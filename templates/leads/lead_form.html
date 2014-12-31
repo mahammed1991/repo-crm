@@ -1,0 +1,232 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+  <form class="lead-form">
+    <div class="form-section-title">Google Rep Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="repName" placeholder="Google Rep Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="repEmail" placeholder="Google Rep Email">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="programName">
+          <option>Program name</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="managerName" placeholder="Manager Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="managerEmail" placeholder="Manager Email">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="programLocation">
+          <option>Program Location</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-section-title">Advertiser Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiserName" placeholder="Advertiser Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="advertiserEmail" placeholder="Advertiser Email">
+      </div>
+      <div class="col-md-4">
+        <input type="tel" class="form-control" id="advertiserPhone" placeholder="Advertiser Telephone">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="companyName" placeholder="Company Name">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="customerID" placeholder="Customer ID">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiserLocation" placeholder="Advertiser Location">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="advertiserLanguage">
+          <option>Select Language</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="advertiserTimeZone">
+          <option>Select Time Zone</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div class="checkbox">
+          <label>
+            <input id="appointmentCheck" type="checkbox" value="">
+            Don’t have an appointment </label>
+        </div>
+      </div>
+    </div>
+    <div id="appointment">
+      <div class="form-heading">Appointment Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contactName" placeholder="Contact Person Name">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contactRole" placeholder="Conatct Person Role">
+        </div>
+        <div class="col-md-4">
+          <select class="form-control" id="appointmentSlot">
+            <option>Select Appointment Slot</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row webmasterCheck">
+        <div id="web-dum1" class="col-md-4">
+        </div>
+        <div id="web-dum2" class="col-md-4"> </div>
+        <div class="col-md-4">
+          <div class="checkbox">
+            <label>
+              <input id="webmasterCheck" type="checkbox" value="">
+              Don’t have a Webmaster </label>
+          </div>
+        </div>
+      </div>
+    <div id="webmaster">
+      <div class="form-heading">Webmaster Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contactName" placeholder="Contact Person Name">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contactRole" placeholder="Conatct Person Role">
+        </div>
+        <div class="col-md-4">
+          <select class="form-control" id="appointmentSlot">
+            <option>Select Appointment Slot</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="lead-type">
+      <label>Please select the type of lead you want to submit</label>
+      <a id="tagImplementation" class="btn std-btn tag-impl"><div class="check-icon"><i class="fa fa-check"></i></div>Tag Implementation</a>
+      <span>And/Or</span>
+      <a id="shoppingSetup" class="btn std-btn shopping-setup"><div class="check-icon"><i class="fa fa-check"></i></div>Shopping Campaign Setup</a>
+    </div>
+    <div class="tasks" id="tasks">
+        <div class="task" id="task1">
+          <div class="form-section-title">Task Info</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select class="form-control" id="taskType-2">
+                <option>Select Task</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+              <input type="text" class="form-control" id="task1-URL" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="removeTask1" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Task</a>
+        <div class="task" id="task2" style="display:none;">
+          <div class="form-heading">Task (2)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select class="form-control" id="taskType-2">
+                <option>Select Task</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+              <input type="text" class="form-control" id="task2-URL" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask1" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add Task</a>
+    </div>
+    <div id="shoppingInfo">
+      <div class="form-section-title">Shopping Campaign Info</div>
+      <div class="row">
+        <div class="col-md-4">
+        <input type="text" class="form-control" id="recoBid" placeholder="Recommended Bid">
+        <input type="text" class="form-control" id="mobBid" placeholder="Recommended Mobile Bid Modifier">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="budget" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping-URL" placeholder="URL">
+        </div>
+        <div class="col-md-4">
+          <textarea class="form-control" placeholder="Special Instructions (Optional)"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-section-title shopping-policies">Heads Up!
+    	<div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Have you ensured that the website meets the Google Shopping Policies?</label>
+          </div>
+    </div>
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed">Reset</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+{% endblock main_js %}
