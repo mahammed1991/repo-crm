@@ -25,6 +25,11 @@ from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, last_day_of_month, previous_quarter)
 from django.http import Http404
 
+from forum.models import *
+from forum.views.readers import question_list
+from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
+
 
 def home(request):
     """ Application landing view """
@@ -38,14 +43,20 @@ def home(request):
 @manager_info_required
 def main_home(request):
     """ Google Portal Home/Index Page """
-    return render(request, 'main/index.html')
+    feed_url = mark_safe(request.path + "?type=rss&q=" + "mostvoted")
+
+    questions_list = question_list(request, Question.objects.all(), None, None, None, None, feed_url=feed_url)
+    for q in questions_list:
+        print q
+
+    return render(request, 'main/index.html', {'questions': questions_list})
 
 
 @login_required
 def add_manager_info(request):
     """ Add manager information for new user """
     if request.method == 'POST':
-        try:
+        try:    
             user_details = UserDetails.objects.get(user_id=request.user.id)
         except ObjectDoesNotExist:
             user_details = UserDetails()

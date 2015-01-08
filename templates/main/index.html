@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load static %}
+{% load question_list_tags %}
 
 {% block title %}
 Regalix Google Portal
@@ -21,6 +22,8 @@ Regalix Google Portal
       border-radius: 3px;
     }
 	</style>
+  {% load static %}
+  <link href="{% static 'css/forum/style.css' %}" rel="stylesheet">
 {% endblock main_css %}
 
 {% block content %}
@@ -33,7 +36,7 @@ Regalix Google Portal
                     <h1>Lead submission becomes easier and faster!</h1>
                     <div class="btn-group">
                         <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
-                        <button class="btn std-btn lead-status">Lead Status</button>
+                        <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Lead Status</button>
                     </div>
                     <div class="leads-summary">
                         <h2 class="sub-title">Your Leads Summary</h2>
@@ -88,6 +91,8 @@ Regalix Google Portal
               <li class="qa">
               	<div class="slide-wrap">
               		<h1>Q&A Forum</h1>
+                    <div id="listA">
+                  </div>
                 </div>
               </li>
               <li class="resources">

@@ -25,6 +25,7 @@ from lib.helpers import get_quarter_date_slots, send_mail
 from lib.salesforce import connect_salesforce
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
+from django.db.models import Q
 
 
 # Create your views here.
@@ -622,3 +623,31 @@ def send_calendar_invite_to_advertiser(advertiser_details):
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return 'Success'
+
+
+@login_required
+def get_lead_summary(request):
+
+    lead_status = ['Implemented', 'In Progress', 'Attempting Contact', 'In Queue', 'In Active']
+    # email = request.user.email
+    email = 'bhavinb@google.com'
+    if 'regalix' in email:
+        total_leads = Leads.objects.filter(lead_owner_email=email).count()
+        implemented_leads = Leads.objects.filter(lead_status='Implemented', lead_owner_email=email).count()
+        in_progress_leads = Leads.objects.filter(lead_status='In Progress', lead_owner_email=email).count()
+        attempting_contact_leads = Leads.objects.filter(lead_status='Attempting Contact', lead_owner_email=email).count()
+        in_queue_leads = Leads.objects.filter(lead_status='In Queue', lead_owner_email=email).count()
+        in_active_leads = Leads.objects.filter(lead_status='In Active', lead_owner_email=email).count()
+        leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email=email)
+    elif 'google' in email:
+        total_leads = Leads.objects.filter(google_rep_email=email).count()
+        implemented_leads = Leads.objects.filter(lead_status='Implemented', google_rep_email=email).count()
+        in_progress_leads = Leads.objects.filter(lead_status='In Progress', google_rep_email=email).count()
+        attempting_contact_leads = Leads.objects.filter(lead_status='Attempting Contact', google_rep_email=email).count()
+        in_queue_leads = Leads.objects.filter(lead_status='In Queue', google_rep_email=email).count()
+        in_active_leads = Leads.objects.filter(lead_status='In Active', google_rep_email=email).count()
+        leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email=email)
+    
+    return render(request, 'leads/lead_summary.html', {'total_leads': total_leads, 'leads': leads, 'implemented_leads': implemented_leads,
+                  'in_progress_leads': in_progress_leads, 'attempting_contact_leads': attempting_contact_leads, 'in_queue_leads': in_queue_leads,
+                  'dead_lead_leads': in_active_leads})
