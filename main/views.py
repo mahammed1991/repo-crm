@@ -64,8 +64,11 @@ def main_home(request):
         question['last_activity_at'] = q.last_activity_at
         question_list.append(question)
 
+    # List all Locations/Country
+    locations = Location.objects.all()
+
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                               'user_profile': user_profile, 'question_list': question_list})
+                                               'user_profile': user_profile, 'question_list': question_list, 'locations': locations})
 
 
 @login_required

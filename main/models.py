@@ -44,6 +44,7 @@ class Feedback(models.Model):
     description = models.CharField(max_length=100)
     status = models.CharField(max_length=20, default='NEW')
     lead_owner = models.ForeignKey(User, related_name='lead_owner', default=default_lead_owner)
+    program = models.ForeignKey(Team, default=None, null=True)
 
     attachment = models.FileField(upload_to=get_file_path)
 
