@@ -20,14 +20,14 @@ Regalix Google Portal
   <div class="lead-summary">
       <h1>Leads Summary</h1>
 			<div class="col-xs-6 col-sm-4 col-md-2 placeholder">
-				<div class="circle">{{dead_lead_leads}}</div>
+				<div class="circle">{{lead_status_dict.in_active}}</div>
         <div class="performer-info">
           <span>Inactive</span>
         </div>
       </div>
 
       <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
-				<div class="circle_red">{{in_queue_leads}}</div>
+				<div class="circle_red">{{lead_status_dict.in_queue}}</div>
 			  <div class="performer-info">
       	  <span>In Queue</span>
         </div>
@@ -35,28 +35,28 @@ Regalix Google Portal
                     
                         
       <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
-				<div class="circle_blue">{{attempting_contact_leads}}</div>
+				<div class="circle_blue">{{lead_status_dict.attempting_contact}}</div>
 				<div class="performer-info">
          	<span>Attempting Contact</span>
         </div>
       </div>
 
       <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
-				<div class="circle_yellow">{{in_progress_leads}}</div>
+				<div class="circle_yellow">{{lead_status_dict.in_progress}}</div>
         <div class="performer-info">
          	<span>In Progress</span>
         </div>
       </div>
                         
       <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
-				<div class="circle_green">{{implemented_leads }}</div>
+				<div class="circle_green">{{lead_status_dict.implemented }}</div>
         <div class="performer-info">
           <span>Implemented</span>
         </div>
       </div>
                         
       <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
-				<div class="circle_black">{{total_leads}}</div>
+				<div class="circle_black">{{lead_status_dict.total_leads}}</div>
         <div class="performer-info">
           <span>Total</span>
         </div>

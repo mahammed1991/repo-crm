@@ -124,3 +124,15 @@ class RegalixTeams(models.Model):
         db_table = 'regalix_teams'
         ordering = ['team_name']
         verbose_name_plural = "Regalix Teams"
+
+
+class Team(models.Model):
+    """ Team/Program information """
+    team_name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.team_name
+
+    class Meta:
+        db_table = 'teams'
+        ordering = ['team_name']

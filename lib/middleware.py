@@ -4,6 +4,7 @@ from requests import request as request_call
 from django.core.exceptions import ObjectDoesNotExist
 from social.exceptions import AuthForbidden
 from django.shortcuts import redirect
+from main.models import UserDetails
 
 
 class SetProfilePicture(object):
@@ -25,9 +26,15 @@ class SetProfilePicture(object):
                     image_url = response['picture']
                 else:
                     image_url = '/static/images/login_pic.png'
-                print image_url, "image_url"
                 request.session['profile_image'] = image_url
-                request.user.profile_image_url = image_url
+                try:
+                    user_profile = UserDetails.objects.get(user_id=request.user.id)
+                    user_profile.profile_photo_url = image_url
+                    user_profile.save()
+                    request.profile_image_url = image_url
+                    request.session['profile'] = user_profile
+                except ObjectDoesNotExist:
+                    pass
             except ObjectDoesNotExist:
                 pass
 

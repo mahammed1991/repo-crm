@@ -12,6 +12,7 @@ from collections import defaultdict
 
 
 from main.models import UserDetails
+from leads.models import Leads
 
 
 def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=False):
@@ -166,3 +167,41 @@ def previous_quarter(ref):
     elif ref.month < 10:
         return date(ref.year, 6, 30)
     return date(ref.year, 9, 30)
+
+
+def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
+    """ get Count of Each Lead Status by rep/manager/email """
+
+    lead_status_dict = {'total_leads': 0,
+                        'implemented': 0,
+                        'in_progress': 0,
+                        'attempting_contact': 0,
+                        'in_queue': 0,
+                        'in_active': 0,
+                        'in_progress': 0,
+                        }
+
+    if 'regalix' in email:
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_owner_email=email).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', lead_owner_email=email).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', lead_owner_email=email).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', lead_owner_email=email).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', lead_owner_email=email).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', lead_owner_email=email).count()
+    elif 'google' in email:
+        lead_status_dict['total_leads'] = Leads.objects.filter(google_rep_email=email).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', google_rep_email=email).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', google_rep_email=email).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', google_rep_email=email).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', google_rep_email=email).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', google_rep_email=email).count()
+
+    return lead_status_dict
+
+
+def get_user_profile(user):
+    try:
+        user_profile = UserDetails.objects.get(user_id=user.id)
+        return user_profile
+    except ObjectDoesNotExist:
+        return None
