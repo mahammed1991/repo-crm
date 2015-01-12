@@ -220,7 +220,7 @@ html, body {
 }
 .home-banner {
 	height:560px;
-	background:url(../images/banner-img.jpg) no-repeat center;
+	background:url(../img/banner-img.jpg) no-repeat center;
 	background-size:cover;	
 }
 .banner-content {
@@ -283,7 +283,7 @@ html, body {
 #bx-pager a span {
 	display:block;
 	height:7px;
-	background:url(../images/selected-tab-icon.png) no-repeat center;
+	background:url(../img/selected-tab-icon.png) no-repeat center;
 	background-size:13px 7px;
 	margin-top:-7px;
 	display:none;
@@ -439,7 +439,7 @@ html, body {
 }
 h2 {
 	font-family:'robotoblack';
-	font-size:16px;
+	font-size:21px;
 	text-transform:uppercase;
 	border-bottom:1px solid #ccc;
 	padding-bottom:15px;
@@ -543,15 +543,15 @@ h3 {
 	font-size:14px;
 }
 .capabilities .sub-title {
-	background:url(../images/capabilities-bg.jpg) no-repeat;
+	background:url(../img/capabilities-bg.jpg) no-repeat;
 	background-size:cover;
 }
 .best-practices .sub-title {
-	background:url(../images/best-practices-bg.jpg) no-repeat;
+	background:url(../img/best-practices-bg.jpg) no-repeat;
 	background-size:cover;
 }
 .faq .sub-title {
-	background:url(../images/faq-bg.jpg) no-repeat;
+	background:url(../img/faq-bg.jpg) no-repeat;
 	background-size:cover;
 }
 .bxslider li .row {
@@ -633,6 +633,9 @@ h1 {
 .inner-page .container-fluid {
 	max-width:1000px;
 }
+.inner-page-wide .container-fluid {
+	max-width:1170px;
+}
 .lead-form {
 	margin-bottom:50px;
 }
@@ -654,7 +657,11 @@ select.form-control {
 	background: -moz-linear-gradient(#fff, #efefef);
 	background: linear-gradient(#fff, #efefef);
 }
-.form-section-title {
+.disabled {
+	opacity:.5 !important;
+	-webkit-opacity:.5 !important;
+}
+.std-sub-title {
 	padding:15px;
 	background:#eeeeee;
 	font-family:'robotoblack';
@@ -765,8 +772,181 @@ textarea.form-control {
 task-btn.add:hover {
 	background:#0f9554;
 }
-
-
+.btn-row {
+	text-align:center;
+	margin-top:20px;
+}
+.auth-user-info {
+	background:#eee;
+	padding:15px;
+	overflow:hidden;
+	line-height:50px;
+	margin-top:50px;
+}
+.auth-user-info label, .auth-user-info .value {
+	float:left;
+	margin-right:10px;
+}
+.auth-user-info label {
+	font-weight:normal;
+}
+.auth-user-info .value {
+	margin-right:40px;
+	font-family:'robotobold';
+	font-size:16px;
+}
+.auth-user-info .form-control {
+	font-size:16px;
+	font-family:'robotobold';
+	width:263px;
+	float:left;
+	margin-bottom:0;
+}
+.ldap-update {
+	float:left;
+	margin-left:-30px;
+}
+.report-section {
+	border:1px solid #ccc;
+	text-align:center;
+	vertical-align:middle;
+	padding:40px;
+}
+.reports-page h2 {
+	border:0;
+	margin:50px 0 15px 0;
+	padding:0;
+}
+.report-img, .report-data {
+	display:inline-block;
+	vertical-align:middle;
+}
+.report-img {
+	margin-bottom:20px;
+}
+.report-img img {
+	max-width:100%;
+}
+.report-section-content {
+	font-size:13px;
+}
+.report-data {
+	margin-left:50px;
+}
+.report-data {
+	text-align:left;
+}
+.report-data th, .report-data td {
+	border:1px solid #ccc;
+	padding:10px 20px;
+}
+.report-data th {
+	font-family:'robotobold';
+	text-align:center;
+	background:#eeeeee;
+	font-size:15px;
+}
+.report-data .lbl {
+	width:200px;
+}
+.report-data .col-3 .lbl {
+	width:100px;
+}
+.report-data .value {
+	width:100px;
+	text-align:center;
+	font-family:'robotobold';
+	font-size:15px;
+}
+table tr:nth-child(even) th, table tr:nth-child(even) td {
+	background:#fffdf7;
+}
+.report-download {
+	margin:40px 0;
+	text-align:center;
+	font-size:13px;
+}
+.report-download .checkbox {
+	padding:25px 15px;
+	background:#eee;
+}
+.report-download .checkbox label {
+	margin-right:8px;
+}
+.feedback-details-section .row {
+	margin-top:30px;
+	margin-bottom:20px;
+}
+.feedback-details-section label {
+	width:150px;
+	margin-right:20px;
+	float:left;
+	font-weight:normal;
+	padding-left:15px;
+}
+.feedback-info-row {
+	overflow:hidden;
+	margin-bottom:15px;
+}
+.feedback-details-section .value {
+	overflow:hidden;
+	font-family:'robotoblack';
+	word-wrap:break-word;
+}
+p {
+	line-height:24px;
+}
+.feedback-details-section p {
+	padding:0 15px;
+}
+.feedback-status {
+	font-size:18px;
+	font-family:'robotoblack';
+	text-transform:uppercase;
+	text-align:center;
+	padding:13px;
+	color:#fff;
+	margin-top:40px
+}
+.feedback-status.resolved {
+	background:#109d59;
+}
+.feedback-status.inprogress {
+	background:#f5b400;
+	color:#000;
+}
+.feedback-status.new {
+	background:#dc4437;
+}
+.feedback-addi-info {
+	background:#eeeeee;
+	padding:10px 15px;
+	margin-bottom:50px;
+}
+.feedback-addi-info span {
+	font-family:'robotoblack';
+}
+.feedback-addi-info p {
+	padding:0;
+}
+.feedback-details-section .btn-row {
+	margin-bottom:50px;
+}
+.feedback-docs {
+	position:relative;
+	display:block;
+	width:100%;
+	height:48px;
+	line-height:16px;
+}
+.feedback-docs input {
+	position:absolute;
+	width:100%;
+	height:100%;
+	opacity:0;
+	top:0;
+	left:0;
+}
 
 /* media queries */
 
@@ -885,14 +1065,47 @@ task-btn.add:hover {
 		-webkit-box-shadow: none;
 		box-shadow: none;
 	}
+	.report-download .checkbox label {
+		margin-bottom:10px;
+	}
 
+}
+@media (max-width: 1024px) {
+	.feedback-details-section .row .col-md-4 {
+		width:50%;
+	}
+}
+
+@media (min-width: 801px) {
+	.col-md-3 {
+		width:25%;
+		float:left;
+	}
 }
 @media (max-width: 880px) {
 	.lead-type span {
 		display:block;
 		margin:15px 0;
-	}
+	}	
 }
+@media (max-width: 800px) {
+	.col-md-3 {
+		width:50%;
+		float:left;
+	}
+	.auth-user-info {
+		padding-bottom:0;
+	}
+	.auth-user-info .manager {
+		clear:left;
+	}
+	.report-data {
+		margin-left:0;
+	}
+
+	
+}
+
 @media (max-width: 767px) {
 	.navbar-nav .notification.open .dropdown-menu, .navbar-nav .user-area.open .dropdown-menu, .navbar-nav.live-transfer .open .dropdown-menu {
 		position: absolute;
@@ -1004,13 +1217,21 @@ task-btn.add:hover {
 	.leads-summary {
 		margin-top:45px;
 	}
+	.feedback-details-section .row .col-md-4 {
+		float:none;
+		width:inherit;
+	}
+	.feedback-docs {
+		margin-bottom:20px;
+	}
 	
 }
 @media screen and (min-width: 600px) {
 	.row .col-md-4 {
 		float:left;
 		width:33.33333333%;
-	}	
+	}
+	
 }
 @media (max-width: 599px) {
 	.performer-info {
@@ -1029,6 +1250,28 @@ task-btn.add:hover {
 		margin-left:auto;
 		margin-right:auto;
 	}
+	.col-md-3 {
+		width:inherit;
+		float:none;
+	}
+	.auth-user-info label {
+		clear:left;
+	}
+	.report-section {
+		padding:0;
+		border:0;
+	}
+	.reports-page h2 {
+		border-bottom:1px solid #ccc;
+		padding-bottom:15px;
+	}
+	.report-download .checkbox {
+		text-align:left;
+	}
+	.report-download .checkbox label {
+		display:block;
+	}
+	
 }
 @media (max-width: 479px) {
 	.lead-type .std-btn {
@@ -1043,10 +1286,10 @@ task-btn.add:hover {
 	}
 	.std-btn {
 		width:100%;
-		margin:0 0 20px 0; 
 	}
 	.std-btn + .std-btn {
-		margin:0 !important;
+		margin-left:0 !important;
+		margin-top:20px;
 	}
 	.task-btn {
 		width:inherit;
@@ -1084,6 +1327,12 @@ task-btn.add:hover {
 	}
 	.home-banner {
 		height:575px;
+	}
+	.auth-user-info .value {
+		margin-right:0;
+	}
+	.auth-user-info .form-control {
+		width:200px;
 	}
 }
 

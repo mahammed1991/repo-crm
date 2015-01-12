@@ -1,10 +1,12 @@
 import csv
 import os
 import mimetypes
-from datetime import datetime
-from leads.models import Leads
-from lib.helpers import (get_week_start_end_days, first_day_of_month,
-                         last_day_of_month, date_range_by_quarter, date_by_month_name, dsum)
+from datetime import datetime, date
+from leads.models import Leads, RegalixTeams
+from lib.helpers import (get_week_start_end_days, first_day_of_month, get_last_week_date_range,
+                         last_day_of_month, date_range_by_quarter, dsum,
+                         get_this_week_date_range, get_current_month_start_end_days,
+                         get_previous_month_start_end_days, get_weeks_in_quarter_to_date)
 from django.conf import settings
 from django.http import HttpResponse
 
@@ -32,6 +34,11 @@ class ReportService(object):
         return list(Leads.objects.exclude(country='').values_list('country', flat=True).distinct().order_by('country'))
 
     @staticmethod
+    def get_all_regalix_teams():
+        ''' Get all regalix Team'''
+        return list(RegalixTeams.objects.values_list('team_name', flat=True).distinct().order_by('team_name'))
+
+    @staticmethod
     def get_all_teams():
         ''' Get all team name '''
         teams = list(Leads.objects.values_list('team', flat=True).distinct().order_by('team'))
@@ -54,28 +61,53 @@ class ReportService(object):
 
         return quarterly
 
+    # @staticmethod
+    # def get_date_range_by_timeline(timeline):
+    #     ''' Get start and end date by timeline options: Weekly, Monthly, Quarterly and date range '''
+    #     if timeline['quarterly']:
+    #         # get date range by quarterly
+    #         start_date, end_date = date_range_by_quarter(timeline['quarterly'])
+    #     elif timeline['monthly']:
+    #         # get date range by monthly
+    #         month = date_by_month_name(int(timeline['monthly']))
+    #         start_date = first_day_of_month(month)
+    #         end_date = last_day_of_month(month)
+
+    #     elif timeline['weekly']:
+    #         # get date range by weekly
+    #         date_now = datetime.utcnow()
+    #         start_date, end_date = get_week_start_end_days(date_now.year, int(timeline['weekly']))
+    #     else:
+    #         # get date range by given date_range
+    #         start_date = datetime.strptime(str(timeline['date_range'][0]), "%b %d, %Y")
+    #         end_date = datetime.strptime(str(timeline['date_range'][1]), "%b %d, %Y")
+
+    #     return start_date, end_date
+
     @staticmethod
     def get_date_range_by_timeline(timeline):
-        ''' Get start and end date by timeline options: Weekly, Monthly, Quarterly and date range '''
-        if timeline['quarterly']:
-            # get date range by quarterly
-            start_date, end_date = date_range_by_quarter(timeline['quarterly'])
-        elif timeline['monthly']:
-            # get date range by monthly
-            month = date_by_month_name(int(timeline['monthly']))
-            start_date = first_day_of_month(month)
-            end_date = last_day_of_month(month)
-
-        elif timeline['weekly']:
-            # get date range by weekly
-            date_now = datetime.utcnow()
-            start_date, end_date = get_week_start_end_days(date_now.year, int(timeline['weekly']))
-        else:
+        ''' Get start and end date by timeline options: thisweek, lastweek, thismonth and lastmonth '''
+        if len(timeline) > 1:
             # get date range by given date_range
-            start_date = datetime.strptime(str(timeline['date_range'][0]), "%b %d, %Y")
-            end_date = datetime.strptime(str(timeline['date_range'][1]), "%b %d, %Y")
-
-        return start_date, end_date
+            start_date = datetime.strptime(str(timeline[0]), "%b %d, %Y")
+            end_date = datetime.strptime(str(timeline[1]), "%b %d, %Y")
+            return start_date, end_date
+        else:
+            if timeline[0] == 'this_week':
+                current_week = date.today().isocalendar()[1]
+                current_year = datetime.now().year
+                return get_this_week_date_range(current_year, current_week)
+            elif timeline[0] == 'last_week':
+                current_week = date.today().isocalendar()[1]
+                last_week = current_week - 1
+                current_year = datetime.now().year
+                return get_last_week_date_range(current_year, last_week)
+            elif timeline[0] == 'this_month':
+                return get_current_month_start_end_days(datetime.now())
+            elif timeline[0] == 'last_month':
+                return get_previous_month_start_end_days(datetime.now())
+            elif timeline[0] == 'this_quarter':
+                return date_range_by_quarter(ReportService.get_current_quarter(datetime.now()))
 
     @staticmethod
     def get_leads_by_location(location, lead_status, code_types, start_date, end_date):
@@ -141,6 +173,115 @@ class ReportService(object):
                                      lead_status__in=lead_status,
                                      type_1__in=code_types).order_by('lead_status')
         return leads
+
+    @staticmethod
+    def get_leads_for_individual(email, start_date, end_date):
+        ''' Get the individual Leads '''
+        leads = Leads.objects.filter(google_rep_email=email,
+                                     lead_status__in=settings.LEAD_STATUS,
+                                     created_date__gte=start_date,
+                                     created_date__lte=end_date)
+        return leads
+
+    @staticmethod
+    def get_leads_status_summary(leads):
+        ''' Get Leads staus summary for Leads '''
+        leads_status_summary = {status: 0 for status in ReportService.get_all_lead_status()}
+        for lead in leads:
+            if lead.lead_status not in leads_status_summary.keys():
+                leads_status_summary[lead.lead_status] = 0
+            else:
+                leads_status_summary[lead.lead_status] += 1
+
+        lead_status_tat = ReportService.get_average_tat_for_leads(leads)
+        leads_status_summary['lead_status_tat'] = lead_status_tat
+        leads_status_summary['total_leads'] = len(leads)
+        return leads_status_summary
+
+    @staticmethod
+    def get_week_on_week_trends_details(lead_ids):
+        ''' Week on week analysis of leads won over leads submitted '''
+        week_on_week_trends = dict()
+        weeks_in_qtd = get_weeks_in_quarter_to_date()
+
+        for index in range(1, len(weeks_in_qtd) + 1):
+
+            week_on_week_trends['Week' + str(index - 1)] = {'leads_won': 0}
+            start_date, end_date = weeks_in_qtd[index - 1]
+            leads = Leads.objects.filter(id__in=lead_ids, created_date__gte=start_date, created_date__lte=end_date)
+            for lead in leads:
+                if lead.lead_status == 'Implemented':
+                    week_on_week_trends['Week' + str(index - 1)]['leads_won'] += 1
+            week_on_week_trends['Week' + str(index - 1)]['total_leads_submitted'] = len(leads)
+        return week_on_week_trends
+
+    @staticmethod
+    def get_region_program_view_report_details(teams, countries, code_types, start_date, end_date):
+
+        ''' Lead details for program and region view '''
+        start_date, end_date = '2014-12-01', '2014-12-10'
+        leads = Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date,
+                                     type_1__in=code_types)
+        lead_ids = [lead.id for lead in leads]
+
+        leads_status_summary = ReportService.get_leads_status_summary(leads)
+        print leads_status_summary
+
+        leads_status_list = leads_status_summary.keys()
+        if 'lead_status_tat' in leads_status_list:
+            leads_status_list.remove('lead_status_tat')
+        if 'total_leads' in leads_status_list:
+            leads_status_list.remove('total_leads')
+
+        code_type_analysis_table = list()
+
+        code_type_analysis_chart = {}
+
+        for type_1 in code_types:
+            leads = Leads.objects.filter(type_1=type_1, created_date__gte=start_date, created_date__lte=end_date)
+
+            code_type_analysis_chart[type_1] = len(leads)
+
+        #code_type_analysis_table.append(code_type_analysis_chart)
+        print '**************************************************************************************************'
+        print 'code_type_analysis_chart', code_type_analysis_chart
+
+        for lead_status in leads_status_list:
+            code_type_analysis = {lead_status: ''}
+            leads_per_status = Leads.objects.filter(team__in=teams, country__in=countries, lead_status=lead_status,
+                                                    created_date__gte=start_date, created_date__lte=end_date)
+
+            print len(leads)
+            code_type_analysis[lead_status] = ReportService.get_lead_code_type_analysis(leads_per_status, code_types)
+            code_type_analysis_table.append(code_type_analysis)
+
+        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
+       
+        return leads_status_summary, code_type_analysis_chart, code_type_analysis_table, week_on_week_trends
+
+    @staticmethod
+    def get_average_tat_for_leads(leads):
+        implemented_leads = list()
+        first_contacted_leads = list()
+        for lead in leads:
+            if lead.lead_status == 'Implemented':
+                implemented_leads.append(lead)
+            if lead.first_contacted_on:
+                first_contacted_leads.append(lead)
+
+        implemented_leads_tat = ReportService.get_average_of_implemented(implemented_leads)
+        first_contacted_leads_tat = ReportService.get_average_of_first_contacted(first_contacted_leads)
+        return (implemented_leads_tat + first_contacted_leads_tat) / 2.0
+
+    @staticmethod
+    def get_lead_code_type_analysis(leads, code_types):
+        ''' Code type analysis for Leads'''
+        import ipdb; ipdb.set_trace()
+        code_type_analysis = {c_type: 0 for c_type in code_types}
+        for lead in leads:
+            if lead.type_1 in code_types:
+                code_type_analysis[lead.type_1] += 1
+        return code_type_analysis
 
     @staticmethod
     def get_leads_reports(leads, lead_status, code_types):
