@@ -1,0 +1,19 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Newsletter
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <ul class="archive">
+            <li>
+                <a href="{% url 'newsletter.views.get_newsletter' '2014' 'september' '1' %}" target="_blank">September, 2014 vol - 1</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock content %}
