@@ -41,7 +41,7 @@ class Feedback(models.Model):
     location = models.ForeignKey(Location)
     language = models.CharField(max_length=150)
     feedback_type = models.CharField(max_length=150)
-    description = models.CharField(max_length=100)
+    description = models.TextField()
     status = models.CharField(max_length=20, default='NEW')
     lead_owner = models.ForeignKey(User, related_name='lead_owner', default=default_lead_owner)
     program = models.ForeignKey(Team, default=None, null=True)
