@@ -22,13 +22,14 @@ $(document).ready(function() {
       }
     });
   });
-  callAjax({'report_type': 'default_report'})
+  callAjax({'report_type': 'default_report', 'report_timeline': ['today']})
 /* ===================== Date Picker function Ends Here ============= */
 });
 
 /*=========== Changes in report type ===============*/
 $("#filter_report_type").change(function() {
   var value = $(this).val();
+  setDefaultDropdown();
   showFilters();
 
   if(value == 'leadreport_individualRep'){
@@ -76,7 +77,6 @@ $("#get_report").click(function(){
           showErrorMessage(errMsg);
           isError = true;
     }else{
-        alert(selectedReportType);
         dataString['report_type'] = selectedReportType;
     }
 
@@ -142,10 +142,8 @@ $("#get_report").click(function(){
      console.log(dataString);
 
     if(isError){
-        alert("false");
         return false;
     }else{
-      alert('Trues');
       // Ajax call for get reports
       callAjax(dataString);
     }
@@ -160,7 +158,7 @@ function callAjax(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data) {
-          alert(data)
+          alert(data['report_type']);
             console.log(data);
             report = data['reports'];
             window.code_type = data['code_types'];
@@ -189,6 +187,12 @@ function showFilters(){
 
 function showErrorMessage(message){
   alert(message);
+}
+
+function setDefaultDropdown(){
+  $("#filter_region").val('');
+  $("#filter_team").val('all');
+  $('#dropdown_container_location').hide();
 }
 
 function get_countries(id){
@@ -235,12 +239,24 @@ function showReport(reports){
   else if(window.report_type == 'leadreport_teamLead'){
     draw_and_display_table(reports);
   }
-  else if(window.report_type == 'leadreport_praogramview'){
+  else if(window.report_type == 'leadreport_programview'){
     clearTables()
     drawColumnChart(reports['lead_status_summary']);
     displayLeadStatusTable(reports['lead_status_summary']);
     drawPieChart(reports['piechart']);
-    drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
+    //drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
+    newTable(reports['table_header'], reports['lead_code_type_analysis'])
+    displayLineChartTable(reports['week_on_week_details_in_qtd'])
+  }
+
+   else if(window.report_type == 'leadreport_regionview'){
+    clearTables()
+    drawColumnChart(reports['lead_status_summary']);
+    displayLeadStatusTable(reports['lead_status_summary']);
+    drawPieChart(reports['piechart']);
+    //drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
+    newTable(reports['table_header'], reports['lead_code_type_analysis'])
+    displayLineChartTable(reports['week_on_week_details_in_qtd'])
   }
 
 }
@@ -287,7 +303,8 @@ function drawLineChart(details){
 
   for(var key in details){
       var record = []
-      record.push(key)
+      var val = 'Week '+ key.toString()
+      record.push(val)
       week_dict = details[key]
 
       for(key in week_dict){
@@ -296,9 +313,9 @@ function drawLineChart(details){
       lineChart_datatable.push(record)
   }
   //console.log(lineChart_datatable)
-  lineChart_datatable_default = [['Weeks', 'Leads Won', 'Leads Submitted'],['week 0', 12, 15], ['week 1', 32, 35], ['week 2', 10, 25]]
+  //lineChart_datatable_default = [['Weeks', 'Leads Won', 'Leads Submitted'],['week 0', 12, 15], ['week 1', 32, 35], ['week 2', 10, 25]]
   lineChartDraw(lineChart_datatable, '', 'linechart')
-  lineChartDraw(lineChart_datatable_default, '', 'linechart')
+  //lineChartDraw(lineChart_datatable_default, '', 'linechart')
 }
 
 function displayLeadStatusTable(details){
@@ -307,8 +324,8 @@ function displayLeadStatusTable(details){
   for(var key in details){
     if(key == 'total_leads'){
         total = '<tr><td class="lbl">Total Leads</td><td class="value">' + details[key] + '</td></tr>'
-    }else if (key == 'lead_status_tat'){
-      end = '<tr><td class="lbl">' + key + '</td><td class="value">' + details[key] + '</td></tr>'
+    }else if (key == 'TAT'){
+      end = '<tr><td class="lbl"> Average ' + key + '</td><td class="value">' + details[key] + ' days</td></tr>'
     }else{
       rows += '<tr><td class="lbl">' + key + '</td><td class="value">' + details[key] + '</td></tr>'
     }
@@ -331,7 +348,8 @@ function displayLineChartTable(details){
   var row = ''
 
   for(key in details){
-      row += '<tr><td class="lbl">'+ key +'</td>'
+
+      row += '<tr><td class="lbl">Week '+ key +'</td>'
       var week_dict = details[key]
 
       for (key in week_dict){
@@ -346,7 +364,7 @@ function displayLineChartTable(details){
 }
 
 
-function drawStatusCodeTypeTable(firstrow, details){
+/*function drawStatusCodeTypeTable(firstrow, details){
 
     $("#code_type_table").empty();
 
@@ -384,7 +402,7 @@ function drawStatusCodeTypeTable(firstrow, details){
 
     console.log(dict_row)
     $("#code_type_table").append(firt_row+second_row+each_row);
-}
+}*/
 
 function clearTables(){
   $('#lead_status_table').empty();
@@ -402,6 +420,43 @@ function draw_and_display_table(reports){
     displayLineChartTable(reports['week_on_week_details_in_qtd']);
 }
 
-function view_code_type_table(reports){
+function newTable(firstrow, details){
+  console.log(firstrow);
+  $("#code_type_table").empty();
 
- }
+  header = '<tr><td>Code Types/Lead Status</td>'
+  for(key in firstrow){
+    header += '<td>'+ key + '</td>'
+  }
+  header = header+'<td>Total</td></tr>'
+
+  var each_row;
+
+    for(i = 0; i < details.length; i++){
+
+        dict_obj = details[i];
+        dict_row = '<tr><td>'
+        var value_dict;  
+        end = '';
+
+        for(key in dict_obj){
+          dict_row += key +'</td>'
+          value_dict = dict_obj[key]
+        }
+
+        for(key in value_dict){
+
+          if(key=='Total'){
+
+            end = '<td>'+value_dict[key]+'</td>'
+          }
+          else{
+
+            dict_row += '<td>'+value_dict[key]+'</td>'
+          }
+        }
+
+        each_row += dict_row+end;
+  }
+ $("#code_type_table").append(header+each_row);
+}

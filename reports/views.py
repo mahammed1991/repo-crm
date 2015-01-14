@@ -16,7 +16,6 @@ from django.contrib.auth.models import User
 def reports(request):
     """ New Report """
     locations = ReportService.get_all_locations()
-    #locations = Location.objects.all()
     teams = ReportService.get_all_teams()
     rgx_teams = RegalixTeams.objects.all()
     if '' in teams:
@@ -72,9 +71,8 @@ def get_current_quarter_report(request):
 
 @login_required
 def get_new_reports(request):
-    print "*****************************"
-    print "Submitted the dropdown values"
-    print "*****************************"
+    """ New Report Details
+    """
     report_detail = dict()
     if request.is_ajax():
         report_type = request.GET.get('report_type', None)
@@ -82,7 +80,6 @@ def get_new_reports(request):
         region = request.GET.get('region')
         countries = request.GET.getlist('countries[]')
         teams = request.GET.getlist('team[]')
-        print report_timeline, report_type, region, countries, teams
 
         # Get teams
         if 'all' in teams:
@@ -97,122 +94,87 @@ def get_new_reports(request):
         if 'all' in countries:
             if len(countries) > 1:
                 countries.remove('all')
-                countries = Location.objects.filter(id__in=countries)
-                print countries
+                countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
             else:
                 countries = ReportService.get_all_locations()
 
         code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types]
-
         if report_timeline:
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
-
-        #start_date, end_date = '2014-12-01', '2014-12-31'
-
+        report_details = dict()
         if report_type == 'default_report':
-
-            #start_date = end_date = get_date_format(datetime.utcnow())
-            start_date, end_date = '2014-12-01', '2014-12-15'
-
             leads = Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
             lead_ids = [lead.id for lead in leads]
-            lead_status_summary = ReportService.get_leads_status_summary(leads)
+            lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
             lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
             week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
             report_detail.update({'lead_status_summary': lead_status_summary,
                                   'lead_code_type_analysis': lead_code_type_analysis,
                                   'week_on_week_details_in_qtd': week_on_week_details_in_qtd})
-            print week_on_week_details_in_qtd, lead_status_summary, lead_code_type_analysis
-            return HttpResponse(json.dumps({'reports': report_detail, 'code_types': code_types,
-                                            'report_type': report_type, 'report_timeline': report_timeline,
-                                            'region': region, 'location': countries, 'team': teams}))
+            report_details = {'reports': report_detail, 'code_types': code_types,
+                              'report_type': report_type, 'report_timeline': report_timeline,
+                              'region': region, 'team': teams}
 
         elif report_type == 'leadreport_individualRep':
-            #email = request.user.email
             email = 'acharyar@google.com'
             leads = ReportService.get_leads_for_individual(email, start_date, end_date)
-            #leads = ReportService.get_leads_for_individual(email, '2014-12-01', '2014-12-31')
             lead_ids = [lead.id for lead in leads]
-            print len(leads)
-            lead_status_summary = ReportService.get_leads_status_summary(leads)
+            lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
             lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
             week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
-            print "Individual Rep"
-            print "**************"
-            print lead_status_summary, lead_code_type_analysis, week_on_week_details_in_qtd
             report_detail.update({'lead_status_summary': lead_status_summary,
                                   'lead_code_type_analysis': lead_code_type_analysis,
                                   'week_on_week_details_in_qtd': week_on_week_details_in_qtd})
-            return HttpResponse(json.dumps({'reports': report_detail, 'code_types': code_types,
-                                            'report_type': report_type, 'report_timeline': report_timeline,
-                                            'region': region, 'location': countries, 'team': teams}))
+            report_details = {'reports': report_detail, 'code_types': code_types,
+                              'report_type': report_type, 'report_timeline': report_timeline,
+                              'region': region, 'team': teams}
 
         elif report_type == 'leadreport_teamLead':
-            print "Team Lead"
-            print "**************"
-            #is_manager = False
-            #email = request.user.email
             email = 'tkhan@regalix-inc.com'
             managers_list = UserDetails.objects.filter(user_manager_email=email)
             if managers_list:
-                #is_manager = True
                 users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
                 user_emails = User.objects.filter(id__in=users)
                 leads = Leads.objects.filter(google_rep_email__in=user_emails, created_date__gte=start_date, created_date__lte=end_date)
                 lead_ids = [lead.id for lead in leads]
-                lead_status_summary = ReportService.get_leads_status_summary(leads)
+                lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
                 lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
                 week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
-                print len(leads), week_on_week_details_in_qtd
-                print lead_status_summary, lead_code_type_analysis, week_on_week_details_in_qtd
                 report_detail.update({'lead_status_summary': lead_status_summary,
                                       'lead_code_type_analysis': lead_code_type_analysis,
                                       'week_on_week_details_in_qtd': week_on_week_details_in_qtd})
-                return HttpResponse(json.dumps({'reports': report_detail, 'code_types': code_types,
-                                                'report_type': report_type, 'report_timeline': report_timeline,
-                                                'region': region, 'location': countries, 'team': teams}))
 
-        elif report_type == 'leadreport_praogramview':
-            print "Program View"
-            print "**************"
+                report_details = {'reports': report_detail, 'code_types': code_types,
+                                  'report_type': report_type, 'report_timeline': report_timeline,
+                                  'region': region, 'team': teams}
 
-            status, piechart, code_type, week_on = ReportService.get_region_program_view_report_details(teams, countries, code_types, start_date, end_date)
+        elif report_type == 'leadreport_programview':
+            #status, piechart, code_type, week_on = ReportService.get_region_program_view_report_details(teams, countries, code_types, start_date, end_date)
+            status, piechart, code_type, week_on = ReportService.get_new_code_type_analysis(teams, countries, code_types, start_date, end_date)
+             
             report_detail.update({'lead_status_summary': status,
                                   'piechart': piechart,
+                                  'table_header': settings.LEAD_STATUS_DICT,
                                   'lead_code_type_analysis': code_type,
                                   'week_on_week_details_in_qtd': week_on})
-            print "am HERR"
-
-            return HttpResponse(json.dumps({'reports': report_detail, 'code_types': code_types,
-                                            'report_type': report_type, 'report_timeline': report_timeline,
-                                            'region': region, 'location': countries, 'team': teams}))
+            report_details = {'reports': report_detail, 'report_type': report_type, 'code_types': code_types}
 
         elif report_type == 'leadreport_regionview':
-            print "Region View"
-            print "**************"
-            status, code_type, week_on = ReportService.get_region_program_view_report_details(teams, countries, code_types, start_date, end_date)
-
+            status, piechart, code_type, week_on = ReportService.get_new_code_type_analysis(teams, countries, code_types, start_date, end_date)
             report_detail.update({'lead_status_summary': status,
                                   'piechart': piechart,
+                                  'table_header': settings.LEAD_STATUS_DICT,
                                   'lead_code_type_analysis': code_type,
                                   'week_on_week_details_in_qtd': week_on})
-            print "am HERR"
-
-            return HttpResponse(json.dumps({'reports': report_detail, 'code_types': code_types,
-                                            'report_type': report_type, 'report_timeline': report_timeline,
-                                            'region': region, 'location': countries, 'team': teams}))
+            report_details = {'reports': report_detail, 'report_type': report_type, 'code_types': code_types}
 
         elif report_type == 'leadreport_deadLeads':
-            print "Dead Leads"
-            print "**************"
             leads = Leads.objects.filter(team__in=teams, country__in=countries, lead_status='Dead Lead',
                                          created_date__gte=start_date, created_date__lte=end_date)
-            print len(leads)
-            # lead_ids = [lead.id for lead in leads]
-            # lead_status_summary = ReportService.get_leads_status_summary(leads)
-            # lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
-            # week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
+            report_details = {'Status': 'Requirement not clear'}
+
+        return HttpResponse(json.dumps(report_details))
 
 
 @login_required
