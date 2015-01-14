@@ -20,7 +20,8 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location
+from leads.models import Leads, Location, Team
+from main.models import UserDetails
 from lib.helpers import get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -91,11 +92,14 @@ def lead_form(request):
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
             'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
 
+    teams = Team.objects.all()
+
     return render(
         request,
         'leads/lead_form.html',
         {'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
          'locations': locations,
+         'teams': teams,
          'time_zone_for_region': json.dumps(time_zone_for_region)}
     )
 
