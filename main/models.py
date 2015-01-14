@@ -10,7 +10,7 @@ from PIL import Image
 from django.utils.translation import ugettext as _
 
 
-from leads.models import Location
+from leads.models import Location, Team
 
 
 class Feedback(models.Model):
@@ -44,6 +44,7 @@ class Feedback(models.Model):
     description = models.CharField(max_length=100)
     status = models.CharField(max_length=20, default='NEW')
     lead_owner = models.ForeignKey(User, related_name='lead_owner', default=default_lead_owner)
+    program = models.ForeignKey(Team, default=None, null=True)
 
     attachment = models.FileField(upload_to=get_file_path)
 
@@ -80,6 +81,10 @@ class UserDetails(models.Model):
     user_supporting_region = models.CharField(max_length=100)
     user_manager_name = models.CharField(max_length=100)
     user_manager_email = models.CharField(max_length=255)
+    phone = models.CharField(max_length=50)
+    team = models.ForeignKey(Team, blank=True, null=True, default=None)
+    location = models.ForeignKey(Location, blank=True, null=True, default=None)
+    profile_photo_url = models.CharField(max_length=255, default=None, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -165,6 +170,8 @@ class CustomerTestimonials(models.Model):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     statement_text = models.TextField(blank=False)
     email = models.EmailField(max_length=100, blank=True)
+    company_name = models.CharField(max_length=100, blank=True, null=True)
+    url = models.CharField(max_length=200, blank=True, null=True)
     created_date = models.DateTimeField(default=datetime.utcnow())
     updated_date = models.DateTimeField(auto_now=True)
 

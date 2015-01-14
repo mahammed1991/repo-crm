@@ -14,4 +14,5 @@ urlpatterns = patterns(
     url(r'^upload-leads/$', views.upload_leads),
     url(r'^migrate-leads/$', views.migrate_leads),
     url(r'^get-lead/(?P<cid>[\w -]+)$', views.get_lead),
+    url(r'^lead-summary/$', views.get_lead_summary),
 )

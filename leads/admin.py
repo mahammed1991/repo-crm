@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leads.models import Leads, Timezone, RegalixTeams, Location
+from leads.models import Leads, Timezone, RegalixTeams, Location, Team
 
 
 class LeadsAdmin(admin.ModelAdmin):
@@ -27,3 +27,9 @@ class LocationAdmin(admin.ModelAdmin):
     filter_horizontal = ('time_zone',)
 
 admin.site.register(Location, LocationAdmin)
+
+
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ('team_name',)
+
+admin.site.register(Team, TeamAdmin)

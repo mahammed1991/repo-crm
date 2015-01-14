@@ -1,0 +1,224 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+Regalix Google Portal
+{% endblock title %}
+
+{% block main_css %}
+     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <link href="{% static 'css/bootstrap-filterable.css' %}" rel="stylesheet">
+{% endblock main_css %}
+
+{% block content %}
+<div class="container">
+<!-- content-region -->
+<section class="content-region inner-page">
+  <div class="lead-summary">
+      <h1>Leads Summary</h1>
+			<div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+				<div class="circle">{{lead_status_dict.in_active}}</div>
+        <div class="performer-info">
+          <span>Inactive</span>
+        </div>
+      </div>
+
+      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+				<div class="circle_red">{{lead_status_dict.in_queue}}</div>
+			  <div class="performer-info">
+      	  <span>In Queue</span>
+        </div>
+      </div>
+                    
+                        
+      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+				<div class="circle_blue">{{lead_status_dict.attempting_contact}}</div>
+				<div class="performer-info">
+         	<span>Attempting Contact</span>
+        </div>
+      </div>
+
+      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+				<div class="circle_yellow">{{lead_status_dict.in_progress}}</div>
+        <div class="performer-info">
+         	<span>In Progress</span>
+        </div>
+      </div>
+                        
+      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+				<div class="circle_green">{{lead_status_dict.implemented }}</div>
+        <div class="performer-info">
+          <span>Implemented</span>
+        </div>
+      </div>
+                        
+      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+				<div class="circle_black">{{lead_status_dict.total_leads}}</div>
+        <div class="performer-info">
+          <span>Total</span>
+        </div>
+      </div>
+  </div>
+                       
+  <div class="lead-filter-option">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+      <h1>Leads Status</h1>
+    </div>
+      <div class="col-xs-12 col-sm-12 col-md-6">
+  			<ul class="pagination">
+  				<li>
+  					<a class="tag" href="#" id='all'>All</a>
+  				</li>
+  				<li>
+  					<a class="page" href="#" id='Inactive'>Inactive</a>
+  				</li>
+  				<li>
+  					<a class="page" href="#" id='InQueue'>In Queue</a>
+  				</li>
+  				<li>
+  					<a class="page" href="#" id='AttemptingContact'>Attempting Contact</a>
+  				</li>
+  				<li>
+  					<a class="page" href="#" id='InProgress' >In Progress </a>
+  				</li>
+  				<li>
+  					<a class="page" href="#" id='Implemented'>Implemented</a>
+  				</li>
+  			</ul>
+  	  </div>
+                            
+    <div class="col-xs-6 col-sm-6 col-md-3">
+      <div class="form-group has-feedback">
+            <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
+			     <i class="fa fa-search"  style="float: right; margin-top: -42px; margin-right: 10px;"/></i>
+      </div>
+    </div>
+		<div class="col-xs-6 col-sm-6 col-md-3">
+        <div class="sd_tags">
+					<span class="title">Sort by: </span>
+							<ul class="pagination">
+									<li>
+										<a class="page" href="#">Recent <i class="fa fa-angle-down"></i></a>
+									</li>
+              </ul>
+				</div>
+    </div>
+  </div>
+  <div class="lead-table">  
+    <div class="row center span10">
+        <div class="table-responsive col-xs-12 col-sm-12 col-md-12">
+            <table class="table table-striped table-hover table-condensed" id='Leads'>
+              <thead>
+                <tr>
+                 <th class="hidden-xs hidden-sm" width="30">No.</th>
+                  <th class="hidden-xs hidden-sm">Advertiser</th>
+                  <th class="hidden-xs hidden-sm" class='filterable'>CID <i class="fa fa-filter" style="float: right;margin-top: -3px;margin-right: -5px;" id='CID'></i> <input type='text' style='display:none;' id='CIDText'/ ></th>
+                  <th class="hidden-xs hidden-sm">Code Type <i class="fa fa-filter" style="float: right;margin-top: -3px;margin-right: -5px;" id='CodeType'></i><input type='text' style='display:none;' id='CodeTypeText'/></th>
+                  <th class="hidden-xs hidden-sm">Google Rep</th>
+                  <th class="hidden-xs hidden-sm">Regalix Rep</th>
+                  <th class="hidden-xs hidden-sm">Date Created</th>
+                  <th class="hidden-xs hidden-sm">Date of Installation</th>
+                  <th class="hidden-xs hidden-sm">Google Comments</th>
+                  <th class="hidden-xs hidden-sm">Regalix Comments</th>
+                  <th>Status</th>
+                  <th>Ping Status</th>
+                </tr>
+                <!-- <tr  class="table_bg">
+                 <th class="hidden-xs hidden-sm nthchild">No.</th>
+                  <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
+                  <th class="nthchild2">CID <i class="fa fa-filter"></i></th>
+                  <th class="hidden-xs hidden-sm nthchild3">Code Type <i class="fa fa-filter"></i></th>
+                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Date Created</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
+                  <th class="hidden-xs hidden-sm nthchild8">Google Comments</th>
+                  <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
+                  <th class="nthchild3">Status <i class="fa fa-filter"></i></th>
+                  <th class="nthchild11">Ping Status</th>
+                </tr> -->
+              </thead>
+              <tbody>
+               
+                {% for l in leads %}
+
+                      {% if l.lead_status == 'Implemented' %}
+                      <tr class='implemented searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="green_bor">{{forloop.counter}}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'In Active' %}
+                      <tr class='inactive searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="left_bor">{{forloop.counter}}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'In Progress' %}
+                      <tr class='inprogress searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="yellow_bor">{{forloop.counter}}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'Attempting Contact' %}
+                      <tr class='attemptingcontact searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="blue_bor">{{forloop.counter}}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'In Queue' %}
+                      <tr class='inqueue searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="red_bor">{{forloop.counter}}</span></td>
+                      {% endif %}
+                      <td class="hidden-xs hidden-sm">{{ l.company }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.customer_id }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.type_1 }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.google_rep_name }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.lead_owner_name }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.created_date |date:"m/d/Y" }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.date_of_installation |date:"m/d/Y" }}</td>
+                      <td class="hidden-xs hidden-sm"><a  type="button" class="pop_up">
+                        {{ l.google_comment | truncatechars:100 }} 
+                        <div class="popover fade right in" role="tooltip"><div class="arrow"></div><div class="popover-content">
+                            {{ l.google_comment}} 
+                        </div></div></a></td>
+                      <td class="hidden-xs hidden-sm"><a  type="button" class="pop_up">
+                        {{ l.regalix_comment | truncatechars:100 }} 
+                        <div class="popover fade right in" role="tooltip"><div class="arrow"></div><div class="popover-content">
+                            {{ l.regalix_comment}} 
+                        </div></div></a></td>
+                      </td>
+                      {% if l.lead_status == 'Implemented' %}
+                        <td><span style="color:#109d59; font-family:robotobold;">{{ l.lead_status }}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'In Active'%}
+                        <td><span style="color:#acacac; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'In Progress' %}
+                        <td><span style="color:#f5b400; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'Attempting Contact' %}
+                        <td><span style="color:#4385f5; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                      {% endif %}
+                      {% if l.lead_status == 'In Queue' %}
+                        <td><span style="color:#dc4437; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                      {% endif %}
+                      
+                      <td><i class="fa fa-comment"></i></td>
+                    </tr>
+                    
+                {% endfor %}
+              </tbody>
+            </table>
+        <div class="span4"><img src="{% static 'images/loading.png' %}" alt=" " class="center-block"/></div>
+    </div>
+  </div>
+</div>
+   
+</section>
+</div>
+<!-- content-region ends --> 
+{% endblock content %}
+
+{% block main_js %}
+
+  <script src="{% static 'js/lead_summary.js' %}"></script>
+
+ 
+  
+{% endblock main_js %}

@@ -13,7 +13,7 @@
             <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="{% url 'leads.views.lead_form' %}">Submit Leads</a></li>
-                <li><a href="#">Lead Status</a></li>
+                <li><a href="{% url 'leads.views.get_lead_summary' %}">Lead Status</a></li>
               </ul>
             </li>
             <li><a href="{% url 'reports.views.reports' %}">Reports</a></li>
@@ -46,10 +46,11 @@
         <ul class="nav navbar-nav live-transfer">
           <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="{% static 'images/US-flag.png' %}"/> <i class="fa fa-angle-down"></i></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#"><img src="{% static 'images/US-flag.png' %}"/> United States</a></li>
-              <li><a href="#"><img src="{% static 'images/US-flag.png' %}"/> Australia</a></li>
-              <li><a href="#"><img src="{% static 'images/US-flag.png' %}"/> UK</a></li>
-              <li><a href="#"><img src="{% static 'images/US-flag.png' %}"/> Germany</a></li>
+              {% for location in locations %}
+              {% if location.flag_image %}
+                <li><a href="#"><img src="{% static 'uploads/' %}{{location.flag_image}}"/>{{location.location_name}}</a></li>
+              {% endif %}
+              {% endfor %}
             </ul>
           </li>
           <li class="live-transfer-number"><i class="fa fa-phone"></i>866-999-7725</li>
@@ -66,8 +67,8 @@
           {% if user.is_authenticated %}
           <li class="dropdown user-area"> 
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              {% if user.profile_image_url %}
-                <img src="{{user.profile_image_url}}"/>
+              {% if request.session.profile_image %}
+                <img src="{{request.session.profile_image}}?sz=32"/>
               {% else %}
                 <img src="{% static 'images/profile-avtar.png' %}"/>
               {% endif %}

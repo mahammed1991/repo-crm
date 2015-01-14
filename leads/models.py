@@ -1,5 +1,9 @@
+import os
 from datetime import datetime
 from django.db import models
+from django.core.exceptions import ValidationError
+from PIL import Image
+from django.utils.translation import ugettext as _
 
 
 # Create your models here.
@@ -97,8 +101,51 @@ class Timezone(models.Model):
 
 
 class Location(models.Model):
+
+    def get_flag_image(instance, flag_filename):
+        """ Dynamic location flag image path """
+        ext = flag_filename.split('.')[-1]
+
+        if instance.location_name:
+            filename = "%s.%s" % (instance.location_name.replace(' ', '-'), ext)
+        else:
+            filename = flag_filename
+        return os.path.join('country_flag/', filename)
+
     location_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=50, null=True, default=None)
     time_zone = models.ManyToManyField(Timezone)
+    flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100)
+
+    @property
+    def flag_filename(self):
+        return os.path.basename(self.flag_image.name)
+
+    def clean(self):
+        # Either email or google_id. Both cannot be empty.
+        if self.location_name == '':
+            raise ValidationError('Please enter location name.')
+
+        image = self.flag_image
+
+        if image:
+            img = Image.open(image)
+            w, h = img.size
+
+            #validate dimensions
+            max_width = 200
+            max_height = 200
+            if w > max_width or h > max_height:
+                raise ValidationError(
+                    _('Please use an image that is smaller or equal to '
+                      '%s x %s pixels.' % (max_width, max_height)))
+
+            #validate content type
+            img_ext = image.name.split('.')[1]
+            if not img_ext in ['png']:
+                raise ValidationError(_('Image is not in PNG format. Please use a PNG image.'))
+
+        return image
 
     def __str__(self):              # __unicode__ on Python 2
         return self.location_name
@@ -124,3 +171,15 @@ class RegalixTeams(models.Model):
         db_table = 'regalix_teams'
         ordering = ['team_name']
         verbose_name_plural = "Regalix Teams"
+
+
+class Team(models.Model):
+    """ Team/Program information """
+    team_name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.team_name
+
+    class Meta:
+        db_table = 'teams'
+        ordering = ['team_name']
