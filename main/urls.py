@@ -8,6 +8,7 @@ urlpatterns = patterns(
     url(r'^add-manager-info/$', views.add_manager_info),
     url(r'^team/$', views.team),
     url(r'^feedback/create/$', views.create_feedback),
+    url(r'^feedback/create/(?P<lead_id>\d+)/$', views.create_feedback),
     url(r'^feedback/list/$', views.list_feedback),
     url(r'^feedback/view/Goog-(?P<id>\d+)/$', views.view_feedback),
     # url(r'^feedback/(?P<id>\d+)/comment/$', views.comment_feedback),
