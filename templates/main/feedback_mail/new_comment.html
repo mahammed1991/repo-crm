@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Hi,</p>
+<p>A new comment has been added to the feedback - <b>{{ feedback.title }}</b>.</p>
+<p>Comment:</p>
+<p>{{ comment.comment }}</p>
+<p>By:</p>
+<p>{{ comment.comment_by.get_full_name }} ({{ comment.comment_by.email }})</p>
+<a href="{{ feedback_url }}">Go To Feedback</a>
+<br /><br />
+<p>Thanks,</p>
+<p>Google Regalix Team</p>
+</body>
+</html>

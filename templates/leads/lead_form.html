@@ -1,0 +1,558 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="post">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
+    <input type="hidden" value="00Dd0000000fk18" name="oid">
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <div class="form-section-title">Google Rep Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="team" title="Program Name" name="00Nd0000005XIWB">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment">
+          <select id="service_segment" title="service_segment" class="form-control" name="00Nd0000007e2AF">
+              <option value="">Service Segment</option>
+              <option value="SBA">SBA</option>
+              <option value="HPA">HPA</option>
+              <option value="HPA+">HPA+</option>
+          </select>
+          <input type="text" class="form-control" id="g_case_id" name="00Nd0000007dWIH" title="G Case ID" placeholder="8-8888888888" value="">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="00Nd00000075Crj" id="00Nd00000075Crj" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" name="00Nd00000077r3s" id="00Nd00000077r3s" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="00Nd0000005WYga">
+          <option value="">Program Location</option>
+         {% for location in locations %}
+            <option value='{{location.location_name}}' location_id="{{location.id}}">{{location.location_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-section-title">Advertiser Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_name" placeholder="Advertiser Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="aemail" name="00Nd0000005WcNw" placeholder="Advertiser Email">
+      </div>
+      <div class="col-md-4">
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+            </td>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="cid" name="00Nd0000005WYgV" placeholder="Customer ID">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_location" placeholder="Advertiser Location">
+      </div>
+      <div class="col-md-4" id='tr_language'>
+        <select class="form-control" id="language" title="language" name="00Nd0000007clUn">
+          <option value="">Select Language</option>
+          <option value="English">English</option>
+          <option value="Dutch">Dutch</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select title="Time Zone" class="form-control" id="tzone" name="00Nd0000005WYhT">
+          <option value="">Select Time Zone</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="tag_datepick_nApplicable" id="appointmentCheck" value="">
+            Don’t have an appointment </label>
+        </div>
+      </div>
+    </div>
+    <div id="appointment">
+      <div class="form-heading">Appointment Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contact_person_role" name="contact_person_role" placeholder="Conatct Person Role">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+        </div>
+      </div>
+    </div>
+    <div class="row webmasterCheck">
+        <div id="web-dum1" class="col-md-4">
+        </div>
+        <div id="web-dum2" class="col-md-4"> </div>
+        <div class="col-md-4">
+          <div class="checkbox">
+            <label>
+              <input id="webmasterCheck" type="checkbox" value="">
+              Don’t have a Webmaster </label>
+          </div>
+        </div>
+      </div>
+    <div id="webmaster">
+      <div class="form-heading">Webmaster Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="fopt" name="00Nd0000005WYgp" placeholder="Contact Person Name">
+          <input type="hidden" class="form-control" id="lopt" name="00Nd0000005WYgu">
+        </div>
+        <div class="col-md-4">
+          <select title="Conatct Person Role" class="form-control" name="00Nd0000005WayW" id="00Nd0000005WayW">
+              <option value="">Conatct Person Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+         <input type="text" class="form-control" id="popt" name="00Nd0000005WYgz" placeholder="888-888-8888">
+        </div>
+      </div>
+    </div>
+    <div class="lead-type">
+      <label>Please select the type of lead you want to submit</label>
+      <a id="tagImplementation" class="btn std-btn tag-impl"><div class="check-icon"><i class="fa fa-check"></i></div>Tag Implementation</a>
+      <span>And/Or</span>
+      <a id="shoppingSetup" class="btn std-btn shopping-setup"><div class="check-icon"><i class="fa fa-check"></i></div>Shopping Campaign Setup</a>
+    </div>
+    <div class="tasks" id="tasks">
+        <div class="task" id="task_1">
+          <div class="form-section-title">Code Type Info</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype1">
+              <option value="">Select Code Type</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Adwords Conversion Code">Adwords Conversion Code</option>
+              <option value="Adwords Remarketing">Adwords Remarketing</option>
+              <option value="Dynamic Remarketing - Retail">Dynamic Remarketing - Retail</option>
+              <option value="Dynamic Remarketing - Extension (non retail)">Dynamic Remarketing - Extension (non retail)</option>
+              <option value="GA Event Tracking">GA Event Tracking</option>
+              <option value="GA Destination Tracking">GA Destination Tracking</option>
+              <option value="GA E-Commerce Tracking">GA E-Commerce Tracking</option>
+              <option value="Google Tag Manager">Google Tag Manager</option>
+              <option value="Website Call Conversion">Website Call Conversion</option>
+            </select>
+              <input type="text" class="form-control" id="url1" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code1" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment1" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 2 ################################################### -->
+        <a id="removeTask_2" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_2" style="display:none;">
+          <div class="form-heading">Code Type Info (2)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype2">
+              <option value="">Select Code Type</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Adwords Conversion Code">Adwords Conversion Code</option>
+              <option value="Adwords Remarketing">Adwords Remarketing</option>
+              <option value="Dynamic Remarketing - Retail">Dynamic Remarketing - Retail</option>
+              <option value="Dynamic Remarketing - Extension (non retail)">Dynamic Remarketing - Extension (non retail)</option>
+              <option value="GA Event Tracking">GA Event Tracking</option>
+              <option value="GA Destination Tracking">GA Destination Tracking</option>
+              <option value="GA E-Commerce Tracking">GA E-Commerce Tracking</option>
+              <option value="Google Tag Manager">Google Tag Manager</option>
+              <option value="Website Call Conversion">Website Call Conversion</option>
+            </select>
+              <input type="text" class="form-control" id="url2" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code2" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment2" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_2" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 3 ################################################### -->
+        <a id="removeTask_3" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_3" style="display:none;">
+          <div class="form-heading">Code Type Info (3)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <option value="">Select Code Type</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Adwords Conversion Code">Adwords Conversion Code</option>
+              <option value="Adwords Remarketing">Adwords Remarketing</option>
+              <option value="Dynamic Remarketing - Retail">Dynamic Remarketing - Retail</option>
+              <option value="Dynamic Remarketing - Extension (non retail)">Dynamic Remarketing - Extension (non retail)</option>
+              <option value="GA Event Tracking">GA Event Tracking</option>
+              <option value="GA Destination Tracking">GA Destination Tracking</option>
+              <option value="GA E-Commerce Tracking">GA E-Commerce Tracking</option>
+              <option value="Google Tag Manager">Google Tag Manager</option>
+              <option value="Website Call Conversion">Website Call Conversion</option>
+            </select>
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_3" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 4 ################################################### -->
+        <a id="removeTask_4" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_4" style="display:none;">
+          <div class="form-heading">Code Type Info (4)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <option value="">Select Code Type</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Adwords Conversion Code">Adwords Conversion Code</option>
+              <option value="Adwords Remarketing">Adwords Remarketing</option>
+              <option value="Dynamic Remarketing - Retail">Dynamic Remarketing - Retail</option>
+              <option value="Dynamic Remarketing - Extension (non retail)">Dynamic Remarketing - Extension (non retail)</option>
+              <option value="GA Event Tracking">GA Event Tracking</option>
+              <option value="GA Destination Tracking">GA Destination Tracking</option>
+              <option value="GA E-Commerce Tracking">GA E-Commerce Tracking</option>
+              <option value="Google Tag Manager">Google Tag Manager</option>
+              <option value="Website Call Conversion">Website Call Conversion</option>
+            </select>
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_4" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 5 ################################################### -->
+        <a id="removeTask_5" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_5" style="display:none;">
+          <div class="form-heading">Code Type Info (5)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <option value="">Select Code Type</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Adwords Conversion Code">Adwords Conversion Code</option>
+              <option value="Adwords Remarketing">Adwords Remarketing</option>
+              <option value="Dynamic Remarketing - Retail">Dynamic Remarketing - Retail</option>
+              <option value="Dynamic Remarketing - Extension (non retail)">Dynamic Remarketing - Extension (non retail)</option>
+              <option value="GA Event Tracking">GA Event Tracking</option>
+              <option value="GA Destination Tracking">GA Destination Tracking</option>
+              <option value="GA E-Commerce Tracking">GA E-Commerce Tracking</option>
+              <option value="Google Tag Manager">Google Tag Manager</option>
+              <option value="Website Call Conversion">Website Call Conversion</option>
+            </select>
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_5" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+    </div>
+    <div id="shoppingInfo">
+      <div class="form-section-title">Shopping Campaign Info</div>
+      <div class="row">
+        <div class="col-md-4">
+        <input type="text" class="form-control" id="recoBid" placeholder="Recommended Bid">
+        <input type="text" class="form-control" id="mobBid" placeholder="Recommended Mobile Bid Modifier">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="budget" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping-URL" placeholder="URL">
+        </div>
+        <div class="col-md-4">
+          <textarea class="form-control" placeholder="Special Instructions (Optional)"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-section-title shopping-policies">Heads Up!
+    	<div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Have you ensured that the website meets the Google Shopping Policies?</label>
+          </div>
+    </div>
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn" onclick="submitbtn(this);">Submit</button>
+            <button class="btn std-btn grayed">Reset</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script type="text/javascript">
+  var userTeam = "{{user.profile.team.team_name|safe}}"
+  if(userTeam){
+    $('#team').val(userTeam);
+  }
+
+  var userLocation = "{{user.profile.location.location_name|safe}}"
+  if(userLocation){
+    $('#country').val(userLocation);
+    loc = document.getElementById('country');
+    changetime(loc.options[loc.selectedIndex]);
+  }
+
+  $('#team').change(function(){
+    var selectedTeam = $(this).val();
+    if (selectedTeam == 'Services'){
+      $(".tr_service_segment").show();
+      $('#g_case_id').show();
+      $("#service_segment").hide();
+    }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+      $("#service_segment").show();
+      $("#service_segment").val('');
+      $(".tr_service_segment").show();
+      $('#g_case_id').hide();
+    }else{
+      $(".tr_service_segment").hide();
+      $('#g_case_id').hide();
+    }
+  });
+
+  $('#team').trigger("change");
+
+  $('#country').change(function(){
+    var selectedTeam = $(this).val();
+    if( selectedTeam == 'Nordic(English)' || selectedTeam == 'Netherlands(English)' ){
+      $("#language").val('English');
+    }else if(selectedTeam == 'Nordic(Dutch)' || selectedTeam == 'Netherlands(Dutch)'){
+      $("#language").val('Dutch');
+    }else{
+      $("#language").val('');
+    }
+  });
+  
+  function validatethis(frm) {
+    var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+    var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    var numericExpression = /^[0-9]+$/;
+    var ct = 0;
+    var rc = 0;
+    var fix_slots = new Array();
+    if ($("input[name=chkRe]:checked").length == 0) {
+      if (frm.gref.value == "") {
+        alert("Please Select Google Representative");
+        return false;
+      }
+    }
+
+    // Customer Id validation
+    if (frm.cid.value == "") {
+      alert("Please Enter Customer ID");
+      frm.cid.focus();
+      return false;
+    }else if(!frm.cid.value.match(cidFormat)){
+      alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+      frm.cid.focus();
+      return false;
+    }
+
+    // Google Manager details validation
+    if (document.getElementById("00Nd00000075Crj").value == "") {
+      alert("Please Update Google Manager details");
+      document.getElementById("addPm").focus();
+      return false;
+    }
+    if (document.getElementById("00Nd00000077r3s").value == "") {
+      alert("Please Update Google Manager details");
+      document.getElementById("addPm").focus();
+      return false;
+    }
+    if (frm.company.value == "") {
+      alert("Please Enter Company Name");
+      frm.company.focus();
+      return false;
+    }
+    if (frm.team.value == "0" || frm.team.value == "") {
+      alert("Please Select the Team");
+      frm.team.focus();
+      return false;
+    }
+    if ($("#"+frm.service_segment.id).is(":visible")) {
+      if(frm.service_segment.value == "0" || frm.service_segment.value == ""){
+        alert("Please Select the Service Segment");
+        frm.service_segment.focus();
+        return false;
+      }
+    }
+    if (frm.country.value == "0") {
+      alert("Please Select Your Country");
+      frm.country.focus();
+      return false;
+    }
+    if (frm.tzone.value == 0 || frm.tzone.value == "") {
+      alert("Please Select Advertiser Time Zone.");
+      frm.tzone.focus();
+      return false;
+    }
+    if (document.getElementById("appointmentCheck").checked == false) {
+      if (frm.tag_datepick.value == "") {
+        alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
+        return false;
+      }
+      var slot = {
+        'type' : 'TAG',
+        'time' : frm.tag_datepick.value
+      }
+      fix_slots.push(slot)
+    } else {
+      frm.tag_datepick.value = "";
+    }
+    if (frm.first_name.value == "") {
+      alert("Please Enter First Name");
+      frm.first_name.focus();
+      return false;
+    }
+    if (frm.last_name.value == "") {
+      alert("Please Enter Last Name");
+      frm.last_name.focus();
+      return false;
+    }
+    if (frm.phone.value == "") {
+      alert("Please Enter Phone Number");
+      frm.phone.focus();
+      return false;
+    }
+    if (frm.aemail.value == "") {
+      alert("Please Enter Email Address");
+      frm.aemail.focus();
+      return false;
+    }
+    frm.aemail.value = frm.aemail.value.trim();
+    if (!frm.aemail.value.trim().match(check)) {
+      alert("Invalid E-mail ID !");
+      frm.aemail.focus();
+      return false;
+    }
+    
+    if (frm.ctype1.value == "") {
+      alert("Please Select Code Type");
+      frm.ctype1.focus();
+      return false;
+    }
+    if (frm.code1.value == "") {
+      alert("Please Enter Code");
+      frm.code1.focus();
+      return false;
+    }
+    var domain = document.getElementById('url1');
+    if (domain.value == "") {
+      alert("Please enter a URL");
+      domain.focus();
+      return false;
+    }
+    if ($('#setup_lead_check').is(':checked')) {
+      if (frm.rbid.value == "") {
+        alert("Please Enter Recommended Bid Value");
+        frm.rbid.focus();
+        return false;
+      }
+      if (frm.rbidmodifier.value == "") {
+        alert("Please Enter Recommended Mobile Bid Modifier Value");
+        frm.rbidmodifier.focus();
+        return false;
+      }
+      if (frm.rbudget.value == "") {
+        alert("Please Enter Recommended Budget Value");
+        frm.rbudget.focus();
+        return false;
+      }
+      if (document.getElementById("setup_datepick_nApplicable").checked == false) {
+        if (frm.setup_datepick.value == "") {
+          alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
+          return false;
+        }
+        var slot = {
+          'type' : 'SHOPPING',
+          'time' : frm.setup_datepick.value
+        }
+        fix_slots.push(slot)
+      } else {
+        frm.setup_datepick.value = "";
+      }
+    }
+
+    var status = true;
+    if (fix_slots.length) {
+      status = check_and_create_appointment(fix_slots);
+    }
+    
+    if (status) {
+      $('form input[type=submit]').attr('disabled', 'disabled');
+    }
+    
+    return status;
+  }
+
+
+  $('#setup_lead_check').click(function() {
+    $('#setup_lead_form').toggle();
+  })
+
+  function submitbtn(ths){
+      $(ths).submit();
+  }
+  
+</script>
+{% endblock main_js %}

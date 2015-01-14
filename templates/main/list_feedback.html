@@ -1,0 +1,113 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Help
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+	<div class="main_content">
+		<div class="feedback_list">
+			<fieldset style="border:1px solid #d9d9d9;">
+				<legend class="legend">
+					<p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c;padding:0px 5px;">
+						Feedback Dashboard
+					</p>
+				</legend>
+				<input type="button" value="Add Feedback" class="logbtn" onclick="window.location.href='{% url 'main.views.create_feedback' %}'" style="float:right;margin: -18px 10px 18px;" />
+				<div style="padding:10px;">
+					{% if is_manager_group %}
+						<div style="margin-bottom:10px;font-weight:bold;color:#3c3c3c;">My Feedback list: </div>
+						<hr />
+					{% endif %}
+					<table class="list" rules="all" border="1" align="center" style="background-color:White;border-color:#4C4C4C;border-width:1px;border-style:None;font-size:9pt;width:100%;border-collapse:collapse;">
+						<tr style="color:#4C4C4C;background-color:#E6E6E6;font-weight:bold;height:40px;">
+							<th width="40px" align="center">#</th>
+							<th width="60px" align="center">Feedback Id.</th>
+							<th width="225px;">Title</th>
+							<th width="225px;">Google Account Manager</th>
+							<th width="150px;">Lead Owner</th>
+							<th width="100px;">CID</th>
+							<th width="100px;">Created Date</th>
+							<th width="100px;">Status</th>
+							<th width="75px;">Attachment</th>
+						</tr>
+						{% for feedback in feedbacks %}
+						<tr style="color:#4C4C4C;background-color:#FBFBFB;height:40px;" align="center">
+							<td>{{ forloop.counter }}</td>
+							<td class="help_title"><a href="{% url 'main.views.view_feedback' feedback.id %}">Goog-{{ feedback.id }}</a></td>
+							<td class="help_title"><a href="{% url 'main.views.view_feedback' feedback.id %}">{{ feedback.title }}</a></td>
+							<td>{{ feedback.user.get_full_name }}</td>
+							<td>{{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}</td>
+							<td>{{ feedback.cid }}</td>
+							<td>{{ feedback.created_date|date:'m/d/Y' }}</td>
+							<td>{{ feedback.status }}</td>
+							<td> {% if feedback.attachment %} <a href="{{ media_url }}{{ feedback.filename }}" target="_blank"><img src="{% static 'images/attachment.jpg' %}" style='width:25px; height:25px;' border='0' /></a> {% endif %} </td>
+						</tr>
+						{% endfor %}
+					</table>
+					{% if is_manager_group %}
+						<div style="margin-bottom:10px;margin-top:10px;font-weight:bold;color:#3c3c3c;">Team Feedback list: </div>
+						<hr />
+						<div style="margin-bottom:10px;">
+							<label> Filter By: </label>
+							<input name="filter" style="width:339px" onkeyup="filter(this, 'team_feedbacks')" type="text" placeholder="Please enter keyword to filter feedback list">
+						</div>
+						
+						<table id="team_feedbacks" class="list" rules="all" border="1" align="center" style="background-color:White;border-color:#4C4C4C;border-width:1px;border-style:None;font-size:9pt;width:100%;border-collapse:collapse;">
+							<tr style="color:#4C4C4C;background-color:#E6E6E6;font-weight:bold;height:40px;">
+								<th width="40px" align="center">#</th>
+								<th width="60px" align="center">Feedback Id.</th>
+								<th width="225px;">Title</th>
+								<th width="225px;">Google Account Manager</th>
+								<th width="150px;">Lead Owner</th>
+								<th width="100px;">CID</th>
+								<th width="100px;">Created Date</th>
+								<th width="100px;">Status</th>
+								<th width="75px;">Attachment</th>
+							</tr>
+							{% for feedback in team_feedbacks %}
+							<tr style="color:#4C4C4C;background-color:#FBFBFB;height:40px;" align="center">
+								<td>{{ forloop.counter }}</td>
+								<td class="help_title"><a href="{% url 'main.views.view_feedback' feedback.id %}">Goog-{{ feedback.id }}</a></td>
+								<td class="help_title"><a href="{% url 'main.views.view_feedback' feedback.id %}">{{ feedback.title }}</a></td>
+								<td>{{ feedback.user.get_full_name }}</td>
+								<td>{{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}</td>
+								<td>{{ feedback.cid }}</td>
+								<td>{{ feedback.created_date|date:'m/d/Y' }}</td>
+								<td>{{ feedback.status }}</td>
+								<td> {% if feedback.attachment %} <a href="{{ media_url }}{{ feedback.filename }}" target="_blank"><img src="{% static 'images/attachment.jpg' %}" style='width:25px; height:25px;' border='0' /></a> {% endif %} </td>
+							</tr>
+							{% endfor %}
+						</table>
+					{% endif %}
+				</div>
+			</fieldset>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+{% block main_js %}
+<script type="text/javascript">
+	function filter(phrase, _id){
+		var words = phrase.value.toLowerCase().split(" ");
+		var _table = document.getElementById(_id);
+		var ele;
+		for (var r = 1; r < _table.rows.length; r++){
+			ele = _table.rows[r].innerHTML.replace(/<[^>]+>/g,"");
+		        var displayStyle = 'none';
+		        for (var i = 0; i < words.length; i++) {
+			    if (ele.toLowerCase().indexOf(words[i])>=0)
+				displayStyle = '';
+			    else {
+				displayStyle = 'none';
+				break;
+			    }
+		        }
+			_table.rows[r].style.display = displayStyle;
+		}
+	}
+</script>
+{% endblock main_js %}
