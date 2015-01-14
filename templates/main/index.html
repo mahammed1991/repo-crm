@@ -23,7 +23,7 @@ Regalix Google Portal
     }
 	</style>
   {% load static %}
-  <link href="{% static 'css/forum/style.css' %}" rel="stylesheet">
+  
 {% endblock main_css %}
 
 {% block content %}
@@ -176,27 +176,39 @@ Regalix Google Portal
             <div class="row">
             	<div class="col-md-4">
                 	<h3>Last Quarter</h3>
-                    <img src="{% static 'images/performer-1.jpg' %}"/>
-                    <div class="performer-info">
-                    	<span>Tejas Thakkar</span>
-                        Sales Manager<br>Bangalore, India
-                    </div>
+                    {% if top_performer.quarterly %}
+                      {% for quarter_topper in top_performer.quarterly %}
+                        <img src="{{quarter_topper.image_url}}" />
+                        <div class="performer-info">
+                        	<span>{{quarter_topper.google_rep_name}}</span>
+                            Sales Manager<br>{{quarter_topper.location}}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="col-md-4">
                 	<h3>Last Month</h3>
-                    <img src="{% static 'images/performer-2.jpg' %}"/>
-                    <div class="performer-info">
-                    	<span>Jose Rodriguez</span>
-                        Sales Manager<br>Bangalore, India
-                    </div>
+                    {% if top_performer.monthly %}
+                      {% for month_topper in top_performer.monthly %}
+                        <img src="{{month_topper.image_url}}" />
+                        <div class="performer-info">
+                          <span>{{month_topper.google_rep_name}}</span>
+                            Sales Manager<br>{{month_topper.location}}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="col-md-4">
                 	<h3>Last Week</h3>
-                    <img src="{% static 'images/performer-3.jpg' %}"/>
-                    <div class="performer-info">
-                    	<span>Harjeet Matharu</span>
-                        Sales Manager<br>Bangalore, India
-                    </div>
+                    {% if top_performer.weekly %}
+                      {% for week_topper in top_performer.weekly %}
+                        <img src="{{week_topper.image_url}}" />
+                        <div class="performer-info">
+                          <span>{{week_topper.google_rep_name}}</span>
+                            Sales Manager<br>{{week_topper.location}}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>

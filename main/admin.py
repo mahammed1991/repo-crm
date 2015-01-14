@@ -18,4 +18,6 @@ class UserDetailsAdmin(admin.ModelAdmin):
     list_display = ('user', 'role', 'user_supporting_region', 'user_manager_name',
                     'user_manager_email', 'phone', 'team', 'location', 'profile_photo_url')
 
+    search_fields = ['user__first_name', 'user__last_name', 'user__email', 'user__username']
+
 admin.site.register(UserDetails, UserDetailsAdmin)

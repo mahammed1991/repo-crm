@@ -39,24 +39,38 @@ $(document).ready(function(){
 	  });
 	});
 	
-	$("#addTask1" ).click(function() {		
-	  //$( "#task2" ).fadeIn();
-	  $( "#task2" ).animate({
+	// Add Multiple Code Type/ Tasks
+	$(".add" ).click(function() {	
+	  $(this).fadeOut();
+	  $(".remove").fadeOut();
+	  id = $(this).attr('id');
+	  indx = id.split('_')[1];
+	  next_id = parseInt(indx) + 1;
+	  $("#addTask_"+ next_id).fadeIn();
+	  $( "#task_" + indx ).animate({
 		height: "toggle"
 	  }, 300, function() {
 	  });
 	  setTimeout(function() {
-		  $( "#removeTask1" ).fadeIn();
+		  $( "#removeTask_" + indx ).fadeIn();
 		  }, 300); 
 	});
+
 	
-	$("#removeTask1" ).click(function() {		
-	  //$( "#task2" ).fadeOut();
-	  $( "#task2" ).animate({
+	// Remove Code Type/ Tasks
+	$(".remove" ).click(function() {
+	  $(".add").fadeOut();
+	  $(this).fadeOut();
+	  id = $(this).attr('id');
+	  indx = id.split('_')[1];
+	  prev_id = parseInt(indx) - 1;
+	  $("#addTask_" + indx).fadeIn();
+	  $( "#task_" + indx).animate({
 		height: "toggle"
 	  }, 300, function() {
 	  });
-	  $( "#removeTask1" ).hide();  
+	  $( "#removeTask_" + indx ).hide();  
+	  $( "#removeTask_" + prev_id ).fadeIn();
 	});
 	
 });

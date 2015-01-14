@@ -22,12 +22,13 @@ from lib.helpers import send_mail, manager_info_required
 from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList
 from leads.models import Location, Leads
 from django.db.models import Count
-from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile,
+from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep)
 from django.http import Http404
 
 from forum.models import *
 from django.utils.html import strip_tags
+from reports.report_services import ReportService
 
 
 def home(request):
@@ -41,12 +42,25 @@ def home(request):
 
 @manager_info_required
 def main_home(request):
-    """ Google Portal Home/Index Page """
+    """ Google Portal Home/Index Page
+        1. Current User/Rep LEADS SUMMARY
+        2. Leads Current Quarter Summary
+        3. Feedback Summary
+        4. Q&A Forum
+        5. Important Resources
+        6. Testimonials
+
+    """
     user_profile = get_user_profile(request.user)
+
+    # 1. Current User/Rep LEADS SUMMARY
     # Get Lead status count by current user
     lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
+
+    # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
 
+    # Q&A Forum
     # Get Top 3 Q&A by most voted
     questions_by_voted = Node.objects.filter(node_type='question').order_by('-score')[:3]
     question_list = list()
@@ -67,8 +81,144 @@ def main_home(request):
     # List all Locations/Country
     locations = Location.objects.all()
 
+    # Leads Current Quarter Summary
+    # Get Leads report for Current Quarter Summary
+    # by default should be current Quarter
+    start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    report_summary = dict()
+
+    total_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date))
+    implemented_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, lead_status='Implemented'))
+    report_summary.update({'total_leads': total_leads,
+                           'implemented_leads': implemented_leads,
+                           'total_win': ReportService.get_conversion_ratio(implemented_leads, total_leads)})
+
+    total_tag_leads = len(Leads.objects.exclude(type_1__in=['Google Shopping Migration',
+                                                            'Google Shopping Setup']).filter(created_date__gte=start_date,
+                                                                                             created_date__lte=end_date))
+    implemented_tag_leads = len(Leads.objects.exclude(type_1__in=['Google Shopping Migration',
+                                                                  'Google Shopping Setup']).filter(created_date__gte=start_date,
+                                                                                                   created_date__lte=end_date,
+                                                                                                   lead_status='Implemented'))
+    report_summary.update({'total_tag_leads': total_tag_leads,
+                           'implemented_tag_leads': implemented_tag_leads,
+                           'tag_win': ReportService.get_conversion_ratio(implemented_tag_leads, total_tag_leads)})
+
+    total_shopping_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, type_1='Google Shopping Setup'))
+    implemented_shopping_leads = len(Leads.objects.filter(created_date__gte=start_date,
+                                                          created_date__lte=end_date, lead_status='Implemented',
+                                                          type_1='Google Shopping Setup'))
+
+    report_summary.update({'total_shopping_leads': total_shopping_leads,
+                           'implemented_shopping_leads': implemented_shopping_leads,
+                           'shopping_win': ReportService.get_conversion_ratio(implemented_shopping_leads, total_shopping_leads)})
+
+    # Top Lead Submitter by LAST QUARTER, LAST MONTH and LAST WEEK
+    current_date = datetime.utcnow()
+    top_performer = get_top_performer_list(current_date)
+
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                               'user_profile': user_profile, 'question_list': question_list, 'locations': locations})
+                                               'user_profile': user_profile, 'question_list': question_list, 'locations': locations,
+                                               'top_performer': top_performer, 'report_summary': report_summary})
+
+
+def get_top_performer_list(current_date):
+    top_performer_list = {'weekly': [], 'monthly': [], 'quarterly': []}
+
+    # Get Top 3 performers by previous week of current week
+    prev_week = int(time.strftime("%W"))
+    start_date, end_date = get_week_start_end_days(current_date.year, prev_week)
+    top_performer_list['weekly'] = get_top_performer_by_date_range(start_date, end_date)
+
+    # Get Top 3 performers by previous month of current month
+    prev_month = date.today().replace(day=1) - timedelta(days=1)
+    start_date = first_day_of_month(prev_month)
+    end_date = last_day_of_month(prev_month)
+    top_performer_list['monthly'] = get_top_performer_by_date_range(start_date, end_date)
+
+    # Get Top 3 performers by previous quarter of current quarter
+    prev_quarter = previous_quarter(current_date)
+    start_date = datetime(prev_quarter.year, prev_quarter.month - 2, 1)
+    end_date = prev_quarter
+    top_performer_list['quarterly'] = get_top_performer_by_date_range(start_date, end_date)
+    return top_performer_list
+
+
+def get_top_performer_by_date_range(start_date, end_date):
+    topper_list = Leads.objects.exclude(google_rep_email='').filter(
+        created_date__gte=start_date,
+        created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
+
+    toppers = dict()
+    indx = 0
+    topper_limit = 1
+    for topper in topper_list:
+        indx = indx + 1
+        key = topper['submitted']
+
+        if indx > topper_limit:
+            if topper['submitted'] in toppers:
+                toppers[key].append(topper['google_rep_email'])
+            else:
+                break
+        elif key not in toppers:
+            toppers[key] = [topper['google_rep_email']]
+        else:
+            toppers[key].append(topper['google_rep_email'])
+
+    # Get toppers from the list
+    topper_email = list()
+    for k in sorted(toppers.keys(), reverse=True):
+        if len(toppers[k]) == 1:
+            topper_email.append(toppers[k][0])
+        else:
+            top_list = list()
+            for email in toppers[k]:
+                latest_lead = dict()
+                last_lead_submitted = Leads.objects.filter(google_rep_email=email,
+                                                           created_date__gte=start_date,
+                                                           created_date__lte=end_date).order_by('-created_date')[:1]
+                latest_lead.update({'email': email, 'created_date': last_lead_submitted[0].created_date})
+                top_list.append(latest_lead)
+            top_list.sort(key=operator.itemgetter('created_date'))
+            created_dates = list()
+            for tpr in top_list:
+                created_dates.append(str(tpr['created_date']))
+                if len(topper_email) != topper_limit:
+                    topper_email.append(tpr['email'])
+                # Check if rep has submitted lead on same date, Created has only day, month and year
+                elif created_dates and created_dates[len(created_dates) - 1] == str(tpr['created_date']):
+                    topper_email.append(tpr['email'])
+                else:
+                    break
+
+    topper_list = list()
+    #topper_email[:topper_limit]
+    for rep_email in ['rajuk@regalix-inc.com']:
+        rep = dict()
+        image_url = '/static/images/default_user.png'
+        rep.update({'google_rep_name': rep_email.split('@')[0]})
+        try:
+            # Get user details
+            user = User.objects.get(email=rep_email)
+            full_name = "%s %s" % (user.first_name, user.last_name)
+            rep.update({'google_rep_name': full_name})
+            try:
+                user_profile = UserDetails.objects.get(user_id=user.id)
+                image_url = user_profile.profile_photo_url
+                location = user_profile.location.location_name if user_profile.location else ''
+            except ObjectDoesNotExist:
+                location = ''
+        except ObjectDoesNotExist:
+            if rep_email:
+                username = rep_email.split('@')[0]
+                os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username + '.png'
+                # Check if profile picture exist
+                if os.path.isfile(os_path):
+                    image_url = '/static/images/GTeam/' + username + '.png'
+        rep.update({'image_url': image_url, 'location': location})
+        topper_list.append(rep)
+    return topper_list
 
 
 @login_required
