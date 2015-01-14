@@ -20,7 +20,7 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location
+from leads.models import Leads, Location, Team
 from lib.helpers import get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -495,11 +495,16 @@ def get_lead(request, cid):
     """ Get lead information """
     lead = {'status': 'FAILED', 'details': None}
     leads = Leads.objects.filter(customer_id=cid)
+    team = Team.objects.get(team_name=leads[0].team)
     if leads:
         lead['status'] = 'SUCCESS'
+
         lead['details'] = {
             'name': leads[0].first_name + ' ' + leads[0].last_name,
-            'email': leads[0].lead_owner_email
+            'email': leads[0].lead_owner_email,
+            'location': leads[0].country,
+            'team': team.team_name,
+            'team_id': team.id
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')
 
