@@ -82,10 +82,33 @@ Regalix Google Portal
               </li>
               <li class="Feedback">
               	<div class="slide-wrap">
-                    <h1>Feedback Summary</h1>             
+                  <div class="leads_summary_head">
+                    <h1>Feedback Summary</h1> 
+                  </div>
+                    <div class="row"> 
+                      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">          
+                        <div class="new_feedback_circle"><span class="new_feedback_circle">{{feedback_list.feedbacks_new}}</span>
+                        </div>
+                        <span  style="line-height: 30px;">New</span>
+                      </div>
+                      <div class="col-xs-6 col-sm-4 col-md-3 placeholder">
+                        <div class="in_progress_feedback_circle"><span class="in_progress_feedback_circle">{{feedback_list.feedbacks_in_progress}}</span>
+                        </div>
+                        <span style="line-height: 30px;">In Progress</span>
+                      </div>
+                      <div class="col-xs-6 col-sm-4 col-md-3 placeholder">
+                        <div class="resolved_feedback_circle"><span class="resolved_feedback_circle">{{feedback_list.feedbacks_resolved}}</span>
+                        </div>
+                        <span style="line-height: 30px;"> Resolved</span>
+                      </div>
+                    </div>
+                     <!-- list veiw of feedback  start here -->
                    
-                    <button class="btn std-btn sm-btn">View all</button>
-                    <button class="btn std-btn sm-btn">Add a Feedback</button>   
+                    <!-- list view of feed back end here -->
+                    </br>
+                    <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback' %}"'>View all</button>
+
+                    <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}"'>Add a Feedback</button>  
                 </div>             
               </li>
               <li class="qa">
