@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load static %}
+{% load question_list_tags %}
 
 {% block title %}
 Regalix Google Portal
@@ -21,6 +22,8 @@ Regalix Google Portal
       border-radius: 3px;
     }
 	</style>
+  {% load static %}
+  <link href="{% static 'css/forum/style.css' %}" rel="stylesheet">
 {% endblock main_css %}
 
 {% block content %}
@@ -33,25 +36,25 @@ Regalix Google Portal
                     <h1>Lead submission becomes easier and faster!</h1>
                     <div class="btn-group">
                         <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
-                        <button class="btn std-btn lead-status">Lead Status</button>
+                        <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Lead Status</button>
                     </div>
                     <div class="leads-summary">
                         <h2 class="sub-title">Your Leads Summary</h2>
                         <div class="row">
                             <div class="summary-breakup">
-                                <span>8</span> Wins
+                                <span>{{lead_status_dict.implemented}}</span> Wins
                             </div>
                             <div class="summary-breakup">
-                                <span>5</span> In Queue
+                                <span>{{lead_status_dict.in_queue}}</span> In Queue
                             </div>
                             <div class="summary-breakup">
-                                <span>3</span> Attempting<br>Contact
+                                <span>{{lead_status_dict.attempting_contact}}</span> Attempting<br>Contact
                             </div>
                             <div class="summary-breakup">
-                                <span>6</span> In Progress
+                                <span>{{lead_status_dict.in_progress}}</span> In Progress
                             </div>
                             <div class="summary-breakup">
-                                <span>4</span> Inactive
+                                <span>{{lead_status_dict.in_active}}</span> Inactive
                             </div>                        
                         </div>
                     </div>
@@ -87,7 +90,42 @@ Regalix Google Portal
               </li>
               <li class="qa">
               	<div class="slide-wrap">
-              		<h1>Q&A Forum</h1>
+                  <h1>Q&A Forum</h1>
+                    {% load i18n humanize extra_filters extra_tags user_tags %}
+                    <div id="listA">
+                      {% for q in question_list%}
+                        <div class="short-summary">
+                          <div class="counts">
+                              <div class="votes">
+                                  <div class="item-count">{{ q.votes }}</div>
+                                  <div>votes</div>
+                              </div>
+                              <div class="status  answered">
+                                  <div class="item-count">{{q.answer}}</div>
+                                  <div>answers</div>
+                              </div>
+                              <div class="views">
+                                   <div class="item-count">{{q.views}}</div>
+                                   <div>views</div>
+                              </div>
+                          </div>
+
+                          <div class="question-summary-wrapper">
+                              <h2><a {% autoescape on %} title="{{ q.body }}" {% endautoescape %} href="/forums/questions/1/tests-questiuons1">{{ q.title }}</a></h2>
+                              
+                              <div class="userinfo">
+                                  <span class="relativetime" title="{{q.last_activity_at}}">{% diff_date q.last_activity_at %}</span>
+                                  <a href="/forums/users/{{q.author_id}}/{{q.author_name}}">{{q.author_name}}</a><span class="score" title="1 reputation"></span>
+
+                              </div>
+                              <!-- <div class="tags">
+                                  <a class="tag-link-test" href="/forums/tags/test/" title="see questions tagged 'test'" rel="tag">test</a>
+                              </div> -->
+                          </div>
+
+                      </div>
+                    {% endfor %}
+                  </div>
                 </div>
               </li>
               <li class="resources">
@@ -164,53 +202,19 @@ Regalix Google Portal
         </div>
     </section>
     <section class="testimonials">
-    	<div class="container-fluid">
-        	<h2>Customer Testimonials</h2>
-        	<div id="owl-demo" class="owl-carousel">
-              <div class="testimonial">              	
-              	<img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
+      <div class="container-fluid">
+          <h2>Customer Testimonials</h2>
+          <div id="owl-demo" class="owl-carousel">
+            {% for testimonials in customer_testimonials %}
+              <div class="testimonial">               
+                <img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
                 <div class="testi-content">
-                	<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.”</p>
-                    <span class="name">Lilia Ghazvini</span>
-                    <span>Company Name | <a href="#">urlofcompany.com</a></span>                
-
+                  <p> {{ testimonials.statement_text }} </p>
+                    <span class="name">{{ testimonials.first_name }} {{ testimonials.last_name }}</span>
+                    <span>{{ testimonials.company_name }} | <a href="#">{{ testimonials.url }}</a></span>             
                 </div>
               </div>
-              <div class="testimonial">
-              	<img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
-                <div class="testi-content">
-                	<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”</p>
-                    <span class="name">Lilia Ghazvini</span>
-                    <span>Company Name | <a href="#">urlofcompany.com</a></span>                
-
-                </div>
-              </div>
-              <div class="testimonial">
-              	<img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
-                <div class="testi-content">
-                	<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”</p>
-                    <span class="name">Lilia Ghazvini</span>
-                    <span>Company Name | <a href="#">urlofcompany.com</a></span>
-
-                </div>
-              </div>
-              <div class="testimonial">
-              	<img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
-                <div class="testi-content">
-                	<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.”</p>
-                    <span class="name">Lilia Ghazvini</span>
-                    <span>Company Name | <a href="#">urlofcompany.com</a></span>                
-
-                </div>
-              </div>
-              <div class="testimonial">
-              	<img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
-                <div class="testi-content">
-                	<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”</p>
-                    <span class="name">Lilia Ghazvini</span>
-                    <span>Company Name | <a href="#">urlofcompany.com</a></span>                
-                </div>
-              </div>              
+              {% endfor %}
             </div>
         </div>
     </section>

@@ -22,8 +22,12 @@ from lib.helpers import send_mail, manager_info_required
 from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList
 from leads.models import Location, Leads
 from django.db.models import Count
-from lib.helpers import (get_week_start_end_days, first_day_of_month, last_day_of_month, previous_quarter)
+from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile,
+                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep)
 from django.http import Http404
+
+from forum.models import *
+from django.utils.html import strip_tags
 
 
 def home(request):
@@ -38,7 +42,33 @@ def home(request):
 @manager_info_required
 def main_home(request):
     """ Google Portal Home/Index Page """
-    return render(request, 'main/index.html')
+    user_profile = get_user_profile(request.user)
+    # Get Lead status count by current user
+    lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
+    customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
+
+    # Get Top 3 Q&A by most voted
+    questions_by_voted = Node.objects.filter(node_type='question').order_by('-score')[:3]
+    question_list = list()
+    for q in questions_by_voted:
+        question = dict()
+        question['votes'] = q.score
+        question['views'] = q.extra_count
+        answer_count = Node.objects.filter(node_type='answer', parent_id=q.id, abs_parent_id=q.id).count()
+        question['answer'] = answer_count
+        question['author_id'] = q.last_activity_by_id
+        user = User.objects.get(id=q.last_activity_by_id)
+        question['author_name'] = user.username
+        question['title'] = q.title
+        question['body'] = strip_tags(q.body)
+        question['last_activity_at'] = q.last_activity_at
+        question_list.append(question)
+
+    # List all Locations/Country
+    locations = Location.objects.all()
+
+    return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
+                                               'user_profile': user_profile, 'question_list': question_list, 'locations': locations})
 
 
 @login_required

@@ -21,10 +21,10 @@ from representatives.models import (
     RegalixRepresentatives
 )
 from leads.models import Leads, Location
-from lib.helpers import get_quarter_date_slots, send_mail
-from lib.salesforce import connect_salesforce
+from lib.helpers import get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
+#from django.db.models import Q
 
 
 # Create your views here.
@@ -622,3 +622,20 @@ def send_calendar_invite_to_advertiser(advertiser_details):
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return 'Success'
+
+
+@login_required
+def get_lead_summary(request):
+    """ Lead Status page """
+
+    lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+    email = request.user.email
+    email = 'bhavinb@google.com'
+    if 'regalix' in email:
+        leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email=email)
+    elif 'google' in email:
+        leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email=email)
+
+    lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
+
+    return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict})
