@@ -195,6 +195,10 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # lead status should be this order
 LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'Dead Lead', 'Implemented']
 
+LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
+                    'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required'],
+                    'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented'], 'ON CALL': ['ON CALL']}
+
 FILE_UPLOAD_TEMP_DIR = os.path.join(os.path.dirname(__file__), 'tmp').replace('\\', '/')
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.MemoryFileUploadHandler",
                         "django.core.files.uploadhandler.TemporaryFileUploadHandler",
