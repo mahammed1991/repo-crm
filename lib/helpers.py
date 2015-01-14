@@ -151,6 +151,23 @@ def get_weeks_by_year(year):
     return weeks
 
 
+def get_weeks_in_quarter_to_date():
+    ''' Gives the weeks in quarter to date'''
+    qtr_start, qtr_end = get_quarter_date_slots(datetime.utcnow())
+    qtr_week_star = qtr_start.isocalendar()[1]
+    qtr_week_end = qtr_end.isocalendar()[1]
+    qtr_week_cur = datetime.utcnow().isocalendar()[1]
+    week_dates = []
+    if qtr_week_cur < 8:
+        week_range = range(qtr_week_star, qtr_week_cur + 1)
+    else:
+        week_range = range(qtr_week_star + (qtr_week_end - 6), qtr_week_end + 1)
+    for week in week_range:
+        start_date, end_date = get_week_start_end_days(datetime.utcnow().year, week)
+        week_dates.append((start_date, end_date))
+    return week_dates
+
+
 def dsum(*dicts):
     ret = defaultdict(int)
     for d in dicts:
@@ -167,6 +184,18 @@ def previous_quarter(ref):
     elif ref.month < 10:
         return date(ref.year, 6, 30)
     return date(ref.year, 9, 30)
+
+
+def get_previous_month_start_end_days(d):
+    """ Start Date and End date of Previous Month """
+    if d.month == 1:
+        start_date = date(d.year - 1, 12, 1)
+    else:
+        start_date = date(d.year, d.month - 1, 1)
+    year = int(start_date.year)
+    month = int(start_date.month)
+    end_day = date(year, month, list(calendar.monthrange(year, month))[1])
+    return start_date, end_day
 
 
 def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):

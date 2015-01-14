@@ -1,10 +1,11 @@
 import csv
 import os
 import mimetypes
-from datetime import datetime
-from leads.models import Leads
+from datetime import datetime, date
+from leads.models import Leads, RegalixTeams
 from lib.helpers import (get_week_start_end_days, first_day_of_month,
-                         last_day_of_month, date_range_by_quarter, date_by_month_name, dsum)
+                         last_day_of_month, date_range_by_quarter, dsum,
+                         get_previous_month_start_end_days, get_weeks_in_quarter_to_date)
 from django.conf import settings
 from django.http import HttpResponse
 
@@ -32,6 +33,11 @@ class ReportService(object):
         return list(Leads.objects.exclude(country='').values_list('country', flat=True).distinct().order_by('country'))
 
     @staticmethod
+    def get_all_regalix_teams():
+        ''' Get all regalix Team'''
+        return list(RegalixTeams.objects.values_list('team_name', flat=True).distinct().order_by('team_name'))
+
+    @staticmethod
     def get_all_teams():
         ''' Get all team name '''
         teams = list(Leads.objects.values_list('team', flat=True).distinct().order_by('team'))
@@ -54,28 +60,56 @@ class ReportService(object):
 
         return quarterly
 
+    # @staticmethod
+    # def get_date_range_by_timeline(timeline):
+    #     ''' Get start and end date by timeline options: Weekly, Monthly, Quarterly and date range '''
+    #     if timeline['quarterly']:
+    #         # get date range by quarterly
+    #         start_date, end_date = date_range_by_quarter(timeline['quarterly'])
+    #     elif timeline['monthly']:
+    #         # get date range by monthly
+    #         month = date_by_month_name(int(timeline['monthly']))
+    #         start_date = first_day_of_month(month)
+    #         end_date = last_day_of_month(month)
+
+    #     elif timeline['weekly']:
+    #         # get date range by weekly
+    #         date_now = datetime.utcnow()
+    #         start_date, end_date = get_week_start_end_days(date_now.year, int(timeline['weekly']))
+    #     else:
+    #         # get date range by given date_range
+    #         start_date = datetime.strptime(str(timeline['date_range'][0]), "%b %d, %Y")
+    #         end_date = datetime.strptime(str(timeline['date_range'][1]), "%b %d, %Y")
+
+    #     return start_date, end_date
+
     @staticmethod
     def get_date_range_by_timeline(timeline):
-        ''' Get start and end date by timeline options: Weekly, Monthly, Quarterly and date range '''
-        if timeline['quarterly']:
-            # get date range by quarterly
-            start_date, end_date = date_range_by_quarter(timeline['quarterly'])
-        elif timeline['monthly']:
-            # get date range by monthly
-            month = date_by_month_name(int(timeline['monthly']))
-            start_date = first_day_of_month(month)
-            end_date = last_day_of_month(month)
-
-        elif timeline['weekly']:
-            # get date range by weekly
-            date_now = datetime.utcnow()
-            start_date, end_date = get_week_start_end_days(date_now.year, int(timeline['weekly']))
-        else:
+        ''' Get start and end date by timeline options: thisweek, lastweek, thismonth and lastmonth '''
+        if len(timeline) > 1:
             # get date range by given date_range
-            start_date = datetime.strptime(str(timeline['date_range'][0]), "%b %d, %Y")
-            end_date = datetime.strptime(str(timeline['date_range'][1]), "%b %d, %Y")
-
-        return start_date, end_date
+            start_date = datetime.strptime(str(timeline[0]), "%b %d, %Y")
+            end_date = datetime.strptime(str(timeline[1]), "%b %d, %Y")
+            return start_date, end_date
+        else:
+            if timeline[0] == 'today':
+                today = datetime.utcnow()
+                return datetime(today.year, today.month, today.day), datetime(today.year, today.month, today.day, 23, 59, 59)
+            elif timeline[0] == 'this_week':
+                current_week = date.today().isocalendar()[1]
+                current_year = datetime.utcnow().year
+                return get_week_start_end_days(current_year, current_week)
+            elif timeline[0] == 'last_week':
+                current_week = date.today().isocalendar()[1]
+                last_week = current_week - 1
+                current_year = datetime.utcnow().year
+                return get_week_start_end_days(current_year, last_week)
+            elif timeline[0] == 'this_month':
+                return first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
+            elif timeline[0] == 'last_month':
+                return get_previous_month_start_end_days(datetime.utcnow())
+            elif timeline[0] == 'this_quarter':
+                return date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
 
     @staticmethod
     def get_leads_by_location(location, lead_status, code_types, start_date, end_date):
@@ -141,6 +175,155 @@ class ReportService(object):
                                      lead_status__in=lead_status,
                                      type_1__in=code_types).order_by('lead_status')
         return leads
+
+    @staticmethod
+    def get_leads_for_individual(email, start_date, end_date):
+        ''' Get the individual Leads '''
+        leads = Leads.objects.filter(google_rep_email=email,
+                                     lead_status__in=settings.LEAD_STATUS,
+                                     created_date__gte=start_date,
+                                     created_date__lte=end_date)
+        return leads
+
+    @staticmethod
+    def get_leads_status_summary(lead_ids):
+        ''' Get Leads staus summary for Leads '''
+        leads_status_summary = dict()
+        lead_status_dict = settings.LEAD_STATUS_DICT
+        total_leads = 0
+        for key in lead_status_dict.keys():
+                leads_status_summary[key] = len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
+                total_leads += len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
+
+        leads_status_summary['total_leads'] = total_leads
+        lead_status_tat = float(leads_status_summary['Implemented']) / total_leads if leads_status_summary['Implemented'] != 0 else 0
+        leads_status_summary['TAT'] = round(lead_status_tat, 2)
+        return leads_status_summary
+
+    @staticmethod
+    def get_week_on_week_trends_details(lead_ids):
+        ''' Week on week analysis of leads won over leads submitted '''
+        week_on_week_trends = dict()
+        weeks_in_qtd = get_weeks_in_quarter_to_date()
+
+        for index in range(1, len(weeks_in_qtd) + 1):
+
+            week_on_week_trends[index] = {'leads_won': 0}
+            start_date, end_date = weeks_in_qtd[index - 1]
+            leads = Leads.objects.filter(id__in=lead_ids, created_date__gte=start_date, created_date__lte=end_date)
+            for lead in leads:
+                if lead.lead_status == 'Implemented':
+                    week_on_week_trends[index]['leads_won'] += 1
+            week_on_week_trends[index]['total_leads_submitted'] = len(leads)
+
+        return week_on_week_trends
+
+    @staticmethod
+    def get_region_program_view_report_details(teams, countries, code_types, start_date, end_date):
+
+        ''' Lead details for program and region view '''
+        ReportService.get_new_code_type_analysis(teams, countries, code_types, start_date, end_date)
+        start_date, end_date = '2014-12-01', '2014-12-30'
+        leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                     created_date__gte=start_date, created_date__lte=end_date)
+
+        lead_ids = [lead.id for lead in leads]
+
+        leads_status_summary = ReportService.get_leads_status_summary(lead_ids)
+
+        leads_status_list = leads_status_summary.keys()
+        if 'TAT' in leads_status_list:
+            leads_status_list.remove('TAT')
+        if 'total_leads' in leads_status_list:
+            leads_status_list.remove('total_leads')
+
+        code_type_analysis_table = list()
+
+        code_type_analysis_chart = {}
+
+        for type_1 in code_types:
+
+            leads = Leads.objects.filter(type_1=type_1, country__in=countries, team__in=teams,
+                                         created_date__gte=start_date, created_date__lte=end_date)
+
+            code_type_analysis_chart[type_1] = len(leads)
+
+        for lead_status in leads_status_list:
+            code_type_analysis = {lead_status: ''}
+            leads_per_status = Leads.objects.filter(team__in=teams, country__in=countries, lead_status=lead_status,
+                                                    created_date__gte=start_date, created_date__lte=end_date)
+
+            code_type_analysis[lead_status] = ReportService.get_lead_code_type_analysis(leads_per_status, code_types)
+            code_type_analysis_table.append(code_type_analysis)
+
+        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
+        return leads_status_summary, code_type_analysis_chart, code_type_analysis_table, week_on_week_trends
+
+    @staticmethod
+    def get_new_code_type_analysis(teams, countries, code_types, start_date, end_date):
+
+        leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                     created_date__gte=start_date, created_date__lte=end_date)
+
+        lead_ids = [lead.id for lead in leads]
+
+        leads_status_summary = ReportService.get_leads_status_summary(lead_ids)
+
+        lead_status_analysis_table = list()
+
+        for code_type in code_types:
+            lead_status_analysis = {code_type: ''}
+
+            leads_per_code_type = Leads.objects.filter(team__in=teams, country__in=countries, type_1=code_type,
+                                                       created_date__gte=start_date, created_date__lte=end_date)
+
+            lead_status_analysis[code_type] = ReportService.get_lead_status_analysis(leads_per_code_type)
+
+            lead_status_analysis_table.append(lead_status_analysis)
+
+        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
+
+        pie_chart_dict = dict()
+
+        for cod_typ in lead_status_analysis_table:
+            key = cod_typ.keys()[0]
+            value = cod_typ[key]['Total']
+            pie_chart_dict[key] = value
+
+        return leads_status_summary, pie_chart_dict, lead_status_analysis_table, week_on_week_trends
+
+    @staticmethod
+    def get_average_tat_for_leads(leads):
+        implemented_leads = list()
+        first_contacted_leads = list()
+        for lead in leads:
+            if lead.lead_status == 'Implemented':
+                implemented_leads.append(lead)
+            if lead.first_contacted_on:
+                first_contacted_leads.append(lead)
+
+        implemented_leads_tat = ReportService.get_average_of_implemented(implemented_leads)
+        return implemented_leads_tat
+
+    @staticmethod
+    def get_lead_code_type_analysis(leads, code_types):
+        ''' Code type analysis for Leads'''
+        code_type_analysis = {c_type: 0 for c_type in code_types}
+        for lead in leads:
+            if lead.type_1 in code_types:
+                code_type_analysis[lead.type_1] += 1
+        return code_type_analysis
+
+    @staticmethod
+    def get_lead_status_analysis(leads):
+        lead_dict = settings.LEAD_STATUS_DICT
+        lead_status_analysis = {lead_status: 0 for lead_status in lead_dict}
+        for lead in leads:
+            for key, value in lead_dict.items():
+                if lead.lead_status in value:
+                    lead_status_analysis[key] += 1
+        lead_status_analysis['Total'] = len(leads)
+        return lead_status_analysis
 
     @staticmethod
     def get_leads_reports(leads, lead_status, code_types):
@@ -332,7 +515,7 @@ class ReportService(object):
             days += ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date)
 
         if days:
-            return days / len(leads)
+            return round(float(days) / len(leads), 2)
         return days
 
     @staticmethod
@@ -342,7 +525,7 @@ class ReportService(object):
             days += ReportService.get_tat_by_first_contacted_on(lead.first_contacted_on, lead.appointment_date, lead.created_date)
 
         if days:
-            return days / len(leads)
+            return round(float(days) / len(leads), 2)
         return days
 
     @staticmethod
@@ -812,23 +995,23 @@ class TrendsReportServices(object):
             first_row[first_row.index('')] = 'Other'
         reports.append(first_row)
         if (timeline == 'Weeks'):
-            currentWeek = datetime.now().isocalendar()[1]
+            currentWeek = datetime.utcnow().isocalendar()[1]
             for w in range(1, currentWeek + 1):
                 week_name = 'W%s' % (str(w))
-                start_date, end_date = get_week_start_end_days(datetime.now().year, w)
+                start_date, end_date = get_week_start_end_days(datetime.utcnow().year, w)
                 reports.append(TrendsReportServices.get_trend_reports_by_teams(week_name, teams, code_types, start_date, end_date))
         elif(timeline == 'Quarters'):
-            currentMonth = int(datetime.now().month)
+            currentMonth = int(datetime.utcnow().month)
             currentQuarter = int(currentMonth / 3)
             for q in range(1, currentQuarter + 1):
                 quarter_name = 'Q%s' % (str(q))
                 start_date, end_date = date_range_by_quarter('Q%s' % (str(q)))
                 reports.append(TrendsReportServices.get_trend_reports_by_teams(quarter_name, teams, code_types, start_date, end_date))
         elif(timeline == 'Months'):
-            currentMonth = datetime.now().month
+            currentMonth = datetime.utcnow().month
             for m in range(1, currentMonth + 1):
                 month_name = 'M%s' % (str(m))
-                c_month = datetime(datetime.now().year, m, 1)
+                c_month = datetime(datetime.utcnow().year, m, 1)
                 start_date = first_day_of_month(c_month)
                 end_date = last_day_of_month(c_month)
                 reports.append(TrendsReportServices.get_trend_reports_by_teams(month_name, teams, code_types, start_date, end_date))
@@ -840,25 +1023,25 @@ class TrendsReportServices(object):
         first_row = [timeline, 'Total Leads', 'Wins', 'Conversion Ratio %']
         reports.append(first_row)
         if (timeline == 'Weeks'):
-            currentWeek = datetime.now().isocalendar()[1]
+            currentWeek = datetime.utcnow().isocalendar()[1]
             for w in range(1, currentWeek + 1):
                 weekname = 'W%s' % (str(w))
-                start_date, end_date = get_week_start_end_days(datetime.now().year, w)
+                start_date, end_date = get_week_start_end_days(datetime.utcnow().year, w)
                 reports.append(TrendsReportServices.get_total_win_conversio_ratio_by_teams(weekname, team, code_types, start_date, end_date))
         elif(timeline == 'Quarters'):
-            currentMonth = int(datetime.now().month)
+            currentMonth = int(datetime.utcnow().month)
             currentQuarter = int(currentMonth / 3)
             for q in range(1, currentQuarter + 1):
                 quartername = 'Q%s' % (str(q))
                 start_date, end_date = date_range_by_quarter('Q%s' % (str(q)))
                 reports.append(TrendsReportServices.get_total_win_conversio_ratio_by_teams(quartername, team, code_types, start_date, end_date))
         elif (timeline == 'Months'):
-            currentMonth = datetime.now().month
+            currentMonth = datetime.utcnow().month
             for m in range(1, currentMonth + 1):
                 lead_team = list()
                 lead_team.append('M%s' % (str(m)))
                 monthname = 'M%s' % (str(m))
-                c_month = datetime(datetime.now().year, m, 1)
+                c_month = datetime(datetime.utcnow().year, m, 1)
                 start_date = first_day_of_month(c_month)
                 end_date = last_day_of_month(c_month)
                 reports.append(TrendsReportServices.get_total_win_conversio_ratio_by_teams(monthname, team, code_types, start_date, end_date))

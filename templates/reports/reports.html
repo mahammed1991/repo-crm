@@ -6,618 +6,181 @@
 Reports
 {% endblock title %}
 
-{% block main_css %}
-<link rel="stylesheet" media="all" type="text/css" href="{% static 'css/reports/reports.css' %}" />
-<link rel="stylesheet" media="all" type="text/css" href="{% static 'css/jquery-ui.css' %}" />
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-{% endblock main_css %}
-
 {% block content %}
-<div id="content" class="clearfix">
-	<div class="container">
-		<div class="main_container">
-			<div class="reports_container">
-				<h2> Choose the Report type,  filters and click on 'View Report Details' </h2>
-				<div class="dropdown_container">
-					<label class="type">List of reports</label>
-					<div class="selectParent big">
-						<select id="filter_report_type">
-							<option value=''>Choose Report Type</option>
-							<optgroup label="Lead Reports">
-								<option value="leadreport_quarter">Lead Report</option>
-								<option value="leadreport_program">Lead Report for a Program</option>
-								<option value="leadreport_location">Lead Report for a Location</option>
-								<option value="leadreport_custome">Custom Lead Report</option>
-							</optgroup>
-							<optgroup label="Trend Reports"> 
-								<option value="trend_report_program_wise">Lead Trends Report - Program wise</option>
-								<option value="trends_report_for_win_and_total">Lead Trends Report (Win & Total) for a Program </option>
-							</optgroup>
-						</select>
-					</div>
-				</div>
-
-				<div class="dropdown_container">
-					<div id="timelineLable">
-						<label id="label_timeline">Timeline</label>
-					</div>
-					<div class="selectParent big">
-						<select name="type" id="filter_timeline" style="display:block;">
-							<option value="">Choose Timeline</option>
-							<option value="quarterly">Quarterly</option>
-							<option value="monthly">Monthly</option>
-							<option value="weekly">Weekly</option>
-							<option value="dateRange">Date Range</option>
-						</select>
-
-						<select name="type" id="trend_filter_timeline" style="display:none;">
-							<option value="">Choose Timeline</option>
-							<option value="Quarters">Quarterly</option>
-							<option value="Months">Monthly</option>
-							<option value="Weeks">Weekly</option>
-						</select>
-
-					</div>
-					<div class="selectParent popup_select filter_quarterly big" style="display:none">
-						<select id="filter_quarterly">
-							<option value="">Select Quarter</option>
-							<option value="Q1">Q1 CY{{year}}</option>
-							<option value="Q2">Q2 CY{{year}}</option>
-							<option value="Q3">Q3 CY{{year}}</option>
-							<option value="Q4">Q4 CY{{year}}</option>
-						</select>
-					</div>
-					<div class="selectParent popup_select filter_monthly big" style="display:none">
-						<select id="filter_monthly">
-							<option value="">Select Month</option>
-							<option value="01">Jan {{year}}</option>
-							<option value="02">Feb {{year}}</option>
-							<option value="03">Mar {{year}}</option>
-							<option value="04">Apr {{year}}</option>
-							<option value="05">May {{year}}</option>
-							<option value="06">Jun {{year}}</option>
-							<option value="07">Jul {{year}}</option>
-							<option value="08">Aug {{year}}</option>
-							<option value="09">Sep {{year}}</option>
-							<option value="10">Oct {{year}}</option>
-							<option value="11">Nov {{year}}</option>
-							<option value="12">Dec {{year}}</option>
-						</select>
-					</div>
-					<div class="selectParent popup_select filter_weekly big" style="display:none">
-						<select id="filter_weekly">
-							<option value="">Select Week</option>
-							{% for week in weeks %}
-							<option value="{{forloop.counter}}">{{week}}, {{year}}</option>
-							{% endfor %}
-						</select>
-					</div>
-					<div class="popup_select_date filter_dateRange big" id="filter_dateRange" style="display:none">
+<div class="wrapper">
+<!-- content-region -->
+<section class="content-region inner-page-wide reports-page">
+  <div class="container-fluid">
+  		<h1>Reports</h1>
+  <div class="row">
+      <div class="col-md-3">
+        <select class="form-control" id="filter_report_type">
+	        <option value="">Choose Report Type</option>
+			<option value="leadreport_individualRep">Individual Rep</option>
+			<option value="leadreport_teamLead">Team Lead </option>
+			<option value="leadreport_programview">Program View</option>
+			<option value="leadreport_regionview">Region View</option>
+			<option value="leadreport_deadLeads">Dead Leads</option>
+			<option value="leadreport_deltaReports">Delta Reports</option>
+			<option value="leadreport_exportRawData">Export Raw Data</option>
+        </select>
+      </div>
+	      <div class="col-md-3">
+		        <div class="selectParent big">
+		        <select name="type" id="filter_timeline" style="display:block;" class="form-control">
+					<option value="">Choose Timeline</option>
+					<option value="this_week">This Week</option>
+					<option value="last_week">Last Week</option>
+					<option value="this_month">This Month</option>
+					<option value="last_month">Last Month</option>
+					<option value="this_quarter">This Quarter</option>
+					<option value="dateRange">Date Range</option>
+				</select>
+				<div class="popup_select_date filter_dateRange big" id="filter_dateRange" style="display:none;margin: 10px 0px 0px 0px;">
 						<label for="from" class="date">From: </label>
-						<input type="text" id="from" name="from">
+						<input type="text" id="from" name="from"><br>
 						<label for="to" class="date">To: </label>
 						<input type="text" id="to" name="to">
-					</div>
-				</div>
+			    </div>
+		   </div>
+	      </div>
 
-			<div class="dropdown_container team" style='display:none'>
-				<label>Programs</label>
-				<div class="selectMultiParent" style="width:170px">
-					<select id="filter_team" size="2" multiple class="medium">
-						<option value='all' selected>All Programs</option>
-						{% for team in teams %}
-							{% if team == 'Other'%}
-								<option value="">{{team}}</option>
-							{% else %}
-								<option value="{{team}}" title="{{team}}">{{team}}</option>
-							{% endif %}
-						{% endfor %}
+	      <div class="col-md-3">
+		      <div id="dropdown_container_region">
+			        <select id="filter_region" class="form-control">
+							<option value="">Choose Region</option>
+							<option value="all">All Region</option>
+							{% for team in rgx_teams %}
+								<option value="{{team.id}}">{{team}}</option>
+							{% endfor %}
 					</select>
-				</div>
-
-				<div class="program">
-					<input type="checkbox" class="program_filter" id="program_split" name="program_filter" value="program_split"/>
-					Split Program-wise
-				</div>
-				
-			</div>
-
-			<div class="dropdown_container team2" style='display:none'>
-				<label>Programs</label>
-				<div class="selectMultiParent" style="width:170px">
-					<select id="filter_team2" size="2"  class="medium">
-						{% for team in teams %}
-							{% if team == 'Other'%}
-								<option value="">{{team}}</option>
-							{% else %}
-								<option value="{{team}}" title="{{team}}">{{team}}</option>
-							{% endif %}
-						{% endfor %}
-					</select>
-				</div>
-				
-			</div>
-
-			<div class="dropdown_container location" style='display:none'>
-				<label>Locations</label>
-				<div class="selectMultiParent">
-					<select id="filter_location" size="2" multiple class="small">
-						<option value='all' selected>All Locations</option>
-						{% for loc in locations %}
-						<option value="{{loc}}" title="{{loc}}">{{loc}}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<div class="loc">
-					<input type="checkbox" class="location_filter" id="loc_split" name="loc_filter" value="loc_split"/>
-					Split Location-wise
-				</div>
-			</div>
-			
-			<div class="dropdown_container lead_status" style='display:none'>
-				<label>Lead Status</label>
-				<div class="selectMultiParent" style="width:139px">
-					<select id="filter_lead_status" size='2' multiple>
-						<option value='all' selected>All Status Types</option>
-						{% for status in lead_status %}
-						<option value="{{status}}" title="{{status}}">{{status}}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<div class="l_status">
-					<input type="checkbox" class="status_filter" id="lead_split" name="lead_filter" value="lead_split" checked/>
-					Split Status-wise
-				</div>
-
-			</div>
-			<div class="dropdown_container code_types last" style='display:none'>
-				<label>Code Types</label>
-				<div class="selectMultiParent" style="width:227px">
-					<select id="filter_code_types" size='2' multiple class="large">
-						<option value='all' selected>All Code Types</option>
-						{% for code in code_types %}
-						<option value="{{code}}" title="{{code}}">{{code}}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<div class="c_types">
-					<input type="checkbox" class="code_filter" id="code_split" name="code_filter" value="code_split" checked/>
-					Split Code Type-wise
-				</div>
-
-			</div>
-			<div class="button_container">
-				<button id="get_report" style="display:block">
-					View Report Details
-				</button>
-				<button id="get_trend_report" style="display:none;">
-					View Report Details
-				</button>
-			</div>
-			</div>
-		</div>
-		<div class="reports larg clearfix"  id="reports" style="display:none">
-				<div class="reports_load" id="leadReport">
-					<p id='report_title'></p>
-						<div class="report_data">
-							<div class="title">
-								TOTAL
-							</div>
-							<div class="win tot">
-								WIN
-							</div>
-							<canvas class="total bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='total-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='total-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='total-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='total-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='total-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- Total Tag Leads Report -->
-						<div class="report_data">
-							<div class="title">
-								TOTAL TAG LEADS
-							</div>
-							<div class="win tot-tag">
-								WIN
-							</div>
-							<canvas class="total-tag bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='total-tag-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='total-tag-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='total-tag-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='total-tag-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='total-tag-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- Google Shopping Migration -->
-						<div class="report_data">
-							<div class="title">
-								G-SHOPPING MIGRATION
-							</div>
-							<div class="win gsm">
-								WIN
-							</div>
-							<canvas class="g-shopping-migration bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='g-shopping-migration-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='g-shopping-migration-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='g-shopping-migration-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='g-shopping-migration-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='g-shopping-migration-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- GOOGLE SHOPPING SETUP -->
-						<div class="report_data">
-							<div class="title">
-								G-SHOPPING SETUP
-							</div>
-							<div class="win gss">
-								WIN
-							</div>
-							<canvas class="g-shopping-setup bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='g-shopping-setup-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='g-shopping-setup-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='g-shopping-setup-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='g-shopping-setup-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='g-shopping-setup-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- Google Forwarding Numbers Conversion code -->
-						<div class="report_data">
-							<div class="title">
-								G-FORWARDING NUMBERS
-							</div>
-							<div class="win gfn">
-								WIN
-							</div>
-							<canvas class="g-forwarding-number bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='g-forwarding-number-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='g-forwarding-number-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='g-forwarding-number-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='g-forwarding-number-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='g-forwarding-number-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- ANALYTICS -->
-						<div class="report_data">
-							<div class="title">
-								ANALYTICS
-							</div>
-							<div class="win ana">
-								WIN
-							</div>
-							<canvas class="analytics bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='analytics-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='analytics-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='analytics-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='analytics-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='analytics-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- ADWORDS CONVERSION CODE -->
-						<div class="report_data">
-							<div class="title">
-								ADWORDS CONVERSION
-							</div>
-							<div class="win adwcon">
-								WIN
-							</div>
-							<canvas class="acc bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='acc-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='acc-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='acc-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='acc-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='acc-tat-fco'>-</span>
-							</div>
-						</div>
-						<!-- DYNAMIC REMARKETING -->
-						<div class="report_data">
-							<div class="title">
-								DYNAMIC REMARKETING
-							</div>
-							<div class="win dyn">
-								WIN
-							</div>
-							<canvas class="dynamic bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='dynamic-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='dynamic-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='dynamic-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='dynamic-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT (First Contact)<span id='dynamic-tat-fco'>-</span>
-							</div>
-						</div>
-
-						<!-- Google TAG MANAGER -->
-						<div class="report_data">
-							<div class="title">
-								G.TAG MANAGER
-							</div>
-							<div class="win gtag">
-								WIN
-							</div>
-							<canvas class="g-tag-manager bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='g-tag-manager-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='g-tag-manager-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='g-tag-manager-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='g-tag-manager-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='g-tag-manager-tat-fco'>-</span>
-							</div>
-						</div>
-
-						<!-- ADWORDS REMARKETING -->
-						<div class="report_data">
-							<div class="title">
-								ADWORDS REMARKETING
-							</div>
-							<div class="win adwmar">
-								WIN
-							</div>
-							<canvas class="ad-remarketing bg_shade">-</canvas>
-							<div class="report">
-								LEADS<span id='ad-remarketing-leads'>-</span>
-							</div>
-							<div class="report">
-								WINS<span id='ad-remarketing-wins'>-</span>
-							</div>
-							<div class="report">
-								IN-QUEUE<span id='ad-remarketing-queue'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(Implemented)</em><span id='ad-remarketing-tat-implemented'>-</span>
-							</div>
-							<div class="report">
-								 TAT <em>(First Contact)</em><span id='ad-remarketing-tat-fco'>-</span>
-							</div>
-						</div>
-					<!-- GA CONVERSION TRACKING -->
-					<div class="report_data">
-						<div class="title">
-							GA CONVERSION
-						</div>
-						<div class="win ga-con">
-							WIN
-						</div>
-						<canvas class="ga-conversion-tracking bg_shade">-</canvas>
-						<div class="report">
-							LEADS<span id='ga-conversion-tracking-leads'>-</span>
-						</div>
-						<div class="report">
-							WINS<span id='ga-conversion-tracking-wins'>-</span>
-						</div>
-						<div class="report">
-							IN-QUEUE<span id='ga-conversion-tracking-queue'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(Implemented)</em><span id='ga-conversion-tracking-tat-implemented'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(First Contact)</em><span id='ga-conversion-tracking-tat-fco'>-</span>
-						</div>
+					 <div id='dropdown_container_location' style="float: left;width: 101%;">
+							<label>Select By Country</label>
+							<div class="selectMultiParent">
+							<select id="filter_country" size="4" class="form-control medium" multiple></select>
 					</div>
-					<!-- GA EVENT TRACKING -->
-					<div class="report_data">
-						<div class="title">
-							GA EVENT TRACKING
-						</div>
-						<div class="win ga-evt">
-							WIN
-						</div>
-						<canvas class="ga-event-tracking bg_shade">-</canvas>
-						<div class="report">
-							LEADS<span id='ga-event-tracking-leads'>-</span>
-						</div>
-						<div class="report">
-							WINS<span id='ga-event-tracking-wins'>-</span>
-						</div>
-						<div class="report">
-							IN-QUEUE<span id='ga-event-tracking-queue'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(Implemented)</em><span id='ga-event-tracking-tat-implemented'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(First Contact)</em><span id='ga-event-tracking-tat-fco'>-</span>
-						</div>
-					</div>
-
-					<!-- GA DESTINATION TRACKING -->
-					<div class="report_data">
-						<div class="title">
-							GA DESTINATION
-						</div>
-						<div class="win ga-dyn">
-							WIN
-						</div>
-						<canvas class="ga-destination-tracking bg_shade">-</canvas>
-						<div class="report">
-							LEADS<span id='ga-destination-tracking-leads'>-</span>
-						</div>
-						<div class="report">
-							WINS<span id='ga-destination-tracking-wins'>-</span>
-						</div>
-						<div class="report">
-							IN-QUEUE<span id='ga-destination-tracking-queue'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(Implemented)</em><span id='ga-destination-tracking-tat-implemented'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(First Contact)</em><span id='ga-destination-tracking-tat-fco'>-</span>
-						</div>
-					</div>
-
-					<!-- GA ECOMMERCE TRACKING -->
-					<div class="report_data">
-						<div class="title">
-							GA ECOMMERCE
-						</div>
-						<div class="win ga-ecm">
-							WIN
-						</div>
-						<canvas class="ga-ecommerce-tracking bg_shade">-</canvas>
-						<div class="report">
-							LEADS<span id='ga-ecommerce-tracking-leads'>-</span>
-						</div>
-						<div class="report">
-							WINS<span id='ga-ecommerce-tracking-wins'>-</span>
-						</div>
-						<div class="report">
-							IN-QUEUE<span id='ga-ecommerce-tracking-queue'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(Implemented)</em><span id='ga-ecommerce-tracking-tat-implemented'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(First Contact)</em><span id='ga-ecommerce-tracking-tat-fco'>-</span>
-						</div>
-					</div>
-					<!-- GA-REMARKETING -->
-					<div class="report_data">
-						<div class="title">
-							GA-REMARKETING
-						</div>
-						<div class="win ga-rem">
-							WIN
-						</div>
-						<canvas class="ga-remarketing bg_shade">-</canvas>
-						<div class="report">
-							LEADS<span id='ga-remarketing-leads'>-</span>
-						</div>
-						<div class="report">
-							WINS<span id='ga-remarketing-wins'>-</span>
-						</div>
-						<div class="report">
-							IN-QUEUE<span id='ga-remarketing-queue'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(Implemented)</em><span id='ga-remarketing-tat-implemented'>-</span>
-						</div>
-						<div class="report">
-							 TAT <em>(First Contact)</em><span id='ga-remarketing-tat-fco'>-</span>
-						</div>
-					</div>
-					
-				</div>
-			</div> <!-- End of reports div -->
-		<div>
-			<div class='note' style='display:none'>
-				<div><span class='star'>*</span> Turn Around Time (TAT) is in days. 0 days means within same day.</div>
-			</div>
-		</div>
-		<div class="report_display" id="report_display">
-		</div><!-- lead  report table -->
-
-	</div><!-- container -->
-
+			 </div>
+		  </div>
+	      </div>
+	     
+	      <div class="col-md-3" id="dropdown_container_team">
+	       <select id="filter_team" size="4" class="form-control" multiple class="medium">
+				<option value='all' selected>All Programs</option>
+				{% for team in teams %}
+					{% if team == 'Other'%}
+						<option value="">{{team}}</option>
+					{% else %}
+						<option value="{{team}}" title="{{team}}">{{team}}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+	      </div>
+    </div>
+    <div class="btn-row">
+    	<button class="btn std-btn" id='get_report'>View Report</button>
+    </div>
+    <div class="auth-user-info">
+    	<label>LDAP:</label>
+        <div class="value"><input type="text" class="form-control" id="ldap" value="mathew@"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
+        <label class="manager">Manager:</label>
+        <div class="value">John</div>
+        <label>Program:</label>
+        <div class="value">Newbie+</div>
+        <label>Region:</label>
+        <div class="value">APAC</div>
+    </div>    
+    
+    <h2>Lead Status Summary</h2>
+    <div class="report-section">    	
+        <div class="report-section-content">
+        	<div class="report-img" id="columnchart" style="width: 700px; height: 400px;">
+            </div>
+            <div class="report-data">
+            	<table class="report-table" cellpadding="0" cellspacing="0" border="0" id="lead_status_table">
+                	
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Code Type Analysis</h2>
+    <div class="report-section">    	
+        <div class="report-section-content">
+        	<div class="report-img" id="piechart" style="width: 720px; height: 400px;">
+            </div>
+            <div class="report-data" style="margin-left:20px !important;">
+            	<table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table">
+                		
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Week on Week Trends (QTD)</h2>
+    <div class="report-section">    	
+        <div class="report-section-content">
+        	<div id="linechart" style="width: 635px; height: 300px;float: left;">
+            </div>
+            <div class="report-data">
+            	<table class="report-table col-3" cellpadding="0" cellspacing="0" border="0" height='300px'id="line_chart_table">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="report-download">
+    	<p>Please select the fields you want to download</p>
+        	<div class="checkbox">
+                <label>
+                  <input type="checkbox"> CID
+                </label>
+                <label>
+                  <input type="checkbox"> Agent Name
+                </label>
+                <label>
+                  <input type="checkbox"> Google Rep
+                </label>
+                <label>
+                  <input type="checkbox"> Manager Name
+                </label>
+                <label>
+                  <input type="checkbox"> Region
+                </label>
+                <label>
+                  <input type="checkbox"> Program
+                </label>
+                <label>
+                  <input type="checkbox"> Code Type
+                </label>
+                <label>
+                  <input type="checkbox"> Lead Status
+                </label>
+                <label>
+                  <input type="checkbox"> Comments
+                </label>
+                <label>
+                  <input type="checkbox"> Date of Installation
+                </label>
+                <label>
+                  <input type="checkbox"> Date of Submission
+                </label>
+          </div>
+          <div class="btn-row">
+          	<button class="btn std-btn">Download Report</button>
+          </div>
+    </div>
+  
+  </div>
+</section>
+<!-- content-region ends --> 
 </div>
-<!-- trend report display -->
-		<div class="reports clearfix"  id="reports">
-			<div class="reports_load" style="width:1300px; margin:0 auto 30px" id="trendReport">
-				<p id='report_title'></p>
-					<div id='Program_wise_div' style='height: 500px; display:none;'></div>
-			</div>
-		</div>
-<!-- trend report table display -->
-		<div class="report_display" id="trend_report_display" style="width:1300px; margin:0 auto 30px">
-		</div><!-- trend  report table -->
 {% endblock content %}
 
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
-<script src="{% static 'js/jquery.classyloader.js' %}"></script>
-<script src="{% static 'js/trends_reports.js' %}"></script>
-<script type="text/javascript">
-
-$(document).ready(function(){
-	window.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	window.weeks = eval({{weeks|safe}});
-	window.Q = "{{quarter}}";
-});
-</script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="{% static 'js/reports.js' %}"></script>
-<script src="{% static 'js/charts.js' %}"></script>
+<script src="{% static 'js/chart.js' %}"></script>
+<script type="text/javascript">
+google.load("visualization", "1", {packages:["corechart"]});
+</script>
 {% endblock main_js %}
