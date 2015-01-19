@@ -23,43 +23,44 @@ Regalix Google Portal
     }
 	</style>
   {% load static %}
-  <link href="{% static 'css/forum/style.css' %}" rel="stylesheet">
+  
 {% endblock main_css %}
 
 {% block content %}
 <section class="content-region">
     <section class="home-banner">
-    	<div class="banner-content">
-            <ul class="bxslider">
-              <li class="leads">
-              	<div class="slide-wrap">
-                    <h1>Lead submission becomes easier and faster!</h1>
-                    <div class="btn-group">
-                        <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
-                        <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Lead Status</button>
-                    </div>
-                    <div class="leads-summary">
-                        <h2 class="sub-title">Your Leads Summary</h2>
-                        <div class="row">
-                            <div class="summary-breakup">
-                                <span>{{lead_status_dict.implemented}}</span> Wins
+      <div class="banner-content">
+          <div class="wrap">
+                <ul class="bxslider">
+                  <li class="leads">
+                    <div class="slide-wrap">
+                        <h1>Lead submission becomes easier and faster!</h1>
+                        <div class="btn-group">
+                            <button class="btn std-btn submit-lead"  onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"'>Lead Status</button>
+                        </div>
+                        <div class="leads-summary">
+                            <h2 class="sub-title">Your Leads Summary</h2>
+                             <div class="row">
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.implemented}}</span> Wins
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.in_queue}}</span> In Queue
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.attempting_contact}}</span> Attempting<br>Contact
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.in_progress}}</span> In Progress
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.in_active}}</span> Inactive
+                                </div>                        
                             </div>
-                            <div class="summary-breakup">
-                                <span>{{lead_status_dict.in_queue}}</span> In Queue
-                            </div>
-                            <div class="summary-breakup">
-                                <span>{{lead_status_dict.attempting_contact}}</span> Attempting<br>Contact
-                            </div>
-                            <div class="summary-breakup">
-                                <span>{{lead_status_dict.in_progress}}</span> In Progress
-                            </div>
-                            <div class="summary-breakup">
-                                <span>{{lead_status_dict.in_active}}</span> Inactive
-                            </div>                        
                         </div>
                     </div>
-                </div>
-              </li>
+                  </li>
               <li class="reports">
               	<div class="slide-wrap">
                     <h1>Leads Q4 Summary - Oct to Dec 2014</h1>
@@ -80,37 +81,32 @@ Regalix Google Portal
                     <button class="btn std-btn sm-btn" onclick='location.href="{% url 'reports.views.reports' %}"'>View all reports</button>   
                 </div>             
               </li>
-              <li class="Feedback">
-              	<div class="slide-wrap">
-                  <div class="leads_summary_head">
-                    <h1>Feedback Summary</h1> 
-                  </div>
-                    <div class="row"> 
-                      <div class="col-xs-6 col-sm-4 col-md-2 placeholder">          
-                        <div class="new_feedback_circle"><span class="new_feedback_circle">{{feedback_list.feedbacks_new}}</span>
-                        </div>
-                        <span  style="line-height: 30px;">New</span>
-                      </div>
-                      <div class="col-xs-6 col-sm-4 col-md-3 placeholder">
-                        <div class="in_progress_feedback_circle"><span class="in_progress_feedback_circle">{{feedback_list.feedbacks_in_progress}}</span>
-                        </div>
-                        <span style="line-height: 30px;">In Progress</span>
-                      </div>
-                      <div class="col-xs-6 col-sm-4 col-md-3 placeholder">
-                        <div class="resolved_feedback_circle"><span class="resolved_feedback_circle">{{feedback_list.feedbacks_resolved}}</span>
-                        </div>
-                        <span style="line-height: 30px;"> Resolved</span>
-                      </div>
-                    </div>
-                     <!-- list veiw of feedback  start here -->
-                   
-                    <!-- list view of feed back end here -->
-                    </br>
-                    <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback' %}"'>View all</button>
-
-                    <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}"'>Add a Feedback</button>  
-                </div>             
+              <li class="feedback">
+                    <div class="slide-wrap">
+                        <h1>Feedback Summary</h1>             
+                           <div class="row">
+                                <div class="col-md-3">
+                                    <div class="fdk-status resolved">{{feedback_list.resolved}}</div>
+                                    <span>Resolved</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status inpro">{{feedback_list.in_progress}}</div>
+                                    <span>In Progress</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status new">{{feedback_list.new}}</div>
+                                    <span>New</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status total">{{feedback_list.total}}</div>
+                                    <span>Total</span>
+                                </div>
+                            </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback' %}"'>Feedback Status</button>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}"'>Add a Feedback</button>   
+                    </div>             
               </li>
+              
               <li class="qa">
               	<div class="slide-wrap">
                   <h1>Q&A Forum</h1>

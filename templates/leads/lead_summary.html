@@ -14,7 +14,7 @@ Regalix Google Portal
 
 {% block content %}
 <!-- content-region -->
-<section class="content-region">
+  <section class="content-region">
     <div class="container-fluid">
       <h1>Leads Summary</h1>
       <div class="row">
@@ -55,19 +55,19 @@ Regalix Google Portal
               <li><a class="page" href="#" id='Implemented'>Implemented</a></li>
             </ul>
           </div>
-          <div class="col-xs-6 col-sm-6 col-md-4">
-            <div class="form-group has-feedback">
-              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
+          <div class="col-xs-6 col-sm-6 col-md-2">
+            <div class="has-feedback">
+               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
               <span class="search-icon"><i class="fa fa-search" /></i></span> </div>
           </div>
-          <div class="col-xs-6 col-sm-6 col-md-3">            
+          <div class="col-xs-6 col-sm-6 col-md-2 pull-right">            
               <ul class="filer-area">
                 <li class="lbl">Sort by: </li>
                 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Recent <i class="fa fa-angle-down"></i></a>
                   <ul class="dropdown-menu light" role="menu">
-                    <li><a href="#">CID</a></li>
-                    <li><a href="#">Code Type</a></li>
-                    <li><a href="#">Status</a></li>
+                    <li><a href="#" id="RecentHeader">Recent</a></li>
+                    <li><a href="#" id='CodeTypeHeader'>Code Type</a></li>
+                    <li><a href="#" id="statusHeader">Status</a></li>
                   </ul>
                   </li>
               </ul>
@@ -76,43 +76,43 @@ Regalix Google Portal
       </span>
       <div class="row">
       <div class="table-responsive col-xs-12 col-sm-12 col-md-12">
-        <table class="table status-table" id='Leads'>
-          <thead>
+        <table class="table status-table tablesorter" id='Leads'>
             <tr  class="table_bg">
               <th class="hidden-xs hidden-sm nthchild">No.</th>
               <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
-              <th class="nthchild2">CID <i class="fa fa-filter"></i></th>
-              <th class="hidden-xs hidden-sm nthchild3">Code Type <i class="fa fa-filter"></i></th>
+              <th class="nthchild2">CID </th>
+              <th class="hidden-xs hidden-sm nthchild3" id="CodeTypeRow">Code Type </th>
               <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
               <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
-              <th class="hidden-xs hidden-sm nthchild3">Date Created</th>
+              <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
+              <th class="hidden-xs hidden-sm nthchild3" >Appointment Time</th>
               <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
               <th class="hidden-xs hidden-sm nthchild8">Google Comments</th>
               <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
-              <th class="nthchild3">Status <i class="fa fa-filter"></i></th>
+              <th class="nthchild3" id='StatusRow'>Status </th>
               <th class="nthchild11">Action</th>
             </tr>
-                {% for l in leads %}
+            {% for l in leads %}
 
                       {% if l.lead_status == 'Implemented' %}
-                      <tr class='implemented searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="green_bor">{{forloop.counter}}</span></td>
+                      <tr class='status-implemented implemented searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'In Active' %}
-                      <tr class='inactive searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="left_bor">{{forloop.counter}}</span></td>
+                      <tr class='status-inactive inactive searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'In Progress' %}
-                      <tr class='inprogress searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="yellow_bor">{{forloop.counter}}</span></td>
+                      <tr class="status-inpro  inprogress searchable">
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'Attempting Contact' %}
-                      <tr class='attemptingcontact searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="blue_bor">{{forloop.counter}}</span></td>
+                      <tr class='status-attm-contact attemptingcontact searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'In Queue' %}
-                      <tr class='inqueue searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="red_bor">{{forloop.counter}}</span></td>
+                      <tr class='status-inq inqueue searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       <td class="hidden-xs hidden-sm">{{ l.company }}</td>
                       <td>{{ l.customer_id }}</td>
@@ -120,6 +120,7 @@ Regalix Google Portal
                       <td class="hidden-xs hidden-sm">{{ l.google_rep_name }}</td>
                       <td class="hidden-xs hidden-sm">{{ l.lead_owner_name }}</td>
                       <td class="hidden-xs hidden-sm">{{ l.created_date |date:"m/d/Y" }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.appointment_date |date:"m/d/Y" }}</td>
                       <td class="hidden-xs hidden-sm">{{ l.date_of_installation |date:"m/d/Y" }}</td>
                       {% if l.google_comment  %}
                         <td class="hidden-xs hidden-sm comments-container"><p>{{ l.google_comment | truncatechars:100 }}</p>
@@ -137,48 +138,140 @@ Regalix Google Portal
                       {% endif %}
                      
                       {% if l.lead_status == 'Implemented' %}
-                        <td><span style="color:#109d59; font-family:robotobold;">{{ l.lead_status }}</span></td>
+                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'In Active'%}
-                        <td><span style="color:#acacac; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'In Progress' %}
-                        <td><span style="color:#f5b400; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'Attempting Contact' %}
-                        <td><span style="color:#4385f5; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                       {% endif %}
                       {% if l.lead_status == 'In Queue' %}
-                        <td><span style="color:#dc4437; font-family:robotobold;" >{{ l.lead_status }}</span></td>
+                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                       {% endif %}
-                      <td ><a href="#" title="Ping Status" class="action-item"><i class="fa fa-comments"></i></a> <a href="{% url 'main.views.create_feedback' l.id %}" title="Write Feedback" class="action-item fb"><i class="fa fa-pencil-square"></i></a></td>
+                      <td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick='chat({{ l.lead_owner_email }}, {{ l.lead_owner_name }} )'><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick='feedbackBycid({{l.id}})'></i></td>
                       
                     </tr>
                     
                 {% endfor %}
-               
-        </thead>
-      </table>
+        </table>
         <div class="span4"></div>
         <div class="span4"><img src="{% static 'images/pre_loading.png' %}" alt=" " class="center-block"/></div>
         <div class="span4"></div>
+      </div>
+      </span>
+    </div>
+  </section>
+  <!-- content-region ends --> 
+
+  <!-- modal -->
+<div class="modal" id="pingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog ping-snippet">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+        <h4 class="modal-title" id="myModalLabel">History</h4>
+      </div>
+      <div class="modal-body">
+         <div class="ping-copy in-msg">
+          <img src="{%static 'images/testimonial-pic.jpg' %}" class="chatter-img">
+          <div class="chat-msg">
+            <img src="{%static 'images/chat-in-img.png' %}">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris</p>
+              <div class="chat-date">Tue, 8:13 PM</div>
+          </div>
+         </div>
+         <div class=" ping-copy out-msg">
+          {% if request.session.profile_image %}
+            <img src="{{request.session.profile_image}}?sz=32" class="chatter-img"/>
+          {% else %}
+            <img src="{% static 'images/profile-avtar.png' %}" class="chatter-img"/>
+          {% endif %}
+          <div class="chat-msg">
+            <img src="{%static 'images/chat-out-img.png' %}">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris</p>
+              <div class="chat-date">Tue, 8:13 PM</div>
+          </div>
+         </div>
+         <div class="ping-copy in-msg">
+          <img src="{%static 'images/testimonial-pic.jpg' %}" class="chatter-img">
+          <div class="chat-msg">
+            <img src="{% static 'images/chat-in-img.png' %}">
+            <p>Thanks much for the quick response Daniel</p>
+              <div class="chat-date">Tue, 8:13 PM</div>
+          </div>
+         </div>
+         <div class=" ping-copy out-msg">
+           {% if request.session.profile_image %}
+            <img src="{{request.session.profile_image}}?sz=32" class="chatter-img"/>
+          {% else %}
+            <img src="{% static 'images/profile-avtar.png' %}" class="chatter-img"/>
+          {% endif %}
+          
+          <div class="chat-msg">
+            <img src="{%static 'images/chat-out-img.png' %}">
+            <p>Most welcome:)</p>
+              <div class="chat-date">Tue, 8:13 PM</div>
+          </div>
+         </div>
+        </div>
+        <div class="modal-footer">
+          <input  type="textarea" class="form-control send-txt" placeholder="Send a messege" id='message'>
+          <button type="button" class="btn send-btn" id='submitmsg'><i class="fa fa-plus"></i></button>
+        </div>
+      </div>
+  </div>
+</div>
+<!-- modal ends -->
+<!-- feedback modal -->
+<div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog ping-snippet">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+        <h4 class="modal-title" id="myModalLabel">Feedback</h4>
+      </div>
+      <div class="modal-body">
+         <input type="text" class="form-control error-box" id="feedbackTitle" placeholder="Feedback Title">
+           <select class="form-control" id="feedbackType">
+              <option>Feedback Type</option>
+              <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
+              <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
+              <option value="Communication - Rude rep">Communication - Rude rep</option>
+              <option value="Communication - Unable to understand rep">Communication - Unable to understand rep</option>
+              <option value="Operations - Missed appointments">Operations - Missed appointments</option>
+              <option value="Operations - No follow up">Operations - No follow up</option>
+              <option value="Operations - Incorrect information provided">Operations - Incorrect information provided</option>
+          </select>
+          <textarea class="form-control" placeholder="Comments" id='comments'></textarea>
+       
+      </div>
+      <div class="modal-footer">
+
+        <div class="btn-group">
+            <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
+            <button class="btn std-btn grayed" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
   </div>
-</section>
-<!-- content-region ends --> 
+</div>
+<!-- feedback modal ends -->
 {% endblock content %}
 
 {% block main_js %}
-   <script>
-       $(document).ready(function(){
-         $('[data-toggle="tooltip"]').tooltip({
-          'placement': 'right'
-      });
-    })
+<script src="{% static 'js/lead_summary.js' %}"></script>
+<script type="text/javascript">
+var lead_id = '';
+
+function feedbackBycid(lead_id){
+  window.lead_id = lead_id
+  console.log(lead_id)
+}
+
 </script>
 
-<script src="{% static 'js/lead_summary.js' %}"></script>
-
- 
-  
 {% endblock main_js %}

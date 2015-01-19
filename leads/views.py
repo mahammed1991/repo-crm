@@ -502,6 +502,7 @@ def get_lead(request, cid):
         lead['details'] = {
             'name': leads[0].first_name + ' ' + leads[0].last_name,
             'email': leads[0].lead_owner_email,
+            'google_rep_email': leads[0].google_rep_email,
             'location': leads[0].country,
             'team': team.team_name,
             'team_id': team.id

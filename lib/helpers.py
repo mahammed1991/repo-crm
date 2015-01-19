@@ -200,7 +200,7 @@ def get_previous_month_start_end_days(d):
 
 def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
     """ get Count of Each Lead Status by rep/manager/email """
-
+    status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     lead_status_dict = {'total_leads': 0,
                         'implemented': 0,
                         'in_progress': 0,
@@ -211,14 +211,14 @@ def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
                         }
 
     if 'regalix' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_owner_email=email).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, lead_owner_email=email).count()
         lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', lead_owner_email=email).count()
         lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', lead_owner_email=email).count()
         lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', lead_owner_email=email).count()
         lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', lead_owner_email=email).count()
         lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', lead_owner_email=email).count()
     elif 'google' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(google_rep_email=email).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, google_rep_email=email).count()
         lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', google_rep_email=email).count()
         lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', google_rep_email=email).count()
         lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', google_rep_email=email).count()

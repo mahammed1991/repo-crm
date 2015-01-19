@@ -82,7 +82,6 @@ Regalix Google Portal
       {% endif %}
       <div class="col-md-4">
         <select class="form-control" id="advertiserLanguage" name="language">
-              <option>Language</option>
               <option value="English">English</option>
               <option value="French">French</option>
               <option value="German">German</option>
@@ -115,7 +114,7 @@ Regalix Google Portal
     <div class="btns text-center">
         <div class="btn-group">
             <button class="btn std-btn">Submit</button>
-            <button class="btn std-btn grayed">Cancel</button>
+            <button class="btn std-btn grayed" onclick='window.history.back()'>Cancel</button>
         </div>
     </div>
   </form>
@@ -174,6 +173,7 @@ Regalix Google Portal
                         $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
                         setSelectValue('advProgram', response.details.team_id);
                         setSelectValue('feedbackLocation', response.details.location);
+                        setSelectValue('googleAcManager', response.details.google_rep_email)
                         
                     }
                 },

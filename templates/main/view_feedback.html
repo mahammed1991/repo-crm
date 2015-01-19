@@ -23,7 +23,7 @@ Manage Help
             <div class="col-md-4">
             <div class="feedback-info-row">
                 <label>Feedback ID</label>
-                <div class="value">Goog-{{feedback.id}}</div>
+                <div class="value" id='feedbackId'>Goog-{{feedback.id}}</div>
             </div>
             </div>
             <div class="col-md-4">
@@ -92,16 +92,73 @@ Manage Help
       <p>{{feedback.description}}</p>
   </div>
   <div class="feedback-details-section">
-    <div class="feedback-status resolved">Resolved</div>
-    <div class="feedback-addi-info">
-        <p>Feedback resolved by <span>{{feedback.resolved_by.user.first_name}} {{feedback.resolved_by.user.last_name}}</span> ({{feedback.resolved_by.user.email}}) On <span>{{feedback.created_date | date:"D, M d Y, f A" }} </span></p>
-        <p>{{feedback.description}}</p>
+    {% if feedback.status == 'RESOLVED' %}
+        <div class="feedback-status resolved">Resolved</div>
+    {% endif %}
+
+    {% if feedback.status == 'IN PROGRESS' %}
+        <div class="feedback-status inprogress">In Progress</div>
+    {% endif %}
+
+    <div class="feedback-comments">
+        {% if comments %}
+            {% for c in comments %}
+                {% if 'regalix' in c.comment_by.email %}
+                    <div class="feedback-comment regalix">
+                        <p>{{c.comment}}</p>
+                        <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% endif %}
+                 {% if 'Google' in c.comment_by.email %}
+                    <div class="feedback-comment google">
+                        <p>{{c.comment}}</p>
+                        <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% endif %}
+                 
+            {% endfor %}
+        {% endif %}
+        {% if feedback.status == 'RESOLVED'%}
+            {% if 'regalix' in feedback.resolved_by.email %}
+                <div class="feedback-comment regalix">
+                    <p>Resolved By</p>
+                    <p class="feedback-auth">- <span>{{feedback.resolved_by.username}}</span> ({{feedback.resolved_by.email}}) On <span>{{feedback.resolved_date | date:"D, M d Y, f A"}}</span></p>
+                </div>
+            {% endif %}
+            {% if 'Google' in feedback.resolved_by.email %}
+                <div class="feedback-comment google">
+                    <p>Resolved By</p>
+                    <p class="feedback-auth">- <span>{{feedback.resolved_by.username}}</span> ({{feedback.resolved_by.email}}) On <span>{{feedback.resolved_date | date:"D, M d Y, f A"}}</span></p>
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
-    <div class="btn-row">
-        <button class="btn std-btn" onclick='window.history.back()'>Go Back</button>
-    </div>
-  </div>
+    
+     {% if feedback.status != 'RESOLVED' %}
+        <form action="{% url 'main.views.comment_feedback' feedback.id %}" method="post" onsubmit="return validate(this);">
+            {% csrf_token %}
+            <input type="hidden" name='feedback' value="{{feedback.id}}">
+            <textarea class="form-control feedback-commet-box" placeholder="Comments" name='comment'></textarea>
+            <div class="btn-row">
+                <button class="btn std-btn" id='AddComments'>Comment</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if feedback.status != 'RESOLVED' and can_resolve %}
+        <form action="{% url 'main.views.resolve_feedback' feedback.id %}">
+                <button class="btn std-btn" id='Resolved' style="margin-top: -170px;margin-left: 750px;">Resolved</button>
+        </form>
+    {% endif %}
+    {% if feedback.status == 'RESOLVED' %}
+        <form action="{% url 'main.views.reopen_feedback' feedback.id %}">
+              <div class="btn-row">
+                <button class="btn std-btn">Reopen</button>
+              </div>
+        </form>
+    {% endif %}
+    
   
+  </div>
   </div>
 </section>
 <!-- content-region ends --> 
@@ -109,6 +166,11 @@ Manage Help
 
 {% block main_js %}
 <script type="text/javascript">
-   
+    function validate(frm){
+        if(frm.comment.value == ''){
+            alert('Write something to comment');
+            return false
+        }
+    }
 </script>
 {% endblock main_js %}

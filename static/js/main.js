@@ -59,5 +59,22 @@ $(document).ready(function(){
 	  $( "#removeTask1" ).hide();  
 	});
 	
+	// media query for team page
+	if ($(window).width() <= 767){	
+		$("div.team-slider").removeClass('slider1');
+	}
+	
+	// table accordian
+	$(".clickable" ).click(function() {
+	  $(this).find( ".row-expand, .row-collapse" ).toggle();
+	});
+	
+	// date picker
+	$(function() {
+    $( "#datepickerFrom, #datepickerTo" ).datepicker();
+  });
+	
 });
+
+
 

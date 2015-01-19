@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, date
 import time
 import os
 import operator
-
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
@@ -74,30 +74,16 @@ def main_home(request):
         | Q(user__profile__user_manager_email=request.user.email)
         | Q(lead_owner__email=request.user.email)
         | Q(lead_owner__profile__user_manager_email=request.user.email)
-    ).order_by('-created_date')[:3]
-    feedbacks_new = Feedback.objects.filter(Q(user__email=request.user.email) | Q(user__profile__user_manager_email=request.user.email)
-                                            | Q(lead_owner__email=request.user.email)
-                                            | Q(lead_owner__profile__user_manager_email=request.user.email)
-                                            )
-    feedbacks_new = feedbacks_new.filter(status='NEW').count()
-    feedbacks_in_progress = Feedback.objects.filter(Q(user__email=request.user.email) | Q(user__profile__user_manager_email=request.user.email)
-                                            | Q(lead_owner__email=request.user.email)
-                                            | Q(lead_owner__profile__user_manager_email=request.user.email)
-                                            )
-
-    feedbacks_in_progress = feedbacks_in_progress.filter(status='IN PROGRESS').count()
-    feedbacks_resolved = Feedback.objects.filter(Q(user__email=request.user.email) | Q(user__profile__user_manager_email=request.user.email)
-                                            | Q(lead_owner__email=request.user.email)
-                                            | Q(lead_owner__profile__user_manager_email=request.user.email)
-                                            )
-    feedbacks_resolved = feedbacks_resolved.filter(status='RESOLVED').count()
-    feedback_list['feedbacks_new'] = feedbacks_new
-    feedback_list['feedbacks_in_progress'] = feedbacks_in_progress
-    feedback_list['feedbacks_resolved'] = feedbacks_resolved
+    )
+    feedback_list['new'] = feedbacks.filter(status='NEW').count()
+    feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
+    feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
+    feedback_list['total'] = feedbacks.count()
+    # feedback summary end here
 
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                'user_profile': user_profile, 'question_list': question_list, 'locations': locations,
-                                               'feedback_list': feedback_list, 'feedbacks': feedbacks})
+                                               'feedback_list': feedback_list})
 
 
 @login_required
@@ -147,14 +133,20 @@ def view_feedback(request, id):
 @manager_info_required
 def list_feedback(request):
     """ List all feedbacks """
+    
     feedbacks = Feedback.objects.filter(
         Q(user__email=request.user.email)
         | Q(user__profile__user_manager_email=request.user.email)
         | Q(lead_owner__email=request.user.email)
         | Q(lead_owner__profile__user_manager_email=request.user.email)
     )
+    feedback_list = dict()
+    feedback_list['new'] = feedbacks.filter(status='NEW').count()
+    feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
+    feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
+    feedback_list['total'] = feedbacks.count()
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
-                                                       'media_url': settings.MEDIA_URL + 'feedback/'})
+                                                       'media_url': settings.MEDIA_URL + 'feedback/', 'feedback_list': feedback_list})
 
 
 @login_required
@@ -251,3 +243,90 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return feedback
+
+
+@login_required
+def create_feedback_from_lead_status(request):
+    """ Create feed back """
+    if request.is_ajax():
+
+        lead_id = request.GET.get('lead_id')
+        lead = Leads.objects.get(id=lead_id)
+
+        feedback_details = Feedback()
+        feedback_details.user = request.user
+        feedback_details.title = request.GET.get('title')
+        feedback_details.feedback_type = request.GET.get('type')
+        feedback_details.description = request.GET.get('comment')
+
+        feedback_details.cid = lead.customer_id
+        feedback_details.advertiser_name = lead.first_name + ' ' + lead.last_name
+
+        feedback_details.language = 'English'
+        feedback_location = Location.objects.get(location_name=lead.country)
+        feedback_details.location = feedback_location
+        team = Team.objects.get(team_name=lead.team)
+        feedback_details.program_id = team.id
+
+        try:
+            # if lead owner not exist, assign lead to default user
+            lead_owner = User.objects.get(email=lead.lead_owner_email)
+            feedback_details.lead_owner = lead_owner
+        except ObjectDoesNotExist:
+            pass
+
+        feedback_details.save()
+        # feedback_details = notify_feedback_activity(request, feedback_details)
+
+        # return 'SUCCESS'
+        return HttpResponse(json.dumps('SUCCESS'))
+
+
+@login_required
+@manager_info_required
+def resolve_feedback(request, id):
+    feedback = Feedback.objects.get(id=id)
+    feedback.status = 'RESOLVED'
+
+    feedback.resolved_by = request.user
+    feedback.resolved_date = datetime.utcnow()
+
+    # notify_feedback_activity(request, feedback, is_resolved=True)
+
+    feedback.save()
+    return redirect('main.views.view_feedback', id=id)
+
+
+@login_required
+@manager_info_required
+def reopen_feedback(request, id):
+    feedback = Feedback.objects.get(id=id)
+    feedback.status = 'IN PROGRESS'
+
+    # feedback.resolved_by = request.user
+    # feedback.resolved_date = datetime.utcnow()
+
+    # notify_feedback_activity(request, feedback, is_resolved=True)
+
+    feedback.save()
+    return redirect('main.views.view_feedback', id=id)
+
+
+@login_required
+@manager_info_required
+def comment_feedback(request, id):
+    """ Comment on a feedback """
+    feedback = Feedback.objects.get(id=id)
+
+    comment = FeedbackComment()
+    comment.feedback = feedback
+    comment.comment = request.POST['comment']
+    comment.comment_by = request.user
+    comment.save()
+
+    feedback.status = 'IN PROGRESS'
+
+    # notify_feedback_activity(request, feedback, comment)
+    feedback.save()
+
+    return redirect('main.views.view_feedback', id=id)
