@@ -19,12 +19,13 @@ from django.conf import settings
 
 from lib.helpers import send_mail, manager_info_required
 
-from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList
+from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, Notification
 from leads.models import Location, Leads, Team
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep)
 from django.http import Http404
+from django.views.decorators.csrf import csrf_exempt
 
 from forum.models import *
 from django.utils.html import strip_tags
@@ -79,7 +80,12 @@ def main_home(request):
         question_list.append(question)
 
     # List all Locations/Country
-    locations = Location.objects.all()
+    locations = Location.objects.exclude(flag_image__isnull=True).filter()
+    request.session['locations'] = locations
+
+    # Notifications list
+    notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+    request.session['notifications'] = notifications
 
     # Leads Current Quarter Summary
     # Get Leads report for Current Quarter Summary
@@ -117,7 +123,7 @@ def main_home(request):
     current_date = datetime.utcnow()
     top_performer = get_top_performer_list(current_date)
 
-	# feedback summary
+    # feedback summary
     feedback_list = dict()
     feedbacks = Feedback.objects.filter(
         Q(user__email=request.user.email)
@@ -147,7 +153,8 @@ def main_home(request):
 
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                'user_profile': user_profile, 'question_list': question_list, 'locations': locations,
-                                               'top_performer': top_performer, 'report_summary': report_summary, 'feedback_list': feedback_list, 'feedbacks': feedbacks})
+                                               'top_performer': top_performer, 'report_summary': report_summary, 'feedback_list': feedback_list,
+                                               'feedbacks': feedbacks, 'notifications': notifications})
 
 
 def get_top_performer_list(current_date):
@@ -179,7 +186,7 @@ def get_top_performer_by_date_range(start_date, end_date):
 
     toppers = dict()
     indx = 0
-    topper_limit = 1
+    topper_limit = 3
     for topper in topper_list:
         indx = indx + 1
         key = topper['submitted']
@@ -221,10 +228,11 @@ def get_top_performer_by_date_range(start_date, end_date):
                     break
 
     topper_list = list()
-    #topper_email[:topper_limit]
-    for rep_email in ['rajuk@regalix-inc.com']:
+    topper_email[:topper_limit]
+    for rep_email in topper_email:
         rep = dict()
         image_url = '/static/images/default_user.png'
+        location = ''
         rep.update({'google_rep_name': rep_email.split('@')[0]})
         try:
             # Get user details
@@ -250,8 +258,11 @@ def get_top_performer_by_date_range(start_date, end_date):
 
 
 @login_required
-def add_manager_info(request):
-    """ Add manager information for new user """
+@csrf_exempt
+def edit_profile_info(request):
+    """ Profile information for user """
+    locations = Location.objects.all()
+    teams = Team.objects.all()
     if request.method == 'POST':
         try:
             user_details = UserDetails.objects.get(user_id=request.user.id)
@@ -259,17 +270,20 @@ def add_manager_info(request):
             user_details = UserDetails()
             user_details.user = request.user
 
+        user_details.team_id = request.POST.get('user_team', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
+        user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
-        return redirect('main.views.home')
-    return render(request, 'main/add_manager_info.html')
+        # return redirect('main.views.home')
+    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'teams': teams})
 
 
 @login_required
 @manager_info_required
 def team(request):
-    return render(request, 'main/team.html')
+    contacts_list = get_contacts(request)
+    return render(request, 'main/team.html', {'contacts_list': contacts_list})
 
 
 @login_required
@@ -400,3 +414,25 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return feedback
+
+
+def get_contacts(request):
+    """ Get team contacts information """
+    contact_list = ContectList.objects.filter()
+    contacts = {'management': list(),
+                'representatives': list()
+                }
+    for cnt in contact_list:
+        contact = dict()
+        contact['name'] = "%s %s" % (cnt.first_name, cnt.last_name)
+        contact['email'] = cnt.email
+        contact['phone'] = cnt.phone_number
+        contact['skype'] = cnt.skype_id
+        contact['picture'] = cnt.profile_photo.name.split('/')[-1]
+        contact['photo_url'] = settings.MEDIA_URL + 'profile_photo/' + contact['picture']
+        if cnt.position_type == 'MGMT':
+            contacts['management'].append(contact)
+        else:
+            contacts['representatives'].append(contact)
+    return contacts
+    return HttpResponse(dumps(contacts), content_type='application/json')

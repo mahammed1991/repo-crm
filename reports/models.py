@@ -1,4 +1,5 @@
 from django.db import models
+from leads.models import Location
 
 
 class LeadSummaryReports(models.Model):
@@ -16,3 +17,24 @@ class LeadSummaryReports(models.Model):
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+
+class Region(models.Model):
+    """ Region with Location mapping information """
+
+    name = models.CharField(max_length=100, unique=True)
+    location = models.ManyToManyField(Location)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def location_list(self):
+        return ", ".join(["%s" % (l.location_name) for l in self.location.all()])
+
+    def __str__(self):              # __unicode__ on Python 2
+        return self.name
+
+    class Meta:
+        db_table = 'regions'
+        ordering = ['name']
+        verbose_name_plural = "Region"

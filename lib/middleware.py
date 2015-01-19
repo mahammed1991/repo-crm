@@ -4,7 +4,8 @@ from requests import request as request_call
 from django.core.exceptions import ObjectDoesNotExist
 from social.exceptions import AuthForbidden
 from django.shortcuts import redirect
-from main.models import UserDetails
+from main.models import UserDetails, Notification
+from leads.models import Location
 
 
 class SetProfilePicture(object):
@@ -35,6 +36,14 @@ class SetProfilePicture(object):
                     request.session['profile'] = user_profile
                 except ObjectDoesNotExist:
                     pass
+
+                # List all Locations/Country
+                locations = Location.objects.exclude(flag_image__isnull=True).filter()
+                request.session['locations'] = locations
+
+                # Notifications list
+                notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+                request.session['notifications'] = notifications
             except ObjectDoesNotExist:
                 pass
 
