@@ -39,39 +39,57 @@ $(document).ready(function(){
 	  });
 	});
 	
-	// Add Multiple Code Type/ Tasks
 	$(".add" ).click(function() {	
-	  $(this).fadeOut();
-	  $(".remove").fadeOut();
+	  $( ".add" ).fadeOut();
+	  $( ".remove" ).fadeOut();
 	  id = $(this).attr('id');
 	  indx = id.split('_')[1];
-	  next_id = parseInt(indx) + 1;
-	  $("#addTask_"+ next_id).fadeIn();
+	  next_id = parseInt(indx) + 1
 	  $( "#task_" + indx ).animate({
 		height: "toggle"
 	  }, 300, function() {
 	  });
 	  setTimeout(function() {
-		  $( "#removeTask_" + indx ).fadeIn();
-		  }, 300); 
-	});
+		  $( "#removeTask_" + indx).fadeIn();
+	  }, 300); 
+	  $("#addTask_" + next_id).fadeIn();
 
+	});
 	
-	// Remove Code Type/ Tasks
-	$(".remove" ).click(function() {
-	  $(".add").fadeOut();
-	  $(this).fadeOut();
+	$(".remove" ).click(function() {		
+	  $( ".add" ).fadeOut();
+	  $( ".remove" ).fadeOut();
 	  id = $(this).attr('id');
 	  indx = id.split('_')[1];
-	  prev_id = parseInt(indx) - 1;
-	  $("#addTask_" + indx).fadeIn();
+	  next_id = parseInt(indx) + 1
+	  prev_id = parseInt(indx) - 1
 	  $( "#task_" + indx).animate({
 		height: "toggle"
 	  }, 300, function() {
 	  });
-	  $( "#removeTask_" + indx ).hide();  
-	  $( "#removeTask_" + prev_id ).fadeIn();
+	  $( "#removeTask_" + prev_id).fadeIn();  
+	  $("#addTask_" + indx).fadeIn();
 	});
 	
+	// media query for team page
+	if ($(window).width() <= 767){	
+		$("div.team-slider").removeClass('slider1');
+	}
+	
+	// table accordian
+	$(".clickable" ).click(function() {
+	  $(this).find( ".row-expand, .row-collapse" ).toggle();
+	});
+	
+	$(".live-transfer-location").click(function(){
+        phone_no = $(this).attr('data-phone');
+        $(".location_number").text(phone_no);
+    });
+
+    //var user_loc = user.profile.location.id;
+
+    //$("#loc_" + user_loc).trigger("click");
 });
+
+
 

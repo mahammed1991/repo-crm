@@ -5,7 +5,7 @@ urlpatterns = patterns(
     '',
     url(r'^$', views.home),
     url(r'^home$', views.main_home),
-    url(r'^add-manager-info/$', views.add_manager_info),
+    url(r'^edit-profile-info/$', views.edit_profile_info),
     url(r'^team/$', views.team),
     url(r'^feedback/create/$', views.create_feedback),
     url(r'^feedback/create/(?P<lead_id>\d+)/$', views.create_feedback),

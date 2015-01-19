@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import ContectList, CustomerTestimonials, UserDetails
+from main.models import ContectList, CustomerTestimonials, UserDetails, Notification
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -21,3 +21,9 @@ class UserDetailsAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'user__username']
 
 admin.site.register(UserDetails, UserDetailsAdmin)
+
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('text', 'is_visible', )
+
+admin.site.register(Notification, NotificationAdmin)

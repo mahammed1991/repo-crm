@@ -1,42 +1,32 @@
 $(document).ready(function() {
 
   $('#dropdown_container_location').hide();
-/* ===================== Date Picker function Starts Here ============= */
-  $(function() {
-    $("#from").datepicker({
-      defaultDate : "+1w",
-      changeMonth : true,
-      numberOfMonths : 1,
-      dateFormat: "M dd, yy",
-      onClose : function(selectedDate) {
-        $("#to").datepicker("option", "minDate", selectedDate);
-      }
-    });
-    $("#to").datepicker({
-      defaultDate : "+1w",
-      changeMonth : true,
-      numberOfMonths : 1,
-      dateFormat: "M dd, yy",
-      onClose : function(selectedDate) {
-        $("#from").datepicker("option", "maxDate", selectedDate);
-      }
-    });
-  });
+/* ===================== Default Report Starts Here ============= */
+  // Get default report while loading template
   callAjax({'report_type': 'default_report', 'report_timeline': ['today']})
-/* ===================== Date Picker function Ends Here ============= */
+/* ===================== Default Report Ends Here ============= */
 });
 
 /*=========== Changes in report type ===============*/
 $("#filter_report_type").change(function() {
-  var value = $(this).val();
+  var report_type = $(this).val();
   setDefaultDropdown();
   showFilters();
 
-  if(value == 'leadreport_individualRep'){
+  if (report_type == 'leadreport_programview'){
+    $("#filter_team").show();
+    $("#filter_region").hide();
+    $("#filter_country").hide();
+  }else if (report_type == 'leadreport_regionview'){
+    $("#filter_team").hide();
+    $("#filter_region").show();
+    $("#filter_country").hide();
+  }else if(report_type == 'leadreport_individualRep'){
     hideFilters();
-  }
-  else if(value == 'leadreport_teamLead'){
+    $("#filter_region").show();
+  }else if(report_type == 'leadreport_teamLead'){
     hideFilters();
+    $("#filter_region").show();
   }
 
 });
@@ -47,16 +37,19 @@ $('#filter_timeline').change(function(){
     $('#filter_dateRange').hide();
 
     if(value == 'dateRange'){
-    $('#filter_dateRange').show();
-  }
+      $('#filter_dateRange').show();
+    }else{
+      $('#filter_dateRange').hide();
+    }
 });
 
 /*=========== Gettin Countries for selected Region ===============*/
 $('#filter_region').change(function(){
-    $("#dropdown_container_location").hide();
-    var value = $(this).val();
-    if(value){
-      get_countries(value);
+    $("#filter_country").hide();
+    var region = $(this).val();
+    if(region){
+      //$("#filter_country").show();
+      get_countries(region);
     }
     
 
@@ -120,23 +113,36 @@ $("#get_report").click(function(){
 
      // Get location and team details
     var selectedCountries = [];
-    selectedCountries = $("#filter_country:visible").val();
-    if (window.locationFlag){
-      if(!include(selectedCountries, 'all')){
-        selectedCountries.push('all');  
-      }
-      window.locationFlag = false;
+    if ($("#filter_country:visible")){
+      $("#filter_country .checkbox input:checked").each(function(){
+          selectedCountries.push($(this).val());
+      });  
     }
+    
+    // selectedCountries = $("#filter_country:visible").val();
+    // if (window.locationFlag){
+    //   if(!include(selectedCountries, 'all')){
+    //     selectedCountries.push('all');  
+    //   }
+    //   window.locationFlag = false;
+    // }
     dataString['countries'] = selectedCountries;
 
     var selectedTeam = [];
-    selectedTeam = $("#filter_team:visible").val();
-    if (window.teamFlag){
-      if(!include(selectedTeam, 'all')){
-        selectedTeam.push('all');
-      }
-      window.teamFlag = false;
+
+    if ($("#filter_team:visible")){
+      $("#filter_team .checkbox input:checked").each(function(){
+          selectedTeam.push($(this).val());
+      });  
     }
+
+    // selectedTeam = $("#filter_team:visible").val();
+    // if (window.teamFlag){
+    //   if(!include(selectedTeam, 'all')){
+    //     selectedTeam.push('all');
+    //   }
+    //   window.teamFlag = false;
+    // }
     dataString['team'] = selectedTeam;
 
      console.log(dataString);
@@ -158,7 +164,6 @@ function callAjax(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data) {
-          alert(data['report_type']);
             console.log(data);
             report = data['reports'];
             window.code_type = data['code_types'];
@@ -166,7 +171,7 @@ function callAjax(dataString){
             showReport(report);
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert('failure');
+            console.log('failure');
         }
       }); 
 
@@ -192,7 +197,7 @@ function showErrorMessage(message){
 function setDefaultDropdown(){
   $("#filter_region").val('');
   $("#filter_team").val('all');
-  $('#dropdown_container_location').hide();
+  //$('#dropdown_container_location').hide();
 }
 
 function get_countries(id){
@@ -209,21 +214,23 @@ function get_countries(id){
               displayCountry(data);
           },
           error: function(errorThrown) {
-              alert('failure');
+              console.log('failure');
           }
         }); 
    }
 }
 
 function displayCountry(countries){
-  $("#filter_country option").remove();
-  $("#filter_country").append('<option value="all">All</option>');
+  $("#filter_country input").remove();
+  $("#filter_country label").remove();
+
   for( i=0; i<countries.length; i++){
       var id = countries[i]['id'];
       var name = countries[i]['name'];
-      $("#filter_country").append('<option value="'+ id+ '">' + name +'</option>');
+      //$("#filter_country").append('<option value="'+ id+ '">' + name +'</option>');
+      $("#filter_country .checkbox").append('<label><input type="checkbox" value="' + id + '">' + name + '</label>');
   }
-  $("#dropdown_container_location").show();
+  $("#filter_country").show();
 }
 
 function showReport(reports){
@@ -246,6 +253,7 @@ function showReport(reports){
     drawPieChart(reports['piechart']);
     //drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
     newTable(reports['table_header'], reports['lead_code_type_analysis'])
+    drawLineChart(reports['week_on_week_details_in_qtd'])
     displayLineChartTable(reports['week_on_week_details_in_qtd'])
   }
 
@@ -256,6 +264,7 @@ function showReport(reports){
     drawPieChart(reports['piechart']);
     //drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
     newTable(reports['table_header'], reports['lead_code_type_analysis'])
+    drawLineChart(reports['week_on_week_details_in_qtd'])
     displayLineChartTable(reports['week_on_week_details_in_qtd'])
   }
 
@@ -298,6 +307,7 @@ function drawPieChart(details){
 }
 
 function drawLineChart(details){
+  console.log(details)
 
   var lineChart_datatable = [['Weeks', 'Leads Won', 'Leads Submitted']]
 
@@ -312,10 +322,7 @@ function drawLineChart(details){
       }
       lineChart_datatable.push(record)
   }
-  //console.log(lineChart_datatable)
-  //lineChart_datatable_default = [['Weeks', 'Leads Won', 'Leads Submitted'],['week 0', 12, 15], ['week 1', 32, 35], ['week 2', 10, 25]]
   lineChartDraw(lineChart_datatable, '', 'linechart')
-  //lineChartDraw(lineChart_datatable_default, '', 'linechart')
 }
 
 function displayLeadStatusTable(details){

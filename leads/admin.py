@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leads.models import Leads, Timezone, RegalixTeams, Location, Team
+from leads.models import Leads, Timezone, RegalixTeams, Location, Team, CodeType
 
 
 class LeadsAdmin(admin.ModelAdmin):
@@ -16,14 +16,14 @@ admin.site.register(Timezone, TimezoneAdmin)
 
 
 class RegalixTeamsAdmin(admin.ModelAdmin):
-    list_display = ('team_name',)
+    list_display = ('team_name', 'location_list')
     filter_horizontal = ('location',)
 
 admin.site.register(RegalixTeams, RegalixTeamsAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('location_name',)
+    list_display = ('location_name', 'timezone_list', 'flag_image')
     filter_horizontal = ('time_zone',)
 
 admin.site.register(Location, LocationAdmin)
@@ -33,3 +33,9 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('team_name',)
 
 admin.site.register(Team, TeamAdmin)
+
+
+class CodeTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active',)
+
+admin.site.register(CodeType, CodeTypeAdmin)
