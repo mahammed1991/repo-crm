@@ -39,20 +39,31 @@ $(document).ready(function(){
 	  });
 	});
 	
-	$("#addTask1" ).click(function() {		
-	  //$( "#task2" ).fadeIn();
-	  $( "#task2" ).animate({
+	$(".add" ).click(function() {	
+	  $( ".add" ).fadeOut();
+	  $( ".remove" ).fadeOut();
+	  id = $(this).attr('id');
+	  indx = id.split('_')[1];
+	  next_id = parseInt(indx) + 1
+	  $( "#task_" + indx ).animate({
 		height: "toggle"
 	  }, 300, function() {
 	  });
 	  setTimeout(function() {
-		  $( "#removeTask1" ).fadeIn();
-		  }, 300); 
+		  $( "#removeTask_" + indx).fadeIn();
+	  }, 300); 
+	  $("#addTask_" + next_id).fadeIn();
+
 	});
 	
-	$("#removeTask1" ).click(function() {		
-	  //$( "#task2" ).fadeOut();
-	  $( "#task2" ).animate({
+	$(".remove" ).click(function() {		
+	  $( ".add" ).fadeOut();
+	  $( ".remove" ).fadeOut();
+	  id = $(this).attr('id');
+	  indx = id.split('_')[1];
+	  next_id = parseInt(indx) + 1
+	  prev_id = parseInt(indx) - 1
+	  $( "#task_" + indx).animate({
 		height: "toggle"
 	  }, 300, function() {
 	  });
@@ -74,6 +85,10 @@ $(document).ready(function(){
     $( "#datepickerFrom, #datepickerTo" ).datepicker();
   });
 	
+	$(".live-transfer-location").click(function(){
+        phone_no = $(this).attr('data-phone');
+        $(".location_number").text(phone_no);
+    });
 });
 
 
