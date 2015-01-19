@@ -1,0 +1,186 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Reports
+{% endblock title %}
+
+{% block content %}
+<div class="wrapper">
+<!-- content-region -->
+<section class="content-region inner-page-wide reports-page">
+  <div class="container-fluid">
+  		<h1>Reports</h1>
+  <div class="row">
+      <div class="col-md-3">
+        <select class="form-control" id="filter_report_type">
+	        <option value="">Choose Report Type</option>
+			<option value="leadreport_individualRep">Individual Rep</option>
+			<option value="leadreport_teamLead">Team Lead </option>
+			<option value="leadreport_programview">Program View</option>
+			<option value="leadreport_regionview">Region View</option>
+			<option value="leadreport_deadLeads">Dead Leads</option>
+			<option value="leadreport_deltaReports">Delta Reports</option>
+			<option value="leadreport_exportRawData">Export Raw Data</option>
+        </select>
+      </div>
+	      <div class="col-md-3">
+		        <div class="selectParent big">
+		        <select name="type" id="filter_timeline" style="display:block;" class="form-control">
+					<option value="">Choose Timeline</option>
+					<option value="this_week">This Week</option>
+					<option value="last_week">Last Week</option>
+					<option value="this_month">This Month</option>
+					<option value="last_month">Last Month</option>
+					<option value="this_quarter">This Quarter</option>
+					<option value="dateRange">Date Range</option>
+				</select>
+				<div class="popup_select_date filter_dateRange big" id="filter_dateRange" style="display:none;margin: 10px 0px 0px 0px;">
+						<label for="from" class="date">From: </label>
+						<input type="text" id="from" name="from"><br>
+						<label for="to" class="date">To: </label>
+						<input type="text" id="to" name="to">
+			    </div>
+		   </div>
+	      </div>
+
+	      <div class="col-md-3">
+		      <div id="dropdown_container_region">
+			        <select id="filter_region" class="form-control">
+							<option value="">Choose Region</option>
+							<option value="all">All Region</option>
+							{% for team in rgx_teams %}
+								<option value="{{team.id}}">{{team}}</option>
+							{% endfor %}
+					</select>
+					 <div id='dropdown_container_location' style="float: left;width: 101%;">
+							<label>Select By Country</label>
+							<div class="selectMultiParent">
+							<select id="filter_country" size="4" class="form-control medium" multiple></select>
+					</div>
+			 </div>
+		  </div>
+	      </div>
+	     
+	      <div class="col-md-3" id="dropdown_container_team">
+	       <select id="filter_team" size="4" class="form-control" multiple class="medium">
+				<option value='all' selected>All Programs</option>
+				{% for team in teams %}
+					{% if team == 'Other'%}
+						<option value="">{{team}}</option>
+					{% else %}
+						<option value="{{team}}" title="{{team}}">{{team}}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+	      </div>
+    </div>
+    <div class="btn-row">
+    	<button class="btn std-btn" id='get_report'>View Report</button>
+    </div>
+    <div class="auth-user-info">
+    	<label>LDAP:</label>
+        <div class="value"><input type="text" class="form-control" id="ldap" value="mathew@"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
+        <label class="manager">Manager:</label>
+        <div class="value">John</div>
+        <label>Program:</label>
+        <div class="value">Newbie+</div>
+        <label>Region:</label>
+        <div class="value">APAC</div>
+    </div>    
+    
+    <h2>Lead Status Summary</h2>
+    <div class="report-section">    	
+        <div class="report-section-content">
+        	<div class="report-img" id="columnchart" style="width: 700px; height: 400px;">
+            </div>
+            <div class="report-data">
+            	<table class="report-table" cellpadding="0" cellspacing="0" border="0" id="lead_status_table">
+                	
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Code Type Analysis</h2>
+    <div class="report-section">    	
+        <div class="report-section-content">
+        	<div class="report-img" id="piechart" style="width: 720px; height: 400px;">
+            </div>
+            <div class="report-data" style="margin-left:20px !important;">
+            	<table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table">
+                		
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Week on Week Trends (QTD)</h2>
+    <div class="report-section">    	
+        <div class="report-section-content">
+        	<div id="linechart" style="width: 635px; height: 300px;float: left;">
+            </div>
+            <div class="report-data">
+            	<table class="report-table col-3" cellpadding="0" cellspacing="0" border="0" height='300px'id="line_chart_table">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="report-download">
+    	<p>Please select the fields you want to download</p>
+        	<div class="checkbox">
+                <label>
+                  <input type="checkbox"> CID
+                </label>
+                <label>
+                  <input type="checkbox"> Agent Name
+                </label>
+                <label>
+                  <input type="checkbox"> Google Rep
+                </label>
+                <label>
+                  <input type="checkbox"> Manager Name
+                </label>
+                <label>
+                  <input type="checkbox"> Region
+                </label>
+                <label>
+                  <input type="checkbox"> Program
+                </label>
+                <label>
+                  <input type="checkbox"> Code Type
+                </label>
+                <label>
+                  <input type="checkbox"> Lead Status
+                </label>
+                <label>
+                  <input type="checkbox"> Comments
+                </label>
+                <label>
+                  <input type="checkbox"> Date of Installation
+                </label>
+                <label>
+                  <input type="checkbox"> Date of Submission
+                </label>
+          </div>
+          <div class="btn-row">
+          	<button class="btn std-btn">Download Report</button>
+          </div>
+    </div>
+  
+  </div>
+</section>
+<!-- content-region ends --> 
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="{% static 'js/reports.js' %}"></script>
+<script src="{% static 'js/chart.js' %}"></script>
+<script type="text/javascript">
+google.load("visualization", "1", {packages:["corechart"]});
+</script>
+{% endblock main_js %}

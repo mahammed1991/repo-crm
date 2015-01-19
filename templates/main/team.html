@@ -1,0 +1,897 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend"><p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Regalix - Google Team</p></legend>
+            <table width="786" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <td height="60" align="right" valign="middle" id="breadcum">
+                            <a href="{% url 'main.views.home' %}">Home</a> &gt;&gt; Regalix - Google Team
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="746" border="0" align="center" cellpadding="0" cellspacing="0">
+                                <tbody><tr>
+                                    <td width="210" height="258" align="center" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td align="left" valign="middle">
+                                                    <img src="{% static 'images/vikas.png' %}" width="111" height="136">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="48" align="left" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Vikas Sharan</span><br>
+                                                    CEO
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:vsharan@regalix-inc.com" class="profile">vsharan@regalix-inc.com</a><br>
+                                                    650-483-8499<br>
+                                                    Skype: <strong>vsharan</strong>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="center" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td align="left" valign="middle">
+                                                    <img src="{% static 'images/brendan.png' %}" width="111" height="136">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="48" align="left" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Brendan Farnell</span><br>
+                                                    Account Manager
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:bfarnell@regalix-inc.com" class="profile">bfarnell@regalix-inc.com</a><br>
+                                                    650-784-3124<br>
+                                                    Skype: <strong>brendan.farnell</strong>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="center" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td align="left" valign="middle">
+                                                    <img src="{% static 'images/babla.png' %}" width="133" height="136">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="48" align="left" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Babla</span><br>
+                                                    COO
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:babla@regalix-inc.com" class="profile">babla@regalix-inc.com
+                                                    </a>
+                                                    <br>
+                                                    1-800-993-3483<br>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/tab.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Tabish Khan</span><br>
+                                                    Project Manager
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:tkhan@regalix-inc.com" class="profile">tkhan@regalix-inc.com</a><br>
+                                                    1-800-993-3483<br>
+                                                    <strong>00 91 9986479140</strong>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Suri.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Suri</span><br>
+                                                    Program Manager
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:skamat@regalix-inc.com" class="profile">skamat@regalix-inc.com</a><br>
+                                                    1-800-993-3483<br>
+                                                    &nbsp;
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/nikhil.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Nikhil Parachure</span><br>
+                                                Head - Google Analytics                                                                                    </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:nparachure@regalix-inc.com" class="profile">nparachure@regalix-inc.com</a><br>
+                                                    1-800-993-3483<br>
+                                                    &nbsp;
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/srinivasan.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Srinivasan</span><br>
+                                                    QA - Lead
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:srinivasans@regalix-inc.com" class="profile">srinivasans@regalix-inc.com</a><br>
+                                                    1-800-993-3483
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/ramesh.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Ramesh</span><br>
+                                                QA - Executive                                                                                  </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                <a href="mailto:sramesh@regalix-inc.com" class="profile">sramesh@regalix-inc.com</a>                                                                                    </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/venkatesh.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Venkatesh</span><br>
+                                                    QA - Executive
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:venkatesh@regalix-inc.com" class="profile">venkatesh@regalix-inc.com</a>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Leon Dave.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Leon Dave</span><br>
+                                                    Program Manager
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:leon@regalix-inc.com" class="profile">leon@regalix-inc.com</a><br>
+                                                    1-800-993-3483
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/nidhi.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Nidhi</span><br>
+                                                Knowledge Mgmt Specialist                                                                                    </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                <a href="mailto:prakashn@regalix-inc.com" class="profile">prakashn@regalix-inc.com</a>                                                                                    </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/raj.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Rajkumar</span><br>
+                                                    Lead - Technical Specialist
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:rkumar@regalix-inc.com" class="profile">rkumar@regalix-inc.com</a>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/krishna.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Krishna Prasad</span><br>
+                                                    Sr. Technical Specialist
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:krishnaprasad@regalix-inc.com" class="profile">krishnaprasad@regalix-inc.com</a>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/vishu.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Vishu Grover</span><br>
+                                                    Technical Specialist
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:vgrover@regalix-inc.com" class="profile">vgrover@regalix-inc.com</a>
+                                                    
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/samy.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Karuppusamy</span><br>
+                                                    Technical Specialist
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                <a href="mailto:vkaruppusamy@regalix-inc.com" class="profile">vkaruppusamy@regalix-inc.com</a>                                                                                    </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/momin.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Momin Khan</span><br>
+                                                    MIS Analyst
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:mkhan@regalix-inc.com" class="profile">mkhan@regalix-inc.com</a><br>
+                                                    
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Vishal.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Vishal Jha</span><br>
+                                                    Implementation Consultant - UK
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:vjha@regalix-inc.com" class="profile">vjha@regalix-inc.com</a>&nbsp;<br>
+                                                    44-207-097-1356
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/akash.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Akash Prabhu</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:aprabhu@regalix-inc.com" class="profile">aprabhu@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-319-7363
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Joshua.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Joshua Stanislaus</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:jajay@regalix-inc.com" class="profile">jajay@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-319-8860
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/jdaniel.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Joshua Daniel</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:jdaniel@regalix-inc.com" class="profile">jdaniel@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-681-9760
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Shashidaran.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Shashidharan H S</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:shashidharan@regalix-inc.com" class="profile">shashidharan@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-209-8263
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Ankit.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Ankit Bhardwaj</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:abhardwaj@regalix-inc.com" class="profile">abhardwaj@regalix-inc.com</a><br>
+                                                    1-650-276-0600
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Saif.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt">Syed Saifullah</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:ssaifullah@regalix-inc.com" class="profile">ssaifullah@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-276-0400
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Sijo.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Sijo Varkey</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:svarkey@regalix-inc.com" class="profile">svarkey@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-319-7324
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Linda.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Linda Joseph</span><br>
+                                                Team Lead - (LATAM &amp; NA)                                                                                    </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:ljoseph@regalix-inc.com" class="profile">ljoseph@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-681-9760
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Daribiang.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Daribiang Lyngdoh</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:dlyngdoh@regalix-inc.com" class="profile">dlyngdoh@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-681-9629
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/Haleema.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Haleema Shareef</span><br>
+                                                    Team Lead (APAC &amp; EMEA)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:hshareef@regalix-inc.com" class="profile">hshareef@regalix-inc.com</a>&nbsp;<br>
+                                                    44-207-097-1392
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/eti.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Abraham E Demas</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:abraham@regalix-inc.com" class="profile">abraham@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-319-7363
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/pankaj.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Pankaj</span><br>
+                                                    Implementation Consultant - POR
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:psingh@regalix-inc.com" class="profile">psingh@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-681-9741
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/vanessa.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt">Vanessa</span><br>
+                                                    Implementation Consultant - ESP
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:vpriscille@regalix-inc.com" class="profile">vpriscille@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-681-9741
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/daniel.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Konan Daniel</span><br>
+                                                    Implementation Consultant - FRA
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:kdaniel@regalix-inc.com " class="profile">kdaniel@regalix-inc.com </a>&nbsp;<br>
+                                                    1-650-681-9629
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/nathan.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Nathan</span><br>
+                                                    Implementation Consultant - FRA
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:nregis@regalix-inc.com" class="profile">nregis@regalix-inc.com</a>&nbsp;<br>
+                                                    44-207-097-1392
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/rupa.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Rupa Sen</span><br>
+                                                    Implementation Consultant - GER
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:rsen@regalix-inc.com" class="profile">rsen@regalix-inc.com</a>&nbsp;<br>
+                                                    1-650-681-9741
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" class="border_tracking" style="padding-left: 41px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/sam.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Sam</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:sampd@regalix.- inc.com" class="profile">sampd@regalix-inc.com</a>&nbsp;<br>
+                                                    1-800-993-3483
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="260" align="left" valign="top" class="border_tracking" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/sandra.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Sandra</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:sandrah@regalix- inc.com" class="profile">sandrah@regalix-inc.com</a>&nbsp;<br>
+                                                    1-800-993-3483
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    <td width="231" align="left" valign="top" style="padding-left: 50px;">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/bindu.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Bindu</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:bindurs@regalix- inc.com" class="profile">bindurs@regalix-inc.com</a>&nbsp;<br>
+                                                    1-800-993-3483
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td height="20" colspan="3" class="border_tracking_top">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="210" height="258" align="left" valign="top" style="padding-left: 41px;" colspan="3">
+                                        <table width="195" border="0" align="left" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <img src="{% static 'images/sushil.png' %}" height="136" width="111">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" height="48" valign="middle">
+                                                    <span class="profile_txt" style="color:#cc3925; font-weight:bold;">Sushil</span><br>
+                                                    Implementation Consultant - US
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left" valign="middle">
+                                                    <a href="mailto:sushil@regalix- inc.com" class="profile">sushil@regalix-inc.com</a>&nbsp;<br>
+                                                    1-800-993-3483
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        &nbsp;
+                                    </td>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+{% endblock content %}
