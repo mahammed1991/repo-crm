@@ -92,6 +92,9 @@ class Timezone(models.Model):
     zone_name = models.CharField(max_length=20)
     time_value = models.CharField(max_length=6)
 
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
     def __str__(self):              # __unicode__ on Python 2
         return self.zone_name
 
@@ -116,6 +119,12 @@ class Location(models.Model):
     phone = models.CharField(max_length=50, null=True, default=None)
     time_zone = models.ManyToManyField(Timezone)
     flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def timezone_list(self):
+        return ", ".join(["%s (UTC %s)" % (t.zone_name, t.time_value) for t in self.time_zone.all()])
 
     @property
     def flag_filename(self):
@@ -164,6 +173,12 @@ class RegalixTeams(models.Model):
         ('SHOPPING', 'SHOPPING'),
     ), default='TAG')
 
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def location_list(self):
+        return ", ".join(["%s" % (l.location_name) for l in self.location.all()])
+
     def __str__(self):              # __unicode__ on Python 2
         return self.team_name
 
@@ -177,9 +192,31 @@ class Team(models.Model):
     """ Team/Program information """
     team_name = models.CharField(max_length=100, unique=True)
 
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
     def __str__(self):
         return self.team_name
 
     class Meta:
         db_table = 'teams'
         ordering = ['team_name']
+        verbose_name_plural = "Programs"
+
+
+class CodeType(models.Model):
+    """ Code Types list """
+
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'code_types'
+        ordering = ['name']
+        verbose_name_plural = "Code Types"

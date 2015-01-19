@@ -124,6 +124,9 @@ class ContectList(models.Model):
     region = models.ForeignKey(Location, null=True, blank=True, default=None)
     profile_photo = models.ImageField(upload_to=get_profile_photo, blank=True, max_length=100)
 
+    created_date = models.DateTimeField(auto_now_add=True, default=datetime.utcnow())
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.utcnow())
+
     @property
     def profile_photo_filename(self):
         return os.path.basename(self.profile_photo.name)
@@ -143,7 +146,7 @@ class ContectList(models.Model):
             img = Image.open(image)
             w, h = img.size
 
-            #validate dimensions
+            # validate dimensions
             max_width = 500
             max_height = 550
             if w > max_width or h > max_height:
@@ -151,9 +154,9 @@ class ContectList(models.Model):
                     _('Please use an image that is smaller or equal to '
                       '%s x %s pixels.' % (max_width, max_height)))
 
-            #validate content type
+            # validate content type
             img_ext = image.name.split('.')[1]
-            if not img_ext in ['png']:
+            if img_ext not in ['png']:
                 raise ValidationError(_('Image is not in PNG format. Please use a PNG image.'))
 
         return image
@@ -177,4 +180,18 @@ class CustomerTestimonials(models.Model):
 
     class Meta:
         db_table = 'customer_testimonials'
+        ordering = ['-created_date']
+
+
+class Notification(models.Model):
+    """ Notification information """
+
+    text = models.TextField(blank=False)
+    is_visible = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'notifications'
         ordering = ['-created_date']

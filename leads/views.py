@@ -20,7 +20,8 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location, Team
+from leads.models import Leads, Location, Team, CodeType
+from main.models import UserDetails
 from lib.helpers import get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -32,6 +33,7 @@ from django.core.files import File
 @csrf_exempt
 def lead_form(request):
     if request.method == 'POST':
+        import ipdb; ipdb.set_trace()
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
 
         # Get Basic/Common form filed data
@@ -50,7 +52,7 @@ def lead_form(request):
         tag_data['00Nd0000005WYjy'] = request.POST.get('00Nd0000005WYjy')  # Optional Comments
         tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick')  # Appointment Date
 
-        requests.request('POST', url=sf_api_url, data=tag_data)
+        #requests.request('POST', url=sf_api_url, data=tag_data)
 
         # Create Icallender (*.ics) file for send mail
         advirtiser_details = {'first_name': request.POST.get('first_name'),
@@ -75,7 +77,7 @@ def lead_form(request):
             setup_data['00Nd00000077TA8'] = request.POST.get('00Nd00000077TA8')  # Recommended Mobile Bid Modifier
             setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick')  # Appointment Date
 
-            requests.request('POST', url=sf_api_url, data=setup_data)
+            #requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -91,11 +93,16 @@ def lead_form(request):
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
             'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
 
+    teams = Team.objects.all()
+    code_types = CodeType.objects.filter(is_active=True)
+
     return render(
         request,
         'leads/lead_form.html',
         {'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
          'locations': locations,
+         'teams': teams,
+         'code_types': code_types,
          'time_zone_for_region': json.dumps(time_zone_for_region)}
     )
 
@@ -144,12 +151,14 @@ def shopping_campaign_setup_lead_form(request):
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
             'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
 
+    code_types = CodeType.objects.filter(is_active=True)
     return render(
         request,
         'leads/pla_lead_form.html',
         {'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
          'locations': locations,
          'process_type': 'SHOPPING',
+         'code_types': code_types,
          'time_zone_for_region': json.dumps(time_zone_for_region)}
     )
 

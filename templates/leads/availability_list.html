@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/main.html' %}
 
 {% load staticfiles %}
 {% load rep_filters %}
@@ -359,7 +359,7 @@
 </div>
 {% endblock body %}
 
-{% block base_js %}
+{% block main_js %}
 <script type="text/javascript">
     $(document).ready(function(){
         $('.time_slot_avi').click(function(){
@@ -396,4 +396,4 @@
         });
     });
 </script>
-{% endblock base_js %}
+{% endblock main_js %}
