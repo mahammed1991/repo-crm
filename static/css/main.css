@@ -199,13 +199,16 @@ html, body {
 	margin-top: -6px;
 	float: left;
 	margin-right: 4px;
+	width:30px;
+	height:30px;
+	border-radius:50%;
 }
 .navbar-collapse {
 	float: left;
 }
 .home-banner {
 	height: 520px;
-	background: url(../images/banner-img.jpg) no-repeat center;
+	background: url(../images//banner-img.jpg) no-repeat center;
 	background-size: cover;
 }
 .banner-content {
@@ -276,7 +279,7 @@ html, body {
 #bx-pager a span {
 	display: block;
 	height: 7px;
-	background: url(../images/selected-tab-icon.png) no-repeat center;
+	background: url(../images//selected-tab-icon.png) no-repeat center;
 	background-size: 13px 7px;
 	margin-top: -7px;
 	display: none;
@@ -545,15 +548,15 @@ h3 {
 	font-size: 14px;
 }
 .capabilities .sub-title {
-	background: url(../images/capabilities-bg.jpg) no-repeat;
+	background: url(../images//capabilities-bg.jpg) no-repeat;
 	background-size: cover;
 }
 .best-practices .sub-title {
-	background: url(../images/best-practices-bg.jpg) no-repeat;
+	background: url(../images//best-practices-bg.jpg) no-repeat;
 	background-size: cover;
 }
 .faq .sub-title {
-	background: url(../images/faq-bg.jpg) no-repeat;
+	background: url(../images//faq-bg.jpg) no-repeat;
 	background-size: cover;
 }
 .bxslider li .row {
@@ -985,13 +988,13 @@ p {
 .feedback-comment {
 	border-bottom:1px solid #ccc;
 	margin:10px;
-	background-image:url(../images/regalix-logo.png);
+	background-image:url(../images//regalix-logo.png);
 	background-repeat:no-repeat;
 	background-position:100% 90%;
 	
 }
 .feedback-comment.google {
-	background-image:url(../images/google-logo.png);
+	background-image:url(../images//google-logo.png);
 }
 .feedback-comment:first-child {
 	padding-top:0;
@@ -1010,7 +1013,7 @@ p {
 	height: 300px;
 	overflow: hidden;
 	margin-bottom: 20px;
-	background: url(../images/team.jpg) no-repeat top center;
+	background: url(../images//team.jpg) no-repeat top center;
 }
 .team-banner img {
 	max-width: 100%;
@@ -1434,6 +1437,40 @@ form label {
 }
 #profileUpdate {
 	margin-left:0 !important;
+}
+.login {
+	margin-top:50px;
+}
+.login h1 {
+	text-transform:inherit;
+	font-family:'robotolight';
+	font-size:36px;
+	border:0;
+	padding:0;
+	margin-top:25px;
+	margin-bottom:30px;
+}
+.login-area {
+	background:#eee;
+	max-width:400px;
+	margin:0 auto;
+	padding:40px;
+}
+.login-area img {
+	display:block;
+	margin:0 auto;
+	width:100px;
+	height:100px;
+	border-radius:50%;
+	margin-bottom:40px;
+}
+.login .std-btn {
+	text-transform:inherit;
+}
+.login .form-control {
+	margin-bottom:10px;}
+.login.auth .std-btn {
+	margin-top:30px;
 }
 
 
@@ -2184,6 +2221,9 @@ i.fa.fa-comment {
 	.feedback-auth {
 		padding-right:0 !important;
 	}
+	.login h1 {
+		font-size:23px;
+	}
 	
 }
 @media (max-width: 599px) {
@@ -2359,7 +2399,6 @@ i.fa.fa-comment {
 	}
 	
 }
-
 @media (max-width: 400px) {
 	.team-slide {
 		width: 100%;
@@ -2377,7 +2416,17 @@ i.fa.fa-comment {
 	.feedback-commet-box {
 		height:250px !important;
 	}
+	.login-area {
+		padding:20px;
+	}
+	.login-area img {
+		margin-bottom:20px;
+	}
+	.login.auth .std-btn {
+		margin-top:20px;
+	}
 }
+
 /* ==========================================================================
    Helper classes
    ========================================================================== */
