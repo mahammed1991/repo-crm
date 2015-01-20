@@ -12,7 +12,7 @@
         <div class="slider1 team-slider">
             {% for management in contacts_list.management %}
             <div class="slide team-slide">
-                <img src="{{management.photo_url}}">
+                <img src="{% static 'images/default_user.png' %}">
                 <div class="slide-copy">
                     <span class="member-name">{{management.name}}</span>
                     {{management.email}}<br>
@@ -26,7 +26,7 @@
         <div class="slider1 team-slider">
             {% for rep in contacts_list.representatives %}
             <div class="slide team-slide">
-                <img src="{{rep.photo_url}}">
+                <img src="{% static 'images/default_user.png' %}">
                 <div class="slide-copy">
                     <span class="member-name">{{rep.name}}</span>
                     {{rep.email}}<br>
@@ -42,3 +42,20 @@
   </section>
   <!-- content-region ends -->
 {% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript">
+
+    $(document).ready(function(){
+  $('.slider1').bxSlider({
+    slideWidth: 240,
+    minSlides: 1,
+    maxSlides: 5,
+    slideMargin: 30,
+    infiniteLoop: false,
+    pager: false
+  });
+});
+
+</script>
+{% endblock main_js %}
