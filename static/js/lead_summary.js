@@ -137,7 +137,11 @@ $(document).ready(function()
                   // disable it by setting the property sorter to false 
                   sorter: false 
               },
-              11: { 
+              10: { 
+                  // disable it by setting the property sorter to false 
+                  sorter: false 
+              },
+              12: { 
                   // disable it by setting the property sorter to false 
                   sorter: false 
               }
@@ -175,81 +179,43 @@ $('#SubmitFeedback').click(function(){
     var feedbackTitle = $('#feedbackTitle').val();
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
-    dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
-    $.ajax({
-        url: "/main/create-feedback-from-lead-status",
-        data: dataString,
-        type: 'GET',
-        dataType: "json",
-        success: function(data) {
-          if(data === 'SUCCESS'){
-            alert('feedback succesfully created ')
-            $('#feedbackModal').hide()
+    if (feedbackTitle === '' ){
+      alert('feedback title can not be blank!')
+    }else if(feedbackType === ''){
+      alert('please select feedback type!')
+    }else if(comments === ''){
+      alert('Comments can not be blank!')
+    }else{
+      dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
+      $.ajax({
+          url: "/main/create-feedback-from-lead-status",
+          data: dataString,
+          type: 'GET',
+          dataType: "json",
+          success: function(data) {
+            if(data === 'SUCCESS'){
+              alert('feedback succesfully created ')
+              $('#feedbackModal').hide()
+              $('#feedbackTitle').val('');
+              $('#feedbackType').prop('selectedIndex', 0);
+              $('#comments').val('');
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              alert('failure');
           }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            alert('failure');
-        }
-      }); 
+        }); 
+    }
+    
     })
-
+$('#closeFeedbcak').click(function(){
+  $('#feedbackModal').hide()
+  $('#feedbackTitle').val('');
+  $('#feedbackType').prop('selectedIndex', 0);
+  $('#comments').val('');
+})
 
 /* feed back submit through leads status page end  here */
 
-/* pin chat */
-var lead_owner_email = ''
-var lead_owner_name = ''
-var weekday = new Array("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
-var currentTime = new Date();
-var day = currentTime.getDay()
-var hour = currentTime.getHours()
-var min = currentTime.getMinutes()
-currentDayTime=''
-if (hour >= 12){
-  hour = hour - 12
-  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' PM'
-}else{
-  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' AM'
-}
 
-function chat(lead_owner_email, lead_owner_name){
-    lead_owner_email = lead_owner_email;
-    lead_owner_name = lead_owner_name 
-}
-
-var counter = true;
-$('#submitmsg').click(function(){
-  msg = $('#message').val()
-  $('#message').val('')
-  if (counter){
-    $('.modal-body').append(  '<div class=" ping-copy out-msg">' +
-                            '<img src="{{request.session.profile_image}}?sz=32" class="chatter-img">'+
-                            '<div class="chat-msg">'+
-                            '<img src="{%static 'images/chat-out-img.png' %}">'+
-                            '<p>'+ msg +' </p><div class="chat-date">'+ currentDayTime +'</div></div></div>')
-    counter = false;
-    $(".modal-body").animate({
-        scrollTop: $(".modal-body").scrollHeight()
-    }, 300);
-  }else{
-    $('.modal-body').append(  '<div class=" ping-copy in-msg">' +
-                            '<img src="{%static 'images/testimonial-pic.jpg' %}" class="chatter-img">'+
-                            '<div class="chat-msg">'+
-                            '<img src="{%static 'images/chat-in-img.png' %}">'+
-                            '<p>'+ msg +' </p><div class="chat-date">'+ currentDayTime +'</div></div></div>')
-    counter = true;
-    $(".modal-body").animate({
-        scrollTop: $(".modal-body").scrollHeight()
-    }, 300);
-  }
-  
-})
-
-$("#message").keypress(function(event) {
-    if (event.which == 13) {
-        event.preventDefault();
-
-        $("#submitmsg").trigger("click");
-    }
-});
 /* */

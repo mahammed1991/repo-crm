@@ -77,6 +77,7 @@ Regalix Google Portal
       <div class="row">
       <div class="table-responsive col-xs-12 col-sm-12 col-md-12">
         <table class="table status-table tablesorter" id='Leads'>
+          <thead>
             <tr  class="table_bg">
               <th class="hidden-xs hidden-sm nthchild">No.</th>
               <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
@@ -92,6 +93,8 @@ Regalix Google Portal
               <th class="nthchild3" id='StatusRow'>Status </th>
               <th class="nthchild11">Action</th>
             </tr>
+            </thead>
+            <tbody>
             {% for l in leads %}
 
                       {% if l.lead_status == 'Implemented' %}
@@ -157,6 +160,7 @@ Regalix Google Portal
                     </tr>
                     
                 {% endfor %}
+              </tbody>
         </table>
         <div class="span4"></div>
         <div class="span4"><img src="{% static 'images/pre_loading.png' %}" alt=" " class="center-block"/></div>
@@ -253,7 +257,7 @@ Regalix Google Portal
 
         <div class="btn-group">
             <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
-            <button class="btn std-btn grayed" data-dismiss="modal">Close</button>
+            <button class="btn std-btn grayed" data-dismiss="modal" id='closeFeedbcak'>Close</button>
         </div>
       </div>
     </div>
@@ -271,7 +275,58 @@ function feedbackBycid(lead_id){
   window.lead_id = lead_id
   console.log(lead_id)
 }
+/* pin chat */
+var lead_owner_email = ''
+var lead_owner_name = ''
+var weekday = new Array("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
+var currentTime = new Date();
+var day = currentTime.getDay()
+var hour = currentTime.getHours()
+var min = currentTime.getMinutes()
+currentDayTime=''
+if (hour >= 12){
+  hour = hour - 12
+  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' PM'
+}else{
+  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' AM'
+}
 
+function chat(lead_owner_email, lead_owner_name){
+    lead_owner_email = lead_owner_email;
+    lead_owner_name = lead_owner_name 
+}
+
+var counter = true;
+$('#submitmsg').click(function(){
+  msg = $('#message').val()
+  $('#message').val('')
+  if (counter){
+    $('.modal-body').append(  '<div class=" ping-copy out-msg">' +
+                            '<img src="{{request.session.profile_image}}?sz=32" class="chatter-img">'+
+                            '<div class="chat-msg">'+
+                            '<img src="{%static 'images/chat-out-img.png' %}">'+
+                            '<p>'+ msg +' </p><div class="chat-date">'+ currentDayTime +'</div></div></div>')
+    counter = false;
+   
+  }else{
+    $('.modal-body').append(  '<div class=" ping-copy in-msg">' +
+                            '<img src="{%static 'images/testimonial-pic.jpg' %}" class="chatter-img">'+
+                            '<div class="chat-msg">'+
+                            '<img src="{%static 'images/chat-in-img.png' %}">'+
+                            '<p>'+ msg +' </p><div class="chat-date">'+ currentDayTime +'</div></div></div>')
+    counter = true;
+  
+  }
+  
+})
+
+$("#message").keypress(function(event) {
+    if (event.which == 13) {
+        event.preventDefault();
+
+        $("#submitmsg").trigger("click");
+    }
+});
 </script>
 
 {% endblock main_js %}
