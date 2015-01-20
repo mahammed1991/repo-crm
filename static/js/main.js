@@ -80,10 +80,7 @@ $(document).ready(function(){
 	  $(this).find( ".row-expand, .row-collapse" ).toggle();
 	});
 	
-	// date picker
-	$(function() {
-    $( "#datepickerFrom, #datepickerTo" ).datepicker();
-  });
+	
 	
 	$(".live-transfer-location").click(function(){
         phone_no = $(this).attr('data-phone');

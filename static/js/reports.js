@@ -5,6 +5,11 @@ $(document).ready(function() {
   // Get default report while loading template
   callAjax({'report_type': 'default_report', 'report_timeline': ['today']})
 /* ===================== Default Report Ends Here ============= */
+
+// date picker
+  $(function() {
+    $( "#datepickerFrom, #datepickerTo" ).datepicker();
+  });
 });
 
 /*=========== Changes in report type ===============*/
@@ -467,3 +472,4 @@ function newTable(firstrow, details){
   }
  $("#code_type_table").append(header+each_row);
 }
+
