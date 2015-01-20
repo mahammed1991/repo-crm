@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95']
+ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com']
 
 ROOT_URLCONF = 'google_portal.urls'
 
