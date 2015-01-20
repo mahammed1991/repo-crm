@@ -208,7 +208,7 @@ html, body {
 }
 .home-banner {
 	height: 520px;
-	background: url(../images//banner-img.jpg) no-repeat center;
+	background: url(../images/banner-img.jpg) no-repeat center;
 	background-size: cover;
 }
 .banner-content {
@@ -279,7 +279,7 @@ html, body {
 #bx-pager a span {
 	display: block;
 	height: 7px;
-	background: url(../images//selected-tab-icon.png) no-repeat center;
+	background: url(../images/selected-tab-icon.png) no-repeat center;
 	background-size: 13px 7px;
 	margin-top: -7px;
 	display: none;
@@ -548,15 +548,15 @@ h3 {
 	font-size: 14px;
 }
 .capabilities .sub-title {
-	background: url(../images//capabilities-bg.jpg) no-repeat;
+	background: url(../images/capabilities-bg.jpg) no-repeat;
 	background-size: cover;
 }
 .best-practices .sub-title {
-	background: url(../images//best-practices-bg.jpg) no-repeat;
+	background: url(../images/best-practices-bg.jpg) no-repeat;
 	background-size: cover;
 }
 .faq .sub-title {
-	background: url(../images//faq-bg.jpg) no-repeat;
+	background: url(../images/faq-bg.jpg) no-repeat;
 	background-size: cover;
 }
 .bxslider li .row {
@@ -988,13 +988,13 @@ p {
 .feedback-comment {
 	border-bottom:1px solid #ccc;
 	margin:10px;
-	background-image:url(../images//regalix-logo.png);
+	background-image:url(../images/regalix-logo.png);
 	background-repeat:no-repeat;
 	background-position:100% 90%;
 	
 }
 .feedback-comment.google {
-	background-image:url(../images//google-logo.png);
+	background-image:url(../images/google-logo.png);
 }
 .feedback-comment:first-child {
 	padding-top:0;
@@ -1013,7 +1013,7 @@ p {
 	height: 300px;
 	overflow: hidden;
 	margin-bottom: 20px;
-	background: url(../images//team.jpg) no-repeat top center;
+	background: url(../images/team.jpg) no-repeat top center;
 }
 .team-banner img {
 	max-width: 100%;
