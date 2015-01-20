@@ -296,7 +296,7 @@ def view_feedback(request, id):
 @manager_info_required
 def list_feedback(request):
     """ List all feedbacks """
-    
+
     feedbacks = Feedback.objects.filter(
         Q(user__email=request.user.email)
         | Q(user__profile__user_manager_email=request.user.email)
@@ -350,7 +350,7 @@ def create_feedback(request, lead_id=None):
             feedback_details.attachment = request.FILES['attachment_name']
 
         feedback_details.save()
-        # feedback_details = notify_feedback_activity(request, feedback_details)
+        feedback_details = notify_feedback_activity(request, feedback_details)
 
         return redirect('main.views.list_feedback')
     return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations, 'programs': programs, 'lead': lead})
@@ -439,7 +439,7 @@ def create_feedback_from_lead_status(request):
             pass
 
         feedback_details.save()
-        # feedback_details = notify_feedback_activity(request, feedback_details)
+        feedback_details = notify_feedback_activity(request, feedback_details)
 
         # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))
@@ -454,7 +454,7 @@ def resolve_feedback(request, id):
     feedback.resolved_by = request.user
     feedback.resolved_date = datetime.utcnow()
 
-    # notify_feedback_activity(request, feedback, is_resolved=True)
+    notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -466,10 +466,10 @@ def reopen_feedback(request, id):
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'IN PROGRESS'
 
-    # feedback.resolved_by = request.user
-    # feedback.resolved_date = datetime.utcnow()
+    feedback.resolved_by = request.user
+    feedback.resolved_date = datetime.utcnow()
 
-    # notify_feedback_activity(request, feedback, is_resolved=True)
+    notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -489,7 +489,7 @@ def comment_feedback(request, id):
 
     feedback.status = 'IN PROGRESS'
 
-    # notify_feedback_activity(request, feedback, comment)
+    notify_feedback_activity(request, feedback, comment)
     feedback.save()
 
     return redirect('main.views.view_feedback', id=id)
