@@ -38,7 +38,7 @@ CACHE_MAX_KEY_LENGTH = 235
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'google_portal',
+        'NAME': 'gtack',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '',

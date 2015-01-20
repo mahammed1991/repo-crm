@@ -269,7 +269,13 @@ Regalix Google Portal
                 <div class="testi-content">
                   <p> {{ testimonials.statement_text }} </p>
                     <span class="name">{{ testimonials.first_name }} {{ testimonials.last_name }}</span>
-                    <span>{{ testimonials.company_name }} | <a href="#">{{ testimonials.url }}</a></span>             
+                    {% if testimonials.company_name and testimonials.url %}
+                      <span>{{ testimonials.company_name }} | <a href="http://{{testimonials.url}}" target="_blank">{{ testimonials.url }}</a></span>
+                    {% elif testimonials.company_name %}
+                      <span>{{ testimonials.company_name }} </span>
+                    {% elif testimonials.url %}
+                        <span> <a href="{{testimonials.url}}" target="_blank">{{ testimonials.url }}</a></span>
+                    {% endif %}
                 </div>
               </div>
               {% endfor %}

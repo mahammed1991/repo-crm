@@ -17,12 +17,15 @@
                     <span class="member-name">{{management.name}}</span>
                     {{management.email}}<br>
                     {{management.phone}}<br>
-                    Skype: <span>{{management.skype}}</span>
+                    {% if management.skype %}
+                        Skype: <span>{{management.skype}}</span>
+                    {% endif %}
+
                 </div>
             </div>
             {% endfor %}
         </div>
-        <h2>XYZ team</h2>
+        <h2>Customer Support team</h2>
         <div class="slider1 team-slider">
             {% for rep in contacts_list.representatives %}
             <div class="slide team-slide">
@@ -31,7 +34,9 @@
                     <span class="member-name">{{rep.name}}</span>
                     {{rep.email}}<br>
                     {{rep.phone}}<br>
-                    Skype: <span>{{rep.skype}}</span>
+                    {% if rep.skype %}
+                        Skype: <span>{{rep.skype}}</span>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}

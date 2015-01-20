@@ -33,7 +33,6 @@ from django.core.files import File
 @csrf_exempt
 def lead_form(request):
     if request.method == 'POST':
-        import ipdb; ipdb.set_trace()
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
 
         # Get Basic/Common form filed data
@@ -645,7 +644,6 @@ def get_lead_summary(request):
 
     lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     email = request.user.email
-    email = 'bhavinb@google.com'
     if 'regalix' in email:
         leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email=email)
     elif 'google' in email:
