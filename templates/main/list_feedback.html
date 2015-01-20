@@ -12,6 +12,8 @@ Manage Help
 
   <section class="content-region">
     <div class="container-fluid">
+    <!-- team leads views start here-->
+      {% if 'regalix' in request.user.email %}
       <div id="teamLeadView">
           <h1>Feedback</h1>
           <div class="row text-center report-category">
@@ -24,7 +26,7 @@ Manage Help
           <div class="col-md-3 centered">
             <select class="form-control" id="reportPeriod">
               <option>George Stephen</option>
-              <option>1</option>
+              <option>{{user.email}}</option>
               <option>2</option>
               <option>3</option>
             </select>
@@ -35,7 +37,12 @@ Manage Help
         <div class="btn-row">
             <button class="btn std-btn">View Feedback</button>
         </div>
+ 
+  
+    
     </div>
+  {% endif %}
+    <!-- team lead view end here -->
     <h1>Feedback Summary</h1>
       <div class="row">
         <div class="col-xs-6 col-sm-4 col-md-2 col-md-offset-2 placeholder">
@@ -68,7 +75,7 @@ Manage Help
           </div>
           <div class="col-xs-6 col-sm-6 col-md-2">
             <div class="has-feedback">
-              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Feedback')"/>
+              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'feedback_table')"/>
               <span class="search-icon"><i class="fa fa-search" /></i></span> </div>
           </div>
           <div class="col-xs-6 col-sm-6 col-md-2 pull-right">            
@@ -94,6 +101,7 @@ Manage Help
               <th >Feedback ID</th>
               <th >CID</th>
               <th >Google Account Manager </th>
+              <th >Feedback By </th>
               <th id="lead_owner_header">Lead Owner</th>
               <th>Title </th>  
               <th id='recent_header'>Date Created</th>
@@ -116,6 +124,7 @@ Manage Help
 					<td><span class="status-bor-color">{{ forloop.counter }} </span></td>
 					<td><a href="{% url 'main.views.view_feedback' feedback.id %}">Goog-{{ feedback.id }}</a></td>
           <td>{{ feedback.cid }}</td>
+          <td></td>
 					<td>{{ feedback.user.get_full_name }}</td>
 					<td>{{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}</td>
 					<td><a href="{% url 'main.views.view_feedback' feedback.id %}">{{ feedback.title }}</a></td>
@@ -204,12 +213,16 @@ $(document).ready(function()
 	                // disable it by setting the property sorter to false 
 	                sorter: false 
 	            }, 
-	            5: { 
+	            4: { 
 	                // disable it by setting the property sorter to false 
 	                sorter: false 
 	            },
+              6: { 
+                  // disable it by setting the property sorter to false 
+                  sorter: false 
+              },
 	              
-	            8: { 
+	            9: { 
 	                // disable it by setting the property sorter to false 
 	                sorter: false 
 	            }
