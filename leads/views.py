@@ -20,12 +20,14 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location, Team, CodeType
+from leads.models import Leads, Location, Team, CodeType, ChatMessage
 from main.models import UserDetails
-from lib.helpers import get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep
+from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
+                         is_manager, get_user_list_by_manager, get_manager_by_user)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
-#from django.db.models import Q
+from django.contrib.auth.models import User
+# from django.db.models import Q
 
 
 # Create your views here.
@@ -51,7 +53,7 @@ def lead_form(request):
         tag_data['00Nd0000005WYjy'] = request.POST.get('00Nd0000005WYjy')  # Optional Comments
         tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick')  # Appointment Date
 
-        #requests.request('POST', url=sf_api_url, data=tag_data)
+        # requests.request('POST', url=sf_api_url, data=tag_data)
 
         # Create Icallender (*.ics) file for send mail
         advirtiser_details = {'first_name': request.POST.get('first_name'),
@@ -76,7 +78,7 @@ def lead_form(request):
             setup_data['00Nd00000077TA8'] = request.POST.get('00Nd00000077TA8')  # Recommended Mobile Bid Modifier
             setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick')  # Appointment Date
 
-            #requests.request('POST', url=sf_api_url, data=setup_data)
+            # requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -639,16 +641,108 @@ def send_calendar_invite_to_advertiser(advertiser_details):
 
 
 @login_required
-def get_lead_summary(request):
+def get_lead_summary(request, lid=None):
     """ Lead Status page """
 
     lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     email = request.user.email
+    if is_manager(email):
+        email_list = get_user_list_by_manager(email)
+    else:
+        email_list = [email]
+
     if 'regalix' in email:
-        leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email=email)
+        leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email__in=email_list)
     elif 'google' in email:
-        leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email=email)
+        leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
 
     lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
 
-    return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict})
+    return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
+
+
+@login_required
+def create_chat_message(request):
+    """ creating chat messages"""
+    if request.is_ajax():
+        lead_id = request.GET.get('lead_id')
+        message = request.GET.get('msg')
+        user_id = request.user.email
+
+        chat = ChatMessage()
+        chat.lead_id = lead_id
+        chat.user_id = user_id
+        chat.message = message
+        chat.save()
+        # notify_chat_activity(request, chat)
+        messages = ChatMessage.objects.filter(lead_id=lead_id)
+        message_list = list()
+        for m in messages:
+            message = convert_chat_message_to_dict(m)
+            message_list.append(message)
+        mimetype = 'application/json'
+        return HttpResponse(json.dumps(message_list), mimetype)
+
+
+@login_required
+def get_chat_message_by_lead(request):
+    """ creating chat messages"""
+    if request.is_ajax():
+        lead_id = request.GET.get('lead_id')
+        messages = ChatMessage.objects.filter(lead_id=lead_id)
+        message_list = list()
+        for m in messages:
+            message = convert_chat_message_to_dict(m)
+            message_list.append(message)
+        mimetype = 'application/json'
+        return HttpResponse(json.dumps(message_list), mimetype)
+
+
+def convert_chat_message_to_dict(model):
+    image_url = '/static/images/default_user.png'
+    message = {}
+    message['lead_id'] = model.lead_id
+    message['user_id'] = model.user_id
+    try:
+        user = User.objects.get(email=model.user_id)
+        user_profile = UserDetails.objects.get(user_id=user.id)
+        image_url = user_profile.profile_photo_url
+    except ObjectDoesNotExist:
+        image_url = '/static/images/default_user.png'
+    message['message'] = model.message
+    message['created_date'] = datetime.strftime(model.created_date, "%m/%d/%Y")
+    message['image_url'] = image_url
+    return message
+
+
+def notify_chat_activity(request, chatmessage):
+
+    mail_subject = "Lead Status Chat"
+    chat_url = request.build_absolute_uri(reverse('leads.views.get_lead_summary', kwargs={'lid': chatmessage.lead_id}))
+    mail_body = get_template('main/feedback_mail/new_comment.html').render(
+        Context({
+            'message': chatmessage.message,
+            'message_url': chat_url
+        })
+    )
+
+    mail_to = set([])
+    # mail_to.add(request.user.email)
+
+    lead = Leads.objects.get(id=chatmessage.user_id)
+    mail_to.add(lead.lead_owner_email)
+    mail_to.add(lead.google_rep_email)
+
+    # get chat user manager and lead owner managers information
+    bcc = set([])
+    user_profile = get_manager_by_user(lead.lead_owner_email)
+    bcc.add(user_profile.user_manager_email)
+    user_profile = get_manager_by_user(lead.google_rep_email)
+    bcc.add(user_profile.user_manager_email)
+
+    mail_from = request.user.email
+
+    attachments = list()
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    return chatmessage

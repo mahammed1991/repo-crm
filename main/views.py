@@ -23,7 +23,7 @@ from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimon
 from leads.models import Location, Leads, Team
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
-                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep)
+                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, is_manager, get_user_list_by_manager)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -135,6 +135,7 @@ def main_home(request):
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
+
     # feedback summary end here
 
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
@@ -296,6 +297,11 @@ def view_feedback(request, id):
 @manager_info_required
 def list_feedback(request):
     """ List all feedbacks """
+    manager_is = False
+    user_list = list()
+    if is_manager(request.user.email):
+        manager_is = True
+        user_list = get_user_list_by_manager(request.user.email)
 
     feedbacks = Feedback.objects.filter(
         Q(user__email=request.user.email)
@@ -309,7 +315,8 @@ def list_feedback(request):
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
-                                                       'media_url': settings.MEDIA_URL + 'feedback/', 'feedback_list': feedback_list})
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'feedback_list': feedback_list, 'is_manager': manager_is, 'rep_list': user_list})
 
 
 @login_required
@@ -515,3 +522,8 @@ def get_contacts(request):
             contacts['representatives'].append(contact)
     return contacts
     return HttpResponse(dumps(contacts), content_type='application/json')
+
+
+@login_required
+def resources(request):
+    return render(request, 'main/resources.html')

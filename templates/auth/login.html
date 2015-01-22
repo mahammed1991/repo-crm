@@ -36,10 +36,10 @@
 <section class="content-region login">
      <div class="container-fluid text-center">
         <img src="{% static 'images/GTrack-Regalix-logo.png'%}" alt="GTrack-Regalix-Logo" class="gtack-sign-logo">
-        <h1>Sign in with Google account</h1>
+        <h1>Sign in with your Google account</h1>
         <div class="login-area">
             <img src="{% static 'images/avtar-big.jpg'%}" class="login-avtar-img">
-            <button class="btn std-btn" onclick='location.href="{% url 'social:begin' 'google-oauth2' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"'>Sign in  Google</button>
+            <button class="btn std-btn" onclick='location.href="{% url 'social:begin' 'google-oauth2' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"'>Sign in with Google</button>
         </div>
     </div>
 </section>

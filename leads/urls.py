@@ -15,4 +15,7 @@ urlpatterns = patterns(
     url(r'^migrate-leads/$', views.migrate_leads),
     url(r'^get-lead/(?P<cid>[\w -]+)$', views.get_lead),
     url(r'^lead-summary/$', views.get_lead_summary),
+    url(r'^lead-summary/(?P<lid>[0-9]+)$', views.get_lead_summary),
+    url(r'^create-chat/$', views.create_chat_message),
+    url(r'^get-chat/$', views.get_chat_message_by_lead),
 )

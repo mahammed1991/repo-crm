@@ -13,29 +13,27 @@ Manage Help
   <section class="content-region">
     <div class="container-fluid">
     <!-- team leads views start here-->
-      {% if 'regalix' in request.user.email %}
+      {% if is_manager %}
       <div id="teamLeadView">
           <h1>Feedback</h1>
           <div class="row text-center report-category">
-          <div class="col-md-3 centered">
-            <select class="form-control" id="reportCat">
-              <option>Team Feedback</option>
-              <option>Individual Feedback</option>
-            </select>
-          </div>     
-          <div class="col-md-3 centered">
-            <select class="form-control" id="reportPeriod">
-              <option>George Stephen</option>
-              <option>{{user.email}}</option>
-              <option>2</option>
-              <option>3</option>
-            </select>
-          </div>      
-          
-          
+            <div class="col-md-3 centered">
+              <select class="form-control" id="reportCat">
+                <option>Team Feedback</option>
+                <option>Individual Feedback</option>
+              </select>
+            </div>     
+            <div class="col-md-3 centered">
+              <select class="form-control" id="EmailId">
+                <option>Select User</option>
+                {% for user in rep_list %}
+                  <option>{{user}}</option>
+                {% endfor %}
+              </select>
+            </div>      
         </div>
         <div class="btn-row">
-            <button class="btn std-btn">View Feedback</button>
+            <button class="btn std-btn" id='GetFeedbacakByemail'>View Feedback</button>
         </div>
  
   
@@ -244,5 +242,11 @@ $(document).ready(function()
    		$("#recent_header").trigger("click");
    })
 
+</script>
+
+<script type="text/javascript">
+  $('#GetFeedbacakByemail').click(function(){
+    alert($('#EmailId').val())
+  })
 </script>
 {% endblock main_js %}

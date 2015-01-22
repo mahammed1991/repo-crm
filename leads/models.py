@@ -73,7 +73,7 @@ class Leads(models.Model):
     appointment_date = models.DateTimeField(blank=True, null=True)
     first_contacted_on = models.DateTimeField(blank=True, null=True)
 
-    #Rescheduled Appointments
+    # Rescheduled Appointments
     rescheduled_appointment = models.DateTimeField(blank=True, null=True)
 
     dials = models.IntegerField(default=0)
@@ -105,7 +105,7 @@ class Timezone(models.Model):
 
 class Location(models.Model):
 
-    def get_flag_image(instance, flag_filename):
+    def get_flag_image(self, instance, flag_filename):
         """ Dynamic location flag image path """
         ext = flag_filename.split('.')[-1]
 
@@ -141,7 +141,7 @@ class Location(models.Model):
             img = Image.open(image)
             w, h = img.size
 
-            #validate dimensions
+            # validate dimensions
             max_width = 200
             max_height = 200
             if w > max_width or h > max_height:
@@ -149,9 +149,9 @@ class Location(models.Model):
                     _('Please use an image that is smaller or equal to '
                       '%s x %s pixels.' % (max_width, max_height)))
 
-            #validate content type
+            # validate content type
             img_ext = image.name.split('.')[1]
-            if not img_ext in ['png']:
+            if img_ext not in ['png']:
                 raise ValidationError(_('Image is not in PNG format. Please use a PNG image.'))
 
         return image
@@ -220,3 +220,19 @@ class CodeType(models.Model):
         db_table = 'code_types'
         ordering = ['name']
         verbose_name_plural = "Code Types"
+
+
+class ChatMessage(models.Model):
+    """ Chat Message Model """
+
+    lead = models.ForeignKey(Leads, null=False)
+    user_id = models.CharField(max_length=255, null=False)
+    message = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user_id
+
+    class Meta:
+        db_table = 'chat_message'
+        verbose_name_plural = 'Chat Message'

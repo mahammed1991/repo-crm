@@ -15,6 +15,7 @@ urlpatterns = patterns(
     url(r'^feedback/(?P<id>\d+)/comment/$', views.comment_feedback),
     url(r'^feedback/(?P<id>\d+)/resolve/$', views.resolve_feedback),
     url(r'^feedback/(?P<id>\d+)/reopen/$', views.reopen_feedback),
+    url(r'^resources/$', views.resources),
     # url(r'^report/$', views.report),
     # url(r'^contacts/$', views.get_contacts),
     # url(r'^top-30-cms/$', views.top_30_cms),

@@ -14,6 +14,8 @@ from collections import defaultdict
 from main.models import UserDetails
 from leads.models import Leads
 
+from django.contrib.auth.models import User
+
 
 def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=False):
     email = EmailMultiAlternatives(subject, body, mail_from, to, bcc)
@@ -200,6 +202,11 @@ def get_previous_month_start_end_days(d):
 
 def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
     """ get Count of Each Lead Status by rep/manager/email """
+    if is_manager(email):
+        email_list = get_user_list_by_manager(email)
+    else:
+        email_list = [email]
+
     status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     lead_status_dict = {'total_leads': 0,
                         'implemented': 0,
@@ -211,19 +218,19 @@ def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
                         }
 
     if 'regalix' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, lead_owner_email=email).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', lead_owner_email=email).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', lead_owner_email=email).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', lead_owner_email=email).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', lead_owner_email=email).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', lead_owner_email=email).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, lead_owner_email__in=email_list).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', lead_owner_email__in=email_list).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', lead_owner_email__in=email_list).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', lead_owner_email__in=email_list).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', lead_owner_email__in=email_list).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', lead_owner_email__in=email_list).count()
     elif 'google' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, google_rep_email=email).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', google_rep_email=email).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', google_rep_email=email).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', google_rep_email=email).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', google_rep_email=email).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', google_rep_email=email).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, google_rep_email__in=email_list).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', google_rep_email__in=email_list).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', google_rep_email__in=email_list).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', google_rep_email__in=email_list).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', google_rep_email__in=email_list).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', google_rep_email__in=email_list).count()
 
     return lead_status_dict
 
@@ -234,3 +241,28 @@ def get_user_profile(user):
         return user_profile
     except ObjectDoesNotExist:
         return None
+
+
+def is_manager(email):
+    # email = 'tkhan@regalix-inc.com'
+    managers_list = UserDetails.objects.filter(user_manager_email=email)
+    if managers_list:
+        return True
+    return False
+
+
+def get_user_list_by_manager(email):
+    """ """
+    users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
+    user_emails = User.objects.filter(id__in=users)
+    user_list = list()
+    for user in user_emails:
+        user_list.append(user.email)
+    return user_list
+
+
+def get_manager_by_user(email):
+    user = User.objects.get(email=email)
+    user_profile = UserDetails.objects.get(user_id=user.id)
+    return user_profile
+    
