@@ -20,25 +20,18 @@ Reports
         <select class="form-control" id="filter_report_type">
           <option value="">Choose Report Type</option>
           <option value="leadreport_individualRep">Individual Rep</option>
-          <option value="leadreport_teamLead">Team Lead </option>
+          {% if manager %}
+            <option value="leadreport_teamLead">Team Lead </option>
+          {% endif %}
           <option value="leadreport_programview">Program View</option>
           <option value="leadreport_regionview">Region View</option>
-          <option value="leadreport_deadLeads">Dead Leads</option>
+          <!-- <option value="leadreport_deadLeads">Dead Leads</option>
           <option value="leadreport_deltaReports">Delta Reports</option>
-          <option value="leadreport_exportRawData">Export Raw Data</option>
+          <option value="leadreport_exportRawData">Export Raw Data</option> -->
         </select>
-      </div>
-      <div class="col-md-3 centered" >
-        <select id="filter_region" class="form-control">
-          <option value="">Choose Region</option>
-          <option value="all">All Region</option>
-          {% for team in rgx_teams %}
-            <option value="{{team.id}}">{{team}}</option>
-          {% endfor %}
-         </select>
-
         <div class="country-pick" id="filter_team" style="display:none;">
-          <div class="checkbox">
+          <div class="checkbox" id="team_checks">
+              <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
               {% for team in teams %}
                   <label>
                     {% if team == 'Other'%}
@@ -50,13 +43,39 @@ Reports
               {% endfor %}
           </div>
         </div>
-
-        <div class="country-pick" id="filter_country" style="display:none;">
-          <div class="checkbox">
+      </div>
+      {% if manager %}
+        <div id="filter_team_members"  class="col-md-3  centered" style="display:none;">
+          <div class="country-pick">
+            <div class="checkbox" id="members_checks">
+              <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                {% for member in team_members %}
+                    <label>
+                        <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}} 
+                    </label>
+                {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <div id="filter_region" class="col-md-3 centered" style="display:none;">
+        <select  class="form-control">
+          <option value="">Choose Region</option>
+          <option value="all">All Region</option>
+          {% for team in rgx_teams %}
+            <option value="{{team.id}}">{{team}}</option>
+          {% endfor %}
+         </select>
+         <div class="country-pick"  id="filter_country" style="display:none;">
+          <div class="checkbox" id="country_checks">
+          <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
                 
           </div>
         </div>
       </div>
+      <!-- <div id="filter_country" class="col-md-3 centered" style="display:none;">
+        
+      </div> -->
       
       <div class="col-md-3 centered">
         <select name="type" id="filter_timeline" style="display:block;" class="form-control">
@@ -80,7 +99,7 @@ Reports
     <div class="btn-row">
       <button class="btn std-btn" id='get_report'>View Report</button>
     </div>
-    <div class="auth-user-info">
+    <div class="auth-user-info" id="auth_user_info" style="display:none;">
       <label>LDAP:</label>
         <div class="value"><input type="text" class="form-control" id="ldap" value="mathew@"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
         <label class="manager">Manager:</label>
@@ -114,6 +133,11 @@ Reports
                     
                 </table>
             </div>
+              <div class="report-data" style="margin-left:20px !important;">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table2">
+                    
+                </table>
+              </div>
         </div>
     </div>
     
@@ -129,180 +153,70 @@ Reports
             </div>
 
             <div class="report-data fixed-table">
-            <table class="report-table full-width" cellpadding="0" cellspacing="0" border="0">
-                  <tr class="top-head">
-                      <th></th>
-                        <th colspan="2">Current Week</th>
-                        <th colspan="2">QTD</th>
-                        <th colspan="3">End - of - Quarter Outlook</th>
-                    </tr>
-                    <tr>
-                      <th>Program</th>
-                        <th>Leads</th>
-                        <th>Wins</th>
-                        <th>Leads</th>
-                        <th>Wins</th>
-                        <th>Leads</th>
-                        <th>Target Leads</th>
-                        <th>Outlook Vs Target</th>
-                    </tr>
+            <table class="report-table full-width" cellpadding="0" cellspacing="0" border="0" id="view_reports">
+
+           <!--  <tr>
+              <td colspan="8" class="no-pad no-bor">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
+                  <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
+                    <td class="lbl relative">Agency Gold<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                  </tr>
+
                     <tr>
                       <td colspan="8" class="no-pad no-bor">
-                          <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
-                              <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
-                                    <td class="lbl relative">MMS One <span class="row-expand">+</span> <span class="row-collapse">_</span></td>
-                                    <td class="value">56</td>
-                                    <td class="value">2</td>
-                                    <td class="value">406</td>
-                                    <td class="value">169</td>
-                                    <td class="value">586</td>
-                                    <td class="value">474</td>
-                                    <td class="value green">123.80%</td>
-                                </tr>
-                                <tr id="accordion1" class="collapse">
-                                    <td colspan="8" class="no-pad no-bor">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
+                        <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
+                          <td class="lbl relative">Agency Hi Touch<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                        </tr>
+
+                        <tr id="accordion1" class="collapse">
+                          <td colspan="8" class="no-pad no-bor">
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                              <tr>
+                                <td class="lbl">AU/NZ</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                              </tr>
+
+                              <tr id="accordion1" class="collapse">
+                              <td colspan="8" class="no-pad no-bor">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                                    <tr>
+                                      <td class="lbl">India</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                    </tr>
+
+                                    <tr id="accordion1" class="collapse">
+                                      <td colspan="8" class="no-pad no-bor">
                                         <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                          </table>
+                                          <tr>
+                                            <td class="lbl">SEA</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                          </tr>
+                                        </table>
                                       </td>
                                     </tr>
-                            </table>
-                        </td>                        
-                    </tr>
-                    <tr>
-                      <td colspan="8" class="no-pad no-bor">
-                          <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
-                              <tr class="clickable" data-toggle="collapse" data-target="#accordion2">
-                                    <td class="lbl relative">UMM<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
-                                    <td class="value">56</td>
-                                    <td class="value">2</td>
-                                    <td class="value">406</td>
-                                    <td class="value">169</td>
-                                    <td class="value">586</td>
-                                    <td class="value">474</td>
-                                    <td class="value yellow">90.00%</td>
-                                </tr>
-                                <tr id="accordion2" class="collapse">
-                                    <td colspan="8" class="no-pad no-bor">
-                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                          </table>
-                                      </td>
-                                    </tr>
-                            </table>
-                        </td>                        
-                    </tr>
-                    <tr>
-                      <td colspan="8" class="no-pad no-bor">
-                          <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
-                              <tr class="clickable" data-toggle="collapse" data-target="#accordion3">
-                                    <td class="lbl relative">Newbie<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
-                                    <td class="value">56</td>
-                                    <td class="value">2</td>
-                                    <td class="value">406</td>
-                                    <td class="value">169</td>
-                                    <td class="value">586</td>
-                                    <td class="value">474</td>
-                                    <td class="value red">83.50%</td>
-                                </tr>
-                                <tr id="accordion3" class="collapse">
-                                    <td colspan="8" class="no-pad no-bor">
-                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="lbl">MMS One</td>
-                                                <td class="value">56</td>
-                                                <td class="value">2</td>
-                                                <td class="value">406</td>
-                                                <td class="value">169</td>
-                                                <td class="value">586</td>
-                                                <td class="value">474</td>
-                                                <td class="value green">123.80%</td>
-                                            </tr>
-                                          </table>
-                                      </td>
-                                    </tr>
-                            </table>
-                        </td>                        
-                    </tr>                    
-                </table>
+                          </table>
+                      </td>
+                  </tr>
+ -->
+            </table>
              </div>
         </div>
     </div>
@@ -361,10 +275,6 @@ Reports
 <script src="{% static 'js/reports.js' %}"></script>
 <script src="{% static 'js/chart.js' %}"></script>
 <script type="text/javascript">
-// date picker
-  $(function() {
-      ( "#datepickerFrom, #datepickerTo" ).datepicker();
-    });
 google.load("visualization", "1", {packages:["corechart"]});
 </script>
 {% endblock main_js %}
