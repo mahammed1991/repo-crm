@@ -3,11 +3,12 @@ import os
 import mimetypes
 from datetime import datetime, date
 from leads.models import Leads, RegalixTeams
-from lib.helpers import (get_week_start_end_days, first_day_of_month,
+from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
                          last_day_of_month, date_range_by_quarter, dsum,
-                         get_previous_month_start_end_days, get_weeks_in_quarter_to_date)
+                         get_previous_month_start_end_days, get_weeks_in_quarter_to_date, is_manager)
 from django.conf import settings
 from django.http import HttpResponse
+import time
 
 
 class ReportService(object):
@@ -192,8 +193,8 @@ class ReportService(object):
         lead_status_dict = settings.LEAD_STATUS_DICT
         total_leads = 0
         for key in lead_status_dict.keys():
-                leads_status_summary[key] = len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
-                total_leads += len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
+            leads_status_summary[key] = len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
+            total_leads += len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
 
         leads_status_summary['total_leads'] = total_leads
         lead_status_tat = float(leads_status_summary['Implemented']) / total_leads if leads_status_summary['Implemented'] != 0 else 0
@@ -219,51 +220,25 @@ class ReportService(object):
         return week_on_week_trends
 
     @staticmethod
-    def get_region_program_view_report_details(teams, countries, code_types, start_date, end_date):
+    def get_report_details_for_filters(code_types, teams, countries, start_date, end_date, emails):
 
-        ''' Lead details for program and region view '''
-        ReportService.get_new_code_type_analysis(teams, countries, code_types, start_date, end_date)
-        start_date, end_date = '2014-12-01', '2014-12-30'
-        leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
-                                     created_date__gte=start_date, created_date__lte=end_date)
+        report_detail = dict()
+        if emails and teams and countries:
+            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date,
+                                         lead_owner_email__in=emails)
 
-        lead_ids = [lead.id for lead in leads]
-
-        leads_status_summary = ReportService.get_leads_status_summary(lead_ids)
-
-        leads_status_list = leads_status_summary.keys()
-        if 'TAT' in leads_status_list:
-            leads_status_list.remove('TAT')
-        if 'total_leads' in leads_status_list:
-            leads_status_list.remove('total_leads')
-
-        code_type_analysis_table = list()
-
-        code_type_analysis_chart = {}
-
-        for type_1 in code_types:
-
-            leads = Leads.objects.filter(type_1=type_1, country__in=countries, team__in=teams,
+        elif not emails and teams and countries:
+            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                          created_date__gte=start_date, created_date__lte=end_date)
 
-            code_type_analysis_chart[type_1] = len(leads)
+        elif emails and not teams and not countries:
+            leads = Leads.objects.filter(type_1__in=code_types, lead_owner_email__in=emails,
+                                         created_date__gte=start_date, created_date__lte=end_date)
 
-        for lead_status in leads_status_list:
-            code_type_analysis = {lead_status: ''}
-            leads_per_status = Leads.objects.filter(team__in=teams, country__in=countries, lead_status=lead_status,
-                                                    created_date__gte=start_date, created_date__lte=end_date)
-
-            code_type_analysis[lead_status] = ReportService.get_lead_code_type_analysis(leads_per_status, code_types)
-            code_type_analysis_table.append(code_type_analysis)
-
-        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
-        return leads_status_summary, code_type_analysis_chart, code_type_analysis_table, week_on_week_trends
-
-    @staticmethod
-    def get_new_code_type_analysis(teams, countries, code_types, start_date, end_date):
-
-        leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
-                                     created_date__gte=start_date, created_date__lte=end_date)
+        elif not emails and not teams and countries:
+            leads = Leads.objects.filter(country__in=countries, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date)
 
         lead_ids = [lead.id for lead in leads]
 
@@ -272,16 +247,14 @@ class ReportService(object):
         lead_status_analysis_table = list()
 
         for code_type in code_types:
+
             lead_status_analysis = {code_type: ''}
 
-            leads_per_code_type = Leads.objects.filter(team__in=teams, country__in=countries, type_1=code_type,
-                                                       created_date__gte=start_date, created_date__lte=end_date)
+            leads_per_code_type = Leads.objects.filter(type_1=code_type, id__in=lead_ids)
 
             lead_status_analysis[code_type] = ReportService.get_lead_status_analysis(leads_per_code_type)
 
             lead_status_analysis_table.append(lead_status_analysis)
-
-        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
 
         pie_chart_dict = dict()
 
@@ -290,7 +263,106 @@ class ReportService(object):
             value = cod_typ[key]['Total']
             pie_chart_dict[key] = value
 
-        return leads_status_summary, pie_chart_dict, lead_status_analysis_table, week_on_week_trends
+        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
+
+        report_detail.update({'lead_status_summary': leads_status_summary,
+                              'piechart': pie_chart_dict,
+                              'table_header': settings.LEAD_STATUS_DICT,
+                              'lead_code_type_analysis': lead_status_analysis_table,
+                              'week_on_week_details_in_qtd': week_on_week_trends})
+
+        return report_detail
+
+    @staticmethod
+    def get_program_report_by_locations(teams, countries):
+        """ Get reports for each Programs by all locations """
+        week = int(time.strftime("%W")) + 1
+        year = int(time.strftime("%Y"))
+        week_start_date, week_end_date = get_week_start_end_days(year, week)
+        quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
+        quarter_end_date = datetime.utcnow()
+
+        programs_list = list()
+        for team in teams:
+            team_rec = {'program_name': team, 'locations': [], 'week_total': 0,
+                        'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+            team_rec['week_total'] = len(Leads.objects.filter(team=team, country__in=countries,
+                                                              created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+            team_rec['week_win'] = len(Leads.objects.filter(team=team, country__in=countries, lead_status='Implemented',
+                                                            created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+            team_rec['qtd_total'] = len(Leads.objects.filter(team=team, country__in=countries, lead_status='Implemented',
+                                                             created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+
+            team_rec['qtd_win'] = len(Leads.objects.filter(team=team, country__in=countries, lead_status='Implemented',
+                                                           created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+            for country in countries:
+                country_rec = {'location_name': country, 'program_name': team, 'week_total': 0,
+                               'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+
+                country_rec['week_total'] = len(Leads.objects.filter(team=team, country=country,
+                                                                     created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+                country_rec['week_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
+                                                                   created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+                country_rec['qtd_total'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
+                                                                    created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+
+                country_rec['qtd_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
+                                                                  created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+                team_rec['locations'].append(country_rec)
+            programs_list.append(team_rec)
+
+        return programs_list
+
+    @staticmethod
+    def get_region_report_by_program(countries, teams):
+        """ Get reports for each Programs by all locations """
+        week = int(time.strftime("%W")) + 1
+        year = int(time.strftime("%Y"))
+        week_start_date, week_end_date = get_week_start_end_days(year, week)
+        quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
+        quarter_end_date = datetime.utcnow()
+
+        region_report_list = list()
+
+        for country in countries:
+            loc_rec = {'location_name': country, 'programs': [], 'week_total': 0,
+                       'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+
+            loc_rec['week_total'] = len(Leads.objects.filter(country=country, team__in=teams,
+                                                             created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+            loc_rec['week_win'] = len(Leads.objects.filter(country=country, team__in=teams, lead_status='Implemented',
+                                                           created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+            loc_rec['qtd_total'] = len(Leads.objects.filter(country=country, team__in=teams, lead_status='Implemented',
+                                                            created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+
+            loc_rec['qtd_win'] = len(Leads.objects.filter(country=country, team__in=teams, lead_status='Implemented',
+                                                          created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+            for team in teams:
+                team_rec = {'team_name': team, 'location_name': country, 'week_total': 0,
+                            'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+
+                team_rec['week_total'] = len(Leads.objects.filter(team=team, country=country,
+                                                                  created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+                team_rec['week_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
+                                                                created_date__gte=week_start_date, created_date__lte=week_end_date))
+
+                team_rec['qtd_total'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
+                                                                 created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+
+                team_rec['qtd_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
+                                                               created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+                loc_rec['programs'].append(team_rec)
+
+            region_report_list.append(loc_rec)
+
+        return region_report_list
 
     @staticmethod
     def get_average_tat_for_leads(leads):
