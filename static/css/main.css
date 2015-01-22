@@ -149,6 +149,10 @@ html, body {
 .live-transfer {
 	margin-left: 25px;
 }
+.live-transfer img {
+	width:26px;
+	height:14px;
+}
 .dropdown-menu img {
 	margin-right: 5px;
 }
@@ -404,6 +408,7 @@ html, body {
 }
 .notifications .container-fluid {
 	max-width:970px;
+	margin-bottom: 0;
 }
 .container-fluid {
 	max-width: 1280px;
@@ -484,11 +489,15 @@ h3 {
 	margin: 20px 0 5px;
 }
 .footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 61px;
 	color: #8b8b8b;
 	font-size: 12px;
 	text-align: center;
 	background: #333;
-	padding: 10px 0;
+	line-height: 61px;
 }
 .footer ul {
 	padding: 0;
@@ -569,7 +578,7 @@ h3 {
 	list-style: none;
 	text-align: left;
 	border: 1px solid #ccc;
-	padding: 10px 20px;
+	padding: 10px 15px;
 	min-height: 125px;
 }
 .bxslider li.resources li {
@@ -585,8 +594,9 @@ h3 {
 	padding: 5px 0;
 	display: block;
 	font-size: 13px;
-	text-indent: -8px;
-	padding-left: 15px;
+	padding-left: 20px;
+	background:url(../images/google-doc-icon.png) no-repeat 0 6px;
+	background-size:13px 16px;
 }
 a {
 	color: #2763c9;
@@ -613,12 +623,6 @@ html {
 	position: relative;
 	min-height: 100%;
 	padding-bottom: 61px;
-}
-footer {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	height: 61px;
 }
 .navbar-default .navbar-nav li a.active {
 	color: #fff;
@@ -1134,8 +1138,12 @@ p {
 	display: block;
 }
 .trans {
-	transition: all ease 1s;
-	-webkit-transition: all ease 1s;
+	transition: all ease .5s;
+	-webkit-transition: all ease .5s;
+}
+.slick-list {
+	transition: all ease .5s;
+	-webkit-transition: all ease .5s;
 }
 .fixed-table {
 	width: 100%;
@@ -1225,7 +1233,7 @@ form label {
 .slick-slider {
 	margin-bottom:0;
 }
-.slick-prev, .slick-next {
+.slick-prev, .slick-next, .slick-dots {
 	display:none !important;
 }
 .fdk-status {
@@ -1398,8 +1406,8 @@ form label {
 	margin:20px 0 30px;
 }
 .profile-img img {
-	width:154px;
-	height:154px;
+	width:150px;
+	height:150px;
 	border-radius:50%;
 	margin-top:20px;
 }
@@ -1472,7 +1480,71 @@ form label {
 .login.auth .std-btn {
 	margin-top:30px;
 }
+.resources.main .sub-title {
+	line-height:150px;
+	font-size:18px;
+	font-family:'robotoblack';
+	height:150px;
+}
+.resources.main .capabilities .sub-title {
+	background:url(../images/capabilities-bg-main.jpg) no-repeat center top;
+	background-size:cover;	
+}
+.resources.main .best-practices .sub-title {
+	background:url(../images/best-practices-bg-main.jpg) no-repeat center top;
+	background-size:cover;
+}
+.resources.main .faq .sub-title {
+	background:url(../images/faq-bg-main.jpg) no-repeat center top;
+	background-size:cover;
+	
+}
+.resources.main li a {
+	font-size:14px;
+	background:url(../images/google-doc-icon.png) no-repeat 0 4px;
+	padding-left:30px;
+	text-indent:inherit;
+}
+ul, ol {
+	padding:0;
+	margin:0;
+}
+ul li, ol li {
+	list-style:none;	
+}
+.resources.main ul {
+	padding:20px 25px;
+	border:1px solid #ccc;
+	min-height:145px;
+	margin-bottom:30px;
+}
+.resources.main ul  li + li {
+	margin-top:7px;
+}
+.chart {
+	height: 111px;
+	position: relative;;
+}
 
+.testimonials .owl-carousel {
+	padding-left:265px;
+	padding-right:60px;
+	background:url(../images/good-job.jpg) no-repeat 71px 10px;
+	min-height:160px;
+}
+.owl-theme .owl-controls {
+	text-align:left;
+	padding-left:5px;
+}
+.report-chart-lbl {
+	position:absolute;
+	z-index:999;
+	width: 100%;
+	text-align: center;
+	top: 30%;
+	text-transform: uppercase;
+	font-size: 12px;
+}
 
 
 
@@ -1704,7 +1776,7 @@ tr.table_bg {
 	color: #333333;
 	height: 55px;
 }
-.table thead tr th {
+.table tr th {
 	vertical-align: middle;
 	background:#eee;
 	font-size: 12px;
@@ -1712,7 +1784,7 @@ tr.table_bg {
 	font-weight: bold;
 	color: #333333;
 }
-.status-table thead tr:nth-child(odd) {
+.status-table tr:nth-child(odd) {
 	font-weight: normal;
 	height: 91px;
 }
@@ -1757,11 +1829,16 @@ tr.table_bg {
 .action-item + .action-item {
 	margin-left:10px;
 }
-.table thead tr td {
+.table tr th {
+	background: #eee !important;
+	vertical-align: middle !important;
+}
+.table tr td {
 	vertical-align: middle;
 	border: 1px solid #cccccc;
 	text-align: center;
 	font-size: 12px;
+	vertical-align: middle !important;
 }
 img.center-block {
 	margin-bottom: 130px;
@@ -1773,7 +1850,7 @@ i.fa.fa-comment {
 	text-align: center;
 	color: #109d59;
 }
-.table thead tr td a {
+.table tr td a {
 	text-decoration: none;
 }
 .text_break {
@@ -1796,8 +1873,8 @@ i.fa.fa-comment {
 	padding:15px;
 	height:inherit;
 	overflow:visible;
-	top:10px;
-	left:100%;
+	top:30px;
+	left:69px;
 	box-shadow: 0 0 20px rgba(0,0,0,.3);
 	word-break:break-word;
 	display:none;	
@@ -2022,14 +2099,27 @@ i.fa.fa-comment {
 	.country-pick {
 		margin-bottom:20px;
 	}
+	.resources.main ul {
+		min-height:170px;
+	}
+	
 }
 @media (min-width: 768px) {
 	.bx-wrapper img {
 		max-width:80%;
 	}
+	.bxslider li.reports .row {
+		max-width: 550px;
+	}
 }
 
 @media (max-width: 767px) {
+	
+	.testimonials .owl-carousel {
+		padding-left:200px;
+		padding-right:30px;
+		background:url(../images/good-job.jpg) no-repeat 30px 10px;
+	}	
 	.navbar-nav .notification.open .dropdown-menu, .navbar-nav .user-area.open .dropdown-menu, .navbar-nav.live-transfer .open .dropdown-menu {
 		position: absolute;
 		float: left;
@@ -2200,6 +2290,9 @@ i.fa.fa-comment {
 		width:100%;
 		text-align:left !important;
 	}
+	.chart {
+		height:90px;
+	}
 }
 
 @media screen and (min-width: 600px) {
@@ -2209,21 +2302,35 @@ i.fa.fa-comment {
 	}
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 600px) {	
+	.testimonials .owl-carousel {
+		padding:0;	
+		background:none;
+		min-height:inherit;	
+		margin-top:-20px;
+	}
 	.capabilities, .best-practices, .faq {
 		padding-left:10px;
 		padding-right:10px;
+	}
+	.main .capabilities, .main .best-practices, .main .faq {
+		padding-left:15px;
+		padding-right:15px;
 	}
 	.feedback-comment {
 		background-position:0 10px;
 		padding-top:30px !important;
 	}
-	.feedback-auth {
+  .feedback-auth {
 		padding-right:0 !important;
 	}
 	.login h1 {
 		font-size:23px;
 	}
+	.resources.main ul	{
+		min-height:207px;
+	}
+	
 	
 }
 @media (max-width: 599px) {
@@ -2273,6 +2380,9 @@ i.fa.fa-comment {
 	.banner-content .col-md-3 {
 		width:25%;
 		float:left;
+	}
+	.resources.main ul {
+		min-height:inherit;
 	}
 }
 
@@ -2329,6 +2439,14 @@ i.fa.fa-comment {
 	.profile-page .form-control {
 		width:inherit;
 	}
+	.bxslider li.resources .row {
+		margin-left:-20px;
+		margin-right:-20px;
+	}
+	.resources li a {
+		background:none;
+		padding-left:0;
+	}
 	
 }
 
@@ -2372,7 +2490,7 @@ i.fa.fa-comment {
 		padding: 5px 10px;
 	}
 	.resources li a {
-		padding: 3px 0 3px 15px;
+		padding: 3px 0 3px 0;
 	}
 	.bxslider .reports .col-md-4 {
 		display: inline-block;
@@ -2397,9 +2515,14 @@ i.fa.fa-comment {
 	.feedback button {
 		margin-top:0;
 	}
+	.bxslider li.resources .row {
+		margin-left:0;
+		margin-right:0px;
+	}
 	
-}
-@media (max-width: 400px) {
+/*}
+@media (max-width: 400px) {*/
+
 	.team-slide {
 		width: 100%;
 		margin-right: 0;

@@ -79,18 +79,12 @@ def main_home(request):
         question['last_activity_at'] = q.last_activity_at
         question_list.append(question)
 
-    # List all Locations/Country
-    locations = Location.objects.exclude(flag_image__isnull=True).filter()
-    request.session['locations'] = locations
-
-    # Notifications list
-    notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
-    request.session['notifications'] = notifications
-
     # Leads Current Quarter Summary
     # Get Leads report for Current Quarter Summary
     # by default should be current Quarter
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    current_quarter = ReportService.get_current_quarter(datetime.utcnow())
+    title = "Leads %s Summary - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
     report_summary = dict()
 
     total_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date))
@@ -139,9 +133,9 @@ def main_home(request):
     # feedback summary end here
 
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                               'user_profile': user_profile, 'question_list': question_list, 'locations': locations,
-											   'top_performer': top_performer, 'report_summary': report_summary,
-                                               'feedback_list': feedback_list, 'notifications': notifications})
+                                               'user_profile': user_profile, 'question_list': question_list,
+                                               'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
+                                               'feedback_list': feedback_list})
 
 
 def get_top_performer_list(current_date):
@@ -357,7 +351,7 @@ def create_feedback(request, lead_id=None):
             feedback_details.attachment = request.FILES['attachment_name']
 
         feedback_details.save()
-        feedback_details = notify_feedback_activity(request, feedback_details)
+        # feedback_details = notify_feedback_activity(request, feedback_details)
 
         return redirect('main.views.list_feedback')
     return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations, 'programs': programs, 'lead': lead})
@@ -461,7 +455,7 @@ def resolve_feedback(request, id):
     feedback.resolved_by = request.user
     feedback.resolved_date = datetime.utcnow()
 
-    notify_feedback_activity(request, feedback, is_resolved=True)
+    # notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -476,7 +470,7 @@ def reopen_feedback(request, id):
     feedback.resolved_by = request.user
     feedback.resolved_date = datetime.utcnow()
 
-    notify_feedback_activity(request, feedback, is_resolved=True)
+    # notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -496,7 +490,7 @@ def comment_feedback(request, id):
 
     feedback.status = 'IN PROGRESS'
 
-    notify_feedback_activity(request, feedback, comment)
+    # notify_feedback_activity(request, feedback, comment)
     feedback.save()
 
     return redirect('main.views.view_feedback', id=id)
@@ -527,3 +521,40 @@ def get_contacts(request):
 @login_required
 def resources(request):
     return render(request, 'main/resources.html')
+
+
+@login_required
+def get_inbound_locations(request):
+    """ Get all In-Bound Locations """
+    locations = Location.objects.exclude(phone__isnull=True).filter()
+    location = list()
+    for loc in locations:
+        loc_dict = dict()
+        loc_dict['id'] = loc.id
+        loc_dict['name'] = loc.location_name
+        loc_dict['phone'] = loc.phone
+        loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name
+        location.append(loc_dict)
+
+    user_loc = {'loc_name': request.user.profile.location.location_name,
+                'loc_id': request.user.profile.location.id,
+                'loc_phone': request.user.profile.location.phone,
+                'loc_flag': settings.MEDIA_URL + '' + request.user.profile.location.flag_image.name,
+                }
+    return HttpResponse(dumps({'location': location, 'user_loc': user_loc}), content_type='application/json')
+
+
+@login_required
+def get_notifications(request):
+    """ Get all Notifications """
+    # Notifications list
+    notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+    notification = list()
+    for notif in notifications:
+        notif_dict = dict()
+        notif_dict['id'] = notif.id
+        notif_dict['text'] = notif.text
+        notification.append(notif_dict)
+
+    return HttpResponse(dumps(notification), content_type='application/json')
+
