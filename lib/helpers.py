@@ -9,10 +9,9 @@ import calendar
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from collections import defaultdict
-
-
 from main.models import UserDetails
 from leads.models import Leads
+from django.contrib.auth.models import User
 
 
 def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=False):
@@ -234,3 +233,27 @@ def get_user_profile(user):
         return user_profile
     except ObjectDoesNotExist:
         return None
+
+
+def is_manager(email):
+    # email = 'tkhan@regalix-inc.com'
+    managers_list = UserDetails.objects.filter(user_manager_email=email)
+    if managers_list:
+        return True
+    return False
+
+
+def get_user_list_by_manager(email):
+    """ """
+    users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
+    user_emails = User.objects.filter(id__in=users)
+    user_list = list()
+    for user in user_emails:
+        user_list.append(user.email)
+    return user_list
+
+
+def get_user_under_manager(email):
+    """ """
+    users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
+    return User.objects.filter(id__in=users)
