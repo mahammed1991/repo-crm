@@ -105,7 +105,7 @@ class Timezone(models.Model):
 
 class Location(models.Model):
 
-    def get_flag_image(self, instance, flag_filename):
+    def get_flag_image(instance, flag_filename):
         """ Dynamic location flag image path """
         ext = flag_filename.split('.')[-1]
 
