@@ -1,0 +1,188 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+Regalix Google Portal
+{% endblock title %}
+
+{% block main_css %}
+
+  {% load static %}
+ 
+{% endblock main_css %}
+
+{% block content %}
+
+<!-- content-region -->
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Feedback Form</h1>
+  <form class="lead-form" onsubmit="return validate(this);" action="{% url 'main.views.create_feedback' %}" method="post" name="help-form" enctype="multipart/form-data">
+  {% csrf_token %}
+    <div class="std-sub-title">Feedback Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title" name="title">
+        <select class="form-control" id="feedbackLocation" name="location">
+          <option value=''></option>
+          {% for l in locations %}
+            <option value="{{ l.location_name }}">{{l.location_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+      {% if lead %}
+        <input type="text" class="form-control" id="feedbackCID" placeholder="CID" name="cid" value='{{lead.customer_id}}' disabled>
+      {% else %}
+        <input type="text" class="form-control" id="feedbackCID" placeholder="CID" name="cid">
+      {% endif %}
+        <select class="form-control" id="feedbackType" name="type">
+          <option>Feedback Type</option>
+          <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
+          <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
+          <option value="Communication - Rude rep">Communication - Rude rep</option>
+          <option value="Communication - Unable to understand rep">Communication - Unable to understand rep</option>
+          <option value="Operations - Missed appointments">Operations - Missed appointments</option>
+          <option value="Operations - No follow up">Operations - No follow up</option>
+          <option value="Operations - Incorrect information provided">Operations - Incorrect information provided</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <textarea class="form-control" placeholder="Feedback Description" name="description"></textarea>
+      </div>
+    </div>
+    <div class="std-sub-title">Additional Info (Optional)</div>
+    <div class="row">
+      <div class="col-md-4">
+
+        <input type="text" class="form-control" id="googleAcManager" placeholder="Google Account Manager">
+      </div>
+      {% if lead %}
+
+          <div class="col-md-4">
+            <input type="email" class="form-control" id="lead_owner" placeholder="Feedback to" value='{{lead.lead_owner_email}}' disabled>
+            <input type="hidden" name="lead_owner" value='{{lead.lead_owner_email}}' />
+          </div>
+          <div class="col-md-4">
+            <input type="tel" class="form-control" id="advertiser" placeholder="Name of the Advertiser"  value='{{lead.first_name}}{{lead.last_name}}' disabled >
+            <input type="hidden" name="advertiser" value='{{lead.first_name}}{{lead.last_name}}'>
+          </div>
+      {% else %}
+          <div class="col-md-4">
+            <input type="email" class="form-control" id="lead_owner" placeholder="Feedback to" disabled>
+            <input type="hidden" name="lead_owner"  />
+          </div>
+          <div class="col-md-4">
+            <input type="tel" class="form-control" id="advertiser" placeholder="Name of the Advertiser" disabled >
+            <input type="hidden" name="advertiser">
+          </div>      
+      {% endif %}
+      <div class="col-md-4">
+        <select class="form-control" id="advertiserLanguage" name="language">
+              <option value="English">English</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Spanish">Spanish</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Dutch">Dutch</option>
+              <option value="Russian">Russian</option>
+              <option value="Mandarin">Mandarin</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="advProgram" name='program'>
+          <option value=""></option>
+          {% for p in programs %}
+            <option value="{{ p.id }}">{{p.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+      	<a href="#" class="feedback-docs btn std-btn grayed" name="attachment_name"><input type="file" name="attachment_name"/>Attach File</a>
+      </div>
+    </div>    
+    <div class="std-sub-title shopping-policies">Heads Up!
+    	<div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua?</label>
+          </div>
+    </div>
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed" onclick='window.history.back()'>Cancel</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+<!-- content-region ends --> 
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript">
+    function validate(frm) {
+        if (frm.cid.value == "") {
+            alert("Please Enter Customer ID");
+            frm.cid.focus();
+            return false;
+        }
+        
+        if (frm.title.value == "") {
+            alert("Please Enter Title");
+            frm.title.focus();
+            return false;
+        }
+
+        if (frm.location.value == "0" || frm.location.value == 0) {
+            alert("Please select location");
+            frm.location.focus();
+            return false;
+        }
+
+        if (frm.description.value == "") {
+            alert("Please Enter Description");
+            frm.description.focus();
+            return false;
+        }
+    }
+
+    function setSelectValue (id, val) {
+        document.getElementById(id).value = val;
+    }
+
+    $('input[name=cid]').on('focusout', function(){
+        if(!$(this).val()){
+            alert('Enter CID');
+            $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+        }else{
+            $.ajax({
+                'method': 'GET',
+                'dataType': 'json',
+                'url': "/leads/get-lead/" + $('input[name=cid]').val(),
+                success: function(response){
+                    if(response['status'] == 'FAILED'){
+                        alert('Lead for Selected CID not available.');
+                        $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                    }else{
+                        $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
+                        $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                        setSelectValue('advProgram', response.details.team_id);
+                        setSelectValue('feedbackLocation', response.details.location);
+                        setSelectValue('googleAcManager', response.details.google_rep_email)
+                        
+                    }
+                },
+                error:function(xhr, status, error){
+                    alert('Something went wrong!. Please check CID');
+                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                }
+            })
+        }
+    });
+</script>
+{% endblock main_js %}

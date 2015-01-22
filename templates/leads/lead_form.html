@@ -1,0 +1,358 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="post">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
+    <input type="hidden" value="00Dd0000000fk18" name="oid">
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <div class="std-sub-title">Google Rep Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" id="team" title="Program Name" name="00Nd0000005XIWB">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment">
+          <select id="service_segment" title="service_segment" class="form-control" name="00Nd0000007e2AF">
+              <option value="">Service Segment</option>
+              <option value="SBA">SBA</option>
+              <option value="HPA">HPA</option>
+              <option value="HPA+">HPA+</option>
+          </select>
+          <input type="text" class="form-control" id="g_case_id" name="00Nd0000007dWIH" title="G Case ID" placeholder="8-8888888888" value="">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="00Nd00000075Crj" id="00Nd00000075Crj" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" name="00Nd00000077r3s" id="00Nd00000077r3s" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="00Nd0000005WYga">
+          <option value="">Program Location</option>
+         {% for location in locations %}
+            <option value='{{location.location_name}}' location_id="{{location.id}}">{{location.location_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_name" placeholder="Advertiser Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="aemail" name="00Nd0000005WcNw" placeholder="Advertiser Email">
+      </div>
+      <div class="col-md-4">
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+            </td>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="cid" name="00Nd0000005WYgV" placeholder="Customer ID">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_location" placeholder="Advertiser Location">
+      </div>
+      <div class="col-md-4" id='tr_language'>
+        <select class="form-control" id="language" title="language" name="00Nd0000007clUn">
+          <option value="">Select Language</option>
+          <option value="English">English</option>
+          <option value="Dutch">Dutch</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select title="Time Zone" class="form-control" id="tzone" name="00Nd0000005WYhT">
+          <option value="">Select Time Zone</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="tag_datepick_nApplicable" id="appointmentCheck" value="">
+            Don’t have an appointment </label>
+        </div>
+      </div>
+    </div>
+    <div id="appointment">
+      <div class="form-heading">Appointment Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contact_person_role" name="contact_person_role" placeholder="Conatct Person Role">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+        </div>
+      </div>
+    </div>
+    <div class="row webmasterCheck">
+        <div id="web-dum1" class="col-md-4">
+        </div>
+        <div id="web-dum2" class="col-md-4"> </div>
+        <div class="col-md-4">
+          <div class="checkbox">
+            <label>
+              <input id="webmasterCheck" type="checkbox" value="">
+              Don’t have a Webmaster </label>
+          </div>
+        </div>
+      </div>
+    <div id="webmaster">
+      <div class="form-heading">Webmaster Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="fopt" name="00Nd0000005WYgp" placeholder="Contact Person Name">
+          <input type="hidden" class="form-control" id="lopt" name="00Nd0000005WYgu">
+        </div>
+        <div class="col-md-4">
+          <select title="Conatct Person Role" class="form-control" name="00Nd0000005WayW" id="00Nd0000005WayW">
+              <option value="">Conatct Person Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+         <input type="text" class="form-control" id="popt" name="00Nd0000005WYgz" placeholder="888-888-8888">
+        </div>
+      </div>
+    </div>
+    <div class="lead-type">
+      <label>Please select the type of lead you want to submit</label>
+      <a class="btn std-btn tag-impl" id="tagImplementation"><div class="check-icon" id="tagImplementationBtn"><i class="fa fa-check"></i></div>Tag Implementation</a>
+      <span>And/Or</span>
+      <a class="btn std-btn shopping-setup" id="shoppingSetup"><div class="check-icon" id="shoppingSetupBtn"><i class="fa fa-check"></i></div>Shopping Campaign Setup</a>
+    </div>
+    <div class="tasks" id="tasks">
+        <div class="task" id="task_1">
+          <div class="std-sub-title">Code Type Info</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype1">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url1" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code1" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment1" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 2 ################################################### -->
+        <a id="removeTask_2" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_2" style="display:none;">
+          <div class="form-heading">Code Type Info (2)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype2">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url2" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code2" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment2" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_2" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 3 ################################################### -->
+        <a id="removeTask_3" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_3" style="display:none;">
+          <div class="form-heading">Code Type Info (3)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_3" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 4 ################################################### -->
+        <a id="removeTask_4" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_4" style="display:none;">
+          <div class="form-heading">Code Type Info (4)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_4" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 5 ################################################### -->
+        <a id="removeTask_5" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_5" style="display:none;">
+          <div class="form-heading">Code Type Info (5)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_5" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+    </div>
+    <div id="shoppingInfo">
+      <div class="std-sub-title">Shopping Campaign Info</div>
+      <div class="row">
+        <div class="col-md-4">
+        <input id="rbid" name="00Nd00000077T9y" class="form-control" type="text" placeholder="Recommended Bid">
+        <input id="rbidmodifier" name="00Nd00000077TA8" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="rbudget" class="form-control" name="00Nd00000077TA3" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping-url" name="" placeholder="URL">
+        </div>
+        <div class="col-md-4">
+          <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="std-sub-title shopping-policies">Heads Up!
+    	<div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Have you ensured that the website meets the Google Shopping Policies?</label>
+          </div>
+    </div>
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed">Reset</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
+<script type="text/javascript">
+  var userTeam = "{{user.profile.team.team_name|safe}}"
+  if(userTeam){
+    $('#team').val(userTeam);
+  }
+  var userLocation = "{{user.profile.location.location_name|safe}}"
+  if(userLocation){
+    $('#country').val(userLocation);
+    loc = document.getElementById('country');
+    changetime(loc.options[loc.selectedIndex]);
+  }
+
+  $('#team').change(function(){
+    var selectedTeam = $(this).val();
+    if (selectedTeam == 'Services'){
+      $(".tr_service_segment").show();
+      $('#g_case_id').show();
+      $("#service_segment").hide();
+    }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+      $("#service_segment").show();
+      $("#service_segment").val('');
+      $(".tr_service_segment").show();
+      $('#g_case_id').hide();
+    }else{
+      $(".tr_service_segment").hide();
+      $('#g_case_id').hide();
+    }
+  });
+
+  $('#team').trigger("change");
+
+  $('#country').change(function(){
+    var selectedTeam = $(this).val();
+    if( selectedTeam == 'Nordic(English)' || selectedTeam == 'Netherlands(English)' ){
+      $("#language").val('English');
+    }else if(selectedTeam == 'Nordic(Dutch)' || selectedTeam == 'Netherlands(Dutch)'){
+      $("#language").val('Dutch');
+    }else{
+      $("#language").val('');
+    }
+  });
+  
+  $('#setup_lead_check').click(function() {
+    $('#setup_lead_form').toggle();
+  })
+
+  function submitbtn(ths){
+      $(ths).submit();
+  }
+  
+</script>
+{% endblock main_js %}
