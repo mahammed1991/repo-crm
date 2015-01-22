@@ -1,0 +1,280 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Reports
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+{% block content %}
+<div class="wrapper">
+<!-- content-region -->
+<section class="content-region inner-page-wide reports-page">
+  <div class="container-fluid">
+  <h1>Reports</h1>
+  <div class="row text-center report-category">
+      <div class="col-md-3 centered">
+        <select class="form-control" id="filter_report_type">
+          <option value="">Choose Report Type</option>
+          <option value="leadreport_individualRep">Individual Rep</option>
+          {% if manager %}
+            <option value="leadreport_teamLead">Team Lead </option>
+          {% endif %}
+          <option value="leadreport_programview">Program View</option>
+          <option value="leadreport_regionview">Region View</option>
+          <!-- <option value="leadreport_deadLeads">Dead Leads</option>
+          <option value="leadreport_deltaReports">Delta Reports</option>
+          <option value="leadreport_exportRawData">Export Raw Data</option> -->
+        </select>
+        <div class="country-pick" id="filter_team" style="display:none;">
+          <div class="checkbox" id="team_checks">
+              <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+              {% for team in teams %}
+                  <label>
+                    {% if team == 'Other'%}
+                      <input type="checkbox" value=""> {{team}} 
+                    {% else %}
+                      <input type="checkbox" value="{{team}}"> {{team}} 
+                    {% endif %}
+                  </label>
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% if manager %}
+        <div id="filter_team_members"  class="col-md-3  centered" style="display:none;">
+          <div class="country-pick">
+            <div class="checkbox" id="members_checks">
+              <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                {% for member in team_members %}
+                    <label>
+                        <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}} 
+                    </label>
+                {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <div id="filter_region" class="col-md-3 centered" style="display:none;">
+        <select  class="form-control">
+          <option value="">Choose Region</option>
+          <option value="all">All Region</option>
+          {% for team in rgx_teams %}
+            <option value="{{team.id}}">{{team}}</option>
+          {% endfor %}
+         </select>
+         <div class="country-pick"  id="filter_country" style="display:none;">
+          <div class="checkbox" id="country_checks">
+          <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                
+          </div>
+        </div>
+      </div>
+      <!-- <div id="filter_country" class="col-md-3 centered" style="display:none;">
+        
+      </div> -->
+      
+      <div class="col-md-3 centered">
+        <select name="type" id="filter_timeline" style="display:block;" class="form-control">
+            <option value="">Choose Timeline</option>
+            <option value="this_week">This Week</option>
+            <option value="last_week">Last Week</option>
+            <option value="this_month">This Month</option>
+            <option value="last_month">Last Month</option>
+            <option value="this_quarter">This Quarter</option>
+            <option value="dateRange">Date Range</option>
+        </select>
+      </div>      
+      <div class="col-md-3 centered date-range" id="filter_dateRange" style="display:none;">
+        <input id="datepickerFrom" type="text" class="form-control date-from" placeholder="From">
+        <i class="fa fa-calendar"></i>
+        <input id="datepickerTo" type="text" class="form-control date-to" placeholder="To">
+        <i class="fa fa-calendar"></i>
+      </div>
+      
+    </div>
+    <div class="btn-row">
+      <button class="btn std-btn" id='get_report'>View Report</button>
+    </div>
+    <div class="auth-user-info" id="auth_user_info">
+      <label>LDAP:</label>
+        <div class="value"><input type="text" class="form-control" id="ldap" value="mathew@"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
+        <label class="manager">Manager:</label>
+        <div class="value">John</div>
+        <label>Program:</label>
+        <div class="value">Newbie+</div>
+        <label>Region:</label>
+        <div class="value">APAC</div>
+    </div>    
+    
+    <h2>Lead Status Summary</h2>
+    <div class="report-section c">      
+        <div class="report-section-content">
+          <div class="report-img" id="columnchart" style="width: 700px; height: 400px;">
+            </div>
+            <div class="report-data">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="lead_status_table">
+                  
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Code Type Analysis</h2>
+    <div class="report-section">      
+        <div class="report-section-content">
+          <div class="report-img" id="piechart" style="width: 720px; height: 400px;">
+            </div>
+            <div class="report-data" style="margin-left:20px !important;">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table">
+                    
+                </table>
+            </div>
+              <div class="report-data" style="margin-left:20px !important;">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table2">
+                    
+                </table>
+              </div>
+        </div>
+    </div>
+    
+
+    <h2>Week on Week Trends (QTD)</h2>
+    <div class="report-section wowt">      
+        <div class="report-section-content">
+          <div id="linechart" style="width: 635px; height: 300px;float: left;">
+            </div>
+            <div class="report-data">
+              <table class="report-table col-3" cellpadding="0" cellspacing="0" border="0" height='300px'id="line_chart_table">
+                </table>
+            </div>
+
+            <div class="report-data fixed-table">
+            <table class="report-table full-width" cellpadding="0" cellspacing="0" border="0" id="view_reports">
+
+           <!--  <tr>
+              <td colspan="8" class="no-pad no-bor">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
+                  <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
+                    <td class="lbl relative">Agency Gold<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                  </tr>
+
+                    <tr>
+                      <td colspan="8" class="no-pad no-bor">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
+                        <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
+                          <td class="lbl relative">Agency Hi Touch<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                        </tr>
+
+                        <tr id="accordion1" class="collapse">
+                          <td colspan="8" class="no-pad no-bor">
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                              <tr>
+                                <td class="lbl">AU/NZ</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                              </tr>
+
+                              <tr id="accordion1" class="collapse">
+                              <td colspan="8" class="no-pad no-bor">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                                    <tr>
+                                      <td class="lbl">India</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                    </tr>
+
+                                    <tr id="accordion1" class="collapse">
+                                      <td colspan="8" class="no-pad no-bor">
+                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                                          <tr>
+                                            <td class="lbl">SEA</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                          </tr>
+                                        </table>
+                                      </td>
+                                    </tr>
+                          </table>
+                      </td>
+                  </tr>
+ -->
+            </table>
+             </div>
+        </div>
+    </div>
+
+    <div class="report-download">
+      <p>Please select the fields you want to download</p>
+          <div class="checkbox">
+                <label>
+                  <input type="checkbox"> CID
+                </label>
+                <label>
+                  <input type="checkbox"> Agent Name
+                </label>
+                <label>
+                  <input type="checkbox"> Google Rep
+                </label>
+                <label>
+                  <input type="checkbox"> Manager Name
+                </label>
+                <label>
+                  <input type="checkbox"> Region
+                </label>
+                <label>
+                  <input type="checkbox"> Program
+                </label>
+                <label>
+                  <input type="checkbox"> Code Type
+                </label>
+                <label>
+                  <input type="checkbox"> Lead Status
+                </label>
+                <label>
+                  <input type="checkbox"> Comments
+                </label>
+                <label>
+                  <input type="checkbox"> Date of Installation
+                </label>
+                <label>
+                  <input type="checkbox"> Date of Submission
+                </label>
+          </div>
+          <div class="btn-row">
+            <button class="btn std-btn">Download Report</button>
+          </div>
+    </div>
+  
+  </div>
+</section>
+<!-- content-region ends --> 
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="{% static 'js/reports.js' %}"></script>
+<script src="{% static 'js/chart.js' %}"></script>
+<script type="text/javascript">
+google.load("visualization", "1", {packages:["corechart"]});
+</script>
+{% endblock main_js %}
