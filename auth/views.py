@@ -35,8 +35,8 @@ def post_login(request):
         obj.profile_image_url = request.session['profile_image'] if 'profile_image' in request.session else ''
         obj.save()
 
-        UserLoginAction(user=obj, ip=request.META['REMOTE_ADDR']).save()
-        UserJoinsAction(user=obj).save()
+        # UserLoginAction(user=obj, ip=request.META['REMOTE_ADDR']).save()
+        # UserJoinsAction(user=obj).save()
     return redirect('main.views.home')
 
 
