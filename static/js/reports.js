@@ -72,7 +72,7 @@ $("#filter_report_type").change(function() {
   }else if(report_type == 'leadreport_individualRep'){
       hideFilters();
     $("#filter_report_type").show();
-    $("#auth_user_info").show();
+    $("#auth_user_info").hide();
     $("#filter_team_members").hide();
 
   }else if(report_type == 'leadreport_teamLead'){
@@ -200,7 +200,6 @@ $("#get_report").click(function(){
         return false;
     }else{
       // Ajax call for get reports
-      console.log("Report ====== datastring"+ dataString);
       callAjax(dataString);
     }
 });
@@ -217,8 +216,14 @@ function callAjax(dataString){
             console.log(data);
             report = data['reports'];
             if (data['report_type'] == 'leadreport_programview'){
+              $('#view_reports').empty();
               window.report_type = 'leadreport_programview';
               createProgramByCountry(report['program_report']);
+            }
+            else if(data['report_type'] == 'leadreport_regionview'){
+              $('#view_reports').empty();
+              window.report_type = 'leadreport_regionview';
+              createCountryByProgram(report['region_report']);
             }
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
@@ -282,15 +287,12 @@ function displayCountry(countries){
   for( i=0; i<countries.length; i++){
       var id = countries[i]['id'];
       var name = countries[i]['name'];
-      //$("#filter_country").append('<option value="'+ id+ '">' + name +'</option>');
       $("#filter_country .checkbox").append('<label><input type="checkbox" value="' + id + '">' + name + '</label>');
   }
   $("#filter_country").show();
 }
 
 function showReport(reports){
-
-  console.log(reports);
 
   if(window.report_type == 'default_report'){
     draw_and_display_tables(reports);
@@ -347,7 +349,6 @@ function drawPieChart(details){
 }
 
 function drawLineChart(details){
-  console.log(details)
 
   var lineChart_datatable = [['Weeks', 'Leads Won', 'Leads Submitted']]
 
@@ -427,8 +428,6 @@ function draw_and_display_tables(reports){
 }
 
 function newTable(firstrow, details){
-  console.log(details)
-  console.log(firstrow);
   $("#code_type_table").empty();
 
   header = '<tr><td>Code Types/Lead Status</td>'
@@ -500,12 +499,50 @@ function createProgramByCountry(programs){
                     '</tr>'
       }
       inner_rows += "</table></td></tr>";
-      console.log(inner_rows, "inner_rows");
       rows += inner_rows;
   }
   total_rows += rows + "</table></td></tr>";
   $("#view_reports").append(total_rows);
 }
+
+function createCountryByProgram(programs){
+  createTableHeader();
+
+  total_rows  = "";
+  rows = "";
+  for(i=0; i<programs.length; i++){
+      rows += '<tr><td colspan="8" class="no-pad no-bor">' +
+              '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
+              '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                      '<td class="lbl relative">'+ programs[i]['location_name']+ '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                      '<td class="value">'+ programs[i]['week_total'] +'</td>'+
+                      '<td class="value">' + programs[i]['week_win'] + '</td>'+
+                      '<td class="value">'+ programs[i]['qtd_total'] +'</td>'+
+                      '<td class="value">' + programs[i]['qtd_win'] + '</td>'+
+                  '</tr>'
+
+      inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
+                      '<td colspan="8" class="no-pad no-bor">'+
+                          '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+
+      for(j=0; j<programs[i]['programs'].length; j++){
+        loc = programs[i]['programs']
+        inner_rows += '<tr>'+
+                        '<td class="lbl">' + loc[j]['team_name'] +'</td>'+
+                        '<td class="value">' + loc[j]['week_total'] +'</td>'+
+                        '<td class="value">' + loc[j]['week_win'] +'</td>'+
+                        '<td class="value">' + loc[j]['qtd_total'] +'</td>' +
+                        '<td class="value">' + loc[j]['qtd_win'] +'</td>'+
+                    '</tr>'
+      }
+      inner_rows += "</table></td></tr>";
+      rows += inner_rows;
+  }
+  total_rows += rows + "</table></td></tr>";
+  $("#view_reports").append(total_rows);
+}
+
+
 
 function createTableHeader(){
 

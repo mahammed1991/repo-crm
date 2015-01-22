@@ -140,7 +140,8 @@ def get_new_reports(request):
             report_detail['program_report'] = program_report
         elif report_type == 'leadreport_regionview':
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
-            #region_details = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+            region_report = ReportService.get_region_report_by_program(countries, teams)
+            report_detail['region_report'] = region_report
         else:
             pass
 
