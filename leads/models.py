@@ -116,7 +116,7 @@ class Location(models.Model):
         return os.path.join('country_flag/', filename)
 
     location_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=50, null=True, default=None)
+    phone = models.CharField(max_length=50, null=True, default=None, blank=True)
     time_zone = models.ManyToManyField(Timezone)
     flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100)
 
