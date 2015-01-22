@@ -533,14 +533,21 @@ def get_inbound_locations(request):
         loc_dict['id'] = loc.id
         loc_dict['name'] = loc.location_name
         loc_dict['phone'] = loc.phone
-        loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name
+        loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
         location.append(loc_dict)
 
-    user_loc = {'loc_name': request.user.profile.location.location_name,
-                'loc_id': request.user.profile.location.id,
-                'loc_phone': request.user.profile.location.phone,
-                'loc_flag': settings.MEDIA_URL + '' + request.user.profile.location.flag_image.name,
-                }
+    if request.user.profile.location:
+        user_loc = {'loc_name': request.user.profile.location.location_name,
+                    'loc_id': request.user.profile.location.id,
+                    'loc_phone': request.user.profile.location.phone,
+                    'loc_flag': settings.MEDIA_URL + '' + request.user.profile.location.flag_image.name if request.user.profile.location.flag_image else "",
+                    }
+    else:
+        user_loc = {'loc_name': '',
+                    'loc_id': '',
+                    'loc_phone': '',
+                    'loc_flag': ''}
+
     return HttpResponse(dumps({'location': location, 'user_loc': user_loc}), content_type='application/json')
 
 
@@ -557,4 +564,3 @@ def get_notifications(request):
         notification.append(notif_dict)
 
     return HttpResponse(dumps(notification), content_type='application/json')
-
