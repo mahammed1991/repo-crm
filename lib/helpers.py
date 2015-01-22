@@ -265,4 +265,10 @@ def get_manager_by_user(email):
     user = User.objects.get(email=email)
     user_profile = UserDetails.objects.get(user_id=user.id)
     return user_profile
+
+def get_user_under_manager(email):
+    """ """
+    users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
+    return User.objects.filter(id__in=users)
+
     

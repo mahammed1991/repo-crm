@@ -1,37 +1,86 @@
 $(document).ready(function() {
 
-  $('#dropdown_container_location').hide();
 /* ===================== Default Report Starts Here ============= */
   // Get default report while loading template
-  callAjax({'report_type': 'default_report', 'report_timeline': ['today']})
+  callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'teams': ['all'], 'countries': ['all']})
 /* ===================== Default Report Ends Here ============= */
 
 // date picker
-  $(function() {
-    $( "#datepickerFrom, #datepickerTo" ).datepicker();
+  /*$(function() {
+    $("#datepickerFrom, #datepickerTo").datepicker();
+  });*/
+
+ $(function() {
+    $("#datepickerFrom").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "M dd, yy",
+      onClose : function(selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+      }
+    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "M dd, yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      }
+    });
   });
+
+
+  $(document).on('click', '.checkbox_select_all', function(e) {
+      is_checked = $(this).is(":checked");
+      id = $(this).closest('.checkbox').attr('id');
+      $("#"+id+" label input").each(function(){
+        if(is_checked){
+          $(this).prop('checked', 'checked');  
+        }else{
+          $(this).prop('checked', false);
+        }
+      });
+    });
+
 });
 
 /*=========== Changes in report type ===============*/
 $("#filter_report_type").change(function() {
+
   var report_type = $(this).val();
+
   setDefaultDropdown();
   showFilters();
 
+  $("#filter_country").hide();
+  $("#filter_team_members").hide();
+  //$('#filter_team').hide();
+
   if (report_type == 'leadreport_programview'){
     $("#filter_team").show();
-    $("#filter_region").hide();
-    $("#filter_country").hide();
+    $("#filter_region").show();
+    $("#filter_team_members").hide();
+    //$("#filter_country").hide();
+     $("#auth_user_info").hide();
   }else if (report_type == 'leadreport_regionview'){
-    $("#filter_team").hide();
+    $("#filter_team").show();
     $("#filter_region").show();
-    $("#filter_country").hide();
+     $("#filter_country").hide();
+     $("#auth_user_info").hide();
   }else if(report_type == 'leadreport_individualRep'){
-    hideFilters();
-    $("#filter_region").show();
+      hideFilters();
+    $("#filter_report_type").show();
+    $("#auth_user_info").hide();
+    $("#filter_team_members").hide();
+
   }else if(report_type == 'leadreport_teamLead'){
-    hideFilters();
-    $("#filter_region").show();
+      //callTeamMembers();
+      hideFilters();
+     $("#filter_region").hide();
+     $("#auth_user_info").hide();
+     $("#filter_team_members").show();
   }
 
 });
@@ -49,7 +98,7 @@ $('#filter_timeline').change(function(){
 });
 
 /*=========== Gettin Countries for selected Region ===============*/
-$('#filter_region').change(function(){
+$('#filter_region select').change(function(){
     $("#filter_country").hide();
     var region = $(this).val();
     if(region){
@@ -85,8 +134,8 @@ $("#get_report").click(function(){
         isError = true;
     }
     else if (selectedTimeline == 'dateRange'){
-      var from_date = $("#from").val();
-      var to_date = $("#to").val();
+      var from_date = $("#datepickerFrom").val();
+      var to_date = $("#datepickerTo").val();
 
       // Validate from and to date
       if(from_date == "" || to_date == ""){
@@ -102,21 +151,30 @@ $("#get_report").click(function(){
     }
 
 
+    team_members = [];
+    if ($("#filter_team_members").is(":visible")){
+      $("#filter_team_members label input:checked").each(function(){
+        team_members.push($(this).val());
+      });    
+    }
+
+    dataString['team_members'] = team_members;
+    
     if($('#filter_region').is(':visible')){
-      var selectedRegion = $('#filter_region').val();
+      var selectedRegion = $('#filter_region select').val();
 
       if(!selectedRegion){
       var errMsg = "Please select Region from dropdown list";
         showErrorMessage(errMsg);
         isError = true;
 
-    }else{
+      }
+    else{
       dataString['region'] = selectedRegion;
-
+      }
     }
-    }
 
-     // Get location and team details
+     // Get location and team details 
     var selectedCountries = [];
     if ($("#filter_country:visible")){
       $("#filter_country .checkbox input:checked").each(function(){
@@ -124,13 +182,6 @@ $("#get_report").click(function(){
       });  
     }
     
-    // selectedCountries = $("#filter_country:visible").val();
-    // if (window.locationFlag){
-    //   if(!include(selectedCountries, 'all')){
-    //     selectedCountries.push('all');  
-    //   }
-    //   window.locationFlag = false;
-    // }
     dataString['countries'] = selectedCountries;
 
     var selectedTeam = [];
@@ -141,13 +192,6 @@ $("#get_report").click(function(){
       });  
     }
 
-    // selectedTeam = $("#filter_team:visible").val();
-    // if (window.teamFlag){
-    //   if(!include(selectedTeam, 'all')){
-    //     selectedTeam.push('all');
-    //   }
-    //   window.teamFlag = false;
-    // }
     dataString['team'] = selectedTeam;
 
      console.log(dataString);
@@ -171,6 +215,16 @@ function callAjax(dataString){
         success: function(data) {
             console.log(data);
             report = data['reports'];
+            if (data['report_type'] == 'leadreport_programview'){
+              $('#view_reports').empty();
+              window.report_type = 'leadreport_programview';
+              createProgramByCountry(report['program_report']);
+            }
+            else if(data['report_type'] == 'leadreport_regionview'){
+              $('#view_reports').empty();
+              window.report_type = 'leadreport_regionview';
+              createCountryByProgram(report['region_report']);
+            }
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
             showReport(report);
@@ -182,17 +236,19 @@ function callAjax(dataString){
 
 }
 
-
-
 /*========== hide and show filter for changes in report type=========*/
 function hideFilters(){
-   $('#dropdown_container_region').hide();
-   $('#dropdown_container_team').hide();
+  $('#filter_region').hide();
+  $('#filter_team').hide();
+  $('#filter_country').hide();
+
 }
 
 function showFilters(){
-   $('#dropdown_container_region').show();
-   $('#dropdown_container_team').show();
+  $('#filter_report_type').show();
+  $('#filter_region').show();
+  $('#filter_timeline').show();
+  $('#filter_team').show();
 }
 
 function showErrorMessage(message){
@@ -200,9 +256,8 @@ function showErrorMessage(message){
 }
 
 function setDefaultDropdown(){
-  $("#filter_region").val('');
+  $("#filter_region select").val('');
   $("#filter_team").val('all');
-  //$('#dropdown_container_location').hide();
 }
 
 function get_countries(id){
@@ -228,11 +283,10 @@ function get_countries(id){
 function displayCountry(countries){
   $("#filter_country input").remove();
   $("#filter_country label").remove();
-
+  $("#filter_country .checkbox").append('<label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>')
   for( i=0; i<countries.length; i++){
       var id = countries[i]['id'];
       var name = countries[i]['name'];
-      //$("#filter_country").append('<option value="'+ id+ '">' + name +'</option>');
       $("#filter_country .checkbox").append('<label><input type="checkbox" value="' + id + '">' + name + '</label>');
   }
   $("#filter_country").show();
@@ -240,37 +294,20 @@ function displayCountry(countries){
 
 function showReport(reports){
 
-  console.log(reports);
-
   if(window.report_type == 'default_report'){
-    draw_and_display_table(reports);
+    draw_and_display_tables(reports);
   }
   else if(window.report_type == 'leadreport_individualRep'){
-    draw_and_display_table(reports);
+    draw_and_display_tables(reports);
   }
   else if(window.report_type == 'leadreport_teamLead'){
-    draw_and_display_table(reports);
+   draw_and_display_tables(reports);
   }
   else if(window.report_type == 'leadreport_programview'){
-    clearTables()
-    drawColumnChart(reports['lead_status_summary']);
-    displayLeadStatusTable(reports['lead_status_summary']);
-    drawPieChart(reports['piechart']);
-    //drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
-    newTable(reports['table_header'], reports['lead_code_type_analysis'])
-    drawLineChart(reports['week_on_week_details_in_qtd'])
-    displayLineChartTable(reports['week_on_week_details_in_qtd'])
+   draw_and_display_tables(reports);
   }
-
    else if(window.report_type == 'leadreport_regionview'){
-    clearTables()
-    drawColumnChart(reports['lead_status_summary']);
-    displayLeadStatusTable(reports['lead_status_summary']);
-    drawPieChart(reports['piechart']);
-    //drawStatusCodeTypeTable(reports['piechart'], reports['lead_code_type_analysis'])
-    newTable(reports['table_header'], reports['lead_code_type_analysis'])
-    drawLineChart(reports['week_on_week_details_in_qtd'])
-    displayLineChartTable(reports['week_on_week_details_in_qtd'])
+    draw_and_display_tables(reports);
   }
 
 }
@@ -312,7 +349,6 @@ function drawPieChart(details){
 }
 
 function drawLineChart(details){
-  console.log(details)
 
   var lineChart_datatable = [['Weeks', 'Leads Won', 'Leads Submitted']]
 
@@ -375,65 +411,23 @@ function displayLineChartTable(details){
   $("#line_chart_table").append(rows+row)
 }
 
-
-/*function drawStatusCodeTypeTable(firstrow, details){
-
-    $("#code_type_table").empty();
-
-    firt_row = '<tr><td>Lead Status/Code Types</td>'
-    second_row = '<tr><td>Total Leads</td>'
-
-    for(key in firstrow){
-      firt_row += '<td>'+key+'</td>'
-      second_row += '<td>'+firstrow[key]+'</td>'
-    }
-
-    firt_row += '</tr>';
-    second_row += '</tr>';
-    var each_row;
-
-    for(i = 0; i < details.length; i++){
-
-        dict_obj = details[i];
-        dict_row = '<tr><td>'
-        var value_dict;  
-
-        for(key in dict_obj){
-          dict_row += key +'</td>'
-          value_dict = dict_obj[key]
-        }
-
-        for(key in value_dict){
-          dict_row += '<td>'+value_dict[key]+'</td>'
-          console.log(dict_row)
-        }
-
-        dict_row += '</tr>';
-        each_row += dict_row;
-    }
-
-    console.log(dict_row)
-    $("#code_type_table").append(firt_row+second_row+each_row);
-}*/
-
 function clearTables(){
   $('#lead_status_table').empty();
   $('#code_type_table').empty();
   $('#line_chart_table').empty();
 }
 
-function draw_and_display_table(reports){
+function draw_and_display_tables(reports){
     clearTables()
     drawColumnChart(reports['lead_status_summary']);
     displayLeadStatusTable(reports['lead_status_summary']);
-    drawPieChart(reports['lead_code_type_analysis']);
-    displayCodeTypeTable(reports['lead_code_type_analysis']);
-    drawLineChart(reports['week_on_week_details_in_qtd']);
-    displayLineChartTable(reports['week_on_week_details_in_qtd']);
+    drawPieChart(reports['piechart']);
+    newTable(reports['table_header'], reports['lead_code_type_analysis'])
+    drawLineChart(reports['week_on_week_details_in_qtd'])
+    displayLineChartTable(reports['week_on_week_details_in_qtd'])
 }
 
 function newTable(firstrow, details){
-  console.log(firstrow);
   $("#code_type_table").empty();
 
   header = '<tr><td>Code Types/Lead Status</td>'
@@ -473,3 +467,98 @@ function newTable(firstrow, details){
  $("#code_type_table").append(header+each_row);
 }
 
+
+function createProgramByCountry(programs){
+  createTableHeader();
+
+  total_rows  = "";
+  rows = "";
+  for(i=0; i<programs.length; i++){
+      rows += '<tr><td colspan="8" class="no-pad no-bor">' +
+              '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
+              '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                      '<td class="lbl relative">'+ programs[i]['program_name']+ '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                      '<td class="value">'+ programs[i]['week_total'] +'</td>'+
+                      '<td class="value">' + programs[i]['week_win'] + '</td>'+
+                      '<td class="value">'+ programs[i]['qtd_total'] +'</td>'+
+                      '<td class="value">' + programs[i]['qtd_win'] + '</td>'+
+                  '</tr>'
+
+      inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
+                      '<td colspan="8" class="no-pad no-bor">'+
+                          '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+
+      for(j=0; j<programs[i]['locations'].length; j++){
+        loc = programs[i]['locations']
+        inner_rows += '<tr>'+
+                        '<td class="lbl">' + loc[j]['location_name'] +'</td>'+
+                        '<td class="value">' + loc[j]['week_total'] +'</td>'+
+                        '<td class="value">' + loc[j]['week_win'] +'</td>'+
+                        '<td class="value">' + loc[j]['qtd_total'] +'</td>' +
+                        '<td class="value">' + loc[j]['qtd_win'] +'</td>'+
+                    '</tr>'
+      }
+      inner_rows += "</table></td></tr>";
+      rows += inner_rows;
+  }
+  total_rows += rows + "</table></td></tr>";
+  $("#view_reports").append(total_rows);
+}
+
+function createCountryByProgram(programs){
+  createTableHeader();
+
+  total_rows  = "";
+  rows = "";
+  for(i=0; i<programs.length; i++){
+      rows += '<tr><td colspan="8" class="no-pad no-bor">' +
+              '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
+              '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                      '<td class="lbl relative">'+ programs[i]['location_name']+ '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                      '<td class="value">'+ programs[i]['week_total'] +'</td>'+
+                      '<td class="value">' + programs[i]['week_win'] + '</td>'+
+                      '<td class="value">'+ programs[i]['qtd_total'] +'</td>'+
+                      '<td class="value">' + programs[i]['qtd_win'] + '</td>'+
+                  '</tr>'
+
+      inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
+                      '<td colspan="8" class="no-pad no-bor">'+
+                          '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+
+      for(j=0; j<programs[i]['programs'].length; j++){
+        loc = programs[i]['programs']
+        inner_rows += '<tr>'+
+                        '<td class="lbl">' + loc[j]['team_name'] +'</td>'+
+                        '<td class="value">' + loc[j]['week_total'] +'</td>'+
+                        '<td class="value">' + loc[j]['week_win'] +'</td>'+
+                        '<td class="value">' + loc[j]['qtd_total'] +'</td>' +
+                        '<td class="value">' + loc[j]['qtd_win'] +'</td>'+
+                    '</tr>'
+      }
+      inner_rows += "</table></td></tr>";
+      rows += inner_rows;
+  }
+  total_rows += rows + "</table></td></tr>";
+  $("#view_reports").append(total_rows);
+}
+
+
+
+function createTableHeader(){
+
+  header = '<tr class="top-head">'+
+              '<th></th>'+
+                '<th colspan="2">Current Week</th>'+
+                '<th colspan="2">QTD</th>'+
+            '</tr>'+
+            '<tr>'+
+              '<th>Program</th>'+
+                '<th>Leads</th>'+
+                '<th>Wins</th>'+
+                '<th>Leads</th>'+
+                '<th>Wins</th>'+
+            '</tr>'
+
+  $("#view_reports").append(header);
+
+}
