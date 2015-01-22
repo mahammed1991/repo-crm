@@ -1,0 +1,252 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Help
+{% endblock title %}
+
+
+{% block content %}
+<!-- content-region -->
+
+  <section class="content-region">
+    <div class="container-fluid">
+    <!-- team leads views start here-->
+      {% if is_manager %}
+      <div id="teamLeadView">
+          <h1>Feedback</h1>
+          <div class="row text-center report-category">
+            <div class="col-md-3 centered">
+              <select class="form-control" id="reportCat">
+                <option>Team Feedback</option>
+                <option>Individual Feedback</option>
+              </select>
+            </div>     
+            <div class="col-md-3 centered">
+              <select class="form-control" id="EmailId">
+                <option>Select User</option>
+                {% for user in rep_list %}
+                  <option>{{user}}</option>
+                {% endfor %}
+              </select>
+            </div>      
+        </div>
+        <div class="btn-row">
+            <button class="btn std-btn" id='GetFeedbacakByemail'>View Feedback</button>
+        </div>
+ 
+  
+    
+    </div>
+  {% endif %}
+    <!-- team lead view end here -->
+    <h1>Feedback Summary</h1>
+      <div class="row">
+        <div class="col-xs-6 col-sm-4 col-md-2 col-md-offset-2 placeholder">
+          <div class="circle_green">{{feedback_list.resolved}}</div>
+          <div class="sum-lbl">Resolved</div>
+        </div>                
+        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+          <div class="circle_yellow">{{feedback_list.in_progress}}</div>
+          <div class="sum-lbl">In Progress</span> </div>
+        </div> 
+        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+          <div class="circle_red">{{feedback_list.new}}</div>
+          <div class="sum-lbl">New</div>
+        </div>       
+        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+          <div class="circle_black">{{feedback_list.total}}</div>
+          <div class="sum-lbl">Total</div>
+        </div>
+        
+      </div>
+      <h1 class="lead_status">Feedback Status</h1>
+      <button class="btn std-btn pull-right fdk-btn" onclick="window.location.href='{% url 'main.views.create_feedback' %}'">Add a Feedback</button>
+      <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-3">
+            <ul class="pagination">
+              <li> <a class="tag" href="#" id='All'>All</a> </li>
+              <li> <a class="page" href="#" id='Resolved'>Resolved</a> </li>
+              <li> <a class="page" href="#" id='InProgress'>In Progress</a> </li>
+              <li> <a class="page" href="#" id='New'>New</a> </li>
+          </div>
+          <div class="col-xs-6 col-sm-6 col-md-2">
+            <div class="has-feedback">
+              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'feedback_table')"/>
+              <span class="search-icon"><i class="fa fa-search" /></i></span> </div>
+          </div>
+          <div class="col-xs-6 col-sm-6 col-md-2 pull-right">            
+              <ul class="filer-area">
+              	<li class="lbl">Sort by: </li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Recent <i class="fa fa-angle-down"></i></a>
+                  <ul class="dropdown-menu light" role="menu">
+                    <li><a href="#" id="recent_sort">Recent</a></li>
+                    <li><a href="#" id="lead_owner_sort">Lead Owner</a></li>
+                    <li><a href="#" id="status_sort">Status</a></li>
+                  </ul>
+                  </li>
+              </ul>
+            </div>
+          </div>
+      </span>
+      <div class="row">
+      <div class="table-responsive col-xs-12 col-sm-12 col-md-12">
+        <table class="table status-table feedback-status-table tablesorter" id='feedback_table'>
+          <thead>
+            <tr  class="table_bg">
+              <th >No.</th>
+              <th >Feedback ID</th>
+              <th >CID</th>
+              <th >Google Account Manager </th>
+              <th >Feedback By </th>
+              <th id="lead_owner_header">Lead Owner</th>
+              <th>Title </th>  
+              <th id='recent_header'>Date Created</th>
+              <th id="status_header" >Status </th>
+              <th >Attachment</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for feedback in feedbacks %}
+            	{% if feedback.status == 'NEW' %}
+      					<tr class="status-inq">
+      				{% endif %}
+      				{% if feedback.status == 'IN PROGRESS' %}
+      					<tr class="status-inpro">
+      				{% endif %}
+      				{% if feedback.status == 'RESOLVED' %}
+      					<tr class="status-implemented">
+      			{% endif %}
+
+					<td><span class="status-bor-color">{{ forloop.counter }} </span></td>
+					<td><a href="{% url 'main.views.view_feedback' feedback.id %}">Goog-{{ feedback.id }}</a></td>
+          <td>{{ feedback.cid }}</td>
+          <td></td>
+					<td>{{ feedback.user.get_full_name }}</td>
+					<td>{{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}</td>
+					<td><a href="{% url 'main.views.view_feedback' feedback.id %}">{{ feedback.title }}</a></td>
+					<td>{{ feedback.created_date|date:'m/d/Y' }}</td>
+					<td><span class="status-txt-color">{{ feedback.status }} </span></td>
+					<td> {% if feedback.attachment %} <a href="{{ media_url }}{{ feedback.filename }}" target="_blank" class="action-item fb"><i class="fa fa-paperclip"></i></a> {% endif %} </td>
+				</tr>
+			{% endfor %}            
+          </tbody>
+        </table>
+        <div class="span4"></div>
+        <div class="span4"><img src="{% static 'images/pre_loading.png' %}" alt=" " class="center-block"/></div>
+        <div class="span4"></div>
+      </div>
+      </span>
+    </div>
+  </section>
+  <!-- content-region ends --> 
+{% endblock content %}
+{% block main_js %}
+<script type="text/javascript">
+	function filter(phrase, _id){
+		var words = phrase.value.toLowerCase().split(" ");
+		var _table = document.getElementById(_id);
+		var ele;
+		for (var r = 1; r < _table.rows.length; r++){
+			ele = _table.rows[r].innerHTML.replace(/<[^>]+>/g,"");
+		        var displayStyle = 'none';
+		        for (var i = 0; i < words.length; i++) {
+			    if (ele.toLowerCase().indexOf(words[i])>=0)
+				displayStyle = '';
+			    else {
+				displayStyle = 'none';
+				break;
+			    }
+		        }
+			_table.rows[r].style.display = displayStyle;
+		}
+	}
+
+$('#All').click(function(){
+      $('.status-inq').show()
+      $('.status-inpro').show()
+      $('.status-implemented').show()
+    })
+$('#Resolved').click(function(){
+      $('.status-inq').hide()
+      $('.status-inpro').hide()
+      $('.status-implemented').show()
+    })
+$('#InProgress').click(function(){
+      $('.status-inq').hide()
+      $('.status-inpro').show()
+      $('.status-implemented').hide()
+    })
+$('#New').click(function(){
+      $('.status-inq').show()
+      $('.status-inpro').hide()
+      $('.status-implemented').hide()
+    })
+
+$(document).ready(function() 
+    { 
+        //$("#Feedback").tablesorter();
+
+      //   if ($("#feedback_table tbody tr").length > 0)
+   			// $(this).tablesorter({ sortList: [[0,0]]});
+
+         $("#feedback_table").tablesorter({ 
+	        // pass the headers argument and assing a object 
+	        headers: { 
+	            // assign the secound column (we start counting zero) 
+	            0: { 
+	                // disable it by setting the property sorter to false 
+	                sorter: false 
+	            }, 
+	            1: { 
+	                // disable it by setting the property sorter to false 
+	                sorter: false 
+	            }, 
+	            2: { 
+	                // disable it by setting the property sorter to false 
+	                sorter: false 
+	            },
+	             3: { 
+	                // disable it by setting the property sorter to false 
+	                sorter: false 
+	            }, 
+	            4: { 
+	                // disable it by setting the property sorter to false 
+	                sorter: false 
+	            },
+              6: { 
+                  // disable it by setting the property sorter to false 
+                  sorter: false 
+              },
+	              
+	            9: { 
+	                // disable it by setting the property sorter to false 
+	                sorter: false 
+	            }
+	            
+	        } 
+	    });
+    } 
+); 
+   
+   $("#status_sort").click(function(){
+   		$("#status_header").trigger("click");
+   })
+
+   $("#lead_owner_sort").click(function(){
+   		$("#lead_owner_header").trigger("click");
+   })
+
+   $("#recent_sort").click(function(){
+   		$("#recent_header").trigger("click");
+   })
+
+</script>
+
+<script type="text/javascript">
+  $('#GetFeedbacakByemail').click(function(){
+    alert($('#EmailId').val())
+  })
+</script>
+{% endblock main_js %}
