@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
+import time
 from leads.models import Leads, Location, RegalixTeams
 from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails
@@ -15,6 +16,12 @@ from django.contrib.auth.models import User
 @login_required
 def reports(request):
     """ New Report """
+
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        team_members = get_user_under_manager(request.user.email)
+
     locations = ReportService.get_all_locations()
     teams = ReportService.get_all_teams()
     rgx_teams = RegalixTeams.objects.all()
@@ -23,7 +30,7 @@ def reports(request):
         teams.append('Other')
     code_types = ReportService.get_all_code_type()
     code_types = [str(codes.encode('utf-8')) for codes in code_types]
-    return render(request, 'reports/reports.html', {'locations': locations,
+    return render(request, 'reports/reports.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
                                                     'teams': teams, 'rgx_teams': rgx_teams,
                                                     'code_types': code_types})
 
@@ -74,12 +81,14 @@ def get_new_reports(request):
     """ New Report Details
     """
     report_detail = dict()
+
     if request.is_ajax():
         report_type = request.GET.get('report_type', None)
         report_timeline = request.GET.getlist('report_timeline[]')
         region = request.GET.get('region')
         countries = request.GET.getlist('countries[]')
         teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
 
         # Get teams
         if 'all' in teams:
@@ -87,93 +96,57 @@ def get_new_reports(request):
                 teams.remove('all')
             else:
                 teams = ReportService.get_all_teams()
+        else:
+            teams = teams
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
 
         if region == 'all':
             countries = ReportService.get_all_locations()
-
-        if 'all' in countries:
-            if len(countries) > 1:
-                countries.remove('all')
-                countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+        else:
+            if 'all' in countries:
+                if len(countries) > 1:
+                    countries.remove('all')
+                    countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                else:
+                    countries = ReportService.get_all_locations()
             else:
-                countries = ReportService.get_all_locations()
+                countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
 
         code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
         if report_timeline:
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+
         report_details = dict()
+        email = request.user.email
+
         if report_type == 'default_report':
-            leads = Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
-            lead_ids = [lead.id for lead in leads]
-            lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
-            lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
-            week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
-            report_detail.update({'lead_status_summary': lead_status_summary,
-                                  'lead_code_type_analysis': lead_code_type_analysis,
-                                  'week_on_week_details_in_qtd': week_on_week_details_in_qtd})
-            report_details = {'reports': report_detail, 'code_types': code_types,
-                              'report_type': report_type, 'report_timeline': report_timeline,
-                              'region': region, 'team': teams}
-
+            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
         elif report_type == 'leadreport_individualRep':
-            email = 'acharyar@google.com'
-            leads = ReportService.get_leads_for_individual(email, start_date, end_date)
-            lead_ids = [lead.id for lead in leads]
-            lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
-            lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
-            week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
-            report_detail.update({'lead_status_summary': lead_status_summary,
-                                  'lead_code_type_analysis': lead_code_type_analysis,
-                                  'week_on_week_details_in_qtd': week_on_week_details_in_qtd})
-            report_details = {'reports': report_detail, 'code_types': code_types,
-                              'report_type': report_type, 'report_timeline': report_timeline,
-                              'region': region, 'team': teams}
-
+            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, [email])
         elif report_type == 'leadreport_teamLead':
-            email = 'tkhan@regalix-inc.com'
-            managers_list = UserDetails.objects.filter(user_manager_email=email)
-            if managers_list:
-                users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
-                user_emails = User.objects.filter(id__in=users)
-                leads = Leads.objects.filter(google_rep_email__in=user_emails, created_date__gte=start_date, created_date__lte=end_date)
-                lead_ids = [lead.id for lead in leads]
-                lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
-                lead_code_type_analysis = ReportService.get_lead_code_type_analysis(leads, code_types)
-                week_on_week_details_in_qtd = ReportService.get_week_on_week_trends_details(lead_ids)
-                report_detail.update({'lead_status_summary': lead_status_summary,
-                                      'lead_code_type_analysis': lead_code_type_analysis,
-                                      'week_on_week_details_in_qtd': week_on_week_details_in_qtd})
-
-                report_details = {'reports': report_detail, 'code_types': code_types,
-                                  'report_type': report_type, 'report_timeline': report_timeline,
-                                  'region': region, 'team': teams}
-
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
-            #status, piechart, code_type, week_on = ReportService.get_region_program_view_report_details(teams, countries, code_types, start_date, end_date)
-            status, piechart, code_type, week_on = ReportService.get_new_code_type_analysis(teams, countries, code_types, start_date, end_date)
-             
-            report_detail.update({'lead_status_summary': status,
-                                  'piechart': piechart,
-                                  'table_header': settings.LEAD_STATUS_DICT,
-                                  'lead_code_type_analysis': code_type,
-                                  'week_on_week_details_in_qtd': week_on})
-            report_details = {'reports': report_detail, 'report_type': report_type, 'code_types': code_types}
-
+            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+            program_report = ReportService.get_program_report_by_locations(teams, countries)
+            report_detail['program_report'] = program_report
         elif report_type == 'leadreport_regionview':
-            status, piechart, code_type, week_on = ReportService.get_new_code_type_analysis(teams, countries, code_types, start_date, end_date)
-            report_detail.update({'lead_status_summary': status,
-                                  'piechart': piechart,
-                                  'table_header': settings.LEAD_STATUS_DICT,
-                                  'lead_code_type_analysis': code_type,
-                                  'week_on_week_details_in_qtd': week_on})
-            report_details = {'reports': report_detail, 'report_type': report_type, 'code_types': code_types}
+            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+            #region_details = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+        else:
+            pass
 
-        elif report_type == 'leadreport_deadLeads':
-            leads = Leads.objects.filter(team__in=teams, country__in=countries, lead_status='Dead Lead',
-                                         created_date__gte=start_date, created_date__lte=end_date)
-            report_details = {'Status': 'Requirement not clear'}
-
+        report_details = {'reports': report_detail, 'code_types': code_types,
+                          'report_type': report_type, 'report_timeline': report_timeline,
+                          'region': region, 'team': teams}
         return HttpResponse(json.dumps(report_details))
 
 
