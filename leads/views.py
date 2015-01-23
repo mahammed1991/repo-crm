@@ -42,33 +42,54 @@ def lead_form(request):
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
 
         tag_data = basic_data
-        tag_data['00Nd0000005WYhJ'] = request.POST.get('00Nd0000005WYhJ')  # Code Type
-        tag_data['00Nd0000005WYhE'] = request.POST.get('00Nd0000005WYhE')  # URL1
-        tag_data['00Nd0000005WYh9'] = request.POST.get('00Nd0000005WYh9')  # Code
-        tag_data['00Nd0000005WZIe'] = request.POST.get('00Nd0000005WZIe')  # Comments
+        if request.POST.get('is_tag_lead') == 'yes':
+            # Code Type 1 Details
+            tag_data['00Nd0000005WYhJ'] = request.POST.get('00Nd0000005WYhJ')  # Code Type1
+            tag_data['00Nd0000005WYhE'] = request.POST.get('00Nd0000005WYhE')  # URL1
+            tag_data['00Nd0000005WYh9'] = request.POST.get('00Nd0000005WYh9')  # Code1
+            tag_data['00Nd0000005WZIe'] = request.POST.get('00Nd0000005WZIe')  # Comments1
 
-        tag_data['00Nd0000005WYkS'] = request.POST.get('00Nd0000005WYkS')  # Optional Code type
-        tag_data['00Nd0000005WYi9'] = request.POST.get('00Nd0000005WYi9')  # Optional URL
-        tag_data['00Nd0000005WYiv'] = request.POST.get('00Nd0000005WYiv')  # Optional Code
-        tag_data['00Nd0000005WYjy'] = request.POST.get('00Nd0000005WYjy')  # Optional Comments
-        tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick')  # Appointment Date
+            # Code Type 2 Details
+            tag_data['00Nd0000005WYkS'] = request.POST.get('00Nd0000005WYkS')  # Code type2
+            tag_data['00Nd0000005WYi9'] = request.POST.get('00Nd0000005WYi9')  # URL2
+            tag_data['00Nd0000005WYiv'] = request.POST.get('00Nd0000005WYiv')  # Code2
+            tag_data['00Nd0000005WYjy'] = request.POST.get('00Nd0000005WYjy')  # Comments2
 
-        # requests.request('POST', url=sf_api_url, data=tag_data)
+            # Code Type 3 Details
+            tag_data['00Nd0000005WYkX'] = request.POST.get('00Nd0000005WYkX')  # Code type3
+            tag_data['00Nd0000005WYi9'] = request.POST.get('00Nd0000005WYi9')  # URL3
+            tag_data['00Nd0000005WYj5'] = request.POST.get('00Nd0000005WYj5')  # Code3
+            tag_data['00Nd0000005WYjB'] = request.POST.get('00Nd0000005WYjB')  # Comments3
 
-        # Create Icallender (*.ics) file for send mail
-        advirtiser_details = {'first_name': request.POST.get('first_name'),
-                              'last_name': request.POST.get('last_name'),
-                              'email': request.POST.get('00Nd0000005WcNw'),
-                              'role': request.POST.get('00Nd0000005WayR'),
-                              'customer_id': request.POST.get('00Nd0000005WYgV'),
-                              'country': request.POST.get('00Nd0000005WYga'),
-                              'appointment_date': request.POST.get('tag_datepick')
-                              }
-        if advirtiser_details.get('appointment_date'):
-            create_icalendar_file(advirtiser_details)
-            send_calendar_invite_to_advertiser(advirtiser_details)
+            # Code Type 4 Details
+            tag_data['00Nd0000005WYkm'] = request.POST.get('00Nd0000005WYkm')  # Code type4
+            tag_data['00Nd0000005WYi9'] = request.POST.get('00Nd0000005WYi9')  # URL4
+            tag_data['00Nd0000005WYjA'] = request.POST.get('00Nd0000005WYjA')  # Code4
+            tag_data['00Nd0000005WYkI'] = request.POST.get('00Nd0000005WYkI')  # Comments4
 
-        if request.POST.get('setup_lead_check'):
+            # Code Type 5 Details
+            tag_data['00Nd0000005WYl6'] = request.POST.get('00Nd0000005WYl6')  # Code type5
+            tag_data['00Nd0000005WYi9'] = request.POST.get('00Nd0000005WYi9')  # URL5
+            tag_data['00Nd0000005WYiw'] = request.POST.get('00Nd0000005WYiw')  # Code5
+            tag_data['00Nd0000005WYkN'] = request.POST.get('00Nd0000005WYkN')  # Comments5
+
+            requests.request('POST', url=sf_api_url, data=tag_data)
+
+            # Create Icallender (*.ics) file for send mail
+            advirtiser_details = {'first_name': request.POST.get('advertiser_name'),
+                                  'last_name': request.POST.get('last_name'),
+                                  'email': request.POST.get('00Nd0000005WcNw'),
+                                  'role': request.POST.get('00Nd0000005WayR'),
+                                  'customer_id': request.POST.get('00Nd0000005WYgV'),
+                                  'country': request.POST.get('00Nd0000005WYga'),
+                                  'appointment_date': request.POST.get('tag_datepick')
+                                  }
+
+            if advirtiser_details.get('appointment_date'):
+                create_icalendar_file(advirtiser_details)
+                send_calendar_invite_to_advertiser(advirtiser_details)
+
+        if request.POST.get('is_shopping_lead') == 'yes':
             setup_data = basic_data
             setup_data['00Nd0000005WYhJ'] = 'Google Shopping Setup',  # Code Type
             setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
@@ -76,12 +97,13 @@ def lead_form(request):
             setup_data['00Nd00000077T9y'] = request.POST.get('00Nd00000077T9y')  # Recommended Bid
             setup_data['00Nd00000077TA3'] = request.POST.get('00Nd00000077TA3')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('00Nd00000077TA8')  # Recommended Mobile Bid Modifier
-            setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick')  # Appointment Date
+            setup_data['is_shopping_policies'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+            setup_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick')  # Appointment Date
 
-            # requests.request('POST', url=sf_api_url, data=setup_data)
+            requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
-            advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
+            # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
             if advirtiser_details.get('appointment_date'):
                 create_icalendar_file(advirtiser_details)
                 send_calendar_invite_to_advertiser(advirtiser_details)
@@ -168,34 +190,38 @@ def get_common_lead_data(post_data):
     """ Get basic data from both lead forms """
 
     basic_data = {
+
+        # Google Rep Information
         '00Nd0000005WYgk': post_data.get('00Nd0000005WYgk'),  # Full Name
-        'email': post_data.get('email'),                      # Rep Email
+        'email': post_data.get('emailref'),                   # Rep Email
         '00Nd00000075Crj': post_data.get('00Nd00000075Crj'),  # Manager Name
         '00Nd00000077r3s': post_data.get('00Nd00000077r3s'),  # Manager Email
-        '00Nd0000005WYgV': post_data.get('00Nd0000005WYgV'),  # Customer ID
-        '00Nd0000005WaHr': post_data.get('00Nd0000005WaHr'),  # E-commerce
-        'company': post_data.get('company'),  # Company
         '00Nd0000005XIWB': post_data.get('00Nd0000005XIWB'),  # Team
         '00Nd0000007e2AF': post_data.get('00Nd0000007e2AF'),  # Service Segment
+        '00Nd0000007dWIH': post_data.get('00Nd0000007dWIH'),  # G Cases Id
         '00Nd0000005WYga': post_data.get('00Nd0000005WYga'),  # Country
+
+        # Advertiser Info
+        'advertiser_name': post_data.get('advertiser_name'),  # Advertiser Name
+        '00Nd0000005WcNw': post_data.get('00Nd0000005WcNw'),  # Advertiser Email
+        '00Nd0000005WYgz': post_data.get('00Nd0000005WYgz'),  # Advertiser Phone
+        'company': post_data.get('company'),    # Advertiser Company
+        '00Nd0000005WYgV': post_data.get('00Nd0000005WYgV'),  # Customer ID
+        'advertiser_location': post_data.get('advertiser_location'),  # Advertiser Location
         '00Nd0000007clUn': post_data.get('00Nd0000007clUn'),  # Language
         '00Nd0000005WYhT': post_data.get('00Nd0000005WYhT'),  # Time Zone
+
+        # Appointment Details
         'first_name': post_data.get('first_name'),  # First Name
         'last_name': post_data.get('last_name'),  # Last Name
-        'phone': post_data.get('phone'),  # Phone
-        '00Nd0000005WcNw': post_data.get('00Nd0000005WcNw'),  # Mandatory Email
         '00Nd0000005WayR': post_data.get('00Nd0000005WayR'),  # Role
-        '00Nd0000005Wayb': post_data.get('00Nd0000005Wayb'),  # Established Contact
-        '00Nd0000005WYgp': post_data.get('00Nd0000005WYgp'),  # Optional First Name
-        '00Nd0000005WYgu': post_data.get('00Nd0000005WYgu'),  # Optional Last Name
-        '00Nd0000005WYgz': post_data.get('00Nd0000005WYgz'),  # Optional Phone
-        '00Nd0000005WYh4': post_data.get('00Nd0000005WYh4'),  # Optional Email
-        '00Nd0000005WayW': post_data.get('00Nd0000005WayW'),  # Optional Role
-        '00Nd0000005Wayg': post_data.get('00Nd0000005Wayg'),  # Optional Establised Contact
-        'description': post_data.get('description'),
-        'Campaign_ID': post_data.get('Campaign_ID'),
-        'oid': post_data.get('oid'),
-        '__VIEWSTATE': post_data.get('__VIEWSTATE'),
+        '00Nd0000005WYlL': post_data.get('tag_datepick'),  # Appointment Date
+
+        # Webmaster Details
+        '00Nd0000005WYgp': post_data.get('00Nd0000005WYgp'),  # Webmaster First Name
+        '00Nd0000005WYgu': post_data.get('00Nd0000005WYgu'),  # Webmaster Last Name
+        '00Nd0000005WayW': post_data.get('00Nd0000005WayW'),  # Webmaster Role
+        'popt': post_data.get('popt'),  # Webmaster Phone
     }
 
     return basic_data
