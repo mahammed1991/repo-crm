@@ -733,6 +733,11 @@ textarea.form-control {
 	font-size: 13px;
 	color:#333;
 }
+.tag-policies .checkbox label {
+	font-family: 'robotoregular';
+	font-size: 13px;
+	color:#333;
+}
 #appointment {
 	overflow: hidden;
 }

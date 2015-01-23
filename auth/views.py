@@ -21,6 +21,8 @@ def post_login(request):
     try:
         username = request.user.username.split('@')[0]
         user = User.objects.get(username=username)
+        user.first_name = request.user.first_name
+        user.last_name = request.user.last_name
         user.user_ptr = request.user
         user.save()
     except ObjectDoesNotExist:
