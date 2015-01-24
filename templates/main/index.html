@@ -69,22 +69,24 @@ Regalix Google Portal
                         <h1>{{title}}</h1>
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="chart" style="position:relative;">
+                                <div class="chart">
                                   <canvas id="totalLeads" class="reports-canvas">
                                   </canvas>
-                                  <div class="report-chart-lbl">Win</div>
+                                  <div class="report-chart-lbl">Win<span id="totalWin"></span></div>
                                 </div>
                                 <span>Total Leads</span>
                             </div>
                             <div class="col-md-4">
                                 <div class="chart">
                                   <canvas id="tagLeads" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="tagWin">45%</span></div>
                                 </div>
                                 <span>Tag Leads</span>
                             </div>
                             <div class="col-md-4">
                                 <div class="chart">
                                   <canvas id="shopSetup" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="shopWin">65%</span></div>
                                 </div>
                                 <span>G-Shopping<br>Setup</span>
                             </div>
@@ -225,7 +227,7 @@ Regalix Google Portal
                    {% for quarter_topper in top_performer.quarterly %}
                       <div class="performer">
                             <h3>Last Quarter</h3>
-                            <img src="{{quarter_topper.image_url}}" style="width:150px; height:150px;" />
+                            <img src="{{quarter_topper.image_url}}"/>
                             <div class="performer-info">
                               <span>{{quarter_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{quarter_topper.location}}
@@ -300,6 +302,11 @@ $(document).ready(function() {
 
   reports = {{report_summary|safe}};
   console.log(reports);
+
+  $("#totalWin").text(parseInt(reports['total_win']) + "%");
+  $("#tagWin").text(parseInt(reports['tag_win']) + "%");
+  $("#shopWin").text(parseInt(reports['shopping_win']) + "%");
+
   $("#owl-demo").owlCarousel({
     autoPlay : true,
     stopOnHover : true,
@@ -311,41 +318,6 @@ $(document).ready(function() {
     transitionStyle:"fade"
   });
   	  
-    $('#totalLeads').ClassyLoader({
-     diameter : 49,
-     fontColor : 'rgb(51,51,51)',
-     fontFamily: 'robotothin',
-     fontSize: '21px',
-     lineColor : 'rgb(70,138,255)',
-     percentage : parseInt(reports['total_win']),
-     lineWidth : 6,
-     animate: false,
-     remainingLineColor : 'rgba(0,0,0,0.15)'
-    });
-
-
-    $('#tagLeads').ClassyLoader({
-     diameter : 49,
-     fontColor : 'rgba(0,0,0,0)',
-     lineColor : 'rgb(20,195,111)',
-     percentage : parseInt(reports['tag_win']),
-     lineWidth : 6,
-     animate: false,
-     remainingLineColor : 'rgba(0,0,0,0.15)'
-    });
-
-
-    $('#shopSetup').ClassyLoader({
-     diameter : 49,
-     fontColor : 'rgba(0,0,0,1)',
-     lineColor : 'rgb(255,187,0)',
-     percentage : parseInt(reports['shopping_win']),
-     lineWidth : 6,
-     animate: false,
-     remainingLineColor : 'rgba(0,0,0,0.15)'
-    });
-
-
 	// banner slider
 	$('.bxslider').bxSlider({
 	  pagerCustom: '#bx-pager'
@@ -374,10 +346,9 @@ $(window).on('resize',function() {
         width: 90,
         height: 90 ,
          diameter : 40,
-         fontColor : 'rgba(0,0,0,1)',
          lineColor : 'rgb(70,138,255)',
          percentage : parseInt(reports['total_win']),
-         lineWidth : 6,
+         lineWidth : 5,
          animate: false,
          remainingLineColor : 'rgba(0,0,0,0.15)'    
           });
@@ -386,10 +357,9 @@ $(window).on('resize',function() {
           width: 90,
           height: 90 ,
           diameter : 40,
-          fontColor : 'rgba(0,0,0,1)',
           lineColor : 'rgb(20,195,111)',
           percentage : parseInt(reports['tag_win']),
-          lineWidth : 6,
+          lineWidth : 5,
           animate: false,
           remainingLineColor : 'rgba(0,0,0,0.15)'
           });
@@ -399,14 +369,44 @@ $(window).on('resize',function() {
            width: 90,
            height: 90 ,
            diameter : 40,
-           fontColor : 'rgba(0,0,0,1)',
            lineColor : 'rgb(255,187,0)',
            percentage : parseInt(reports['shopping_win']),
-           lineWidth : 6,
+           lineWidth : 5,
            animate: false,
            remainingLineColor : 'rgba(0,0,0,0.15)'
           });
 
+    }else{
+      $('#totalLeads').ClassyLoader({
+       diameter : 49,     
+       fontFamily: 'robotothin',
+       fontSize: '21px',
+       lineColor : 'rgb(70,138,255)',
+       percentage : parseInt(reports['total_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+
+
+      $('#tagLeads').ClassyLoader({
+       diameter : 49,
+       lineColor : 'rgb(20,195,111)',
+       percentage : parseInt(reports['tag_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+
+
+      $('#shopSetup').ClassyLoader({
+       diameter : 49,
+       lineColor : 'rgb(255,187,0)',
+       percentage : parseInt(reports['shopping_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
     }
 
 });

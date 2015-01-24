@@ -131,7 +131,6 @@ def main_home(request):
     feedback_list['total'] = feedbacks.count()
 
     # feedback summary end here
-
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                'user_profile': user_profile, 'question_list': question_list,
                                                'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
@@ -161,9 +160,9 @@ def get_top_performer_list(current_date):
 
 
 def get_top_performer_by_date_range(start_date, end_date):
-    topper_list = Leads.objects.exclude(google_rep_email='').filter(
+    topper_list = Leads.objects.exclude(lead_owner_email='').filter(
         created_date__gte=start_date,
-        created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
+        created_date__lte=end_date).values('lead_owner_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
 
     toppers = dict()
     indx = 0
@@ -174,13 +173,13 @@ def get_top_performer_by_date_range(start_date, end_date):
 
         if indx > topper_limit:
             if topper['submitted'] in toppers:
-                toppers[key].append(topper['google_rep_email'])
+                toppers[key].append(topper['lead_owner_email'])
             else:
                 break
         elif key not in toppers:
-            toppers[key] = [topper['google_rep_email']]
+            toppers[key] = [topper['lead_owner_email']]
         else:
-            toppers[key].append(topper['google_rep_email'])
+            toppers[key].append(topper['lead_owner_email'])
 
     # Get toppers from the list
     topper_email = list()
@@ -191,7 +190,7 @@ def get_top_performer_by_date_range(start_date, end_date):
             top_list = list()
             for email in toppers[k]:
                 latest_lead = dict()
-                last_lead_submitted = Leads.objects.filter(google_rep_email=email,
+                last_lead_submitted = Leads.objects.filter(lead_owner_email=email,
                                                            created_date__gte=start_date,
                                                            created_date__lte=end_date).order_by('-created_date')[:1]
                 latest_lead.update({'email': email, 'created_date': last_lead_submitted[0].created_date})
@@ -212,7 +211,7 @@ def get_top_performer_by_date_range(start_date, end_date):
     topper_email[:topper_limit]
     for rep_email in topper_email:
         rep = dict()
-        image_url = '/static/images/default_user.png'
+        image_url = '/static/images/avtar-big.jpg'
         location = ''
         rep.update({'google_rep_name': rep_email.split('@')[0]})
         try:
@@ -509,13 +508,33 @@ def get_contacts(request):
         contact['phone'] = cnt.phone_number
         contact['skype'] = cnt.skype_id
         contact['picture'] = cnt.profile_photo.name.split('/')[-1]
-        contact['photo_url'] = settings.MEDIA_URL + 'profile_photo/' + contact['picture']
+        contact['photo_url'] = get_profile_avatar_by_email(cnt.email)
         if cnt.position_type == 'MGMT':
             contacts['management'].append(contact)
         else:
             contacts['representatives'].append(contact)
     return contacts
-    return HttpResponse(dumps(contacts), content_type='application/json')
+
+
+def get_profile_avatar_by_email(email):
+    """ Get Profile Avatar """
+
+    avatar_url = '/static/images/avtar-big.jpg'
+    try:
+        user = User.objects.get(email=email)
+        try:
+            user_profile = UserDetails.objects.get(user_id=user.id)
+            avatar_url = user_profile.profile_photo_url
+        except ObjectDoesNotExist:
+            avatar_url = '/static/images/avtar-big.jpg'
+    except ObjectDoesNotExist:
+        if email:
+            username = email.split('@')[0]
+            os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username + '.png'
+            # Check if profile picture exist
+            if os.path.isfile(os_path):
+                avatar_url = '/static/images/GTeam/' + username + '.png'
+    return avatar_url
 
 
 @login_required
