@@ -83,6 +83,24 @@
             }
             $('#tzone').html(option);
         }
+
+        // // Get Languages by Location/Country
+        // var languages = {{language_for_location|safe}}
+        
+        // $('#language').html('');
+        // if(languages[abt.value].length == 1){
+        //     var lang_info = languages[abt.value];
+        //     var option = "<option value='" + lang_info[0]['language_name'] + "'>"+ lang_info[0]['language_name'] +")</option>"
+        //     $('#language').html(option);
+        // }else{
+        //     var option = "<option value='0'>--Select--</option>"
+        //     var lang_info = languages[abt.value];
+        //     for(var i=0;i<languages[abt.value].length;i++){
+        //         option += "<option value='" + lang_info[i]['language_name'] + "'>"+ lang_info[i]['language_name'] +")</option>"
+        //     }
+        //     $('#language').html(option);
+        // }
+
     }
 
     function check_and_create_appointment(slots){
