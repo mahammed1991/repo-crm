@@ -103,6 +103,23 @@ class Timezone(models.Model):
         ordering = ['zone_name']
 
 
+class Language(models.Model):
+    """ Language model """
+
+    language_name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def __str__(self):
+        return self.language_name
+
+    class Meta:
+        db_table = 'languages'
+        verbose_name_plural = 'Languages'
+
+
 class Location(models.Model):
 
     def get_flag_image(instance, flag_filename):
@@ -118,7 +135,8 @@ class Location(models.Model):
     location_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=50, null=True, default=None, blank=True)
     time_zone = models.ManyToManyField(Timezone)
-    flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100)
+    language = models.ManyToManyField(Language)
+    flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100, blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

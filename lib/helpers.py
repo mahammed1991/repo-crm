@@ -253,6 +253,7 @@ def is_manager(email):
 
 def get_user_list_by_manager(email):
     """ """
+    # email = 'tkhan@regalix-inc.com'
     users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
     user_emails = User.objects.filter(id__in=users)
     user_list = list()
@@ -266,9 +267,9 @@ def get_manager_by_user(email):
     user_profile = UserDetails.objects.get(user_id=user.id)
     return user_profile
 
+
 def get_user_under_manager(email):
     """ """
+    # email = 'tkhan@regalix-inc.com'
     users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
     return User.objects.filter(id__in=users)
-
-    

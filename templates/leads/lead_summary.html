@@ -13,40 +13,42 @@ Regalix Google Portal
 {% endblock main_css %}
 
 {% block content %}
-<!-- content-region -->
+
+
+   <!-- content-region -->
   <section class="content-region">
     <div class="container-fluid">
       <h1>Leads Summary</h1>
-      <div class="row">
-        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+      <div class="row summary-container">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_green">{{lead_status_dict.implemented }}</div>
           <div class="sum-lbl">Wins</div>
         </div>
-        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_red">{{lead_status_dict.in_queue}}</div>
           <div class="sum-lbl">In Queue</div>
         </div>
-        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_blue">{{lead_status_dict.attempting_contact}}</div>
           <div class="sum-lbl">Attempting Contact</div>
         </div>
-        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_yellow">{{lead_status_dict.in_progress}}</div>
-          <div class="sum-lbl">In Progress</span> </div>
+          <div class="sum-lbl">In Progress </div>
         </div>
-        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle">{{lead_status_dict.in_active}}</div>
           <div class="sum-lbl">Inactive</div>
         </div>
-        <div class="col-xs-6 col-sm-4 col-md-2 placeholder">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_black">{{lead_status_dict.total_leads}}</div>
           <div class="sum-lbl">Total</div>
         </div>
       </div>
       <h1 class="lead_status">Leads Status</h1>
       <div class="row">
-          <div class="col-xs-12 col-sm-12 col-md-5">
-            <ul class="pagination">
+          <div class="col-xs-9 col-sm-12 col-md-10">
+            <ul class="pagination pull-left">
               <li><a class="tag" href="#" id='all'>All</a></li>
               <li><a class="page" href="#" id='Inactive'>Inactive</a></li>
               <li><a class="page" href="#" id='InQueue'>In Queue</a></li>
@@ -54,14 +56,13 @@ Regalix Google Portal
               <li><a class="page" href="#" id='InProgress' >In Progress </a></li>
               <li><a class="page" href="#" id='Implemented'>Implemented</a></li>
             </ul>
+            <div class="table-search">
+              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
+              <span class="search-icon"><i class="fa fa-search" /></i></span>
+            </div>
           </div>
-          <div class="col-xs-6 col-sm-6 col-md-2">
-            <div class="has-feedback">
-               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
-              <span class="search-icon"><i class="fa fa-search" /></i></span> </div>
-          </div>
-          <div class="col-xs-6 col-sm-6 col-md-2 pull-right">            
-              <ul class="filer-area">
+          <div class="col-xs-3 col-md-2">            
+              <ul class="filter-area navbar-right">
                 <li class="lbl">Sort by: </li>
                 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Recent <i class="fa fa-angle-down"></i></a>
                   <ul class="dropdown-menu light" role="menu">
@@ -73,29 +74,27 @@ Regalix Google Portal
               </ul>
             </div>
           </div>
-      </span>
-      <div class="row">
-      <div class="table-responsive col-xs-12 col-sm-12 col-md-12">
-        <table class="table status-table tablesorter" id='Leads'>
-          <thead>
-            <tr  class="table_bg">
-              <th class="hidden-xs hidden-sm nthchild">No.</th>
-              <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
-              <th class="nthchild2">CID </th>
-              <th class="hidden-xs hidden-sm nthchild3" id="CodeTypeRow">Code Type </th>
-              <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
-              <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
-              <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
-              <th class="hidden-xs hidden-sm nthchild3" >Appointment Time</th>
-              <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
-              <th class="hidden-xs hidden-sm nthchild8">Google Comments</th>
-              <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
-              <th class="nthchild3" id='StatusRow'>Status </th>
-              <th class="nthchild11">Action</th>
-            </tr>
+        <div class="table-container">
+          <table class="table status-table tablesorter" id='Leads'>
+            <thead>
+                <tr class="table_bg">
+                  <th class="hidden-xs hidden-sm nthchild">No.</th>
+                  <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
+                  <th width="20%" class="nthchild2">CID </th>
+                  <th class="hidden-xs hidden-sm nthchild3" id="CodeTypeRow">Code Type </th>
+                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Appointment Time</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
+                  <th class="hidden-xs hidden-sm nthchild8">Google Comments</th>
+                  <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
+                  <th class="nthchild3" id='StatusRow'>Status </th>
+                  <th width="6%" class="nthchild11">Action</th>
+                </tr>
             </thead>
             <tbody>
-            {% for l in leads %}
+                  {% for l in leads %}
 
                       {% if l.lead_status == 'Implemented' %}
                       <tr class='status-implemented implemented searchable'>
@@ -160,54 +159,50 @@ Regalix Google Portal
                     </tr>
                     
                 {% endfor %}
-              </tbody>
+          </tbody>
         </table>
-        <div class="span4"></div>
-        <div class="span4"><img src="{% static 'images/pre_loading.png' %}" alt=" " class="center-block"/></div>
-        <div class="span4"></div>
-      </div>
-      </span>
+        <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/>
+        </div>
     </div>
   </section>
   <!-- content-region ends --> 
-
-  
 <!-- feedback modal -->
-<div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog ping-snippet">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
-        <h4 class="modal-title" id="myModalLabel">Feedback</h4>
-      </div>
-      <div class="modal-body">
-         <input type="text" class="form-control error-box" id="feedbackTitle" placeholder="Feedback Title">
-           <select class="form-control" id="feedbackType">
-              <option>Feedback Type</option>
-              <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
-              <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
-              <option value="Communication - Rude rep">Communication - Rude rep</option>
-              <option value="Communication - Unable to understand rep">Communication - Unable to understand rep</option>
-              <option value="Operations - Missed appointments">Operations - Missed appointments</option>
-              <option value="Operations - No follow up">Operations - No follow up</option>
-              <option value="Operations - Incorrect information provided">Operations - Incorrect information provided</option>
-          </select>
-          <textarea class="form-control" placeholder="Comments" id='comments'></textarea>
-       
-      </div>
-      <div class="modal-footer">
+        <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Feedback</h4>
+              </div>
+              <div class="modal-body">
+                 <input type="text" class="form-control error-box" id="feedbackTitle" placeholder="Feedback Title">
+                   <select class="form-control" id="feedbackType">
+                      <option>Feedback Type</option>
+                      <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
+                      <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
+                      <option value="Communication - Rude rep">Communication - Rude rep</option>
+                      <option value="Communication - Unable to understand rep">Communication - Unable to understand rep</option>
+                      <option value="Operations - Missed appointments">Operations - Missed appointments</option>
+                      <option value="Operations - No follow up">Operations - No follow up</option>
+                      <option value="Operations - Incorrect information provided">Operations - Incorrect information provided</option>
+                  </select>
+                  <textarea class="form-control" placeholder="Comments" id='comments'></textarea>
+               
+              </div>
+              <div class="modal-footer">
 
-        <div class="btn-group">
-            <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
-            <button class="btn std-btn grayed" data-dismiss="modal" id='closeFeedbcak'>Close</button>
+                <div class="btn-group">
+                    <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
+                    <button class="btn std-btn grayed" data-dismiss="modal" id='closeFeedbcak'>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- feedback modal ends -->
+        <!-- feedback modal ends -->
 {% endblock content %}
   {% block model_popup %}
+      
       <!-- modal -->
       <div class="modal" id="pingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog ping-snippet">

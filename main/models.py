@@ -44,12 +44,20 @@ class Feedback(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=20, default='NEW')
     lead_owner = models.ForeignKey(User, related_name='lead_owner', default=default_lead_owner)
+    google_account_manager = models.ForeignKey(User, related_name='google_account_manager', default=default_lead_owner)
     program = models.ForeignKey(Team, default=None, null=True)
 
     attachment = models.FileField(upload_to=get_file_path)
 
     resolved_by = models.ForeignKey(User, related_name='resolved_by', null=True)
     resolved_date = models.DateTimeField(blank=True, null=True)
+
+    second_resolved_by = models.ForeignKey(User, related_name='second_resolved_by', null=True)
+    second_resolved_date = models.DateTimeField(blank=True, null=True)
+
+    third_resolved_by = models.ForeignKey(User, related_name='third_resolved_by', null=True)
+    third_resolved_date = models.DateTimeField(blank=True, null=True)
+    resolved_count = models.IntegerField(blank=True, default=0)
 
     created_date = models.DateTimeField(auto_now_add=True)
 

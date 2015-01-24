@@ -20,7 +20,7 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location, Team, CodeType, ChatMessage
+from leads.models import Leads, Location, Team, CodeType, ChatMessage, Language
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
                          is_manager, get_user_list_by_manager, get_manager_by_user)
@@ -506,6 +506,12 @@ def get_lead(request, cid):
     lead = {'status': 'FAILED', 'details': None}
     leads = Leads.objects.filter(customer_id=cid)
     team = Team.objects.get(team_name=leads[0].team)
+    location = Location.objects.get(location_name=leads[0].country)
+    languages = location.language.all()
+    languages_list = list()
+    for lang in languages:
+        languages_list({'l_id': lang.id, 'language_name': lang.language_name})
+
     if leads:
         lead['status'] = 'SUCCESS'
 
@@ -515,7 +521,9 @@ def get_lead(request, cid):
             'google_rep_email': leads[0].google_rep_email,
             'location': leads[0].country,
             'team': team.team_name,
-            'team_id': team.id
+            'team_id': team.id,
+            'languages_list': languages_list
+
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')
 

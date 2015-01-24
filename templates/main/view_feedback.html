@@ -41,12 +41,12 @@ Manage Help
         <div class="col-md-4">
             <div class="feedback-info-row">
                 <label>Google Acc. Manager</label>
-                <div class="value">Suresh Kumar</div>
+                <div class="value">{{feedback.google_account_manager.first_name}} {{feedback.google_account_manager.last_name}}</div>
             </div></div>
             <div class="col-md-4">
             <div class="feedback-info-row">
                 <label>Email</label>
-                <div class="value">skumar@regalix.com</div>
+                <div class="value">{{feedback.google_account_manager.email}}</div>
             </div>
             </div>
             <div class="col-md-4">
@@ -108,8 +108,8 @@ Manage Help
                         <p>{{c.comment}}</p>
                         <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
                     </div>
-                {% endif %}
-                 {% if 'Google' in c.comment_by.email %}
+                
+                 {% elif 'Google' in c.comment_by.email %}
                     <div class="feedback-comment google">
                         <p>{{c.comment}}</p>
                         <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
@@ -117,21 +117,84 @@ Manage Help
                 {% endif %}
                  
             {% endfor %}
-        {% endif %}
-        {% if feedback.status == 'RESOLVED'%}
+        {% if feedback.status == 'IN PROGRESS' or feedback.status == 'RESOLVED' %}
+
             {% if 'regalix' in feedback.resolved_by.email %}
                 <div class="feedback-comment regalix">
                     <p>Resolved By</p>
                     <p class="feedback-auth">- <span>{{feedback.resolved_by.username}}</span> ({{feedback.resolved_by.email}}) On <span>{{feedback.resolved_date | date:"D, M d Y, f A"}}</span></p>
                 </div>
-            {% endif %}
-            {% if 'Google' in feedback.resolved_by.email %}
+            {% elif 'Google' in feedback.resolved_by.email %}
                 <div class="feedback-comment google">
                     <p>Resolved By</p>
                     <p class="feedback-auth">- <span>{{feedback.resolved_by.username}}</span> ({{feedback.resolved_by.email}}) On <span>{{feedback.resolved_date | date:"D, M d Y, f A"}}</span></p>
                 </div>
             {% endif %}
         {% endif %}
+    {% endif %}
+    <!--second resolved comments start here  -->
+     {% if first_resolved_comments %}
+            {% for c in first_resolved_comments %}
+                {% if 'regalix' in c.comment_by.email %}
+                    <div class="feedback-comment regalix">
+                        <p>{{c.comment}}</p>
+                        <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                
+                 {% elif 'Google' in c.comment_by.email %}
+                    <div class="feedback-comment google">
+                        <p>{{c.comment}}</p>
+                        <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% endif %}
+                 
+            {% endfor %}
+            {% if feedback.status == 'IN PROGRESS' or feedback.status == 'RESOLVED' %}
+                {% if 'regalix' in feedback.second_resolved_by.email %}
+                    <div class="feedback-comment regalix">
+                        <p>Resolved By</p>
+                        <p class="feedback-auth">- <span>{{feedback.second_resolved_by.username}}</span> ({{feedback.second_resolved_by.email}}) On <span>{{feedback.second_resolved_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% elif 'Google' in feedback.second_resolved_by.email %}
+                    <div class="feedback-comment google">
+                        <p>Resolved By</p>
+                        <p class="feedback-auth">- <span>{{feedback.second_resolved_by.username}}</span> ({{feedback.second_resolved_by.email}}) On <span>{{feedback.second_resolved_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        <!-- third resolved commnet start here -->
+        {% if second_resolved_comments %}
+            {% for c in second_resolved_comments %}
+                {% if 'regalix' in c.comment_by.email %}
+                    <div class="feedback-comment regalix">
+                        <p>{{c.comment}}</p>
+                        <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                
+                 {% elif 'Google' in c.comment_by.email %}
+                    <div class="feedback-comment google">
+                        <p>{{c.comment}}</p>
+                        <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if feedback.status == 'IN PROGRESS' or feedback.status == 'RESOLVED'%}
+
+                {% if 'regalix' in feedback.third_resolved_by.email %}
+                    <div class="feedback-comment regalix">
+                        <p>Resolved By</p>
+                        <p class="feedback-auth">- <span>{{feedback.third_resolved_by.username}}</span> ({{feedback.third_resolved_by.email}}) On <span>{{feedback.third_resolved_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% elif 'Google' in feedback.third_resolved_by.email %}
+                    <div class="feedback-comment google">
+                        <p>Resolved By</p>
+                        <p class="feedback-auth">- <span>{{feedback.third_resolved_by.username}}</span> ({{feedback.third_resolved_by.email}}) On <span>{{feedback.third_resolved_date | date:"D, M d Y, f A"}}</span></p>
+                    </div>
+                {% endif %}
+        {% endif %}
+    {% endif %}
+
     </div>
     
      {% if feedback.status != 'RESOLVED' %}
@@ -141,6 +204,9 @@ Manage Help
             <textarea class="form-control feedback-commet-box" placeholder="Comments" name='comment'></textarea>
             <div class="btn-row">
                 <button class="btn std-btn" id='AddComments'>Comment</button>
+               <!--  {% if feedback.status != 'RESOLVED' and can_resolve %}
+                    <button class="btn std-btn" id='Resolved' onclick="window.location.href='{% url 'main.views.resolve_feedback' feedback.id %}'">Resolved</button>
+                {% endif %} -->
             </div>
         </form>
     {% endif %}
@@ -149,12 +215,19 @@ Manage Help
                 <button class="btn std-btn" id='Resolved' style="margin-top: -170px;margin-left: 750px;">Resolved</button>
         </form>
     {% endif %}
-    {% if feedback.status == 'RESOLVED' %}
-        <form action="{% url 'main.views.reopen_feedback' feedback.id %}">
+    {% if feedback.status == 'RESOLVED' and feedback.resolved_count < 3 %}
+        <form action="{% url 'main.views.reopen_feedback' feedback.id %}"  method="POST" onsubmit="return validateropen(this);">
+            {% csrf_token %}
+              <input type="hidden" name='feedback' value="{{feedback.id}}">
+              <textarea class="form-control feedback-commet-box" placeholder="Comments" name='reopencomment'></textarea>
               <div class="btn-row">
                 <button class="btn std-btn">Reopen</button>
               </div>
         </form>
+    {% elif feedback.status == 'RESOLVED' and feedback.resolved_count == 3 %}
+            <div class="btn-row">
+                <button class="btn std-btn" id='finalreopenalert'>Reopen</button>
+              </div>
     {% endif %}
     
   
@@ -172,5 +245,14 @@ Manage Help
             return false
         }
     }
+    function validateropen(frm){
+        if(frm.reopencomment.value == ''){
+            alert('Write something to comment for reopen feedback');
+            return false
+        }
+    }
+    $('#finalreopenalert').click(function(){
+        alert('If you want to reopen this feedback send mail to admin or create new feedback')
+    })
 </script>
 {% endblock main_js %}

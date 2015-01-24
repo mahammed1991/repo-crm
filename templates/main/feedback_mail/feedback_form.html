@@ -34,11 +34,7 @@ Regalix Google Portal
         </select>
       </div>
       <div class="col-md-4">
-      {% if lead %}
-        <input type="text" class="form-control" id="feedbackCID" placeholder="CID" name="cid" value='{{lead.customer_id}}' disabled>
-      {% else %}
         <input type="text" class="form-control" id="feedbackCID" placeholder="CID" name="cid">
-      {% endif %}
         <select class="form-control" id="feedbackType" name="type">
           <option>Feedback Type</option>
           <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
@@ -58,19 +54,9 @@ Regalix Google Portal
     <div class="row">
       <div class="col-md-4">
 
-        <input type="text" class="form-control" id="googleAcManager" placeholder="Google Account Manager">
+        <input type="text" class="form-control" id="googleAcManager" placeholder="Google Account Manager" name='googleAcManager' disabled>
+         <input type="hidden" name="google_acManager_name"/>
       </div>
-      {% if lead %}
-
-          <div class="col-md-4">
-            <input type="email" class="form-control" id="lead_owner" placeholder="Feedback to" value='{{lead.lead_owner_email}}' disabled>
-            <input type="hidden" name="lead_owner" value='{{lead.lead_owner_email}}' />
-          </div>
-          <div class="col-md-4">
-            <input type="tel" class="form-control" id="advertiser" placeholder="Name of the Advertiser"  value='{{lead.first_name}}{{lead.last_name}}' disabled >
-            <input type="hidden" name="advertiser" value='{{lead.first_name}}{{lead.last_name}}'>
-          </div>
-      {% else %}
           <div class="col-md-4">
             <input type="email" class="form-control" id="lead_owner" placeholder="Feedback to" disabled>
             <input type="hidden" name="lead_owner"  />
@@ -79,17 +65,12 @@ Regalix Google Portal
             <input type="tel" class="form-control" id="advertiser" placeholder="Name of the Advertiser" disabled >
             <input type="hidden" name="advertiser">
           </div>      
-      {% endif %}
       <div class="col-md-4">
         <select class="form-control" id="advertiserLanguage" name="language">
-              <option value="English">English</option>
-              <option value="French">French</option>
-              <option value="German">German</option>
-              <option value="Spanish">Spanish</option>
-              <option value="Portuguese">Portuguese</option>
-              <option value="Dutch">Dutch</option>
-              <option value="Russian">Russian</option>
-              <option value="Mandarin">Mandarin</option>
+             {% for l in languages %}
+                <option value="{{l.id}}">{{l.language_name}}</option>
+              {% endfor %}
+             
         </select>
       </div>
       <div class="col-md-4">
@@ -104,13 +85,13 @@ Regalix Google Portal
       	<a href="#" class="feedback-docs btn std-btn grayed" name="attachment_name"><input type="file" name="attachment_name"/>Attach File</a>
       </div>
     </div>    
-    <div class="std-sub-title shopping-policies">Heads Up!
+   <!--  <div class="std-sub-title shopping-policies">Heads Up!
     	<div class="checkbox">
             <label>
               <input type="checkbox" value="">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua?</label>
           </div>
-    </div>
+    </div> -->
     <div class="btns text-center">
         <div class="btn-group">
             <button class="btn std-btn">Submit</button>
@@ -155,6 +136,13 @@ Regalix Google Portal
         document.getElementById(id).value = val;
     }
 
+    function setLanguages(languages_list){
+      $('#advertiserLanguage').html('')
+      for(i=0 ;i < languages_list.length; i +=1){
+        $('#advertiserLanguage').append('<option value="' + languages_list[i].l_id + '">' + languages_list[i].language_name + '</option>')
+      }
+    }
+
     $('input[name=cid]').on('focusout', function(){
         if(!$(this).val()){
             alert('Enter CID');
@@ -167,13 +155,15 @@ Regalix Google Portal
                 success: function(response){
                     if(response['status'] == 'FAILED'){
                         alert('Lead for Selected CID not available.');
-                        $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                        $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
                     }else{
                         $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
                         $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                        $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
                         setSelectValue('advProgram', response.details.team_id);
                         setSelectValue('feedbackLocation', response.details.location);
-                        setSelectValue('googleAcManager', response.details.google_rep_email)
+                        setSelectValue('googleAcManager', response.details.google_rep_email);
+                        setLanguages(response.details.languages_list);
                         
                     }
                 },

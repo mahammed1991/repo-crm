@@ -16,18 +16,33 @@ Manage Help
       {% if is_manager %}
       <div id="teamLeadView">
           <h1>Feedback</h1>
+          <form action='{% url 'main.views.list_feedback' %}' method='POST'>
+          {% csrf_token %}
           <div class="row text-center report-category">
+
             <div class="col-md-3 centered">
-              <select class="form-control" id="reportCat">
-                <option>Team Feedback</option>
-                <option>Individual Feedback</option>
+              <select class="form-control" id="FeedbackCat" name='feedback_type'>
+                <option value="TeamFeedback">Team Feedback</option>
+                <option value="IndividualFeedback">Individual Feedback</option>
               </select>
-            </div>     
+            </div>
+            <!--  <div  id="EmailId"  class="col-md-3  centered" >
+              <div class="country-pick">
+                <div class="checkbox" name='userids'>
+                  <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                    {% for user in rep_list %}
+                        <label>
+                            <input type="checkbox" value="{{user.id}}" checked=checked> {{user.user_name}} {{user.last_name}} 
+                        </label>
+                    {% endfor %}
+                </div>
+              </div>
+          </div> -->      
             <div class="col-md-3 centered">
-              <select class="form-control" id="EmailId">
+              <select class="form-control" id="EmailId" name='userids'>
                 <option>Select User</option>
                 {% for user in rep_list %}
-                  <option>{{user}}</option>
+                  <option value='{{user.id}}'>{{user.user_name}} {{user.last_name}}</option>
                 {% endfor %}
               </select>
             </div>      
@@ -36,7 +51,7 @@ Manage Help
             <button class="btn std-btn" id='GetFeedbacakByemail'>View Feedback</button>
         </div>
  
-  
+      </form>
     
     </div>
   {% endif %}
@@ -122,8 +137,8 @@ Manage Help
 					<td><span class="status-bor-color">{{ forloop.counter }} </span></td>
 					<td><a href="{% url 'main.views.view_feedback' feedback.id %}">Goog-{{ feedback.id }}</a></td>
           <td>{{ feedback.cid }}</td>
-          <td></td>
-					<td>{{ feedback.user.get_full_name }}</td>
+          <td>{{ feedback.google_account_manager.first_name }} {{ feedback.google_account_manager.last_name }} </td>
+					<td>{{ feedback.user.first_name }} {{ feedback.user.last_name }}</td>
 					<td>{{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}</td>
 					<td><a href="{% url 'main.views.view_feedback' feedback.id %}">{{ feedback.title }}</a></td>
 					<td>{{ feedback.created_date|date:'m/d/Y' }}</td>
@@ -143,110 +158,5 @@ Manage Help
   <!-- content-region ends --> 
 {% endblock content %}
 {% block main_js %}
-<script type="text/javascript">
-	function filter(phrase, _id){
-		var words = phrase.value.toLowerCase().split(" ");
-		var _table = document.getElementById(_id);
-		var ele;
-		for (var r = 1; r < _table.rows.length; r++){
-			ele = _table.rows[r].innerHTML.replace(/<[^>]+>/g,"");
-		        var displayStyle = 'none';
-		        for (var i = 0; i < words.length; i++) {
-			    if (ele.toLowerCase().indexOf(words[i])>=0)
-				displayStyle = '';
-			    else {
-				displayStyle = 'none';
-				break;
-			    }
-		        }
-			_table.rows[r].style.display = displayStyle;
-		}
-	}
-
-$('#All').click(function(){
-      $('.status-inq').show()
-      $('.status-inpro').show()
-      $('.status-implemented').show()
-    })
-$('#Resolved').click(function(){
-      $('.status-inq').hide()
-      $('.status-inpro').hide()
-      $('.status-implemented').show()
-    })
-$('#InProgress').click(function(){
-      $('.status-inq').hide()
-      $('.status-inpro').show()
-      $('.status-implemented').hide()
-    })
-$('#New').click(function(){
-      $('.status-inq').show()
-      $('.status-inpro').hide()
-      $('.status-implemented').hide()
-    })
-
-$(document).ready(function() 
-    { 
-        //$("#Feedback").tablesorter();
-
-      //   if ($("#feedback_table tbody tr").length > 0)
-   			// $(this).tablesorter({ sortList: [[0,0]]});
-
-         $("#feedback_table").tablesorter({ 
-	        // pass the headers argument and assing a object 
-	        headers: { 
-	            // assign the secound column (we start counting zero) 
-	            0: { 
-	                // disable it by setting the property sorter to false 
-	                sorter: false 
-	            }, 
-	            1: { 
-	                // disable it by setting the property sorter to false 
-	                sorter: false 
-	            }, 
-	            2: { 
-	                // disable it by setting the property sorter to false 
-	                sorter: false 
-	            },
-	             3: { 
-	                // disable it by setting the property sorter to false 
-	                sorter: false 
-	            }, 
-	            4: { 
-	                // disable it by setting the property sorter to false 
-	                sorter: false 
-	            },
-              6: { 
-                  // disable it by setting the property sorter to false 
-                  sorter: false 
-              },
-	              
-	            9: { 
-	                // disable it by setting the property sorter to false 
-	                sorter: false 
-	            }
-	            
-	        } 
-	    });
-    } 
-); 
-   
-   $("#status_sort").click(function(){
-   		$("#status_header").trigger("click");
-   })
-
-   $("#lead_owner_sort").click(function(){
-   		$("#lead_owner_header").trigger("click");
-   })
-
-   $("#recent_sort").click(function(){
-   		$("#recent_header").trigger("click");
-   })
-
-</script>
-
-<script type="text/javascript">
-  $('#GetFeedbacakByemail').click(function(){
-    alert($('#EmailId').val())
-  })
-</script>
+  <script src="{% static 'js/feedback.js' %}"></script>
 {% endblock main_js %}

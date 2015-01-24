@@ -20,10 +20,11 @@ from django.conf import settings
 from lib.helpers import send_mail, manager_info_required
 
 from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, Notification
-from leads.models import Location, Leads, Team
+from leads.models import Location, Leads, Team, Language
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
-                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, is_manager, get_user_list_by_manager)
+                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
+                         is_manager, get_user_list_by_manager, get_user_under_manager)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -271,10 +272,32 @@ def team(request):
 @manager_info_required
 def view_feedback(request, id):
     """ Detail view of a feedback """
-    comments = list()
+    normal_comments = list()
+    first_resolved_comments = list()
+    second_resolved_comments = list()
+
     try:
         feedback = Feedback.objects.get(id=id)
-        comments = FeedbackComment.objects.filter(feedback__id=id)
+        if feedback.resolved_date:
+            normal_comments = FeedbackComment.objects.filter(feedback__id=id, created_date__lte=feedback.resolved_date)
+            if feedback.second_resolved_date:
+                second_resolved_exist = True
+                first_resolved_comments = FeedbackComment.objects.filter(feedback__id=id,
+                                                                         created_date__gt=feedback.resolved_date,
+                                                                         created_date__lte=feedback.second_resolved_date)
+            else:
+                first_resolved_comments = FeedbackComment.objects.filter(feedback__id=id, created_date__gte=feedback.resolved_date)
+                second_resolved_exist = False
+
+            if second_resolved_exist:
+                if feedback.third_resolved_date:
+                    second_resolved_comments = FeedbackComment.objects.filter(feedback__id=id,
+                                                                              created_date__gte=feedback.second_resolved_date,
+                                                                              created_date__lte=feedback.third_resolved_date)
+                else:
+                    second_resolved_comments = FeedbackComment.objects.filter(feedback__id=id, created_date__gt=feedback.second_resolved_date)
+        else:
+            normal_comments = FeedbackComment.objects.filter(feedback__id=id)
     except ObjectDoesNotExist:
         feedback = None
 
@@ -282,7 +305,9 @@ def view_feedback(request, id):
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
     return render(request, 'main/view_feedback.html', {'feedback': feedback,
-                                                       'comments': comments,
+                                                       'comments': normal_comments,
+                                                       'first_resolved_comments': first_resolved_comments,
+                                                       'second_resolved_comments': second_resolved_comments,
                                                        'can_resolve': can_resolve,
                                                        'media_url': settings.MEDIA_URL + 'feedback/'})
 
@@ -291,26 +316,41 @@ def view_feedback(request, id):
 @manager_info_required
 def list_feedback(request):
     """ List all feedbacks """
-    manager_is = False
-    user_list = list()
-    if is_manager(request.user.email):
-        manager_is = True
-        user_list = get_user_list_by_manager(request.user.email)
+    manager_is = is_manager(request.user.email)
+    feedback_type = 'TeamFeedback'
+    if request.method == 'POST':
+        user_list = get_user_under_manager(request.user.email)
+        email_list = list()
+        if request.POST['feedback_type'] == 'IndividualFeedback':
+            feedback_type = request.POST['feedback_type']
+            email_list.append(request.user.email)
+            feedbacks = Feedback.objects.filter(user__email__in=email_list)
+        else:
+            feedback_type = request.POST['feedback_type']
+            userids = request.POST['userids']
+            email_list = get_user_list_by_manager(request.user.email)
+            feedbacks = Feedback.objects.filter(user__id__in=userids)
+    else:
+        user_list = list()
+        if is_manager(request.user.email):
+            user_list = get_user_under_manager(request.user.email)
 
-    feedbacks = Feedback.objects.filter(
-        Q(user__email=request.user.email)
-        | Q(user__profile__user_manager_email=request.user.email)
-        | Q(lead_owner__email=request.user.email)
-        | Q(lead_owner__profile__user_manager_email=request.user.email)
-    )
+        feedbacks = Feedback.objects.filter(
+            Q(user__email=request.user.email)
+            | Q(user__profile__user_manager_email=request.user.email)
+            | Q(lead_owner__email=request.user.email)
+            | Q(lead_owner__profile__user_manager_email=request.user.email)
+        )
     feedback_list = dict()
     feedback_list['new'] = feedbacks.filter(status='NEW').count()
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
+
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
                                                        'media_url': settings.MEDIA_URL + 'feedback/',
-                                                       'feedback_list': feedback_list, 'is_manager': manager_is, 'rep_list': user_list})
+                                                       'feedback_list': feedback_list, 'is_manager': manager_is,
+                                                       'rep_list': user_list, 'feedback_type': feedback_type})
 
 
 @login_required
@@ -319,6 +359,7 @@ def create_feedback(request, lead_id=None):
     """ Create feed back """
     locations = Location.objects.all()
     programs = Team.objects.all()
+    languages = Language.objects.all()
     lead = None
     if lead_id:
         try:
@@ -332,8 +373,8 @@ def create_feedback(request, lead_id=None):
         feedback_details.title = request.POST['title']
         feedback_details.cid = request.POST['cid']
         feedback_details.advertiser_name = request.POST['advertiser']
-
-        feedback_details.language = request.POST['language']
+        language = Language.objects.get(id=request.POST['language'])
+        feedback_details.language = language.language_name
         feedback_location = Location.objects.get(location_name=request.POST['location'])
         feedback_details.location = feedback_location
 
@@ -345,6 +386,8 @@ def create_feedback(request, lead_id=None):
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=request.POST['lead_owner'])
             feedback_details.lead_owner = lead_owner
+            google_account_manager = User.objects.get(email=request.POST['google_acManager_name'])
+            feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
             pass
         if request.FILES:
@@ -354,7 +397,8 @@ def create_feedback(request, lead_id=None):
         # feedback_details = notify_feedback_activity(request, feedback_details)
 
         return redirect('main.views.list_feedback')
-    return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations, 'programs': programs, 'lead': lead})
+    return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
+                                                                     'programs': programs, 'lead': lead, 'languages': languages})
 
 
 def notify_feedback_activity(request, feedback, comment=None, is_resolved=False):
@@ -425,17 +469,19 @@ def create_feedback_from_lead_status(request):
 
         feedback_details.cid = lead.customer_id
         feedback_details.advertiser_name = lead.first_name + ' ' + lead.last_name
-
         feedback_details.language = 'English'
         feedback_location = Location.objects.get(location_name=lead.country)
         feedback_details.location = feedback_location
         team = Team.objects.get(team_name=lead.team)
         feedback_details.program_id = team.id
+        feedback_details.created_date = datetime.utcnow()
 
         try:
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=lead.lead_owner_email)
             feedback_details.lead_owner = lead_owner
+            google_account_manager = User.objects.get(email=lead.google_rep_email)
+            feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
             pass
 
@@ -451,12 +497,19 @@ def create_feedback_from_lead_status(request):
 def resolve_feedback(request, id):
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'RESOLVED'
-
-    feedback.resolved_by = request.user
-    feedback.resolved_date = datetime.utcnow()
-
+    if feedback.resolved_count == 0:
+        feedback.resolved_count += 1
+        feedback.resolved_by = request.user
+        feedback.resolved_date = datetime.utcnow()
+    elif feedback.resolved_count == 1:
+        feedback.resolved_count += 1
+        feedback.second_resolved_by = request.user
+        feedback.second_resolved_date = datetime.utcnow()
+    elif feedback.resolved_count == 2:
+        feedback.resolved_count += 1
+        feedback.third_resolved_by = request.user
+        feedback.third_resolved_date = datetime.now()
     # notify_feedback_activity(request, feedback, is_resolved=True)
-
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
 
@@ -466,10 +519,12 @@ def resolve_feedback(request, id):
 def reopen_feedback(request, id):
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'IN PROGRESS'
-
-    feedback.resolved_by = request.user
-    feedback.resolved_date = datetime.utcnow()
-
+    comment = FeedbackComment()
+    comment.feedback = feedback
+    comment.comment = request.POST['reopencomment']
+    comment.comment_by = request.user
+    comment.created_date = datetime.utcnow()
+    comment.save()
     # notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
@@ -486,6 +541,7 @@ def comment_feedback(request, id):
     comment.feedback = feedback
     comment.comment = request.POST['comment']
     comment.comment_by = request.user
+    # comment.created_date = datetime.utcnow()
     comment.save()
 
     feedback.status = 'IN PROGRESS'
