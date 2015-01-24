@@ -26,7 +26,7 @@
             fontSize: '200px',
             showText: true,
             diameter: 80,
-            fontColor: 'rgb(51, 51, 51)',
+            fontColor: 'rgb(255, 255, 255)',
             lineColor: 'rgba(55, 55, 55, 1)',
             remainingLineColor: 'rgba(55, 55, 55, 0.4)',
             lineWidth: 5

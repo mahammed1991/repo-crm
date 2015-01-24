@@ -62,7 +62,7 @@ function validatethis(frm) {
     if (frm.advertiser_name.value == "") {
       // alert("Please Enter First Name");
       $(frm.advertiser_name).addClass('error-box');
-      $(frm.advertiser_name).after('<span class="error-txt">Please Enter Advertizer Name</span>')
+      $(frm.advertiser_name).after('<span class="error-txt">Please Enter Advertiser Name</span>')
       frm.advertiser_name.focus();
       return false;
     }
@@ -182,7 +182,6 @@ function validatethis(frm) {
       frm.tag_datepick.value = "";
     }
 
-
     // Webmaster Validation
     if(document.getElementById("webmasterCheck").checked == false){
 
@@ -216,32 +215,89 @@ function validatethis(frm) {
     // validate Tag Implementation fields
     if($("#tagImplementationBtn").is(":visible")){
 
-      // Code Type Validation
-      if (frm.ctype1.value == "") {
-        // alert("Please Select Code Type");
-        $(frm.ctype1).addClass('error-box');
-        $(frm.ctype1).after('<span class="error-txt">Please Select Code Type</span>')
-        frm.ctype1.focus();
-        return false;
+      if($("#task_1").is(":visible")){
+        ctypeElem = frm.ctype1;
+        if(!validateCtype(ctypeElem)){
+          return false;
+        }
+
+        codeElem = frm.code1;
+        if(!validateCode(codeElem)){
+          return false;
+        }
+
+        urlElem = frm.url1;
+        if(!validateUrl(urlElem)){
+          return false;
+        }
+      }
+      
+      if($("#task_2").is(":visible")){
+        ctypeElem2 = frm.ctype2;
+        if(!validateCtype(ctypeElem2)){
+          return false;
+        }
+
+        codeElem2 = frm.code2;
+        if(!validateCode(codeElem2)){
+          return false;
+        }
+
+        urlElem2 = frm.url2;
+        if(!validateUrl(urlElem2)){
+          return false;
+        }
       }
 
-      // Code Validation
-      if (frm.code1.value == "") {
-        //alert("Please Enter Code");
-        $(frm.code1).addClass('error-box');
-        $(frm.code1).after('<span class="error-txt">Please Enter Code</span>')
-        frm.code1.focus();
-        return false;
+      if($("#task_3").is(":visible")){
+        ctypeElem3 = frm.ctype3;
+        if(!validateCtype(ctypeElem3)){
+          return false;
+        }
+
+        codeElem3 = frm.code3;
+        if(!validateCode(codeElem3)){
+          return false;
+        }
+
+        urlElem3 = frm.url3;
+        if(!validateUrl(urlElem3)){
+          return false;
+        }
       }
 
-      // URL Validation
-      var domain = document.getElementById('url1');
-      if (domain.value == "") {
-        // alert("Please enter a URL");
-        $(domain).addClass('error-box');
-        $(domain).after('<span class="error-txt">Please enter a URL</span>')
-        domain.focus();
-        return false;
+      if($("#task_4").is(":visible")){
+        ctypeElem4 = frm.ctype4;
+        if(!validateCtype(ctypeElem4)){
+          return false;
+        }
+
+        codeElem4 = frm.code4;
+        if(!validateCode(codeElem4)){
+          return false;
+        }
+
+        urlElem4 = frm.url4;
+        if(!validateUrl(urlElem4)){
+          return false;
+        }
+      }
+
+      if($("#task_5").is(":visible")){
+        ctypeElem5 = frm.ctype5;
+        if(!validateCtype(ctypeElem5)){
+          return false;
+        }
+
+        codeElem5 = frm.code5;
+        if(!validateCode(codeElem5)){
+          return false;
+        }
+
+        urlElem5 = frm.url5;
+        if(!validateUrl(urlElem5)){
+          return false;
+        }
       }
 
     }
@@ -299,3 +355,45 @@ function validatethis(frm) {
     
     return status;
   }
+
+
+  function validateCtype(ctypeElem){
+    // Code Type Validation
+    if (ctypeElem.value == "") {
+      // alert("Please Select Code Type");
+      $(ctypeElem).addClass('error-box');
+      $(ctypeElem).after('<span class="error-txt">Please Select Code Type</span>')
+      ctypeElem.focus();
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  function validateCode(codeElem){
+    // Code Type Validation
+    if (codeElem.value == "") {
+      // alert("Please Select Code Type");
+      $(codeElem).addClass('error-box');
+      $(codeElem).after('<span class="error-txt">Please Select Code </span>')
+      codeElem.focus();
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+
+  function validateUrl(urlElem){
+    // Code Type Validation
+    if (urlElem.value == "") {
+      // alert("Please Select Code Type");
+      $(urlElem).addClass('error-box');
+      $(urlElem).after('<span class="error-txt">Please Select URL</span>')
+      urlElem.focus();
+      return false;
+    }else{
+      return true;
+    }
+  }
+    

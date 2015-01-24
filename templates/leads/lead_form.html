@@ -14,15 +14,18 @@
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
     <input type="hidden" value="00Dd0000000fk18" name="oid">
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
-    <div class="std-sub-title">Google Rep Info</div>
+    <div class="std-sub-title">Google Rep Information</div>
     <div class="row">
       <div class="col-md-4">
-        <input type="text" class="form-control" id="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+        <label for="gref">Google Rep Name</label>
+        <input type="text" class="form-control" id="gref" name="00Nd0000005WYgk" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
       </div>
       <div class="col-md-4">
+        <label for="emailref">Google Rep Email</label>
         <input type="email" class="form-control" id="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
       </div>
       <div class="col-md-4">
+        <label for="team">Program name</label>
         <select class="form-control" id="team" title="Program Name" name="00Nd0000005XIWB">
           <option value="">Program name</option>
           {% for team in teams %}
@@ -33,21 +36,26 @@
       <div class="col-md-4 tr_service_segment"></div>
       <div class="col-md-4 tr_service_segment"></div>
       <div class="col-md-4 tr_service_segment">
+        <label for="service_segment">Service Segment</label>
           <select id="service_segment" title="service_segment" class="form-control" name="00Nd0000007e2AF">
               <option value="">Service Segment</option>
               <option value="SBA">SBA</option>
               <option value="HPA">HPA</option>
               <option value="HPA+">HPA+</option>
           </select>
-          <input type="text" class="form-control" id="g_case_id" name="00Nd0000007dWIH" title="G Case ID" placeholder="8-8888888888" value="">
+          <label for="g_case_id">Google Cases-ID</label>
+          <input type="text" class="form-control" id="g_cases_id" name="00Nd0000007dWIH" title="G Case ID" placeholder="8-8888888888" value="">
       </div>
       <div class="col-md-4">
+        <label for="00Nd00000075Crj">Manager Name</label>
         <input type="text" class="form-control" name="00Nd00000075Crj" id="00Nd00000075Crj" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
       </div>
       <div class="col-md-4">
+        <label for="00Nd00000077r3s">Manager Email</label>
         <input type="email" class="form-control" name="00Nd00000077r3s" id="00Nd00000077r3s" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
       </div>
       <div class="col-md-4">
+        <label for="country">Program Location</label>
         <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="00Nd0000005WYga">
           <option value="">Program Location</option>
          {% for location in locations %}
@@ -59,13 +67,13 @@
     <div class="std-sub-title">Advertiser Info</div>
     <div class="row">
       <div class="col-md-4">
-        <input type="text" class="form-control" id="advertiser_name" placeholder="Advertiser Name">
+        <input type="text" class="form-control" id="advertiser_name" name="advertiser_name" placeholder="Advertiser Name">
       </div>
       <div class="col-md-4">
         <input type="email" class="form-control" id="aemail" name="00Nd0000005WcNw" placeholder="Advertiser Email">
       </div>
       <div class="col-md-4">
-        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+        <input type="tel" class="form-control" id="phone" name="00Nd0000005WYgz" placeholder="Advertiser Telephone">
             </td>
       </div>
       <div class="col-md-4">
@@ -75,7 +83,7 @@
         <input type="text" class="form-control" id="cid" name="00Nd0000005WYgV" placeholder="Customer ID">
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" id="advertiser_location" placeholder="Advertiser Location">
+        <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Advertiser Location">
       </div>
       <div class="col-md-4" id='tr_language'>
         <select class="form-control" id="language" title="language" name="00Nd0000007clUn">
@@ -104,7 +112,13 @@
           <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
         </div>
         <div class="col-md-4">
-          <input type="text" class="form-control" id="contact_person_role" name="contact_person_role" placeholder="Conatct Person Role">
+          <select title="Primary Contact Role" class="form-control" name="00Nd0000005WayR" id="00Nd0000005WayR">
+              <option value="">Primary Contact Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+            </select>
+          <!-- <input type="text" class="form-control" id="contact_person_role" name="00Nd0000005WayR" placeholder="Conatct Person Role"> -->
         </div>
         <div class="col-md-4">
           <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
@@ -139,7 +153,7 @@
           </select>
         </div>
         <div class="col-md-4">
-         <input type="text" class="form-control" id="popt" name="00Nd0000005WYgz" placeholder="888-888-8888">
+         <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
         </div>
       </div>
     </div>
@@ -149,6 +163,8 @@
       <span>And/Or</span>
       <a class="btn std-btn shopping-setup" id="shoppingSetup"><div class="check-icon" id="shoppingSetupBtn"><i class="fa fa-check"></i></div>Shopping Campaign Setup</a>
     </div>
+    <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
+    <input type="hidden" class="form-control" id="is_shopping_lead" name="is_shopping_lead" value="no">
     <div class="tasks" id="tasks">
         <div class="task" id="task_1">
           <div class="std-sub-title">Code Type Info</div>
@@ -177,19 +193,19 @@
           <div class="form-heading">Code Type Info (2)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype2">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYkS" id="ctype2">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
             </select>
-              <input type="text" class="form-control" id="url2" name="00Nd0000005WYhE" placeholder="URL">
+              <input type="text" class="form-control" id="url2" name="00Nd0000005WYi9" placeholder="URL">
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="code2" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+              <textarea class="form-control" id="code2" name="00Nd0000005WYiv" placeholder="Code"></textarea>
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="comment2" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+              <textarea class="form-control" id="comment2" name="00Nd0000005WYjy" placeholder="Special Instructions (Optional)"></textarea>
             </div>
           </div>
         </div>
@@ -201,19 +217,19 @@
           <div class="form-heading">Code Type Info (3)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYkX" id="ctype3">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
             </select>
-              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+              <input type="text" class="form-control" id="url3" name="00Nd0000005WYjZ" placeholder="URL">
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+              <textarea class="form-control" id="code3" name="00Nd0000005WYj5" placeholder="Code"></textarea>
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+              <textarea class="form-control" id="comment3" name="00Nd0000005WYjB" placeholder="Special Instructions (Optional)"></textarea>
             </div>
           </div>
         </div>
@@ -225,18 +241,18 @@
           <div class="form-heading">Code Type Info (4)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYkm" id="ctype4">
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
             </select>
-              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+              <input type="text" class="form-control" id="url4" name="00Nd0000005WYjo" placeholder="URL">
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+              <textarea class="form-control" id="code4" name="00Nd0000005WYjA" placeholder="Code"></textarea>
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+              <textarea class="form-control" id="comment4" name="00Nd0000005WYkI" placeholder="Special Instructions (Optional)"></textarea>
             </div>
           </div>
         </div>
@@ -248,19 +264,19 @@
           <div class="form-heading">Code Type Info (5)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="00Nd0000005WYhJ" id="ctype3">
+              <select title="Code Type" class="form-control" name="00Nd0000005WYl6" id="ctype5">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
             </select>
-              <input type="text" class="form-control" id="url3" name="00Nd0000005WYhE" placeholder="URL">
+              <input type="text" class="form-control" id="url5" name="00Nd0000005WYhE" placeholder="URL">
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="code3" name="00Nd0000005WYh9" placeholder="Code"></textarea>
+              <textarea class="form-control" id="code5" name="00Nd0000005WYiw" placeholder="Code"></textarea>
             </div>
             <div class="col-md-4">
-              <textarea class="form-control" id="comment3" name="00Nd0000005WZIe" placeholder="Special Instructions (Optional)"></textarea>
+              <textarea class="form-control" id="comment5" name="00Nd0000005WYkN" placeholder="Special Instructions (Optional)"></textarea>
             </div>
           </div>
         </div>
@@ -283,14 +299,23 @@
         </div>
       </div>
     </div>
-    <div class="std-sub-title shopping-policies">Heads Up!
+
+     <div class="std-sub-title tag-policies" style="display:none">Heads Up!
+      <div class="checkbox">
+            <label>
+              <input type="checkbox" value="" id="via_google_tag_manager">
+              "Do you want to implement this code via Google Tag Manager?</label>
+          </div>
+    </div>
+
+    <div class="std-sub-title shopping-policies" style="display:none">Heads Up!
     	<div class="checkbox">
             <label>
-              <input type="checkbox" value="">
+              <input type="checkbox" value="" id="is_shopping_policies">
               Have you ensured that the website meets the Google Shopping Policies?</label>
           </div>
     </div>
-    <div class="btns text-center">
+    <div class="btns text-center" style="display:none;" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn">Submit</button>
             <button class="btn std-btn grayed">Reset</button>
@@ -305,6 +330,122 @@
 {% include 'leads/timezone.html' %}
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
 <script type="text/javascript">
+
+  $(document).ready(function(){
+
+    // lead form controls
+    $("#appointmentCheck" ).click(function() {
+      $( "#appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+    
+    $("#webmasterCheck" ).click(function() {
+      $( "#webmaster" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      $( "#web-dum1, #web-dum2" ).toggle(500);
+    });
+    
+    $("#tagImplementation" ).click(function() {
+      
+      if($(this).children().is(':visible')){
+        if($( "#shoppingSetup .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+        }else{
+          $("#submit_buttons").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+      }
+
+      $( "#tasks" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      //$( "#tagImplementation .check-icon" ).toggle();
+      $( "#tagImplementation .check-icon" ).animate({
+      opacity: "toggle"
+      }, 200, function() {
+        if($(".tag-policies").is(":visible")){
+            $(".tag-policies").hide();  
+          }else{
+            $(".tag-policies").show(); 
+            $("#is_tag_lead").val('yes'); 
+          }
+
+      });
+    });
+    
+    $("#shoppingSetup" ).click(function() {
+
+      if($(this).children().is(':visible')){
+        if($( "#tagImplementation .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+        }else{
+          $("#submit_buttons").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+      }
+      $( "#shoppingInfo" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+
+      $( "#shoppingSetup .check-icon" ).animate({
+      opacity: "toggle"
+      }, 200, function() {
+          if($(".shopping-policies").is(":visible")){
+            $(".shopping-policies").hide();  
+          }else{
+            $(".shopping-policies").show();
+            $("#is_shopping_lead").val('yes'); 
+          }
+      });
+    });
+    
+    $(".add" ).click(function() { 
+      $( ".add" ).fadeOut();
+      $( ".remove" ).fadeOut();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      $( "#task_" + indx ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      setTimeout(function() {
+        $( "#removeTask_" + indx).fadeIn();
+      }, 300); 
+      $("#addTask_" + next_id).fadeIn();
+
+    });
+    
+    $(".remove" ).click(function() {    
+      $( ".add" ).fadeOut();
+      $( ".remove" ).fadeOut();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      prev_id = parseInt(indx) - 1
+      $( "#task_" + indx).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      $("#removeTask_" + prev_id ).fadeIn();
+      $("#addTask_" + indx).fadeIn();
+    });
+    
+    // media query for team page
+    if ($(window).width() <= 767){  
+      $("div.team-slider").removeClass('slider1');
+    }
+    
+  });
+
   var userTeam = "{{user.profile.team.team_name|safe}}"
   if(userTeam){
     $('#team').val(userTeam);
@@ -320,6 +461,8 @@
     var selectedTeam = $(this).val();
     if (selectedTeam == 'Services'){
       $(".tr_service_segment").show();
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').hide();
       $('#g_case_id').show();
       $("#service_segment").hide();
     }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
@@ -327,9 +470,15 @@
       $("#service_segment").val('');
       $(".tr_service_segment").show();
       $('#g_case_id').hide();
+
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').show();
     }else{
       $(".tr_service_segment").hide();
       $('#g_case_id').hide();
+
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').hide();
     }
   });
 
@@ -352,6 +501,15 @@
 
   function submitbtn(ths){
       $(ths).submit();
+  }
+
+  function showOrHideButtons(){
+    /* Show or Hide Submit Buttons based on selections */
+    if($("#tagImplementation").is(":visible") || $("#shoppingSetup").is(":visible")){
+      $("#submit_buttons").show();
+    }else if(!$("#tagImplementation").is(":visible") && !$("#shoppingSetup").is(":visible")){
+      $("#submit_buttons").hide();
+    }
   }
   
 </script>
