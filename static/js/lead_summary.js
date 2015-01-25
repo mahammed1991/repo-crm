@@ -176,15 +176,16 @@ $(document).ready(function()
 /* feed back submit through leads status page start here */
 
 $('#SubmitFeedback').click(function(){
+    $(".error-box").removeClass('error-box')
     var feedbackTitle = $('#feedbackTitle').val();
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
     if (feedbackTitle === '' ){
-      alert('feedback title can not be blank!')
+      $('#feedbackTitle').addClass('error-box');
     }else if(feedbackType === ''){
-      alert('please select feedback type!')
+      $('#feedbackType').addClass('error-box');
     }else if(comments === ''){
-      alert('Comments can not be blank!')
+      $('#comments').addClass('error-box');
     }else{
       dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
       $.ajax({
