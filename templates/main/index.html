@@ -227,7 +227,7 @@ Regalix Google Portal
                    {% for quarter_topper in top_performer.quarterly %}
                       <div class="performer">
                             <h3>Last Quarter</h3>
-                            <img src="{{quarter_topper.image_url}}"/>
+                            <img src="{% static quarter_topper.image_url %}"/>
                             <div class="performer-info">
                               <span>{{quarter_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{quarter_topper.location}}
@@ -242,7 +242,7 @@ Regalix Google Portal
                    {% for month_topper in top_performer.monthly %}
                       <div class="performer">
                             <h3>Last Month</h3>
-                            <img src="{{month_topper.image_url}}" />
+                            <img src="{% static month_topper.image_url %}" />
                             <div class="performer-info">
                               <span>{{month_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{month_topper.location}}
@@ -257,7 +257,7 @@ Regalix Google Portal
                    {% for week_topper in top_performer.weekly %}
                       <div class="performer">
                             <h3>Last Week</h3>
-                            <img src="{{week_topper.image_url}}"/>
+                            <img src="{% static week_topper.image_url %}"/>
                             <div class="performer-info">
                               <span>{{week_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{week_topper.location}}

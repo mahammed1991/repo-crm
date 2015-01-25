@@ -491,9 +491,12 @@ def get_lead(request, cid):
     team = Team.objects.get(team_name=leads[0].team)
     location = Location.objects.get(location_name=leads[0].country)
     languages = location.language.all()
+    if len(languages) == 0:
+        languages = Language.objects.all()
     languages_list = list()
     for lang in languages:
-        languages_list({'l_id': lang.id, 'language_name': lang.language_name})
+        language = {'l_id': lang.id, 'language_name': lang.language_name}
+        languages_list.append(language)
 
     if leads:
         lead['status'] = 'SUCCESS'

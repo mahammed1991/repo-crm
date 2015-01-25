@@ -212,7 +212,6 @@ def get_top_performer_by_date_range(start_date, end_date):
     topper_email[:topper_limit]
     for rep_email in topper_email:
         rep = dict()
-        image_url = settings.STATIC_FOLDER + '/images/avtar-big.jpg'
         location = ''
         rep.update({'google_rep_name': rep_email.split('@')[0]})
         try:
@@ -222,18 +221,13 @@ def get_top_performer_by_date_range(start_date, end_date):
             rep.update({'google_rep_name': full_name})
             try:
                 user_profile = UserDetails.objects.get(user_id=user.id)
-                image_url = user_profile.profile_photo_url
                 location = user_profile.location.location_name if user_profile.location else ''
             except ObjectDoesNotExist:
                 location = ''
         except ObjectDoesNotExist:
-            if rep_email:
-                username = rep_email.split('@')[0]
-                os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username + '.png'
-                # Check if profile picture exist
-                if os.path.isfile(os_path):
-                    image_url = '/static/images/GTeam/' + username + '.png'
-        rep.update({'image_url': image_url, 'location': location})
+            location = ''
+        avatar_url = get_profile_avatar_by_email(rep_email)
+        rep.update({'image_url': avatar_url, 'location': location})
         topper_list.append(rep)
     return topper_list
 
@@ -575,7 +569,7 @@ def get_contacts(request):
 def get_profile_avatar_by_email(email):
     """ Get Profile Avatar """
 
-    avatar_url = '/static/images/avtar-big.jpg'
+    avatar_url = 'images/avtar-big.jpg'
     try:
         user = User.objects.get(email=email)
         try:
@@ -584,19 +578,19 @@ def get_profile_avatar_by_email(email):
                 avatar_url = user_profile.profile_photo_url
             else:
                 username = email.split('@')[0]
-                os_path = '/static/images/GTeam/' + username + '.png'
+                os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username
                 # Check if profile picture exist
-                if os.path.isfile(os_path):
-                    avatar_url = '/static/images/GTeam/' + username + '.png'
+                if os.path.isfile(os_path + '.png') or os.path.isfile(os_path + '.png.gz'):
+                    avatar_url = 'images/GTeam/' + username + '.png'
         except ObjectDoesNotExist:
-            avatar_url = '/static/images/avtar-big.jpg'
+            avatar_url = 'images/avtar-big.jpg'
     except ObjectDoesNotExist:
         if email:
             username = email.split('@')[0]
-            os_path = '/static/images/GTeam/' + username + '.png'
+            os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username
             # Check if profile picture exist
-            if os.path.isfile(os_path):
-                avatar_url = '/static/images/GTeam/' + username + '.png'
+            if os.path.isfile(os_path + '.png') or os.path.isfile(os_path + '.png.gz'):
+                avatar_url = 'images/GTeam/' + username + '.png'
     return avatar_url
 
 
