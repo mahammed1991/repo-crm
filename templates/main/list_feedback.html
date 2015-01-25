@@ -12,49 +12,7 @@ Manage Help
 
   <section class="content-region">
     <div class="container-fluid">
-    <!-- team leads views start here-->
-      {% if is_manager %}
-      <div id="teamLeadView">
-          <h1>Feedback</h1>
-          <form action='{% url 'main.views.list_feedback' %}' method='POST'>
-          {% csrf_token %}
-          <div class="row text-center report-category">
-
-            <div class="col-md-3 centered">
-              <select class="form-control" id="FeedbackCat" name='feedback_type'>
-                <option value="TeamFeedback">Team Feedback</option>
-                <option value="IndividualFeedback">Individual Feedback</option>
-              </select>
-            </div>
-            <!--  <div  id="EmailId"  class="col-md-3  centered" >
-              <div class="country-pick">
-                <div class="checkbox" name='userids'>
-                  <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
-                    {% for user in rep_list %}
-                        <label>
-                            <input type="checkbox" value="{{user.id}}" checked=checked> {{user.user_name}} {{user.last_name}} 
-                        </label>
-                    {% endfor %}
-                </div>
-              </div>
-          </div> -->      
-            <div class="col-md-3 centered">
-              <select class="form-control" id="EmailId" name='userids'>
-                <option>Select User</option>
-                {% for user in rep_list %}
-                  <option value='{{user.id}}'>{{user.user_name}} {{user.last_name}}</option>
-                {% endfor %}
-              </select>
-            </div>      
-        </div>
-        <div class="btn-row">
-            <button class="btn std-btn" id='GetFeedbacakByemail'>View Feedback</button>
-        </div>
- 
-      </form>
-    
-    </div>
-  {% endif %}
+      
     <!-- team lead view end here -->
     <h1>Feedback Summary</h1>
       <div class="row">

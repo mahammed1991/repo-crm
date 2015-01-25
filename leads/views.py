@@ -83,7 +83,7 @@ def lead_form(request):
             tag_data['00Nd0000005WYjo'] = request.POST.get('url5')  # URL5
             tag_data['00Nd0000005WYiw'] = request.POST.get('code5')  # Code5
             tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
-            requests.request('POST', url=sf_api_url, data=tag_data)
+            #requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
@@ -102,7 +102,7 @@ def lead_form(request):
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
             setup_data['is_shopping_policies'] = request.POST.get('is_shopping_policies')  # Shopping Policies
-            requests.request('POST', url=sf_api_url, data=setup_data)
+            #requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -488,24 +488,24 @@ def get_lead(request, cid):
     """ Get lead information """
     lead = {'status': 'FAILED', 'details': None}
     leads = Leads.objects.filter(customer_id=cid)
-    team = Team.objects.get(team_name=leads[0].team)
-    location = Location.objects.get(location_name=leads[0].country)
+    if len(leads) > 1:
+        leads = leads[0]
+    team = Team.objects.get(team_name=leads.team)
+    location = Location.objects.get(location_name=leads.country)
     languages = location.language.all()
-    if len(languages) == 0:
+    if not languages:
         languages = Language.objects.all()
     languages_list = list()
     for lang in languages:
-        language = {'l_id': lang.id, 'language_name': lang.language_name}
-        languages_list.append(language)
-
+        languages_list.append({'l_id': lang.id, 'language_name': lang.language_name})
     if leads:
         lead['status'] = 'SUCCESS'
 
         lead['details'] = {
-            'name': leads[0].first_name + ' ' + leads[0].last_name,
-            'email': leads[0].lead_owner_email,
-            'google_rep_email': leads[0].google_rep_email,
-            'location': leads[0].country,
+            'name': leads.first_name + ' ' + leads.last_name,
+            'email': leads.lead_owner_email,
+            'google_rep_email': leads.google_rep_email,
+            'location': leads.country,
             'team': team.team_name,
             'team_id': team.id,
             'languages_list': languages_list

@@ -309,31 +309,13 @@ def view_feedback(request, id):
 @manager_info_required
 def list_feedback(request):
     """ List all feedbacks """
-    manager_is = is_manager(request.user.email)
-    feedback_type = 'TeamFeedback'
-    if request.method == 'POST':
-        user_list = get_user_under_manager(request.user.email)
-        email_list = list()
-        if request.POST['feedback_type'] == 'IndividualFeedback':
-            feedback_type = request.POST['feedback_type']
-            email_list.append(request.user.email)
-            feedbacks = Feedback.objects.filter(user__email__in=email_list)
-        else:
-            feedback_type = request.POST['feedback_type']
-            userids = request.POST['userids']
-            email_list = get_user_list_by_manager(request.user.email)
-            feedbacks = Feedback.objects.filter(user__id__in=userids)
-    else:
-        user_list = list()
-        if is_manager(request.user.email):
-            user_list = get_user_under_manager(request.user.email)
 
-        feedbacks = Feedback.objects.filter(
-            Q(user__email=request.user.email)
-            | Q(user__profile__user_manager_email=request.user.email)
-            | Q(lead_owner__email=request.user.email)
-            | Q(lead_owner__profile__user_manager_email=request.user.email)
-        )
+    feedbacks = Feedback.objects.filter(
+        Q(user__email=request.user.email)
+        | Q(user__profile__user_manager_email=request.user.email)
+        | Q(lead_owner__email=request.user.email)
+        | Q(lead_owner__profile__user_manager_email=request.user.email)
+    )
     feedback_list = dict()
     feedback_list['new'] = feedbacks.filter(status='NEW').count()
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
@@ -342,8 +324,8 @@ def list_feedback(request):
 
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
                                                        'media_url': settings.MEDIA_URL + 'feedback/',
-                                                       'feedback_list': feedback_list, 'is_manager': manager_is,
-                                                       'rep_list': user_list, 'feedback_type': feedback_type})
+                                                       'feedback_list': feedback_list,
+                                                       })
 
 
 @login_required
@@ -465,10 +447,12 @@ def create_feedback_from_lead_status(request):
         feedback_details.language = 'English'
         feedback_location = Location.objects.get(location_name=lead.country)
         feedback_details.location = feedback_location
-        team = Team.objects.get(team_name=lead.team)
-        feedback_details.program_id = team.id
+        try:
+            team = Team.objects.get(team_name=lead.team)
+            feedback_details.program_id = team.id
+        except ObjectDoesNotExist:
+            feedback_details.program = None
         feedback_details.created_date = datetime.utcnow()
-
         try:
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=lead.lead_owner_email)
@@ -479,7 +463,7 @@ def create_feedback_from_lead_status(request):
             pass
 
         feedback_details.save()
-        feedback_details = notify_feedback_activity(request, feedback_details)
+        #feedback_details = notify_feedback_activity(request, feedback_details)
 
         # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))

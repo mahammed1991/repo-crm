@@ -178,11 +178,11 @@ function validatethis(frm) {
       }
 
       // Contact Person Role Validation 
-      if (frm.contact_person_role.value == "") {
+      if (frm.primary_role.value == "") {
         // alert("Please Select Advertiser Time Zone.");
-        $(frm.contact_person_role).addClass('error-box');
+        $(frm.primary_role).addClass('error-box');
         //$(frm.contact_person_role).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        frm.contact_person_role.focus();
+        frm.primary_role.focus();
         return false;
       }
 
