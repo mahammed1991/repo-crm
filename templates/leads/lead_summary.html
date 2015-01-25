@@ -174,7 +174,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
                 <h4 class="modal-title" id="myModalLabel">Feedback</h4>
               </div>
-              <div class="modal-body">
+              <div class="modal-body" id="feedback-body">
                  <input type="text" class="form-control error-box" id="feedbackTitle" placeholder="Feedback Title">
                    <select class="form-control" id="feedbackType">
                       <option>Feedback Type</option>
@@ -211,7 +211,7 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
               <h4 class="modal-title" id="myModalLabel">History</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="chat-body">
               
             </div>
             <div class="modal-footer">
@@ -271,10 +271,10 @@ function chat(lead_id){
 }
 
 function setChat(chatmessages){
-    $('.modal-body').html('')
+    $('#chat-body').html('')
     for(i=0; i < chatmessages.length; i +=1){
       if (chatmessages[i].user_id === '{{user.email}}'){
-            $('.modal-body').append(  '<div class=" ping-copy out-msg">' +
+            $('#chat-body').append(  '<div class=" ping-copy out-msg">' +
                                       '<img src="{{request.session.profile_image}}" class="chatter-img">'+
                                       '<div class="chat-msg">'+
                                       '<img src="{%static 'images/chat-out-img.png' %}">'+
@@ -282,7 +282,7 @@ function setChat(chatmessages){
                  
             }else{
 
-              $('.modal-body').append(  '<div class=" ping-copy in-msg">' +
+              $('#chat-body').append(  '<div class=" ping-copy in-msg">' +
                                       '<img src="'+chatmessages[i].image_url+'?sz=32" class="chatter-img">'+
                                       '<div class="chat-msg">'+
                                       '<img src="{%static 'images/chat-in-img.png' %}">'+

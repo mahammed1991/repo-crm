@@ -95,6 +95,7 @@ function validatethis(frm) {
       frm.aemail.focus();
       return false;
     }
+
     frm.aemail.value = frm.aemail.value.trim();
     if (!frm.aemail.value.trim().match(check)) {
       // alert("Invalid E-mail ID !");
@@ -203,7 +204,7 @@ function validatethis(frm) {
     }
 
     // Webmaster Validation
-    if(document.getElementById("webmasterCheck").checked == false){
+    if(document.getElementById("webmasterCheck").checked == true){
 
       // Contact Person Name
       if (frm.fopt.value == "") {
@@ -214,15 +215,15 @@ function validatethis(frm) {
       }
 
       // Contact Person Role
-      if (document.getElementById("00Nd0000005WayW").value == "") {
-        var elem = document.getElementById("00Nd0000005WayW");
-        $(elem).addClass('error-box');
+      if (frm.contact_person_role.value == "") {
+        // var elem = document.getElementById("00Nd0000005WayW");
+        $(frm.contact_person_role).addClass('error-box');
         //$(elem).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        $(elem).focus();
+        $(frm.contact_person_role).focus();
         return false;
         }
 
-    // Contact Person Name
+      // Contact Person Name
       if (frm.popt.value == "") {
         $(frm.popt).addClass('error-box');
         //$(frm.popt).after('<span class="error-txt">Please Enter Phone Number.</span>')
@@ -359,7 +360,7 @@ function validatethis(frm) {
           'type' : 'SHOPPING',
           'time' : frm.setup_datepick.value
         }
-        fix_slots.push(slot)
+      fix_slots.push(slot)
       }else{
         frm.setup_datepick.value = "";
       }

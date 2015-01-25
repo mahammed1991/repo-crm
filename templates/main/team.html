@@ -16,7 +16,7 @@
         <div class="team-slider">
             {% for management in contacts_list.management %}
             <div class="team-slide">
-                <img src="{{management.photo_url}}">
+                <img src="{% static management.photo_url %}">
                 <div class="slide-copy">
                     <span class="member-name">{{management.name}}</span>
                     {{management.email}}<br>
@@ -33,7 +33,7 @@
         <div class="team-slider">
             {% for rep in contacts_list.representatives %}
             <div class="team-slide">
-                <img src="{{rep.photo_url}}">
+                <img src="{% static rep.photo_url %}">
                 <div class="slide-copy">
                     <span class="member-name">{{rep.name}}</span>
                     {{rep.email}}<br>

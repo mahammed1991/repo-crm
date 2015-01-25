@@ -95,7 +95,7 @@ Regalix Google Portal
     <div class="btns text-center">
         <div class="btn-group">
             <button class="btn std-btn">Submit</button>
-            <button class="btn std-btn grayed" onclick='window.history.back()'>Cancel</button>
+            <button class="btn std-btn grayed cancel" onclick='window.history.back()'>Cancel</button>
         </div>
     </div>
   </form>
@@ -106,7 +106,18 @@ Regalix Google Portal
 
 {% block main_js %}
 <script type="text/javascript">
+    window.cancel_clicked = false;
+
+    $('.cancel').click(function(event) { 
+      window.cancel_clicked = true;
+    });
+
     function validate(frm) {
+
+        if (window.cancel_clicked){
+          return false;
+        }
+        
         if (frm.cid.value == "") {
             alert("Please Enter Customer ID");
             frm.cid.focus();
@@ -145,7 +156,6 @@ Regalix Google Portal
 
     $('input[name=cid]').on('focusout', function(){
         if(!$(this).val()){
-            alert('Enter CID');
             $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
         }else{
             $.ajax({
