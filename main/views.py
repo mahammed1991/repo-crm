@@ -575,21 +575,28 @@ def get_contacts(request):
 def get_profile_avatar_by_email(email):
     """ Get Profile Avatar """
 
-    avatar_url = settings.STATIC_FOLDER + '/images/avtar-big.jpg'
+    avatar_url = '/static/images/avtar-big.jpg'
     try:
         user = User.objects.get(email=email)
         try:
             user_profile = UserDetails.objects.get(user_id=user.id)
-            avatar_url = user_profile.profile_photo_url
+            if user_profile.profile_photo_url:
+                avatar_url = user_profile.profile_photo_url
+            else:
+                username = email.split('@')[0]
+                os_path = '/static/images/GTeam/' + username + '.png'
+                # Check if profile picture exist
+                if os.path.isfile(os_path):
+                    avatar_url = '/static/images/GTeam/' + username + '.png'
         except ObjectDoesNotExist:
-            avatar_url = settings.STATIC_FOLDER + '/images/avtar-big.jpg'
+            avatar_url = '/static/images/avtar-big.jpg'
     except ObjectDoesNotExist:
         if email:
             username = email.split('@')[0]
-            os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username + '.png'
+            os_path = '/static/images/GTeam/' + username + '.png'
             # Check if profile picture exist
             if os.path.isfile(os_path):
-                avatar_url = settings.STATIC_FOLDER + '/images/GTeam/' + username + '.png'
+                avatar_url = '/static/images/GTeam/' + username + '.png'
     return avatar_url
 
 
