@@ -80,27 +80,9 @@
       $('.pop_up').mouseout(function(){
           $(this).find('.popover').hide();
       })
-  })
-$('.pingchat').click(function(){
-  $('.popup_overlay').show()
-})
 
-$('.close').click(function(){
-  $('.popup_overlay').hide()
-})
-
-$('#habla_panel_div').click(function(){
-  $('.popup_overlay').hide()
-  $('#habla_panel_div').hide()
-})
-
-
-// sorting function statrt here
-
-$(document).ready(function() 
-    { 
-
-         $("#Leads").tablesorter({ 
+      /* sorting function start here*/
+        $("#Leads").tablesorter({ 
           // pass the headers argument and assing a object 
           headers: { 
               // assign the secound column (we start counting zero) 
@@ -148,8 +130,30 @@ $(document).ready(function()
               
           } 
       });
-    } 
-); 
+    /*end sorting function*/
+    /*comment popup*/
+    $('[data-toggle="tooltip"]').tooltip({
+          'placement': 'right'
+      });
+    /*comment popup*/
+  })
+
+
+$('.pingchat').click(function(){
+  $('.popup_overlay').show()
+})
+
+$('.close').click(function(){
+  $('.popup_overlay').hide()
+})
+
+$('#habla_panel_div').click(function(){
+  $('.popup_overlay').hide()
+  $('#habla_panel_div').hide()
+})
+
+
+// sorting function statrt here
 
  $("#statusHeader").click(function(){
       $("#StatusRow").trigger("click");
@@ -167,22 +171,17 @@ $(document).ready(function()
 
 /* sorting function end here*/
 
- $(document).ready(function(){
-         $('[data-toggle="tooltip"]').tooltip({
-          'placement': 'right'
-      });
-    }) 
 
 /* feed back submit through leads status page start here */
 
 $('#SubmitFeedback').click(function(){
-    $(".error-box").removeClass('error-box')
+    $(".error-box").removeClass('error-box');
     var feedbackTitle = $('#feedbackTitle').val();
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
     if (feedbackTitle === '' ){
       $('#feedbackTitle').addClass('error-box');
-    }else if(feedbackType === ''){
+    }else if(feedbackType === 'Feedback Type'){
       $('#feedbackType').addClass('error-box');
     }else if(comments === ''){
       $('#comments').addClass('error-box');
@@ -210,6 +209,13 @@ $('#SubmitFeedback').click(function(){
     
     })
 $('#closeFeedbcak').click(function(){
+  $('#feedbackModal').hide()
+  $('#feedbackTitle').val('');
+  $('#feedbackType').prop('selectedIndex', 0);
+  $('#comments').val('');
+})
+
+$('.close').click(function(){
   $('#feedbackModal').hide()
   $('#feedbackTitle').val('');
   $('#feedbackType').prop('selectedIndex', 0);

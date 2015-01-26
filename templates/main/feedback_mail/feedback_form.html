@@ -27,7 +27,7 @@ Regalix Google Portal
       <div class="col-md-4">
         <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title" name="title">
         <select class="form-control" id="feedbackLocation" name="location">
-          <option value=''></option>
+          <option value='Location'>Select Location</option>
           {% for l in locations %}
             <option value="{{ l.location_name }}">{{l.location_name}}</option>
           {% endfor %}
@@ -36,7 +36,7 @@ Regalix Google Portal
       <div class="col-md-4">
         <input type="text" class="form-control" id="feedbackCID" placeholder="CID" name="cid">
         <select class="form-control" id="feedbackType" name="type">
-          <option>Feedback Type</option>
+          <option value="Feedback Type">Feedback Type</option>
           <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
           <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
           <option value="Communication - Rude rep">Communication - Rude rep</option>
@@ -47,7 +47,7 @@ Regalix Google Portal
         </select>
       </div>
       <div class="col-md-4">
-        <textarea class="form-control" placeholder="Feedback Description" name="description"></textarea>
+        <textarea class="form-control" placeholder="Feedback Description" name="description" id='description'></textarea>
       </div>
     </div>
     <div class="std-sub-title">Additional Info (Optional)</div>
@@ -67,6 +67,7 @@ Regalix Google Portal
           </div>      
       <div class="col-md-4">
         <select class="form-control" id="advertiserLanguage" name="language">
+             <option value="Language"> Select Language</option>
              {% for l in languages %}
                 <option value="{{l.id}}">{{l.language_name}}</option>
               {% endfor %}
@@ -75,7 +76,7 @@ Regalix Google Portal
       </div>
       <div class="col-md-4">
         <select class="form-control" id="advProgram" name='program'>
-          <option value=""></option>
+          <option value="0"> Select Program</option>
           {% for p in programs %}
             <option value="{{ p.id }}">{{p.team_name}}</option>
           {% endfor %}
@@ -105,84 +106,8 @@ Regalix Google Portal
 {% endblock content %}
 
 {% block main_js %}
+<script src="{% static 'js/feedback_form.js' %}"></script>
 <script type="text/javascript">
-    window.cancel_clicked = false;
-
-    $('.cancel').click(function(event) { 
-      window.cancel_clicked = true;
-    });
-
-    function validate(frm) {
-
-        if (window.cancel_clicked){
-          return false;
-        }
-        
-        if (frm.cid.value == "") {
-            alert("Please Enter Customer ID");
-            frm.cid.focus();
-            return false;
-        }
-        
-        if (frm.title.value == "") {
-            alert("Please Enter Title");
-            frm.title.focus();
-            return false;
-        }
-
-        if (frm.location.value == "0" || frm.location.value == 0) {
-            alert("Please select location");
-            frm.location.focus();
-            return false;
-        }
-
-        if (frm.description.value == "") {
-            alert("Please Enter Description");
-            frm.description.focus();
-            return false;
-        }
-    }
-
-    function setSelectValue (id, val) {
-        document.getElementById(id).value = val;
-    }
-
-    function setLanguages(languages_list){
-      $('#advertiserLanguage').html('')
-      for(i=0 ;i < languages_list.length; i +=1){
-        $('#advertiserLanguage').append('<option value="' + languages_list[i].l_id + '">' + languages_list[i].language_name + '</option>')
-      }
-    }
-
-    $('input[name=cid]').on('focusout', function(){
-        if(!$(this).val()){
-            $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
-        }else{
-            $.ajax({
-                'method': 'GET',
-                'dataType': 'json',
-                'url': "/leads/get-lead/" + $('input[name=cid]').val(),
-                success: function(response){
-                    if(response['status'] == 'FAILED'){
-                        alert('Lead for Selected CID not available.');
-                        $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
-                    }else{
-                        $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
-                        $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
-                        $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
-                        setSelectValue('advProgram', response.details.team_id);
-                        setSelectValue('feedbackLocation', response.details.location);
-                        setSelectValue('googleAcManager', response.details.google_rep_email);
-                        setLanguages(response.details.languages_list);
-                        
-                    }
-                },
-                error:function(xhr, status, error){
-                    alert('Something went wrong!. Please check CID');
-                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
-                }
-            })
-        }
-    });
+    
 </script>
 {% endblock main_js %}
