@@ -9,7 +9,7 @@ function validatethis(frm) {
     var rc = 0;
     var fix_slots = new Array();
 
-
+    
     // Google Rep Name Validation
     if (frm.gref.value == "0" || frm.gref.value == "") {
       //alert("Please Select the Team");
@@ -194,13 +194,6 @@ function validatethis(frm) {
         frm.tag_datepick.focus();
         return false;
       }
-      var slot = {
-        'type' : 'TAG',
-        'time' : frm.tag_datepick.value
-      }
-      fix_slots.push(slot)
-    } else {
-      frm.tag_datepick.value = "";
     }
 
     // Webmaster Validation
@@ -215,11 +208,11 @@ function validatethis(frm) {
       }
 
       // Contact Person Role
-      if (frm.contact_person_role.value == "") {
+      if (frm.web_master_email.value == "") {
         // var elem = document.getElementById("00Nd0000005WayW");
-        $(frm.contact_person_role).addClass('error-box');
+        $(frm.web_master_email).addClass('error-box');
         //$(elem).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        $(frm.contact_person_role).focus();
+        $(frm.web_master_email).focus();
         return false;
         }
 
@@ -232,10 +225,19 @@ function validatethis(frm) {
       }
     }
 
+    
+
     // Tag Implementation lead form related Validation
     // validate Tag Implementation fields
     if($("#tagImplementationBtn").is(":visible")){
 
+      var slot = {
+        'type' : 'TAG',
+        'time' : frm.tag_datepick.value
+      }
+      fix_slots.push(slot)
+
+      
       if($("#task_1").is(":visible")){
         ctypeElem = frm.ctype1;
         if(!validateCtype(ctypeElem)){
@@ -318,14 +320,15 @@ function validatethis(frm) {
         urlElem5 = frm.url5;
         if(!validateUrl(urlElem5)){
           return false;
-        }
+        } 
       }
-
+    }else{
+      frm.tag_datepick.value = '';
     }
     
     // Check If Shopping related lead fields
     if ($('#shoppingSetupBtn').is(':visible')) {
-
+      
       if (frm.rbid.value == "") {
         // alert("Please Enter Recommended Bid Value");
         $(frm.rbid).addClass('error-box');

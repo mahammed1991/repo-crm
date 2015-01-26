@@ -21,9 +21,14 @@ def post_login(request):
     """ Update user profile """
     try:
         username = request.user.username.split('@')[0]
+
+        # Main User Model
+        request.user.first_name = request.user.first_name
+        request.user.last_name = request.user.last_name
+        request.user.save()
+
+        # Customise User Model
         user = User.objects.get(username=username)
-        user.first_name = request.user.first_name
-        user.last_name = request.user.last_name
         user.user_ptr = request.user
         user.save()
     except ObjectDoesNotExist:

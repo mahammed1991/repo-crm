@@ -83,6 +83,8 @@ def lead_form(request):
             tag_data['00Nd0000005WYjo'] = request.POST.get('url5')  # URL5
             tag_data['00Nd0000005WYiw'] = request.POST.get('code5')  # Code5
             tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
+
+            tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
             requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
@@ -101,7 +103,7 @@ def lead_form(request):
             setup_data['00Nd00000077T9y'] = request.POST.get('rbid')  # Recommended Bid
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
-            setup_data['is_shopping_policies'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+            setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
             requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
@@ -155,12 +157,12 @@ def get_common_lead_data(post_data):
         '00Nd0000005WYga': post_data.get('country'),  # Country
 
         # Advertiser Info
-        'advertiser_name': post_data.get('advertiser_name'),  # Advertiser Name
+        '00Nd0000007esJ1': post_data.get('advertiser_name'),  # Advertiser Name
         '00Nd0000005WcNw': post_data.get('aemail'),  # Advertiser Email
         '00Nd0000005WYgz': post_data.get('phone'),  # Advertiser Phone
         'company': post_data.get('company'),    # Advertiser Company
         '00Nd0000005WYgV': post_data.get('cid'),  # Customer ID
-        'advertiser_location': post_data.get('advertiser_location'),  # Advertiser Location
+        '00Nd0000007es7U': post_data.get('advertiser_location'),  # Advertiser Location
         '00Nd0000007clUn': post_data.get('language'),  # Language
         '00Nd0000005WYhT': post_data.get('tzone'),  # Time Zone
 
@@ -170,11 +172,14 @@ def get_common_lead_data(post_data):
         '00Nd0000005WayR': post_data.get('primary_role'),  # Role
 
         # Webmaster Details
-        'web_access': post_data.get('web_access'),  # Web Access
+        '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
         '00Nd0000005WYgp': post_data.get('fopt'),  # Webmaster First Name
         '00Nd0000005WYgu': post_data.get('lopt'),  # Webmaster Last Name
-        '00Nd0000005WayW': post_data.get('contact_person_role'),  # Webmaster Role
-        'popt': post_data.get('popt'),  # Webmaster Phone
+        '00Nd0000007esIh': post_data.get('web_master_email'),  # Webmaster Email
+        '00Nd0000007esIc': post_data.get('popt'),  # Webmaster Phone
+        'Campaign_ID': post_data.get('Campaign_ID'),
+        'oid': post_data.get('oid'),
+        '__VIEWSTATE': post_data.get('__VIEWSTATE'),
     }
 
     return basic_data

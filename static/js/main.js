@@ -5,6 +5,9 @@ $(document).ready(function(){
       $(this).find( ".row-expand, .row-collapse" ).toggle();
     });
     
+    $(".fa-bell").click(function(){
+    	$("#notifications_count").hide();
+    });
 
 	$(document).on('click', '.live-transfer-location', function(e) { 
 		phone_no = $(this).attr('data-phone');
