@@ -166,7 +166,10 @@
     </div>
   </section>
   <!-- content-region ends --> 
-<!-- feedback modal -->
+
+{% endblock content %}
+  {% block model_popup %}
+  <!-- feedback modal -->
         <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-dialog ping-snippet">
             <div class="modal-content">
@@ -177,7 +180,7 @@
               <div class="modal-body" id="feedback-body">
                  <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title">
                    <select class="form-control" id="feedbackType">
-                      <option>Feedback Type</option>
+                      <option value="Feedback Type">Feedback Type</option>
                       <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
                       <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
                       <option value="Communication - Rude rep">Communication - Rude rep</option>
@@ -200,8 +203,6 @@
           </div>
         </div>
         <!-- feedback modal ends -->
-{% endblock content %}
-  {% block model_popup %}
       
       <!-- modal -->
       <div class="modal" id="pingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -291,11 +292,9 @@ function setChat(chatmessages){
     }
 }
 
-var counter = true;
 $('#submitmsg').click(function(){
   msg = $('#message').val()
   $('#message').val('')
-  console.log(window.lead_id)
    dataString = {'msg': msg, 'lead_id': window.lead_id};
    if (msg != ''){
      $.ajax({
