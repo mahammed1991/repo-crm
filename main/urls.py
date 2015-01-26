@@ -13,7 +13,7 @@ urlpatterns = patterns(
     url(r'^feedback/view/Goog-(?P<id>\d+)/$', views.view_feedback),
     url(r'^create-feedback-from-lead-status$', views.create_feedback_from_lead_status),
     url(r'^feedback/(?P<id>\d+)/comment/$', views.comment_feedback),
-    url(r'^feedback/(?P<id>\d+)/resolve/$', views.resolve_feedback),
+    # url(r'^feedback/(?P<id>\d+)/resolve/$', views.resolve_feedback),
     url(r'^feedback/(?P<id>\d+)/reopen/$', views.reopen_feedback),
     url(r'^resources/$', views.resources),
     url(r'^get-inbound-locations$', views.get_inbound_locations),

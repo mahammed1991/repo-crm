@@ -123,9 +123,6 @@
               <option value="Webmaster">Webmaster</option>
             </select>
         </div>
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
-        </div>
       </div>
     </div>
 
@@ -164,6 +161,7 @@
     <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
     <input type="hidden" class="form-control" id="is_shopping_lead" name="is_shopping_lead" value="no">
     <div class="tasks" id="tasks">
+
         <div class="task" id="task_1">
           <div class="std-sub-title">Code Type Info</div>
           <div class="row">
@@ -182,6 +180,9 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
             </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+              </div>
           </div>
         </div>
 
@@ -295,12 +296,12 @@
         <div class="col-md-4">
           <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
         </div>
-        <div class="col-md-4">
+       <!--  <div class="col-md-4">
           <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
             Do you want to use same timeslot for Shopping?
-        </div>
+        </div> -->
         <div class="col-md-4">
-          <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off' style="display:none">
+          <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
         </div>
     </div>
   </div>
@@ -320,7 +321,7 @@
     <div class="btns text-center" style="display:none;" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn">Submit</button>
-            <button class="btn std-btn grayed">Reset</button>
+            <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
         </div>
     </div>
   </form>
@@ -341,6 +342,16 @@
       height: "toggle"
       }, 300, function() {
       });
+      if($(this).is(":checked")){
+        $("#setup_datepick").val('');
+        $("#setup_datepick").hide();
+        $("#tag_datepick").val('');
+        $("#tag_datepick").hide();
+      }else{
+        $("#setup_datepick").show();
+        $("#tag_datepick").show();
+      }
+
     });
     
     $("#webmasterCheck" ).click(function() {

@@ -20,18 +20,32 @@
               <input type="text" class="form-control edit allow-edit" name="user_phone" id="user_phone" value="{{ user.profile.phone }}" placeholder="Telephone number">
               <input type="text" class="form-control edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} placeholder="Manager Name">
               <input type="text" class="form-control edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} placeholder="Manager email">
-              <select class="form-control edit allow-edit" name="user_team" id="user_team">
-                <option value="">Select Team</option>
-                {% for team in teams %}
-                  <option value="{{team.id}}">{{team.team_name}}</option>
-                {% endfor %}
-               </select>
-              <select class="form-control edit allow-edit" name="user_location" id="user_location">
-                <option value="">Select Location</option>
-                {% for loc in locations %}
-                <option value="{{loc.id}}">{{loc.location_name}}</option>
-                {% endfor %}
-              </select>
+
+              {% if 'google' in request.user.email %}
+                <select class="form-control edit allow-edit" name="user_team" id="user_team">
+                  <option value="">Select Program</option>
+                  {% for team in teams %}
+                    <option value="{{team.id}}">{{team.team_name}}</option>
+                  {% endfor %}
+                 </select>
+               {% elif 'regalix' in request.user.email %}
+                  <select class="form-control edit allow-edit" name="user_team" id="user_team">
+                    <option value="">Select Program</option>
+                    {% for team in regalix_team %}
+                      <option value="{{team.id}}">{{team.team_name}}</option>
+                    {% endfor %}
+                 </select>
+              {% endif %}
+              {% if 'google' in request.user.email %}
+                <select class="form-control edit allow-edit" name="user_location" id="user_location">
+                  <option value="">Select Location</option>
+
+                  {% for loc in locations %}
+                  <option value="{{loc.id}}">{{loc.location_name}}</option>
+                  {% endfor %}
+                </select>
+              {% endif %}
+             
               <button class="btn std-btn">Get Started</button>
             </form>
         </div>

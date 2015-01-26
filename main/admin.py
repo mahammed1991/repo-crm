@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import ContectList, CustomerTestimonials, UserDetails, Notification
+from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback
 
 
 class ContactAdmin(admin.ModelAdmin):
@@ -27,3 +27,9 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ('text', 'is_visible', )
 
 admin.site.register(Notification, NotificationAdmin)
+
+
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ('user', 'title', 'cid', 'advertiser_name', 'location', 'language', 'feedback_type', 'description')
+
+admin.site.register(Feedback, FeedbackAdmin)

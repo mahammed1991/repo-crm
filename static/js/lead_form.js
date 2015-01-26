@@ -429,3 +429,9 @@ function validatethis(frm) {
     }
   }
     
+function resetBtn(elem){
+  elemId = $(elem).attr('id');
+  if(elemId == 'formReset'){
+    window.location.reload();
+  }
+}
