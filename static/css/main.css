@@ -1231,15 +1231,6 @@ form label {
 	font-size:13px;
 	color:#999;
 }
-.status-table.feedback-status-table td:nth-child(1) {
-	width:50px;
-}
-.status-table.feedback-status-table th:nth-child(2), .status-table.feedback-status-table th:nth-child(4), .status-table.feedback-status-table th:nth-child(5), .status-table.feedback-status-table th:nth-child(6), .status-table.feedback-status-table th:nth-child(7), .status-table.feedback-status-table th:nth-child(8), .status-table.feedback-status-table th:nth-child(9) {
-	width:100px;
-}
-.status-table.feedback-status-table th:nth-child(3) {
-	width:300px;	
-}
 .status-table.feedback-status-table td:nth-child(3) {
 	text-align:left;
 }
@@ -1548,7 +1539,6 @@ ul li, ol li {
     margin-top: 0;
     line-height: 24px;
 }
-
 .testimonials .owl-carousel {
 	padding-left:265px;
 	padding-right:60px;
@@ -1868,6 +1858,36 @@ tr.table_bg {
 .status-table th:nth-child(13) {
 	width:6%;
 }
+.feedback-status-table th:nth-child(1) {
+	width:4%;
+}
+.feedback-status-table th:nth-child(2) {
+	width:9%;
+}
+.feedback-status-table th:nth-child(3) {
+	width:26%;
+}
+.feedback-status-table th:nth-child(4) {
+	width:10%;
+}
+.feedback-status-table th:nth-child(5) {
+	width:10%;
+}
+.feedback-status-table th:nth-child(6) {
+	width:10%;
+}
+.feedback-status-table th:nth-child(7) {
+	width:8%;
+}
+.feedback-status-table th:nth-child(8) {
+	width:8%;
+}
+.feedback-status-table th:nth-child(9) {
+	width:8%;
+}
+.feedback-status-table th:nth-child(10) {
+	width:7%;
+}
 .action-item {
 	font-size:18px;
 	color:#109d59 !important;
@@ -2181,7 +2201,19 @@ i.fa.fa-comment {
 }
 
 @media (max-width: 767px) {
-	
+	.feedback-status-table th:nth-child(3) {
+		width:40%;
+	}
+	.feedback-status-table th:nth-child(8) {
+		width:30%;
+	}
+	.feedback-status-table th:nth-child(9) {
+		width:30%;
+	}
+	.fdk-btn {
+		margin: 0 auto;
+		display: block;
+	}
 	.testimonials .owl-carousel {
 		padding-left:200px;
 		padding-right:30px;
@@ -2410,8 +2442,15 @@ i.fa.fa-comment {
 		width:100%;
 	}
 	.col-xs-3 {
-		float:right;
-		margin-top:-40px;
+		float:left;
+		width:100%;
+	}
+	.filter-area.navbar-right {
+		float:left;
+	}
+	.filter-area.navbar-right .dropdown-menu {
+		left:inherit;
+		right:inherit;
 	}
 	.feedback-page .table-search {
 		clear:both;
@@ -2544,6 +2583,9 @@ i.fa.fa-comment {
 }
 
 @media (max-width: 479px) {
+	.fdk-btn {
+		margin-bottom:20px;
+	}
 	.lead-type .std-btn {
 		font-size: 15px;
 		min-width: 100%;
