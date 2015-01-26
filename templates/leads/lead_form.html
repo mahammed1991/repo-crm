@@ -415,8 +415,8 @@
     });
     
     $(".add" ).click(function() { 
-      $( ".add" ).fadeOut();
-      $( ".remove" ).fadeOut();
+      $( ".add" ).hide();
+      $( ".remove" ).hide();
       id = $(this).attr('id');
       indx = id.split('_')[1];
       next_id = parseInt(indx) + 1
@@ -425,15 +425,17 @@
       }, 300, function() {
       });
       setTimeout(function() {
-        $( "#removeTask_" + indx).fadeIn();
+        $( "#removeTask_" + indx).show();
       }, 300); 
-      $("#addTask_" + next_id).fadeIn();
 
+       setTimeout(function() {
+        $("#addTask_" + next_id).show();
+      }, 300); 
     });
     
     $(".remove" ).click(function() {    
-      $( ".add" ).fadeOut();
-      $( ".remove" ).fadeOut();
+      $( ".add" ).hide();
+      $( ".remove" ).hide();
       id = $(this).attr('id');
       indx = id.split('_')[1];
       next_id = parseInt(indx) + 1
@@ -442,8 +444,15 @@
       height: "toggle"
       }, 300, function() {
       });
-      $("#removeTask_" + prev_id ).fadeIn();
-      $("#addTask_" + indx).fadeIn();
+
+      setTimeout(function() {
+        $("#removeTask_" + prev_id ).show();
+      }, 300); 
+
+      setTimeout(function() {
+        $("#addTask_" + indx).show();
+      }, 300); 
+      
     });
     
     // media query for team page
