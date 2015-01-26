@@ -716,30 +716,44 @@ def convert_chat_message_to_dict(model):
     return message
 
 
-def notify_chat_activity(request, chatmessage):
+def notify_chat_activity(request, chatmessage, lead_id):
+    lead = Leads.objects.get(id=lead_id)
 
-    mail_subject = "Lead Status Chat"
+    # get chat user manager and lead owner managers information
+    rgx_user_profile = get_manager_by_user(lead.lead_owner_email)
+    google_user_profile = get_manager_by_user(lead.google_rep_email)
+
+    # create mail subject
+    mail_subject = "IMP - Lead Status Updates - " + lead.cid
+    # CHat url
     chat_url = request.build_absolute_uri(reverse('leads.views.get_lead_summary', kwargs={'lid': chatmessage.lead_id}))
-    mail_body = get_template('main/feedback_mail/new_comment.html').render(
+    # Chat Body
+    mail_body = get_template('main/ping_chat_mail/new_chat.html').render(
         Context({
             'message': chatmessage.message,
-            'message_url': chat_url
+            'message_url': chat_url,
+            'rgx_rep': lead.lead_owner_name,
+            'google_rep': lead.google_rep_name,
+            'rgx_rep_mgr': rgx_user_profile.user_manager_name,
+            'google_rep_mgr': google_user_profile.user_manager_name,
+            'cid': lead.cid,
+            'sender_name': request.user.name,
+            'sender_email': request.user.email
         })
     )
 
-    mail_to = set([])
     # mail_to.add(request.user.email)
-
+    mail_to = set([])
     lead = Leads.objects.get(id=chatmessage.user_id)
-    mail_to.add(lead.lead_owner_email)
-    mail_to.add(lead.google_rep_email)
+    if 'regalix' in request.user.email:
+        mail_to.add(lead.google_rep_email)
+    elif 'google' in request.user.email:
+        mail_to.add(lead.lead_owner_email)
 
-    # get chat user manager and lead owner managers information
+    # add mail_Bcc address
     bcc = set([])
-    user_profile = get_manager_by_user(lead.lead_owner_email)
-    bcc.add(user_profile.user_manager_email)
-    user_profile = get_manager_by_user(lead.google_rep_email)
-    bcc.add(user_profile.user_manager_email)
+    bcc.add(rgx_user_profile.user_manager_email)
+    bcc.add(google_user_profile.user_manager_email)
 
     mail_from = request.user.email
 
