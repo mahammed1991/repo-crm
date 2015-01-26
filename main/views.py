@@ -164,9 +164,9 @@ def get_top_performer_list(current_date):
 
 
 def get_top_performer_by_date_range(start_date, end_date):
-    topper_list = Leads.objects.exclude(lead_owner_email='').filter(
+    topper_list = Leads.objects.exclude(google_rep_email='').filter(
         created_date__gte=start_date,
-        created_date__lte=end_date).values('lead_owner_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
+        created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
 
     toppers = dict()
     indx = 0
@@ -177,13 +177,13 @@ def get_top_performer_by_date_range(start_date, end_date):
 
         if indx > topper_limit:
             if topper['submitted'] in toppers:
-                toppers[key].append(topper['lead_owner_email'])
+                toppers[key].append(topper['google_rep_email'])
             else:
                 break
         elif key not in toppers:
-            toppers[key] = [topper['lead_owner_email']]
+            toppers[key] = [topper['google_rep_email']]
         else:
-            toppers[key].append(topper['lead_owner_email'])
+            toppers[key].append(topper['google_rep_email'])
 
     # Get toppers from the list
     topper_email = list()
@@ -194,7 +194,7 @@ def get_top_performer_by_date_range(start_date, end_date):
             top_list = list()
             for email in toppers[k]:
                 latest_lead = dict()
-                last_lead_submitted = Leads.objects.filter(lead_owner_email=email,
+                last_lead_submitted = Leads.objects.filter(google_rep_email=email,
                                                            created_date__gte=start_date,
                                                            created_date__lte=end_date).order_by('-created_date')[:1]
                 latest_lead.update({'email': email, 'created_date': last_lead_submitted[0].created_date})
@@ -368,7 +368,7 @@ def create_feedback(request, lead_id=None):
             feedback_details.attachment = request.FILES['attachment_name']
 
         feedback_details.save()
-        # feedback_details = notify_feedback_activity(request, feedback_details)
+        feedback_details = notify_feedback_activity(request, feedback_details)
 
         return redirect('main.views.list_feedback')
     return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
@@ -383,7 +383,8 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
             Context({
                 'feedback': feedback,
                 'comment': comment,
-                'feedback_url': feedback_url
+                'feedback_url': feedback_url,
+                'feedback_owner': request.user.first_name + request.user.last_name
             })
         )
     elif is_resolved:
@@ -391,14 +392,23 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
             Context({
                 'feedback': feedback,
                 'user_info': request.user,
-                'feedback_url': feedback_url
+                'feedback_url': feedback_url,
+                'cid': feedback.cid,
+                'type': feedback.feedback_type,
+                'feedback_title': feedback.title,
+                'feedback_body': feedback.description
             })
         )
     else:
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
             Context({
                 'feedback': feedback,
-                'feedback_url': feedback_url
+                'user_info': request.user,
+                'feedback_url': feedback_url,
+                'cid': feedback.cid,
+                'type': feedback.feedback_type,
+                'feedback_title': feedback.title,
+                'feedback_body': feedback.description
             })
         )
 
@@ -462,7 +472,7 @@ def create_feedback_from_lead_status(request):
             pass
 
         feedback_details.save()
-        #feedback_details = notify_feedback_activity(request, feedback_details)
+        feedback_details = notify_feedback_activity(request, feedback_details)
 
         # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))
@@ -482,7 +492,7 @@ def reopen_feedback(request, id):
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
-    # notify_feedback_activity(request, feedback, is_resolved=True)
+    notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -492,7 +502,7 @@ def reopen_feedback(request, id):
 @manager_info_required
 def comment_feedback(request, id):
     """ Comment on a feedback """
-    
+
     action_type = request.POST['feedback_action']
     feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
@@ -526,10 +536,10 @@ def comment_feedback(request, id):
         feedback.status = 'IN PROGRESS'
         feedback.save()
 
-    # if action_type == 'Resolved':
-    #     # notify_feedback_activity(request, feedback, comment is_resolved=True)
-    # else:
-    #     # notify_feedback_activity(request, feedback, comment)
+    if action_type == 'Resolved':
+        notify_feedback_activity(request, feedback, is_resolved=True)
+    else:
+        notify_feedback_activity(request, feedback, comment)
     return redirect('main.views.view_feedback', id=id)
 
 
@@ -600,7 +610,7 @@ def get_inbound_locations(request):
             loc_dict['phone'] = loc.phone
             loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
             location.append(loc_dict)
-            
+
     location.append({'id': '0', "name": 'US', 'phone': '8669997725', 'url': '/static/images/US-flag.png'})
     if request.user.profile.location:
         user_loc = {'loc_name': request.user.profile.location.location_name,
