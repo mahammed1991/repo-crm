@@ -91,6 +91,7 @@ class Leads(models.Model):
 class Timezone(models.Model):
     zone_name = models.CharField(max_length=20)
     time_value = models.CharField(max_length=6)
+    is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -137,6 +138,7 @@ class Location(models.Model):
     time_zone = models.ManyToManyField(Timezone)
     language = models.ManyToManyField(Language)
     flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100, blank=True)
+    is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -191,6 +193,8 @@ class RegalixTeams(models.Model):
         ('SHOPPING', 'SHOPPING'),
     ), default='TAG')
 
+    is_active = models.BooleanField(default=True)
+
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
@@ -209,6 +213,7 @@ class RegalixTeams(models.Model):
 class Team(models.Model):
     """ Team/Program information """
     team_name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

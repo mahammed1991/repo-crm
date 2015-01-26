@@ -340,11 +340,20 @@ function validatethis(frm) {
         frm.rbidmodifier.focus();
         return false;
       }
+
       if (frm.rbudget.value == "") {
         // alert("Please Enter Recommended Budget Value");
         $(frm.rbudget).addClass('error-box');
         //$(frm.rbudget).after('<span class="error-txt">Please Enter Recommended Budget Value</span>')
         frm.rbudget.focus();
+        return false;
+      }
+
+      if (frm.shopping_url.value == "") {
+        // alert("Please Enter Recommended Budget Value");
+        $(frm.shopping_url).addClass('error-box');
+        //$(frm.rbudget).after('<span class="error-txt">Please Enter Recommended Budget Value</span>')
+        frm.shopping_url.focus();
         return false;
       }
 

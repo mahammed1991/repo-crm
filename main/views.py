@@ -239,19 +239,38 @@ def edit_profile_info(request):
     locations = Location.objects.all()
     teams = Team.objects.all()
     if request.method == 'POST':
+        next_url = request.POST.get('next_url', None)
+        if next_url != 'home':
+            user_full_name = request.POST.get('user_full_name', None)
+            if user_full_name:
+                request.user.first_name = user_full_name.rsplit(' ')[0]
+                request.user.last_name = user_full_name.rsplit(' ')[1]
+                request.user.save()
         try:
             user_details = UserDetails.objects.get(user_id=request.user.id)
         except ObjectDoesNotExist:
             user_details = UserDetails()
             user_details.user = request.user
 
+        user_details.phone = request.POST.get('user_phone', None)
         user_details.team_id = request.POST.get('user_team', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
         user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
-        # return redirect('main.views.home')
+        
+        if next_url == 'home':
+            return redirect('main.views.home')
     return render(request, 'main/edit_profile_info.html', {'locations': locations, 'teams': teams})
+
+
+@login_required
+@csrf_exempt
+def get_started(request):
+    """ Get Initial information from user """
+    locations = Location.objects.all()
+    teams = Team.objects.all()
+    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams})
 
 
 @login_required

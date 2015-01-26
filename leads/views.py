@@ -118,10 +118,10 @@ def lead_form(request):
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
             'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
 
-    # language_for_location = dict()
-    # for loc in locations:
-    #     language_for_location[loc.location_name] = [{'language_name': lang[
-    #         'language_name']} for lang in loc.language.values()]
+    language_for_location = dict()
+    for loc in locations:
+        language_for_location[loc.location_name] = [{'language_name': lang[
+            'language_name']} for lang in loc.language.values()]
 
     teams = Team.objects.all()
     code_types = CodeType.objects.filter(is_active=True)
@@ -133,7 +133,9 @@ def lead_form(request):
          'locations': locations,
          'teams': teams,
          'code_types': code_types,
-         'time_zone_for_region': json.dumps(time_zone_for_region)}
+         'time_zone_for_region': json.dumps(time_zone_for_region),
+         'language_for_location': json.dumps(language_for_location)
+         }
     )
 
 

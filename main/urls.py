@@ -18,6 +18,7 @@ urlpatterns = patterns(
     url(r'^resources/$', views.resources),
     url(r'^get-inbound-locations$', views.get_inbound_locations),
     url(r'^get-notifications$', views.get_notifications),
+    url(r'^get-started/$', views.get_started),
     # url(r'^report/$', views.report),
     # url(r'^contacts/$', views.get_contacts),
     # url(r'^top-30-cms/$', views.top_30_cms),

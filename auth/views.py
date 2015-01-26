@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from forum.actions import UserLoginAction, UserJoinsAction
 from django.template import RequestContext
+from main.models import UserDetails
 
 
 # User login view
@@ -36,9 +37,16 @@ def post_login(request):
         obj.email = request.user.email
         obj.profile_image_url = request.session['profile_image'] if 'profile_image' in request.session else ''
         obj.save()
-
         # UserLoginAction(user=obj, ip=request.META['REMOTE_ADDR']).save()
         # UserJoinsAction(user=obj).save()
+        return redirect('main.views.get_started')
+    try:
+        user_profile = UserDetails.objects.get(user_id=request.user.id)
+        if not user_profile.phone and not user_profile.user_manager_name and not user_profile.user_manager_email and user_profile.team and user_profile.location:
+            return redirect('main.views.get_started')
+    except ObjectDoesNotExist:
+        return redirect('main.views.get_started')
+
     return redirect('main.views.home')
 
 
