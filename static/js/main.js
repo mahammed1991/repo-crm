@@ -66,10 +66,12 @@ $(document).ready(function(){
 
 	function setNotifications(notifications){
 		$("#notifications_count").text(notifications.length);
+		//$("#marquee_notofication").html('');
 		elem = "";
 		for(i=0; i<notifications.length; i++){
 			elem = '<li><a href="#">'+ notifications[i]['text'] +'</a></li>'
 			$("#notifications").append(elem);
+			//$("#marquee_notofication").append("<div>" + notifications[i]['text'] + "</div>");
 		}
 		
 	}
