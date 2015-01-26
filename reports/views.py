@@ -10,6 +10,7 @@ from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manag
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails
+from reports.models import Region
 from django.contrib.auth.models import User
 
 
@@ -24,7 +25,7 @@ def reports(request):
 
     locations = ReportService.get_all_locations()
     teams = ReportService.get_all_teams()
-    rgx_teams = RegalixTeams.objects.all()
+    rgx_teams = Region.objects.all()
     if '' in teams:
         teams.remove('')
         teams.append('Other')
@@ -155,8 +156,8 @@ def get_new_reports(request):
 def get_countries(request):
     if request.is_ajax():
         region_id = request.GET.get('team_id')
-        team = RegalixTeams.objects.get(pk=region_id)
-        locations = team.location.all()
+        regn = Region.objects.get(pk=region_id)
+        locations = regn.location.all()
         countries = list()
         for location in locations:
             countries.append({"id": location.id, "name": location.location_name})
