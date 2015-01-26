@@ -131,11 +131,14 @@ def main_home(request):
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
 
+    # Notification Section
+    notifications = Notification.objects.filter(is_visible=True)
+
     # feedback summary end here
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                'user_profile': user_profile, 'question_list': question_list,
                                                'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
-                                               'feedback_list': feedback_list})
+                                               'feedback_list': feedback_list, 'notifications': notifications})
 
 
 def get_top_performer_list(current_date):
@@ -236,8 +239,8 @@ def get_top_performer_by_date_range(start_date, end_date):
 @csrf_exempt
 def edit_profile_info(request):
     """ Profile information for user """
-    locations = Location.objects.all()
-    teams = Team.objects.all()
+    locations = Location.objects.filter(is_active=True)
+    teams = Team.objects.filter(is_active=True)
     if request.method == 'POST':
         next_url = request.POST.get('next_url', None)
         if next_url != 'home':
@@ -268,8 +271,8 @@ def edit_profile_info(request):
 @csrf_exempt
 def get_started(request):
     """ Get Initial information from user """
-    locations = Location.objects.all()
-    teams = Team.objects.all()
+    locations = Location.objects.filter(is_active=True)
+    teams = Team.objects.filter(is_active=True)
     return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams})
 
 
@@ -351,8 +354,8 @@ def list_feedback(request):
 @manager_info_required
 def create_feedback(request, lead_id=None):
     """ Create feed back """
-    locations = Location.objects.all()
-    programs = Team.objects.all()
+    locations = Location.objects.filter(is_active=True)
+    programs = Team.objects.filter(is_active=True)
     languages = Language.objects.all()
     lead = None
     if lead_id:
@@ -605,7 +608,7 @@ def resources(request):
 @login_required
 def get_inbound_locations(request):
     """ Get all In-Bound Locations """
-    locations = Location.objects.exclude(phone__isnull=True).filter()
+    locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter(is_active=True)
     location = list()
     for loc in locations:
         loc_dict = dict()

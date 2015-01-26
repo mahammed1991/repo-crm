@@ -83,7 +83,7 @@ def lead_form(request):
             tag_data['00Nd0000005WYjo'] = request.POST.get('url5')  # URL5
             tag_data['00Nd0000005WYiw'] = request.POST.get('code5')  # Code5
             tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
-            #requests.request('POST', url=sf_api_url, data=tag_data)
+            requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
@@ -102,7 +102,7 @@ def lead_form(request):
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
             setup_data['is_shopping_policies'] = request.POST.get('is_shopping_policies')  # Shopping Policies
-            #requests.request('POST', url=sf_api_url, data=setup_data)
+            requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -112,7 +112,7 @@ def lead_form(request):
 
         return redirect(basic_data['retURL'])
 
-    locations = Location.objects.all()
+    locations = Location.objects.filter(is_active=True)
     time_zone_for_region = dict()
     for loc in locations:
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
@@ -123,7 +123,7 @@ def lead_form(request):
         language_for_location[loc.location_name] = [{'language_name': lang[
             'language_name']} for lang in loc.language.values()]
 
-    teams = Team.objects.all()
+    teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
 
     return render(
