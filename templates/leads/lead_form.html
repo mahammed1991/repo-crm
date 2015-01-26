@@ -1,0 +1,514 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="post">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
+    <input type="hidden" value="00Dd0000000fk18" name="oid">
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <div class="std-sub-title">Google Rep Information</div>
+    <div class="row">
+      <div class="col-md-4">
+        <label for="gref">Google Rep Name</label>
+        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+      </div>
+      <div class="col-md-4">
+        <label for="emailref">Google Rep Email</label>
+        <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+      </div>
+      <div class="col-md-4">
+        <label for="team">Program name</label>
+        <select class="form-control" id="team" title="Program Name" name="team">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment">
+        <label for="service_segment">Service Segment</label>
+          <select id="service_segment" title="service_segment" class="form-control" name="service_segment">
+              <option value="">Service Segment</option>
+              <option value="SBA">SBA</option>
+              <option value="HPA">HPA</option>
+              <option value="HPA+">HPA+</option>
+          </select>
+          <label for="g_case_id">Google Cases-ID</label>
+          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="8-8888888888" value="">
+      </div>
+      <div class="col-md-4">
+        <label for="manager_name">Manager Name</label>
+        <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+      </div>
+      <div class="col-md-4">
+        <label for="manager_email">Manager Email</label>
+        <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+      </div>
+      <div class="col-md-4">
+        <label for="country">Program Location</label>
+        <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
+          <option value="">Program Location</option>
+         {% for location in locations %}
+            <option value='{{location.location_name}}' location_id="{{location.id}}">{{location.location_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_name" name="advertiser_name" placeholder="Advertiser Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email">
+      </div>
+      <div class="col-md-4">
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+            </td>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="cid" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Advertiser Location">
+      </div>
+      <div class="col-md-4" id='tr_language'>
+        <select class="form-control" id="language" title="language" name="language">
+          <option value="">Select Language</option>
+          <option value="English">English</option>
+          <option value="Dutch">Dutch</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select title="Time Zone" class="form-control" id="tzone" name="tzone">
+          <option value="">Select Time Zone</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="tag_datepick_nApplicable" id="appointmentCheck" value="">
+            Don’t have an appointment </label>
+        </div>
+      </div>
+    </div>
+    <div id="appointment">
+      <div class="form-heading">Appointment Details</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
+        </div>
+        <div class="col-md-4">
+          <select title="Primary Contact Role" class="form-control" name="primary_role" id="primary_role">
+              <option value="">Primary Contact Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+        </div>
+      </div>
+    </div>
+
+    <div class="webmasterCheck">        
+      <div class="form-heading">Does the advertiser have web access or a Webmaster? (Optional)</div>
+      <div class="checkbox web-access">
+            <label>
+              <input type="checkbox" value="" name="web_access" id="web_access">
+              Web Access
+            </label>
+            <label>
+              <input id="webmasterCheck" type="checkbox" name="webmasterCheck" value="">
+              Webmaster
+            </label>
+      </div>
+      <div id="webmaster" class="row" style="display:none;">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="fopt" name="fopt" placeholder="Webmaster Name">
+          <input type="hidden" class="form-control" id="lopt" name="lopt">
+        </div>
+        <div class="col-md-4">
+          <select title="Web Master Role" class="form-control" name="contact_person_role" id="contact_person_role">
+              <option value="">Web Master Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+           <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
+        </div>
+      </div>
+      </div>
+
+    <div class="lead-type">
+      <label>Please select the type of lead you want to submit</label>
+      <a class="btn std-btn tag-impl" id="tagImplementation"><div class="check-icon" id="tagImplementationBtn"><i class="fa fa-check"></i></div>Tag Implementation</a>
+      <span>And/Or</span>
+      <a class="btn std-btn shopping-setup" id="shoppingSetup"><div class="check-icon" id="shoppingSetupBtn"><i class="fa fa-check"></i></div>Shopping Campaign Setup</a>
+    </div>
+    <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
+    <input type="hidden" class="form-control" id="is_shopping_lead" name="is_shopping_lead" value="no">
+    <div class="tasks" id="tasks">
+        <div class="task" id="task_1">
+          <div class="std-sub-title">Code Type Info</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="ctype1" id="ctype1">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code1" name="code1" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 2 ################################################### -->
+        <a id="removeTask_2" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_2" style="display:none;">
+          <div class="form-heading">Code Type Info (2)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="ctype2" id="ctype2">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url2" name="url2" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code2" name="code2" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment2" name="comment2" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_2" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 3 ################################################### -->
+        <a id="removeTask_3" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_3" style="display:none;">
+          <div class="form-heading">Code Type Info (3)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="ctype3" id="ctype3">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="code3" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="comment3" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_3" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 4 ################################################### -->
+        <a id="removeTask_4" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_4" style="display:none;">
+          <div class="form-heading">Code Type Info (4)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="ctype4" id="ctype4">
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url4" name="url4" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code4" name="code4" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment4" name="comment4" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_4" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+        <!-- ############################################### Code Type 5 ################################################### -->
+        <a id="removeTask_5" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_5" style="display:none;">
+          <div class="form-heading">Code Type Info (5)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control" name="ctype5" id="ctype5">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url5" name="url5" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code5" name="code5" placeholder="Code"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment5" name="comment5" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+          </div>
+        </div>
+        <a id="addTask_5" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+
+    </div>
+    <div id="shoppingInfo">
+      <div class="std-sub-title">Shopping Campaign Info</div>
+      <div class="row">
+        <div class="col-md-4">
+        <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
+        <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="rbudget" class="form-control" name="rbudget" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping_url" name="shopping_url" placeholder="URL">
+        </div>
+        <div class="col-md-4">
+          <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
+      </div>
+    </div>
+  </div>
+     <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
+      <div class="checkbox">
+            <label id="tagCheck" class="tag-policies" style="display:none;">
+               <input type="checkbox" value="" id="via_google_tag_manager" name="via_google_tag_manager">
+              Do you want to install this Tag via GTM?
+            </label>
+            <label id="shoppingCheck" class="shopping-policy" style="display:none;">
+              <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
+              Have you ensured that the website meets the Google Shopping Policies?
+            </label>
+          </div>
+    </div>
+
+    <div class="btns text-center" style="display:none;" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed">Reset</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
+<script type="text/javascript">
+
+  $(document).ready(function(){
+
+    // lead form controls
+    $("#appointmentCheck" ).click(function() {
+      $( "#appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+    
+    $("#webmasterCheck" ).click(function() {
+      $( "#webmaster" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      $( "#web-dum1, #web-dum2" ).toggle(500);
+    });
+    
+    $("#tagImplementation" ).click(function() {
+      
+      if($(this).children().is(':visible')){
+        if($( "#shoppingSetup .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+          //$("#heads_up").show();
+        }else{
+          $("#submit_buttons").hide();
+          //$("#heads_up").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+        //$("#heads_up").show();
+      }
+
+      $( "#tasks" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      //$( "#tagImplementation .check-icon" ).toggle();
+      $( "#tagImplementation .check-icon" ).animate({
+      opacity: "toggle"
+      }, 200, function() {
+        if($(".tag-policies").is(":visible")){
+            $(".tag-policies").hide();  
+          }else{
+            $(".tag-policies").show();
+            $("#heads_up").show();
+            $("#is_tag_lead").val('yes'); 
+          }
+
+      });
+    });
+    
+    $("#shoppingSetup" ).click(function() {
+
+      if($(this).children().is(':visible')){
+        if($( "#tagImplementation .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+          //$("#heads_up").show();
+        }else{
+          $("#submit_buttons").hide();
+          //$("#heads_up").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+        //$("#heads_up").show();
+      }
+      $( "#shoppingInfo" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+
+      $( "#shoppingSetup .check-icon" ).animate({
+      opacity: "toggle"
+      }, 200, function() {
+          if($(".shopping-policy").is(":visible")){
+            $(".shopping-policy").hide();  
+          }else{
+            $(".shopping-policy").show();
+            $("#heads_up").show();
+            $("#is_shopping_lead").val('yes'); 
+          }
+      });
+    });
+    
+    $(".add" ).click(function() { 
+      $( ".add" ).fadeOut();
+      $( ".remove" ).fadeOut();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      $( "#task_" + indx ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      setTimeout(function() {
+        $( "#removeTask_" + indx).fadeIn();
+      }, 300); 
+      $("#addTask_" + next_id).fadeIn();
+
+    });
+    
+    $(".remove" ).click(function() {    
+      $( ".add" ).fadeOut();
+      $( ".remove" ).fadeOut();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      prev_id = parseInt(indx) - 1
+      $( "#task_" + indx).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      $("#removeTask_" + prev_id ).fadeIn();
+      $("#addTask_" + indx).fadeIn();
+    });
+    
+    // media query for team page
+    if ($(window).width() <= 767){  
+      $("div.team-slider").removeClass('slider1');
+    }
+    
+  });
+
+  var userTeam = "{{user.profile.team.team_name|safe}}"
+  if(userTeam){
+    $('#team').val(userTeam);
+  }
+  var userLocation = "{{user.profile.location.location_name|safe}}"
+  if(userLocation){
+    $('#country').val(userLocation);
+    loc = document.getElementById('country');
+    changetime(loc.options[loc.selectedIndex]);
+  }
+
+  $('#team').change(function(){
+    var selectedTeam = $(this).val();
+    if (selectedTeam == 'Services'){
+      $(".tr_service_segment").show();
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').hide();
+      $('#g_case_id').show();
+      $("#service_segment").hide();
+    }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+      $("#service_segment").show();
+      $("#service_segment").val('');
+      $(".tr_service_segment").show();
+      $('#g_case_id').hide();
+
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').show();
+    }else{
+      $(".tr_service_segment").hide();
+      $('#g_case_id').hide();
+
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').hide();
+    }
+  });
+
+  $('#team').trigger("change");
+
+  $('#country').change(function(){
+    var selectedTeam = $(this).val();
+    if( selectedTeam == 'Nordic(English)' || selectedTeam == 'Netherlands(English)' ){
+      $("#language").val('English');
+    }else if(selectedTeam == 'Nordic(Dutch)' || selectedTeam == 'Netherlands(Dutch)'){
+      $("#language").val('Dutch');
+    }else{
+      $("#language").val('');
+    }
+  });
+  
+  $('#setup_lead_check').click(function() {
+    $('#setup_lead_form').toggle();
+  })
+
+  function submitbtn(ths){
+      $(ths).submit();
+  }
+  
+</script>
+{% endblock main_js %}

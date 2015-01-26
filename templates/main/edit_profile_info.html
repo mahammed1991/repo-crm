@@ -1,0 +1,76 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  User Profile
+{% endblock title %}
+
+{% block content %}
+
+<section class="content-region profile-page">
+  <div class="container-fluid">
+  <h1>My Account</h1>
+  <form class="profile" onsubmit="return validateProfile()" action="{% url 'main.views.edit_profile_info' %}" id="edit_profile" method="POST">
+    {% csrf_token %}
+    <div class="std-sub-title">Personal Info</div>
+    <div class="profile-row">
+     <div class="pull-right text-right profile-img">
+        {% if user.profile.profile_photo_url %}
+            <img src="{{user.profile.profile_photo_url}}">
+        {% else %}
+            <img src="{% static 'images/default_user.png' %}">
+        {% endif %}
+      </div>
+      <div class="profile-section">
+        <label>Name</label>
+        <input type="text" class="form-control non-edit allow-edit" name='user_full_name' id='user_full_name' value="{{ user.get_full_name }}" disabled>
+         <label>Email </label>
+        <input type="text" class="form-control non-edit" name='user_email' value="{{ user.email }}" disabled>
+         <label>Phone</label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_phone" id="user_phone" value="{{ user.profile.phone }}" disabled>
+      </div>     
+    </div>
+    <div class="std-sub-title">Team Info</div>
+    <div class="profile-row">
+      <div class="profile-section editable">
+        <label>Team</label>
+         <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team">
+            <option value="">Select Team</option>
+            {% for team in teams %}
+            <option value="{{team.id}}">{{team.team_name}}</option>
+            {% endfor %}
+        </select>
+        <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
+         <label>Manager Name </label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} disabled>
+         <label>Manager Email</label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} disabled>
+        <label>Program Location</label>
+        <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
+            <option value="">Select Location</option>
+            {% for loc in locations %}
+            <option value="{{loc.id}}">{{loc.location_name}}</option>
+            {% endfor %}
+        </select>
+      </div>
+      </div>      
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn" id="profileEdit">Edit</button>
+            <button class="btn std-btn" style="display:none" id="profileUpdate">Update</button>
+            <button class="btn std-btn grayed" style="display:none" id="profileCancel">Cancel</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+    <script type="text/javascript" src="{% static 'js/profile.js' %}"></script>
+     <script type="text/javascript">
+      window.loc_id = {{user.profile.location.id|safe}}
+      window.team_id = {{user.profile.team.id|safe}}
+    </script>
+{% endblock main_js %}

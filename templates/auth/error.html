@@ -1,0 +1,23 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Regalix Google Portal
+{% endblock title %}
+
+{% block content %}
+<div class="main">
+    <img src="{% static 'images/login_banner.png' %}" width="100%" />
+    <div class="login">
+        <div class="form_container">
+            <div class="login_text">
+                You are currently logged in with <span class='error-email'>{{email}}</span>.<br /> Please sign out and proceed to log in with your Google id.
+            </div>
+            <div class="btnContainer">
+                <a href="{% url 'auth.views.user_login' %}"><img src="{% static 'images/google-login-button.png' %}"></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
