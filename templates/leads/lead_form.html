@@ -10,14 +10,18 @@
 <section class="content-region inner-page">
   <div class="container-fluid">
   <h1>Submit Lead</h1>
-  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="post">
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
     <input type="hidden" value="00Dd0000000fk18" name="oid">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <div class="std-sub-title">Google Rep Information</div>
     <div class="row">
       <div class="col-md-4">
         <label for="gref">Google Rep Name</label>
+        <!-- <input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /> -->
         <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
       </div>
       <div class="col-md-4">
@@ -80,7 +84,7 @@
         <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" id="cid" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
       <div class="col-md-4">
         <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Advertiser Location">
@@ -143,12 +147,7 @@
           <input type="hidden" class="form-control" id="lopt" name="lopt">
         </div>
         <div class="col-md-4">
-          <select title="Web Master Role" class="form-control" name="contact_person_role" id="contact_person_role">
-              <option value="">Web Master Role</option>
-              <option value="Owner">Owner</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Webmaster">Webmaster</option>
-          </select>
+          <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Name">
         </div>
         <div class="col-md-4">
            <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
@@ -297,14 +296,18 @@
           <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
         </div>
         <div class="col-md-4">
-          <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
-      </div>
+          <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
+            Do you want to use same timeslot for Shopping?
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off' style="display:none">
+        </div>
     </div>
   </div>
      <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
       <div class="checkbox">
             <label id="tagCheck" class="tag-policies" style="display:none;">
-               <input type="checkbox" value="" id="via_google_tag_manager" name="via_google_tag_manager">
+               <input type="checkbox" value="" id="tag_via_gtm" name="via_google_tag_manager">
               Do you want to install this Tag via GTM?
             </label>
             <label id="shoppingCheck" class="shopping-policy" style="display:none;">

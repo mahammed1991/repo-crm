@@ -608,15 +608,16 @@ def resources(request):
 @login_required
 def get_inbound_locations(request):
     """ Get all In-Bound Locations """
-    locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter(is_active=True)
+    locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter()
     location = list()
     for loc in locations:
         loc_dict = dict()
-        loc_dict['id'] = loc.id
-        loc_dict['name'] = loc.location_name
-        loc_dict['phone'] = loc.phone
-        loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
-        location.append(loc_dict)
+        if loc.phone and loc.flag_image.name:
+            loc_dict['id'] = loc.id
+            loc_dict['name'] = loc.location_name
+            loc_dict['phone'] = loc.phone
+            loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
+            location.append(loc_dict)
 
     if request.user.profile.location:
         user_loc = {'loc_name': request.user.profile.location.location_name,
