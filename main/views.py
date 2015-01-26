@@ -20,7 +20,7 @@ from django.conf import settings
 from lib.helpers import send_mail, manager_info_required
 
 from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, Notification
-from leads.models import Location, Leads, Team, Language
+from leads.models import Location, Leads, Team, Language, RegalixTeams
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
@@ -261,7 +261,7 @@ def edit_profile_info(request):
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
         user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
-        
+
         if next_url == 'home':
             return redirect('main.views.home')
     return render(request, 'main/edit_profile_info.html', {'locations': locations, 'teams': teams})
@@ -273,7 +273,8 @@ def get_started(request):
     """ Get Initial information from user """
     locations = Location.objects.filter(is_active=True)
     teams = Team.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams})
+    regalix_team = RegalixTeams.objects.filter(is_active=True)
+    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams, 'regalix_team': regalix_team})
 
 
 @login_required
@@ -290,32 +291,8 @@ def view_feedback(request, id):
     normal_comments = list()
     first_resolved_comments = list()
     second_resolved_comments = list()
-
-    try:
-        feedback = Feedback.objects.get(id=id)
-        if feedback.resolved_date:
-            normal_comments = FeedbackComment.objects.filter(feedback__id=id, created_date__lte=feedback.resolved_date)
-            if feedback.second_resolved_date:
-                second_resolved_exist = True
-                first_resolved_comments = FeedbackComment.objects.filter(feedback__id=id,
-                                                                         created_date__gt=feedback.resolved_date,
-                                                                         created_date__lte=feedback.second_resolved_date)
-            else:
-                first_resolved_comments = FeedbackComment.objects.filter(feedback__id=id, created_date__gte=feedback.resolved_date)
-                second_resolved_exist = False
-
-            if second_resolved_exist:
-                if feedback.third_resolved_date:
-                    second_resolved_comments = FeedbackComment.objects.filter(feedback__id=id,
-                                                                              created_date__gte=feedback.second_resolved_date,
-                                                                              created_date__lte=feedback.third_resolved_date)
-                else:
-                    second_resolved_comments = FeedbackComment.objects.filter(feedback__id=id, created_date__gt=feedback.second_resolved_date)
-        else:
-            normal_comments = FeedbackComment.objects.filter(feedback__id=id)
-    except ObjectDoesNotExist:
-        feedback = None
-
+    feedback = Feedback.objects.get(id=id)
+    normal_comments = FeedbackComment.objects.filter(feedback__id=id)
     can_resolve = True
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
@@ -493,35 +470,16 @@ def create_feedback_from_lead_status(request):
 
 @login_required
 @manager_info_required
-def resolve_feedback(request, id):
-    feedback = Feedback.objects.get(id=id)
-    feedback.status = 'RESOLVED'
-    if feedback.resolved_count == 0:
-        feedback.resolved_count += 1
-        feedback.resolved_by = request.user
-        feedback.resolved_date = datetime.utcnow()
-    elif feedback.resolved_count == 1:
-        feedback.resolved_count += 1
-        feedback.second_resolved_by = request.user
-        feedback.second_resolved_date = datetime.utcnow()
-    elif feedback.resolved_count == 2:
-        feedback.resolved_count += 1
-        feedback.third_resolved_by = request.user
-        feedback.third_resolved_date = datetime.now()
-    # notify_feedback_activity(request, feedback, is_resolved=True)
-    feedback.save()
-    return redirect('main.views.view_feedback', id=id)
-
-
-@login_required
-@manager_info_required
 def reopen_feedback(request, id):
+    """ Reopen Comment """
+
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'IN PROGRESS'
     comment = FeedbackComment()
     comment.feedback = feedback
     comment.comment = request.POST['reopencomment']
     comment.comment_by = request.user
+    comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
     # notify_feedback_activity(request, feedback, is_resolved=True)
@@ -534,20 +492,44 @@ def reopen_feedback(request, id):
 @manager_info_required
 def comment_feedback(request, id):
     """ Comment on a feedback """
+    
+    action_type = request.POST['feedback_action']
     feedback = Feedback.objects.get(id=id)
-
     comment = FeedbackComment()
     comment.feedback = feedback
     comment.comment = request.POST['comment']
+
     comment.comment_by = request.user
+    if action_type == 'Resolved':
+        comment.feedback_status = 'RESOLVED'
+    else:
+        comment.feedback_status = 'IN PROGRESS'
     # comment.created_date = datetime.utcnow()
     comment.save()
+    if action_type == 'Resolved':
+        feedback.status = 'RESOLVED'
+        if feedback.resolved_count == 0:
+            feedback.resolved_count += 1
+            feedback.resolved_by = request.user
+            feedback.resolved_date = datetime.utcnow()
+        elif feedback.resolved_count == 1:
+            feedback.resolved_count += 1
+            feedback.second_resolved_by = request.user
+            feedback.second_resolved_date = datetime.utcnow()
+        elif feedback.resolved_count == 2:
+            feedback.resolved_count += 1
+            feedback.third_resolved_by = request.user
+            feedback.third_resolved_date = datetime.utcnow()
+        # notify_feedback_activity(request, feedback, is_resolved=True)
+        feedback.save()
+    else:
+        feedback.status = 'IN PROGRESS'
+        feedback.save()
 
-    feedback.status = 'IN PROGRESS'
-
-    # notify_feedback_activity(request, feedback, comment)
-    feedback.save()
-
+    # if action_type == 'Resolved':
+    #     # notify_feedback_activity(request, feedback, comment is_resolved=True)
+    # else:
+    #     # notify_feedback_activity(request, feedback, comment)
     return redirect('main.views.view_feedback', id=id)
 
 
@@ -618,7 +600,8 @@ def get_inbound_locations(request):
             loc_dict['phone'] = loc.phone
             loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
             location.append(loc_dict)
-
+            
+    location.append({'id': '0', "name": 'US', 'phone': '8669997725', 'url': '/static/images/US-flag.png'})
     if request.user.profile.location:
         user_loc = {'loc_name': request.user.profile.location.location_name,
                     'loc_id': request.user.profile.location.id,

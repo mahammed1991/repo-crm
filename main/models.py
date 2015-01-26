@@ -72,8 +72,9 @@ class Feedback(models.Model):
 class FeedbackComment(models.Model):
     """ Feedback comments """
     feedback = models.ForeignKey(Feedback)
-    comment = models.CharField(max_length=1500)
+    comment = models.TextField()
     comment_by = models.ForeignKey(User)
+    feedback_status = models.CharField(max_length=20, default='NEW')
     created_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
