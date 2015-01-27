@@ -114,15 +114,16 @@ class ContectList(models.Model):
         return os.path.join('profile_photo/', filename)
 
     position_type = models.CharField(max_length=100, blank=False, choices=(
-        ('TL', 'TEAM LEADER'),
+        ('OPERATIONS', 'OPERATIONS'),
         ('MGMT', 'MANAGEMENT'),
-        ('QA', 'QUALLITY ASSURANCE'),
+        ('QUALLITY', 'QUALLITY'),
         ('TECH', 'TECH'),
         ('TAG', 'TAG'),
         ('SHOPPING', 'SHOPPING'),
-        ('PLA', 'PLA'),
+        ('POD', 'POD'),
         ('MIS', 'MIS'),
-        ('DESIGN', 'DESIGN'),)
+        ('DESIGN', 'DESIGN'),
+        ('TRAINING', 'TRAINING'),)
     )
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)

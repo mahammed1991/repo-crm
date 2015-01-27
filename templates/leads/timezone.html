@@ -90,6 +90,7 @@
                 var lang_info = languages[abt.value];
                 var option = "<option value='" + lang_info[0]['language_name'] + "'>"+ lang_info[0]['language_name'] +"</option>"
                 $('#language').html(option);
+                $('#language').val(lang_info[0]['language_name']);
             }else{
                 var option = "<option value='0'>--Select--</option>"
                 var lang_info = languages[abt.value];
@@ -97,7 +98,7 @@
                     option += "<option value='" + lang_info[i]['language_name'] + "'>"+ lang_info[i]['language_name'] +"</option>"
                 }
                 $('#language').html(option);
-                $('#language').val('0');
+                $('#language').val(0);
             }
         }
 
