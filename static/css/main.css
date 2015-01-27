@@ -149,6 +149,10 @@ html, body {
 .live-transfer {
 	margin-left: 25px;
 }
+.live-transfer ul {
+    max-height: 318px;
+    overflow: auto;
+}
 .live-transfer img {
 	width:26px;
 	height:14px;
@@ -301,7 +305,6 @@ html, body {
 .std-btn {
 	text-transform: uppercase;
 	border-radius: 0;
-	padding: 15px;
 	background: #4385f5;
 	color: #fff;
 	min-width: 200px;
@@ -654,17 +657,26 @@ h1 {
 	text-shadow: none;
 	font-size: 13px;
 	font-family: 'robotoregular';
-	padding: 23px 15px;
+	padding: 15px;
 	color: #333;
 	margin-bottom: 20px;
+	height:48px;
 }
 select.form-control {
 	height: 48px;
-	padding: 0 10px;
-	background: -webkit-linear-gradient(#fff, #efefef);
-	background: -o-linear-gradient(#fff, #efefef);
-	background: -moz-linear-gradient(#fff, #efefef);
-	background: linear-gradient(#fff, #efefef);
+	padding: 0 10px;	
+	background-image: url(../images/down-arrow.svg), -webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef)); /* Saf4+, Chrome */
+	background-image: url(../images/down-arrow.svg), -webkit-linear-gradient(top, #fff, #efefef); /* Chrome 10+, Saf5.1+ */
+	background-image: url(../images/down-arrow.svg),    -moz-linear-gradient(top, #fff, #efefef); /* FF3.6+ */
+	background-image: url(../images/down-arrow.svg),     -ms-linear-gradient(top, #fff, #efefef); /* IE10 */
+	background-image: url(../images/down-arrow.svg),      -o-linear-gradient(top, #fff, #efefef); /* Opera 11.10+ */
+	background-image: url(../images/down-arrow.svg),         linear-gradient(top bottom, #fff, #efefef); /* W3C */
+	background-repeat:no-repeat;
+	background-position: 95% center;	
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	-ms-appearance:none;
+    
 }
 .disabled {
 	opacity: .5 !important;
@@ -992,9 +1004,46 @@ p {
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	opacity: 0;
 	top: 0;
 	left: 0;
+	padding: 15px 0 0 36px;
+}
+.file-type-txt {
+	position: absolute;
+	height: 100%;
+	min-width: inherit;
+	top: 0;
+	line-height: 16px;
+}
+.custom-file-type span {
+	margin:0;
+	float:left;
+	width:inherit;
+}
+.custom-file-type label {
+	background:#999;
+	font-family:'robotomedium';
+	text-transform:uppercase;
+	color:#fff;
+	border-radius:0;
+	box-shadow:none;
+	-webkit-box-shadow:none;
+	border:none;
+	height:100%;
+	text-shadow:none;
+	-webkit-text-shadow;
+	font-size:16px;
+	padding:13px 16px;
+}
+.custom-file-type label:hover, .custom-file-type label:visited, .custom-file-type label:active, .custom-file-type label:focus {
+	background:#929191;
+	color:#fff;
+}
+.custom-file-type input {
+	float:right !important;
+	width:57% !important;
+	background:none !important;
+	border:0 !important;
 }
 .feedback-comment {
 	border-bottom:1px solid #ccc;
@@ -1560,6 +1609,49 @@ ul li, ol li {
 	position:relative;
 	margin-bottom:10px;
 }
+#preloaderOverlay {
+	position: fixed;
+	width: 100%;
+	height:100%;
+	display: flex;
+	align-items: center;
+	top: 0;
+	background:#fff;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+	z-index: 99999;
+}
+.preloader {
+	  display: flex;
+	  margin: 0 auto;  
+}
+.time_zone table tr td .time_slot {
+    background: none repeat scroll 0 0 #f6f6f6;
+    height: 35px;
+    padding-top: 15px;
+    position: relative;
+    width: 140px;
+    z-index: 999;
+	font-family: 'robotoregular';
+}
+.time_zone table tr th .header {
+    background: none repeat scroll 0 0 #77a7fb;
+    color: #fff;
+    font-size: 13px;
+    height: 53px;
+    padding-top: 19px;
+    width: 140px;
+	font-family: 'robotoregular';
+}
+.time_zone table tr td .time_slot {
+    background: none repeat scroll 0 0 #ffe5e5;
+    height: 35px;
+    padding-top: 15px;
+    position: relative;
+    width: 140px;
+    z-index: 999;
+	font-family: 'robotoregular';
+}
 
 
 
@@ -1650,7 +1742,7 @@ a.tag {
 	font-size: 13px;
 	font-family: robotoregular;
 }
-.pagination > li:first-child > a, .pagination > li:first-child > span {
+.pagination > .selected > a, .pagination > li:first-child > span {
 	font-family: 'robotoblack';
 }
 .pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
@@ -1805,6 +1897,7 @@ tr.table_bg {
 .status-table th, .status-table td {
 	border:1px solid #ccc !important;
 	border-collapse:collapse;
+	font-family:'robotoregular';
 }
 .status-table p {
 	line-height:18px;

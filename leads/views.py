@@ -27,6 +27,8 @@ from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_le
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
+from reports.report_services import ReportService
+from lib.helpers import date_range_by_quarter
 # from django.db.models import Q
 
 
@@ -47,12 +49,16 @@ def lead_form(request):
                               'email': request.POST.get('aemail'),
                               'role': request.POST.get('primary_role'),
                               'customer_id': request.POST.get('cid'),
-                              'country': request.POST.get('country')
+                              'country': request.POST.get('country'),
+                              'cid_std': request.POST.get('cid').rsplit("-", 1)[0] + '-xxxx',
+                              'code_type': request.POST.get('ctype1')
                               }
 
         if request.POST.get('is_tag_lead') == 'yes':
 
             tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick'),  # TAG Appointment Date
+            tag_data['first_name'] = request.POST.get('tag_contact_person_name'),  # Primary Contact Name
+            tag_data['00Nd0000005WayR'] = request.POST.get('tag_primary_role'),  # Role
 
             # Code Type 1 Details
             tag_data['00Nd0000005WYhJ'] = request.POST.get('ctype1')  # Code Type1
@@ -85,7 +91,7 @@ def lead_form(request):
             tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
 
             tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
-            requests.request('POST', url=sf_api_url, data=tag_data)
+            #requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
@@ -96,6 +102,8 @@ def lead_form(request):
 
         if request.POST.get('is_shopping_lead') == 'yes':
             setup_data = basic_data
+            setup_data['first_name'] = request.POST.get('shop_contact_person_name'),  # Primary Contact Name
+            setup_data['00Nd0000005WayR'] = request.POST.get('shop_primary_role'),  # Role
             setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick'),  # Shopping Appointment Date
             setup_data['00Nd0000005WYhJ'] = 'Google Shopping Setup',  # Code Type
             #setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
@@ -104,7 +112,7 @@ def lead_form(request):
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
             setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
-            requests.request('POST', url=sf_api_url, data=setup_data)
+            # requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -167,9 +175,9 @@ def get_common_lead_data(post_data):
         '00Nd0000005WYhT': post_data.get('tzone'),  # Time Zone
 
         # Appointment Details
-        'first_name': post_data.get('first_name'),  # First Name
-        'last_name': post_data.get('last_name'),  # Last Name
-        '00Nd0000005WayR': post_data.get('primary_role'),  # Role
+        #'first_name': post_data.get('first_name'),  # First Name
+        #'last_name': post_data.get('last_name'),  # Last Name
+        #'00Nd0000005WayR': post_data.get('primary_role'),  # Role
 
         # Webmaster Details
         '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
@@ -575,7 +583,7 @@ def create_icalendar_file(advirtiser_details):
     cal.add('version', '2.0')
 
     event = Event()
-    event.add('summary', 'Appointment Slot')
+    event.add('summary', 'Google Implementation Appointment')
 
     # Appointment slot Date formate: "11/20/2014 10:00 AM"
     appointment_date = datetime.strptime(advirtiser_details['appointment_date'], "%m/%d/%Y %H:%M %p")
@@ -586,7 +594,7 @@ def create_icalendar_file(advirtiser_details):
     event['uid'] = advirtiser_details['customer_id']
 
     organizer = vCalAddress('MAILTO:rajuk@regalix-inc.com.com')
-    organizer.params['cn'] = vText('Regalix')
+    organizer.params['cn'] = vText('Google')
     organizer.params['ROLE'] = vText('REQ-PARTICIPANT')
     event.add('organizer', organizer)
 
@@ -609,13 +617,17 @@ def create_icalendar_file(advirtiser_details):
 
 
 def send_calendar_invite_to_advertiser(advertiser_details):
-    mail_subject = "Google Tag Implementation Support Appointment Confirmation"
+
+    mail_subject = "Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
 
     mail_body = get_template('leads/advertiser_mail/appointment_confirmation.html').render(
         Context({
             'text': "Google Tag Implementation Support Appointment Confirmation",
             'first_name': advertiser_details.get('first_name'),
-            'last_name': advertiser_details.get('last_name')
+            'last_name': advertiser_details.get('last_name'),
+            'customer_id': advertiser_details.get('customer_id'),
+            'code_type': advertiser_details.get('code_type'),
+            'appointment_date': advertiser_details.get('appointment_date')
         })
     )
 
@@ -647,17 +659,39 @@ def get_lead_summary(request, lid=None):
 
     lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     email = request.user.email
-    if is_manager(email):
-        email_list = get_user_list_by_manager(email)
+
+    if email in ['rajuk@regalix-inc.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com']:
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)
+
+        status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+        lead_status_dict = {'total_leads': 0,
+                            'implemented': 0,
+                            'in_progress': 0,
+                            'attempting_contact': 0,
+                            'in_queue': 0,
+                            'in_active': 0,
+                            'in_progress': 0,
+                            }
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', created_date__gte=start_date, created_date__lte=end_date).count()
     else:
-        email_list = [email]
+        if is_manager(email):
+            email_list = get_user_list_by_manager(email)
+        else:
+            email_list = [email]
 
-    if 'regalix' in email:
-        leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email__in=email_list)
-    elif 'google' in email:
-        leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
+        if 'regalix' in email:
+            leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email__in=email_list)
+        elif 'google' in email:
+            leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
 
-    lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
 
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 

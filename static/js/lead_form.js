@@ -16,7 +16,8 @@ function validatethis(frm) {
       $(frm.gref).addClass('error-box');
       // $(frm.gref).after('<span class="error-txt">Please Enter Google Rep Name</span>')
       frm.gref.focus();
-      return false;
+      window.is_error = true;
+      //return false;
     }
 
     // Google Rep Email Validation
@@ -25,7 +26,7 @@ function validatethis(frm) {
       $(frm.emailref).addClass('error-box');
       // $(frm.emailref).after('<span class="error-txt">Please Enter Google Rep Email</span>')
       frm.emailref.focus();
-      return false;
+      window.is_error = true;
     }
 
 
@@ -35,7 +36,7 @@ function validatethis(frm) {
       $(frm.team).addClass('error-box');
       // $(frm.team).after('<span class="error-txt">Please Select the Team</span>')
       frm.team.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Service Segment Validation
@@ -45,7 +46,7 @@ function validatethis(frm) {
         $(frm.service_segment).addClass('error-box');
         // $(frm.service_segment).after('<span class="error-txt">Please Select the Service Segment</span>')
         frm.service_segment.focus();
-        return false;
+        window.is_error = true;
       }
     }
 
@@ -56,7 +57,7 @@ function validatethis(frm) {
       $(elem).addClass('error-box');
       // $(elem).after('<span class="error-txt">Please Update Google Manager details</span>')
       $(elem).focus();
-      return false;
+      window.is_error = true;
     }
     if (document.getElementById("manager_email").value == "") {
       //alert("Please Update Google Manager details");
@@ -65,7 +66,7 @@ function validatethis(frm) {
       //$(elem).after('<span class="error-txt">Please Update Google Manager details</span>')
       $(elem).focus();
       //document.getElementById("addPm").focus();
-      return false;
+      window.is_error = true;
     }
 
     // Location/Country Validation
@@ -74,7 +75,7 @@ function validatethis(frm) {
       $(frm.country).addClass('error-box');
       //$(frm.country).after('<span class="error-txt">Please Select Your Country</span>')
       frm.country.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Advertiser Info
@@ -84,7 +85,7 @@ function validatethis(frm) {
       $(frm.advertiser_name).addClass('error-box');
       //$(frm.advertiser_name).after('<span class="error-txt">Please Enter Advertiser Name</span>')
       frm.advertiser_name.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Advertiser Email Validation
@@ -93,7 +94,7 @@ function validatethis(frm) {
       $(frm.aemail).addClass('error-box');
       //$(frm.aemail).after('<span class="error-txt">Please Enter Email Address</span>')
       frm.aemail.focus();
-      return false;
+      window.is_error = true;
     }
 
     frm.aemail.value = frm.aemail.value.trim();
@@ -102,7 +103,7 @@ function validatethis(frm) {
       $(frm.aemail).addClass('error-box');
       //$(frm.aemail).after('<span class="error-txt">Invalid E-mail ID !</span>')
       frm.aemail.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Advertiser Phone Validation
@@ -111,7 +112,7 @@ function validatethis(frm) {
       $(frm.phone).addClass('error-box');
       //$(frm.phone).after('<span class="error-txt">Please Enter Phone Number</span>');
       frm.phone.focus();
-      return false;
+      window.is_error = true;
     }
     
     // Advertiser Company Validation
@@ -120,7 +121,7 @@ function validatethis(frm) {
       $(frm.company).addClass('error-box');
       //$(frm.company).after('<span class="error-txt">Please Enter Company Name</span>')
       frm.company.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Customer Id validation
@@ -129,13 +130,13 @@ function validatethis(frm) {
       $(frm.cid).addClass('error-box');
       //$(frm.cid).after('<span class="error-txt">Please Enter Customer ID</span>')
       frm.cid.focus();
-      return false;
+      window.is_error = true;
     }else if(!frm.cid.value.match(cidFormat)){
       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
       $(frm.cid).addClass('error-box');
       //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
       frm.cid.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Advertiser Location validation
@@ -144,7 +145,7 @@ function validatethis(frm) {
       $(frm.advertiser_location).addClass('error-box');
       //$(frm.advertiser_location).after('<span class="error-txt">Please Enter Advertiser location</span>')
       frm.advertiser_location.focus();
-      return false;
+      window.is_error = true;
     }
     
     // Language validation
@@ -153,7 +154,7 @@ function validatethis(frm) {
       $(frm.language).addClass('error-box');
       //$(frm.language).after('<span class="error-txt">Please Choose Language</span>')
       frm.language.focus();
-      return false;
+      window.is_error = true;
     }
 
     // Timezone Validation
@@ -162,38 +163,7 @@ function validatethis(frm) {
       $(frm.tzone).addClass('error-box');
       //$(frm.tzone).after('<span class="error-txt">Please Select Advertiser Time Zone.</span>')
       frm.tzone.focus();
-      return false;
-    }
-
-    // Hava an appointment 
-    if (document.getElementById("appointmentCheck").checked == false) {
-
-      // Contact Person Name Validation 
-      if (frm.contact_person_name.value == "") {
-        // alert("Please Select Advertiser Time Zone.");
-        $(frm.contact_person_name).addClass('error-box');
-        //$(frm.contact_person_name).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
-        frm.contact_person_name.focus();
-        return false;
-      }
-
-      // Contact Person Role Validation 
-      if (frm.primary_role.value == "") {
-        // alert("Please Select Advertiser Time Zone.");
-        $(frm.primary_role).addClass('error-box');
-        //$(frm.contact_person_role).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        frm.primary_role.focus();
-        return false;
-      }
-
-      // Appointments Date and Time Validation
-      if (frm.tag_datepick.value == "") {
-        //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
-        $(frm.tag_datepick).addClass('error-box');
-        //$(frm.tag_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Don’t have an appointment check box to continue.</span>')
-        frm.tag_datepick.focus();
-        return false;
-      }
+      window.is_error = true;
     }
 
     // Webmaster Validation
@@ -204,7 +174,7 @@ function validatethis(frm) {
         $(frm.fopt).addClass('error-box');
         //$(frm.fopt).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
         frm.fopt.focus();
-        return false;
+        window.is_error = true;
       }
 
       // Contact Person Role
@@ -213,7 +183,7 @@ function validatethis(frm) {
         $(frm.web_master_email).addClass('error-box');
         //$(elem).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
         $(frm.web_master_email).focus();
-        return false;
+        window.is_error = true;
         }
 
       // Contact Person Name
@@ -221,15 +191,46 @@ function validatethis(frm) {
         $(frm.popt).addClass('error-box');
         //$(frm.popt).after('<span class="error-txt">Please Enter Phone Number.</span>')
         frm.popt.focus();
-        return false;
+       window.is_error = true;
       }
     }
 
-    
 
     // Tag Implementation lead form related Validation
     // validate Tag Implementation fields
     if($("#tagImplementationBtn").is(":visible")){
+
+
+      // Hava an appointment 
+    if (document.getElementById("appointmentCheck1").checked == true) {
+
+      // Contact Person Name Validation 
+      if (frm.tag_contact_person_name.value == "") {
+        // alert("Please Select Advertiser Time Zone.");
+        $(frm.tag_contact_person_name).addClass('error-box');
+        //$(frm.contact_person_name).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
+        frm.tag_contact_person_name.focus();
+        window.is_error = true;
+      }
+
+      // Contact Person Role Validation 
+      if (frm.tag_primary_role.value == "") {
+        // alert("Please Select Advertiser Time Zone.");
+        $(frm.tag_primary_role).addClass('error-box');
+        //$(frm.contact_person_role).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
+        frm.tag_primary_role.focus();
+        window.is_error = true;
+      }
+
+      // Appointments Date and Time Validation
+      if (frm.tag_datepick.value == "") {
+        //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
+        $(frm.tag_datepick).addClass('error-box');
+        //$(frm.tag_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Don’t have an appointment check box to continue.</span>')
+        frm.tag_datepick.focus();
+        window.is_error = true;
+      }
+    }
 
       var slot = {
         'type' : 'TAG',
@@ -241,85 +242,85 @@ function validatethis(frm) {
       if($("#task_1").is(":visible")){
         ctypeElem = frm.ctype1;
         if(!validateCtype(ctypeElem)){
-          return false;
+          window.is_error = true;
         }
 
         codeElem = frm.code1;
         if(!validateCode(codeElem)){
-          return false;
+          window.is_error = true;
         }
 
         urlElem = frm.url1;
         if(!validateUrl(urlElem)){
-          return false;
+          window.is_error = true;
         }
       }
       
       if($("#task_2").is(":visible")){
         ctypeElem2 = frm.ctype2;
         if(!validateCtype(ctypeElem2)){
-          return false;
+          window.is_error = true;
         }
 
         codeElem2 = frm.code2;
         if(!validateCode(codeElem2)){
-          return false;
+          window.is_error = true;
         }
 
         urlElem2 = frm.url2;
         if(!validateUrl(urlElem2)){
-          return false;
+          window.is_error = true;
         }
       }
 
       if($("#task_3").is(":visible")){
         ctypeElem3 = frm.ctype3;
         if(!validateCtype(ctypeElem3)){
-          return false;
+          window.is_error = true;
         }
 
         codeElem3 = frm.code3;
         if(!validateCode(codeElem3)){
-          return false;
+          window.is_error = true;
         }
 
         urlElem3 = frm.url3;
         if(!validateUrl(urlElem3)){
-          return false;
+          window.is_error = true;
         }
       }
 
       if($("#task_4").is(":visible")){
         ctypeElem4 = frm.ctype4;
         if(!validateCtype(ctypeElem4)){
-          return false;
+          window.is_error = true;
         }
 
         codeElem4 = frm.code4;
         if(!validateCode(codeElem4)){
-          return false;
+          window.is_error = true;
         }
 
         urlElem4 = frm.url4;
         if(!validateUrl(urlElem4)){
-          return false;
+          window.is_error = true;
         }
       }
 
       if($("#task_5").is(":visible")){
         ctypeElem5 = frm.ctype5;
         if(!validateCtype(ctypeElem5)){
-          return false;
+          window.is_error = true;
         }
 
         codeElem5 = frm.code5;
         if(!validateCode(codeElem5)){
-          return false;
+          window.is_error = true;
         }
 
         urlElem5 = frm.url5;
         if(!validateUrl(urlElem5)){
-          return false;
+          window.is_error = true;
         } 
       }
     }else{
@@ -334,14 +335,14 @@ function validatethis(frm) {
         $(frm.rbid).addClass('error-box');
         //$(frm.rbid).after('<span class="error-txt">Please Enter Recommended Bid Value</span>')
         frm.rbid.focus();
-        return false;
+        window.is_error = true;
       }
       if (frm.rbidmodifier.value == "") {
         // alert("Please Enter Recommended Mobile Bid Modifier Value");
         $(frm.rbidmodifier).addClass('error-box');
         //$(frm.rbidmodifier).after('<span class="error-txt">Please Enter Recommended Mobile Bid Modifier Value</span>')
         frm.rbidmodifier.focus();
-        return false;
+        window.is_error = true;
       }
 
       if (frm.rbudget.value == "") {
@@ -349,7 +350,7 @@ function validatethis(frm) {
         $(frm.rbudget).addClass('error-box');
         //$(frm.rbudget).after('<span class="error-txt">Please Enter Recommended Budget Value</span>')
         frm.rbudget.focus();
-        return false;
+        window.is_error = true;
       }
 
       if (frm.shopping_url.value == "") {
@@ -357,18 +358,40 @@ function validatethis(frm) {
         $(frm.shopping_url).addClass('error-box');
         //$(frm.rbudget).after('<span class="error-txt">Please Enter Recommended Budget Value</span>')
         frm.shopping_url.focus();
-        return false;
+        window.is_error = true;
       }
 
+    // Hava an appointment 
+    if (document.getElementById("appointmentCheck2").checked == true) {
+
+      // Contact Person Name Validation 
+      if (frm.shop_contact_person_name.value == "") {
+        // alert("Please Select Advertiser Time Zone.");
+        $(frm.shop_contact_person_name).addClass('error-box');
+        //$(frm.contact_person_name).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
+        frm.shop_contact_person_name.focus();
+        window.is_error = true;
+      }
+
+      // Contact Person Role Validation 
+      if (frm.shop_primary_role.value == "") {
+        // alert("Please Select Advertiser Time Zone.");
+        $(frm.shop_primary_role).addClass('error-box');
+        //$(frm.contact_person_role).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
+        frm.shop_primary_role.focus();
+        window.is_error = true;
+      }
+
+      // Appointments Date and Time Validation
       if (frm.setup_datepick.value == "") {
           //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
           $(frm.setup_datepick).addClass('error-box');
           //$(frm.setup_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Not Applicable check box to continue.</span>')
           frm.setup_datepick.focus();
-          return false;
+          window.is_error = true;
         }
-
-      var slot = {
+    }
+        var slot = {
           'type' : 'SHOPPING',
           'time' : frm.setup_datepick.value
         }
@@ -377,15 +400,20 @@ function validatethis(frm) {
         frm.setup_datepick.value = "";
       }
 
-    var status = true;
-    if (fix_slots.length) {
-      status = check_and_create_appointment(fix_slots);
+    if(window.is_error){
+      return false;
+    }else{
+      var status = true;
+      if (fix_slots.length) {
+        status = check_and_create_appointment(fix_slots);
+      }
+      
+      if (status) {
+        // $('form input[type=submit]').attr('disabled', 'disabled');
+      }
+      return status;  
     }
     
-    if (status) {
-      $('form input[type=submit]').attr('disabled', 'disabled');
-    }
-    return status;
   }
 
 

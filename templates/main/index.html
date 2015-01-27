@@ -9,7 +9,7 @@ Regalix Google Portal
 {% endblock title %}
 
 {% block main_css %}
-	<style>
+  <style>
     #owl-demo .owl-item div{
       padding:5px;
     }
@@ -21,7 +21,7 @@ Regalix Google Portal
       -moz-border-radius: 3px;
       border-radius: 3px;
     }
-	</style>
+  </style>
   {% load static %}
   
 {% endblock main_css %}
@@ -37,7 +37,7 @@ Regalix Google Portal
                 <ul class="bxslider">
                   <li class="leads">
                     <div class="slide-wrap">
-                        <h1>Lead submission becomes easier and faster!</h1>
+                        <h1>Lead Management is Fast and Easy</h1>
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Lead Status</button>
@@ -220,7 +220,7 @@ Regalix Google Portal
 
     <section class="performers testimonials">
       <div class="container-fluid">
-          <h2>Top Lead Submitters</h2>
+          <h2>Heavy Users</h2>
             <div class="row">
               {% if top_performer.quarterly %}
                 <div class="slick-slider col-md-4">
@@ -271,7 +271,7 @@ Regalix Google Portal
     </section>
      <section class="testimonials">
       <div class="container-fluid">
-          <h2>Customer Testimonials</h2>
+          <h2>Testimonials</h2>
           <div id="owl-demo" class="owl-carousel">
             {% for testimonials in customer_testimonials %}
               <div class="testimonial">               
@@ -317,11 +317,11 @@ $(document).ready(function() {
     autoHeight : true,
     transitionStyle:"fade"
   });
-  	  
-	// banner slider
-	$('.bxslider').bxSlider({
-	  pagerCustom: '#bx-pager'
-	});
+      
+  // banner slider
+  $('.bxslider').bxSlider({
+    pagerCustom: '#bx-pager'
+  });
 
   $('.slick-slider').slick({
       dots: false,

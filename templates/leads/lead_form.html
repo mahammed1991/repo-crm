@@ -101,29 +101,7 @@
           <option value="">Select Time Zone</option>
         </select>
       </div>
-      <div class="col-md-4">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="tag_datepick_nApplicable" id="appointmentCheck" value="">
-            Don’t have an appointment </label>
-        </div>
-      </div>
-    </div>
-    <div id="appointment">
-      <div class="form-heading">Appointment Details</div>
-      <div class="row">
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
-        </div>
-        <div class="col-md-4">
-          <select title="Primary Contact Role" class="form-control" name="primary_role" id="primary_role">
-              <option value="">Primary Contact Role</option>
-              <option value="Owner">Owner</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Webmaster">Webmaster</option>
-            </select>
-        </div>
-      </div>
+     
     </div>
 
     <div class="webmasterCheck">        
@@ -180,9 +158,6 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
             </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
-              </div>
           </div>
         </div>
 
@@ -281,6 +256,30 @@
         </div>
         <a id="addTask_5" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
 
+        <div class="appointment">
+          <div class="checkbox">
+              <label>
+                <input id="appointmentCheck1" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+            <div class="row" id="tag_appointment">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <select title="Primary Contact Role" class="form-control" name="tag_primary_role" id="tag_primary_role">
+              <option value="">Primary Contact Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+            </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
+            </div>
+          </div>
+        </div>    
+
     </div>
     <div id="shoppingInfo">
       <div class="std-sub-title">Shopping Campaign Info</div>
@@ -300,10 +299,32 @@
           <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
             Do you want to use same timeslot for Shopping?
         </div> -->
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
-        </div>
     </div>
+
+    <div class="appointment">
+          <div class="checkbox">
+              <label>
+                <input id="appointmentCheck2" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+          <div class="row" id="shopping_appointment">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="shop_contact_person_name" name="shop_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <select title="Primary Contact Role" class="form-control" name="shop_primary_role" id="shop_primary_role">
+              <option value="">Primary Contact Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+            </select>
+            </div>
+            <div class="col-md-4">
+            <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>      
+            </div>
+          </div>
+        </div>
+
   </div>
      <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
       <div class="checkbox">
@@ -337,6 +358,21 @@
   $(document).ready(function(){
 
     // lead form controls
+
+    $("#appointmentCheck1" ).click(function() {
+      $( "#tag_appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+  
+    $("#appointmentCheck2" ).click(function() {
+      $( "#shopping_appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+
     $("#appointmentCheck" ).click(function() {
       $( "#appointment" ).animate({
       height: "toggle"
@@ -532,6 +568,22 @@
   function submitbtn(ths){
       $(ths).submit();
   }
+
+  $("#tag_contact_person_name").change(function(){
+      $("#shop_contact_person_name").val($(this).val());
+  });
+
+  $("#shop_contact_person_name").change(function(){
+      $("#tag_contact_person_name").val($(this).val());
+  });
+
+  $("#tag_primary_role").change(function(){
+      $("#shop_primary_role").val($(this).val());
+  });
+
+  $("#shop_primary_role").change(function(){
+      $("#tag_primary_role").val($(this).val());
+  });
   
 </script>
 {% endblock main_js %}

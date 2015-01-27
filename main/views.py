@@ -24,7 +24,7 @@ from leads.models import Location, Leads, Team, Language, RegalixTeams
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
-                         is_manager, get_user_list_by_manager, get_user_under_manager)
+                         is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -55,9 +55,29 @@ def main_home(request):
     """
     user_profile = get_user_profile(request.user)
 
-    # 1. Current User/Rep LEADS SUMMARY
-    # Get Lead status count by current user
-    lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
+    if request.user.email in ['rajuk@regalix-inc.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com']:
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+
+        status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+        lead_status_dict = {'total_leads': 0,
+                            'implemented': 0,
+                            'in_progress': 0,
+                            'attempting_contact': 0,
+                            'in_queue': 0,
+                            'in_active': 0,
+                            'in_progress': 0,
+                            }
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', created_date__gte=start_date, created_date__lte=end_date).count()
+    else:
+        # 1. Current User/Rep LEADS SUMMARY
+        # Get Lead status count by current user
+        lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
 
     # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
@@ -85,7 +105,7 @@ def main_home(request):
     # by default should be current Quarter
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
-    title = "Leads %s Summary - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
+    title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
     report_summary = dict()
 
     total_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date))
@@ -256,10 +276,10 @@ def edit_profile_info(request):
             user_details.user = request.user
 
         user_details.phone = request.POST.get('user_phone', None)
-        user_details.team_id = request.POST.get('user_team', None)
+        # user_details.team_id = request.POST.get('user_team', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
-        user_details.location_id = request.POST.get('user_location', None)
+        # user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
 
         if next_url == 'home':
@@ -271,10 +291,10 @@ def edit_profile_info(request):
 @csrf_exempt
 def get_started(request):
     """ Get Initial information from user """
-    locations = Location.objects.filter(is_active=True)
-    teams = Team.objects.filter(is_active=True)
-    regalix_team = RegalixTeams.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams, 'regalix_team': regalix_team})
+    # locations = Location.objects.filter(is_active=True)
+    # teams = Team.objects.filter(is_active=True)
+    # regalix_team = RegalixTeams.objects.filter(is_active=True)
+    return render(request, 'main/get_started.html')
 
 
 @login_required
