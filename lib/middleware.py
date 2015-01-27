@@ -4,7 +4,7 @@ from requests import request as request_call
 from django.core.exceptions import ObjectDoesNotExist
 from social.exceptions import AuthForbidden
 from django.shortcuts import redirect
-from main.models import UserDetails, Notification
+from main.models import UserDetails
 from leads.models import Location
 
 
@@ -26,24 +26,23 @@ class SetProfilePicture(object):
                     response = loads(user_profile_from_google.text)
                     image_url = response['picture']
                 else:
-                    image_url = '/static/images/login_pic.png'
+                    image_url = '/static/images/avtar-big.jpg'
                 request.session['profile_image'] = image_url
                 try:
                     user_profile = UserDetails.objects.get(user_id=request.user.id)
-                    user_profile.profile_photo_url = image_url
-                    user_profile.save()
-                    request.profile_image_url = image_url
-                    request.session['profile'] = user_profile
                 except ObjectDoesNotExist:
-                    pass
+                    user_profile = UserDetails()
+
+                user_profile.user_id = request.user.id
+                user_profile.profile_photo_url = image_url
+                user_profile.save()
+                request.profile_image_url = image_url
+                request.session['profile'] = user_profile
 
                 # List all Locations/Country
                 locations = Location.objects.exclude(flag_image__isnull=True).filter()
                 request.session['locations'] = locations
 
-                # Notifications list
-                notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
-                request.session['notifications'] = notifications
             except ObjectDoesNotExist:
                 pass
 

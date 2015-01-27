@@ -4,14 +4,17 @@
 {% load rep_filters %}
 
 {% block base_css %}
-<link rel="stylesheet" media="all" type="text/css" href="{% static 'css/representative/style.css' %}" />
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/representative/style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+
 {% endblock base_css %}
 
 {% block body %}
-<div class="time_zone">
+<div class="time_zone std-sub-title">
     <div class="title">
-        <a href="{% url 'representatives.views.availability_list' prev_week.month prev_week.day prev_week.year process_type location_id time_zone %}" class="prev">Prev Week</a>
-        <span>TimeZone: {{time_zone_desc}}</span>
+        <a href="{% url 'representatives.views.availability_list' prev_week.month prev_week.day prev_week.year process_type location_id time_zone %}" class="prev"><i class="fa fa-angle-left"></i>Prev Week</a>
+        TimeZone: {{time_zone_desc}}</span>
         <a href="{% url 'representatives.views.availability_list' next_week.month next_week.day next_week.year process_type location_id time_zone %}" class="next">Next Week</a>
     </div>
     <table>

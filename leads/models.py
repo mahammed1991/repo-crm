@@ -73,7 +73,7 @@ class Leads(models.Model):
     appointment_date = models.DateTimeField(blank=True, null=True)
     first_contacted_on = models.DateTimeField(blank=True, null=True)
 
-    #Rescheduled Appointments
+    # Rescheduled Appointments
     rescheduled_appointment = models.DateTimeField(blank=True, null=True)
 
     dials = models.IntegerField(default=0)
@@ -91,6 +91,7 @@ class Leads(models.Model):
 class Timezone(models.Model):
     zone_name = models.CharField(max_length=20)
     time_value = models.CharField(max_length=6)
+    is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -101,6 +102,23 @@ class Timezone(models.Model):
     class Meta:
         db_table = 'timezone'
         ordering = ['zone_name']
+
+
+class Language(models.Model):
+    """ Language model """
+
+    language_name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def __str__(self):
+        return self.language_name
+
+    class Meta:
+        db_table = 'languages'
+        verbose_name_plural = 'Languages'
 
 
 class Location(models.Model):
@@ -116,9 +134,11 @@ class Location(models.Model):
         return os.path.join('country_flag/', filename)
 
     location_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=50, null=True, default=None)
+    phone = models.CharField(max_length=50, null=True, default=None, blank=True)
     time_zone = models.ManyToManyField(Timezone)
-    flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100)
+    language = models.ManyToManyField(Language)
+    flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100, blank=True)
+    is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -141,7 +161,7 @@ class Location(models.Model):
             img = Image.open(image)
             w, h = img.size
 
-            #validate dimensions
+            # validate dimensions
             max_width = 200
             max_height = 200
             if w > max_width or h > max_height:
@@ -149,9 +169,9 @@ class Location(models.Model):
                     _('Please use an image that is smaller or equal to '
                       '%s x %s pixels.' % (max_width, max_height)))
 
-            #validate content type
+            # validate content type
             img_ext = image.name.split('.')[1]
-            if not img_ext in ['png']:
+            if img_ext not in ['png']:
                 raise ValidationError(_('Image is not in PNG format. Please use a PNG image.'))
 
         return image
@@ -173,6 +193,8 @@ class RegalixTeams(models.Model):
         ('SHOPPING', 'SHOPPING'),
     ), default='TAG')
 
+    is_active = models.BooleanField(default=True)
+
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
@@ -191,6 +213,7 @@ class RegalixTeams(models.Model):
 class Team(models.Model):
     """ Team/Program information """
     team_name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -220,3 +243,19 @@ class CodeType(models.Model):
         db_table = 'code_types'
         ordering = ['name']
         verbose_name_plural = "Code Types"
+
+
+class ChatMessage(models.Model):
+    """ Chat Message Model """
+
+    lead = models.ForeignKey(Leads, null=False)
+    user_id = models.CharField(max_length=255, null=False)
+    message = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user_id
+
+    class Meta:
+        db_table = 'chat_message'
+        verbose_name_plural = 'Chat Message'

@@ -9,7 +9,7 @@ Regalix Google Portal
 {% endblock title %}
 
 {% block main_css %}
-	<style>
+  <style>
     #owl-demo .owl-item div{
       padding:5px;
     }
@@ -21,7 +21,7 @@ Regalix Google Portal
       -moz-border-radius: 3px;
       border-radius: 3px;
     }
-	</style>
+  </style>
   {% load static %}
   
 {% endblock main_css %}
@@ -37,7 +37,7 @@ Regalix Google Portal
                 <ul class="bxslider">
                   <li class="leads">
                     <div class="slide-wrap">
-                        <h1>Lead submission becomes easier and faster!</h1>
+                        <h1>Lead Management is Fast and Easy</h1>
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Lead Status</button>
@@ -66,18 +66,28 @@ Regalix Google Portal
                   </li>
                   <li class="reports">
                     <div class="slide-wrap">
-                        <h1>Leads Q4 Summary - Oct to Dec 2014</h1>
+                        <h1>{{title}}</h1>
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="chart"><img src="{% static 'images/chart-1.png' %}"/></div>
+                                <div class="chart">
+                                  <canvas id="totalLeads" class="reports-canvas">
+                                  </canvas>
+                                  <div class="report-chart-lbl">Win<span id="totalWin"></span></div>
+                                </div>
                                 <span>Total Leads</span>
                             </div>
                             <div class="col-md-4">
-                                <div class="chart"><img src="{% static 'images/chart-2.png' %}"/></div>
+                                <div class="chart">
+                                  <canvas id="tagLeads" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="tagWin">45%</span></div>
+                                </div>
                                 <span>Tag Leads</span>
                             </div>
                             <div class="col-md-4">
-                                <div class="chart"><img src="{% static 'images/chart-3.png' %}"/></div>
+                                <div class="chart">
+                                  <canvas id="shopSetup" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="shopWin">65%</span></div>
+                                </div>
                                 <span>G-Shopping<br>Setup</span>
                             </div>
                         </div>
@@ -165,24 +175,24 @@ Regalix Google Portal
                             <div class="col-md-4 capabilities">
                                 <div class="sub-title">Capabilities</div>
                                 <ul>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Tag Implementation</a></li>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Product Listing Ads</a></li>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Shopping Migration</a></li>
+                                    <li><a href="#">Tag Implementation</a></li>
+                                    <li><a href="#">Product Listing Ads</a></li>
+                                    <li><a href="#">Shopping Migration</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-4 best-practices">
                                 <div class="sub-title">Best Practices</div>
                                 <ul>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Workflow</a></li>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Callflow</a></li>
+                                    <li><a href="#">Workflow</a></li>
+                                    <li><a href="#">Callflow</a></li>
                                 </ul>
                             </div>
                             <div class="col-md-4 faq">
                                 <div class="sub-title">FAQs</div>
                                 <ul>
-                                    <li><a href="#"><i class="fa fa-gear"></i><span>Compatibility with CMS/Platforms</span></a></li>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Top 30 CMS</a></li>
-                                    <li><a href="#"><i class="fa fa-gear"></i>Newsletter</a></li>
+                                    <li><a href="#">Compatibility with CMS/Platforms</a></li>
+                                    <li><a href="#">Top 30 CMS</a></li>
+                                    <li><a href="#">Newsletter</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -200,7 +210,7 @@ Regalix Google Portal
         </div>
     </section>
     <section class="notifications">
-      <div class="slick-slider container-fluid trans">
+      <div class="slick-slider container-fluid trans" id="marquee_notofication">
         {% for notification in notifications %}
           <div>{{notification.text}}</div>
         {% endfor %}
@@ -210,14 +220,14 @@ Regalix Google Portal
 
     <section class="performers testimonials">
       <div class="container-fluid">
-          <h2>Top Lead Submitters</h2>
+          <h2>Heavy Users</h2>
             <div class="row">
               {% if top_performer.quarterly %}
                 <div class="slick-slider col-md-4">
                    {% for quarter_topper in top_performer.quarterly %}
                       <div class="performer">
                             <h3>Last Quarter</h3>
-                            <img src="{{quarter_topper.image_url}}" />
+                            <img src="{% static quarter_topper.image_url %}"/>
                             <div class="performer-info">
                               <span>{{quarter_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{quarter_topper.location}}
@@ -231,8 +241,8 @@ Regalix Google Portal
                 <div class="slick-slider col-md-4">
                    {% for month_topper in top_performer.monthly %}
                       <div class="performer">
-                            <h3>Last Quarter</h3>
-                            <img src="{{month_topper.image_url}}" />
+                            <h3>Last Month</h3>
+                            <img src="{% static month_topper.image_url %}" />
                             <div class="performer-info">
                               <span>{{month_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{month_topper.location}}
@@ -246,8 +256,8 @@ Regalix Google Portal
                 <div class="slick-slider col-md-4">
                    {% for week_topper in top_performer.weekly %}
                       <div class="performer">
-                            <h3>Last Quarter</h3>
-                            <img src="{{week_topper.image_url}}" />
+                            <h3>Last Week</h3>
+                            <img src="{% static week_topper.image_url %}"/>
                             <div class="performer-info">
                               <span>{{week_topper.google_rep_name}}</span>
                                 Sales Manager<br>{{week_topper.location}}
@@ -261,11 +271,10 @@ Regalix Google Portal
     </section>
      <section class="testimonials">
       <div class="container-fluid">
-          <h2>Customer Testimonials</h2>
+          <h2>Testimonials</h2>
           <div id="owl-demo" class="owl-carousel">
             {% for testimonials in customer_testimonials %}
               <div class="testimonial">               
-                <img class="testi-photo" src="{% static 'images/testimonial-pic.jpg' %}" alt="Customer Photo">
                 <div class="testi-content">
                   <p> {{ testimonials.statement_text }} </p>
                     <span class="name">{{ testimonials.first_name }} {{ testimonials.last_name }}</span>
@@ -287,8 +296,17 @@ Regalix Google Portal
 {% endblock content %}
 
 {% block main_js %}
+<script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script>
 $(document).ready(function() {
+
+  reports = {{report_summary|safe}};
+  console.log(reports);
+
+  $("#totalWin").text(parseInt(reports['total_win']) + "%");
+  $("#tagWin").text(parseInt(reports['tag_win']) + "%");
+  $("#shopWin").text(parseInt(reports['shopping_win']) + "%");
+
   $("#owl-demo").owlCarousel({
     autoPlay : true,
     stopOnHover : true,
@@ -299,14 +317,14 @@ $(document).ready(function() {
     autoHeight : true,
     transitionStyle:"fade"
   });
-  	  
-	// banner slider
-	$('.bxslider').bxSlider({
-	  pagerCustom: '#bx-pager'
-	});
+      
+  // banner slider
+  $('.bxslider').bxSlider({
+    pagerCustom: '#bx-pager'
+  });
 
   $('.slick-slider').slick({
-      dots: true,
+      dots: false,
       infinite: true,
       speed: 500,
       fade: true,
@@ -316,7 +334,83 @@ $(document).ready(function() {
       autoplaySpeed:5000,
       adaptiveHeight:true
     });
+  $(window).trigger('resize');
+});
+
+
+$(window).on('resize',function() {
+   // do whatever
+    if ($(window).width() < 768 ) {
+      // alert(screen.width)
+      $('#totalLeads').ClassyLoader({
+        width: 90,
+        height: 90 ,
+         diameter : 40,
+         lineColor : 'rgb(70,138,255)',
+         percentage : parseInt(reports['total_win']),
+         lineWidth : 5,
+         animate: false,
+         remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+
+       $('#tagLeads').ClassyLoader({
+          width: 90,
+          height: 90 ,
+          diameter : 40,
+          lineColor : 'rgb(20,195,111)',
+          percentage : parseInt(reports['tag_win']),
+          lineWidth : 5,
+          animate: false,
+          remainingLineColor : 'rgba(0,0,0,0.15)'
+          });
+
+
+          $('#shopSetup').ClassyLoader({
+           width: 90,
+           height: 90 ,
+           diameter : 40,
+           lineColor : 'rgb(255,187,0)',
+           percentage : parseInt(reports['shopping_win']),
+           lineWidth : 5,
+           animate: false,
+           remainingLineColor : 'rgba(0,0,0,0.15)'
+          });
+
+    }else{
+      $('#totalLeads').ClassyLoader({
+       diameter : 49,     
+       fontFamily: 'robotothin',
+       fontSize: '21px',
+       lineColor : 'rgb(70,138,255)',
+       percentage : parseInt(reports['total_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+
+
+      $('#tagLeads').ClassyLoader({
+       diameter : 49,
+       lineColor : 'rgb(20,195,111)',
+       percentage : parseInt(reports['tag_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+
+
+      $('#shopSetup').ClassyLoader({
+       diameter : 49,
+       lineColor : 'rgb(255,187,0)',
+       percentage : parseInt(reports['shopping_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+    }
 
 });
+
+ 
 </script>
 {% endblock main_js %}

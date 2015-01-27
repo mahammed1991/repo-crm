@@ -2,11 +2,22 @@
 <html>
 <body>
 <p>Hi,</p>
-<p>A new comment has been added to the feedback - <b>{{ feedback.title }}</b>.</p>
-<p>Comment:</p>
-<p>{{ comment.comment }}</p>
-<p>By:</p>
-<p>{{ comment.comment_by.get_full_name }} ({{ comment.comment_by.email }})</p>
+<p>A new Comment has been added for Feedback- <b>{{feedback.title}}</b> </p>
+<p>Feedback Details are below:</p>
+<p>Feedback By: {{ feedback.user.get_full_name }} ({{ feedback.user.email}})</p>
+<p>Feedback To: {{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }} ({{ feedback.lead_owner.email }})</p>
+<p>CID: {{ feedback.cid }}</p>
+<p>Name of the Advertiser: {{ feedback.advertiser_name }}</p>
+<p>Feedback Type: {{ feedback.feedback_type }}</p>
+<p>Language: {{ feedback.language }}</p>
+<p>Location: {{ feedback.location.location_name }}</p>
+<p>Description: {{ feedback.description }}</p>
+
+
+<p>Comment Details:</p>
+<p>Comment By:{{comment.comment_by}}</p>
+<p>Comment: {{comment.comment}} </p>
+
 <a href="{{ feedback_url }}">Go To Feedback</a>
 <br /><br />
 <p>Thanks,</p>
