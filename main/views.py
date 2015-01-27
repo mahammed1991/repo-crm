@@ -20,7 +20,7 @@ from django.conf import settings
 from lib.helpers import send_mail, manager_info_required
 
 from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, Notification
-from leads.models import Location, Leads, Team, Language, RegalixTeams
+from leads.models import Location, Leads, Team, Language
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
@@ -276,10 +276,10 @@ def edit_profile_info(request):
             user_details.user = request.user
 
         user_details.phone = request.POST.get('user_phone', None)
-        # user_details.team_id = request.POST.get('user_team', None)
+        user_details.team_id = request.POST.get('user_team', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
-        # user_details.location_id = request.POST.get('user_location', None)
+        user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
 
         if next_url == 'home':
@@ -291,10 +291,10 @@ def edit_profile_info(request):
 @csrf_exempt
 def get_started(request):
     """ Get Initial information from user """
-    # locations = Location.objects.filter(is_active=True)
-    # teams = Team.objects.filter(is_active=True)
+    locations = Location.objects.filter(is_active=True)
+    teams = Team.objects.filter(is_active=True)
     # regalix_team = RegalixTeams.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html')
+    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams})
 
 
 @login_required
