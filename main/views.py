@@ -20,10 +20,11 @@ from django.conf import settings
 from lib.helpers import send_mail, manager_info_required
 
 from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, Notification
-from leads.models import Location, Leads, Team
+from leads.models import Location, Leads, Team, Language, RegalixTeams
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
-                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep)
+                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
+                         is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -54,9 +55,29 @@ def main_home(request):
     """
     user_profile = get_user_profile(request.user)
 
-    # 1. Current User/Rep LEADS SUMMARY
-    # Get Lead status count by current user
-    lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
+    if request.user.email in ['rajuk@regalix-inc.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com']:
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+
+        status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+        lead_status_dict = {'total_leads': 0,
+                            'implemented': 0,
+                            'in_progress': 0,
+                            'attempting_contact': 0,
+                            'in_queue': 0,
+                            'in_active': 0,
+                            'in_progress': 0,
+                            }
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', created_date__gte=start_date, created_date__lte=end_date).count()
+    else:
+        # 1. Current User/Rep LEADS SUMMARY
+        # Get Lead status count by current user
+        lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
 
     # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
@@ -79,18 +100,12 @@ def main_home(request):
         question['last_activity_at'] = q.last_activity_at
         question_list.append(question)
 
-    # List all Locations/Country
-    locations = Location.objects.exclude(flag_image__isnull=True).filter()
-    request.session['locations'] = locations
-
-    # Notifications list
-    notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
-    request.session['notifications'] = notifications
-
     # Leads Current Quarter Summary
     # Get Leads report for Current Quarter Summary
     # by default should be current Quarter
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    current_quarter = ReportService.get_current_quarter(datetime.utcnow())
+    title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
     report_summary = dict()
 
     total_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date))
@@ -135,11 +150,14 @@ def main_home(request):
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
-    # feedback summary end here
 
+    # Notification Section
+    notifications = Notification.objects.filter(is_visible=True)
+
+    # feedback summary end here
     return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                               'user_profile': user_profile, 'question_list': question_list, 'locations': locations,
-											   'top_performer': top_performer, 'report_summary': report_summary,
+                                               'user_profile': user_profile, 'question_list': question_list,
+                                               'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
                                                'feedback_list': feedback_list, 'notifications': notifications})
 
 
@@ -217,7 +235,6 @@ def get_top_performer_by_date_range(start_date, end_date):
     topper_email[:topper_limit]
     for rep_email in topper_email:
         rep = dict()
-        image_url = '/static/images/default_user.png'
         location = ''
         rep.update({'google_rep_name': rep_email.split('@')[0]})
         try:
@@ -227,18 +244,13 @@ def get_top_performer_by_date_range(start_date, end_date):
             rep.update({'google_rep_name': full_name})
             try:
                 user_profile = UserDetails.objects.get(user_id=user.id)
-                image_url = user_profile.profile_photo_url
                 location = user_profile.location.location_name if user_profile.location else ''
             except ObjectDoesNotExist:
                 location = ''
         except ObjectDoesNotExist:
-            if rep_email:
-                username = rep_email.split('@')[0]
-                os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username + '.png'
-                # Check if profile picture exist
-                if os.path.isfile(os_path):
-                    image_url = '/static/images/GTeam/' + username + '.png'
-        rep.update({'image_url': image_url, 'location': location})
+            location = ''
+        avatar_url = get_profile_avatar_by_email(rep_email)
+        rep.update({'image_url': avatar_url, 'location': location})
         topper_list.append(rep)
     return topper_list
 
@@ -247,22 +259,42 @@ def get_top_performer_by_date_range(start_date, end_date):
 @csrf_exempt
 def edit_profile_info(request):
     """ Profile information for user """
-    locations = Location.objects.all()
-    teams = Team.objects.all()
+    locations = Location.objects.filter(is_active=True)
+    teams = Team.objects.filter(is_active=True)
     if request.method == 'POST':
+        next_url = request.POST.get('next_url', None)
+        if next_url != 'home':
+            user_full_name = request.POST.get('user_full_name', None)
+            if user_full_name:
+                request.user.first_name = user_full_name.rsplit(' ')[0]
+                request.user.last_name = user_full_name.rsplit(' ')[1]
+                request.user.save()
         try:
             user_details = UserDetails.objects.get(user_id=request.user.id)
         except ObjectDoesNotExist:
             user_details = UserDetails()
             user_details.user = request.user
 
-        user_details.team_id = request.POST.get('user_team', None)
+        user_details.phone = request.POST.get('user_phone', None)
+        # user_details.team_id = request.POST.get('user_team', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
-        user_details.location_id = request.POST.get('user_location', None)
+        # user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
-        # return redirect('main.views.home')
+
+        if next_url == 'home':
+            return redirect('main.views.home')
     return render(request, 'main/edit_profile_info.html', {'locations': locations, 'teams': teams})
+
+
+@login_required
+@csrf_exempt
+def get_started(request):
+    """ Get Initial information from user """
+    # locations = Location.objects.filter(is_active=True)
+    # teams = Team.objects.filter(is_active=True)
+    # regalix_team = RegalixTeams.objects.filter(is_active=True)
+    return render(request, 'main/get_started.html')
 
 
 @login_required
@@ -276,18 +308,18 @@ def team(request):
 @manager_info_required
 def view_feedback(request, id):
     """ Detail view of a feedback """
-    comments = list()
-    try:
-        feedback = Feedback.objects.get(id=id)
-        comments = FeedbackComment.objects.filter(feedback__id=id)
-    except ObjectDoesNotExist:
-        feedback = None
-
+    normal_comments = list()
+    first_resolved_comments = list()
+    second_resolved_comments = list()
+    feedback = Feedback.objects.get(id=id)
+    normal_comments = FeedbackComment.objects.filter(feedback__id=id)
     can_resolve = True
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
     return render(request, 'main/view_feedback.html', {'feedback': feedback,
-                                                       'comments': comments,
+                                                       'comments': normal_comments,
+                                                       'first_resolved_comments': first_resolved_comments,
+                                                       'second_resolved_comments': second_resolved_comments,
                                                        'can_resolve': can_resolve,
                                                        'media_url': settings.MEDIA_URL + 'feedback/'})
 
@@ -308,16 +340,20 @@ def list_feedback(request):
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
+
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
-                                                       'media_url': settings.MEDIA_URL + 'feedback/', 'feedback_list': feedback_list})
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'feedback_list': feedback_list,
+                                                       })
 
 
 @login_required
 @manager_info_required
 def create_feedback(request, lead_id=None):
     """ Create feed back """
-    locations = Location.objects.all()
-    programs = Team.objects.all()
+    locations = Location.objects.filter(is_active=True)
+    programs = Team.objects.filter(is_active=True)
+    languages = Language.objects.all()
     lead = None
     if lead_id:
         try:
@@ -331,8 +367,8 @@ def create_feedback(request, lead_id=None):
         feedback_details.title = request.POST['title']
         feedback_details.cid = request.POST['cid']
         feedback_details.advertiser_name = request.POST['advertiser']
-
-        feedback_details.language = request.POST['language']
+        language = Language.objects.get(id=request.POST['language'])
+        feedback_details.language = language.language_name
         feedback_location = Location.objects.get(location_name=request.POST['location'])
         feedback_details.location = feedback_location
 
@@ -344,6 +380,8 @@ def create_feedback(request, lead_id=None):
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=request.POST['lead_owner'])
             feedback_details.lead_owner = lead_owner
+            google_account_manager = User.objects.get(email=request.POST['google_acManager_name'])
+            feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
             pass
         if request.FILES:
@@ -353,7 +391,8 @@ def create_feedback(request, lead_id=None):
         feedback_details = notify_feedback_activity(request, feedback_details)
 
         return redirect('main.views.list_feedback')
-    return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations, 'programs': programs, 'lead': lead})
+    return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
+                                                                     'programs': programs, 'lead': lead, 'languages': languages})
 
 
 def notify_feedback_activity(request, feedback, comment=None, is_resolved=False):
@@ -364,7 +403,8 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
             Context({
                 'feedback': feedback,
                 'comment': comment,
-                'feedback_url': feedback_url
+                'feedback_url': feedback_url,
+                'feedback_owner': request.user.first_name + request.user.last_name
             })
         )
     elif is_resolved:
@@ -372,14 +412,23 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
             Context({
                 'feedback': feedback,
                 'user_info': request.user,
-                'feedback_url': feedback_url
+                'feedback_url': feedback_url,
+                'cid': feedback.cid,
+                'type': feedback.feedback_type,
+                'feedback_title': feedback.title,
+                'feedback_body': feedback.description
             })
         )
     else:
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
             Context({
                 'feedback': feedback,
-                'feedback_url': feedback_url
+                'user_info': request.user,
+                'feedback_url': feedback_url,
+                'cid': feedback.cid,
+                'type': feedback.feedback_type,
+                'feedback_title': feedback.title,
+                'feedback_body': feedback.description
             })
         )
 
@@ -424,17 +473,21 @@ def create_feedback_from_lead_status(request):
 
         feedback_details.cid = lead.customer_id
         feedback_details.advertiser_name = lead.first_name + ' ' + lead.last_name
-
         feedback_details.language = 'English'
         feedback_location = Location.objects.get(location_name=lead.country)
         feedback_details.location = feedback_location
-        team = Team.objects.get(team_name=lead.team)
-        feedback_details.program_id = team.id
-
+        try:
+            team = Team.objects.get(team_name=lead.team)
+            feedback_details.program_id = team.id
+        except ObjectDoesNotExist:
+            feedback_details.program = None
+        feedback_details.created_date = datetime.utcnow()
         try:
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=lead.lead_owner_email)
             feedback_details.lead_owner = lead_owner
+            google_account_manager = User.objects.get(email=lead.google_rep_email)
+            feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
             pass
 
@@ -447,28 +500,18 @@ def create_feedback_from_lead_status(request):
 
 @login_required
 @manager_info_required
-def resolve_feedback(request, id):
-    feedback = Feedback.objects.get(id=id)
-    feedback.status = 'RESOLVED'
-
-    feedback.resolved_by = request.user
-    feedback.resolved_date = datetime.utcnow()
-
-    notify_feedback_activity(request, feedback, is_resolved=True)
-
-    feedback.save()
-    return redirect('main.views.view_feedback', id=id)
-
-
-@login_required
-@manager_info_required
 def reopen_feedback(request, id):
+    """ Reopen Comment """
+
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'IN PROGRESS'
-
-    feedback.resolved_by = request.user
-    feedback.resolved_date = datetime.utcnow()
-
+    comment = FeedbackComment()
+    comment.feedback = feedback
+    comment.comment = request.POST['reopencomment']
+    comment.comment_by = request.user
+    comment.feedback_status = 'IN PROGRESS'
+    comment.created_date = datetime.utcnow()
+    comment.save()
     notify_feedback_activity(request, feedback, is_resolved=True)
 
     feedback.save()
@@ -479,19 +522,44 @@ def reopen_feedback(request, id):
 @manager_info_required
 def comment_feedback(request, id):
     """ Comment on a feedback """
-    feedback = Feedback.objects.get(id=id)
 
+    action_type = request.POST['feedback_action']
+    feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
     comment.feedback = feedback
     comment.comment = request.POST['comment']
+
     comment.comment_by = request.user
+    if action_type == 'Resolved':
+        comment.feedback_status = 'RESOLVED'
+    else:
+        comment.feedback_status = 'IN PROGRESS'
+    # comment.created_date = datetime.utcnow()
     comment.save()
+    if action_type == 'Resolved':
+        feedback.status = 'RESOLVED'
+        if feedback.resolved_count == 0:
+            feedback.resolved_count += 1
+            feedback.resolved_by = request.user
+            feedback.resolved_date = datetime.utcnow()
+        elif feedback.resolved_count == 1:
+            feedback.resolved_count += 1
+            feedback.second_resolved_by = request.user
+            feedback.second_resolved_date = datetime.utcnow()
+        elif feedback.resolved_count == 2:
+            feedback.resolved_count += 1
+            feedback.third_resolved_by = request.user
+            feedback.third_resolved_date = datetime.utcnow()
+        # notify_feedback_activity(request, feedback, is_resolved=True)
+        feedback.save()
+    else:
+        feedback.status = 'IN PROGRESS'
+        feedback.save()
 
-    feedback.status = 'IN PROGRESS'
-
-    notify_feedback_activity(request, feedback, comment)
-    feedback.save()
-
+    if action_type == 'Resolved':
+        notify_feedback_activity(request, feedback, is_resolved=True)
+    else:
+        notify_feedback_activity(request, feedback, comment)
     return redirect('main.views.view_feedback', id=id)
 
 
@@ -508,10 +576,87 @@ def get_contacts(request):
         contact['phone'] = cnt.phone_number
         contact['skype'] = cnt.skype_id
         contact['picture'] = cnt.profile_photo.name.split('/')[-1]
-        contact['photo_url'] = settings.MEDIA_URL + 'profile_photo/' + contact['picture']
+        contact['photo_url'] = get_profile_avatar_by_email(cnt.email)
         if cnt.position_type == 'MGMT':
             contacts['management'].append(contact)
         else:
             contacts['representatives'].append(contact)
     return contacts
-    return HttpResponse(dumps(contacts), content_type='application/json')
+
+
+def get_profile_avatar_by_email(email):
+    """ Get Profile Avatar """
+
+    avatar_url = 'images/avtar-big.jpg'
+    try:
+        user = User.objects.get(email=email)
+        try:
+            user_profile = UserDetails.objects.get(user_id=user.id)
+            if user_profile.profile_photo_url:
+                avatar_url = user_profile.profile_photo_url
+            else:
+                username = email.split('@')[0]
+                os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username
+                # Check if profile picture exist
+                if os.path.isfile(os_path + '.png') or os.path.isfile(os_path + '.png.gz'):
+                    avatar_url = 'images/GTeam/' + username + '.png'
+        except ObjectDoesNotExist:
+            avatar_url = 'images/avtar-big.jpg'
+    except ObjectDoesNotExist:
+        if email:
+            username = email.split('@')[0]
+            os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username
+            # Check if profile picture exist
+            if os.path.isfile(os_path + '.png') or os.path.isfile(os_path + '.png.gz'):
+                avatar_url = 'images/GTeam/' + username + '.png'
+    return avatar_url
+
+
+@login_required
+def resources(request):
+    return render(request, 'main/resources.html')
+
+
+@login_required
+def get_inbound_locations(request):
+    """ Get all In-Bound Locations """
+    locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter()
+    location = list()
+    for loc in locations:
+        loc_dict = dict()
+        if loc.phone and loc.flag_image.name:
+            loc_dict['id'] = loc.id
+            loc_dict['name'] = loc.location_name
+            loc_dict['phone'] = loc.phone
+            loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
+            location.append(loc_dict)
+
+    location.append({'id': '0', "name": 'US', 'phone': '8669997725', 'url': '/static/images/US-flag.png'})
+    if request.user.profile.location:
+        user_loc = {'loc_name': request.user.profile.location.location_name,
+                    'loc_id': request.user.profile.location.id,
+                    'loc_phone': request.user.profile.location.phone,
+                    'loc_flag': settings.MEDIA_URL + '' + request.user.profile.location.flag_image.name if request.user.profile.location.flag_image else "",
+                    }
+    else:
+        user_loc = {'loc_name': '',
+                    'loc_id': '',
+                    'loc_phone': '',
+                    'loc_flag': ''}
+
+    return HttpResponse(dumps({'location': location, 'user_loc': user_loc}), content_type='application/json')
+
+
+@login_required
+def get_notifications(request):
+    """ Get all Notifications """
+    # Notifications list
+    notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+    notification = list()
+    for notif in notifications:
+        notif_dict = dict()
+        notif_dict['id'] = notif.id
+        notif_dict['text'] = notif.text
+        notification.append(notif_dict)
+
+    return HttpResponse(dumps(notification), content_type='application/json')

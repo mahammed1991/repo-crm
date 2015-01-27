@@ -44,12 +44,20 @@ class Feedback(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=20, default='NEW')
     lead_owner = models.ForeignKey(User, related_name='lead_owner', default=default_lead_owner)
+    google_account_manager = models.ForeignKey(User, related_name='google_account_manager', default=default_lead_owner)
     program = models.ForeignKey(Team, default=None, null=True)
 
     attachment = models.FileField(upload_to=get_file_path)
 
     resolved_by = models.ForeignKey(User, related_name='resolved_by', null=True)
     resolved_date = models.DateTimeField(blank=True, null=True)
+
+    second_resolved_by = models.ForeignKey(User, related_name='second_resolved_by', null=True)
+    second_resolved_date = models.DateTimeField(blank=True, null=True)
+
+    third_resolved_by = models.ForeignKey(User, related_name='third_resolved_by', null=True)
+    third_resolved_date = models.DateTimeField(blank=True, null=True)
+    resolved_count = models.IntegerField(blank=True, default=0)
 
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -64,8 +72,9 @@ class Feedback(models.Model):
 class FeedbackComment(models.Model):
     """ Feedback comments """
     feedback = models.ForeignKey(Feedback)
-    comment = models.CharField(max_length=1500)
+    comment = models.TextField()
     comment_by = models.ForeignKey(User)
+    feedback_status = models.CharField(max_length=20, default='NEW')
     created_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -105,15 +114,16 @@ class ContectList(models.Model):
         return os.path.join('profile_photo/', filename)
 
     position_type = models.CharField(max_length=100, blank=False, choices=(
-        ('TL', 'TEAM LEADER'),
+        ('OPERATIONS', 'OPERATIONS'),
         ('MGMT', 'MANAGEMENT'),
-        ('QA', 'QUALLITY ASSURANCE'),
+        ('QUALLITY', 'QUALLITY'),
         ('TECH', 'TECH'),
         ('TAG', 'TAG'),
         ('SHOPPING', 'SHOPPING'),
-        ('PLA', 'PLA'),
+        ('POD', 'POD'),
         ('MIS', 'MIS'),
-        ('DESIGN', 'DESIGN'),)
+        ('DESIGN', 'DESIGN'),
+        ('TRAINING', 'TRAINING'),)
     )
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)

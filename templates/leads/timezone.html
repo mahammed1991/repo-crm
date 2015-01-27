@@ -46,10 +46,6 @@
         $('#setup_datepick').val('');
     });
 
-    $('input[name=migration_datepick_nApplicable]').click(function(){
-        $('#migration_datepick').val('');
-    });
-
     function checkURL(domain){
         domain = domain.replace('http://','');
         domain = domain.replace('https://','');
@@ -60,29 +56,52 @@
     function changetime(abt) {
         var locations = {{time_zone_for_region|safe}}
         
-        if (abt.value == 'UK'){
-            $('#campid').val("701d0000000EaB7");
-        }else if(abt.value == 'Ireland'){
-            $('#campid').val("701d0000000EaP4");
-        }else if(abt.value == 'US'){
-            $('#campid').val("701d0000000EaB2");
-        }else{
-            $('#campid').val("None");
+        if(abt){
+            if (abt.value == 'UK'){
+                $('#campid').val("701d0000000EaB7");
+            }else if(abt.value == 'Ireland'){
+                $('#campid').val("701d0000000EaP4");
+            }else if(abt.value == 'US'){
+                $('#campid').val("701d0000000EaB2");
+            }else{
+                $('#campid').val("None");
+            }
+        
+
+            $('#tzone').html('');
+            if(locations[abt.value].length == 1){
+                var tz_info = locations[abt.value];
+                var option = "<option value='" + tz_info[0]['zone_name'] + "'>"+ tz_info[0]['zone_name'] +"(UTC"+tz_info[0]['time_value']+")</option>"
+                $('#tzone').html(option);
+            }else{
+                var option = "<option value='0'>--Select--</option>"
+                var tz_info = locations[abt.value];
+                for(var i=0;i<locations[abt.value].length;i++){
+                    option += "<option value='" + tz_info[i]['zone_name'] + "'>"+ tz_info[i]['zone_name'] +"(UTC"+tz_info[i]['time_value']+")</option>"
+                }
+                $('#tzone').html(option);
+            }
+
+            // Get Languages by Location/Country
+            var languages = {{language_for_location|safe}}
+            
+            $('#language').html('');
+            if(languages[abt.value].length == 1){
+                var lang_info = languages[abt.value];
+                var option = "<option value='" + lang_info[0]['language_name'] + "'>"+ lang_info[0]['language_name'] +"</option>"
+                $('#language').html(option);
+                $('#language').val(lang_info[0]['language_name']);
+            }else{
+                var option = "<option value='0'>--Select--</option>"
+                var lang_info = languages[abt.value];
+                for(var i=0;i<languages[abt.value].length;i++){
+                    option += "<option value='" + lang_info[i]['language_name'] + "'>"+ lang_info[i]['language_name'] +"</option>"
+                }
+                $('#language').html(option);
+                $('#language').val(0);
+            }
         }
 
-        $('#tzone').html('');
-        if(locations[abt.value].length == 1){
-            var tz_info = locations[abt.value];
-            var option = "<option value='" + tz_info[0]['zone_name'] + "'>"+ tz_info[0]['zone_name'] +"(UTC"+tz_info[0]['time_value']+")</option>"
-            $('#tzone').html(option);
-        }else{
-            var option = "<option value='0'>--Select--</option>"
-            var tz_info = locations[abt.value];
-            for(var i=0;i<locations[abt.value].length;i++){
-                option += "<option value='" + tz_info[i]['zone_name'] + "'>"+ tz_info[i]['zone_name'] +"(UTC"+tz_info[i]['time_value']+")</option>"
-            }
-            $('#tzone').html(option);
-        }
     }
 
     function check_and_create_appointment(slots){
@@ -100,6 +119,7 @@
             'success': function(response){
                 if(response['status'] == 'FAILED'){
                     alert('Oops! the slot for ' + response['type'] + ' has already been booked by someone else.\nPlease relaunch calendar app from the date picker and choose a different appointment');
+                    $("#setup_datepick").show();
                     status = false;
                 }
             },
@@ -112,5 +132,25 @@
     }
     $('#country, #tzone').change(function(){
         $('#tag_datepick, #setup_datepick').val('');
+    });
+
+    $("#is_tag_datepic").click(function(){
+        if(!$("#tag_datepick").val()){
+            alert("Please choose Appintment date");
+            $(this).attr('checked', false);
+        }else{
+            if(document.getElementById("is_tag_datepic").checked == true){
+            var tag_slot = {
+                'type' : 'TAG',
+                'time' : $("#tag_datepick").val()
+              }
+            sts = check_and_create_appointment([tag_slot]);
+            if(sts){
+                $("#setup_datepick").val($("#tag_datepick").val());
+            }else{
+                $("#setup_datepick").show().focus();
+            }
+        }    
+        }
     });
 </script>

@@ -2,17 +2,18 @@
 
 {% load staticfiles %}
 
+{% block title %}
+  Meet The Team
+{% endblock title %}
+
 {% block content %}
 <section class="content-region team-page">
     <div class="container-fluid">
-      <h1>Meet the team</h1>
-      <div class="team-banner"></div>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae facilisis purus. Sed molestie tempus tortor eget elementum. Nullam eu sollicitudin orci, non interdum augue. Cras est dui, consequat sed tristique sed, pulvinar nec nulla. Vestibulum tincidunt eu est non luctus. Pellentesque venenatis dictum nunc, quis maximus augue sodales quis. Proin sodales efficitur nibh. In imperdiet, sapien vel sodales cursus, diam dui porttitor ante, ut molestie purus est eget est. Nulla non elit mi.</p>
-      <h2>Management Team</h2>
-        <div class="slider1 team-slider">
+      <h2>Heavy Users</h2>
+        <div class="team-slider">
             {% for management in contacts_list.management %}
-            <div class="slide team-slide">
-                <img src="{% static 'images/default_user.png' %}">
+            <div class="team-slide">
+                <img src="{% static management.photo_url %}">
                 <div class="slide-copy">
                     <span class="member-name">{{management.name}}</span>
                     {{management.email}}<br>
@@ -20,16 +21,16 @@
                     {% if management.skype %}
                         Skype: <span>{{management.skype}}</span>
                     {% endif %}
-
                 </div>
             </div>
             {% endfor %}
         </div>
         <h2>Customer Support team</h2>
-        <div class="slider1 team-slider">
+
+        <div class="team-slider">
             {% for rep in contacts_list.representatives %}
-            <div class="slide team-slide">
-                <img src="{% static 'images/default_user.png' %}">
+            <div class="team-slide">
+                <img src="{% static rep.photo_url %}">
                 <div class="slide-copy">
                     <span class="member-name">{{rep.name}}</span>
                     {{rep.email}}<br>

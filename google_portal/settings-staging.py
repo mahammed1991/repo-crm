@@ -95,7 +95,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Media Files (User uploaded files)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = "/srv/uploads/gtrack/"
+MEDIA_ROOT = "/srv/gtrack-uploads"
 
 # URLs for login, post login redirect and error
 LOGIN_URL = '/auth/login'
