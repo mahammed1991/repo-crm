@@ -91,7 +91,7 @@ def lead_form(request):
             tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
 
             tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
-            #requests.request('POST', url=sf_api_url, data=tag_data)
+            requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
@@ -105,14 +105,14 @@ def lead_form(request):
             setup_data['first_name'] = request.POST.get('shop_contact_person_name'),  # Primary Contact Name
             setup_data['00Nd0000005WayR'] = request.POST.get('shop_primary_role'),  # Role
             setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick'),  # Shopping Appointment Date
-            setup_data['00Nd0000005WYhJ'] = 'Google Shopping Setup',  # Code Type
-            #setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
-            #setup_data['00Nd00000077T9t'] = request.POST.get('00Nd00000077T9t')  # Web Inventory
+            setup_data['00Nd0000005WYhJ'] = u'Google Shopping Setup',  # Code Type
+            setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
+            setup_data['00Nd00000077T9t'] = request.POST.get('00Nd00000077T9t')  # Web Inventory
             setup_data['00Nd00000077T9y'] = request.POST.get('rbid')  # Recommended Bid
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
             setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
-            # requests.request('POST', url=sf_api_url, data=setup_data)
+            requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
             #advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})

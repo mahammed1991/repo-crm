@@ -122,7 +122,7 @@
           <input type="hidden" class="form-control" id="lopt" name="lopt">
         </div>
         <div class="col-md-4">
-          <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Name">
+          <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Email">
         </div>
         <div class="col-md-4">
            <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
@@ -295,6 +295,10 @@
         <div class="col-md-4">
           <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
         </div>
+        <input id="00Nd00000077T9o" name="00Nd00000077T9o" size="20" class="form-control" type="hidden">
+        <select id="webinventory" name="00Nd00000077T9t" class="form-control" title="Client's Web inventory" style="display:none">
+          <option value="Under 100">Under 100</option>
+        </select>
        <!--  <div class="col-md-4">
           <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
             Do you want to use same timeslot for Shopping?
@@ -570,20 +574,24 @@
   }
 
   $("#tag_contact_person_name").change(function(){
-      $("#shop_contact_person_name").val($(this).val());
+      var tag_name = $(this).val();
+      $("#shop_contact_person_name").val(tag_name);
   });
 
   $("#shop_contact_person_name").change(function(){
-      $("#tag_contact_person_name").val($(this).val());
+    var shop_name = $(this).val();
+      $("#tag_contact_person_name").val(shop_name);
   });
 
   $("#tag_primary_role").change(function(){
-      $("#shop_primary_role").val($(this).val());
+      var tag_role = $(this).val();
+      $("#shop_primary_role").val(tag_role);
   });
 
   $("#shop_primary_role").change(function(){
-      $("#tag_primary_role").val($(this).val());
+      var shop_role = $(this).val();
+      $("#tag_primary_role").val(shop_role);
   });
-  
+
 </script>
 {% endblock main_js %}
