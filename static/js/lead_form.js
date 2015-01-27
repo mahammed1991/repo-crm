@@ -9,6 +9,7 @@ function validatethis(frm) {
     var rc = 0;
     var fix_slots = new Array();
 
+    window.is_error = false;
     
     // Google Rep Name Validation
     if (frm.gref.value == "0" || frm.gref.value == "") {

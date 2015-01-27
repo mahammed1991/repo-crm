@@ -26,12 +26,12 @@ $(document).ready(function(){
         $(this).hide();
         $("#profileUpdate").hide();
         $("#profileEdit").show();
-        $("#user_full_name").val("{{user.get_full_name}}");
-        $("#user_phone").val("{{user.profile.phone}}");
-        $("#user_team").val("{{user.profile.team.id}}");
-        $("#user_manager_name").val("{{user.profile.user_manager_name}}");
-        $("#user_manager_email").val("{{user.profile.user_manager_email}}");
-        $("#user_location").val("{{user.profile.location.id}}");
+        $("#user_full_name").val(window.user_full_name);
+        $("#user_phone").val(window.phone);
+        $("#user_team").val(window.team_id);
+        $("#user_manager_name").val(window.manager_name);
+        $("#user_manager_email").val(window.manager_email);
+        $("#user_location").val(window.loc_id);
         $(".allow-edit").addClass('non-edit');
         $(".allow-edit").attr('disabled', true);
         return false;

@@ -96,9 +96,9 @@ def lead_form(request):
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
 
-            if advirtiser_details.get('appointment_date'):
-                create_icalendar_file(advirtiser_details)
-                send_calendar_invite_to_advertiser(advirtiser_details)
+            #if advirtiser_details.get('appointment_date'):
+                #create_icalendar_file(advirtiser_details)
+                #send_calendar_invite_to_advertiser(advirtiser_details)
 
         if request.POST.get('is_shopping_lead') == 'yes':
             setup_data = basic_data
@@ -115,10 +115,10 @@ def lead_form(request):
             # requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
-            advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
-            if advirtiser_details.get('appointment_date'):
-                create_icalendar_file(advirtiser_details)
-                send_calendar_invite_to_advertiser(advirtiser_details)
+            #advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
+            #if advirtiser_details.get('appointment_date'):
+                #create_icalendar_file(advirtiser_details)
+                #send_calendar_invite_to_advertiser(advirtiser_details)
 
         return redirect(basic_data['retURL'])
 
