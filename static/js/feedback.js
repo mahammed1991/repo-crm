@@ -46,14 +46,17 @@ $(document).ready(function()
 ); 
 /* sort by function start here*/
    $("#status_sort").click(function(){
+   		$('#SortBy').text($("#status_sort").text());
    		$("#status_header").trigger("click");
    })
 
    $("#lead_owner_sort").click(function(){
+   		$('#SortBy').text($("#lead_owner_sort").text());
    		$("#lead_owner_header").trigger("click");
    })
 
    $("#recent_sort").click(function(){
+   		$('#SortBy').text($("#recent_sort").text());
    		$("#recent_header").trigger("click");
    })
 

@@ -1625,14 +1625,36 @@ ul li, ol li {
 	  display: flex;
 	  margin: 0 auto;  
 }
-.time_zone table tr td .time_slot {
-    background: none repeat scroll 0 0 #f6f6f6;
-    height: 35px;
-    padding-top: 15px;
-    position: relative;
-    width: 140px;
-    z-index: 999;
-	font-family: 'robotoregular';
+
+
+/* ==========================================================================
+   Appointment Popup
+   ========================================================================== */
+.time_zone {
+	font-family:sans-serif !important;
+	padding: 0;
+	width: 100%;
+	background: #fff;
+}
+.time_zone .title {
+	font-family: sans-serif !important;
+	font-size: 14px;
+	font-weight: bold;
+	border-radius: 0;
+	font-size: 14px;
+	background: #eee;
+	padding: 15px 20px;
+	box-sizing:border-box;
+}
+.time_zone .title .prev, .time_zone .title .next {
+	font-weight: normal;;
+}
+.time_zone table {
+	padding: 20px;
+	width: 100%;
+}
+#cboxMiddleLeft, #cboxMiddleRight, #cboxTopCenter, #cboxBottomCenter, #cboxTopLeft, #cboxTopRight, #cboxBottomLeft, #cboxBottomRight {
+	display: none;
 }
 .time_zone table tr th .header {
     background: none repeat scroll 0 0 #77a7fb;
@@ -1641,18 +1663,39 @@ ul li, ol li {
     height: 53px;
     padding-top: 19px;
     width: 140px;
-	font-family: 'robotoregular';
+	font-family: sans-serif !important;
+	border-radius: 0;
+	text-transform: uppercase;;
 }
 .time_zone table tr td .time_slot {
-    background: none repeat scroll 0 0 #ffe5e5;
+    background: #ffe5e5 url(../images/tim_slot.png) no-repeat center !important;
     height: 35px;
-    padding-top: 15px;
     position: relative;
     width: 140px;
     z-index: 999;
-	font-family: 'robotoregular';
+	font-family: sans-serif !important;
+	padding: 8px 0;
+	line-height: 20px;
+	font-size: 12px;
 }
-
+.time_zone table tr td.content_block .time_slot_avi {
+	background: #c7f5d3 !important;
+	color: #2763c9;
+	padding: 8px 0;
+	line-height: 20px;
+	font-size: 12px; 
+	border-radius: 0;
+}
+.time_zone table tr td.content_block .time_slot_avi:hover {
+	text-decoration: underline;
+	background:#b4ebc2 !important;
+}
+#cboxOverlay {
+	z-index: 99999 !important;
+}
+#colorbox {
+	z-index: 999999 !important;
+}
 
 
 /* ==========================================================================

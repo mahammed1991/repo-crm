@@ -155,15 +155,22 @@ $('#habla_panel_div').click(function(){
 
 // sorting function statrt here
 
+
  $("#statusHeader").click(function(){
+
+      $('#sortBy').text($("#statusHeader").text());
       $("#StatusRow").trigger("click");
+      
    })
 
    $("#CodeTypeHeader").click(function(){
+      $('#sortBy').text($("#CodeTypeHeader").text());
       $("#CodeTypeRow").trigger("click");
+
    })
 
    $("#RecentHeader").click(function(){
+      $('#sortBy').text($("#RecentHeader").text());
       $("#RecentRow").trigger("click");
    })
 

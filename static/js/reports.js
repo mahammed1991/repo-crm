@@ -206,7 +206,7 @@ $("#get_report").click(function(){
 
 
 function callAjax(dataString){
-
+   $('#preloaderOverlay').show()
   $.ajax({
         url: "/reports/get_new_reports",
         data: dataString,
@@ -228,6 +228,7 @@ function callAjax(dataString){
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
             showReport(report);
+        $('#preloaderOverlay').hide()
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log('failure');
