@@ -202,7 +202,7 @@ $('#SubmitFeedback').click(function(){
           success: function(data) {
             if(data === 'SUCCESS'){
               alert('feedback succesfully created ')
-              $('#feedbackModal').hide()
+              $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);
               $('#comments').val('');

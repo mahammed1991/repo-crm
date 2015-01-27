@@ -233,11 +233,14 @@ function validatethis(frm) {
       }
     }
 
-      var slot = {
-        'type' : 'TAG',
-        'time' : frm.tag_datepick.value
+      if(frm.tag_datepick.value != ''){
+          var slot = {
+            'type' : 'TAG',
+            'time' : frm.tag_datepick.value
+          }
+        fix_slots.push(slot)  
       }
-      fix_slots.push(slot)
+      
 
       
       if($("#task_1").is(":visible")){
@@ -392,13 +395,37 @@ function validatethis(frm) {
           window.is_error = true;
         }
     }
-        var slot = {
-          'type' : 'SHOPPING',
-          'time' : frm.setup_datepick.value
-        }
-      fix_slots.push(slot)
+      
+      // If Setup Date Slot Selected
+      if(frm.setup_datepick.value != ''){
+          var slot = {
+            'type' : 'SHOPPING',
+            'time' : frm.setup_datepick.value
+          }
+        fix_slots.push(slot)
+      }
       }else{
-        frm.setup_datepick.value = "";
+        // If Setup Date Slot Not Selected
+        frm.setup_datepick.value = '';
+      }
+
+      // Check Box Options
+      if($("#tag_via_gtm").is(":checked")){
+        $("#tag_via_gtm").val(true);
+      }else{
+        $("#tag_via_gtm").val(false);
+      }
+
+      if($("#is_shopping_policies").is(":checked")){
+          $("#is_shopping_policies").val(true);
+      }else{
+        $("#is_shopping_policies").val(false);
+      }
+
+      if($("#web_access").is(":checked")){
+          $("#web_access").val(true);
+      }else{
+        $("#web_access").val(false);
       }
 
     if(window.is_error){
@@ -410,7 +437,7 @@ function validatethis(frm) {
       }
       
       if (status) {
-        // $('form input[type=submit]').attr('disabled', 'disabled');
+        $('form input[type=submit]').attr('disabled', 'disabled');
       }
       return status;  
     }
