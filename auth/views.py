@@ -23,8 +23,6 @@ def post_login(request):
         username = request.user.username.split('@')[0]
 
         # Main User Model
-        request.user.first_name = request.user.first_name
-        request.user.last_name = request.user.last_name
         request.user.save()
 
         # Customise User Model

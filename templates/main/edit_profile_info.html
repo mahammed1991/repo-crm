@@ -34,25 +34,25 @@
     <div class="std-sub-title">Team Info</div>
     <div class="profile-row">
       <div class="profile-section editable">
-        <label>Team</label>
+        <!-- <label>Team</label>
          <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team">
             <option value="">Select Team</option>
             {% for team in teams %}
             <option value="{{team.id}}">{{team.team_name}}</option>
             {% endfor %}
-        </select>
+        </select> -->
         <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
          <label>Manager Name </label>
         <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} disabled>
          <label>Manager Email</label>
         <input type="text" class="form-control non-edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} disabled>
-        <label>Program Location</label>
+        <!-- <label>Program Location</label>
         <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
             <option value="">Select Location</option>
             {% for loc in locations %}
             <option value="{{loc.id}}">{{loc.location_name}}</option>
             {% endfor %}
-        </select>
+        </select> -->
       </div>
       </div>      
     <div class="btns text-center">

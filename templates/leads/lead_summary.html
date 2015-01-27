@@ -49,12 +49,12 @@
       <div class="row">
           <div class="col-xs-9 col-sm-12 col-md-10">
             <ul class="pagination pull-left">
-              <li><a class="tag" href="#" id='all'>All</a></li>
-              <li><a class="page" href="#" id='Inactive'>Inactive</a></li>
-              <li><a class="page" href="#" id='InQueue'>In Queue</a></li>
-              <li><a class="page" href="#" id='AttemptingContact'>Attempting Contact</a></li>
-              <li><a class="page" href="#" id='InProgress' >In Progress </a></li>
-              <li><a class="page" href="#" id='Implemented'>Implemented</a></li>
+              <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
+              <li><a class="page" href="javascript:void(0);" id='Inactive'>Inactive</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InQueue'>In Queue</a></li>
+              <li><a class="page" href="javascript:void(0);" id='AttemptingContact'>Attempting Contact</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InProgress' >In Progress </a></li>
+              <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
             </ul>
             <div class="table-search">
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
@@ -64,11 +64,11 @@
           <div class="col-xs-3 col-md-2">            
               <ul class="filter-area navbar-right">
                 <li class="lbl">Sort by: </li>
-                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Recent <i class="fa fa-angle-down"></i></a>
+                <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Recent <i class="fa fa-angle-down"></i></a>
                   <ul class="dropdown-menu light" role="menu">
-                    <li><a href="#" id="RecentHeader">Recent</a></li>
-                    <li><a href="#" id='CodeTypeHeader'>Code Type</a></li>
-                    <li><a href="#" id="statusHeader">Status</a></li>
+                    <li><a href="javascript:void(0);" id="RecentHeader">Recent</a></li>
+                    <li><a href="javascript:void(0);" id='CodeTypeHeader'>Code Type</a></li>
+                    <li><a href="javascript:void(0);" id="statusHeader">Status</a></li>
                   </ul>
                   </li>
               </ul>
@@ -181,13 +181,14 @@
                  <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title">
                    <select class="form-control" id="feedbackType">
                       <option value="Feedback Type">Feedback Type</option>
-                      <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
-                      <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
-                      <option value="Communication - Rude rep">Communication - Rude rep</option>
-                      <option value="Communication - Unable to understand rep">Communication - Unable to understand rep</option>
-                      <option value="Operations - Missed appointments">Operations - Missed appointments</option>
-                      <option value="Operations - No follow up">Operations - No follow up</option>
-                      <option value="Operations - Incorrect information provided">Operations - Incorrect information provided</option>
+                      <option value="Incorrect Code Installed / Code Installed Incorrectly">Incorrect Code Installed / Code Installed Incorrectly</option>
+                      <option value="Rude / Unprofessional">Rude / Unprofessional</option>
+                      <option value="Bad Communication">Bad Communication</option>
+                      <option value="Missed Appointment(S) / No Follow Up">Missed Appointment(S) / No Follow Up</option>
+                      <option value="Incorrect Information Provided">Incorrect Information Provided</option>
+                      <option value="Good / Perfect Implementation">Good / Perfect Implementation</option>
+                      <option value="Excellent Follow Up">Excellent Follow Up</option>
+                      <option value="100%+">100%+</option>
                   </select>
                   <textarea class="form-control" placeholder="Comments" id='comments'></textarea>
                
