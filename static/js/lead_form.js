@@ -249,10 +249,10 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        codeElem = frm.code1;
-        if(!validateCode(codeElem)){
-          window.is_error = true;
-        }
+        // codeElem = frm.code1;
+        // if(!validateCode(codeElem)){
+        //   window.is_error = true;
+        // }
 
         urlElem = frm.url1;
         if(!validateUrl(urlElem)){
@@ -266,10 +266,10 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        codeElem2 = frm.code2;
-        if(!validateCode(codeElem2)){
-          window.is_error = true;
-        }
+        // codeElem2 = frm.code2;
+        // if(!validateCode(codeElem2)){
+        //   window.is_error = true;
+        // }
 
         urlElem2 = frm.url2;
         if(!validateUrl(urlElem2)){
@@ -283,10 +283,10 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        codeElem3 = frm.code3;
-        if(!validateCode(codeElem3)){
-          window.is_error = true;
-        }
+        // codeElem3 = frm.code3;
+        // if(!validateCode(codeElem3)){
+        //   window.is_error = true;
+        // }
 
         urlElem3 = frm.url3;
         if(!validateUrl(urlElem3)){
@@ -300,10 +300,10 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        codeElem4 = frm.code4;
-        if(!validateCode(codeElem4)){
-          window.is_error = true;
-        }
+        // codeElem4 = frm.code4;
+        // if(!validateCode(codeElem4)){
+        //   window.is_error = true;
+        // }
 
         urlElem4 = frm.url4;
         if(!validateUrl(urlElem4)){
@@ -317,10 +317,10 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        codeElem5 = frm.code5;
-        if(!validateCode(codeElem5)){
-          window.is_error = true;
-        }
+        // codeElem5 = frm.code5;
+        // if(!validateCode(codeElem5)){
+        //   window.is_error = true;
+        // }
 
         urlElem5 = frm.url5;
         if(!validateUrl(urlElem5)){
