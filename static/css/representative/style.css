@@ -62,8 +62,7 @@
   text-align: center;
   z-index: 99;
 }
-.time_zone table tr td .time_slot {
-  background: url("/static/css/images/tim_slot.png") no-repeat !important;
+.time_zone table tr td .time_slot {  
   position: relative;
   z-index: 999;
   width: 137px;
