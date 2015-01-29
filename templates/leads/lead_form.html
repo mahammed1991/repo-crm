@@ -61,9 +61,9 @@
       <div class="col-md-4">
         <label for="country">Program Location</label>
         <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
-          <option value="">Program Location</option>
-         {% for location in locations %}
-            <option value='{{location.location_name}}' location_id="{{location.id}}">{{location.location_name}}</option>
+          <option value="0">Program Location</option>
+          {% for loc in locations %}
+            <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
           {% endfor %}
         </select>
       </div>
@@ -338,7 +338,7 @@
             </label>
             <label id="shoppingCheck" class="shopping-policy" style="display:none;">
               <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
-              Have you ensured that the website meets the Google Shopping Policies?
+              Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
             </label>
           </div>
     </div>
@@ -361,6 +361,9 @@
 
   $(document).ready(function(){
 
+    window.locations = {{locations|safe}};
+    window.new_locations = {{new_locations|safe}};
+    window.is_loc_changed = false
     // lead form controls
 
     $("#appointmentCheck1" ).click(function() {
@@ -529,13 +532,23 @@
 
   $('#team').change(function(){
     var selectedTeam = $(this).val();
-    if (selectedTeam == 'Services'){
+    if (selectedTeam == 'Gem Central America English' || selectedTeam == 'Gem Central America Spanish'){
+      console.log(window.is_loc_changed, "status")
+      if(!window.is_loc_changed){
+        setLocations(window.new_locations); 
+      }
+      window.is_loc_changed = true;
+    }else if (selectedTeam == 'Services'){
       $(".tr_service_segment").show();
       $('label[for="g_case_id"]').hide();
       $('label[for="service_segment"]').hide();
       $('#g_case_id').show();
       $("#service_segment").hide();
     }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+      if (window.is_loc_changed){
+        setLocations(window.locations);
+        window.is_loc_changed = false;
+      }
       $("#service_segment").show();
       $("#service_segment").val('');
       $(".tr_service_segment").show();
@@ -544,6 +557,10 @@
       $('label[for="g_case_id"]').hide();
       $('label[for="service_segment"]').show();
     }else{
+      if (window.is_loc_changed){
+        setLocations(window.locations);
+        window.is_loc_changed = false;
+      }
       $(".tr_service_segment").hide();
       $('#g_case_id').hide();
 
@@ -554,16 +571,16 @@
 
   $('#team').trigger("change");
 
-  $('#country').change(function(){
-    var selectedTeam = $(this).val();
-    if( selectedTeam == 'Nordic(English)' || selectedTeam == 'Netherlands(English)' ){
-      $("#language").val('English');
-    }else if(selectedTeam == 'Nordic(Dutch)' || selectedTeam == 'Netherlands(Dutch)'){
-      $("#language").val('Dutch');
-    }else{
-      $("#language").val('');
-    }
-  });
+  // $('#country').change(function(){
+  //   var selectedTeam = $(this).val();
+  //   if( selectedTeam == 'Nordic(English)' || selectedTeam == 'Netherlands(English)' ){
+  //     $("#language").val('English');
+  //   }else if(selectedTeam == 'Nordic(Dutch)' || selectedTeam == 'Netherlands(Dutch)'){
+  //     $("#language").val('Dutch');
+  //   }else{
+  //     $("#language").val('0');
+  //   }
+  // });
   
   $('#setup_lead_check').click(function() {
     $('#setup_lead_form').toggle();
@@ -593,5 +610,13 @@
       $("#tag_primary_role").val(shop_role);
   });
 
+  function setLocations(newLocations){
+    $("#country option").remove()
+    $("#country").append('<option value="0">Program Location</option>');
+    for(i=0; i<newLocations.length; i++){
+      $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+    }
+  }
+  
 </script>
 {% endblock main_js %}

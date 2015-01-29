@@ -122,7 +122,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 # list of domains allowed
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['gmail.com', 'regalix-inc.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['google.com', 'regalix-inc.com']
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['rwieker@google.com', 'winstonsingh@google.com', 'meenakshid@google.com', 'sabinaa@google.com']
 
 TEMPLATE_CONTEXT_PROCESSORS = [

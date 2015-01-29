@@ -111,6 +111,7 @@ def lead_form(request):
             setup_data['00Nd00000077T9y'] = request.POST.get('rbid')  # Recommended Bid
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
+            setup_data['00Nd0000005WYhE'] = request.POST.get('shopping_url')  # Shopping URL
             setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
             requests.request('POST', url=sf_api_url, data=setup_data)
 
@@ -123,13 +124,18 @@ def lead_form(request):
         return redirect(basic_data['retURL'])
 
     locations = Location.objects.filter(is_active=True)
+    new_locations = list()
+    all_locations = list()
     time_zone_for_region = dict()
-    for loc in locations:
-        time_zone_for_region[loc.location_name] = [{'zone_name': tz[
-            'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
-
     language_for_location = dict()
     for loc in locations:
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
+            new_locations.append(l)
+        else:
+            all_locations.append(l)
+        time_zone_for_region[loc.location_name] = [{'zone_name': tz[
+            'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
         language_for_location[loc.location_name] = [{'language_name': lang[
             'language_name']} for lang in loc.language.values()]
 
@@ -140,7 +146,8 @@ def lead_form(request):
         request,
         'leads/lead_form.html',
         {'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
-         'locations': locations,
+         'locations': all_locations,
+         'new_locations': new_locations,
          'teams': teams,
          'code_types': code_types,
          'time_zone_for_region': json.dumps(time_zone_for_region),
