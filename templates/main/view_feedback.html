@@ -143,7 +143,7 @@ Manage Help
             <textarea class="form-control feedback-commet-box" placeholder="Comments" name='comment' id='feedback_comment'></textarea>
             <div class="btn-row">
                 <button class="btn std-btn" onclick="return validate(this);" id='AddComments'>Comment</button>
-                 {% if feedback.status != 'RESOLVED'  %}
+                 {% if feedback.status != 'RESOLVED' and can_resolve %}
                     <button class="btn std-btn" onclick="return validate(this);" id='Resolved'>Resolved</button>
                 {% endif %}
             </div>
