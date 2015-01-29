@@ -15,6 +15,7 @@ from leads.models import Location, Team
 
 class Feedback(models.Model):
     """ Feedback data """
+
     def get_file_path(instance, filename):
         """ Dynamic file path """
         ext = filename.split('.')[-1]
@@ -57,7 +58,7 @@ class Feedback(models.Model):
 
     third_resolved_by = models.ForeignKey(User, related_name='third_resolved_by', null=True)
     third_resolved_date = models.DateTimeField(blank=True, null=True)
-    resolved_count = models.IntegerField(blank=True, default=0)
+    # resolved_count = models.IntegerField(blank=True, default=0)
 
     created_date = models.DateTimeField(auto_now_add=True)
 
