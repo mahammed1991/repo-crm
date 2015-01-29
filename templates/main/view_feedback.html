@@ -102,7 +102,7 @@ Manage Help
 
     <div class="feedback-comments">
 
-        <!-- third resolved commnet start here -->
+        <!-- commnet start here -->
              {% if comments %}
 
                     {% for c in comments %}
@@ -111,8 +111,8 @@ Manage Help
                                 <p>{{c.comment}}</p>
                                 
                                  {% if c.feedback_status == 'RESOLVED' %}
-                                    <p>Resolved By</p>
-                                    <p class="feedback-auth">- <span>{{feedback.resolved_by.username}}</span> ({{feedback.resolved_by.email}}) On <span>{{feedback.resolved_date | date:"D, M d Y, f A"}}</span></p>
+                                    <p></p>
+                                   <p class="feedback-auth"> Resolved By:- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
                                 {% else %}
                                     <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
                                 {% endif %}
@@ -122,8 +122,8 @@ Manage Help
                             <div class="feedback-comment google">
                                 <p>{{c.comment}}</p>
                                 {% if c.feedback_status == 'RESOLVED' %}
-                                    <p>Resolved By</p>
-                                    <p class="feedback-auth">- <span>{{feedback.resolved_by.username}}</span> ({{feedback.resolved_by.email}}) On <span>{{feedback.resolved_date | date:"D, M d Y, f A"}}</span></p>
+                                    <p></p>
+                                    <p class="feedback-auth"> Resolved By:- <span> {{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
                                 {% else %}
                                     <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
                                 {% endif %}
@@ -150,7 +150,7 @@ Manage Help
         </form>
     {% endif %}
 
-    {% if feedback.status == 'RESOLVED' and feedback.resolved_count < 3 %}
+    {% if feedback.status == 'RESOLVED' and resolved_count < 3 %}
         <form action="{% url 'main.views.reopen_feedback' feedback.id %}"  method="POST" onsubmit="return validateropen(this);">
             {% csrf_token %}
               <input type="hidden" name='feedback' value="{{feedback.id}}">
@@ -159,7 +159,7 @@ Manage Help
                 <button class="btn std-btn">Reopen</button>
               </div>
         </form>
-    {% elif feedback.status == 'RESOLVED' and feedback.resolved_count == 3 %}
+    {% elif feedback.status == 'RESOLVED' and resolved_count == 3 %}
             <div class="btn-row">
                 <button class="btn std-btn" id='finalreopenalert'>Reopen</button>
               </div>

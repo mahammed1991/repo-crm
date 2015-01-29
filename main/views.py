@@ -309,18 +309,16 @@ def team(request):
 def view_feedback(request, id):
     """ Detail view of a feedback """
     normal_comments = list()
-    first_resolved_comments = list()
-    second_resolved_comments = list()
     feedback = Feedback.objects.get(id=id)
     normal_comments = FeedbackComment.objects.filter(feedback__id=id)
+    resolved_count = FeedbackComment.objects.filter(feedback__id=id, feedback_status='resolved').count()
     can_resolve = True
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
     return render(request, 'main/view_feedback.html', {'feedback': feedback,
                                                        'comments': normal_comments,
-                                                       'first_resolved_comments': first_resolved_comments,
-                                                       'second_resolved_comments': second_resolved_comments,
                                                        'can_resolve': can_resolve,
+                                                       'resolved_count': resolved_count,
                                                        'media_url': settings.MEDIA_URL + 'feedback/'})
 
 
@@ -388,7 +386,7 @@ def create_feedback(request, lead_id=None):
             feedback_details.attachment = request.FILES['attachment_name']
 
         feedback_details.save()
-        feedback_details = notify_feedback_activity(request, feedback_details)
+        # feedback_details = notify_feedback_activity(request, comment=None, feedback_details)
 
         return redirect('main.views.list_feedback')
     return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
@@ -492,7 +490,7 @@ def create_feedback_from_lead_status(request):
             pass
 
         feedback_details.save()
-        feedback_details = notify_feedback_activity(request, feedback_details)
+        # feedback_details = notify_feedback_activity(request, feedback_details)
 
         # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))
@@ -512,7 +510,7 @@ def reopen_feedback(request, id):
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
-    notify_feedback_activity(request, feedback, is_resolved=True)
+    # notify_feedback_activity(request, feedback, comment)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -532,34 +530,28 @@ def comment_feedback(request, id):
     comment.comment_by = request.user
     if action_type == 'Resolved':
         comment.feedback_status = 'RESOLVED'
-    else:
-        comment.feedback_status = 'IN PROGRESS'
-    # comment.created_date = datetime.utcnow()
-    comment.save()
-    if action_type == 'Resolved':
+        comment.save()
         feedback.status = 'RESOLVED'
-        if feedback.resolved_count == 0:
-            feedback.resolved_count += 1
+
+        resolved_count = FeedbackComment.objects.filter(feedback__id=id, feedback_status='resolved').count()
+        if resolved_count == 1:
             feedback.resolved_by = request.user
             feedback.resolved_date = datetime.utcnow()
-        elif feedback.resolved_count == 1:
-            feedback.resolved_count += 1
+        elif resolved_count == 2:
             feedback.second_resolved_by = request.user
             feedback.second_resolved_date = datetime.utcnow()
-        elif feedback.resolved_count == 2:
-            feedback.resolved_count += 1
+        elif resolved_count == 3:
             feedback.third_resolved_by = request.user
             feedback.third_resolved_date = datetime.utcnow()
-        # notify_feedback_activity(request, feedback, is_resolved=True)
-        feedback.save()
     else:
-        feedback.status = 'IN PROGRESS'
-        feedback.save()
-
-    if action_type == 'Resolved':
-        notify_feedback_activity(request, feedback, is_resolved=True)
-    else:
-        notify_feedback_activity(request, feedback, comment)
+        comment.feedback_status = 'IN PROGRESS'
+        comment.save()
+    # comment.created_date = datetime.utcnow()
+    feedback.save()
+    # if action_type == 'Resolved':
+    #     # notify_feedback_activity(request, feedback, comment, is_resolved=True)
+    # else:
+    #     notify_feedback_activity(request, feedback, comment, is_resolved=False)
     return redirect('main.views.view_feedback', id=id)
 
 
