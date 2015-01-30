@@ -10,8 +10,10 @@ from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manag
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails
+from django.db.models import Q
 from reports.models import Region
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
 
 @login_required
@@ -90,6 +92,9 @@ def get_new_reports(request):
         countries = request.GET.getlist('countries[]')
         teams = request.GET.getlist('team[]')
         team_members = request.GET.getlist('team_members[]')
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+        ldap_id = request.GET.get('ldap_id', None)
 
         # Get teams
         if 'all' in teams:
@@ -126,7 +131,12 @@ def get_new_reports(request):
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
 
         report_details = dict()
-        email = request.user.email
+
+        if ldap_id:
+            ldap_user = User.objects.get(pk=ldap_id)
+            email = ldap_user.email
+        else:
+            email = request.user.email
 
         if report_type == 'default_report':
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
@@ -137,19 +147,124 @@ def get_new_reports(request):
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
-            program_report = ReportService.get_program_report_by_locations(teams, countries)
-            report_detail['program_report'] = program_report
+            if program_split:
+                program_report = ReportService.get_program_report_by_locations(teams, countries)
+                report_detail['program_report'] = program_report
         elif report_type == 'leadreport_regionview':
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
-            region_report = ReportService.get_region_report_by_program(countries, teams)
-            report_detail['region_report'] = region_report
+            if location_split:
+                region_report = ReportService.get_region_report_by_program(countries, teams)
+                report_detail['region_report'] = region_report
         else:
             pass
 
         report_details = {'reports': report_detail, 'code_types': code_types,
                           'report_type': report_type, 'report_timeline': report_timeline,
-                          'region': region, 'team': teams}
+                          'region': region, 'team': teams, }
         return HttpResponse(json.dumps(report_details))
+
+
+@csrf_exempt
+@login_required
+def get_download_report(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('download_report_type')
+        report_timeline = request.POST.get('download_report_timeline')
+        region = request.POST.get('download_region')
+        countries = request.POST.get('download_countries')
+        teams = request.POST.get('download_team')
+        team_members = request.POST.get('download_team_members')
+        selected_fields = request.POST.get('download_selectedFields')
+        report_timeline = report_timeline.split(',') if report_timeline else []
+        countries = countries.split(',') if countries else []
+        teams = teams.split(',') if teams else []
+        team_members = team_members.split(',') if team_members else []
+        selected_fields = selected_fields.split(',') if selected_fields else []
+        # Get teams
+        if 'all' in teams:
+            if len(teams) > 1:
+                teams.remove('all')
+            else:
+                teams = ReportService.get_all_teams()
+        else:
+            teams = teams
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        if region == 'all':
+            countries = ReportService.get_all_locations()
+        else:
+            if 'all' in countries:
+                if len(countries) > 1:
+                    countries.remove('all')
+                    countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                else:
+                    countries = ReportService.get_all_locations()
+            else:
+                countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+
+        code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+
+        email = request.user.email
+
+        #rint report_type, report_timeline, start_date, end_date, selectedFields
+
+        if report_type == 'default_report':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        elif report_type == 'leadreport_individualRep':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, [email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, team_emails)
+        elif report_type == 'leadreport_programview':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        elif report_type == 'leadreport_regionview':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        else:
+            pass
+
+        path = DownloadLeads.download_lead_report(leads, start_date, end_date, selected_fields)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+
+@login_required
+def get_user_name(request):
+    if request.is_ajax():
+        query = request.GET.get('term', '')
+        qs = User.objects.all()
+        users = qs.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))
+        results = []
+        for user in users:
+            user_json = {}
+            user_json['id'] = user.id
+            user_json['label'] = user.first_name + " " + user.last_name
+            user_json['value'] = user.first_name + " " + user.last_name
+            user_json['username'] = user.username
+            try:
+                user_details = UserDetails.objects.get(user_id=user.id)
+                user_json['manager'] = user_details.user_manager_name if user_details.user_manager_name else None
+                user_json['team'] = user_details.team_id if user_details.team_id else None
+                user_json['location'] = user_details.location_id if user_details.location_id else None
+            except UserDetails.DoesNotExist:
+                user_json['manager'] = None
+                user_json['team'] = None
+                user_json['location'] = None
+            results.append(user_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 
 
 @login_required

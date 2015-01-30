@@ -270,7 +270,6 @@ class ReportService(object):
                               'table_header': settings.LEAD_STATUS_DICT,
                               'lead_code_type_analysis': lead_status_analysis_table,
                               'week_on_week_details_in_qtd': week_on_week_trends})
-
         return report_detail
 
     @staticmethod
@@ -281,8 +280,8 @@ class ReportService(object):
         week_start_date, week_end_date = get_week_start_end_days(year, week)
         quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
         quarter_end_date = datetime.utcnow()
-
         programs_list = list()
+
         for team in teams:
             team_rec = {'program_name': team, 'locations': [], 'week_total': 0,
                         'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
@@ -316,6 +315,7 @@ class ReportService(object):
             programs_list.append(team_rec)
 
         return programs_list
+
 
     @staticmethod
     def get_region_report_by_program(countries, teams):
@@ -946,6 +946,103 @@ class DownloadLeads(object):
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def get_leads_by_report_type(code_types, teams, countries, start_date, end_date, emails):
+        if emails and teams and countries:
+            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date,
+                                         lead_owner_email__in=emails)
+
+        elif not emails and teams and countries:
+            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date)
+
+        elif emails and not teams and not countries:
+            leads = Leads.objects.filter(type_1__in=code_types, lead_owner_email__in=emails,
+                                         created_date__gte=start_date, created_date__lte=end_date)
+
+        elif not emails and not teams and countries:
+            leads = Leads.objects.filter(country__in=countries, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date)
+
+        return leads
+    
+    @staticmethod
+    def download_lead_report(leads, from_date, to_date, selected_fields):
+        filename = "leads-%s-to-%s" % (datetime.strftime(from_date, "%d-%b-%Y"), datetime.strftime(to_date, "%d-%b-%Y"))
+        leads = DownloadLeads.get_leads_for_report(leads, from_date, to_date, selected_fields)
+        path = "/tmp/%s.csv" % (filename)
+        DownloadLeads.conver_to_csv(path, leads, selected_fields)
+        return path
+
+    @staticmethod
+    def get_leads_for_report(leads, from_date, to_date, selected_fields):
+        results = list()
+        for lead in leads:
+            row = dict()
+            lead_dict = dict()
+            
+            row['Email'] = str(lead.google_rep_email.encode('utf-8'))
+            row['E-commerce'] = lead.ecommerce
+            row['Lead Owner'] = str(lead.lead_owner_name.encode('utf-8'))
+            row['Regalix E-mails'] = str(lead.lead_owner_email.encode('utf-8'))
+            row['Company / Account'] = str(lead.company.encode('utf-8'))
+
+            row['Customer ID'] = lead.customer_id
+            row['First Name'] = str(lead.first_name.encode('utf-8'))
+            row['Last Name'] = str(lead.last_name.encode('utf-8'))
+            row['Phone'] = str(lead.phone.encode('utf-8'))
+
+            row['First Name - optional'] = str(lead.first_name_optional.encode('utf-8'))
+            row['Last Name - optional'] = str(lead.last_name_optional.encode('utf-8'))
+            row['Phone - optional'] = str(lead.phone_optional.encode('utf-8'))
+            row['Email - optional'] = str(lead.email_optional.encode('utf-8'))
+
+            row['Time Zone'] = lead.time_zone
+            row['Regalix Comment'] = str(lead.regalix_comment.encode('utf-8'))
+            row['Google Comment'] = str(lead.google_comment.encode('utf-8'))
+
+            row['Code'] = str(lead.code_1.encode('utf-8'))
+            row['URL'] = str(lead.url_1.encode('utf-8'))
+            row['Comment 1'] = str(lead.comment_1.encode('utf-8'))
+
+            row['Google Account Manager'] = str(lead.google_rep_name.encode('utf-8'))
+            row['Lead Status'] = lead.lead_status
+            row['Location'] = lead.country
+            row['Code Type'] = str(lead.type_1.encode('utf-8'))
+            row['Team'] = lead.team
+            row['Dials'] = lead.dials
+            row['Rescheduled Appointments'] = lead.rescheduled_appointment
+            row['Lead Sub-Status'] = lead.lead_sub_status
+
+            # Format ex: 18/07/2014
+            if lead.date_of_installation:
+                row['Date of installation'] = str(datetime.strftime(lead.date_of_installation, "%d/%m/%Y"))
+            else:
+                row['Date of installation'] = None
+            row['Create Date'] = str(datetime.strftime(lead.created_date, "%d/%m/%Y"))
+
+            # Date formate in csv ex: 01/07/2014 03:42:00
+            if lead.appointment_date:
+                row['Appointment Date'] = datetime.strftime(lead.appointment_date, "%d/%m/%Y %I:%M:%S")
+            else:
+                row['Appointment Date'] = None
+
+            if lead.first_contacted_on:
+                row['1st Contacted on'] = datetime.strftime(lead.first_contacted_on, "%d/%m/%Y %I:%M:%S")
+            else:
+                row['1st Contacted on'] = None
+
+            row['Lead ID'] = lead.sf_lead_id
+
+            for field in selected_fields:
+                if field in row.keys():
+                    lead_dict[field] = row[field]
+
+            results.append(lead_dict)
+
+        return results
 
     @staticmethod
     def download_lead_data(from_date, to_date, fields_type):
