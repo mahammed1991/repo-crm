@@ -9,8 +9,6 @@ import calendar
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from collections import defaultdict
-
-
 from main.models import UserDetails
 from leads.models import Leads
 
@@ -270,6 +268,5 @@ def get_manager_by_user(email):
 
 def get_user_under_manager(email):
     """ """
-    # email = 'tkhan@regalix-inc.com'
     users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
     return User.objects.filter(id__in=users)
