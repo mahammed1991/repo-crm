@@ -225,7 +225,7 @@ $("#get_report").click(function(){
         dataString['location_split'] = $('#location_split').prop('unchecked');
       }
 
-     console.log(dataString);
+     console.log(dataString, "Calling");
 
      if(window.current_ldap){
       dataString['ldap_id'] = window.current_ldap;
@@ -271,6 +271,7 @@ function callAjax(dataString){
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log('failure');
+            $('#preloaderOverlay').hide()
         }
       }); 
 
