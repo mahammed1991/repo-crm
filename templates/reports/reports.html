@@ -43,15 +43,15 @@ Reports
               {% endfor %}
           </div>
         </div>
-        <div id="split_program">
-          <label><input type="checkbox" id="program_split" > Split Program-Wise</label>
+        <div id="split_program" style="display:none">
+          <label><input type="checkbox" id="program_split"> Split Program-Wise</label>
         </div>
       </div>
       {% if manager %}
         <div id="filter_team_members"  class="col-md-3  centered" style="display:none;">
           <div class="country-pick">
             <div class="checkbox" id="members_checks">
-              <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+              <label><input type="checkbox" value="all" class="checkbox_select_all" checked> Select All </label>
                 {% for member in team_members %}
                     <label>
                         <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}} 
@@ -106,13 +106,13 @@ Reports
     </div>
     <div class="auth-user-info" id="auth_user_info" style="display:none;">
       <label>LDAP:</label>
-        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="mathew@"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
+        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
         <label class="manager">Manager:</label>
-        <div class="value" id="ldap_manager"></div>
+        <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
         <label>Program:</label>
-        <div class="value" id="ldap_program"></div>
+        <div class="value" id="ldap_program">{{request.user.profile.team.team_name}}</div>
         <label>Region:</label>
-        <div class="value" id="ldap_region"></div>
+        <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
     </div>    
     
     <h2>Lead Status Summary</h2>

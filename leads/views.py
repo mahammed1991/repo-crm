@@ -36,8 +36,17 @@ from lib.helpers import date_range_by_quarter
 @login_required
 @csrf_exempt
 def lead_form(request):
+
+    """
+    Production OID
+    <input type="hidden" value="00Dd0000000fk18" name="oid">
+
+    Sandbox OID
+    <input type=hidden name="oid" value="00Dq00000009tyR">
+    """
     if request.method == 'POST':
-        sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+        sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+        # sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
 
         # Get Basic/Common form filed data
         basic_data = get_common_lead_data(request.POST)
@@ -90,7 +99,12 @@ def lead_form(request):
             tag_data['00Nd0000005WYiw'] = request.POST.get('code5')  # Code5
             tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
 
-            tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
+            # Production ID for TAD VIA GTM
+            # tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
+
+            # Sandbox ID for TAD VIA GTM
+            tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
+
             requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
@@ -112,7 +126,13 @@ def lead_form(request):
             setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
             setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
             setup_data['00Nd0000005WYhE'] = request.POST.get('shopping_url')  # Shopping URL
-            setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+
+            # Production ID for IS SHOPPING POLICIES
+            # setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+
+            # SandBox ID for IS SHOPPING POLICIES
+            setup_data['00Nq0000000eZPB'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+
             requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
@@ -171,27 +191,32 @@ def get_common_lead_data(post_data):
         '00Nd0000007dWIH': post_data.get('g_case_id'),  # G Cases Id
         '00Nd0000005WYga': post_data.get('country'),  # Country
 
-        # Advertiser Info
-        '00Nd0000007esJ1': post_data.get('advertiser_name'),  # Advertiser Name
+        # Production ID's
+        # '00Nd0000007esJ1': post_data.get('advertiser_name'),  # Advertiser Name
+        # '00Nd0000007es7U': post_data.get('advertiser_location'),  # Advertiser Location
+        # '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
+        # '00Nd0000007esIh': post_data.get('web_master_email'),  # Webmaster Email
+        # '00Nd0000007esIc': post_data.get('popt'),  # Webmaster Phone
+
         '00Nd0000005WcNw': post_data.get('aemail'),  # Advertiser Email
         '00Nd0000005WYgz': post_data.get('phone'),  # Advertiser Phone
         'company': post_data.get('company'),    # Advertiser Company
         '00Nd0000005WYgV': post_data.get('cid'),  # Customer ID
-        '00Nd0000007es7U': post_data.get('advertiser_location'),  # Advertiser Location
+
         '00Nd0000007clUn': post_data.get('language'),  # Language
         '00Nd0000005WYhT': post_data.get('tzone'),  # Time Zone
 
-        # Appointment Details
-        #'first_name': post_data.get('first_name'),  # First Name
-        #'last_name': post_data.get('last_name'),  # Last Name
-        #'00Nd0000005WayR': post_data.get('primary_role'),  # Role
+
+        # Sandbox ID's
+        '00Nq0000000eZPG': post_data.get('advertiser_name'),  # Advertiser Name
+        '00Nq0000000eZOS': post_data.get('advertiser_location'),  # Advertiser Location
+        '00Nq0000000eZOw': post_data.get('web_access'),  # Web Access
+        '00Nq0000000eZOh': post_data.get('web_master_email'),  # Webmaster Email
+        '00Nq0000000eZOc': post_data.get('popt'),  # Webmaster Phone
 
         # Webmaster Details
-        '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
         '00Nd0000005WYgp': post_data.get('fopt'),  # Webmaster First Name
         '00Nd0000005WYgu': post_data.get('lopt'),  # Webmaster Last Name
-        '00Nd0000007esIh': post_data.get('web_master_email'),  # Webmaster Email
-        '00Nd0000007esIc': post_data.get('popt'),  # Webmaster Phone
         'Campaign_ID': post_data.get('Campaign_ID'),
         'oid': post_data.get('oid'),
         '__VIEWSTATE': post_data.get('__VIEWSTATE'),
