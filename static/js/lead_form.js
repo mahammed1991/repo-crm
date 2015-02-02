@@ -10,6 +10,11 @@ function validatethis(frm) {
     var fix_slots = new Array();
 
     window.is_error = false;
+
+    if(window.is_reset == true){
+      window.is_reset = false;
+      return false;
+    }
     
     // Google Rep Name Validation
     if (frm.gref.value == "0" || frm.gref.value == "") {
@@ -228,7 +233,7 @@ function validatethis(frm) {
         //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
         $(frm.tag_datepick).addClass('error-box');
         //$(frm.tag_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Don’t have an appointment check box to continue.</span>')
-        frm.tag_datepick.focus();
+        // frm.tag_datepick.focus();
         window.is_error = true;
       }
     }
@@ -391,7 +396,7 @@ function validatethis(frm) {
           //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
           $(frm.setup_datepick).addClass('error-box');
           //$(frm.setup_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Not Applicable check box to continue.</span>')
-          frm.setup_datepick.focus();
+          // frm.setup_datepick.focus();
           window.is_error = true;
         }
     }
@@ -488,6 +493,7 @@ function validatethis(frm) {
 function resetBtn(elem){
   elemId = $(elem).attr('id');
   if(elemId == 'formReset'){
+    window.is_reset = true;
     window.location.reload();
   }
 }

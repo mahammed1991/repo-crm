@@ -84,7 +84,6 @@ def get_new_reports(request):
     """ New Report Details
     """
     report_detail = dict()
-
     if request.is_ajax():
         report_type = request.GET.get('report_type', None)
         report_timeline = request.GET.getlist('report_timeline[]')
@@ -121,8 +120,10 @@ def get_new_reports(request):
                     countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
                 else:
                     countries = ReportService.get_all_locations()
-            else:
+            elif countries:
                 countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+            else:
+                countries = list(Location.objects.values_list('location_name', flat=True).filter().distinct().order_by('location_name'))
 
         code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types]

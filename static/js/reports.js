@@ -56,30 +56,30 @@ $("#filter_report_type").change(function() {
   showFilters();
 
   $("#filter_country").hide();
+  $("#split_location").hide();
   $("#filter_team_members").hide();
-  //$('#filter_team').hide();
 
   if (report_type == 'leadreport_programview'){
     $("#filter_team").show();
     $("#filter_region").show();
     $("#filter_team_members").hide();
-    //$("#filter_country").hide();
-     $("#auth_user_info").hide();
-     $("#split_program").show();
+    $("#auth_user_info").hide();
+    $("#split_program").show();
 
   }else if (report_type == 'leadreport_regionview'){
     $("#filter_team").show();
     $("#filter_region").show();
      $("#filter_country").hide();
+     $("#split_location").hide();
      $("#auth_user_info").hide();
-     $("#split_program").show();
+     $("#split_program").hide();
   }else if(report_type == 'leadreport_individualRep'){
       hideFilters();
     $("#filter_report_type").show();
     $("#auth_user_info").show();
     $("#filter_team_members").hide();
     $("#split_program").hide();
-
+    $(".checkbox_select_all").trigger("click");
   }else if(report_type == 'leadreport_teamLead'){
       //callTeamMembers();
       hideFilters();
@@ -87,6 +87,7 @@ $("#filter_report_type").change(function() {
      $("#auth_user_info").hide();
      $("#filter_team_members").show();
      $("#split_program").hide();
+     $(".checkbox_select_all").trigger("click");
   }
   else if(report_type == ''){
     $('#filter_team').hide();
@@ -94,19 +95,10 @@ $("#filter_report_type").change(function() {
     $("#filter_region").hide();
     $("#auth_user_info").hide();
   }
+  window.report_type = report_type;
 
 });
 
-/*$('#filter_region').change(function(){
-  var value = $(this).val();
-  
-  $('#split_location').show();
-
-  if (value == ''){
-    $('#split_location').hide();
-  }
-})
-*/
 /*=========== Changes in report timeline ===============*/
 $('#filter_timeline').change(function(){
     var value = $(this).val();
@@ -122,13 +114,16 @@ $('#filter_timeline').change(function(){
 /*=========== Gettin Countries for selected Region ===============*/
 $('#filter_region select').change(function(){
     $("#filter_country").hide();
+    $("#split_location").hide();
     var region = $(this).val();
     if(region){
-      //$("#filter_country").show();
+      if(window.report_type == 'leadreport_regionview' && region != 'all'){
+        $("#split_location").show();
+      }else{
+        $("#split_location").hide();
+      }
       get_countries(region);
     }
-    $("#split_location").show();
-
 });
 
 
@@ -230,7 +225,7 @@ $("#get_report").click(function(){
         dataString['location_split'] = $('#location_split').prop('unchecked');
       }
 
-     console.log(dataString);
+     console.log(dataString, "Calling");
 
      if(window.current_ldap){
       dataString['ldap_id'] = window.current_ldap;
@@ -276,6 +271,7 @@ function callAjax(dataString){
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log('failure');
+            $('#preloaderOverlay').hide()
         }
       }); 
 
@@ -286,6 +282,7 @@ function hideFilters(){
   $('#filter_region').hide();
   $('#filter_team').hide();
   $('#filter_country').hide();
+  $("#split_location").hide();
 
 }
 
@@ -335,6 +332,7 @@ function displayCountry(countries){
       $("#filter_country .checkbox").append('<label><input type="checkbox" value="' + id + '">' + name + '</label>');
   }
   $("#filter_country").show();
+  //$("#split_location").show();
 }
 
 function showReport(reports){
