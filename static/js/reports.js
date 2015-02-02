@@ -259,14 +259,14 @@ function callAjax(dataString){
               $('#view_reports').empty();
               window.report_type = 'leadreport_programview';
               if(report['program_report']){
-                createProgramByCountry(report['program_report']);
+                programViewReport(report['program_report']);
               }
             }
             else if(data['report_type'] == 'leadreport_regionview'){
               $('#view_reports').empty();
               window.report_type = 'leadreport_regionview';
               if(report['region_report']){
-                createCountryByProgram(report['region_report']);
+                regionViewReport(report['region_report'])
               }
             }
             window.code_type = data['code_types'];
@@ -513,81 +513,87 @@ function newTable(firstrow, details){
 }
 
 
-function createProgramByCountry(programs){
+function programViewReport(programs){
   createTableHeader();
-
-  total_rows  = "";
   rows = "";
-  for(i=0; i<programs.length; i++){
-      rows += '<tr><td colspan="8" class="no-pad no-bor">' +
-              '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
-              '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
-                      '<td class="lbl relative">'+ programs[i]['program_name']+ '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
-                      '<td class="value">'+ programs[i]['week_total'] +'</td>'+
-                      '<td class="value">' + programs[i]['week_win'] + '</td>'+
-                      '<td class="value">'+ programs[i]['qtd_total'] +'</td>'+
-                      '<td class="value">' + programs[i]['qtd_win'] + '</td>'+
-                  '</tr>'
+  i = 1;
+  for(key in programs){
+    i = i + 1;
+    rows += '<tr><td colspan="8" class="no-pad no-bor">' +
+                '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
+                '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                        '<td class="lbl relative">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                        '<td class="value">'+ programs[key]['week_total'] +'</td>'+
+                        '<td class="value">' + programs[key]['week_win'] + '</td>'+
+                        '<td class="value">'+ programs[key]['qtd_total'] +'</td>'+
+                        '<td class="value">' + programs[key]['qtd_win'] + '</td>'+
+                 '</tr>'
 
-      inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
-                      '<td colspan="8" class="no-pad no-bor">'+
-                          '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+    locations = programs[key]['locations']
 
-      for(j=0; j<programs[i]['locations'].length; j++){
-        loc = programs[i]['locations']
-        inner_rows += '<tr>'+
-                        '<td class="lbl">' + loc[j]['location_name'] +'</td>'+
-                        '<td class="value">' + loc[j]['week_total'] +'</td>'+
-                        '<td class="value">' + loc[j]['week_win'] +'</td>'+
-                        '<td class="value">' + loc[j]['qtd_total'] +'</td>' +
-                        '<td class="value">' + loc[j]['qtd_win'] +'</td>'+
-                    '</tr>'
-      }
-      inner_rows += "</table></td></tr>";
-      rows += inner_rows;
-  }
-  total_rows += rows + "</table></td></tr>";
-  $("#view_reports").append(total_rows);
+    inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
+                  '<td colspan="8" class="no-pad no-bor">'+
+                      '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+
+    for (key in locations){
+
+    inner_rows += '<tr>'+
+                        '<td class="lbl">' + key +'</td>'+
+                        '<td class="value">' + locations[key]['week_total'] +'</td>'+
+                        '<td class="value">' + locations[key]['week_win'] +'</td>'+
+                        '<td class="value">' + locations[key]['qtd_total'] +'</td>' +
+                        '<td class="value">' + locations[key]['qtd_win'] +'</td>'+
+                   '</tr>'
+
+    }
+  
+  inner_rows += "</table></td></tr>";
+  rows += inner_rows;
+  rows += "</table></td></tr>";
+}
+ $("#view_reports").append(rows);
 }
 
-function createCountryByProgram(programs){
+function regionViewReport(locations){
   createTableHeader();
-
-  total_rows  = "";
   rows = "";
-  for(i=0; i<programs.length; i++){
-      rows += '<tr><td colspan="8" class="no-pad no-bor">' +
-              '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
-              '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
-                      '<td class="lbl relative">'+ programs[i]['location_name']+ '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
-                      '<td class="value">'+ programs[i]['week_total'] +'</td>'+
-                      '<td class="value">' + programs[i]['week_win'] + '</td>'+
-                      '<td class="value">'+ programs[i]['qtd_total'] +'</td>'+
-                      '<td class="value">' + programs[i]['qtd_win'] + '</td>'+
-                  '</tr>'
+  i = 1;
+  for(key in locations){
+    i = i + 1;
+    rows += '<tr><td colspan="8" class="no-pad no-bor">' +
+                '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
+                '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                        '<td class="lbl relative">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                        '<td class="value">'+ locations[key]['week_total'] +'</td>'+
+                        '<td class="value">' + locations[key]['week_win'] + '</td>'+
+                        '<td class="value">'+ locations[key]['qtd_total'] +'</td>'+
+                        '<td class="value">' + locations[key]['qtd_win'] + '</td>'+
+                 '</tr>'
 
-      inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
-                      '<td colspan="8" class="no-pad no-bor">'+
-                          '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+    programs = locations[key]['programs']
 
-      for(j=0; j<programs[i]['programs'].length; j++){
-        loc = programs[i]['programs']
-        inner_rows += '<tr>'+
-                        '<td class="lbl">' + loc[j]['team_name'] +'</td>'+
-                        '<td class="value">' + loc[j]['week_total'] +'</td>'+
-                        '<td class="value">' + loc[j]['week_win'] +'</td>'+
-                        '<td class="value">' + loc[j]['qtd_total'] +'</td>' +
-                        '<td class="value">' + loc[j]['qtd_win'] +'</td>'+
-                    '</tr>'
-      }
-      inner_rows += "</table></td></tr>";
-      rows += inner_rows;
-  }
-  total_rows += rows + "</table></td></tr>";
-  $("#view_reports").append(total_rows);
+    inner_rows = '<tr id="'+ 'accordion'+ i +'" class="collapse">'+
+                  '<td colspan="8" class="no-pad no-bor">'+
+                      '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">'
+
+    for (key in programs){
+
+    inner_rows += '<tr>'+
+                        '<td class="lbl">' + key +'</td>'+
+                        '<td class="value">' + programs[key]['week_total'] +'</td>'+
+                        '<td class="value">' + programs[key]['week_win'] +'</td>'+
+                        '<td class="value">' + programs[key]['qtd_total'] +'</td>' +
+                        '<td class="value">' + programs[key]['qtd_win'] +'</td>'+
+                   '</tr>'
+
+    }
+  
+  inner_rows += "</table></td></tr>";
+  rows += inner_rows;
+  rows += "</table></td></tr>";
 }
-
-
+ $("#view_reports").append(rows);
+}
 
 function createTableHeader(){
 

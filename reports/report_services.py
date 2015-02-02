@@ -280,42 +280,46 @@ class ReportService(object):
         week_start_date, week_end_date = get_week_start_end_days(year, week)
         quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
         quarter_end_date = datetime.utcnow()
-        programs_list = list()
+
+        week_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+                                               created_date__gte=week_start_date, created_date__lte=week_end_date)
+
+        quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+                                                  created_date__gte=quarter_start_date, created_date__lte=quarter_end_date)
+
+        detail = dict()
+
+        if '' in teams:
+            teams.remove('')
 
         for team in teams:
-            team_rec = {'program_name': team, 'locations': [], 'week_total': 0,
-                        'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
-            team_rec['week_total'] = len(Leads.objects.filter(team=team, country__in=countries,
-                                                              created_date__gte=week_start_date, created_date__lte=week_end_date))
-
-            team_rec['week_win'] = len(Leads.objects.filter(team=team, country__in=countries, lead_status='Implemented',
-                                                            created_date__gte=week_start_date, created_date__lte=week_end_date))
-
-            team_rec['qtd_total'] = len(Leads.objects.filter(team=team, country__in=countries, lead_status='Implemented',
-                                                             created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
-
-            team_rec['qtd_win'] = len(Leads.objects.filter(team=team, country__in=countries, lead_status='Implemented',
-                                                           created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+            detail[team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'locations': {}}
             for country in countries:
-                country_rec = {'location_name': country, 'program_name': team, 'week_total': 0,
-                               'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+                detail[team]['locations'][country] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
 
-                country_rec['week_total'] = len(Leads.objects.filter(team=team, country=country,
-                                                                     created_date__gte=week_start_date, created_date__lte=week_end_date))
+        for lead in week_wise_leads:
+            if lead.team in detail.keys():
+                detail[lead.team]['week_total'] = detail[lead.team]['week_total'] + 1
+                if lead.lead_status == 'Implemented':
+                    detail[lead.team]['week_win'] = detail[lead.team]['week_win'] + 1
 
-                country_rec['week_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
-                                                                   created_date__gte=week_start_date, created_date__lte=week_end_date))
+                if lead.country in detail[lead.team]['locations'].keys():
+                    detail[lead.team]['locations'][lead.country]['week_total'] = detail[lead.team]['locations'][lead.country]['week_total'] + 1
+                    if lead.lead_status == 'Implemented':
+                        detail[lead.team]['locations'][lead.country]['week_win'] = detail[lead.team]['locations'][lead.country]['week_win'] + 1
 
-                country_rec['qtd_total'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
-                                                                    created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+        for lead in quarter_wise_leads:
+            if lead.team in detail.keys():
+                detail[lead.team]['qtd_total'] = detail[lead.team]['qtd_total'] + 1
+                if lead.lead_status == 'Implemented':
+                    detail[lead.team]['qtd_win'] = detail[lead.team]['qtd_win'] + 1
 
-                country_rec['qtd_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
-                                                                  created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
-                team_rec['locations'].append(country_rec)
-            programs_list.append(team_rec)
+                if lead.country in detail[lead.team]['locations'].keys():
+                    detail[lead.team]['locations'][lead.country]['qtd_total'] = detail[lead.team]['locations'][lead.country]['qtd_total'] + 1
+                    if lead.lead_status == 'Implemented':
+                        detail[lead.team]['locations'][lead.country]['qtd_win'] = detail[lead.team]['locations'][lead.country]['qtd_win'] + 1
 
-        return programs_list
-
+        return detail
 
     @staticmethod
     def get_region_report_by_program(countries, teams):
@@ -326,43 +330,45 @@ class ReportService(object):
         quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
         quarter_end_date = datetime.utcnow()
 
-        region_report_list = list()
+        week_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+                                               created_date__gte=week_start_date, created_date__lte=week_end_date)
 
-        for country in countries:
-            loc_rec = {'location_name': country, 'programs': [], 'week_total': 0,
-                       'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+        quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+                                                  created_date__gte=quarter_start_date, created_date__lte=quarter_end_date)
 
-            loc_rec['week_total'] = len(Leads.objects.filter(country=country, team__in=teams,
-                                                             created_date__gte=week_start_date, created_date__lte=week_end_date))
+        detail = dict()
 
-            loc_rec['week_win'] = len(Leads.objects.filter(country=country, team__in=teams, lead_status='Implemented',
-                                                           created_date__gte=week_start_date, created_date__lte=week_end_date))
+        if '' in teams:
+            teams.remove('')
 
-            loc_rec['qtd_total'] = len(Leads.objects.filter(country=country, team__in=teams, lead_status='Implemented',
-                                                            created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
-
-            loc_rec['qtd_win'] = len(Leads.objects.filter(country=country, team__in=teams, lead_status='Implemented',
-                                                          created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+        for location in countries:
+            detail[location] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'programs': {}}
             for team in teams:
-                team_rec = {'team_name': team, 'location_name': country, 'week_total': 0,
-                            'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+                detail[location]['programs'][team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
 
-                team_rec['week_total'] = len(Leads.objects.filter(team=team, country=country,
-                                                                  created_date__gte=week_start_date, created_date__lte=week_end_date))
+        for lead in week_wise_leads:
+            if lead.country in detail.keys():
+                detail[lead.country]['week_total'] = detail[lead.country]['week_total'] + 1
+                if lead.lead_status == 'Implemented':
+                    detail[lead.country]['week_win'] = detail[lead.country]['week_win'] + 1
 
-                team_rec['week_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
-                                                                created_date__gte=week_start_date, created_date__lte=week_end_date))
+                if lead.team in detail[lead.country]['programs'].keys():
+                    detail[lead.country]['programs'][lead.team]['week_total'] = detail[lead.country]['programs'][lead.team]['week_total'] + 1
+                    if lead.lead_status == 'Implemented':
+                        detail[lead.country]['programs'][lead.team]['week_win'] = detail[lead.country]['programs'][lead.team]['week_win'] + 1
 
-                team_rec['qtd_total'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
-                                                                 created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
+        for lead in quarter_wise_leads:
+            if lead.country in detail.keys():
+                detail[lead.country]['qtd_total'] = detail[lead.country]['qtd_total'] + 1
+                if lead.lead_status == 'Implemented':
+                    detail[lead.country]['qtd_win'] = detail[lead.country]['qtd_win'] + 1
 
-                team_rec['qtd_win'] = len(Leads.objects.filter(team=team, country=country, lead_status='Implemented',
-                                                               created_date__gte=quarter_start_date, created_date__lte=quarter_end_date))
-                loc_rec['programs'].append(team_rec)
+                if lead.country in detail[lead.country]['programs'].keys():
+                    detail[lead.country]['programs'][lead.team]['qtd_total'] = detail[lead.country]['programs'][lead.team]['qtd_total'] + 1
+                    if lead.lead_status == 'Implemented':
+                        detail[lead.country]['programs'][lead.team]['qtd_win'] = detail[lead.country]['programs'][lead.team]['qtd_win'] + 1
 
-            region_report_list.append(loc_rec)
-
-        return region_report_list
+        return detail
 
     @staticmethod
     def get_average_tat_for_leads(leads):
