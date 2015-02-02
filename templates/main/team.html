@@ -13,7 +13,11 @@
         <div class="team-slider">
             {% for management in contacts_list.management %}
             <div class="team-slide">
-                <img src="{% static management.photo_url %}">
+                {% if 'http' in management.photo_url %}
+                    <img src="{{management.photo_url}}">
+                {% else %}
+                    <img src="{% static management.photo_url %}">
+                {% endif %}
                 <div class="slide-copy">
                     <span class="member-name">{{management.name}}</span>
                     {{management.email}}<br>
@@ -30,7 +34,11 @@
         <div class="team-slider">
             {% for rep in contacts_list.representatives %}
             <div class="team-slide">
-                <img src="{% static rep.photo_url %}">
+                {% if 'http' in rep.photo_url %}
+                    <img src="{{rep.photo_url}}">
+                {% else %}
+                    <img src="{% static rep.photo_url %}">
+                {% endif %}
                 <div class="slide-copy">
                     <span class="member-name">{{rep.name}}</span>
                     {{rep.email}}<br>
