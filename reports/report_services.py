@@ -363,7 +363,7 @@ class ReportService(object):
                 if lead.lead_status == 'Implemented':
                     detail[lead.country]['qtd_win'] = detail[lead.country]['qtd_win'] + 1
 
-                if lead.country in detail[lead.country]['programs'].keys():
+                if lead.team in detail[lead.country]['programs'].keys():
                     detail[lead.country]['programs'][lead.team]['qtd_total'] = detail[lead.country]['programs'][lead.team]['qtd_total'] + 1
                     if lead.lead_status == 'Implemented':
                         detail[lead.country]['programs'][lead.team]['qtd_win'] = detail[lead.country]['programs'][lead.team]['qtd_win'] + 1

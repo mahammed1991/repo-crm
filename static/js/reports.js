@@ -117,11 +117,15 @@ $('#filter_region select').change(function(){
     $("#split_location").hide();
     var region = $(this).val();
     if(region){
-      if(window.report_type == 'leadreport_regionview' && region != 'all'){
+      if(window.report_type == 'leadreport_regionview' && region == 'all'){
         $("#split_location").show();
-      }else{
-        $("#split_location").hide();
       }
+      else if (window.report_type == 'leadreport_regionview' && region != ''){
+        $("#split_location").show();
+      }
+      else{
+      $("#split_location").hide();
+    }
       get_countries(region);
     }
 });
