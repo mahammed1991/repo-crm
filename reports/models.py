@@ -1,5 +1,6 @@
 from django.db import models
-from leads.models import Location
+from leads.models import Location, Team
+from datetime import datetime
 
 
 class LeadSummaryReports(models.Model):
@@ -38,3 +39,30 @@ class Region(models.Model):
         db_table = 'regions'
         ordering = ['name']
         verbose_name_plural = "Region"
+
+
+class QuarterTargetLeads(models.Model):
+    """ Program by Location mapping in a Quarter
+        Set Target Leads for each Program by Location
+    """
+
+    YEAR_CHOICES = []
+    for r in range(2000, (datetime.utcnow().year + 1)):
+        YEAR_CHOICES.append((r, r))
+
+    program = models.ForeignKey(Team, null=False, blank=False)
+    location = models.ForeignKey(Location, null=False, blank=False)
+    quarter = models.CharField(max_length=10, blank=False, choices=(
+        ('Q1', 'Q1'),
+        ('Q2', 'Q2'),
+        ('Q3', 'Q3'),
+        ('Q4', 'Q4'),)
+    )
+    year = models.IntegerField(max_length=4, choices=YEAR_CHOICES, default=datetime.utcnow().year)
+    target_leads = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('program', 'location', 'quarter', 'year')
+        db_table = 'quarter_target_leads'
+        ordering = ['target_leads']
+        verbose_name_plural = "Quarter Target Leads"
