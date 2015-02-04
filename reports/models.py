@@ -47,7 +47,7 @@ class QuarterTargetLeads(models.Model):
     """
 
     YEAR_CHOICES = []
-    for r in range(2000, (datetime.utcnow().year + 1)):
+    for r in range(2000, (datetime.utcnow().year + 2)):
         YEAR_CHOICES.append((r, r))
 
     program = models.ForeignKey(Team, null=False, blank=False)
