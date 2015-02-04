@@ -17,5 +17,8 @@ urlpatterns = patterns(
     url(r'^lead-summary/$', views.get_lead_summary),
     url(r'^lead-summary/(?P<lid>[0-9]+)$', views.get_lead_summary),
     url(r'^create-chat/$', views.create_chat_message),
-    url(r'^get-chat/$', views.get_chat_message_by_lead),
+    url(r'^create-teams/$', views.create_teams),
+    url(r'^create-locations/$', views.create_locations),
+    url(r'^create-codetypes/$', views.create_codetypes),
+
 )

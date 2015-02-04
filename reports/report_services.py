@@ -2,9 +2,10 @@ import csv
 import os
 import mimetypes
 from datetime import datetime, date
-from leads.models import Leads, RegalixTeams
+from leads.models import Leads, RegalixTeams, Team, Location
+from reports.models import QuarterTargetLeads
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
-                         last_day_of_month, date_range_by_quarter, dsum,
+                         last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range,
                          get_previous_month_start_end_days, get_weeks_in_quarter_to_date, is_manager)
 from django.conf import settings
 from django.http import HttpResponse
@@ -287,15 +288,33 @@ class ReportService(object):
         quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
                                                   created_date__gte=quarter_start_date, created_date__lte=quarter_end_date)
 
+        prev_qtr_start_dt, prev_qtr_end_dt = prev_quarter_date_range(datetime.utcnow())
+
+        prev_qtr_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+                                              created_date__gte=prev_qtr_start_dt, created_date__lte=prev_qtr_end_dt)
+
+        prev_qtr_year = prev_qtr_start_dt.year
+
+        quarter = ReportService.get_current_quarter(prev_qtr_start_dt)
+
+        team_dict = {team.team_name: team.id for team in Team.objects.all()}
+
+        location_dict = {location.location_name: location.id for location in Location.objects.all()}
+        # import ipdb; ipdb.set_trace()
+
+        target_leads = QuarterTargetLeads.objects.filter(quarter=quarter, year=prev_qtr_year)
+
+        target_leads = {"%s_%s_%s_%s" %(target_lead.program_id, target_lead.location_id, target_lead.quarter, target_lead.year): target_lead.target_leads for target_lead in target_leads}
+
         detail = dict()
 
         if '' in teams:
             teams.remove('')
 
         for team in teams:
-            detail[team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'locations': {}}
+            detail[team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'locations': {}, 'end_qtr_total': 0, 'end_qtr_target': 0, 'out_vs_trgt': 0.0}
             for country in countries:
-                detail[team]['locations'][country] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+                detail[team]['locations'][country] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'end_qtr_total': 0, 'end_qtr_target': 0, 'out_vs_trgt': 0.0}
 
         for lead in week_wise_leads:
             if lead.team in detail.keys():
@@ -319,6 +338,26 @@ class ReportService(object):
                     if lead.lead_status == 'Implemented':
                         detail[lead.team]['locations'][lead.country]['qtd_win'] = detail[lead.team]['locations'][lead.country]['qtd_win'] + 1
 
+        for lead in prev_qtr_leads:
+            if lead.team in detail.keys():
+                detail[lead.team]['end_qtr_total'] = detail[lead.team]['end_qtr_total'] + 1
+                if lead.country in detail[lead.team]['locations'].keys():
+                    detail[lead.team]['locations'][lead.country]['end_qtr_total'] = detail[lead.team]['locations'][lead.country]['end_qtr_total'] + 1
+                    if "%s_%s_%s_%s" % (team_dict[lead.team], location_dict[lead.country], quarter, prev_qtr_year) not in target_leads.keys():
+                        detail[lead.team]['locations'][lead.country]['end_qtr_target'] = 0
+                    else:
+                        detail[lead.team]['locations'][lead.country]['end_qtr_target'] = target_leads["%s_%s_%s_%s" % (team_dict[lead.team], location_dict[lead.country], quarter, prev_qtr_year)]
+                    loc_out_vs_trgt = float(detail[lead.team]['locations'][lead.country]['end_qtr_total']) / detail[lead.team]['locations'][lead.country]['end_qtr_target'] if detail[lead.team]['locations'][lead.country]['end_qtr_target'] != 0 else 0
+                    detail[lead.team]['locations'][lead.country]['out_vs_trgt'] = round(loc_out_vs_trgt, 2) * 100
+
+        for program in detail.keys():
+            program_target = list()
+            for loc in detail[program]['locations'].keys():
+                program_target.append(detail[program]['locations'][loc]['end_qtr_target'])
+            detail[program]['end_qtr_target'] = sum(program_target)
+            out_vs_trgt = float(detail[program]['end_qtr_total']) / detail[program]['end_qtr_target'] if detail[program]['end_qtr_target'] != 0 else 0
+            detail[program]['out_vs_trgt'] = round(out_vs_trgt, 2) * 100
+
         return detail
 
     @staticmethod
@@ -336,15 +375,35 @@ class ReportService(object):
         quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
                                                   created_date__gte=quarter_start_date, created_date__lte=quarter_end_date)
 
+        prev_qtr_start_dt, prev_qtr_end_dt = prev_quarter_date_range(datetime.utcnow())
+
+        prev_qtr_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+                                              created_date__gte=prev_qtr_start_dt, created_date__lte=prev_qtr_end_dt)
+
+        prev_qtr_year = prev_qtr_start_dt.year
+
+        quarter = ReportService.get_current_quarter(prev_qtr_start_dt)
+
+        team_dict = {team.team_name: team.id for team in Team.objects.all()}
+
+        location_dict = {location.location_name: location.id for location in Location.objects.all()}
+
+        target_leads = QuarterTargetLeads.objects.filter(quarter=quarter, year=prev_qtr_year)
+
+        target_leads = {"%s_%s_%s_%s" %(target_lead.location_id, target_lead.program_id, target_lead.quarter, target_lead.year): target_lead.target_leads for target_lead in target_leads}
         detail = dict()
 
         if '' in teams:
             teams.remove('')
 
         for location in countries:
-            detail[location] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'programs': {}}
+            target_loc = list()
+            detail[location] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'programs': {}, 'end_qtr_total': 0, 'end_qtr_target': 0, 'out_vs_trgt': 0}
             for team in teams:
-                detail[location]['programs'][team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0}
+                target_key = "%s_%s_%s_%s" % (location_dict[location], team_dict[team], quarter, prev_qtr_year)
+                target_loc.append(target_leads.get(target_key, 0))
+                detail[location]['programs'][team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'end_qtr_total': 0, 'end_qtr_target': target_leads.get(target_key, 0), 'out_vs_trgt': 0}
+            detail[location]['end_qtr_target'] = sum(target_loc)
 
         for lead in week_wise_leads:
             if lead.country in detail.keys():
@@ -367,6 +426,18 @@ class ReportService(object):
                     detail[lead.country]['programs'][lead.team]['qtd_total'] = detail[lead.country]['programs'][lead.team]['qtd_total'] + 1
                     if lead.lead_status == 'Implemented':
                         detail[lead.country]['programs'][lead.team]['qtd_win'] = detail[lead.country]['programs'][lead.team]['qtd_win'] + 1
+
+        for lead in prev_qtr_leads:
+            if lead.country in detail.keys():
+                detail[lead.country]['end_qtr_total'] = detail[lead.country]['end_qtr_total'] + 1
+                if lead.team in detail[lead.country]['programs'].keys():
+                    detail[lead.country]['programs'][lead.team]['end_qtr_total'] = detail[lead.country]['programs'][lead.team]['end_qtr_total'] + 1
+                    pgm_out_vs_trgt = float(detail[lead.country]['programs'][lead.team]['end_qtr_total']) / detail[lead.country]['programs'][lead.team]['end_qtr_target'] if detail[lead.country]['programs'][lead.team]['end_qtr_target'] != 0 else 0
+                    detail[lead.country]['programs'][lead.team]['out_vs_trgt'] = round(pgm_out_vs_trgt, 2) * 100
+
+        for location in detail.keys():
+            out_vs_trgt = float(detail[location]['end_qtr_total']) / detail[location]['end_qtr_target'] if detail[location]['end_qtr_target'] != 0 else 0
+            detail[location]['out_vs_trgt'] = round(out_vs_trgt, 2) * 100
 
         return detail
 

@@ -827,3 +827,36 @@ def notify_chat_activity(request, chatmessage, lead_id):
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return chatmessage
+
+
+@login_required
+def create_teams(request):
+    """ Create Teams by Leads Data """
+    teams = ReportService.get_all_teams()
+    for team in teams:
+        if not Team.objects.filter(team_name=team):
+            t_object = Team(team_name=team)
+            t_object.save()
+    return HttpResponse('Success')
+
+
+@login_required
+def create_codetypes(request):
+    """ Create Code Types by Leads Data """
+    code_types = ReportService.get_all_code_type()
+    for code in code_types:
+        if not CodeType.objects.filter(name=code):
+            c_object = CodeType(name=code)
+            c_object.save()
+    return HttpResponse('Success')
+
+
+@login_required
+def create_locations(request):
+    """ Create location by Leads Data """
+    locations = ReportService.get_all_locations()
+    for location in locations:
+        if not Location.objects.filter(location_name=location):
+            l_object = Location(location_name=location)
+            l_object.save()
+    return HttpResponse('Success')

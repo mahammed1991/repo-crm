@@ -270,3 +270,13 @@ def get_user_under_manager(email):
     """ """
     users = UserDetails.objects.filter(user_manager_email=email).values_list("user").distinct()
     return User.objects.filter(id__in=users)
+
+
+def prev_quarter_date_range(ref):
+    if ref.month < 4:
+        return get_quarter_date_slots(date(ref.year - 1, 12, 31))
+    elif ref.month < 7:
+        return get_quarter_date_slots(date(ref.year, 3, 31))
+    elif ref.month < 10:
+        return get_quarter_date_slots(date(ref.year, 6, 30))
+    return get_quarter_date_slots(date(ref.year, 9, 30))

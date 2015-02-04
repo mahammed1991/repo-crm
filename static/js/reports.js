@@ -516,10 +516,23 @@ function newTable(firstrow, details){
 
 
 function programViewReport(programs){
-  createTableHeader();
+  createTableHeader("Program");
   rows = "";
   i = 1;
   for(key in programs){
+
+     var colRow = ''
+      if((programs[key]['out_vs_trgt']).toFixed(2) >= 100){
+            colRow = '<td class="value green">' + (programs[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else if(((programs[key]['out_vs_trgt']).toFixed(2) < 100) && (programs[key]['out_vs_trgt'].toFixed(2) > 0)){
+        colRow = '<td class="value red">' + (programs[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else{
+        colRow = '<td class="value"> N/A </td>'
+          }
+
+
     i = i + 1;
     rows += '<tr><td colspan="8" class="no-pad no-bor">' +
                 '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
@@ -527,8 +540,11 @@ function programViewReport(programs){
                         '<td class="lbl relative">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
                         '<td class="value">'+ programs[key]['week_total'] +'</td>'+
                         '<td class="value">' + programs[key]['week_win'] + '</td>'+
-                        '<td class="value">'+ programs[key]['qtd_total'] +'</td>'+
+                        '<td class="value">' + programs[key]['qtd_total'] +'</td>'+
                         '<td class="value">' + programs[key]['qtd_win'] + '</td>'+
+                        '<td class="value">' + programs[key]['end_qtr_total'] + '</td>'+
+                        '<td class="value">' + programs[key]['end_qtr_target'] + '</td>'+
+                        colRow +
                  '</tr>'
 
     locations = programs[key]['locations']
@@ -539,12 +555,26 @@ function programViewReport(programs){
 
     for (key in locations){
 
+      var rowCol = ''
+      if((locations[key]['out_vs_trgt']).toFixed(2) >= 100){
+            rowCol = '<td class="value green">' + (locations[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else if(((locations[key]['out_vs_trgt']).toFixed(2) < 100) && (locations[key]['out_vs_trgt'].toFixed(2) > 0)){
+        rowCol = '<td class="value red">' + (locations[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else{
+        rowCol = '<td class="value"> N/A </td>'
+          }
+
     inner_rows += '<tr>'+
                         '<td class="lbl">' + key +'</td>'+
                         '<td class="value">' + locations[key]['week_total'] +'</td>'+
                         '<td class="value">' + locations[key]['week_win'] +'</td>'+
                         '<td class="value">' + locations[key]['qtd_total'] +'</td>' +
                         '<td class="value">' + locations[key]['qtd_win'] +'</td>'+
+                        '<td class="value">' + locations[key]['end_qtr_total'] + '</td>'+
+                        '<td class="value">' + locations[key]['end_qtr_target'] + '</td>'+
+                        rowCol +
                    '</tr>'
 
     }
@@ -557,19 +587,34 @@ function programViewReport(programs){
 }
 
 function regionViewReport(locations){
-  createTableHeader();
+  createTableHeader("Region");
   rows = "";
   i = 1;
   for(key in locations){
     i = i + 1;
+
+    var rowCol = ''
+      if((locations[key]['out_vs_trgt']).toFixed(2) >= 100){
+            rowCol = '<td class="value green">' + (locations[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else if(((locations[key]['out_vs_trgt']).toFixed(2) < 100) && (locations[key]['out_vs_trgt'].toFixed(2) > 0)){
+        rowCol = '<td class="value red">' + (locations[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else{
+        rowCol = '<td class="value"> N/A </td>'
+          }
+
     rows += '<tr><td colspan="8" class="no-pad no-bor">' +
                 '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
                 '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
                         '<td class="lbl relative">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
                         '<td class="value">'+ locations[key]['week_total'] +'</td>'+
                         '<td class="value">' + locations[key]['week_win'] + '</td>'+
-                        '<td class="value">'+ locations[key]['qtd_total'] +'</td>'+
+                        '<td class="value">' + locations[key]['qtd_total'] +'</td>'+
                         '<td class="value">' + locations[key]['qtd_win'] + '</td>'+
+                        '<td class="value">' + locations[key]['end_qtr_total'] + '</td>'+
+                        '<td class="value">' + locations[key]['end_qtr_target'] + '</td>'+
+                        rowCol +
                  '</tr>'
 
     programs = locations[key]['programs']
@@ -580,12 +625,27 @@ function regionViewReport(locations){
 
     for (key in programs){
 
+      var colRow = ''
+      if((programs[key]['out_vs_trgt']).toFixed(2) >= 100){
+            colRow = '<td class="value green">' + (programs[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else if(((programs[key]['out_vs_trgt']).toFixed(2) < 100) && (programs[key]['out_vs_trgt'].toFixed(2) > 0)){
+        colRow = '<td class="value red">' + (programs[key]['out_vs_trgt']).toFixed(2) + '% </td>'
+          }
+      else{
+        colRow = '<td class="value"> N/A </td>'
+          }
+
     inner_rows += '<tr>'+
                         '<td class="lbl">' + key +'</td>'+
                         '<td class="value">' + programs[key]['week_total'] +'</td>'+
                         '<td class="value">' + programs[key]['week_win'] +'</td>'+
                         '<td class="value">' + programs[key]['qtd_total'] +'</td>' +
                         '<td class="value">' + programs[key]['qtd_win'] +'</td>'+
+                        '<td class="value">' + programs[key]['end_qtr_total'] + '</td>'+
+                        '<td class="value">' + programs[key]['end_qtr_target'] + '</td>'+
+                        colRow +
+                        
                    '</tr>'
 
     }
@@ -597,19 +657,23 @@ function regionViewReport(locations){
  $("#view_reports").append(rows);
 }
 
-function createTableHeader(){
+function createTableHeader(param){
 
   header = '<tr class="top-head">'+
               '<th></th>'+
                 '<th colspan="2">Current Week</th>'+
                 '<th colspan="2">QTD</th>'+
+                '<th colspan="3">End of Quarter Outlook</th>'+
             '</tr>'+
             '<tr>'+
-              '<th>Program</th>'+
+              '<th>'+ param +'</th>'+
                 '<th>Leads</th>'+
                 '<th>Wins</th>'+
                 '<th>Leads</th>'+
                 '<th>Wins</th>'+
+                '<th>Leads</th>'+
+                '<th>Target Leads</th>'+
+                '<th>Outlook vs Target</th>'+
             '</tr>'
 
   $("#view_reports").append(header);
