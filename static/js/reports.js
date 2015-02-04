@@ -245,7 +245,7 @@ $("#get_report").click(function(){
 
 
 function callAjax(dataString){
-  $('#preloaderOverlay').show()
+  $('#preloaderOverlay').show();
   $.ajax({
         url: "/reports/get_new_reports",
         data: dataString,

@@ -686,7 +686,7 @@ select.form-control {
 	-webkit-opacity: .5 !important;
 }
 .std-sub-title {
-	padding: 15px;
+	padding: 15px 20px;
 	background: #eeeeee;
 	font-family: 'robotoblack';
 	margin-bottom: 20px;
@@ -1048,6 +1048,7 @@ p {
 	background:none !important;
 	border:0 !important;
 }
+
 .feedback-comment {
 	border-bottom:1px solid #ccc;
 	margin:10px;
@@ -1627,6 +1628,21 @@ ul li, ol li {
 .preloader {
 	  display: flex;
 	  margin: 0 auto;  
+}
+.shopping-policies .subitems {
+	font-family:'robotoregular';
+	clear:both;
+	font-size:13px;
+	padding-left:40px;
+}
+.shopping-policies .subitems li {
+	display:list-item;
+	list-style:inherit;
+	margin-bottom:10px;
+}
+.shopping-policies .subitems ul {
+	padding-left:30px;
+	margin-top:10px;
 }
 
 
@@ -2987,6 +3003,7 @@ tr,  img {
 }
 img {
 	max-width: 100% !important;
+
 }
 @page {
 	margin: 0.5cm;

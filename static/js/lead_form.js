@@ -423,8 +423,11 @@ function validatethis(frm) {
 
       if($("#is_shopping_policies").is(":checked")){
           $("#is_shopping_policies").val(true);
+          $(".shopping-policy").removeClass('error-box');
       }else{
-        $("#is_shopping_policies").val(false);
+          $(".shopping-policy").addClass('error-box');
+          return false;
+          $("#is_shopping_policies").val(false);
       }
 
       if($("#web_access").is(":checked")){
