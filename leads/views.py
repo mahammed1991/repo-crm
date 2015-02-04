@@ -193,7 +193,7 @@ def get_common_lead_data(post_data):
 
         # Production ID's
         # '00Nd0000007esJ1': post_data.get('advertiser_name'),  # Advertiser Name
-        # '00Nd0000007es7U': post_data.get('advertiser_location'),  # Advertiser Location
+        # '00Nd0000007es7U': post_data.get('advertiser_location').split(',')[0] if post_data.get('advertiser_location') else post_data.get('advertiser_location'),  # Advertiser Location
         # '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
         # '00Nd0000007esIh': post_data.get('web_master_email'),  # Webmaster Email
         # '00Nd0000007esIc': post_data.get('popt'),  # Webmaster Phone
@@ -209,7 +209,7 @@ def get_common_lead_data(post_data):
 
         # Sandbox ID's
         '00Nq0000000eZPG': post_data.get('advertiser_name'),  # Advertiser Name
-        '00Nq0000000eZOS': post_data.get('advertiser_location'),  # Advertiser Location
+        '00Nq0000000eZOS': post_data.get('advertiser_location').split(',')[0] if post_data.get('advertiser_location') else post_data.get('advertiser_location'),  # Advertiser Location
         '00Nq0000000eZOw': post_data.get('web_access'),  # Web Access
         '00Nq0000000eZOh': post_data.get('web_master_email'),  # Webmaster Email
         '00Nq0000000eZOc': post_data.get('popt'),  # Webmaster Phone
