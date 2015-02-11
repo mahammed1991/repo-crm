@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from PIL import Image
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -259,3 +260,38 @@ class ChatMessage(models.Model):
     class Meta:
         db_table = 'chat_message'
         verbose_name_plural = 'Chat Message'
+
+
+class AgencyDetails(models.Model):
+    """ Agency Details """
+
+    google_rep = models.ForeignKey(User)
+    agency_name = models.CharField(max_length=255, null=False)
+    location = models.ForeignKey(Location, null=False)
+    timezone = models.ForeignKey(Timezone, null=False)
+    language = models.ForeignKey(Language, null=True, blank=True)
+    appointment_date = models.DateTimeField(default=datetime.utcnow())
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'agency_details'
+        verbose_name_plural = 'Agency Details'
+
+
+class ContactPerson(models.Model):
+    """ Contact Persons """
+
+    contact_person = models.CharField(max_length=255, null=False)
+    contact_email = models.EmailField(max_length=255, null=False, unique=True)
+    contact_phone = models.CharField(max_length=255, null=False)
+    agency = models.ForeignKey(AgencyDetails)
+    person_id = models.CharField(max_length=255, null=False)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'contact_person'
+        verbose_name_plural = 'Contact Person'
