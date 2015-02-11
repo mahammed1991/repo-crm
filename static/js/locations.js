@@ -26,7 +26,7 @@ function initialize() {
 // as supplied by the browser's 'navigator.geolocation' object.
 
     var geocoder =  new google.maps.Geocoder();
-    window.selected_location = $("#country").val();
+    window.selected_location = 'India';
     geocoder.geocode( { 'address': window.selected_location}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
             console.log("location : " + results[0].geometry.location.lat() + " " +results[0].geometry.location.lng());

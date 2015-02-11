@@ -1,0 +1,378 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+  <div class="lead-form agents-form-selection">
+      <div class="checkbox web-access">
+        <label>
+          <input type="radio" id="agentAppointment" name="agent-selection" value="">
+          Setup introduction call </label>
+        <label>
+          <input id="agentMultipleLeads" type="radio"  name="agent-selection"  value="">
+          Bulk Upload Tasks / CID </label>
+      </div>
+    </div>
+    {% if status == 'success' %}
+        <label class="success">Successfully Submitted</label>
+    {% elif status == 'fail' %}
+        <label class="error">{{error}}</label>
+    {% endif %}
+
+    
+    <form class="lead-form" id="introduction_form" onsubmit="return validateAgencyForm(this);" method="POST">
+    {% csrf_token %}
+      <input type="hidden" name="poc_count" id="poc_count">
+        <div class="std-sub-title">Agency Information</div>
+          <div class="row">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
+            </div>
+            <div class="col-md-4">
+              <select class="form-control" id="country" title="Program Location" name="country">
+                <option value="0">Program Location</option>
+                {% for loc in locations %}
+                  <option value="{{loc.id}}" location_id="{{loc.id}}">{{loc.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="set_appointment" name="set_appointment" placeholder="Set Appointment">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Time Zone" class="form-control" id="tzone" name="tzone">
+                <option value="">Select Time Zone</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control" id="language" title="language" name="language">
+                <option value="">Select Language</option>
+                <option value="English">English</option>
+                <option value="Dutch">Dutch</option>
+              </select>
+            </div>
+          </div>
+          <div class="std-sub-title">POC Information</div>
+
+          <!-- Add POC 1 -->
+          <div class="row" id="poc_1">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name_1" name="contact_person_name_1" placeholder="Agency Contact Person">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_telephone_1" name="contact_telephone_1" placeholder="Agency Contact tel">
+            </div>
+            <div class="col-md-4">
+              <input type="email" class="form-control" id="agency_email_1" name="agency_email_1" placeholder="Agency Contact email">
+            </div>
+            <a id="addPoc_1" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add POC</a>
+          </div>
+
+          <!-- Add POC 2 -->
+          <div class="row" id="poc_2" style="display:none;">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name_2" name="contact_person_name_2" placeholder="Agency Contact Person">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_telephone_2" name="contact_telephone_2" placeholder="Agency Contact tel">
+            </div>
+            <div class="col-md-4">
+              <input type="email" class="form-control" id="agency_email_2" name="agency_email_2" placeholder="Agency Contact email">
+            </div>
+            <a id="removePoc_2" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove POC</a>
+            <a id="addPoc_2" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add POC</a>
+          </div>
+
+          <!-- Add POC 3 -->
+          <div class="row" id="poc_3" style="display:none;">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name_3" name="contact_person_name_3" placeholder="Agency Contact Person">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_telephone_3" name="contact_telephone_3" placeholder="Agency Contact tel">
+            </div>
+            <div class="col-md-4">
+              <input type="email" class="form-control" id="agency_email_3" name="agency_email_3" placeholder="Agency Contact email">
+            </div>
+            <a id="removePoc_3" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove POC</a>
+            <a id="addPoc_3" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add POC</a>
+          </div>
+
+          <!-- Add POC 4 -->
+          <div class="row" id="poc_4" style="display:none;">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name_4" name="contact_person_name_4" placeholder="Agency Contact Person">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_telephone_4" name="contact_telephone_4" placeholder="Agency Contact tel">
+            </div>
+            <div class="col-md-4">
+              <input type="email" class="form-control" id="agency_email_4" name="agency_email_4" placeholder="Agency Contact email">
+            </div>
+            <a id="removePoc_4" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove POC</a>
+            <a id="addPoc_4" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add POC</a>
+          </div>
+
+          <!-- Add POC 5 -->
+          <div class="row" id="poc_5" style="display:none;">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name_5" name="contact_person_name_5" placeholder="Agency Contact Person">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_telephone_5" name="contact_telephone_5" placeholder="Agency Contact tel">
+            </div>
+            <div class="col-md-4">
+              <input type="email" class="form-control" id="agency_email_5" name="agency_email_5" placeholder="Agency Contact email">
+            </div>
+            <a id="removePoc_5" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+          </div>
+          <div class="btns text-center">
+            <div class="btn-group">
+              <button class="btn std-btn">Submit</button>
+            </div>
+          </div>
+    </form>
+  </div>
+    <!-- BULK UPLOAD FORM FORM REP -->
+    <div class="container-fluid">
+    <div class="lead-form agents-form-selection" id="agency_bulk_upload">
+
+            <div class="table-container" style="float:left;">
+              <form action="{% url 'leads.views.download_agency_csv' %}">
+                <input type="submit" class="btn std-btn sm-btn" value="Download CSV formate">
+              </form>
+            </div>
+          <div class="table-container" style="float:left;">
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                  <label style="float:left;"> Select CSV file to upload: </label>
+                  <input type="file" name="csvfile" id="csvfile" style="float:left;">
+                  <input type="submit" class="btn std-btn sm-btn" value="Upload CSV" name="submit" style="float:left;">
+                </form>
+          </div>
+          {% if data %}
+          <div class="row table-container">
+                <form method="post" enctype="multipart/form-data" onsubmit="return validateBulkForm(this)">
+                    <table style="width:100%" class="csv-table">
+                    <tr> 
+                      <th>Customer ID</th>
+                      <th>Code Type</th>
+                      <th>URL</th>
+                      <th>Special Instructions</th>
+                    </tr>
+                    {% for rec in data %}
+                    <tr>
+                      <td><input type="text" value="{{rec.customer_id }}" name="customer_id{{forloop.counter}}" id="customer_id{{forloop.counter}}"></td>
+                      <td><!-- <input type="text" value="{{rec.code_types}}"> -->
+                      <select name="code_type{{forloop.counter}}" id="code_type{{forloop.counter}}">
+                          <option value="">Choose an Code type</option>
+                        {% for type in code_types %}
+                          {% if rec.code_type == type %}
+                            <option value="{{rec.code_type}}" selected>{{type}}</option>
+                          {% else %}
+                            <option value="{{type}}">{{type}}</option>
+                          {% endif %}
+                        {% endfor %}
+                      </select>
+
+                      </td>
+                      <td><input type="text" value="{{rec.url}}" name="url{{forloop.counter}}" id="url{{forloop.counter}}"></td>
+                      <td><input type="textarea" value="{{rec.special_instructions}}" name="special_instructions{{forloop.counter}}" id="special_instructions{{forloop.counter}}"></td>
+                    </tr>
+                    {% endfor %}
+                    <input type="hidden" value="{{data|length}}" name="paramcounts">
+                </table>
+              <input type="submit" value="Submit" class="btn std-btn sm-btn">
+          </form>
+        </div>
+     {% endif %}
+    </div>
+    </div>
+</div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+ <script type="text/javascript">
+  $(document).ready(function(){
+    
+      $(".add" ).click(function() { 
+      $( ".add" ).hide();
+      $( ".remove" ).hide();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      $( "#poc_" + next_id ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      setTimeout(function() {
+        $( "#removePoc_" + next_id).show();
+      }, 300); 
+
+       setTimeout(function() {
+        $("#addPoc_" + next_id).show();
+      }, 300); 
+    });
+    
+    $(".remove" ).click(function() {    
+      $( ".add" ).hide();
+      $( ".remove" ).hide();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      prev_id = parseInt(indx) - 1
+      $( "#poc_" + indx).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+
+      setTimeout(function() {
+        $("#removePoc_" + prev_id ).show();
+      }, 300); 
+
+      setTimeout(function() {
+        $("#addPoc_" + prev_id).show();
+      }, 300); 
+      
+    });
+
+  });
+
+  function validateAgencyForm(frm) {
+    $(".error-txt").remove();
+    $(".lead-form .form-control").removeClass('error-box');
+    var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+    var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    var numericExpression = /^[0-9]+$/;
+    var ct = 0;
+    var rc = 0;
+    var fix_slots = new Array();
+
+    window.is_error = false;
+
+    agency_name = document.getElementById('agency_name');
+    validateFiled(agency_name);
+    country = document.getElementById('country');
+    validateFiled(country)
+    appointment_date = document.getElementById('set_appointment');
+    validateFiled(appointment_date)
+    timezone = document.getElementById('tzone');
+    validateFiled(timezone)
+    language = document.getElementById('language');
+    validateFiled(language)
+    contact_person = document.getElementById('contact_person_name_1');
+    validateFiled(contact_person)
+    phone = document.getElementById('contact_telephone_1');
+    validateFiled(phone)
+    email = document.getElementById('agency_email_1');
+    validateFiled(email);
+
+    window.poc_count = 1;
+    for (i=2; i<=5; i++){
+      if($("#poc_" + i).is(":visible")){
+        window.poc_count = poc_count + 1;
+        contact_person = document.getElementById('contact_person_name_' + i);
+        validateFiled(contact_person)
+        phone = document.getElementById('contact_telephone_' + i);
+        validateFiled(phone)
+        email = document.getElementById('agency_email_' + i);
+        validateFiled(email);
+      }
+    }
+
+    if(window.is_error){
+      return false;
+    }else{
+      $("#poc_count").val(window.poc_count);
+      $('form input[type=submit]').attr('disabled', 'disabled');
+      leadSubmit();
+    }
+  }
+
+function validateFiled(elem){
+  // Google Manager details validation
+    if (elem.value == "" || elem.value == "0" || !elem.value) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
+$(function() {
+    $("#set_appointment").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "M dd, yy",
+      onClose : function(selectedDate) {
+        $("#set_appointment").datepicker("option", "minDate", selectedDate);
+      }
+    });
+  });
+
+
+$("#country").change(function(){
+    var locations = {{time_zone_for_region|safe}};
+    loc_id = $(this).val();
+        if(locations[loc_id].length == 1){
+            var tz_info = locations[loc_id];
+            var option = "<option value='" + tz_info[0]['id'] + "' selected>"+ tz_info[0]['zone_name'] +"(UTC"+tz_info[0]['time_value']+")</option>"
+            $('#tzone').html(option);
+        }else{
+            var option = "<option value='0'>--Select--</option>"
+            var tz_info = locations[loc_id];
+            for(var i=0;i<locations[loc_id].length;i++){
+                option += "<option value='" + tz_info[i]['id'] + "'>"+ tz_info[i]['zone_name'] +"(UTC"+tz_info[i]['time_value']+")</option>"
+            }
+            $('#tzone').html(option);
+        }
+
+        // Get Languages by Location/Country
+        var languages = {{language_for_location|safe}}
+        
+        $('#language').html('');
+        if(languages[loc_id].length == 1){
+            var lang_info = languages[loc_id];
+            var option = "<option value='" + lang_info[0]['id'] + "' selected>"+ lang_info[0]['language_name'] +"</option>"
+            $('#language').html(option);
+            //$('#language').val(lang_info[0]['language_name']);
+        }else{
+            var option = "<option value='0'>--Select--</option>"
+            var lang_info = languages[loc_id];
+            for(var i=0;i<languages[loc_id].length;i++){
+                option += "<option value='" + lang_info[i]['id'] + "'>"+ lang_info[i]['language_name'] +"</option>"
+            }
+            $('#language').html(option);
+            $('#language').val(0);
+        }
+});
+
+$("#agentMultipleLeads").click(function(){
+    $("#agency_bulk_upload").show();
+    $("#introduction_form").hide();
+});
+
+$("#agentAppointment").click(function(){
+    $("#agency_bulk_upload").hide();
+    $("#introduction_form").show();
+});
+
+</script>
+{% endblock main_js %}

@@ -1,3 +1,243 @@
+    // lead form controls
+    $("#appointmentCheck1" ).click(function() {
+      $( "#tag_appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+  
+    $("#appointmentCheck2" ).click(function() {
+      $( "#shopping_appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+
+    $("#appointmentCheck" ).click(function() {
+      $( "#appointment" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      if($(this).is(":checked")){
+        $("#setup_datepick").val('');
+        $("#setup_datepick").hide();
+        $("#tag_datepick").val('');
+        $("#tag_datepick").hide();
+      }else{
+        $("#setup_datepick").show();
+        $("#tag_datepick").show();
+      }
+
+    });
+    
+    $("#webmasterCheck" ).click(function() {
+      $( "#webmaster" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      $( "#web-dum1, #web-dum2" ).toggle(500);
+    });
+    
+    $("#tagImplementation" ).click(function() {
+      
+      if($(this).children().is(':visible')){
+        if($( "#shoppingSetup .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+          //$("#heads_up").show();
+        }else{
+          $("#submit_buttons").hide();
+          //$("#heads_up").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+        //$("#heads_up").show();
+      }
+
+      $( "#tasks" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      //$( "#tagImplementation .check-icon" ).toggle();
+      $( "#tagImplementation .check-icon" ).animate({
+      opacity: "toggle"
+      }, 200, function() {
+        if($(".tag-policies").is(":visible")){
+            $(".tag-policies").hide();  
+          }else{
+            $(".tag-policies").show();
+            $("#heads_up").show();
+            $("#is_tag_lead").val('yes'); 
+          }
+
+      });
+    });
+    
+    $("#shoppingSetup" ).click(function() {
+
+      if($(this).children().is(':visible')){
+        if($( "#tagImplementation .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+          //$("#heads_up").show();
+        }else{
+          $("#submit_buttons").hide();
+          //$("#heads_up").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+        //$("#heads_up").show();
+      }
+      $( "#shoppingInfo" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+
+      $( "#shoppingSetup .check-icon" ).animate({
+      opacity: "toggle"
+      }, 200, function() {
+          if($(".shopping-policy").is(":visible")){
+            $(".shopping-policy").hide();  
+          }else{
+            $(".shopping-policy").show();
+            $("#heads_up").show();
+            $("#is_shopping_lead").val('yes'); 
+          }
+      });
+    });
+
+
+    $(".add" ).click(function() { 
+      $( ".add" ).hide();
+      $( ".remove" ).hide();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      $( "#task_" + indx ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      setTimeout(function() {
+        $( "#removeTask_" + indx).show();
+      }, 300); 
+
+       setTimeout(function() {
+        $("#addTask_" + next_id).show();
+      }, 300); 
+    });
+    
+    $(".remove" ).click(function() {    
+      $( ".add" ).hide();
+      $( ".remove" ).hide();
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      prev_id = parseInt(indx) - 1
+      $( "#task_" + indx).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+
+      setTimeout(function() {
+        $("#removeTask_" + prev_id ).show();
+      }, 300); 
+
+      setTimeout(function() {
+        $("#addTask_" + indx).show();
+      }, 300); 
+      
+    });
+    
+    // media query for team page
+    if ($(window).width() <= 767){  
+      $("div.team-slider").removeClass('slider1');
+    }
+
+  $('#team').change(function(){
+    var selectedTeam = $(this).val();
+    if (selectedTeam == 'Gem Central America English' || selectedTeam == 'Gem Central America Spanish'){
+      console.log(window.is_loc_changed, "status")
+      if(!window.is_loc_changed){
+        setLocations(window.new_locations); 
+      }
+      window.is_loc_changed = true;
+    }else if (selectedTeam == 'Services' || selectedTeam == 'Services (Traverwood)'){
+      $(".tr_service_segment").show();
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').hide();
+      $('#g_case_id').show();
+      $("#service_segment").hide();
+    }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+      if (window.is_loc_changed){
+        setLocations(window.locations);
+        window.is_loc_changed = false;
+      }
+      $("#service_segment").show();
+      $("#service_segment").val('');
+      $(".tr_service_segment").show();
+      $('#g_case_id').hide();
+
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').show();
+    }else{
+      if (window.is_loc_changed){
+        setLocations(window.locations);
+        window.is_loc_changed = false;
+      }
+      $(".tr_service_segment").hide();
+      $('#g_case_id').hide();
+
+      $('label[for="g_case_id"]').hide();
+      $('label[for="service_segment"]').hide();
+    }
+  });
+
+  $('#team').trigger("change");
+  
+  $('#setup_lead_check').click(function() {
+    $('#setup_lead_form').toggle();
+  })
+
+  function submitbtn(ths){
+      $(ths).submit();
+  }
+
+  $("#tag_contact_person_name").change(function(){
+      var tag_name = $(this).val();
+      $("#shop_contact_person_name").val(tag_name);
+  });
+
+  $("#shop_contact_person_name").change(function(){
+    var shop_name = $(this).val();
+      $("#tag_contact_person_name").val(shop_name);
+  });
+
+  $("#tag_primary_role").change(function(){
+      var tag_role = $(this).val();
+      $("#shop_primary_role").val(tag_role);
+  });
+
+  $("#shop_primary_role").change(function(){
+      var shop_role = $(this).val();
+      $("#tag_primary_role").val(shop_role);
+  });
+
+  function setLocations(newLocations){
+    $("#country option").remove()
+    $("#country").append('<option value="0">Program Location</option>');
+    for(i=0; i<newLocations.length; i++){
+      $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+    }
+  }
+  
+   //shopping check 
+    $("#is_shopping_policies" ).click(function() {
+        $(".shopping-policy").removeClass('error-box');
+        $( "#shoppingTerms" ).animate({
+        height: "toggle"
+        }, 300, function() {
+        });
+    }); 
+
+
 function validatethis(frm) {
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
@@ -409,6 +649,16 @@ function validatethis(frm) {
           }
         fix_slots.push(slot)
       }
+
+        if($("#is_shopping_policies").is(":checked")){
+            $("#is_shopping_policies").val(true);
+            $(".shopping-policy").removeClass('error-box');
+        }else{
+            $(".shopping-policy").addClass('error-box');
+            $("#is_shopping_policies").val(false);
+            return false;
+        }
+
       }else{
         // If Setup Date Slot Not Selected
         frm.setup_datepick.value = '';
@@ -419,15 +669,6 @@ function validatethis(frm) {
         $("#tag_via_gtm").val(true);
       }else{
         $("#tag_via_gtm").val(false);
-      }
-
-      if($("#is_shopping_policies").is(":checked")){
-          $("#is_shopping_policies").val(true);
-          $(".shopping-policy").removeClass('error-box');
-      }else{
-          $(".shopping-policy").addClass('error-box');
-          return false;
-          $("#is_shopping_policies").val(false);
       }
 
       if($("#web_access").is(":checked")){
