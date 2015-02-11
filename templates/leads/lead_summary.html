@@ -255,16 +255,17 @@ if (hour >= 12){
   currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' AM'
 }
 
+var myVar=setInterval(function(){chat(window.lead_id)},5000);
+
 function chat(lead_id){
     window.lead_id = lead_id
-    dataString = {'lead_id': window.lead_id}
+    dataString = {'lead_id': lead_id}
     $.ajax({
           url: "/leads/get-chat",
           data: dataString,
           type: 'GET',
           dataType: "json",
           success: function(data) {
-                console.log(data)
                  setChat(data)       
           }
           
