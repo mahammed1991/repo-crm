@@ -2,7 +2,8 @@ import os
 import json
 from datetime import datetime, timedelta
 import requests
-
+import csv
+from uuid import uuid4
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
@@ -20,14 +21,14 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location, Team, CodeType, ChatMessage, Language
+from leads.models import Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, AgencyDetails
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
                          is_manager, get_user_list_by_manager, get_manager_by_user)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
-from reports.report_services import ReportService
+from reports.report_services import ReportService, DownloadLeads
 from lib.helpers import date_range_by_quarter
 # from django.db.models import Q
 
@@ -110,9 +111,9 @@ def lead_form(request):
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
 
-            #if advirtiser_details.get('appointment_date'):
-                #create_icalendar_file(advirtiser_details)
-                #send_calendar_invite_to_advertiser(advirtiser_details)
+            # if advirtiser_details.get('appointment_date'):
+            # create_icalendar_file(advirtiser_details)
+            # send_calendar_invite_to_advertiser(advirtiser_details)
 
         if request.POST.get('is_shopping_lead') == 'yes':
             setup_data = basic_data
@@ -136,10 +137,10 @@ def lead_form(request):
             requests.request('POST', url=sf_api_url, data=setup_data)
 
             # Create Icallender (*.ics) file for send mail
-            #advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
-            #if advirtiser_details.get('appointment_date'):
-                #create_icalendar_file(advirtiser_details)
-                #send_calendar_invite_to_advertiser(advirtiser_details)
+            # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
+            # if advirtiser_details.get('appointment_date'):
+            # create_icalendar_file(advirtiser_details)
+            # send_calendar_invite_to_advertiser(advirtiser_details)
 
         return redirect(basic_data['retURL'])
 
@@ -197,6 +198,7 @@ def get_common_lead_data(post_data):
         # '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
         # '00Nd0000007esIh': post_data.get('web_master_email'),  # Webmaster Email
         # '00Nd0000007esIc': post_data.get('popt'),  # Webmaster Phone
+        # '00Nd0000007elYB': 1,  # Default value for Change Lead Owner
 
         '00Nd0000005WcNw': post_data.get('aemail'),  # Advertiser Email
         '00Nd0000005WYgz': post_data.get('phone'),  # Advertiser Phone
@@ -217,12 +219,125 @@ def get_common_lead_data(post_data):
         # Webmaster Details
         '00Nd0000005WYgp': post_data.get('fopt'),  # Webmaster First Name
         '00Nd0000005WYgu': post_data.get('lopt'),  # Webmaster Last Name
+        '00Nq0000000eJdW': 1,    # Default value for Change Lead Owner
         'Campaign_ID': post_data.get('Campaign_ID'),
         'oid': post_data.get('oid'),
         '__VIEWSTATE': post_data.get('__VIEWSTATE'),
     }
 
     return basic_data
+
+
+@login_required
+@csrf_exempt
+def agency_form(request):
+    """ Agency Form """
+
+    template_args = dict()
+
+    locations = Location.objects.filter(is_active=True)
+    new_locations = list()
+    all_locations = list()
+    time_zone_for_region = dict()
+    language_for_location = dict()
+    for loc in locations:
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        all_locations.append(l)
+        time_zone_for_region[loc.id] = [{'zone_name': tz.zone_name, 'id': tz.id, 'time_value': tz.time_value} for tz in loc.time_zone.filter()]
+        language_for_location[loc.id] = [{'language_name': lang.language_name, 'id': lang.id} for lang in loc.language.filter()]
+
+    teams = Team.objects.filter(is_active=True)
+    code_types = CodeType.objects.filter(is_active=True)
+
+    template_args.update({'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
+                          'locations': all_locations,
+                          'new_locations': new_locations,
+                          'teams': teams,
+                          'code_types': code_types,
+                          'time_zone_for_region': json.dumps(time_zone_for_region),
+                          'language_for_location': json.dumps(language_for_location)
+                          })
+    # import ipdb; ipdb.set_trace()
+    if request.method == 'POST':
+        if request.FILES:
+            myfile = request.FILES['csvfile']
+            data_list = list()
+            for record in csv.DictReader(myfile.read().splitlines()):
+                each_rec = dict()
+                each_rec['customer_id'] = record['Customer ID']
+                each_rec['code_type'] = record['Code Type']
+                each_rec['url'] = record['URL']
+                each_rec['special_instructions'] = record['Special Instructions']
+                data_list.append(each_rec)
+
+            code_types = ReportService.get_all_code_type()
+            template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True})
+            return render(request, 'leads/agent_form.html', template_args)
+
+        if 'paramcounts' in request.POST:
+            params_count = request.POST.get('paramcounts')
+            for i in range(1, int(params_count) + 1):
+                customer_id = request.POST.get('customer_id' + str(i))
+                code_type = request.POST.get('code_type' + str(i))
+                url = request.POST.get('url' + str(i))
+                special_instructions = request.POST.get('special_instructions' + str(i))
+                print customer_id, code_type, url, special_instructions
+            template_args.update({'is_csv': True})
+            return render(request, 'leads/agent_form.html', template_args)
+
+        agency_name = request.POST.get("agency_name")
+        location = request.POST.get("country")
+        timezone = request.POST.get("tzone")
+        language = request.POST.get("language")
+        appointment_date = request.POST.get('set_appointment')
+        appointment_date = datetime.strptime(appointment_date, "%b %d, %Y")
+        try:
+            agency = AgencyDetails.objects.get(google_rep=request.user, agency_name=agency_name, location_id=location,
+                                               timezone_id=timezone, language_id=language)
+        except ObjectDoesNotExist:
+            agency = AgencyDetails(google_rep=request.user, agency_name=agency_name, location_id=location,
+                                   timezone_id=timezone, language_id=language, appointment_date=appointment_date)
+            agency.save()
+
+        poc_count = int(request.POST.get('poc_count'))
+        for i in range(1, poc_count + 1):
+            indx = str(i)
+            person_name = "contact_person_name_" + indx
+            telephone = "contact_telephone_" + indx
+            email = "agency_email_" + indx
+            person_name = request.POST.get(person_name)
+            contact_telephone = request.POST.get(telephone)
+            agency_email = request.POST.get(email)
+
+            try:
+                person = ContactPerson.objects.get(contact_email=agency_email)
+                template_args.update({'status': 'fail', 'error': "%s Email already exist" % (agency_email)})
+                break
+            except ObjectDoesNotExist:
+                person_id = "%s-%s" % (agency_email, uuid4())
+                try:
+                    per = ContactPerson(contact_person=person_name, contact_email=agency_email,
+                                        contact_phone=contact_telephone, agency=agency, person_id=person_id)
+                    per.save()
+                except Exception:
+                    template_args.update({'status': 'fail', 'error': "Something went wrong!"})
+                    break
+
+            template_args.update({'status': 'success'})
+
+    return render(
+        request,
+        'leads/agent_form.html',
+        template_args
+    )
+
+
+@login_required
+def download_agency_csv(request):
+    path = settings.STATIC_FOLDER + '/AGENCY.csv'
+    print 'path', path
+    response = DownloadLeads.get_downloaded_file_response(path)
+    return response
 
 
 @login_required

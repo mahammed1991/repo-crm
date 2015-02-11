@@ -20,6 +20,7 @@ urlpatterns = patterns(
     url(r'^create-teams/$', views.create_teams),
     url(r'^create-locations/$', views.create_locations),
     url(r'^create-codetypes/$', views.create_codetypes),
-    url(r'^get-chat/$', views.get_chat_message_by_lead),
+    url(r'^agency-form/$', views.agency_form),
+    url(r'^download-agency-csv/$', views.download_agency_csv),
 
 )
