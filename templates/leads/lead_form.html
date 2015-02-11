@@ -411,20 +411,12 @@
 
     });
     
-    $("#webmasterCheck").on('click', function() {
-      /* this line for uncheck other check box*/ 
-      $("#web_access").prop("checked", false);
+    $("#webmasterCheck" ).click(function() {
       $( "#webmaster" ).animate({
-            height: "toggle"
-          }, 300, function() {
+      height: "toggle"
+      }, 300, function() {
       });
       $( "#web-dum1, #web-dum2" ).toggle(500);
-    });
-    /* this line for uncheck webmasterCheck box*/ 
-    $("#web_access").on('click', function() {
-      
-      $("#webmasterCheck").prop("checked", false);
-      $('#webmaster').hide()
     });
     
     $("#tagImplementation" ).click(function() {
@@ -561,12 +553,11 @@
         setLocations(window.new_locations); 
       }
       window.is_loc_changed = true;
-    }else if (selectedTeam == 'Services' || selectedTeam == 'Services (Traverwood)' || selectedTeam == 'Services Revenue Program (SRP)'){
+    }else if (selectedTeam == 'Services'){
       $(".tr_service_segment").show();
       $('label[for="g_case_id"]').hide();
       $('label[for="service_segment"]').hide();
       $('#g_case_id').show();
-      $('#GCaseId').show()
       $("#service_segment").hide();
     }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
       if (window.is_loc_changed){
@@ -585,7 +576,6 @@
         setLocations(window.locations);
         window.is_loc_changed = false;
       }
-      $('#GCaseId').hide()
       $(".tr_service_segment").hide();
       $('#g_case_id').hide();
 
