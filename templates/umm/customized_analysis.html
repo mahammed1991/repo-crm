@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+
+
+<head>
+  <meta charset="utf-8">
+ 
+  <title>Google Portal</title>
+
+    <link href="{% static 'css/umm/css/style.default.css' %}" rel="stylesheet">
+    <link href="{% static 'css/umm/css/styletable.css' %}" rel="stylesheet">
+   <link href="{% static 'css/umm/zb_datepicker/css/default.css' %}" rel="stylesheet">
+
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="{% static 'js/umm/js/html5shiv.js' %}"></script>
+  <script src="{% static 'js/umm/js/respond.min.js' %}"></script>
+  <![endif]-->
+  
+</head>
+
+<body>
+    
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<section>
+  
+    {% include "umm/left_nav.html" %}
+  
+  <div class="mainpanel">
+    
+    <div class="headerbar">
+      
+      <a class="menutoggle"><i class="fa fa-bars"></i></a>
+      
+      
+      
+      
+      
+    </div><!-- headerbar -->
+    
+    <div class="pageheader">
+     
+      <h2><a href="{% url 'umm.views.home' %}"><i class="fa fa-home"></i></a> Customized analysis</h2>
+      
+    </div><!-- contentpanel -->
+    
+    <div class="contentpanel">
+      
+      <div class="row">
+        <!-- col-md-6 -->
+        
+        <div class="col-md-11">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="panel-btns">
+               
+                <a href="#" class="minimize">&minus;</a>
+              </div>
+              <h4 class="panel-title">Generate Customized Report</h4>
+              <p>Please fill the following information to generate report</p>
+            </div>
+            <div class="panel-body panel-body-nopadding">
+              
+              <!-- BASIC WIZARD -->
+              <div id="progressWizard" class="basic-wizard">
+                
+                <ul class="nav nav-pills nav-justified">
+                  <li><a href="#ptab1" data-toggle="tab"><span>Step 1:</span> Basic Info</a></li>
+                  <li><a href="#ptab2" data-toggle="tab"><span>Step 2:</span> Metrics</a></li>
+                  <li><a href="#ptab3" data-toggle="tab"><span>Step 3:</span> Comparison</a></li>
+                </ul>
+                  
+                <div class="tab-content">
+                  
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  
+                  <div class="tab-pane" id="ptab1">
+                    <form class="form">
+                      <div class="form-group">
+                        <label class="col-sm-3">Region</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="4" multiple="multiple" required="">
+                      <option value="lily">INDIA</option>
+                      <option value="jasmine">SEA</option>
+                      <option value="daisy">UKI</option>
+                      
+                      
+                      
+                    </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="col-sm-3">REP LDAP</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="3" multiple="multiple" required="">
+                            <option value="">ACHARYAR</option>
+                            <option value="">SJAIND</option>
+                            <option value="">RACHELV</option>
+                             </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                        
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="col-sm-3">Expiration</label>
+                        <div  class="col-sm-3" class="input-group">
+                <input type="text" id="datepicker" placeholder="From : mm/dd/yyyy" class="form-control hasDatepicker">
+                
+              </div>
+              <div  class="col-sm-3" class="input-group">
+                <input type="text" id="datepicker1" placeholder="To : mm/dd/yyyy" class="form-control hasDatepicker">
+                
+              </div>
+                     
+                          
+                         
+                        
+                        
+                        
+                      </div>
+                      
+                    </form>
+                  </div>
+                  <div class="tab-pane" id="ptab2">
+                    <form class="form">
+                      <div class="form-group">
+                        <label class="col-sm-4">Task Types</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="3" multiple="multiple" required="">
+                            <option value="">Conversion Tracking</option>
+                            <option value="">Budget Increase</option>
+                            <option value="">Basic Optimization</option>
+                             </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="col-sm-4">Quelaity / CXS</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="3" multiple="multiple" required="">
+                            <option value="">Average Call Quality</option>
+                            <option value="">CXS</option>
+                           
+                             </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="col-sm-4">Performance Metrics</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="3" multiple="multiple" required="">
+                            <option value="">UAA </option>
+                            <option value="">Points</option>
+                            <option value="">Run Rate</option>
+                           
+                             </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                      </div>
+                      
+                    </form>
+                  </div>
+                  <div class="tab-pane" id="ptab3">
+                    <form class="form">
+                      <div class="form-group">
+                        <label class="col-sm-4">Region</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="4" multiple="multiple" required="">
+                      <option value="lily">INDIA</option>
+                      <option value="jasmine">SEA</option>
+                      <option value="daisy">UKI</option>
+                      
+                      
+                      
+                    </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="col-sm-4">Rep</label>
+                        <div class="col-sm-4">
+                    <select style="overflow:scroll;" id="flowers" name="flowers" title="Please select at least 2 flowers" class="form-control valid" size="3" multiple="multiple" required="">
+                            <option value="">ACHARYAR</option>
+                            <option value="">SJAIND</option>
+                            <option value="">RACHELV</option>
+                             </select>
+                    <label class="error" for="flowers" style="display: inline-block;"></label>
+                  </div>
+                        
+                        
+                        
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="col-sm-4">Date ( From / To )</label>
+                        <div class="col-sm-3">
+                <span class="Zebra_DatePicker_Icon_Wrapper" style="display: block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;"><input type="text" class="form-control hasDatepicker" placeholder="From : mm/dd/yyyy" id="datepicker2" readonly style="position: relative; top: auto; right: auto; bottom: auto; left: auto;"><button class="Zebra_DatePicker_Icon Zebra_DatePicker_Icon_Inside" type="button" style="top: 12.5px; left: 198px;">Pick a date</button></span>
+                
+              </div>
+              <div class="col-sm-3">
+                <span class="Zebra_DatePicker_Icon_Wrapper" style="display: block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;"><input type="text" class="form-control hasDatepicker" placeholder="To : mm/dd/yyyy" id="datepicker3" readonly style="position: relative; top: auto; right: auto; bottom: auto; left: auto;"><button class="Zebra_DatePicker_Icon Zebra_DatePicker_Icon_Inside" type="button" style="top: 12.5px; left: 198px;">Pick a date</button></span>
+                
+              </div>
+                     
+                          
+                         
+                        
+                        
+                        
+                      </div>
+                     
+                      
+                    </form>
+                  </div>
+                  
+                  
+                </div><!-- tab-content -->
+                
+                <ul class="pager wizard">
+                    <li class="previous"><a href="javascript:void(0)">Previous</a></li>
+                    <li class="next"><a href="javascript:void(0)">Next</a></li>
+                  </ul>
+                
+              </div><!-- #basicWizard -->
+              
+            </div><!-- panel-body -->
+          </div><!-- panel -->
+        </div><!-- col-md-6 -->
+        
+      </div><!-- row -->
+      
+      <!-- row -->
+      
+    </div>      
+    </div>
+    
+  </div><!-- mainpanel -->
+  
+  <div class="rightpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a href="#rp-alluser" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+        <li><a href="#rp-favorites" data-toggle="tab"><i class="fa fa-heart"></i></a></li>
+        <li><a href="#rp-history" data-toggle="tab"><i class="fa fa-clock-o"></i></a></li>
+        <li><a href="#rp-settings" data-toggle="tab"><i class="fa fa-gear"></i></a></li>
+    </ul>
+        
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="rp-alluser">
+            <h5 class="sidebartitle">Online Users</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/userprofile.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <span class="pull-right badge badge-danger">2</span>
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+            
+            <div class="mb30"></div>
+            
+            <h5 class="sidebartitle">Offline Users</h5>
+            <ul class="chatuserlist">
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-favorites">
+            <h5 class="sidebartitle">Favorites</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-history">
+            <h5 class="sidebartitle">History</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Hi hello, ctc?... would you mind if I go to your...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>This is to inform you that your product that we...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Are you willing to have a long term relat...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane pane-settings" id="rp-settings">
+            
+            <h5 class="sidebartitle mb20">Settings</h5>
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Offline Users</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Enable History</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Full Name</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle-chat1 toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Location</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+        </div><!-- tab-pane -->
+        
+    </div><!-- tab-content -->
+  </div><!-- rightpanel -->
+  
+  
+</section>
+
+
+<script src="{% static 'js/umm/js/jquery-1.10.2.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery-migrate-1.2.1.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery-ui-1.10.3.min.js' %}"></script>
+<script src="{% static 'js/umm/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/umm/js/modernizr.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.sparkline.min.js' %}"></script>
+<script src="{% static 'js/umm/js/toggles.min.js' %}"></script>
+<script src="{% static 'js/umm/js/retina.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.cookies.js' %}"></script>
+
+<script src="{% static 'js/umm/js/bootstrap-wizard.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.autogrow-textarea.js' %}"></script>
+<script src="{% static 'js/umm/js/bootstrap-fileupload.min.js' %}"></script>
+<script src="{% static 'js/umm/js/bootstrap-timepicker.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.tagsinput.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.mousewheel.js' %}"></script>
+<script src="{% static 'js/umm/js/chosen.jquery.min.js' %}"></script>
+<script src="{% static 'js/umm/js/dropzone.min.js' %}"></script>
+<script src="{% static 'js/umm/js/colorpicker.js' %}"></script>
+<script src="{% static 'css/umm/zb_datepicker/javascript/zebra_datepicker.js' %}"></script>
+
+<script src="{% static 'js/umm/js/custom.js' %}"></script>
+<script>
+jQuery(document).ready(function(){
+ $('.nav-parent').eq(2).next().addClass('active')
+  // Basic Wizard
+  $('#datepicker').Zebra_DatePicker();
+  $('#datepicker1').Zebra_DatePicker();
+    $('#datepicker2').Zebra_DatePicker();
+  $('#datepicker3').Zebra_DatePicker();
+  jQuery('#basicWizard').bootstrapWizard();
+  
+  // Progress Wizard
+  jQuery('#progressWizard').bootstrapWizard({
+    'nextSelector': '.next',
+    'previousSelector': '.previous',
+    onNext: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    },
+    onPrevious: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    },
+    onTabShow: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    }
+  });
+  
+  // Disabled Tab Click Wizard
+  jQuery('#disabledTabWizard').bootstrapWizard({
+    tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+    onTabClick: function(tab, navigation, index) {
+      return false;
+    }
+  });
+  
+  // With Form Validation Wizard
+  var $validator = jQuery("#firstForm").validate({
+    highlight: function(element) {
+      jQuery(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+    },
+    success: function(element) {
+      jQuery(element).closest('.form-group').removeClass('has-error');
+    }
+  });
+  
+  jQuery('#validationWizard').bootstrapWizard({
+    tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+    onTabClick: function(tab, navigation, index) {
+      return false;
+    },
+    onNext: function(tab, navigation, index) {
+      var $valid = jQuery('#firstForm').valid();
+      if(!$valid) {
+        
+        $validator.focusInvalid();
+        return false;
+      }
+    }
+  });	  
+  
+  
+});
+</script>
+</body>
+
+<!-- Mirrored from themepixels.com/demo/webpage/bracket/index.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 28 Mar 2014 14:23:40 GMT -->
+</html>
