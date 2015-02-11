@@ -206,3 +206,26 @@ class Notification(models.Model):
     class Meta:
         db_table = 'notifications'
         ordering = ['-created_date']
+
+
+class PortalFeedback(models.Model):
+    """ Portal Feedback data """
+
+    def get_file_path(instance, filename):
+        """ Dynamic file path """
+        ext = filename.split('.')[-1]
+        filename = "%s.%s" % (uuid4(), ext)
+        return os.path.join('feedback/', filename)
+
+    user = models.ForeignKey(User, related_name='portal_feedback_by')
+    feedback_type = models.CharField(max_length=150)
+    description = models.TextField()
+    attachment = models.FileField(upload_to=get_file_path)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def filename(self):
+        return os.path.basename(self.attachment.name)
+
+    class Meta:
+        db_table = 'portal_feedback'

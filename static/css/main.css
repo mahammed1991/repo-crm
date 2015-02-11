@@ -406,7 +406,7 @@ html, body {
 	opacity: 1;
 }
 .notifications {
-	font-size: 18px;
+	font-size: 17px;
 	background: #f5b400;
 	color: #000;
 	padding: 30px 0;
@@ -1644,7 +1644,6 @@ ul li, ol li {
 	padding-left:30px;
 	margin-top:10px;
 }
-
 
 /* ==========================================================================
    Appointment Popup

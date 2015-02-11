@@ -37,10 +37,11 @@ Regalix Google Portal
                 <ul class="bxslider">
                   <li class="leads">
                     <div class="slide-wrap">
-                        <h1>Lead Management is Fast and Easy</h1>
+                        <h1> &nbsp    </h1>
+
                         <div class="btn-group">
-                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
-                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Lead Status</button>
+                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit A Lead</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Check Your Lead Status</button>
                         </div>
                         <div class="leads-summary">
                             <h2 class="sub-title">Your Leads Summary</h2>
@@ -211,7 +212,7 @@ Regalix Google Portal
     <section class="notifications">
       <div class="slick-slider container-fluid trans" id="marquee_notofication">
         {% for notification in notifications %}
-          <div>{{notification.text}}</div>
+          <div>{{notification.text}} <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal">Report a bug</i></a></div>
         {% endfor %}
       </div>
     </section>
@@ -293,7 +294,45 @@ Regalix Google Portal
   </section>
   <!-- content-region ends --> 
 {% endblock content %}
+{% block model_popup %}
+  <!-- feedback modal -->
+        <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Portal Feedback</h4>
+              </div>
+              <div class="modal-body" id="feedback-body">
+                <form onsubmit='return portalFeedbackValidation(this);' action='{% url 'main.views.create_portal_feedback' %}' method='POST' enctype="multipart/form-data" id="portalFeedback">
+                    {% csrf_token %}
+                   <input type="text" class="form-control" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                     <select class="form-control" id="feedbackType" name="type">
+                        <option value="Feedback Type">Feedback Type</option>
+                        <option value="UI / Design Related"> UI / Design Related</option>
+                        <option value="UX / Experience Related">UX / Experience Related</option>
+                        <option value="Incorrect Data / Information">Incorrect Data / Information</option>
+                    </select>
+                    <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
+                    
+                      <input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" />
+                   
+                    
+                    <!-- <i class="fa fa-paperclip" name="attachmentfile"></i> -->
+                </div>
+                <div class="modal-footer">
 
+                  <div class="btn-group">
+                      <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
+                  </div>
+                </div>
+               </form>
+            </div>
+          </div>
+        </div>
+        <!-- feedback modal ends -->
+      
+  {% endblock model_popup %}
 {% block main_js %}
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script>
@@ -411,5 +450,60 @@ $(window).on('resize',function() {
 });
 
  
+</script>
+
+<script type="text/javascript">
+  
+  /* feed back submit through leads status page start here */
+
+
+function portalFeedbackValidation(frm){
+    $(".error-box").removeClass('error-box');
+    var feedbackType = $('#feedbackType').val();
+    var comments = $('#comments').val();
+   if(feedbackType === 'Feedback Type'){
+      $('#feedbackType').addClass('error-box');
+      return false;
+    }else if(comments === ''){
+      $('#comments').addClass('error-box');
+      return false;
+    }else{
+      alert('Portal feedback created')
+      return true;
+      
+      // attachmentfile = $('#attachmentfile').val()
+      // dataString = {'type': feedbackType, 'comment': comments, 'attachmentfile': attachmentfile}
+      // $.ajax({
+      //     url: "/main/portal/feedback",
+      //     data: dataString,
+      //     type: 'GET',
+      //     dataType: "json",
+      //     success: function(data) {
+      //       console.log(data)
+      //       if(data === 'SUCCESS'){
+      //         alert('feedback succesfully created ')
+      //         $('.close').trigger('click');
+      //         $('#feedbackTitle').val('');
+      //         $('#feedbackType').prop('selectedIndex', 0);
+      //         $('#comments').val('');
+      //         $('#attachmentfile').val('')
+      //       }
+      //     }
+      //   }); 
+    }
+    
+    }
+
+
+$('.close').click(function(){
+  $('#feedbackModal').hide()
+  $('#feedbackTitle').val('');
+  $('#feedbackType').prop('selectedIndex', 0);
+  $('#comments').val('');
+  input = $('#attachmentfile');
+  input.replaceWith(input.val('').clone(true))
+})
+
+/* feed back submit through leads status page end  here */
 </script>
 {% endblock main_js %}

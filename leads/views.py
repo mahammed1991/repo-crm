@@ -691,7 +691,7 @@ def get_lead_summary(request, lid=None):
 
     lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     email = request.user.email
-
+    # email = 'tkhan@regalix-inc.com'
     if email in ['rajuk@regalix-inc.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com']:
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)

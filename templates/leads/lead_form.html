@@ -47,8 +47,7 @@
               <option value="HPA">HPA</option>
               <option value="HPA+">HPA+</option>
           </select>
-          <label for="g_case_id">Google Cases-ID</label>
-          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="8-8888888888" value="">
+          
       </div>
       <div class="col-md-4">
         <label for="manager_name">Manager Name</label>
@@ -101,11 +100,14 @@
           <option value="">Select Time Zone</option>
         </select>
       </div>
-     
+      <div class="col-md-4" style="display:none" id='GCaseId'>
+          <label for="g_case_id">Google Cases-ID</label>
+          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+      </div>
     </div>
 
     <div class="webmasterCheck">        
-      <div class="form-heading">Does the advertiser have web access or a Webmaster? (Optional)</div>
+      <div class="form-heading">Does the advertiser have edit access for the website or has a webmaster?</div>
       <div class="checkbox web-access">
             <label>
               <input type="checkbox" value="" name="web_access" id="web_access">
@@ -334,15 +336,15 @@
       <div class="checkbox">
             <label id="tagCheck" class="tag-policies" style="display:none;">
                <input type="checkbox" value="" id="tag_via_gtm" name="via_google_tag_manager">
-              Do you want to install this Tag via GTM?
+              Do you want to install this Tag via Google Tag Manager?
             </label>
             <label class="shopping-policy" style="display:none;">
               <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
               Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
             </label>
             <ol class="subitems" id="shoppingTerms" style="display:none;">
-              <li>If this advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
-                <li>If this advertiser's website meets Google Shopping's <a href="https://support.google.com/merchants/answer/188486?ref_topic=3163841" target="_blank">user safety requirements</a>. Notably, this advertiser's website contains:
+              <li>This advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
+                <li>This advertiser's website meets Google Shopping's <a href="https://support.google.com/merchants/answer/188486?ref_topic=3163841" target="_blank">user safety requirements</a>. Notably, this advertiser's website contains:
                   <ul>
                       <li>Shopping cart functionality with secure checkout (https://);</li>
                         <li>Clearly labeled contact info</li>
@@ -409,12 +411,19 @@
 
     });
     
-    $("#webmasterCheck" ).click(function() {
+    $("#webmasterCheck").on('click', function() {
+      /* this line for uncheck other check box*/ 
+      $("#web_access").prop("checked", false);
       $( "#webmaster" ).animate({
-      height: "toggle"
-      }, 300, function() {
+            height: "toggle"
+          }, 300, function() {
       });
       $( "#web-dum1, #web-dum2" ).toggle(500);
+    });
+    /* this line for uncheck webmasterCheck box*/ 
+    $("#web_access").on('click', function() {
+      
+      $("#webmasterCheck").prop("checked", false);
     });
     
     $("#tagImplementation" ).click(function() {
@@ -551,11 +560,12 @@
         setLocations(window.new_locations); 
       }
       window.is_loc_changed = true;
-    }else if (selectedTeam == 'Services'){
+    }else if (selectedTeam == 'Services' || selectedTeam == 'Services (Traverwood)' || selectedTeam == 'Services Revenue Program (SRP)'){
       $(".tr_service_segment").show();
       $('label[for="g_case_id"]').hide();
       $('label[for="service_segment"]').hide();
       $('#g_case_id').show();
+      $('#GCaseId').show()
       $("#service_segment").hide();
     }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
       if (window.is_loc_changed){
@@ -574,6 +584,7 @@
         setLocations(window.locations);
         window.is_loc_changed = false;
       }
+      $('#GCaseId').hide()
       $(".tr_service_segment").hide();
       $('#g_case_id').hide();
 

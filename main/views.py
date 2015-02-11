@@ -19,7 +19,8 @@ from django.conf import settings
 
 from lib.helpers import send_mail, manager_info_required
 
-from main.models import UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, Notification
+from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList,
+                         Notification, PortalFeedback)
 from leads.models import Location, Leads, Team, Language
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
@@ -652,3 +653,56 @@ def get_notifications(request):
         notification.append(notif_dict)
 
     return HttpResponse(dumps(notification), content_type='application/json')
+
+
+@csrf_exempt
+@login_required
+@manager_info_required
+def create_portal_feedback(request):
+    """ Create feed back """
+    if request.method == 'POST':
+        feedback_details = PortalFeedback()
+        feedback_details.user = request.user
+        feedback_details.feedback_type = str(request.POST['type'])
+        feedback_details.description = str(request.POST['comment'])
+        if request.FILES:
+            feedback_details.attachment = request.FILES['attachmentfile']
+
+        feedback_details.save()
+        feedback_details = notify_portal_feedback_activity(request, feedback_details)
+
+        return redirect('main.views.main_home')
+    return redirect('main.views.main_home')
+
+
+def notify_portal_feedback_activity(request, feedback):
+    mail_subject = feedback.feedback_type + " Portal Feedback"
+    mail_body = get_template('main/portal_feedback/portal_feedback_mail.html').render(
+        Context({
+            'feedback': feedback,
+            'user_info': request.user,
+            'type': feedback.feedback_type,
+            'feedback_body': feedback.description
+        })
+    )
+
+    # get feedback user manager and lead owner managers information
+    bcc = set([])
+
+    mail_to = set([
+        'dkarthik@regalix-inc.com',
+        'tkhan@regalix.com',
+        'ram@regalix-inc.com',
+        'rajuk@regalix-inc.com'
+        'sprasad@regalix-inc.com'
+    ])
+
+    mail_from = request.user.email
+
+    attachments = list()
+    if feedback.attachment:
+        attachments.append(feedback.attachment)
+
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    return feedback
