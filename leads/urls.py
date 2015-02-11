@@ -22,5 +22,6 @@ urlpatterns = patterns(
     url(r'^create-codetypes/$', views.create_codetypes),
     url(r'^agency-form/$', views.agency_form),
     url(r'^download-agency-csv/$', views.download_agency_csv),
+    url(r'^get-chat/$', views.get_chat_message_by_lead),
 
 )
