@@ -171,6 +171,11 @@ function validatethis(frm) {
       frm.tzone.focus();
       window.is_error = true;
     }
+    // Does the advertiser have edit access for the website or has a webmaster validation for selection
+    if(document.getElementById("web_access").checked == false && document.getElementById("webmasterCheck").checked == false){
+      $('.checkbox').addClass('error-box')
+      window.is_error = true;
+    }
 
     // Webmaster Validation
     if(document.getElementById("webmasterCheck").checked == true){
@@ -199,6 +204,8 @@ function validatethis(frm) {
         frm.popt.focus();
        window.is_error = true;
       }
+
+
     }
 
 
