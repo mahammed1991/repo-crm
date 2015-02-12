@@ -207,6 +207,7 @@
 
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/jquery-ui-timepicker-addon.js' %}"></script>
  <script type="text/javascript">
   $(document).ready(function(){
     
@@ -316,16 +317,22 @@ function validateFiled(elem){
 }
 
 $(function() {
-    $("#set_appointment").datepicker({
-      defaultDate : "+1w",
-      changeMonth : true,
-      numberOfMonths : 1,
-      dateFormat: "M dd, yy",
-      onClose : function(selectedDate) {
-        $("#set_appointment").datepicker("option", "minDate", selectedDate);
-      }
-    });
+    // $("#set_appointment").datepicker({
+    //   defaultDate : "+1w",
+    //   changeMonth : true,
+    //   numberOfMonths : 1,
+    //   dateFormat: "M dd, yy",
+    //   onClose : function(selectedDate) {
+    //     $("#set_appointment").datepicker("option", "minDate", selectedDate);
+    //   }
+    // });
   });
+
+$('#set_appointment').datetimepicker({
+  controlType: 'select',
+  timeFormat: 'hh:mm tt'
+});
+
 
 
 $("#country").change(function(){
