@@ -249,42 +249,18 @@ def agency_form(request):
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
 
+    agencies = AgencyDetails.objects.filter(google_rep_id=request.user.id)
+
     template_args.update({'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
                           'locations': all_locations,
                           'new_locations': new_locations,
                           'teams': teams,
                           'code_types': code_types,
                           'time_zone_for_region': json.dumps(time_zone_for_region),
-                          'language_for_location': json.dumps(language_for_location)
+                          'language_for_location': json.dumps(language_for_location),
+                          'agencies': agencies
                           })
-    # import ipdb; ipdb.set_trace()
     if request.method == 'POST':
-        if request.FILES:
-            myfile = request.FILES['csvfile']
-            data_list = list()
-            for record in csv.DictReader(myfile.read().splitlines()):
-                each_rec = dict()
-                each_rec['customer_id'] = record['Customer ID']
-                each_rec['code_type'] = record['Code Type']
-                each_rec['url'] = record['URL']
-                each_rec['special_instructions'] = record['Special Instructions']
-                data_list.append(each_rec)
-
-            code_types = ReportService.get_all_code_type()
-            template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True})
-            return render(request, 'leads/agent_form.html', template_args)
-
-        if 'paramcounts' in request.POST:
-            params_count = request.POST.get('paramcounts')
-            for i in range(1, int(params_count) + 1):
-                customer_id = request.POST.get('customer_id' + str(i))
-                code_type = request.POST.get('code_type' + str(i))
-                url = request.POST.get('url' + str(i))
-                special_instructions = request.POST.get('special_instructions' + str(i))
-                print customer_id, code_type, url, special_instructions
-            template_args.update({'is_csv': True})
-            return render(request, 'leads/agent_form.html', template_args)
-
         agency_name = request.POST.get("agency_name")
         location = request.POST.get("country")
         timezone = request.POST.get("tzone")
@@ -308,17 +284,20 @@ def agency_form(request):
             person_name = request.POST.get(person_name)
             contact_telephone = request.POST.get(telephone)
             agency_email = request.POST.get(email)
-
             try:
                 person = ContactPerson.objects.get(contact_email=agency_email)
                 template_args.update({'status': 'fail', 'error': "%s Email already exist" % (agency_email)})
                 break
             except ObjectDoesNotExist:
-                person_id = "%s-%s" % (agency_email, uuid4())
+                person_id = "%s-%s" % (agency_email.split('@')[0], uuid4())
                 try:
                     per = ContactPerson(contact_person=person_name, contact_email=agency_email,
                                         contact_phone=contact_telephone, agency=agency, person_id=person_id)
                     per.save()
+                    is_rep = False
+                    mail_notification(request, per, is_rep)
+                    is_rep = True
+                    mail_notification(request, per, is_rep)
                 except Exception:
                     template_args.update({'status': 'fail', 'error': "Something went wrong!"})
                     break
@@ -332,12 +311,108 @@ def agency_form(request):
     )
 
 
+def mail_notification(request, person, is_rep):
+    poc_link = request.build_absolute_uri(reverse('leads.views.agent_bulk_upload', kwargs={'agency_name': person.agency.agency_name.replace(' ', '-'),
+                                                                                           'pid': person.person_id}))
+    if not is_rep:
+        mail_body = get_template('leads/advertiser_mail/advetiser_email.html').render(
+            Context({
+                'advertiser_name': person.contact_person,
+                'poc_link': poc_link,
+            })
+        )
+        mail_subject = " Agency Form Submission "
+        mail_to = set([
+            person.contact_email,
+        ])
+
+    if is_rep:
+        mail_body = get_template('leads/advertiser_mail/google_rep_mail.html').render(
+            Context({
+                'advertiser_name': person.contact_person,
+                'google_account_manager': request.user.first_name,
+                'poc_link': poc_link,
+            })
+        )
+        mail_subject = " Agency Form Submission "
+        mail_to = set([
+            request.user.email,
+        ])
+
+    bcc = set([])
+
+    mail_from = 'rajuk@regalix-inc.com'
+
+    attachments = list()
+
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    return "feedback"
+
+
 @login_required
 def download_agency_csv(request):
     path = settings.STATIC_FOLDER + '/AGENCY.csv'
-    print 'path', path
     response = DownloadLeads.get_downloaded_file_response(path)
     return response
+
+
+@login_required
+@csrf_exempt
+def agent_bulk_upload(request, agency_name, pid):
+    """ Agency Bulk Upload """
+    template_args = dict()
+    try:
+        poc_details = ContactPerson.objects.get(person_id=pid)
+        template_args['poc_details'] = poc_details
+    except ObjectDoesNotExist:
+        template_args.update({'status': 'fail', 'error': 'Invalid POC'})
+        return render(request, 'leads/agent_bulk_form.html', template_args)
+    if request.method == "POST":
+        if request.FILES:
+            myfile = request.FILES['csvfile']
+            data_list = list()
+            for record in csv.DictReader(myfile.read().splitlines()):
+                each_rec = dict()
+                each_rec['customer_id'] = record['Customer ID']
+                each_rec['code_type'] = record['Code Type']
+                each_rec['url'] = record['URL']
+                each_rec['special_instructions'] = record['Special Instructions']
+                data_list.append(each_rec)
+
+            locations = Location.objects.filter(is_active=True)
+            new_locations = list()
+            all_locations = list()
+            time_zone_for_region = dict()
+            language_for_location = dict()
+            for loc in locations:
+                l = {'id': int(loc.id), 'name': str(loc.location_name)}
+                if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
+                    new_locations.append(l)
+                else:
+                    all_locations.append(l)
+                time_zone_for_region[loc.location_name] = [{'zone_name': tz[
+                    'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
+                language_for_location[loc.location_name] = [{'language_name': lang[
+                    'language_name']} for lang in loc.language.values()]
+
+            code_types = ReportService.get_all_code_type()
+            remaining = len(data_list) + 11
+            template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True, 'agency_name': agency_name, 'pid': pid,
+                                  'remaining': range(len(data_list) + 1, remaining), 'locations': all_locations,
+                                  'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
+            return render(request, 'leads/agent_bulk_form.html', template_args)
+
+        if 'paramcounts' in request.POST:
+            params_count = request.POST.get('paramcounts')
+            for i in range(1, int(params_count) + 1):
+                customer_id = request.POST.get('customer_id' + str(i))
+                code_type = request.POST.get('code_type' + str(i))
+                url = request.POST.get('url' + str(i))
+                special_instructions = request.POST.get('special_instructions' + str(i))
+                print customer_id, code_type, url, special_instructions
+            template_args.update({'is_csv': True})
+    return render(request, 'leads/agent_bulk_form.html', template_args)
 
 
 @login_required
