@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Hi,</p>
+<p>A new feedback - <b>{{feedback.title}}</b> has been added.</p>
+<p>Feedback Details are below:</p>
+<p>Feedback By: {{ feedback.user.get_full_name }} ({{ feedback.user.email}})</p>
+<p>Feedback To: {{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }} ({{ feedback.lead_owner.email }})</p>
+<p>CID: {{ feedback.cid }}</p>
+<p>Name of the Advertiser: {{ feedback.advertiser_name }}</p>
+<p>Feedback Type: {{ feedback.feedback_type }}</p>
+<p>Language: {{ feedback.language }}</p>
+<p>Location: {{ feedback.location.location_name }}</p>
+<p>Description: {{ feedback.description }}</p>
+
+<a href="{{ feedback_url }}">Go To Feedback</a>
+<br /><br />
+<p>Thanks,</p>
+<p>Google Regalix Team</p>
+</body>
+</html>
