@@ -25,8 +25,10 @@ def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=Fal
             attachment.name,
             attachment.read()
         )
-
-    email.send()
+    try:
+        email.send()
+    except Exception, e:
+        print e
 
 
 def get_quarter_date_slots(input_date):

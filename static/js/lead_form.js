@@ -252,6 +252,7 @@
 function validatethis(frm) {
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
+    $('.web-access').removeClass('error-box');
     var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -424,7 +425,7 @@ function validatethis(frm) {
     }
     // Does the advertiser have edit access for the website or has a webmaster validation for selection
     if(document.getElementById("web_access").checked == false && document.getElementById("webmasterCheck").checked == false){
-      $('.checkbox').addClass('error-box')
+      $('.web-access').addClass('error-box');
       window.is_error = true;
     }
 

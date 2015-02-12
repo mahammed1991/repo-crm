@@ -25,5 +25,5 @@ urlpatterns = patterns(
     url(r'^get-chat/$', views.get_chat_message_by_lead),
     url(r'^lead-summary-by-user/$', views.get_lead_status_by_ldap),
     url(r'^agency/(?P<agency_name>[\w -]+)/(?P<pid>[\w -][^/]+)$', views.agent_bulk_upload),
-
+    url(r'^get-timezones/$', views.get_timezones),
 )
