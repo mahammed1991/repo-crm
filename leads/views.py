@@ -30,7 +30,7 @@ from django.core.files import File
 from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
 from lib.helpers import date_range_by_quarter
-# from django.db.models import Q
+from django.db.models import Q
 
 
 # Create your views here.
@@ -976,3 +976,45 @@ def create_locations(request):
             l_object = Location(location_name=location)
             l_object.save()
     return HttpResponse('Success')
+
+
+@login_required
+def get_lead_status_by_ldap(request):
+    if request.is_ajax():
+        lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+        user_id = request.GET['user_id']
+        user = User.objects.get(id=user_id)
+        leads = Leads.objects.filter(Q(google_rep_email=user.email) | Q(lead_owner_email=user.email))
+        leads = leads.filter(lead_status__in=lead_status)
+        lead_list = list()
+        for l in leads:
+            lead = convert_lead_to_dict(l)
+            lead_list.append(lead)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, start_date=None, end_date=None)
+        mimetype = 'application/json'
+        return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
+    return render(request, 'leads/get_lead_summary_ldap.html', {})
+
+
+def convert_lead_to_dict(model):
+    lead = {}
+    lead['Advertiser'] = model.company
+    lead['cid'] = model.customer_id
+    lead['code_type'] = model.type_1
+    lead['google_rep'] = model.google_rep_name
+    lead['regalix_rep'] = model.lead_owner_name
+    if model.created_date:
+        lead['date_created'] = datetime.strftime(model.created_date, "%m/%d/%Y")
+    else:
+        lead['date_created'] = ''
+    if model.appointment_date:
+        lead['appointment_time'] = datetime.strftime(model.appointment_date, "%m/%d/%Y")
+    else:
+        lead['appointment_time'] = ''
+    if model.date_of_installation:
+        lead['date_of_installation'] = datetime.strftime(model.date_of_installation, "%m/%d/%Y")
+    else:
+        lead['date_of_installation'] = ''
+    lead['regalix_comment'] = model.regalix_comment
+    lead['lead_status'] = model.lead_status
+    return lead
