@@ -105,7 +105,6 @@ def lead_form(request):
 
             # Sandbox ID for TAD VIA GTM
             tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
-
             requests.request('POST', url=sf_api_url, data=tag_data)
 
             # Create Icallender (*.ics) file for send mail
@@ -189,7 +188,7 @@ def get_common_lead_data(post_data):
         '00Nd00000077r3s': post_data.get('manager_email'),  # Manager Email
         '00Nd0000005XIWB': post_data.get('team'),  # Team
         '00Nd0000007e2AF': post_data.get('service_segment'),  # Service Segment
-        '00Nd0000007dWIH': post_data.get('g_case_id'),  # G Cases Id
+        '00Nd0000007f0fj': post_data.get('g_case_id'),  # G Cases Id
         '00Nd0000005WYga': post_data.get('country'),  # Country
 
         # Production ID's
@@ -266,7 +265,9 @@ def agency_form(request):
         timezone = request.POST.get("tzone")
         language = request.POST.get("language")
         appointment_date = request.POST.get('set_appointment')
-        appointment_date = datetime.strptime(appointment_date, "%b %d, %Y")
+        #  02/12/2015 09:16 pm Time Formate
+        appointment_date = datetime.strptime(appointment_date, "%m/%d/%Y %I:%M %p")
+        print appointment_date
         try:
             agency = AgencyDetails.objects.get(google_rep=request.user, agency_name=agency_name, location_id=location,
                                                timezone_id=timezone, language_id=language)
@@ -294,9 +295,9 @@ def agency_form(request):
                     per = ContactPerson(contact_person=person_name, contact_email=agency_email,
                                         contact_phone=contact_telephone, agency=agency, person_id=person_id)
                     per.save()
-                    is_rep = False
+                    is_rep = "advertiser"
                     mail_notification(request, per, is_rep)
-                    is_rep = True
+                    is_rep = "google_rep"
                     mail_notification(request, per, is_rep)
                 except Exception:
                     template_args.update({'status': 'fail', 'error': "Something went wrong!"})
@@ -314,7 +315,7 @@ def agency_form(request):
 def mail_notification(request, person, is_rep):
     poc_link = request.build_absolute_uri(reverse('leads.views.agent_bulk_upload', kwargs={'agency_name': person.agency.agency_name.replace(' ', '-'),
                                                                                            'pid': person.person_id}))
-    if not is_rep:
+    if is_rep == 'advertiser':
         mail_body = get_template('leads/advertiser_mail/advetiser_email.html').render(
             Context({
                 'advertiser_name': person.contact_person,
@@ -326,7 +327,7 @@ def mail_notification(request, person, is_rep):
             person.contact_email,
         ])
 
-    if is_rep:
+    if is_rep == 'google_rep':
         mail_body = get_template('leads/advertiser_mail/google_rep_mail.html').render(
             Context({
                 'advertiser_name': person.contact_person,
@@ -348,6 +349,18 @@ def mail_notification(request, person, is_rep):
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return "feedback"
+
+
+def get_timezones(request):
+    if request.is_ajax():
+        loc_name = request.GET.get('loc_name')
+        location = Location.objects.get(location_name=loc_name)
+        timezones = location.time_zone.all()
+        timezones_list = list()
+        for zone in timezones:
+            zone_val = "%s (UTC%s)" % (zone.zone_name, zone.time_value)
+            timezones_list.append({"id": zone.zone_name, "time": zone_val})
+        return HttpResponse(json.dumps(timezones_list))
 
 
 def download_agency_csv(request):

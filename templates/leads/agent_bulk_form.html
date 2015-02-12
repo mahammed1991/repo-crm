@@ -120,8 +120,7 @@
                             </td>
 
                             <td>
-                              <select name="timezone_{{indx}}" id="timezone_{{indx}}">
-                                  <option value="">Timezone</option>
+                              <select name="timezone_{{indx}}" id="timezone_{{indx}}" class="timezone">
                               </select>
                             </td>
 
@@ -231,6 +230,44 @@
           return false;
         }
     }
+$('.location').change(function(){
+    
+    var loc = $(this).val();
+    var id = $(this).attr('id')
+    var index = id.split('_')[1]
+    $("#timezone_"+index+"").empty();
+    if(loc){
+      getTimezones(loc, index);
+    }
 
+  });
+
+  function getTimezones(loc_name, index){
+  if(loc_name==''){
+    console.log(loc_name);
+  }else{
+     $.ajax({
+          url: "/leads/get-timezones",
+          dataType: "json",
+          type: 'GET',
+          data: {'loc_name': loc_name},
+          success: function(data) {
+              console.log(data);
+              displayTimezones(data, index);
+          },
+          error: function(errorThrown) {
+              console.log('failure');
+          }
+        }); 
+   }
+}
+
+function displayTimezones(timezones, index){
+  for( i=0; i<timezones.length; i++){
+      var id = timezones[i]['id'];
+      var time = timezones[i]['time'];
+      $("#timezone_"+index+"").append('<option value="' + id + '">' + time + '</option>');
+  }
+}
 </script>
 {% endblock main_js %}
