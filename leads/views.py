@@ -285,7 +285,7 @@ def agency_form(request):
             contact_telephone = request.POST.get(telephone)
             agency_email = request.POST.get(email)
             try:
-                person = ContactPerson.objects.get(contact_email=agency_email)
+                ContactPerson.objects.get(contact_email=agency_email)
                 template_args.update({'status': 'fail', 'error': "%s Email already exist" % (agency_email)})
                 break
             except ObjectDoesNotExist:
@@ -350,14 +350,12 @@ def mail_notification(request, person, is_rep):
     return "feedback"
 
 
-@login_required
 def download_agency_csv(request):
     path = settings.STATIC_FOLDER + '/AGENCY.csv'
     response = DownloadLeads.get_downloaded_file_response(path)
     return response
 
 
-@login_required
 @csrf_exempt
 def agent_bulk_upload(request, agency_name, pid):
     """ Agency Bulk Upload """
@@ -401,18 +399,99 @@ def agent_bulk_upload(request, agency_name, pid):
             template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True, 'agency_name': agency_name, 'pid': pid,
                                   'remaining': range(len(data_list) + 1, remaining), 'locations': all_locations,
                                   'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
+            print template_args
             return render(request, 'leads/agent_bulk_form.html', template_args)
 
         if 'paramcounts' in request.POST:
             params_count = request.POST.get('paramcounts')
+            google_rep_id = request.POST.get('google_rep_id')
+            poc_id = request.POST.get('poc_id')
+
+            try:
+                goggle_rep = User.objects.get(id=int(google_rep_id))
+            except ObjectDoesNotExist:
+                pass
+
+            try:
+                poc = ContactPerson.objects.get(id=poc_id)
+            except ObjectDoesNotExist:
+                pass
+
+            basic_lead_args = {
+                # Google Rep Information
+                '00Nd0000005WYgk': goggle_rep.first_name + ' ' + goggle_rep.last_name,  # Full Name
+                'email': goggle_rep.email,                   # Rep Email
+                '00Nd00000075Crj': goggle_rep.profile.user_manager_name,  # Manager Name
+                '00Nd00000077r3s': goggle_rep.profile.user_manager_email,  # Manager Email
+                '00Nd0000005XIWB': goggle_rep.profile.team.team_name,  # Team
+                '00Nd0000007e2AF': None,  # Service Segment
+                '00Nd0000007dWIH': None,  # G Cases Id
+                '00Nd0000005WYga': '',  # Country
+
+                '00Nd0000005WcNw': '',  # Advertiser Email
+                '00Nd0000005WYgz': '',  # Advertiser Phone
+                'company': '',    # Advertiser Company
+                '00Nd0000005WYgV': '',  # Customer ID
+
+                '00Nd0000007clUn': poc.agency.language.language_name,  # Language
+                '00Nd0000005WYhT': '',  # Time Zone
+
+
+                # Sandbox ID's
+                '00Nq0000000eZPG': '',  # Advertiser Name
+                '00Nq0000000eZOS': '',  # Advertiser Location
+                '00Nq0000000eZOw': 0,  # Web Access
+                '00Nq0000000eZOh': '',  # Webmaster Email
+                '00Nq0000000eZOc': '',  # Webmaster Phone
+
+                # Webmaster Details
+                '00Nd0000005WYgp': None,  # Webmaster First Name
+                '00Nd0000005WYgu': None,  # Webmaster Last Name
+                '00Nq0000000eJdW': 1,    # Default value for Change Lead Owner
+                'Campaign_ID': None,
+                'oid': request.POST.get('oid'),
+                '__VIEWSTATE': request.POST.get('__VIEWSTATE'),
+            }
+
             for i in range(1, int(params_count) + 1):
-                customer_id = request.POST.get('customer_id' + str(i))
-                code_type = request.POST.get('code_type' + str(i))
-                url = request.POST.get('url' + str(i))
-                special_instructions = request.POST.get('special_instructions' + str(i))
-                print customer_id, code_type, url, special_instructions
+                lead_args = dict()
+                customer_id = request.POST.get('customer_id_' + str(i))
+                location = request.POST.get('location_' + str(i))
+                timezone = request.POST.get('timezone_' + str(i))
+                agency_name = request.POST.get('agency_name_' + str(i))
+                agency_phone = request.POST.get('agency_phone_' + str(i))
+                agency_email = request.POST.get('agency_email_' + str(i))
+                code_type = request.POST.get('code_type_' + str(i))
+                url = request.POST.get('url_' + str(i))
+                special_instructions = request.POST.get('special_instructions_' + str(i))
+
+                lead_args = basic_lead_args
+                lead_args['00Nq0000000eZPG'] = agency_name     # Advertiser Name
+                lead_args['00Nd0000005WcNw'] = agency_email     # Advertiser Email
+                lead_args['00Nd0000005WYgz'] = agency_phone     # Advertiser Phone
+                lead_args['00Nd0000005WYgV'] = customer_id     # Customer ID
+                lead_args['00Nd0000005WYga'] = location     # Agency Location
+                lead_args['00Nd0000005WYhT'] = timezone     # Time Zone
+
+                # Code Type 1 Details
+                lead_args['00Nd0000005WYhJ'] = code_type  # Code Type1
+                lead_args['00Nd0000005WYhE'] = url  # URL1
+                lead_args['00Nd0000005WYh9'] = None  # Code1
+                lead_args['00Nd0000005WZIe'] = special_instructions  # Comments1
+
+                lead_args['create_date'] = datetime.utcnow()  # Created Date
+                # Post Lead data to SalesForce
+                post_lead_to_sf(request, lead_args)
+
             template_args.update({'is_csv': True})
     return render(request, 'leads/agent_bulk_form.html', template_args)
+
+
+def post_lead_to_sf(request, lead_data):
+    """ Post lead to SalesForce """
+    print lead_data, "Lead Data ============================="
+    sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+    requests.request('POST', url=sf_api_url, data=lead_data)
 
 
 @login_required

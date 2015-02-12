@@ -21,7 +21,9 @@
 {% endblock base_css %}
 
 {% block body %}
-    {% include "layouts/header.html" %}
+    {% if request.user.is_authenticated %}
+        {% include "layouts/header.html" %}
+    {% endif %}
     
         {% block content %}
                 <!-- COntent Block  -->
