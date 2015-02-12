@@ -351,6 +351,19 @@ def mail_notification(request, person, is_rep):
 
 
 @login_required
+def get_timezones(request):
+    if request.is_ajax():
+        loc_name = request.GET.get('loc_name')
+        location = Location.objects.filter(location_name=loc_name)[0]
+        timezones = location.time_zone.all()
+        timezones_list = list()
+        for zone in timezones:
+            timezones_list.append({"id": zone.id, "time": zone.time_value})
+        print timezones_list
+        return HttpResponse(json.dumps(timezones_list))
+
+
+@login_required
 def download_agency_csv(request):
     path = settings.STATIC_FOLDER + '/AGENCY.csv'
     response = DownloadLeads.get_downloaded_file_response(path)
