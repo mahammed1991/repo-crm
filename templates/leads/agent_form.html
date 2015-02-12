@@ -13,17 +13,17 @@
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
-  <h1>Submit Lead</h1>
-  <div class="lead-form agents-form-selection">
+  <h1>Setup introduction call</h1>
+  <!-- <div class="lead-form agents-form-selection">
       <div class="checkbox web-access">
         <label>
           <input type="radio" id="agentAppointment" name="agent-selection" value="">
           Setup introduction call </label>
-        <label>
+       <label>
           <input id="agentMultipleLeads" type="radio"  name="agent-selection"  value="">
           Bulk Upload Tasks / CID </label>
       </div>
-    </div>
+    </div> -->
     {% if status == 'success' %}
         <label class="success">Successfully Submitted</label>
     {% elif status == 'fail' %}
@@ -146,61 +146,6 @@
           </div>
     </form>
   </div>
-    <!-- BULK UPLOAD FORM FORM REP -->
-    <div class="container-fluid">
-    <div class="lead-form agents-form-selection" id="agency_bulk_upload">
-
-            <div class="table-container" style="float:left;">
-              <form action="{% url 'leads.views.download_agency_csv' %}">
-                <input type="submit" class="btn std-btn sm-btn" value="Download CSV formate">
-              </form>
-            </div>
-          <div class="table-container" style="float:left;">
-              <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                  <label style="float:left;"> Select CSV file to upload: </label>
-                  <input type="file" name="csvfile" id="csvfile" style="float:left;">
-                  <input type="submit" class="btn std-btn sm-btn" value="Upload CSV" name="submit" style="float:left;">
-                </form>
-          </div>
-          {% if data %}
-          <div class="row table-container">
-                <form method="post" enctype="multipart/form-data" onsubmit="return validateBulkForm(this)">
-                    <table style="width:100%" class="csv-table">
-                    <tr> 
-                      <th>Customer ID</th>
-                      <th>Code Type</th>
-                      <th>URL</th>
-                      <th>Special Instructions</th>
-                    </tr>
-                    {% for rec in data %}
-                    <tr>
-                      <td><input type="text" value="{{rec.customer_id }}" name="customer_id{{forloop.counter}}" id="customer_id{{forloop.counter}}"></td>
-                      <td><!-- <input type="text" value="{{rec.code_types}}"> -->
-                      <select name="code_type{{forloop.counter}}" id="code_type{{forloop.counter}}">
-                          <option value="">Choose an Code type</option>
-                        {% for type in code_types %}
-                          {% if rec.code_type == type %}
-                            <option value="{{rec.code_type}}" selected>{{type}}</option>
-                          {% else %}
-                            <option value="{{type}}">{{type}}</option>
-                          {% endif %}
-                        {% endfor %}
-                      </select>
-
-                      </td>
-                      <td><input type="text" value="{{rec.url}}" name="url{{forloop.counter}}" id="url{{forloop.counter}}"></td>
-                      <td><input type="textarea" value="{{rec.special_instructions}}" name="special_instructions{{forloop.counter}}" id="special_instructions{{forloop.counter}}"></td>
-                    </tr>
-                    {% endfor %}
-                    <input type="hidden" value="{{data|length}}" name="paramcounts">
-                </table>
-              <input type="submit" value="Submit" class="btn std-btn sm-btn">
-          </form>
-        </div>
-     {% endif %}
-    </div>
-    </div>
 </div>
 </section>
 {% endblock content %}
