@@ -60,6 +60,11 @@
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
               <span class="search-icon"><i class="fa fa-search" /></i></span>
             </div>
+            {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)'%}
+              <div class="table-search" id='ldapSearch'>
+                <a href="{% url 'leads.views.get_lead_status_by_ldap' %}" >click here to search leads By Ldap </a>
+              </div>
+            {% endif %}
           </div>
           <div class="col-xs-3 col-md-2">            
               <ul class="filter-area navbar-right">

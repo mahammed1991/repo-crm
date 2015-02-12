@@ -23,7 +23,6 @@ $(document).ready(function(){
           type: 'GET',
           data: {},
           success: function(data) {
-              console.log(data);
               displayLocations(data['location']);
               showUserLoc(data['user_loc']);
           },
@@ -58,7 +57,6 @@ $(document).ready(function(){
           type: 'GET',
           data: {},
           success: function(notifications) {
-              console.log(notifications);
               setNotifications(notifications);
           },
           error: function(errorThrown) {
