@@ -23,5 +23,5 @@ urlpatterns = patterns(
     url(r'^agency-form/$', views.agency_form),
     url(r'^download-agency-csv/$', views.download_agency_csv),
     url(r'^get-chat/$', views.get_chat_message_by_lead),
-
+    url(r'^agency/(?P<agency_name>[\w -]+)/(?P<pid>[\w -][^/]+)$', views.agent_bulk_upload),
 )
