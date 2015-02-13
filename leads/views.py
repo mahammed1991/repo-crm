@@ -67,7 +67,9 @@ def lead_form(request):
         if request.POST.get('is_tag_lead') == 'yes':
 
             tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick'),  # TAG Appointment Date
-            tag_data['first_name'] = request.POST.get('tag_contact_person_name'),  # Primary Contact Name
+            if request.POST.get('tag_contact_person_name'):
+                tag_data['first_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[0],  # Primary Contact Name
+                tag_data['last_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[1] if len(request.POST.get('tag_contact_person_name').rsplit(' ', 1)) > 1 else '',
             tag_data['00Nd0000005WayR'] = request.POST.get('tag_primary_role'),  # Role
 
             # Code Type 1 Details
@@ -116,10 +118,15 @@ def lead_form(request):
 
         if request.POST.get('is_shopping_lead') == 'yes':
             setup_data = basic_data
-            setup_data['first_name'] = request.POST.get('shop_contact_person_name'),  # Primary Contact Name
+            if request.POST.get('shop_contact_person_name'):
+                full_name = request.POST.get('shop_contact_person_name')
+                first_name = full_name.rsplit(' ', 1)[0]
+                last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+                setup_data['first_name'] = first_name  # Primary Contact First Name
+                setup_data['last_name'] = last_name  # Primary Contact Last Name
             setup_data['00Nd0000005WayR'] = request.POST.get('shop_primary_role'),  # Role
-            setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick'),  # Shopping Appointment Date
-            setup_data['00Nd0000005WYhJ'] = u'Google Shopping Setup',  # Code Type
+            setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick')  # Shopping Appointment Date
+            setup_data['00Nd0000005WYhJ'] = u'Google Shopping Setup'  # Code Type
             setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
             setup_data['00Nd00000077T9t'] = request.POST.get('00Nd00000077T9t')  # Web Inventory
             setup_data['00Nd00000077T9y'] = request.POST.get('rbid')  # Recommended Bid
@@ -210,7 +217,8 @@ def get_common_lead_data(post_data):
 
         # Sandbox ID's
         '00Nq0000000eZPG': post_data.get('advertiser_name'),  # Advertiser Name
-        'first_name': post_data.get('advertiser_name'),    # First Name
+        'first_name': post_data.get('advertiser_name').rsplit(' ', 1)[0],    # First Name
+        'last_name': post_data.get('advertiser_name').rsplit(' ', 1)[1] if len(post_data.get('advertiser_name').rsplit(' ', 1)) > 1 else '',   # Last Name
         '00Nq0000000eZOS': post_data.get('advertiser_location').split(',')[0] if post_data.get('advertiser_location') else post_data.get('advertiser_location'),  # Advertiser Location
         '00Nq0000000eZOw': post_data.get('web_access'),  # Web Access
         '00Nq0000000eZOh': post_data.get('web_master_email'),  # Webmaster Email
