@@ -304,7 +304,7 @@ Regalix Google Portal
                 <h4 class="modal-title" id="myModalLabel">Portal Feedback</h4>
               </div>
               <div class="modal-body" id="feedback-body">
-                <form onsubmit='return portalFeedbackValidation(this);' action='{% url 'main.views.create_portal_feedback' %}' method='POST' enctype="multipart/form-data" id="portalFeedback">
+                <form onsubmit='return portalFeedbackValidation(this);' action="{% url 'main.views.create_portal_feedback' %}" method='POST' enctype="multipart/form-data" id="portalFeedback">
                     {% csrf_token %}
                    <input type="text" class="form-control" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
                      <select class="form-control" id="feedbackType" name="type">

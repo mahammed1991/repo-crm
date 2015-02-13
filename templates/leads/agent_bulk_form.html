@@ -20,7 +20,7 @@
       <div class="lead-form agents-form-selection" id="agency_bulk_upload">
               <div class="table-container" style="float:left;">
                 <form action="{% url 'leads.views.download_agency_csv' %}">
-                  <input type="submit" class="btn std-btn sm-btn" value="Download CSV formate">
+                  <input type="submit" class="btn std-btn sm-btn" value="Download CSV format">
                 </form>
               </div>
             <div class="table-container" style="float:left;">
@@ -44,19 +44,33 @@
                       <tr>
                         <th width="100px">Google Rep Name</th>
                         <th width="80px">Customer ID</th>
+                        <th>Code Type</th>
+                        <th>URL</th>
                         <th>Location</th>
                         <th>Timezone</th>
                         <th>Agency Contact Name</th>
                         <th>Agency Contact phone</th>
                         <th>Agency Contact Email</th>
-                        <th>Code Type</th>
-                        <th>URL</th>
                         <th>Special Instructions</th>
                       </tr>
                       {% for rec in data %}
                       <tr class="leads">
                         <td><input type="text" value="{{poc_details.agency.google_rep.first_name}} {{poc_details.agency.google_rep.last_name}}" name="rep_name_{{forloop.counter}}" id="rep_name_{{forloop.counter}}"></td>
                         <td><input type="text" value="{{rec.customer_id }}" name="customer_id_{{forloop.counter}}" id="customer_id_{{forloop.counter}}"></td>
+
+                        <td>
+                          <select name="code_type_{{forloop.counter}}" id="code_type_{{forloop.counter}}">
+                              <option value="">Choose an Code type</option>
+                            {% for type in code_types %}
+                              {% if rec.code_type == type %}
+                                <option value="{{rec.code_type}}" selected>{{type}}</option>
+                              {% else %}
+                                <option value="{{type}}">{{type}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                        </td>
+                        <td><input type="text" value="{{rec.url}}" name="url_{{forloop.counter}}" id="url_{{forloop.counter}}"></td>
 
                         <td>
                           <select name="location_{{forloop.counter}}" id="location_{{forloop.counter}}" class="location">
@@ -89,19 +103,6 @@
                           <input type="text" value="{{poc_details.contact_email}}" name="agency_email_{{forloop.counter}}" id="agency_email_{{forloop.counter}}">
                         </td>
 
-                        <td>
-                          <select name="code_type_{{forloop.counter}}" id="code_type_{{forloop.counter}}">
-                              <option value="">Choose an Code type</option>
-                            {% for type in code_types %}
-                              {% if rec.code_type == type %}
-                                <option value="{{rec.code_type}}" selected>{{type}}</option>
-                              {% else %}
-                                <option value="{{type}}">{{type}}</option>
-                              {% endif %}
-                            {% endfor %}
-                          </select>
-                        </td>
-                        <td><input type="text" value="{{rec.url}}" name="url_{{forloop.counter}}" id="url_{{forloop.counter}}"></td>
                         <td><input type="textarea" value="{{rec.special_instructions}}" name="special_instructions_{{forloop.counter}}" id="special_instructions_{{forloop.counter}}"></td>
                       </tr>
                       {% endfor %}
@@ -169,6 +170,17 @@
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
  <script type="text/javascript">
+
+ $(document).ready(function(){
+    var loc_length = $(".location").length;
+    for(i=1; i<=loc_length; i++){
+      locElem = "#location_" + i;
+      val = $(locElem).val();
+      if(val){
+        getTimezones(val, i);
+      }
+    }
+ });
 
     $(".addMore").click(function(){
         var thisid = $(this).attr('id')
@@ -263,10 +275,11 @@ $('.location').change(function(){
 }
 
 function displayTimezones(timezones, index){
+  $("#timezone_"+index).html("");
   for( i=0; i<timezones.length; i++){
       var id = timezones[i]['id'];
       var time = timezones[i]['time'];
-      $("#timezone_"+index+"").append('<option value="' + id + '">' + time + '</option>');
+      $("#timezone_"+index).append('<option value="' + id + '">' + time + '</option>');
   }
 }
 </script>

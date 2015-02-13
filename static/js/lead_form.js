@@ -45,6 +45,8 @@
     $("#web_access").on('click', function() {
       
       $("#webmasterCheck").prop("checked", false);
+      $( "#webmaster").hide();
+
     });
     
     $("#tagImplementation" ).click(function() {
