@@ -210,6 +210,7 @@ def get_common_lead_data(post_data):
 
         # Sandbox ID's
         '00Nq0000000eZPG': post_data.get('advertiser_name'),  # Advertiser Name
+        'first_name': post_data.get('advertiser_name'),    # First Name
         '00Nq0000000eZOS': post_data.get('advertiser_location').split(',')[0] if post_data.get('advertiser_location') else post_data.get('advertiser_location'),  # Advertiser Location
         '00Nq0000000eZOw': post_data.get('web_access'),  # Web Access
         '00Nq0000000eZOh': post_data.get('web_master_email'),  # Webmaster Email
@@ -502,7 +503,6 @@ def agent_bulk_upload(request, agency_name, pid):
 
 def post_lead_to_sf(request, lead_data):
     """ Post lead to SalesForce """
-    print lead_data, "Lead Data ============================="
     sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
     requests.request('POST', url=sf_api_url, data=lead_data)
 
