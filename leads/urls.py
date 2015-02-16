@@ -4,6 +4,7 @@ import views
 urlpatterns = patterns(
     '',
     url(r'^lead-form/$', views.lead_form),
+    url(r'^bundle-lead-form/$', views.bundle_lead_form),
     url(r'^shopping-campaign-setup-lead-form/$', views.shopping_campaign_setup_lead_form),
     url(r'^shopping-campaign-lead-form/$', views.shopping_campaign_lead_form),
     url(r'^leads-list/$', views.leads_list),

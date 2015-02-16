@@ -489,6 +489,8 @@ def agent_bulk_upload(request, agency_name, pid):
 
                 lead_args = basic_lead_args
                 lead_args['00Nq0000000eZPG'] = agency_name     # Advertiser Name
+                lead_args['first_name'] = agency_name.rsplit(' ', 1)[0]    # First Name
+                lead_args['last_name'] = agency_name.rsplit(' ', 1)[1] if len(agency_name.rsplit(' ', 1)) > 1 else ''   # Last Name
                 lead_args['00Nd0000005WcNw'] = agency_email     # Advertiser Email
                 lead_args['00Nd0000005WYgz'] = agency_phone     # Advertiser Phone
                 lead_args['00Nd0000005WYgV'] = customer_id     # Customer ID
@@ -513,6 +515,156 @@ def post_lead_to_sf(request, lead_data):
     """ Post lead to SalesForce """
     sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
     requests.request('POST', url=sf_api_url, data=lead_data)
+
+
+# Create your views here.
+@login_required
+@csrf_exempt
+def bundle_lead_form(request):
+
+    """
+    Production OID
+    <input type="hidden" value="00Dd0000000fk18" name="oid">
+
+    Sandbox OID
+    <input type=hidden name="oid" value="00Dq00000009tyR">
+    """
+    if request.method == 'POST':
+        sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+        # sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+
+        # Get Basic/Common form filed data
+        basic_data = get_common_lead_data(request.POST)
+        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+
+        tag_data = basic_data
+        advirtiser_details = {'first_name': request.POST.get('advertiser_name'),
+                              'last_name': request.POST.get('last_name'),
+                              'email': request.POST.get('aemail'),
+                              'role': request.POST.get('primary_role'),
+                              'customer_id': request.POST.get('cid'),
+                              'country': request.POST.get('country'),
+                              'cid_std': request.POST.get('cid').rsplit("-", 1)[0] + '-xxxx',
+                              'code_type': request.POST.get('ctype1')
+                              }
+
+        if request.POST.get('is_tag_lead') == 'yes':
+
+            tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick'),  # TAG Appointment Date
+            if request.POST.get('tag_contact_person_name'):
+                tag_data['first_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[0],  # Primary Contact Name
+                tag_data['last_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[1] if len(request.POST.get('tag_contact_person_name').rsplit(' ', 1)) > 1 else '',
+            tag_data['00Nd0000005WayR'] = request.POST.get('tag_primary_role'),  # Role
+
+            # Code Type 1 Details
+            tag_data['00Nd0000005WYhJ'] = request.POST.get('ctype1')  # Code Type1
+            tag_data['00Nd0000005WYhE'] = request.POST.get('url1')  # URL1
+            tag_data['00Nd0000005WYh9'] = request.POST.get('code1')  # Code1
+            tag_data['00Nd0000005WZIe'] = request.POST.get('comment1')  # Comments1
+
+            # Code Type 2 Details
+            tag_data['00Nd0000005WYkS'] = request.POST.get('ctype2')  # Code type2
+            tag_data['00Nd0000005WYi9'] = request.POST.get('url2')  # URL2
+            tag_data['00Nd0000005WYiv'] = request.POST.get('code2')  # Code2
+            tag_data['00Nd0000005WYjy'] = request.POST.get('comment2')  # Comments2
+
+            # Code Type 3 Details
+            tag_data['00Nd0000005WYkX'] = request.POST.get('ctype3')  # Code type3
+            tag_data['00Nd0000005WYjU'] = request.POST.get('url3')  # URL3
+            tag_data['00Nd0000005WYj5'] = request.POST.get('code3')  # Code3
+            tag_data['00Nd0000005WYjB'] = request.POST.get('comment3')  # Comments3
+
+            # Code Type 4 Details
+            tag_data['00Nd0000005WYkm'] = request.POST.get('ctype4')  # Code type4
+            tag_data['00Nd0000005WYjZ'] = request.POST.get('url4')  # URL4
+            tag_data['00Nd0000005WYjA'] = request.POST.get('code4')  # Code4
+            tag_data['00Nd0000005WYkI'] = request.POST.get('comment4')  # Comments4
+
+            # Code Type 5 Details
+            tag_data['00Nd0000005WYl6'] = request.POST.get('ctype5')  # Code type5
+            tag_data['00Nd0000005WYjo'] = request.POST.get('url5')  # URL5
+            tag_data['00Nd0000005WYiw'] = request.POST.get('code5')  # Code5
+            tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
+
+            # Production ID for TAD VIA GTM
+            # tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
+
+            # Sandbox ID for TAD VIA GTM
+            tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
+            requests.request('POST', url=sf_api_url, data=tag_data)
+
+            # Create Icallender (*.ics) file for send mail
+            advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
+
+            # if advirtiser_details.get('appointment_date'):
+            # create_icalendar_file(advirtiser_details)
+            # send_calendar_invite_to_advertiser(advirtiser_details)
+
+        if request.POST.get('is_shopping_lead') == 'yes':
+            setup_data = basic_data
+            if request.POST.get('shop_contact_person_name'):
+                full_name = request.POST.get('shop_contact_person_name')
+                first_name = full_name.rsplit(' ', 1)[0]
+                last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+                setup_data['first_name'] = first_name  # Primary Contact First Name
+                setup_data['last_name'] = last_name  # Primary Contact Last Name
+            setup_data['00Nd0000005WayR'] = request.POST.get('shop_primary_role'),  # Role
+            setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick')  # Shopping Appointment Date
+            setup_data['00Nd0000005WYhJ'] = u'Google Shopping Setup'  # Code Type
+            setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
+            setup_data['00Nd00000077T9t'] = request.POST.get('00Nd00000077T9t')  # Web Inventory
+            setup_data['00Nd00000077T9y'] = request.POST.get('rbid')  # Recommended Bid
+            setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
+            setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
+            setup_data['00Nd0000005WYhE'] = request.POST.get('shopping_url')  # Shopping URL
+
+            # Production ID for IS SHOPPING POLICIES
+            # setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+
+            # SandBox ID for IS SHOPPING POLICIES
+            setup_data['00Nq0000000eZPB'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+
+            requests.request('POST', url=sf_api_url, data=setup_data)
+
+            # Create Icallender (*.ics) file for send mail
+            # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
+            # if advirtiser_details.get('appointment_date'):
+            # create_icalendar_file(advirtiser_details)
+            # send_calendar_invite_to_advertiser(advirtiser_details)
+
+        return redirect(basic_data['retURL'])
+
+    locations = Location.objects.filter(is_active=True)
+    new_locations = list()
+    all_locations = list()
+    time_zone_for_region = dict()
+    language_for_location = dict()
+    for loc in locations:
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
+            new_locations.append(l)
+        else:
+            all_locations.append(l)
+        time_zone_for_region[loc.location_name] = [{'zone_name': tz[
+            'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
+        language_for_location[loc.location_name] = [{'language_name': lang[
+            'language_name']} for lang in loc.language.values()]
+
+    teams = Team.objects.filter(is_active=True)
+    code_types = CodeType.objects.filter(is_active=True)
+
+    return render(
+        request,
+        'leads/bundle_lead_form.html',
+        {'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID,
+         'locations': all_locations,
+         'new_locations': new_locations,
+         'teams': teams,
+         'code_types': code_types,
+         'time_zone_for_region': json.dumps(time_zone_for_region),
+         'language_for_location': json.dumps(language_for_location)
+         }
+    )
 
 
 @login_required
