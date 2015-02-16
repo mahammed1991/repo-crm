@@ -3,7 +3,7 @@ $(document).ready(function() {
   $("#split_location").hide();
 /* ===================== Default Report Starts Here ============= */
   // Get default report while loading template
-  callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'teams': ['all'], 'countries': ['all']})
+  callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'team': ['all'], 'countries': ['all']})
 /* ===================== Default Report Ends Here ============= */
 
 // date picker
@@ -229,7 +229,6 @@ $("#get_report").click(function(){
         dataString['location_split'] = $('#location_split').prop('unchecked');
       }
 
-     console.log(dataString, "Calling");
 
      if(window.current_ldap){
       dataString['ldap_id'] = window.current_ldap;
@@ -302,6 +301,8 @@ function showErrorMessage(message){
 }
 
 function setDefaultDropdown(){
+  $("#filter_timeline").val('')
+  $("#filter_dateRange").hide()
   $("#filter_region select").val('');
   $("#filter_team").val('all');
 }
@@ -812,7 +813,7 @@ function downloadReport(dataString){
 
 }
 
-$('.ldap').focus(function() {
+$('.ldap').on("keyup", function() {
   return $(this).autocomplete({
     source: "/reports/get-user-name",
     minLength: 2,

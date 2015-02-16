@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-import time
-from leads.models import Leads, Location, RegalixTeams
+from leads.models import Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager
 from django.conf import settings
@@ -242,6 +241,8 @@ def get_download_report(request):
 def get_user_name(request):
     if request.is_ajax():
         query = request.GET.get('term', '')
+        if ' ' in query:
+            query = query.split(' ')[0]
         qs = User.objects.all()
         users = qs.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))
         results = []
