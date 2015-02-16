@@ -52,7 +52,7 @@ def get_current_quarter_report(request):
     if 'In Progress' in lead_status:
         lead_status.extend(['Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Rework Required'])
 
-    ###################### cron job reports for Current Quarter start here ######################
+    # ##################### cron job reports for Current Quarter start here ######################
     # Get summary report by code types and lead_status
     c_types = ['total', 'total_tag', 'Google Shopping Migration', 'Google Shopping Setup']
     report_details = LeadSummaryReports.objects.filter(code_type__in=c_types)
@@ -65,10 +65,10 @@ def get_current_quarter_report(request):
         report_detail[rep.code_type]['In Queue'] = rep.in_queue
         report_detail[rep.code_type]['tat_implemented'] = int(rep.tat_implemented)
         report_detail[rep.code_type]['tat_first_contacted'] = int(rep.tat_first_contacted)
-    ###################### cron job reports for Current Quarter ends here ######################
+    # ##################### cron job reports for Current Quarter ends here ######################
 
     # Get summary report by code types and lead_status
-    #report_detail = ReportService.get_summary_by_code_types_and_status(
+    # report_detail = ReportService.get_summary_by_code_types_and_status(
     #    'tag', code_types, lead_status, start_date, end_date, teams=list(), locations=list())
 
     quarter = ReportService.get_current_quarter(datetime.utcnow())
@@ -217,8 +217,6 @@ def get_download_report(request):
 
         email = request.user.email
 
-        #rint report_type, report_timeline, start_date, end_date, selectedFields
-
         if report_type == 'default_report':
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
         elif report_type == 'leadreport_individualRep':
@@ -242,6 +240,8 @@ def get_download_report(request):
 def get_user_name(request):
     if request.is_ajax():
         query = request.GET.get('term', '')
+        if ' ' in query:
+            query = query.split(' ')[0]
         qs = User.objects.all()
         users = qs.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))
         results = []
@@ -285,7 +285,7 @@ def get_reports(request):
     ''' Get report by Filter '''
     if request.is_ajax():
         # Get type of report
-        #report_type = request.GET.get('report_type', None)
+        # report_type = request.GET.get('report_type', None)
         report_type = "lead_report"
 
         # Get process filters
@@ -295,7 +295,7 @@ def get_reports(request):
             if len(lead_status) > 1:
                 lead_status.remove('all')
             else:
-                #get all lead status
+                # get all lead status
                 lead_status = [l for l in settings.LEAD_STATUS]
 
         if 'In Queue' in lead_status:
@@ -309,7 +309,7 @@ def get_reports(request):
             if len(code_types) > 1:
                 code_types.remove('all')
             else:
-                #get all code types
+                # get all code types
                 code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types if 'www.' not in codes and 'http:' not in codes and 'https:' not in codes]
 
@@ -591,7 +591,7 @@ def download_leads(request):
     return render(request, 'reports/download_leads.html')
 
 
-#Trends Reports
+# Trends Reports
 @login_required
 def get_trends_reports(request):
     if request.is_ajax():
@@ -604,7 +604,7 @@ def get_trends_reports(request):
             if len(code_types) > 1:
                 code_types.remove('all')
             else:
-                #get all code types
+                # get all code types
                 code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types if 'www.' not in codes and 'http:' not in codes and 'https:' not in codes]
         # Get teams
@@ -618,7 +618,7 @@ def get_trends_reports(request):
             reports = TrendsReportServices.get_trends_report_program_wise(teams, code_types, timeline)
         elif(reportType == 'trends_report_for_win_and_total'):
             reports = TrendsReportServices.get_for_win_total_and_conversionratio(teams, code_types, timeline)
-    #creating this tableReports for draw table
+    # creating this tableReports for draw table
     tableReports = list()
     for i in range(len(reports[0])):
         tableReports.append([row[i] for row in reports])

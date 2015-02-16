@@ -108,11 +108,27 @@ Reports
       <label>Name:</label>
         <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
         <label class="manager">Manager:</label>
-        <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
+        {% if request.user.profile.user_manager_name %}
+            <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
+        {% else %}
+            <div class="value" id="ldap_manager">N/A</div>
+        {% endif %}
         <label>Program:</label>
-        <div class="value" id="ldap_program">{{request.user.profile.team.team_name}}</div>
+        {% if request.user.profile.team.team_name %}
+          <div class="value" id="ldap_program">{{request.user.profile.team.team_name}}</div>
+        {% else %}
+          <div class="value" id="ldap_program">N/A</div>
+        {% endif %}
         <label>Region:</label>
-        <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
+        {% if request.user.profile.location.location_name %}
+          <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
+        {% else %}
+          <div class="value" id="ldap_region">N/A</div>
+        {% endif %}
+        {% if not request.user.profile.user_manager_name or not request.user.profile.team.team_name or request.user.profile.location.location_name %}
+          <label>Complete Your Profile:</label>
+          <a href="{% url 'main.views.edit_profile_info' %}">Your Profile</a>
+        {% endif %}
     </div>    
     
     <h2>Lead Status Summary</h2>
