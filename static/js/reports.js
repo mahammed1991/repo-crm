@@ -229,7 +229,6 @@ $("#get_report").click(function(){
         dataString['location_split'] = $('#location_split').prop('unchecked');
       }
 
-     console.log(dataString, "Calling");
 
      if(window.current_ldap){
       dataString['ldap_id'] = window.current_ldap;
