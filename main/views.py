@@ -278,7 +278,7 @@ def edit_profile_info(request):
 
         user_details.phone = request.POST.get('user_phone', None)
         user_details.team_id = request.POST.get('user_team', None)
-        user_details.user_manager_name = request.POST.get('user_manager_name', None)
+        # user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
         user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
