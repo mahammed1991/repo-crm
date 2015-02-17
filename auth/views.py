@@ -45,7 +45,7 @@ def post_login(request):
         return redirect('main.views.get_started')
     try:
         user_profile = UserDetails.objects.get(user_id=request.user.id)
-        if not user_profile.phone and not user_profile.user_manager_name and not user_profile.user_manager_email and user_profile.team and user_profile.location:
+        if not user_profile.phone and not user_profile.user_manager_email and user_profile.team and user_profile.location:
             return redirect('main.views.get_started')
     except ObjectDoesNotExist:
         return redirect('main.views.get_started')
@@ -77,4 +77,4 @@ def handle_page_not_found(request):
     """ Page not found Page """
     print "404 Page"
     return render_to_response('auth/404.html', locals(), context_instance=RequestContext(request))
-    #return render(request, 'auth/404.html')
+    # return render(request, 'auth/404.html')

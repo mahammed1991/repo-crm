@@ -523,114 +523,53 @@ def post_lead_to_sf(request, lead_data):
 def bundle_lead_form(request):
 
     """
-    Production OID
-    <input type="hidden" value="00Dd0000000fk18" name="oid">
-
-    Sandbox OID
-    <input type=hidden name="oid" value="00Dq00000009tyR">
+    Bundle Leas Form
+    Combination of 3 Code Types
     """
     if request.method == 'POST':
-        sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        # sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+        complex_code_type = ['Dynamic Remarketing - Extension (non retail)', 'Google Shopping Setup',
+                             'Dynamic Remarketing - Retail', 'Cross Domain Tracking']
 
         # Get Basic/Common form filed data
         basic_data = get_common_lead_data(request.POST)
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
 
-        tag_data = basic_data
-        advirtiser_details = {'first_name': request.POST.get('advertiser_name'),
-                              'last_name': request.POST.get('last_name'),
-                              'email': request.POST.get('aemail'),
-                              'role': request.POST.get('primary_role'),
-                              'customer_id': request.POST.get('cid'),
-                              'country': request.POST.get('country'),
-                              'cid_std': request.POST.get('cid').rsplit("-", 1)[0] + '-xxxx',
-                              'code_type': request.POST.get('ctype1')
-                              }
+        code_type1 = request.POST.get('ctype1')
+        code_type2 = request.POST.get('ctype2')
+        code_type3 = request.POST.get('ctype3')
+        code_types = list()
+        if code_type1 in complex_code_type:
+            if code_type1 != 'Google Shopping Setup':
+                post_tag_lead_to_sf(request, request.POST, basic_data, [1])
+            else:
+                post_shopping_lead_to_sf(request, request.POST, basic_data, 1)
+        elif code_type1:
+            code_types.append(1)
 
-        if request.POST.get('is_tag_lead') == 'yes':
+        if code_type2 in complex_code_type:
+            if code_type2 != 'Google Shopping Setup':
+                post_tag_lead_to_sf(request, request.POST, basic_data, [2])
+            else:
+                post_shopping_lead_to_sf(request, request.POST, basic_data, 2)
+        elif code_type2:
+            code_types.append(2)
 
-            tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick'),  # TAG Appointment Date
-            if request.POST.get('tag_contact_person_name'):
-                tag_data['first_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[0],  # Primary Contact Name
-                tag_data['last_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[1] if len(request.POST.get('tag_contact_person_name').rsplit(' ', 1)) > 1 else '',
-            tag_data['00Nd0000005WayR'] = request.POST.get('tag_primary_role'),  # Role
+        if code_type3 in complex_code_type:
+            if code_type3 != 'Google Shopping Setup':
+                post_tag_lead_to_sf(request, request.POST, basic_data, [3])
+            else:
+                post_shopping_lead_to_sf(request, request.POST, basic_data, 3)
+        elif code_type3:
+            code_types.append(3)
 
-            # Code Type 1 Details
-            tag_data['00Nd0000005WYhJ'] = request.POST.get('ctype1')  # Code Type1
-            tag_data['00Nd0000005WYhE'] = request.POST.get('url1')  # URL1
-            tag_data['00Nd0000005WYh9'] = request.POST.get('code1')  # Code1
-            tag_data['00Nd0000005WZIe'] = request.POST.get('comment1')  # Comments1
+        if code_types:
+            post_tag_lead_to_sf(request, request.POST, basic_data, code_types)
 
-            # Code Type 2 Details
-            tag_data['00Nd0000005WYkS'] = request.POST.get('ctype2')  # Code type2
-            tag_data['00Nd0000005WYi9'] = request.POST.get('url2')  # URL2
-            tag_data['00Nd0000005WYiv'] = request.POST.get('code2')  # Code2
-            tag_data['00Nd0000005WYjy'] = request.POST.get('comment2')  # Comments2
-
-            # Code Type 3 Details
-            tag_data['00Nd0000005WYkX'] = request.POST.get('ctype3')  # Code type3
-            tag_data['00Nd0000005WYjU'] = request.POST.get('url3')  # URL3
-            tag_data['00Nd0000005WYj5'] = request.POST.get('code3')  # Code3
-            tag_data['00Nd0000005WYjB'] = request.POST.get('comment3')  # Comments3
-
-            # Code Type 4 Details
-            tag_data['00Nd0000005WYkm'] = request.POST.get('ctype4')  # Code type4
-            tag_data['00Nd0000005WYjZ'] = request.POST.get('url4')  # URL4
-            tag_data['00Nd0000005WYjA'] = request.POST.get('code4')  # Code4
-            tag_data['00Nd0000005WYkI'] = request.POST.get('comment4')  # Comments4
-
-            # Code Type 5 Details
-            tag_data['00Nd0000005WYl6'] = request.POST.get('ctype5')  # Code type5
-            tag_data['00Nd0000005WYjo'] = request.POST.get('url5')  # URL5
-            tag_data['00Nd0000005WYiw'] = request.POST.get('code5')  # Code5
-            tag_data['00Nd0000005WYkN'] = request.POST.get('comment5')  # Comments5
-
-            # Production ID for TAD VIA GTM
-            # tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
-
-            # Sandbox ID for TAD VIA GTM
-            tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
-            requests.request('POST', url=sf_api_url, data=tag_data)
-
-            # Create Icallender (*.ics) file for send mail
-            advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
-
-            # if advirtiser_details.get('appointment_date'):
-            # create_icalendar_file(advirtiser_details)
-            # send_calendar_invite_to_advertiser(advirtiser_details)
-
-        if request.POST.get('is_shopping_lead') == 'yes':
-            setup_data = basic_data
-            if request.POST.get('shop_contact_person_name'):
-                full_name = request.POST.get('shop_contact_person_name')
-                first_name = full_name.rsplit(' ', 1)[0]
-                last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
-                setup_data['first_name'] = first_name  # Primary Contact First Name
-                setup_data['last_name'] = last_name  # Primary Contact Last Name
-            setup_data['00Nd0000005WayR'] = request.POST.get('shop_primary_role'),  # Role
-            setup_data['00Nd0000005WYlL'] = request.POST.get('setup_datepick')  # Shopping Appointment Date
-            setup_data['00Nd0000005WYhJ'] = u'Google Shopping Setup'  # Code Type
-            setup_data['00Nd00000077T9o'] = request.POST.get('00Nd00000077T9o')  # MC-ID
-            setup_data['00Nd00000077T9t'] = request.POST.get('00Nd00000077T9t')  # Web Inventory
-            setup_data['00Nd00000077T9y'] = request.POST.get('rbid')  # Recommended Bid
-            setup_data['00Nd00000077TA3'] = request.POST.get('rbudget')  # Recommended Budget
-            setup_data['00Nd00000077TA8'] = request.POST.get('rbidmodifier')  # Recommended Mobile Bid Modifier
-            setup_data['00Nd0000005WYhE'] = request.POST.get('shopping_url')  # Shopping URL
-
-            # Production ID for IS SHOPPING POLICIES
-            # setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
-
-            # SandBox ID for IS SHOPPING POLICIES
-            setup_data['00Nq0000000eZPB'] = request.POST.get('is_shopping_policies')  # Shopping Policies
-
-            requests.request('POST', url=sf_api_url, data=setup_data)
-
-            # Create Icallender (*.ics) file for send mail
-            # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
-            # if advirtiser_details.get('appointment_date'):
-            # create_icalendar_file(advirtiser_details)
-            # send_calendar_invite_to_advertiser(advirtiser_details)
+        # Create Icallender (*.ics) file for send mail
+        # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
+        # if advirtiser_details.get('appointment_date'):
+        # create_icalendar_file(advirtiser_details)
+        # send_calendar_invite_to_advertiser(advirtiser_details)
 
         return redirect(basic_data['retURL'])
 
@@ -665,6 +604,112 @@ def bundle_lead_form(request):
          'language_for_location': json.dumps(language_for_location)
          }
     )
+
+
+def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
+    """ Post Tag Lead to Salesforce """
+    sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+    # sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+    tag_data = basic_data
+    # advirtiser_details = {'first_name': post_data.get('advertiser_name'),
+    #                       'last_name': post_dataget('advertiser_name').split(' ')[1] if len(post_data.get('advertiser_name')) > 1 else '',
+    #                       'email': post_data.get('aemail'),
+    #                       'role': post_data.get('primary_role'),
+    #                       'customer_id': post_data.get('cid'),
+    #                       'country': post_data.get('country'),
+    #                       'cid_std': post_data.get('cid').rsplit("-", 1)[0] + '-xxxx'
+    #                       }
+
+    tag_data['00Nd0000005WYlL'] = post_data.get('tag_datepick' + str(code_types[0])),  # TAG Appointment Date
+    for indx in code_types:
+        if indx == 1:
+            if post_data.get('tag_contact_person_name1'):
+                tag_data['first_name'] = post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)[0] if post_data.get('tag_contact_person_name' + str(indx)) else '',  # Primary Contact Name
+                tag_data['last_name'] = post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)[1] if len(post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)) > 1 else '',
+            tag_data['00Nd0000005WayR'] = post_data.get('tag_primary_role'),  # Role
+
+            # Code Type 1 Details
+            tag_data['00Nd0000005WYhJ'] = post_data.get('ctype' + str(indx))  # Code Type1
+            tag_data['00Nd0000005WYhE'] = post_data.get('url' + str(indx))  # URL1
+            tag_data['00Nd0000005WZIe'] = post_data.get('comment' + str(indx))  # Comments1
+
+            if post_data.get('is_campaign_created' + str(indx)) == '0' or post_data.get('is_campaign_created' + str(indx)) == 0:
+                tag_data['00Nd00000077T9y'] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data['00Nd00000077TA3'] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+
+        elif indx == 2:
+            if post_data.get('tag_contact_person_name' + str(indx)):
+                tag_data['first_name'] = post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)[0] if post_data.get('tag_contact_person_name' + str(indx)) else '',  # Primary Contact Name
+                tag_data['last_name'] = post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)[1] if len(post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)) > 1 else '',
+            tag_data['00Nd0000005WayR'] = post_data.get('tag_primary_role'),  # Role
+
+            # Code Type 2 Details
+            tag_data['00Nd0000005WYkS'] = post_data.get('ctype' + str(indx))  # Code Type2
+            tag_data['00Nd0000005WYi9'] = post_data.get('url' + str(indx))  # URL2
+            tag_data['00Nd0000005WYjy'] = post_data.get('comment' + str(indx))  # Comments2
+
+            if post_data.get('is_campaign_created' + str(indx)) == '0' or post_data.get('is_campaign_created' + str(indx)) == 0:
+                tag_data['00Nd00000077T9y'] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data['00Nd00000077TA3'] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+
+        elif indx == 3:
+            if post_data.get('tag_contact_person_name1'):
+                tag_data['first_name'] = post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)[0] if post_data.get('tag_contact_person_name' + str(indx)) else '',  # Primary Contact Name
+                tag_data['last_name'] = post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)[1] if len(post_data.get('tag_contact_person_name' + str(indx)).rsplit(' ', 1)) > 1 else '',
+            tag_data['00Nd0000005WayR'] = post_data.get('tag_primary_role'),  # Role
+
+            # Code Type 3 Details
+            tag_data['00Nd0000005WYkX'] = post_data.get('ctype' + str(indx))  # Code Type3
+            tag_data['00Nd0000005WYjU'] = post_data.get('url' + str(indx))  # URL3
+            tag_data['00Nd0000005WYjB'] = post_data.get('comment' + str(indx))  # Comments3
+
+            if post_data.get('is_campaign_created' + str(indx)) == '0' or post_data.get('is_campaign_created' + str(indx)) == 0:
+                tag_data['00Nd00000077T9y'] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data['00Nd00000077TA3'] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+
+    # Sandbox ID for TAD VIA GTM
+    tag_data['00Nq0000000eZP6'] = post_data.get('tag_via_gtm')  # Tag Via  GTM
+
+    requests.request('POST', url=sf_api_url, data=tag_data)
+
+
+def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
+    """ Post Tag Lead to Salesforce """
+
+    sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+    # sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+    setup_data = basic_data
+    # advirtiser_details = {'first_name': post_data.get('advertiser_name'),
+    #                       'last_name': post_dataget('advertiser_name').split(' ')[1] if len(post_data.get('advertiser_name')) > 1 else '',
+    #                       'email': post_data.get('aemail'),
+    #                       'role': post_data.get('primary_role'),
+    #                       'customer_id': post_data.get('cid'),
+    #                       'country': post_data.get('country'),
+    #                       'cid_std': post_data.get('cid').rsplit("-", 1)[0] + '-xxxx'
+    #                       }
+
+    setup_data['00Nd0000005WYlL'] = post_data.get('setup_datepick' + str(indx)),  # TAG Appointment Date
+    full_name = post_data.get('shop_contact_person_name' + str(indx))
+    first_name = full_name.rsplit(' ', 1)[0]
+    last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+    setup_data['first_name'] = first_name  # Primary Contact First Name
+    setup_data['last_name'] = last_name  # Primary Contact Last Name
+    setup_data['00Nd0000005WayR'] = post_data.get('shop_primary_role'),  # Role
+    setup_data['00Nd0000005WYhJ'] = u'Google Shopping Setup'  # Code Type
+    setup_data['00Nd00000077T9o'] = post_data.get('00Nd00000077T9o')  # MC-ID
+    setup_data['00Nd00000077T9t'] = post_data.get('00Nd00000077T9t')  # Web Inventory
+    setup_data['00Nd00000077T9y'] = post_data.get('rbid' + str(indx))  # Recommended Bid
+    setup_data['00Nd00000077TA3'] = post_data.get('rbudget' + str(indx))  # Recommended Budget
+    setup_data['00Nd00000077TA8'] = post_data.get('rbidmodifier' + str(indx))  # Recommended Mobile Bid Modifier
+    setup_data['00Nd0000005WYhE'] = post_data.get('shopping_url' + str(indx))  # Shopping URL
+
+    # Production ID for IS SHOPPING POLICIES
+    # setup_data['00Nd0000007esIw'] = post_data.get('is_shopping_policies')  # Shopping Policies
+
+    # SandBox ID for IS SHOPPING POLICIES
+    setup_data['00Nq0000000eZPB'] = post_data.get('is_shopping_policies')  # Shopping Policies
+
+    requests.request('POST', url=sf_api_url, data=setup_data)
 
 
 @login_required

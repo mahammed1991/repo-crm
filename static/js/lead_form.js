@@ -672,11 +672,11 @@ function validatethis(frm) {
       }
 
         if($("#is_shopping_policies").is(":checked")){
-            $("#is_shopping_policies").val(true);
+            $("#is_shopping_policies").val(1);
             $(".shopping-policy").removeClass('error-box');
         }else{
             $(".shopping-policy").addClass('error-box');
-            $("#is_shopping_policies").val(false);
+            $("#is_shopping_policies").val(0);
             return false;
         }
 
@@ -687,15 +687,15 @@ function validatethis(frm) {
 
       // Check Box Options
       if($("#tag_via_gtm").is(":checked")){
-        $("#tag_via_gtm").val(true);
+        $("#tag_via_gtm").val(1);
       }else{
-        $("#tag_via_gtm").val(false);
+        $("#tag_via_gtm").val(0);
       }
 
       if($("#web_access").is(":checked")){
-          $("#web_access").val(true);
+          $("#web_access").val(1);
       }else{
-        $("#web_access").val(false);
+        $("#web_access").val(0);
       }
 
     if(window.is_error){
