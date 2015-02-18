@@ -14,7 +14,7 @@
   <h1>Submit Lead</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
-    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
     <input type="hidden" name="oid" value="00Dq00000009tyR">
     <input type="hidden" id="campid" name="Campaign_ID" value="None">
 
@@ -46,6 +46,10 @@
           </select>
           
       </div>
+      <div class="col-md-4" style="display:none" id='GCaseId'>
+          <label for="g_case_id">Google Cases-ID</label>
+          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+      </div>
       <div class="col-md-4">
         <label for="manager_name">Manager Name</label>
         <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
@@ -55,8 +59,8 @@
         <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
       </div>
       <div class="col-md-4">
-        <label for="country">Rep Location</label>
-          <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Enter Advertiser Location" autocomplete="off">
+        <label for="country">Google Rep Location</label>
+          <input type="text" class="form-control" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
       </div>
     </div>
     <div class="std-sub-title">Advertiser Info</div>
@@ -78,7 +82,7 @@
         </div>
         <div class="col-md-4">
           <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
-            <option value="0">Target Program Location</option>
+            <option value="0">Target Location</option>
             {% for loc in locations %}
               <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
             {% endfor %}
@@ -96,9 +100,8 @@
             <option value="">Select Time Zone</option>
           </select>
         </div>
-       <div class="col-md-4" style="display:none" id='GCaseId'>
-            <label for="g_case_id">Google Cases-ID</label>
-            <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Enter Advertiser Location" autocomplete="off">
         </div>
     </div>
     <div class="webmasterCheck">        
@@ -177,7 +180,7 @@
                   </select>
 
                   <div id='ctype2_campaign' style="display:none">
-                  <label style="height:48px;margin-bottom: 20px;">
+                  <label style="height:48px;margin-bottom:20px;">
                     <input type="checkbox" value="0" name="is_campaign_created2" id="is_campaign_created2">
                     Is campaign created?
                   </label>
@@ -210,7 +213,7 @@
               </select>
 
               <div id='ctype3_campaign' style="display:none">
-                  <label style="height:48px;margin-bottom: 20px;">
+                  <label style="height:48px;margin-bottom:20px;">
                     <input type="checkbox" value="0" name="is_campaign_created3" id="is_campaign_created3">
                     Is campaign created?
                   </label>
@@ -345,7 +348,7 @@
   <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
     <div class="checkbox">
           <label id="tagCheck" class="tag-policies" style="display:none;">
-             <input type="checkbox" value="" id="tag_via_gtm" name="via_google_tag_manager">
+             <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm">
             Do you want to install this Tag via Google Tag Manager?
           </label>
           <label class="shopping-policy" style="display:none;">
@@ -382,6 +385,8 @@
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bundle_lead_form.js' %}"></script>
 <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAp04yNttlQq-7b4aZI_jL5hQYPm-xtd00hTQOC0OXpAMO40FHAxQMnH50uBbWoKVHwgpklyirDEregg"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
     if(google.loader.ClientLocation)
     {
@@ -392,14 +397,15 @@
         visitor_country = google.loader.ClientLocation.address.country;
         visitor_countrycode = google.loader.ClientLocation.address.country_code;
         var currentLoc = visitor_city + ', ' + visitor_region + ', ' + visitor_country;
-        document.getElementById('advertiser_location').value = currentLoc;
+        document.getElementById('rep_location').value = currentLoc;
     }
     else
     {
-        document.getElementById('advertiser_location').value = '';
+        document.getElementById('rep_location').value = '';
     }
 
   $(document).ready(function(){
+    initialize();
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;

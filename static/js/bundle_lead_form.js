@@ -32,39 +32,39 @@
 
     $("#is_campaign_created1").click(function(){
       if(document.getElementById('is_campaign_created1').checked == false){
-          document.getElementById('is_campaign_created1').value = 0;
+          $(this).val(0);
           $("#rbid_campaign1").show();
           $("#rbudget_campaign1").show();
       }else{
-          document.getElementById('is_campaign_created1').value = 1;
-          $("#rbid_campaign1").hide();
-          $("#rbudget_campaign1").hide();
+          $(this).val(1);
+          $("#rbid_campaign1").hide().val('');
+          $("#rbudget_campaign1").hide().val('');
       }
     });
 
 
     $("#is_campaign_created2").click(function(){
       if(document.getElementById('is_campaign_created2').checked == false){
-          document.getElementById('is_campaign_created2').value = 0;
+          $(this).val(0);
           $("#rbid_campaign2").show();
           $("#rbudget_campaign2").show();
       }else{
-          document.getElementById('is_campaign_created2').value = 1;
-          $("#rbid_campaign2").hide();
-          $("#rbudget_campaign2").hide();
+          $(this).val(1);
+          $("#rbid_campaign2").hide().val('');
+          $("#rbudget_campaign2").hide().val('');
       }
     });
 
 
     $("#is_campaign_created3").click(function(){
       if(document.getElementById('is_campaign_created3').checked == false){
-        document.getElementById('is_campaign_created3').value = 0;
+        $(this).val(0);
           $("#rbid_campaign3").show();
           $("#rbudget_campaign3").show();
       }else{
-        document.getElementById('is_campaign_created3').value = 1;
-          $("#rbid_campaign3").hide();
-          $("#rbudget_campaign3").hide();
+        $(this).val(1);
+          $("#rbid_campaign3").hide().val('');
+          $("#rbudget_campaign3").hide().val('');
       }
     });
     
@@ -529,14 +529,16 @@ function validatethis(frm) {
 
     }
 
-      if($("#is_shopping_policies").is(":checked")){
-        $("#is_shopping_policies").val(true);
-        $(".shopping-policy").removeClass('error-box');
-      }else{
-          $(".shopping-policy").addClass('error-box');
-          $("#is_shopping_policies").val(false);
-          return false;
-      }
+    if($("#is_shopping_policies").is(":visible")){
+        if($("#is_shopping_policies").is(":checked")){
+          $("#is_shopping_policies").val(1);
+          $(".shopping-policy").removeClass('error-box');
+        }else{
+            $(".shopping-policy").addClass('error-box');
+            $("#is_shopping_policies").val(0);
+            return false;
+        }
+    }
 
       // Check If Error in Form
       if(window.is_error){
@@ -555,15 +557,15 @@ function validatethis(frm) {
 
     // Check Box Options
     if($("#tag_via_gtm").is(":checked")){
-      $("#tag_via_gtm").val(true);
+      $("#tag_via_gtm").val(1);
     }else{
-      $("#tag_via_gtm").val(false);
+      $("#tag_via_gtm").val(0);
     }
 
     if($("#web_access").is(":checked")){
-        $("#web_access").val(true);
+        $("#web_access").val(1);
     }else{
-      $("#web_access").val(false);
+      $("#web_access").val(0);
     }
 
 
@@ -695,7 +697,7 @@ function showHeadsUp(){
 
   if(type1 || type2 || type3){
     // Type 1
-    if(type1 && type1 in window.shoppingLeads){
+    if(type1 && type1 == 'Google Shopping Setup'){
       $("#heads_up").show();
       $(".shopping-policy").show();
     }else if(type1){
@@ -704,7 +706,7 @@ function showHeadsUp(){
     }
 
     // Type 2
-    if(type2 && type2 in window.shoppingLeads){
+    if(type2 && type2 == 'Google Shopping Setup'){
       $("#heads_up").show();
       $(".shopping-policy").show();
     }else if(type2){
@@ -713,7 +715,7 @@ function showHeadsUp(){
     }
 
     // Type 3
-    if(type3 && type3 in window.shoppingLeads){
+    if(type3 && type3 == 'Google Shopping Setup'){
       $("#heads_up").show();
       $(".shopping-policy").show();
     }else if(type3){
