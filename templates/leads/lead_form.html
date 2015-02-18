@@ -5,7 +5,9 @@
 {% block title %}
   Lead Form
 {% endblock title %}
-
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
@@ -30,12 +32,7 @@
       </div>
       <div class="col-md-4">
         <label for="team">Program name</label>
-        <select class="form-control" id="team" title="Program Name" name="team">
-          <option value="">Program name</option>
-          {% for team in teams %}
-            <option value='{{team.team_name}}'>{{team.team_name}}</option>
-          {% endfor %}
-        </select>
+        <input type="text" id="team" class="form-control" title="Program Name">
       </div>
       <div class="col-md-4 tr_service_segment"></div>
       <div class="col-md-4 tr_service_segment"></div>
@@ -369,6 +366,7 @@
 
 {% block main_js %}
 {% include 'leads/timezone.html' %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
  <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
@@ -392,5 +390,13 @@
     }
   
   });
+
+ $("#team").autocomplete({
+      source: {{programs|safe}},
+      select: function(event,ui){
+        $("#team").val(ui.item);
+      }
+    });
+
 </script>
 {% endblock main_js %}

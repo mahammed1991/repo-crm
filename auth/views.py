@@ -3,12 +3,12 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from forum.models import User
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from forum.actions import UserLoginAction, UserJoinsAction
 from django.template import RequestContext
 from main.models import UserDetails
+from lib.forum_helpers import update_forum_user
 
 
 # User login view
@@ -20,32 +20,20 @@ def user_login(request):
 def post_login(request):
     """ Update user profile """
     try:
-        username = request.user.username.split('@')[0]
-
         # Main User Model
-        request.user.save()
+        usr = User.objects.get(email=request.user.email)
+        update_forum_user(request)
 
-        # Customise User Model
-        user = User.objects.get(username=username)
-        user.user_ptr = request.user
-        user.save()
+        usr.first_name = request.user.first_name
+        usr.last_name = request.user.last_name
+        usr.save()
     except ObjectDoesNotExist:
-        obj = User()
-        obj.user_ptr = request.user
-        obj.email_isvalid = True
-        obj.last_seen = request.user.last_login
-        obj.username = request.user.username if '@' not in request.user.username else request.user.username.split('@')[0]
-        obj.real_name = "%s %s" % (request.user.first_name, request.user.last_name)
-        obj.is_active = request.user.is_active
-        obj.email = request.user.email
-        obj.profile_image_url = request.session['profile_image'] if 'profile_image' in request.session else ''
-        obj.save()
-        # UserLoginAction(user=obj, ip=request.META['REMOTE_ADDR']).save()
-        # UserJoinsAction(user=obj).save()
-        return redirect('main.views.get_started')
+        print Exception
+        return redirect('auth.views.user_login')
+
     try:
         user_profile = UserDetails.objects.get(user_id=request.user.id)
-        if not user_profile.phone and not user_profile.user_manager_name and not user_profile.user_manager_email and user_profile.team and user_profile.location:
+        if not user_profile.phone or not user_profile.user_manager_email or user_profile.team or user_profile.location:
             return redirect('main.views.get_started')
     except ObjectDoesNotExist:
         return redirect('main.views.get_started')
