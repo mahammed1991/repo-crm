@@ -32,7 +32,13 @@
       </div>
       <div class="col-md-4">
         <label for="team">Program name</label>
-        <input type="text" id="team" class="form-control" title="Program Name">
+        <select class="form-control" id="team" title="Program Name" name="team">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+        <!-- <input type="text" id="team" class="form-control" title="Program Name"> -->
       </div>
       <div class="col-md-4 tr_service_segment"></div>
       <div class="col-md-4 tr_service_segment"></div>
@@ -44,11 +50,10 @@
               <option value="HPA">HPA</option>
               <option value="HPA+">HPA+</option>
           </select>
-          
-      </div>
-      <div class="col-md-4" style="display:none" id='GCaseId'>
-          <label for="g_case_id">Google Cases-ID</label>
-          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+          <!-- <div class="col-md-4" style="display:none" id='GCaseId'> -->
+            <label for="g_case_id">Google Cases-ID</label>
+            <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+        <!-- </div> -->
       </div>
       <div class="col-md-4">
         <label for="manager_name">Manager Name</label>
@@ -423,11 +428,11 @@
     }
   
   });
-  $("#team").autocomplete({
-      source: {{programs|safe}},
-      select: function(event,ui){
-        $("#team").val(ui.item);
-      }
-    });
+  // $("#team").autocomplete({
+  //     source: {{programs|safe}},
+  //     select: function(event,ui){
+  //       $("#team").val(ui.item);
+  //     }
+  //   });
 </script>
 {% endblock main_js %}
