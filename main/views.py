@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
 from django.core.urlresolvers import reverse
+from forum.models import *
 from django.contrib.auth.models import User
 
 from django.conf import settings
@@ -28,8 +29,7 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_p
                          is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
-
-from forum.models import *
+from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.utils.html import strip_tags
 from reports.report_services import ReportService
 
@@ -294,8 +294,10 @@ def get_started(request):
     """ Get Initial information from user """
     locations = Location.objects.filter(is_active=True)
     teams = Team.objects.filter(is_active=True)
+    managers = User.objects.values_list('email', flat=True)
+    managers = [str(m) for m in managers]
     # regalix_team = RegalixTeams.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams})
+    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams, 'managers': managers})
 
 
 @login_required
@@ -706,3 +708,89 @@ def notify_portal_feedback_activity(request, feedback):
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return feedback
+
+
+@login_required
+def master_data_upload(request):
+    """ upload and load leads to view """
+    template_args = dict({'migrate_type': None})
+    if request.method == 'POST':
+        migrate_type = request.POST.get('migrate_type')
+        if request.FILES:
+            excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+            if not os.path.exists(excel_file_save_path):
+                os.makedirs(excel_file_save_path)
+            excel_file = request.FILES['file']
+            # excel sheet data
+            excel_data = list()
+
+            # Check file extension type
+            # require only .xlsx file
+            if excel_file.name.split('.')[1] != 'xlsx':
+                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file'})
+                return render(request, 'main/master_upload.html', template_args)
+
+            file_name = 'master_data.xls'
+            excel_file_path = excel_file_save_path + file_name
+            with open(excel_file_path, 'wb+') as destination:
+                for chunk in excel_file.chunks():
+                    destination.write(chunk)
+                destination.close()
+
+            workbook = open_workbook(excel_file_path)
+
+            sheet = workbook.sheet_by_index(0)
+
+            for row_index in range(sheet.nrows):
+                # read each row
+                excel_row_data = list()
+                for col_index in range(sheet.ncols):
+                    # check each column for date type
+                    cell_type = sheet.cell_type(row_index, col_index)
+                    cell_value = sheet.cell_value(row_index, col_index)
+
+                    # if column is formatted as datetype, convert to datetime object
+                    # otherwise show column as is
+                    if cell_type == XL_CELL_DATE:
+                        dt_tuple = xldate_as_tuple(cell_value, workbook.datemode)
+                        cell_dt = datetime(dt_tuple[0], dt_tuple[1], dt_tuple[2], dt_tuple[3], dt_tuple[4], dt_tuple[5])
+                        cell_dt = datetime.strftime(cell_dt, '%m/%d/%Y')
+                        excel_row_data.append(cell_dt)
+                    else:
+                        excel_row_data.append(cell_value)
+
+                # append row data to excel sheet data
+                excel_data.append(excel_row_data)
+
+            template_args.update({'excel_data': excel_data, 'excel_file': file_name, 'migrate_type': migrate_type})
+    return render(request, 'main/master_upload.html', template_args)
+
+
+def migrate_user_data(request):
+    """ Update leads to server Database from uploaded file """
+    excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+    excel_file = request.POST['file']
+    excel_file_path = excel_file_save_path + excel_file
+    workbook = open_workbook(excel_file_path)
+    sheet = workbook.sheet_by_index(0)
+    #email_list = User.objects.values_list('email', flat=True)
+    for r_i in range(1, sheet.nrows):
+        rep_email = sheet.cell(r_i, get_col_index(sheet, 'Rep Email')).value
+        manager_email = sheet.cell(r_i, get_col_index(sheet, 'Manager Email')).value
+        program = sheet.cell(r_i, get_col_index(sheet, 'Program')).value
+        location = sheet.cell(r_i, get_col_index(sheet, 'Location')).value
+        print rep_email, manager_email, program, location
+        try:
+            pass
+            #email_list = User.objects.values_list('email', flat=True)
+        except ObjectDoesNotExist:
+            continue
+
+    return redirect('main.views.master_data_upload')
+
+
+def get_col_index(sheet, col_name):
+    for col_index in range(sheet.ncols):
+        col_val = sheet.cell(0, col_index).value
+        if col_name == col_val:
+            return col_index
