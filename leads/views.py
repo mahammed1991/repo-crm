@@ -168,7 +168,8 @@ def lead_form(request):
 
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
-
+    programs = ReportService.get_all_teams()
+    programs = [str(pgm) for pgm in programs]
     return render(
         request,
         'leads/lead_form.html',
@@ -177,6 +178,7 @@ def lead_form(request):
          'new_locations': new_locations,
          'teams': teams,
          'code_types': code_types,
+         'programs': programs,
          'time_zone_for_region': json.dumps(time_zone_for_region),
          'language_for_location': json.dumps(language_for_location)
          }
@@ -650,7 +652,8 @@ def bundle_lead_form(request):
 
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
-
+    programs = ReportService.get_all_teams()
+    programs = [str(pgm) for pgm in programs]
     return render(
         request,
         'leads/bundle_lead_form.html',
@@ -658,6 +661,7 @@ def bundle_lead_form(request):
          'locations': all_locations,
          'new_locations': new_locations,
          'teams': teams,
+         'programs': programs,
          'code_types': code_types,
          'time_zone_for_region': json.dumps(time_zone_for_region),
          'language_for_location': json.dumps(language_for_location)

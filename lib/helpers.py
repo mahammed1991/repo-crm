@@ -80,7 +80,7 @@ def manager_info_required(func):
             # check if user has manager information filled in
             # otherwise redirect to add/edit manager info section
             user_details = UserDetails.objects.get(user_id=request.user.id)
-            if not user_details.user_manager_name or not user_details.user_manager_email:
+            if not user_details.user_manager_email:
                 return redirect('main.views.edit_profile_info')
         except ObjectDoesNotExist:
             return redirect('main.views.edit_profile_info')

@@ -766,6 +766,7 @@ def master_data_upload(request):
     return render(request, 'main/master_upload.html', template_args)
 
 
+@csrf_exempt
 def migrate_user_data(request):
     """ Update leads to server Database from uploaded file """
     excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
@@ -773,22 +774,34 @@ def migrate_user_data(request):
     excel_file_path = excel_file_save_path + excel_file
     workbook = open_workbook(excel_file_path)
     sheet = workbook.sheet_by_index(0)
-    #email_list = User.objects.values_list('email', flat=True)
     for r_i in range(1, sheet.nrows):
-        rep_email = sheet.cell(r_i, get_col_index(sheet, 'Rep Email')).value
-        manager_email = sheet.cell(r_i, get_col_index(sheet, 'Manager Email')).value
+        rep_email = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager ldap (Google Rep)')).value
+        google_rep_email = rep_email + '@google.com'
+        google_manager = sheet.cell(r_i, get_col_index(sheet, 'Google Manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'Program')).value
-        location = sheet.cell(r_i, get_col_index(sheet, 'Location')).value
-        print rep_email, manager_email, program, location
+        #rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
+        #r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
+        #market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
+        #rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
         try:
-            pass
-            #email_list = User.objects.values_list('email', flat=True)
+            user = User.objects.get(email=google_rep_email)
+            user_details = UserDetails.objects.get(user_id=user.id)
+            user_details.user_manager_email = google_manager
+            try:
+                program = Team.objects.get(team_name=program)
+                user_details.team_id = program.id
+                user_details.save()
+            except ObjectDoesNotExist:
+                program = Team(team_name=program)
+                program.save()
+                user_details.team_id = program.id
+                user_details.save()
         except ObjectDoesNotExist:
             continue
 
     return redirect('main.views.master_data_upload')
 
-
+ 
 def get_col_index(sheet, col_name):
     for col_index in range(sheet.ncols):
         col_val = sheet.cell(0, col_index).value
