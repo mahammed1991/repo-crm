@@ -276,7 +276,6 @@ def agency_form(request):
         appointment_date = request.POST.get('set_appointment')
         #  02/12/2015 09:16 pm Time Formate
         appointment_date = datetime.strptime(appointment_date, "%m/%d/%Y %I:%M %p")
-        print appointment_date
         try:
             agency = AgencyDetails.objects.get(google_rep=request.user, agency_name=agency_name, location_id=location,
                                                timezone_id=timezone, language_id=language)
@@ -421,7 +420,6 @@ def agent_bulk_upload(request, agency_name, pid):
             template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True, 'agency_name': agency_name, 'pid': pid,
                                   'remaining': range(len(data_list) + 1, remaining), 'locations': all_locations,
                                   'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
-            print template_args
             return render(request, 'leads/agent_bulk_form.html', template_args)
 
         if 'paramcounts' in request.POST:

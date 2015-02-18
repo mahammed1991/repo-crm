@@ -5,7 +5,9 @@
 {% block title %}
   User Profile
 {% endblock title %}
-
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
 {% block content %}
 
 
@@ -49,10 +51,19 @@
 {% endblock content %}
 
 {% block main_js %}
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/profile.js' %}"></script>
     <script type="text/javascript">
       window.loc_id = {{user.profile.location.id|safe}}
       window.team_id = {{user.profile.team.id|safe}}
-    </script>
+
+    $("#user_manager_email").autocomplete({
+      source: {{managers|safe}},
+      select: function(event,ui){
+        $("#user_manager_email").val(ui.item);
+      }
+    });
+
+</script>
     
 {% endblock main_js %}

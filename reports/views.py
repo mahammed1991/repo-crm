@@ -578,7 +578,6 @@ def get_reports(request):
 @login_required
 def download_leads(request):
     """ Download leads from Database """
-
     if request.method == 'POST':
         from_date = request.POST.get('from')
         to_date = request.POST.get('to')

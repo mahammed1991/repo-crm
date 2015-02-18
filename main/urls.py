@@ -23,4 +23,6 @@ urlpatterns = patterns(
     # url(r'^report/$', views.report),
     # url(r'^contacts/$', views.get_contacts),
     # url(r'^top-30-cms/$', views.top_30_cms),
+    url(r'^user/master-data$', views.master_data_upload),
+    url(r'^user/migrate-user-data$', views.migrate_user_data),
 )
