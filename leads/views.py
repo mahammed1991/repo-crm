@@ -198,7 +198,7 @@ def get_common_lead_data(post_data):
         '00Nd00000077r3s': post_data.get('manager_email'),  # Manager Email
         '00Nd0000005XIWB': post_data.get('team'),  # Team
         '00Nd0000007e2AF': post_data.get('service_segment'),  # Service Segment
-        '00Nd0000007f0fj': post_data.get('g_case_id'),  # G Cases Id
+        '00Nd0000007f0fj': post_data.get('g_cases_id'),  # G Cases Id
         '00Nd0000005WYga': post_data.get('country'),  # Country
 
         # Production ID's
