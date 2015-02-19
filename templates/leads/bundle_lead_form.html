@@ -15,6 +15,7 @@
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
     <input type="hidden" name="oid" value="00Dq00000009tyR">
     <input type="hidden" id="campid" name="Campaign_ID" value="None">
 

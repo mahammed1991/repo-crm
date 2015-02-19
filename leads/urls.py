@@ -10,6 +10,7 @@ urlpatterns = patterns(
     url(r'^leads-list/$', views.leads_list),
     url(r'^leads-report/$', views.leads_report),
     url(r'^thankyou/$', views.thankyou),
+    url(r'^lead_error/$', views.lead_error),
     url(r'^day-light-changes/$', views.day_light_changes),
     url(r'^manage-leads/$', views.manage_leads),
     url(r'^upload-leads/$', views.upload_leads),

@@ -65,4 +65,4 @@ def handle_page_not_found(request):
     """ Page not found Page """
     print "404 Page"
     return render_to_response('auth/404.html', locals(), context_instance=RequestContext(request))
-    #return render(request, 'auth/404.html')
+    # return render(request, 'auth/404.html')
