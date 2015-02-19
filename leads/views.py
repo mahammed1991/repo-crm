@@ -53,6 +53,7 @@ def lead_form(request):
         # Get Basic/Common form filed data
         basic_data = get_common_lead_data(request.POST)
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
 
         tag_data = basic_data
         advirtiser_details = {'first_name': request.POST.get('advertiser_name'),
@@ -108,7 +109,11 @@ def lead_form(request):
 
             # Sandbox ID for TAD VIA GTM
             tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
-            requests.request('POST', url=sf_api_url, data=tag_data)
+            try:
+                requests.request('POST', url=sf_api_url, data=tag_data)
+            except Exception as e:
+                print e
+                return redirect(basic_data['errorURL'])
 
             # Create Icallender (*.ics) file for send mail
             advirtiser_details.update({'appointment_date': request.POST.get('tag_datepick')})
@@ -141,7 +146,11 @@ def lead_form(request):
             # SandBox ID for IS SHOPPING POLICIES
             setup_data['00Nq0000000eZPB'] = request.POST.get('is_shopping_policies')  # Shopping Policies
 
-            requests.request('POST', url=sf_api_url, data=setup_data)
+            try:
+                requests.request('POST', url=sf_api_url, data=setup_data)
+            except Exception as e:
+                print e
+                return redirect(basic_data['errorURL'])
 
             # Create Icallender (*.ics) file for send mail
             # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -165,8 +174,11 @@ def lead_form(request):
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
             'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
         language_for_location[loc.location_name] = [{'language_name': lang[
-            'language_name']} for lang in loc.language.values()]
-
+            'language_name']} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
+        if language_for_location[loc.location_name]:
+            language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
+        else:
+            language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
     programs = ReportService.get_all_teams()
@@ -255,7 +267,12 @@ def agency_form(request):
         l = {'id': int(loc.id), 'name': str(loc.location_name)}
         all_locations.append(l)
         time_zone_for_region[loc.id] = [{'zone_name': tz.zone_name, 'id': tz.id, 'time_value': tz.time_value} for tz in loc.time_zone.filter()]
-        language_for_location[loc.id] = [{'language_name': lang.language_name, 'id': lang.id} for lang in loc.language.filter()]
+        language_for_location[loc.id] = [
+            {'language_name': lang.language_name, 'id': lang.id} for lang in loc.language.filter() if lang.language_name != loc.primary_language.language_name]
+        if language_for_location[loc.location_name]:
+            language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
+        else:
+            language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
 
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
@@ -416,7 +433,11 @@ def agent_bulk_upload(request, agency_name, pid):
                 time_zone_for_region[loc.location_name] = [{'zone_name': tz[
                     'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
                 language_for_location[loc.location_name] = [{'language_name': lang[
-                    'language_name']} for lang in loc.language.values()]
+                    'language_name']} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
+                if language_for_location[loc.location_name]:
+                    language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
+                else:
+                    language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
 
             code_types = ReportService.get_all_code_type()
             remaining = len(data_list) + 11
@@ -440,43 +461,43 @@ def agent_bulk_upload(request, agency_name, pid):
             except ObjectDoesNotExist:
                 pass
 
-            basic_lead_args = {
-                # Google Rep Information
-                '00Nd0000005WYgk': goggle_rep.first_name + ' ' + goggle_rep.last_name,  # Full Name
-                'email': goggle_rep.email,                   # Rep Email
-                '00Nd00000075Crj': goggle_rep.profile.user_manager_name,  # Manager Name
-                '00Nd00000077r3s': goggle_rep.profile.user_manager_email,  # Manager Email
-                '00Nd0000005XIWB': goggle_rep.profile.team.team_name,  # Team
-                '00Nd0000007e2AF': None,  # Service Segment
-                '00Nd0000007dWIH': None,  # G Cases Id
-                '00Nd0000005WYga': '',  # Country
-
-                '00Nd0000005WcNw': '',  # Advertiser Email
-                '00Nd0000005WYgz': '',  # Advertiser Phone
-                'company': '',    # Advertiser Company
-                '00Nd0000005WYgV': '',  # Customer ID
-
-                '00Nd0000007clUn': poc.agency.language.language_name,  # Language
-                '00Nd0000005WYhT': '',  # Time Zone
-
-
-                # Sandbox ID's
-                '00Nq0000000eZPG': '',  # Advertiser Name
-                '00Nq0000000eZOS': '',  # Advertiser Location
-                '00Nq0000000eZOw': 0,  # Web Access
-                '00Nq0000000eZOh': '',  # Webmaster Email
-                '00Nq0000000eZOc': '',  # Webmaster Phone
-
-                # Webmaster Details
-                '00Nd0000005WYgp': None,  # Webmaster First Name
-                '00Nd0000005WYgu': None,  # Webmaster Last Name
-                '00Nq0000000eJdW': 1,    # Default value for Change Lead Owner
-                'Campaign_ID': None,
-                'oid': request.POST.get('oid'),
-                '__VIEWSTATE': request.POST.get('__VIEWSTATE'),
-            }
-
             for i in range(1, int(params_count) + 1):
+
+                basic_lead_args = {
+                    # Google Rep Information
+                    '00Nd0000005WYgk': goggle_rep.first_name + ' ' + goggle_rep.last_name,  # Full Name
+                    'email': goggle_rep.email,                   # Rep Email
+                    '00Nd00000075Crj': goggle_rep.profile.user_manager_name,  # Manager Name
+                    '00Nd00000077r3s': goggle_rep.profile.user_manager_email,  # Manager Email
+                    '00Nd0000005XIWB': goggle_rep.profile.team.team_name,  # Team
+                    '00Nd0000007e2AF': None,  # Service Segment
+                    '00Nd0000007dWIH': None,  # G Cases Id
+                    '00Nd0000005WYga': '',  # Country
+
+                    '00Nd0000005WcNw': '',  # Advertiser Email
+                    '00Nd0000005WYgz': '',  # Advertiser Phone
+                    'company': '',    # Advertiser Company
+                    '00Nd0000005WYgV': '',  # Customer ID
+
+                    '00Nd0000007clUn': poc.agency.language.language_name,  # Language
+                    '00Nd0000005WYhT': '',  # Time Zone
+
+
+                    # Sandbox ID's
+                    '00Nq0000000eZPG': '',  # Advertiser Name
+                    '00Nq0000000eZOS': '',  # Advertiser Location
+                    '00Nq0000000eZOw': 0,  # Web Access
+                    '00Nq0000000eZOh': '',  # Webmaster Email
+                    '00Nq0000000eZOc': '',  # Webmaster Phone
+
+                    # Webmaster Details
+                    '00Nd0000005WYgp': None,  # Webmaster First Name
+                    '00Nd0000005WYgu': None,  # Webmaster Last Name
+                    '00Nq0000000eJdW': 1,    # Default value for Change Lead Owner
+                    'Campaign_ID': None,
+                    'oid': request.POST.get('oid'),
+                    '__VIEWSTATE': request.POST.get('__VIEWSTATE'),
+                }
                 lead_args = dict()
                 customer_id = request.POST.get('customer_id_' + str(i))
                 location = request.POST.get('location_' + str(i))
@@ -506,7 +527,10 @@ def agent_bulk_upload(request, agency_name, pid):
 
                 lead_args['create_date'] = datetime.utcnow()  # Created Date
                 # Post Lead data to SalesForce
-                post_lead_to_sf(request, lead_args)
+                try:
+                    post_lead_to_sf(request, lead_args)
+                except Exception as e:
+                    print e
 
             template_args.update({'is_csv': True})
     return render(request, 'leads/agent_bulk_form.html', template_args)
@@ -614,8 +638,11 @@ def bundle_lead_form(request):
         time_zone_for_region[loc.location_name] = [{'zone_name': tz[
             'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
         language_for_location[loc.location_name] = [{'language_name': lang[
-            'language_name']} for lang in loc.language.values()]
-
+            'language_name']} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
+        if language_for_location[loc.location_name]:
+            language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
+        else:
+            language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
     programs = ReportService.get_all_teams()
@@ -796,6 +823,22 @@ def thankyou(request):
         redirect_page = redirect_page_source[redirect_page]
 
     return render(request, 'leads/thankyou.html', {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
+
+
+@login_required
+def lead_error(request):
+    """ Error message fail to submitting salesforce """
+    redirect_page = request.GET.get('n', reverse('main.views.home'))
+    redirect_page_source = {
+        '1': reverse('leads.views.lead_form'),
+        '2': reverse('leads.views.shopping_campaign_setup_lead_form'),
+        '3': reverse('leads.views.bundle_lead_form'),
+    }
+
+    if redirect_page in redirect_page_source.keys():
+        redirect_page = redirect_page_source[redirect_page]
+
+    return render(request, 'leads/lead_error.html', {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
 
 
 @login_required

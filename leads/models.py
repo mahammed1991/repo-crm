@@ -137,6 +137,7 @@ class Location(models.Model):
     location_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=50, null=True, default=None, blank=True)
     time_zone = models.ManyToManyField(Timezone)
+    primary_language = models.ForeignKey(Language, related_name="primary_language", null=False, blank=False, default=1)
     language = models.ManyToManyField(Language)
     flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
