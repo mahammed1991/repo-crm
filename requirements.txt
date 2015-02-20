@@ -5,7 +5,7 @@ argparse==1.2.1                 # Python command-line parsing library
 oauthlib==0.6.3                 # A generic, spec-compliant, thorough implementation of the OAuth request-signing logic
 python-openid==2.2.5            # OpenID support for servers and consumers
 python-social-auth==0.1.26      # Python social authentication.
-requests==2.3.0                 # Python HTTP for Humans
+requests==2.5.1                 # Python HTTP for Humans
 requests-oauthlib==0.4.1        # OAuthlib authentication support for Requests
 six==1.7.2                      # Python 2 and 3 compatibility utilities
 wsgiref==0.1.2                  # WSGI (PEP 333) Reference Library

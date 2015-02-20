@@ -56,7 +56,7 @@ def main_home(request):
     """
     user_profile = get_user_profile(request.user)
 
-    if request.user.email in ['rajuk@regalix-inc.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com']:
+    if request.user.email in settings.SEPERVIEWUSER:
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
 
         status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']

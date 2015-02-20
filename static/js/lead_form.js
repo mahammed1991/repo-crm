@@ -73,7 +73,8 @@
       opacity: "toggle"
       }, 200, function() {
         if($(".tag-policies").is(":visible")){
-            $(".tag-policies").hide();  
+            $(".tag-policies").hide();
+            $("#is_tag_lead").val('yes');
           }else{
             $(".tag-policies").show();
             $("#heads_up").show();
@@ -470,6 +471,8 @@ function validatethis(frm) {
 
       // Hava an appointment 
     if (document.getElementById("appointmentCheck1").checked == true) {
+
+      $("#is_tag_lead").val('yes');
 
       // Contact Person Name Validation 
       if (frm.tag_contact_person_name.value == "") {

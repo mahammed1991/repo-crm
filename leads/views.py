@@ -70,8 +70,11 @@ def lead_form(request):
 
             tag_data['00Nd0000005WYlL'] = request.POST.get('tag_datepick'),  # TAG Appointment Date
             if request.POST.get('tag_contact_person_name'):
-                tag_data['first_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[0],  # Primary Contact Name
-                tag_data['last_name'] = request.POST.get('tag_contact_person_name').rsplit(' ', 1)[1] if len(request.POST.get('tag_contact_person_name').rsplit(' ', 1)) > 1 else '',
+                full_name = request.POST.get('tag_contact_person_name')
+            else:
+                full_name = request.POST.get('tag_contact_person_name')
+            tag_data['first_name'] = full_name.rsplit(' ', 1)[0],  # Primary Contact Name
+            tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else '',
             tag_data['00Nd0000005WayR'] = request.POST.get('tag_primary_role'),  # Role
 
             # Code Type 1 Details
@@ -110,7 +113,7 @@ def lead_form(request):
             # Sandbox ID for TAD VIA GTM
             tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
             try:
-                requests.request('POST', url=sf_api_url, data=tag_data)
+                requests.post(url=sf_api_url, data=tag_data)
             except Exception as e:
                 print e
                 return redirect(basic_data['errorURL'])
@@ -147,7 +150,7 @@ def lead_form(request):
             setup_data['00Nq0000000eZPB'] = request.POST.get('is_shopping_policies')  # Shopping Policies
 
             try:
-                requests.request('POST', url=sf_api_url, data=setup_data)
+                requests.post(url=sf_api_url, data=setup_data)
             except Exception as e:
                 print e
                 return redirect(basic_data['errorURL'])
@@ -723,8 +726,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
 
     # Sandbox ID for TAD VIA GTM
     tag_data['00Nq0000000eZP6'] = post_data.get('tag_via_gtm')  # Tag Via  GTM
-
-    requests.request('POST', url=sf_api_url, data=tag_data)
+    print tag_data, "TAG Data"
+    requests.post(url=sf_api_url, data=tag_data)
 
 
 def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
@@ -767,8 +770,8 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
 
     # SandBox ID for IS SHOPPING POLICIES
     setup_data['00Nq0000000eZPB'] = post_data.get('is_shopping_policies')  # Shopping Policies
-
-    requests.request('POST', url=sf_api_url, data=setup_data)
+    print setup_data, "Shopping"
+    requests.post(url=sf_api_url, data=setup_data)
 
 
 @login_required
@@ -1255,7 +1258,7 @@ def get_lead_summary(request, lid=None):
     lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
     email = request.user.email
     # email = 'tkhan@regalix-inc.com'
-    if email in ['rajuk@regalix-inc.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com']:
+    if email in settings.SEPERVIEWUSER:
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)
         # leads = Leads.objects.filter(google_rep_email="bhavinb@google.com")

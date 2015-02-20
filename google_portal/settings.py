@@ -250,7 +250,7 @@ for path in app_url_split[1].split('/')[1:]:
 if FORCE_SCRIPT_NAME.endswith('/'):
     FORCE_SCRIPT_NAME = FORCE_SCRIPT_NAME[:-1]
 
-#Module system initialization
+# Module system initialization
 MODULES_PACKAGE = 'forum_modules'
 MODULES_FOLDER = os.path.join(SITE_SRC_ROOT, MODULES_PACKAGE)
 
@@ -267,3 +267,7 @@ MODULE_LIST = filter(lambda m: getattr(m, 'CAN_USE', True), [
     ["%s.%s" % (m.__name__, mc) for mc in getattr(m, 'MIDDLEWARE_CLASSES', [])]) for m in MODULE_LIST]
 
 [TEMPLATE_LOADERS.extend(["%s.%s" % (m.__name__, tl) for tl in getattr(m, 'TEMPLATE_LOADERS', [])]) for m in MODULE_LIST]
+
+
+SEPERVIEWUSER = ['rajuk@regalix-inc.com', 'schaturvedi@google.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com',
+                 'yatharth@google.com', 'vaibhavgoyal@google.com', 'lornamellon@google.com', 'blasieli@google.com']
