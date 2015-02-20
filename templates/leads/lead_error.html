@@ -1,0 +1,14 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content" style="padding-top:10px;padding-bottom:420px;text-align:left;">
+        Oops Error !<br /><br />
+        Something went wrong while submitting lead<br /><br />
+        Please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
+        To submit once again please <a href="{{ return_link }}"><b>click here.</b></a>
+    </div>
+</div>
+{% endblock content %}

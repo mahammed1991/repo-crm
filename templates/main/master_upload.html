@@ -1,0 +1,79 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Upload Leads
+{% endblock title %}
+
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend">
+                <p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Upload Data From Excel</p>
+            </legend>
+            <div id="class_content" >
+                <div id="datacontent">
+                    <form method="post" enctype="multipart/form-data" name='show-form'>
+                        {% csrf_token %}
+                        <p>Select Excel: <input type="file" name="file" id="master_data" />
+                        <input id="show" name="Show" type="submit" value="Show" /></p>
+                        <p style="font-family:Times New Roman;font-size:12px;color:red">{{error}}</p>
+                    </form>
+                </div>
+                {% if excel_data %}
+                    <div id="div1">
+                            <div id="buttonAction"><br>
+                                <form method="post" action="{% url 'main.views.migrate_user_data' %}">
+                                    {% csrf_token %}
+                                    <table width="100%" style="border-collapse: collapse">                
+                                        <tr>
+                                            <td>
+                                                <input type="submit" value="Save" />
+                                                <input type="hidden" name='file' value='{{ excel_file }}' />
+                                                <input type="button" value="Cancel" onclick="window.location.href='{% url 'main.views.master_data_upload'%}'">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
+                            </div>
+                        <div id="div2" style="height:390px;width:900px;overflow:auto;" >
+                            <table id="xlsxTable" width="100%" cellpadding="3" cellspacing="0" border="1">
+                                {% for row in excel_data %}
+                                    <tr align="center">
+                                    {% if forloop.first %}
+                                        {% for col in row %}
+                                        <td style="background:#E6E7E9"><b>{{ col }}</b></td>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for col in row %}
+                                                <td>{{ col }}</td>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script type='text/javascript'>
+    $(document).ready(function(){
+        $('#show').click(function(){
+            if($("#master_data").val() == ""){
+                alert('Please select an excel file to upload data.');
+                return false;
+            }
+        });
+    });
+
+</script>
+{% endblock main_js %}

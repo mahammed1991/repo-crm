@@ -1,0 +1,286 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+    <!-- BULK UPLOAD FORM FORM REP -->
+    <div class="container-fluid">
+    {% if poc_details %}
+      <div class="lead-form agents-form-selection" id="agency_bulk_upload">
+              <div class="table-container" style="float:left;">
+                <form action="{% url 'leads.views.download_agency_csv' %}">
+                  <input type="submit" class="btn std-btn sm-btn" value="Download CSV format">
+                </form>
+              </div>
+            <div class="table-container" style="float:left;">
+                {% if not data %}
+                <form method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                    <label style="float:left;"> Select CSV file to upload: </label>
+                    <input type="file" name="csvfile" id="csvfile" style="float:left;">
+                    <input type="submit" class="btn std-btn sm-btn" value="Upload CSV" name="submit" style="float:left;">
+                  </form>
+                  {% endif %}
+            </div>
+            {% if data %}
+            <div class="row table-container" style="width:800px !important">
+                  <form method="post" id="bulkForm" name="buklForm" action="{% url 'leads.views.agent_bulk_upload' agency_name pid %}">
+                    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+                    <input type="hidden" name="oid" value="00DZ000000MipUa">
+                      <input type="hidden" value="{{poc_details.agency.google_rep.id}}" name="google_rep_id" id="google_rep_id">
+                      <input type="hidden" value="{{poc_details.id}}" name="poc_id" id="poc_id">
+                      <table style="width:100%" class="csv-table">
+                      <tr>
+                        <th width="100px">Google Rep Name</th>
+                        <th width="80px">Customer ID</th>
+                        <th>Code Type</th>
+                        <th>URL</th>
+                        <th>Location</th>
+                        <th>Timezone</th>
+                        <th>Agency Contact Name</th>
+                        <th>Agency Contact phone</th>
+                        <th>Agency Contact Email</th>
+                        <th>Special Instructions</th>
+                      </tr>
+                      {% for rec in data %}
+                      <tr class="leads">
+                        <td><input type="text" value="{{poc_details.agency.google_rep.first_name}} {{poc_details.agency.google_rep.last_name}}" name="rep_name_{{forloop.counter}}" id="rep_name_{{forloop.counter}}"></td>
+                        <td><input type="text" value="{{rec.customer_id }}" name="customer_id_{{forloop.counter}}" id="customer_id_{{forloop.counter}}"></td>
+
+                        <td>
+                          <select name="code_type_{{forloop.counter}}" id="code_type_{{forloop.counter}}">
+                              <option value="">Choose an Code type</option>
+                            {% for type in code_types %}
+                              {% if rec.code_type == type %}
+                                <option value="{{rec.code_type}}" selected>{{type}}</option>
+                              {% else %}
+                                <option value="{{type}}">{{type}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                        </td>
+                        <td><input type="text" value="{{rec.url}}" name="url_{{forloop.counter}}" id="url_{{forloop.counter}}"></td>
+
+                        <td>
+                          <select name="location_{{forloop.counter}}" id="location_{{forloop.counter}}" class="location">
+                              <option value="">Choose an Location</option>
+                            {% for loc in locations %}
+                              {% if loc.id == poc_details.agency.location_id %}
+                                <option value="{{loc.name}}" selected>{{loc.name}}</option>
+                              {% else %}
+                                <option value="{{loc.name}}">{{loc.name}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                        </td>
+
+                        <td>
+                          <select name="timezone_{{forloop.counter}}" id="timezone_{{forloop.counter}}">
+                              <option value="{{poc_details.agency.timezone.zone_name}}">{{poc_details.agency.timezone.zone_name}}</option>
+                          </select>
+                        </td>
+
+                        <td>
+                          <input type="text" value="{{poc_details.contact_person}}" name="agency_name_{{forloop.counter}}" id="agency_name_{{forloop.counter}}">
+                        </td>
+
+                        <td>
+                          <input type="text" value="{{poc_details.contact_phone}}" name="agency_phone_{{forloop.counter}}" id="agency_phone_{{forloop.counter}}">
+                        </td>
+
+                        <td>
+                          <input type="text" value="{{poc_details.contact_email}}" name="agency_email_{{forloop.counter}}" id="agency_email_{{forloop.counter}}">
+                        </td>
+
+                        <td><input type="textarea" value="{{rec.special_instructions}}" name="special_instructions_{{forloop.counter}}" id="special_instructions_{{forloop.counter}}"></td>
+                      </tr>
+                      {% endfor %}
+                      {% for indx in remaining %}
+                          <tr class="leads snew-tr" id="tr_{{indx}}" style="display:none;">
+                            <td><input type="text" value="" name="rep_name_{{indx}}" id="rep_name_{{indx}}"></td>
+                            <td><input type="text" value="" name="customer_id_{{indx}}" id="customer_id_{{indx}}"></td>
+
+                            <td>
+                              <select name="location_{{indx}}" id="location_{{indx}}" class="location">
+                                  <option value="">Choose an Location</option>
+                                {% for loc in locations %}
+                                    <option value="{{loc.name}}">{{loc.name}}</option>
+                                {% endfor %}
+                              </select>
+                            </td>
+
+                            <td>
+                              <select name="timezone_{{indx}}" id="timezone_{{indx}}" class="timezone">
+                              </select>
+                            </td>
+
+                            <td>
+                              <input type="text" value="" name="agency_name_{{indx}}" id="agency_name_{{indx}}">
+                            </td>
+
+                            <td>
+                              <input type="text" value="" name="agency_phone_{{indx}}" id="agency_phone_{{indx}}">
+                            </td>
+
+                            <td>
+                              <input type="text" value="" name="agency_email_{{indx}}" id="agency_email_{{indx}}">
+                            </td>
+
+                            <td>
+                              <select name="code_type_{{indx}}" id="code_type_{{indx}}">
+                                  <option value="">Choose an Code type</option>
+                                {% for type in code_types %}
+                                    <option value="{{type}}">{{type}}</option>
+                                {% endfor %}
+                              </select>
+                            </td>
+                            <td><input type="text" value="" name="url_{{indx}}" id="url_{{indx}}"></td>
+                            <td><input type="textarea" value="" name="special_instructions_{{indx}}" id="special_instructions_{{indx}}"></td>
+                          </tr>
+                      {% endfor %}
+                      <tr><td colspan="10"><a href="javascript:void(0);" class="addMore" id="addMore_{{data|length}}">Add new</a><td></tr>
+                      <input type="hidden" value="{{data|length}}" name="paramcounts" id="paramcounts">
+                  </table>
+                <div class="row" style="margin-top:20px">
+                  <input type="submit" value="Submit" class="btn std-btn sm-btn">
+                </div>
+            </form>
+          </div>
+       {% endif %}
+      </div>
+    {% else %}
+        <div class="row">No Agencies found!</div>
+    {% endif %}
+    </div>
+</div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+ <script type="text/javascript">
+
+ $(document).ready(function(){
+    var loc_length = $(".location").length;
+    for(i=1; i<=loc_length; i++){
+      locElem = "#location_" + i;
+      val = $(locElem).val();
+      if(val){
+        getTimezones(val, i);
+      }
+    }
+ });
+
+    $(".addMore").click(function(){
+        var thisid = $(this).attr('id')
+        var indx = thisid.split('_')[1]
+        var elm = thisid.split('_')[0]
+        idx = parseInt(indx) + 1;
+        $("#tr_"+idx).show();
+        next_id = parseInt(indx) + 1;
+        $(this).attr('id', elm + '_'+ next_id)
+    });
+
+    $("#bulkForm").submit(function(event){
+        $(".error-txt").remove();
+        $(".lead-form .form-control").removeClass('error-box');
+        var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+        var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        var numericExpression = /^[0-9]+$/;
+
+        window.is_error = false;
+        var row_len = $(".csv-table .leads:visible").length;
+
+        for(i=1; i<=row_len; i++){
+          rep_name = document.getElementById('rep_name_'+ i);
+          validateFiled(rep_name);
+          cid = document.getElementById('customer_id_' + i);
+          validateFiled(cid)
+          loc = document.getElementById('location_' + i);
+          validateFiled(loc)
+          timezone = document.getElementById('timezone_' + i);
+          validateFiled(timezone)
+          agency_name = document.getElementById('agency_name_' + i);
+          validateFiled(agency_name)
+          agency_phone = document.getElementById('agency_phone_' + i);
+          validateFiled(agency_phone)
+          agency_email = document.getElementById('agency_email_' + i);
+          validateFiled(agency_email)
+          ctype = document.getElementById('code_type_' + i);
+          validateFiled(ctype);
+          url = document.getElementById('url_' + i);
+          validateFiled(url);
+        }
+        
+        if(window.is_error){
+          event.preventDefault();
+          return false;
+        }else{
+          $("#paramcounts").val(row_len);
+        }
+      });
+
+    function validateFiled(elem){
+      console.log($(elem).val());
+      // Google Manager details validation
+        if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+          $(elem).addClass('error-box');
+          $(elem).focus();
+          window.is_error = true;
+          return false;
+        }
+    }
+$('.location').change(function(){
+    
+    var loc = $(this).val();
+    var id = $(this).attr('id')
+    var index = id.split('_')[1]
+    $("#timezone_"+index+"").empty();
+    if(loc){
+      getTimezones(loc, index);
+    }
+
+  });
+
+  function getTimezones(loc_name, index){
+  if(loc_name==''){
+    console.log(loc_name);
+  }else{
+     $.ajax({
+          url: "/leads/get-timezones",
+          dataType: "json",
+          type: 'GET',
+          data: {'loc_name': loc_name},
+          success: function(data) {
+              console.log(data);
+              displayTimezones(data, index);
+          },
+          error: function(errorThrown) {
+              console.log('failure');
+          }
+        }); 
+   }
+}
+
+function displayTimezones(timezones, index){
+  $("#timezone_"+index).html("");
+  for( i=0; i<timezones.length; i++){
+      var id = timezones[i]['id'];
+      var time = timezones[i]['time'];
+      $("#timezone_"+index).append('<option value="' + id + '">' + time + '</option>');
+  }
+}
+</script>
+{% endblock main_js %}
