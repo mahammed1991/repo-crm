@@ -1,0 +1,155 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#tag_datepick, #setup_datepick, #tag_datepick1, #setup_datepick1, #tag_datepick2, #setup_datepick2, #tag_datepick3, #setup_datepick3').on('focus', function(){
+            if ($('#tzone').val() == 0 || $('#tzone').val() == '0' || $('#tzone').val() == "") {
+                alert("Please Select Advertiser Time Zone.");
+                $('#tzone').focus();
+                return false;
+            }
+            var process_type = $(this).attr('process_type');
+            window.source_ele = $(this);
+            $.colorbox({
+                iframe:true,
+                width:"60%",
+                height:"510px",
+                open:true,
+                href: function(){
+                    var datepick_val = window.source_ele.val();
+                    if(!datepick_val){
+                        var url = "{% url 'representatives.views.availability_list' %}" + '0-0-0/' + process_type + '/' + $('#country option:selected').attr('location_id') + '/'+ $('#tzone').val() + '/';
+                    }else{
+                        var selected_date = datepick_val.split(' ')
+                        selected_date = selected_date[0].replace(/\//g, '-')
+                        var url = "{% url 'representatives.views.availability_list' %}" + selected_date + '/' + process_type + '/' + $('#country option:selected').attr('location_id') + '/'+ $('#tzone').val() + '/';
+                    }
+                    return url;
+                }
+            });
+        });
+
+        $(document).bind('cbox_open', function() {
+            $('html').css({
+                overflow: 'hidden'
+            });
+        }).bind('cbox_closed', function() {
+            $('html').css({
+                overflow: 'auto'
+            });
+        });
+    });
+    
+    $('input[name=tag_datepick_nApplicable]').click(function(){
+        $('#tag_datepick').val('');
+    });
+
+    $('input[name=setup_datepick_nApplicable]').click(function(){
+        $('#setup_datepick').val('');
+    });
+
+    function checkURL(domain){
+        domain = domain.replace('http://','');
+        domain = domain.replace('https://','');
+        var re = new RegExp(/^((?:(?:(?:\w[\.\-\+]?)*)\w)+)((?:(?:(?:\w[\.\-\+]?){0,62})\w)+)\.(\w{2,6})$/);
+        return domain.match(re);
+    }
+    
+    function changetime(abt) {
+        var locations = {{time_zone_for_region|safe}}
+        
+        if(abt){
+            if (abt.value == 'UK'){
+                $('#campid').val("701d0000000EaB7");
+            }else if(abt.value == 'Ireland'){
+                $('#campid').val("701d0000000EaP4");
+            }else if(abt.value == 'US'){
+                $('#campid').val("701d0000000EaB2");
+            }else{
+                $('#campid').val("None");
+            }
+        
+
+            $('#tzone').html('');
+            if(locations[abt.value].length == 1){
+                var tz_info = locations[abt.value];
+                var option = "<option value='" + tz_info[0]['zone_name'] + "'>"+ tz_info[0]['zone_name'] +"(UTC"+tz_info[0]['time_value']+")</option>"
+                $('#tzone').html(option);
+            }else{
+                var option = "<option value='0'>--Select--</option>"
+                var tz_info = locations[abt.value];
+                for(var i=0;i<locations[abt.value].length;i++){
+                    option += "<option value='" + tz_info[i]['zone_name'] + "'>"+ tz_info[i]['zone_name'] +"(UTC"+tz_info[i]['time_value']+")</option>"
+                }
+                $('#tzone').html(option);
+            }
+
+            // Get Languages by Location/Country
+            var languages = {{language_for_location|safe}}
+            
+            $('#language').html('');
+            if(languages[abt.value].length == 1){
+                var lang_info = languages[abt.value];
+                var option = "<option value='" + lang_info[0]['language_name'] + "'>"+ lang_info[0]['language_name'] +"</option>"
+                $('#language').html(option);
+                $('#language').val(lang_info[0]['language_name']);
+            }else{
+                var option = "";
+                var lang_info = languages[abt.value];
+                for(var i=0;i<languages[abt.value].length;i++){
+                    option += "<option value='" + lang_info[i]['language_name'] + "'>"+ lang_info[i]['language_name'] +"</option>"
+                }
+                $('#language').html(option);
+            }
+        }
+
+    }
+
+    function check_and_create_appointment(slots){
+        var status = true;
+        $.ajax({
+            'type': 'POST',
+            'async': false,
+            'dataType': 'json',
+            'url': "{% url 'representatives.views.check_and_add_appointment' %}",
+            'data':{
+                'time_zone': $('#tzone').val(),
+                'slots': JSON.stringify(slots),
+                'location_id': $('#country option:selected').attr('location_id')
+            },
+            'success': function(response){
+                if(response['status'] == 'FAILED'){
+                    alert('Oops! the slot for ' + response['type'] + ' has already been booked by someone else.\nPlease relaunch calendar app from the date picker and choose a different appointment');
+                    $("#setup_datepick").show();
+                    status = false;
+                }
+            },
+            'error':function(xhr, resp_status, error){
+                alert('Something went wrong!. Please reload page')
+                status = false;
+            }
+        })
+        return status;  
+    }
+    $('#country, #tzone').change(function(){
+        $('#tag_datepick, #setup_datepick').val('');
+    });
+
+    $("#is_tag_datepic").click(function(){
+        if(!$("#tag_datepick").val()){
+            alert("Please choose Appintment date");
+            $(this).attr('checked', false);
+        }else{
+            if(document.getElementById("is_tag_datepic").checked == true){
+            var tag_slot = {
+                'type' : 'TAG',
+                'time' : $("#tag_datepick").val()
+              }
+            sts = check_and_create_appointment([tag_slot]);
+            if(sts){
+                $("#setup_datepick").val($("#tag_datepick").val());
+            }else{
+                $("#setup_datepick").show().focus();
+            }
+        }    
+        }
+    });
+</script>
