@@ -1441,7 +1441,8 @@ def get_lead_status_by_ldap(request):
         lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, start_date=None, end_date=None)
         mimetype = 'application/json'
         return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
-    return render(request, 'leads/get_lead_summary_ldap.html', {})
+    #return render(request, 'leads/get_lead_summary_ldap.html', {})
+    return render(request, 'leads/lead_summary.html', {})
 
 
 def convert_lead_to_dict(model):
