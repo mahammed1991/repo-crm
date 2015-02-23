@@ -190,7 +190,9 @@ class ReportService(object):
     @staticmethod
     def get_leads_status_summary(lead_ids):
         ''' Get Leads staus summary for Leads '''
+        leads = Leads.objects.filter(id__in=lead_ids)
         leads_status_summary = dict()
+        leads_status_summary['TAT'] = ReportService.get_average_tat_for_leads(leads)
         lead_status_dict = settings.LEAD_STATUS_DICT
         total_leads = 0
         for key in lead_status_dict.keys():
@@ -198,8 +200,6 @@ class ReportService(object):
             total_leads += len(Leads.objects.filter(lead_status__in=lead_status_dict[key], id__in=lead_ids))
 
         leads_status_summary['total_leads'] = total_leads
-        lead_status_tat = float(leads_status_summary['Implemented']) / total_leads if leads_status_summary['Implemented'] != 0 else 0
-        leads_status_summary['TAT'] = round(lead_status_tat, 2)
         return leads_status_summary
 
     @staticmethod
@@ -227,14 +227,14 @@ class ReportService(object):
         if emails and teams and countries:
             leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                          created_date__gte=start_date, created_date__lte=end_date,
-                                         lead_owner_email__in=emails)
+                                         google_rep_email__in=emails)
 
         elif not emails and teams and countries:
             leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                          created_date__gte=start_date, created_date__lte=end_date)
 
         elif emails and not teams and not countries:
-            leads = Leads.objects.filter(type_1__in=code_types, lead_owner_email__in=emails,
+            leads = Leads.objects.filter(type_1__in=code_types, google_rep_email__in=emails,
                                          created_date__gte=start_date, created_date__lte=end_date)
 
         elif not emails and not teams and countries:
@@ -300,7 +300,6 @@ class ReportService(object):
         team_dict = {team.team_name: team.id for team in Team.objects.all()}
 
         location_dict = {location.location_name: location.id for location in Location.objects.all()}
-        # import ipdb; ipdb.set_trace()
 
         target_leads = QuarterTargetLeads.objects.filter(quarter=quarter, year=prev_qtr_year)
 
@@ -661,7 +660,10 @@ class ReportService(object):
     def get_average_of_implemented(leads):
         days = 0
         for lead in leads:
-            days += ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date)
+            if lead.team in ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']:
+                days += ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date)
+            else:
+                days += ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date)
 
         if days:
             return round(float(days) / len(leads), 2)
@@ -707,6 +709,20 @@ class ReportService(object):
                 diff = max([fco, created_date]) - min([fco, created_date])
             days = diff.days
 
+        return days
+
+    @staticmethod
+    def get_tat_by_implemented_for_service(implemented_date, created_date):
+        ''' Get Turn Around Time by two dates
+            1. TAT is difference between Appointment date and Implemented date.
+            2. In case Appointment date is blank, use Created date instead.
+            Only For Team Belongs to SERVICES and ...
+        '''
+        if implemented_date:
+            diff = max([implemented_date, created_date]) - min([implemented_date, created_date])
+            days = diff.days
+        else:
+            days = 0
         return days
 
     @staticmethod
@@ -1029,14 +1045,14 @@ class DownloadLeads(object):
         if emails and teams and countries:
             leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                          created_date__gte=start_date, created_date__lte=end_date,
-                                         lead_owner_email__in=emails)
+                                         google_rep_email__in=emails)
 
         elif not emails and teams and countries:
             leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                          created_date__gte=start_date, created_date__lte=end_date)
 
         elif emails and not teams and not countries:
-            leads = Leads.objects.filter(type_1__in=code_types, lead_owner_email__in=emails,
+            leads = Leads.objects.filter(type_1__in=code_types, google_rep_email__in=emails,
                                          created_date__gte=start_date, created_date__lte=end_date)
 
         elif not emails and not teams and countries:
@@ -1095,9 +1111,10 @@ class DownloadLeads(object):
 
             # Format ex: 18/07/2014
             if lead.date_of_installation:
-                row['Date of installation'] = str(datetime.strftime(lead.date_of_installation, "%d/%m/%Y"))
+                row['Date of Installation'] = str(datetime.strftime(lead.date_of_installation, "%d/%m/%Y"))
             else:
-                row['Date of installation'] = None
+                row['Date of Installation'] = None
+            
             row['Create Date'] = str(datetime.strftime(lead.created_date, "%d/%m/%Y"))
 
             # Date formate in csv ex: 01/07/2014 03:42:00
@@ -1112,6 +1129,10 @@ class DownloadLeads(object):
                 row['1st Contacted on'] = None
 
             row['Lead ID'] = lead.sf_lead_id
+            if lead.team in ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']:
+                row['TAT'] = ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date) if lead.date_of_installation else 'N/A'
+            else:
+                row['TAT'] = ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date)
 
             for field in selected_fields:
                 if field in row.keys():

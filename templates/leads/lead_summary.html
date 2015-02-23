@@ -10,6 +10,13 @@
 
 {% block main_css %}
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+    <style type="text/css">
+    #ldap-user-info {
+        margin-top: 0 !important;
+        margin-bottom: 30px !important;
+        text-align: center;
+        }
+    </style>
 {% endblock main_css %}
 
 {% block content %}
@@ -46,6 +53,39 @@
         </div>
       </div>
       <h1 class="lead_status">Leads Status</h1>
+      {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)' %}
+              <!-- <div class="table-search" id='ldapSearch'>
+                <a href="{% url 'leads.views.get_lead_status_by_ldap' %}" >click here to search leads By Ldap </a>
+                </div> -->
+        <div class="row" style="margin-top: -55px !important;margin-bottom: 20px; !important">
+                <div class="auth-user-info" id="ldap_user_info" style="display:block;">
+                  <label style="margin-left: 40px;">LDAP:</label>
+                    <div class="value">
+                        <input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}">
+                        <a href="#" class="ldap-update"></a>&nbsp; 
+                    </div>
+                    <label class="manager" style="width: 56px !important;">Manager:</label>
+                    {% if request.user.profile.user_manager_name %}
+                        <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
+                    {% else %}
+                        <div class="value" id="ldap_manager">N/A</div>
+                    {% endif %}
+                    <label>Program:</label>
+                    {% if request.user.profile.team.team_name %}
+                      <div class="value" id="ldap_program">{{request.user.profile.team.team_name}}</div>
+                    {% else %}
+                      <div class="value" id="ldap_program">N/A</div>
+                    {% endif %}
+                    <label>Region:</label>
+                    {% if request.user.profile.location.location_name %}
+                      <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
+                    {% else %}
+                      <div class="value" id="ldap_region">N/A</div>
+                    {% endif %}
+                    <button id='getLead' class="btn std-btn" style="margin-left: 120px;"> Get Lead</button>
+                </div> 
+        </div>
+      {% endif %}
       <div class="row">
           <div class="col-xs-9 col-sm-12 col-md-10">
             <ul class="pagination pull-left">
@@ -60,15 +100,7 @@
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
               <span class="search-icon"><i class="fa fa-search" /></i></span>
             </div>
-            {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)' %}
-              <!-- <div class="table-search" id='ldapSearch'>
-                <a href="{% url 'leads.views.get_lead_status_by_ldap' %}" >click here to search leads By Ldap </a>
-              </div> -->
-                    <div class="auth-user-info" id="auth_user_info" style="display:block;" style="">
-                      <label style="margin-left: 400px;">LDAP:</label>
-                        <div class="value"><input type="text" class="form-control ldap" id="ldap" value=""><a href="#" class="ldap-update"></a>&nbsp; <button id='getLead'> Get Lead</button></div>
-                    </div> 
-            {% endif %}
+            
           </div>
           <div class="col-xs-3 col-md-2">            
               <ul class="filter-area navbar-right">
@@ -353,10 +385,12 @@ $('.ldap').focus(function() {
         type: 'GET',
         dataType: 'json',
         success: function(data){
-          console.log(data)
           if(data){
             setLeadSummary(data['lead_status_dict'])
             setLeadSummaryTable(data['lead_list'])
+            $("#ldap_manager").text(data['ldap_dict'].manager)
+            $("#ldap_program").text(data['ldap_dict'].program)
+            $("#ldap_region").text(data['ldap_dict'].region)
             $('#leadstatus').show();
           }else{
             alert('No leads Found')
@@ -377,7 +411,6 @@ function setLeadSummary(lead_status){
     
   }
   function setLeadSummaryTable(leads){
-    console.log(leads)
 
     $('#tableBody').html('')
     for(i=0; i<leads.length; i += 1){
