@@ -35,8 +35,7 @@
                 {% endif %}
               {% if 'google' in request.user.email %}
                 <select class="form-control edit allow-edit" name="user_location" id="user_location">
-                  <option value="">Select Location</option>
-
+                  <option value="">Market Served</option>
                   {% for loc in locations %}
                   <option value="{{loc.id}}">{{loc.location_name}}</option>
                   {% endfor %}

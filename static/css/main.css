@@ -406,7 +406,7 @@ html, body {
 	opacity: 1;
 }
 .notifications {
-	font-size: 17px;
+	font-size: 18px;
 	background: #f5b400;
 	color: #000;
 	padding: 30px 0;
@@ -1644,6 +1644,13 @@ ul li, ol li {
 	padding-left:30px;
 	margin-top:10px;
 }
+.agents-form-selection {
+	margin:30px 0;	
+	margin-left:-20px;
+}
+.lead-form.agents-form-selection .checkbox label {
+	font-family:'robotoblack' !important;
+}
 
 /* ==========================================================================
    Appointment Popup
@@ -2054,7 +2061,7 @@ tr.table_bg {
 	margin-left:10px;
 }
 .table tr th {
-	background: #eee !important;
+	background: #eee;
 	vertical-align: middle !important;
 }
 .table tr td {

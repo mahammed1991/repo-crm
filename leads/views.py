@@ -46,6 +46,13 @@ def lead_form(request):
     Sandbox OID
     <input type=hidden name="oid" value="00Dq00000009tyR">
     """
+
+    if request.user.profile.team or request.user.profile.location:
+        if request.user.profile.team and request.user.profile.team.team_name in ['Newbie', 'Newbie Plus']:
+            return redirect('leads.views.bundle_lead_form')
+        if request.user.profile.location and request.user.profile.location.location_name in ['AU/NZ']:
+            return redirect('leads.views.bundle_lead_form')
+
     if request.method == 'POST':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         # sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'

@@ -62,9 +62,9 @@
         <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
       </div>
       <div class="col-md-4">
-        <label for="country">Program Location</label>
+        <label for="country">Market Served</label>
         <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
-          <option value="0">Program Location</option>
+          <option value="0">Market Served</option>
           {% for loc in locations %}
             <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
           {% endfor %}

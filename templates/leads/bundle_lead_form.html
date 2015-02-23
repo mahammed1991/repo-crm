@@ -88,7 +88,7 @@
         </div>
         <div class="col-md-4">
           <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
-            <option value="0">Target Location</option>
+            <option value="0">Market Served</option>
             {% for loc in locations %}
               <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
             {% endfor %}

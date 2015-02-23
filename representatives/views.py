@@ -236,10 +236,13 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
     diff = divmod((utc_date - plan_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
-
+    total_booked = dict()
+    total_available = dict()
     # prepare appointments slot keys
     appointments = dict()
     for key, _date in plan_dates.items():
+        total_booked[datetime.strftime(_date, '%d_%m_%Y')] = []
+        total_available[datetime.strftime(_date, '%d_%m_%Y')] = []
         for hour in range(24):
             # even hour slot
             minutes = 0
@@ -275,6 +278,8 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
             '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
         appointments[key]['value'] = int(apptmnt.availability_count)
         appointments[key]['booked'] = int(apptmnt.booked_count)
+        total_available[datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y')].append(int(apptmnt.availability_count))
+        total_booked[datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y')].append(int(apptmnt.booked_count))
 
     teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
     process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
@@ -295,7 +300,9 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
          'plan_year': plan_year,
          'process_type': process_type,
          'process_types': process_types,
-         'selected_team': selected_team
+         'selected_team': selected_team,
+         'total_booked': total_booked,
+         'total_available': total_available
          }
     )
 

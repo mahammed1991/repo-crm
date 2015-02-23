@@ -49,9 +49,9 @@
          <label>Manager Email</label>
         <input type="text" class="form-control non-edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} disabled>
         {% if 'google' in request.user.email %}
-          <label>Program Location</label>
+          <label>Market Served</label>
           <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
-              <option value="">Select Location</option>
+              <option value="">Market Served</option>
               {% for loc in locations %}
               <option value="{{loc.id}}">{{loc.location_name}}</option>
               {% endfor %}

@@ -74,7 +74,7 @@
 
                         <td>
                           <select name="location_{{forloop.counter}}" id="location_{{forloop.counter}}" class="location">
-                              <option value="">Choose an Location</option>
+                              <option value="">Market Served</option>
                             {% for loc in locations %}
                               {% if loc.id == poc_details.agency.location_id %}
                                 <option value="{{loc.name}}" selected>{{loc.name}}</option>
