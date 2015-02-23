@@ -367,9 +367,9 @@ function drawColumnChart(details){
   for(var key in details){
     if (key =='total_leads'){
       keys.splice(0, 0, "Total Leads");
-    }
-    else{
-      keys.push(key)
+    }else{
+      if(key != 'TAT')
+        keys.push(key)
     }
   } 
 
@@ -377,7 +377,8 @@ function drawColumnChart(details){
      if (key =='total_leads'){
       values.splice(0, 0, details[key]);
     }else{
-      values.push(details[key])
+        if (key != 'TAT')
+          values.push(details[key])
     }
   }
 

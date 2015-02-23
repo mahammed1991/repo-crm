@@ -118,7 +118,7 @@ def lead_form(request):
             # tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
 
             # Sandbox ID for TAD VIA GTM
-            tag_data['00Nq0000000eZP6'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
+            tag_data['00Nd0000007esIr'] = request.POST.get('tag_via_gtm')  # Tag Via  GTM
             try:
                 requests.post(url=sf_api_url, data=tag_data)
             except Exception as e:
@@ -154,7 +154,7 @@ def lead_form(request):
             # setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
 
             # SandBox ID for IS SHOPPING POLICIES
-            setup_data['00Nq0000000eZPB'] = request.POST.get('is_shopping_policies')  # Shopping Policies
+            setup_data['00Nd0000007esIw'] = request.POST.get('is_shopping_policies')  # Shopping Policies
 
             try:
                 requests.post(url=sf_api_url, data=setup_data)
@@ -241,18 +241,18 @@ def get_common_lead_data(post_data):
 
 
         # Sandbox ID's
-        '00Nq0000000eZPG': post_data.get('advertiser_name'),  # Advertiser Name
+        '00NZ0000001X6y7': post_data.get('advertiser_name'),  # Advertiser Name
         'first_name': post_data.get('advertiser_name').rsplit(' ', 1)[0],    # First Name
         'last_name': post_data.get('advertiser_name').rsplit(' ', 1)[1] if len(post_data.get('advertiser_name').rsplit(' ', 1)) > 1 else '',   # Last Name
-        '00Nq0000000eZOS': post_data.get('advertiser_location').split(',')[0] if post_data.get('advertiser_location') else post_data.get('advertiser_location'),  # Advertiser Location
-        '00Nq0000000eZOw': post_data.get('web_access'),  # Web Access
-        '00Nq0000000eZOh': post_data.get('web_master_email'),  # Webmaster Email
-        '00Nq0000000eZOc': post_data.get('popt'),  # Webmaster Phone
+        '00Nd0000007es7U': post_data.get('advertiser_location').split(',')[0] if post_data.get('advertiser_location') else post_data.get('advertiser_location'),  # Advertiser Location
+        '00Nd0000007esIm': post_data.get('web_access'),  # Web Access
+        '00NZ0000001X6yC': post_data.get('web_master_email'),  # Webmaster Email
+        '00Nd0000007esIc': post_data.get('popt'),  # Webmaster Phone
 
         # Webmaster Details
         '00Nd0000005WYgp': post_data.get('fopt'),  # Webmaster First Name
         '00Nd0000005WYgu': post_data.get('lopt'),  # Webmaster Last Name
-        '00Nq0000000eJdW': 1,    # Default value for Change Lead Owner
+        '00Nd0000007elYB': 1,    # Default value for Change Lead Owner
         'Campaign_ID': post_data.get('Campaign_ID'),
         'oid': post_data.get('oid'),
         '__VIEWSTATE': post_data.get('__VIEWSTATE'),
@@ -494,16 +494,16 @@ def agent_bulk_upload(request, agency_name, pid):
 
 
                     # Sandbox ID's
-                    '00Nq0000000eZPG': '',  # Advertiser Name
-                    '00Nq0000000eZOS': '',  # Advertiser Location
-                    '00Nq0000000eZOw': 0,  # Web Access
-                    '00Nq0000000eZOh': '',  # Webmaster Email
-                    '00Nq0000000eZOc': '',  # Webmaster Phone
+                    '00NZ0000001X6y7': '',  # Advertiser Name
+                    '00Nd0000007es7U': '',  # Advertiser Location
+                    '00Nd0000007esIm': 0,  # Web Access
+                    '00NZ0000001X6yC': '',  # Webmaster Email
+                    '00Nd0000007esIc': '',  # Webmaster Phone
 
                     # Webmaster Details
                     '00Nd0000005WYgp': None,  # Webmaster First Name
                     '00Nd0000005WYgu': None,  # Webmaster Last Name
-                    '00Nq0000000eJdW': 1,    # Default value for Change Lead Owner
+                    '00Nd0000007elYB': 1,    # Default value for Change Lead Owner
                     'Campaign_ID': None,
                     'oid': request.POST.get('oid'),
                     '__VIEWSTATE': request.POST.get('__VIEWSTATE'),
@@ -520,13 +520,13 @@ def agent_bulk_upload(request, agency_name, pid):
                 special_instructions = request.POST.get('special_instructions_' + str(i))
 
                 lead_args = basic_lead_args
-                lead_args['00Nq0000000eZPG'] = agency_name     # Advertiser Name
+                lead_args['00NZ0000001X6y7'] = agency_name     # Advertiser Name
                 lead_args['first_name'] = agency_name.rsplit(' ', 1)[0]    # First Name
                 lead_args['last_name'] = agency_name.rsplit(' ', 1)[1] if len(agency_name.rsplit(' ', 1)) > 1 else ''   # Last Name
                 lead_args['00Nd0000005WcNw'] = agency_email     # Advertiser Email
                 lead_args['00Nd0000005WYgz'] = agency_phone     # Advertiser Phone
                 lead_args['00Nd0000005WYgV'] = customer_id     # Customer ID
-                lead_args['00Nd0000005WYga'] = location     # Agency Location
+                lead_args['00Nd0000007es7U'] = location     # Agency Location
                 lead_args['00Nd0000005WYhT'] = timezone     # Time Zone
 
                 # Code Type 1 Details
@@ -776,7 +776,7 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
     # setup_data['00Nd0000007esIw'] = post_data.get('is_shopping_policies')  # Shopping Policies
 
     # SandBox ID for IS SHOPPING POLICIES
-    setup_data['00Nq0000000eZPB'] = post_data.get('is_shopping_policies')  # Shopping Policies
+    setup_data['00Nd0000007esIw'] = post_data.get('is_shopping_policies')  # Shopping Policies
     print setup_data, "Shopping"
     requests.post(url=sf_api_url, data=setup_data)
 
