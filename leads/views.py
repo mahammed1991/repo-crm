@@ -1450,8 +1450,13 @@ def get_lead_status_by_ldap(request):
             lead_list.append(lead)
         lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, start_date=None, end_date=None)
         mimetype = 'application/json'
-        return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
-    return render(request, 'leads/get_lead_summary_ldap.html', {})
+        ldap_dict = dict()
+        ldap_dict['manager'] = user.profile.user_manager_name
+        ldap_dict['program'] = user.profile.team.team_name if user.profile.team else 'N/A'
+        ldap_dict['region'] = user.profile.location.location_name if user.profile.location else 'N/A'
+        return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict, 'ldap_dict': ldap_dict}), mimetype)
+    #return render(request, 'leads/get_lead_summary_ldap.html', {})
+    return render(request, 'leads/lead_summary.html', {})
 
 
 def convert_lead_to_dict(model):
