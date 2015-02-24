@@ -165,7 +165,7 @@
 
   $('#team').change(function(){
     var selectedTeam = $(this).val();
-    if (selectedTeam == 'Gem Central America English' || selectedTeam == 'Gem Central America Spanish'){
+    if (selectedTeam == 'Gem Central America' || selectedTeam == 'Gem Central America'){
       console.log(window.is_loc_changed, "status")
       if(!window.is_loc_changed){
         setLocations(window.new_locations); 
@@ -236,10 +236,11 @@
 
   function setLocations(newLocations){
     $("#country option").remove()
-    $("#country").append('<option value="0">Program Location</option>');
+    $("#country").append('<option value="0">Market Served</option>');
     for(i=0; i<newLocations.length; i++){
       $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
     }
+    $("#country").val('0');
   }
   
    //shopping check 

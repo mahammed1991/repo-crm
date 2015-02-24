@@ -48,26 +48,6 @@ text-align:center;
 cursor:pointer;
 }
 
-.bgicon{
-background-image: url(../img/event-arrow-down.png), -webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef)) !important;
-background-repeat: no-repeat;
-background-position: 95% center;
--moz-appearance: none;
--webkit-appearance: none;
-}
-.plusicon{
-float:right;
-width:20px;
-height:20px;
-margin-bottom:5px;
-}
-.minusicon{
-float:right;
-width:20px;
-height:20px;
-margin-bottom:2px;
-}
-
 @media (min-width:992px) 
 {
 .custom2 {
@@ -143,7 +123,7 @@ padding-right: 0px;
 
 @media (min-width:992px) {
 .bb{ width:22%;}
-.bbc{width:18%;}
+.bbc{width:20%;}
 .bbd{width:16%;}
 }
 .custom-bg{
@@ -172,6 +152,7 @@ margin-bottom:0px !important;
 background:#EEEEEE !important;
 border:none !important;
 margin-bottom:0px !important;
+width: 50%;
 }
 .ttb{border-spacing:5px; border-collapse: inherit;
 background:transparent !important;
