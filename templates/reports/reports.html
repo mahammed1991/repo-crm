@@ -106,7 +106,7 @@ Reports
     </div>
     <div class="auth-user-info" id="auth_user_info" style="display:none;">
       <label>Name:</label>
-        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a href="#" class="ldap-update"><i class="fa fa-refresh"></i></a></div>
+        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a href="#" class="ldap-update"><i id="refresh" class="fa fa-refresh"></i></a></div>
         <label class="manager">Manager:</label>
         {% if request.user.profile.user_manager_name %}
             <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
@@ -125,10 +125,14 @@ Reports
         {% else %}
           <div class="value" id="ldap_region">N/A</div>
         {% endif %}
-        {% if not request.user.profile.user_manager_name or not request.user.profile.team.team_name or request.user.profile.location.location_name %}
-          <label>Complete Your Profile:</label>
-          <a href="{% url 'main.views.edit_profile_info' %}">Your Profile</a>
+        <div id="profile_div">
+        {% if request.user.profile.user_manager_email and request.user.profile.team and not request.user.location %}
+          <div></div>
+        {% else %}
+            <label>Complete Your Profile:</label>
+            <a href="{% url 'main.views.edit_profile_info' %}">Your Profile</a>
         {% endif %}
+        </div>
     </div>    
     
     <h2>Lead Status Summary</h2>
@@ -317,7 +321,13 @@ Reports
 <script type="text/javascript">
 $(document).ready(function(){
   window.current_ldap = {{request.user.id|safe}};
+  window.user_id = {{request.user.id|safe}};
 });
 google.load("visualization", "1", {packages:["corechart"]});
+
+
+$("#refresh").on('click', function(){
+  $( "#get_report" ).trigger( "click" );
+});
 </script>
 {% endblock main_js %}

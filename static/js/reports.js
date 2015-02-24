@@ -815,6 +815,7 @@ function downloadReport(dataString){
 }
 
 $('.ldap').on("keyup", function() {
+  $("#profile_div").show();
   return $(this).autocomplete({
     source: "/reports/get-user-name",
     minLength: 2,
@@ -827,6 +828,12 @@ $('.ldap').on("keyup", function() {
          $("#ldap_manager").text(ui.item.manager);
          $("#ldap_program").text(ui.item.program);
          $("#ldap_region").text(ui.item.region);
+         if (window.user_id == ui.item.id){
+          $("#profile_div").show();
+         }
+         else{
+          $("#profile_div").hide();
+         }
         //$("label[for=id_employee]").css("display", "none");
 
       }
