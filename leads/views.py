@@ -181,14 +181,16 @@ def lead_form(request):
             new_locations.append(l)
         else:
             all_locations.append(l)
-        time_zone_for_region[loc.location_name] = [{'zone_name': tz[
-            'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
-        language_for_location[loc.location_name] = [{'language_name': lang[
-            'language_name']} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
-        if language_for_location[loc.location_name]:
-            language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
+        loc_name = str(loc.location_name)
+        time_zone_for_region[loc_name] = [{'zone_name': str(tz[
+            'zone_name']), 'time_value': str(tz['time_value'])} for tz in loc.time_zone.values()]
+        language_for_location[loc_name] = [{'language_name': str(lang[
+            'language_name'])} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
+        if language_for_location[loc_name]:
+            language_for_location[loc_name].insert(0, {'language_name': str(loc.primary_language.language_name)})
         else:
-            language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
+            language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name)})
+
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
     programs = ReportService.get_all_teams()
@@ -220,7 +222,7 @@ def get_common_lead_data(post_data):
         '00Nd00000077r3s': post_data.get('manager_email'),  # Manager Email
         '00Nd0000005XIWB': post_data.get('team'),  # Team
         '00Nd0000007e2AF': post_data.get('service_segment'),  # Service Segment
-        '00Nd0000007f0fj': post_data.get('g_cases_id'),  # G Cases Id
+        '00Nd0000007dWIH': post_data.get('g_cases_id'),  # G Cases Id
         '00Nd0000005WYga': post_data.get('country'),  # Country
 
         # Production ID's
@@ -275,14 +277,19 @@ def agency_form(request):
     language_for_location = dict()
     for loc in locations:
         l = {'id': int(loc.id), 'name': str(loc.location_name)}
-        all_locations.append(l)
-        time_zone_for_region[loc.id] = [{'zone_name': tz.zone_name, 'id': tz.id, 'time_value': tz.time_value} for tz in loc.time_zone.filter()]
-        language_for_location[loc.id] = [
-            {'language_name': lang.language_name, 'id': lang.id} for lang in loc.language.filter() if lang.language_name != loc.primary_language.language_name]
-        if language_for_location[loc.location_name]:
-            language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
+        if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
+            new_locations.append(l)
         else:
-            language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
+            all_locations.append(l)
+        loc_name = str(loc.location_name)
+        time_zone_for_region[loc_name] = [{'zone_name': str(tz[
+            'zone_name']), 'time_value': str(tz['time_value'])} for tz in loc.time_zone.values()]
+        language_for_location[loc_name] = [{'language_name': str(lang[
+            'language_name'])} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
+        if language_for_location[loc_name]:
+            language_for_location[loc_name].insert(0, {'language_name': str(loc.primary_language.language_name)})
+        else:
+            language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name)})
 
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
@@ -411,6 +418,32 @@ def download_agency_csv(request):
 def agent_bulk_upload(request, agency_name, pid):
     """ Agency Bulk Upload """
     template_args = dict()
+    locations = Location.objects.filter(is_active=True)
+    teams = Team.objects.filter(is_active=True)
+    new_locations = list()
+    all_locations = list()
+    time_zone_for_region = dict()
+    language_for_location = dict()
+    for loc in locations:
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
+            new_locations.append(l)
+        else:
+            all_locations.append(l)
+        loc_name = str(loc.location_name)
+        time_zone_for_region[loc_name] = [{'zone_name': str(tz[
+            'zone_name']), 'time_value': str(tz['time_value'])} for tz in loc.time_zone.values()]
+        language_for_location[loc_name] = [{'language_name': str(lang[
+            'language_name'])} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
+        if language_for_location[loc_name]:
+            language_for_location[loc_name].insert(0, {'language_name': str(loc.primary_language.language_name)})
+        else:
+            language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name)})
+
+    code_types = CodeType.objects.filter(is_active=True)
+    template_args.update({'code_types': code_types, 'locations': all_locations, 'teams': teams,
+                          'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
+
     try:
         poc_details = ContactPerson.objects.get(person_id=pid)
         template_args['poc_details'] = poc_details
@@ -429,31 +462,9 @@ def agent_bulk_upload(request, agency_name, pid):
                 each_rec['special_instructions'] = record['Special Instructions']
                 data_list.append(each_rec)
 
-            locations = Location.objects.filter(is_active=True)
-            new_locations = list()
-            all_locations = list()
-            time_zone_for_region = dict()
-            language_for_location = dict()
-            for loc in locations:
-                l = {'id': int(loc.id), 'name': str(loc.location_name)}
-                if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
-                    new_locations.append(l)
-                else:
-                    all_locations.append(l)
-                time_zone_for_region[loc.location_name] = [{'zone_name': tz[
-                    'zone_name'], 'time_value': tz['time_value']} for tz in loc.time_zone.values()]
-                language_for_location[loc.location_name] = [{'language_name': lang[
-                    'language_name']} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
-                if language_for_location[loc.location_name]:
-                    language_for_location[loc.location_name].insert(0, {'language_name': loc.primary_language.language_name})
-                else:
-                    language_for_location[loc.location_name].append({'language_name': loc.primary_language.language_name})
-
-            code_types = ReportService.get_all_code_type()
             remaining = len(data_list) + 11
             template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True, 'agency_name': agency_name, 'pid': pid,
-                                  'remaining': range(len(data_list) + 1, remaining), 'locations': all_locations,
-                                  'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
+                                  'remaining': range(len(data_list) + 1, remaining)})
             return render(request, 'leads/agent_bulk_form.html', template_args)
 
         if 'paramcounts' in request.POST:
@@ -1455,7 +1466,7 @@ def get_lead_status_by_ldap(request):
         ldap_dict['program'] = user.profile.team.team_name if user.profile.team else 'N/A'
         ldap_dict['region'] = user.profile.location.location_name if user.profile.location else 'N/A'
         return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict, 'ldap_dict': ldap_dict}), mimetype)
-    #return render(request, 'leads/get_lead_summary_ldap.html', {})
+    # return render(request, 'leads/get_lead_summary_ldap.html', {})
     return render(request, 'leads/lead_summary.html', {})
 
 

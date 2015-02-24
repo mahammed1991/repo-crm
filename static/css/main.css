@@ -2131,6 +2131,47 @@ i.fa.fa-comment {
 	margin:0 auto;
 }
 
+.bgicon{
+	background-image: url(../images/event-arrow-down.png), -webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef)) !important;
+	background-repeat: no-repeat;
+	background-position: 95% center;
+	-moz-appearance: none;
+-webkit-appearance: none;
+}
+.plusicon{
+	float:right;
+	width:20px;
+	height:20px;
+margin-bottom:5px;
+}
+.minusicon{
+	float:right;
+	width:20px;
+	height:20px;
+margin-bottom:2px;
+}
+
+.css3{
+	height: 25px;
+	width: 100%;
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+	border: none !important;
+	text-align: center;
+}
+/*.css3:hover, .css3:focus, .css3:active, textarea:focus, input:focus{
+	border: none !important;
+	background: transparent !important;
+	border-color: none !important;
+	  -webkit-box-shadow: none;
+	  box-shadow: none;
+   outline: 0;
+}*/
+
+.css4{
+	width:50px;
+}
+
 
 /* ==========================================================================
    End of Leads Status

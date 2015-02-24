@@ -7,318 +7,433 @@
 Manage Appointments
 {% endblock title %}
 
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+{% endblock main_css %}
+
 {% block content %}
-<div id="content" class="clearfix">
-    <div class="main_content">
-        <fieldset style="border:1px solid #d9d9d9;">
-            <legend class="legend"><p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Schedule Appointments</p></legend>
-                <input type='button' class="logbtn copy_button" id='copy_appointments' value='Copy from previous week' week-start='{{dates|get_dict_val:'day1'|date:"m-d-Y"}}' />
-                <form method="post" action="{% url 'representatives.views.plan_schedule' plan_month plan_day plan_year process_type selected_team.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
-                    <table style="margin:0 auto;">
-                        <td colspan="2" align="left">
-                            <a href="{% url 'representatives.views.plan_schedule' prev_week.month prev_week.day prev_week.year process_type selected_team.id %}" class="prev">Prev Week</a>
-                        </td>
-                        <td colspan="2" align="left">
-                            <label><span class='red'>*</span>Each cell = Appointments Booked / Slots Available</label><br />
-                            <label><span class='red'>*</span>All slots represents availability of resource in IST</label>
-                        </td>
-                        <td colspan="2" align="left">
-                            <label>Process</label>
-                            <select name="process_type">
-                                {% for type in process_types %}
-                                    <option value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</option>
-                                {% endfor %}
-                            </select><br />
-                            <label>Teams</label>
-                            <select name="team">
-                                {% for team in teams %}
-                                    <option value="{{team.id}}" {% if team.id == selected_team.id %}selected{% endif %}>{{team}}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td colspan="2" align="right">
-                            <a href="{% url 'representatives.views.plan_schedule' next_week.month next_week.day next_week.year process_type selected_team.id %}" class="next">Next Week</a>
-                        </td>
-                    </table>
-                    <div style="clear:both;"></div>
-                    <table border="1px;" style="margin: 0 auto 10px;" name='schedule_appointments'>
-                        <tbody>
-                            <tr>
-                                <th>Slots/Day</th>
-                                <th>Mon<br />{{dates|get_dict_val:'day1'|date:"M d, Y"}}</th>
-                                <th>Tue<br />{{dates|get_dict_val:'day2'|date:"M d, Y"}}</th>
-                                <th>Wed<br />{{dates|get_dict_val:'day3'|date:"M d, Y"}}</th>
-                                <th>Thu<br />{{dates|get_dict_val:'day4'|date:"M d, Y"}}</th>
-                                <th>Fri<br />{{dates|get_dict_val:'day5'|date:"M d, Y"}}</th>
-                                <th>Sat<br />{{dates|get_dict_val:'day6'|date:"M d, Y"}}</th>
-                            </tr>
-                            {% for i in 12|get_range %}
-                            <tr align="center">
-                                {% if forloop.first %}
-                                    <th><b>{{i|add:12|concatenate:':00'}} AM</b></th>
-                                {% else %}
-                                    <th><b>{{i|concatenate:':00'}} AM</b></th>
-                                {% endif %}
-                                {% with 'input_' as input %}
-                                <td>
-                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
+<!-- content-region -->
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>SCHEDULE APPOINTMENTS</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+            <div class="col-xs-2 ">
+                <a href="{% url 'representatives.views.plan_schedule' prev_week.month prev_week.day prev_week.year process_type selected_team.id %}" class="text-prev">Previous Week</a>
+            </div>
+            <div class="col-xs-8  title-text">
+                <span>Time Zone: IST(UTC:5:30)</span>
+            </div>
+            <div class="col-xs-2 ">
+                <a href="{% url 'representatives.views.plan_schedule' next_week.month next_week.day next_week.year process_type selected_team.id %}" class="text-next">Next Week</a>
+            </div>
+        </div>
+    <form method="post" action="{% url 'representatives.views.plan_schedule' plan_month plan_day plan_year process_type selected_team.id %}">
+        {% csrf_token %}
+        <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
+        <div class="row">
+            <div class="col-md-1">
+                <label class="lab2">Process</label>
+            </div>
+            <div class="col-md-2 box2 bb">
+                <select class="form-control bgicon" name="process_type">
+                    {% for type in process_types %}
+                        <option value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1 cutomwid1">
+                <label class="lab2">Team</label>
+            </div>
+            <div class="col-md-2 box2 bb">
+                 <select class="form-control bgicon" name="team">
+                    {% for team in teams %}
+                        <option value="{{team.id}}" {% if team.id == selected_team.id %}selected{% endif %}>{{team}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3 bbc">
+                <div class="checkbox web-access">
+                    <span>
+                        <svg width="10" height="10" style="margin-right:3%">
+                        <rect x="2" y="2" width="5" height="5" style="fill:blue;stroke:#C7F4D3;stroke-width:5;fill-opacity:0.1;stroke-opacity:1">
+                        </svg>Appointments Booked
+                    </span><br />
+                  <span>
+                    <svg width="12" height="12" style="margin-right:3%">
+                        <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1">
+                    </svg>
+                  Slots Available</span>
+                </div>
+            </div>
+
+            <div class="col-md-5 bbd">
+                <input type='button' class="btn std-btn copy_button" style="min-width:164px !important; width=100% !important; font-size:10px;" id='copy_appointments' value='Copy from previous week' week-start='{{dates|get_dict_val:'day1'|date:"m-d-Y"}}' />
+                 <!-- <button class="btn std-btn ">Submit</button> -->
+            </div>     
+        </div>
+        <div style=" overflow-x: scroll !important;">
+            <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
+                <tr>
+                    <!-- <th>Slots/Day</th> -->
+                    <th style="border-top:none !important; border:none !important; width:8% !important;"></th>
+                    <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Mon</td></tr><tr><td class="cubg">{{dates|get_dict_val:'day1'|date:"M d, Y"}}</td></tr></table></th>
+                    <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Tue</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day2'|date:"M d, Y"}}</td></tr></table></th>
+                    <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Wed</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day3'|date:"M d, Y"}}</td></tr></table></th>
+                    <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Thu</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day4'|date:"M d, Y"}}</td></tr></table></th>
+                    <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Fri</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day5'|date:"M d, Y"}}</td></tr></table></th>
+                    <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Sat</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day6'|date:"M d, Y"}}</td></tr></table></th>
+                </tr>
+                {% for i in 12|get_range %}
+                    <tr>
+                        {% if forloop.first %}
+                            <td class="cubg2">{{i|add:12|concatenate:':00'}} AM</td>
+                        {% else %}
+                        <td class="cubg2">{{i|concatenate:':00'}} AM</td>
+                        {% endif %}
+                        {% with 'input_' as input %}
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
                                 {% endwith %}
-                            </tr>
-                            <tr align="center">
-                                {% if forloop.first %}
-                                    <th><b>{{i|add:12|concatenate:':30'}} AM</b></th>
-                                {% else %}
-                                    <th><b>{{i|concatenate:':30'}} AM</b></th>
-                                {% endif %}
-                                {% with 'input_' as input %}
-                                <td>
-                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
                                 {% endwith %}
-                            </tr>
-                        {% endfor %}
-                        {% for i in 12|get_range %}
-                            <tr align="center">
-                                {% if forloop.first %}
-                                    <th><b>{{i|add:12|concatenate:':00'}}PM</b></th>
-                                {% else %}
-                                    <th><b>{{i|concatenate:':00'}}PM</b></th>
-                                {% endif %}
-                                {% with 'input_' as input %}
-                                <td>
-                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
                                 {% endwith %}
-                            </tr>
-                            <tr align="center">
-                                {% if forloop.first %}
-                                    <th><b>{{i|add:12|concatenate:':30'}}PM</b></th>
-                                {% else %}
-                                    <th><b>{{i|concatenate:':30'}}PM</b></th>
-                                {% endif %}
-                                {% with 'input_' as input %}
-                                <td>
-                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
-                                <td>
-                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        {{booked_count|either:0}} / <input type="text" name="{{key_subs}}" value='{{av_count}}' {% if isdisabled %}disabled{% endif %}/>
-                                    {% endwith %}
-                                    {% endwith %}
-                                    {% endwith %}
-                                </td>
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
                                 {% endwith %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <div style="text-align:center;" >
-                        <input type="submit" value="Schedule" class="logbtn">
-                    </div>
-                </form>
-        </fieldset>
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        {% endwith %}
+                    </tr>
+                    <tr>
+                        {% if forloop.first %}
+                            <td class="cubg2">{{i|add:12|concatenate:':30'}} AM</td>
+                        {% else %}
+                        <td class="cubg2">{{i|concatenate:':30'}} AM</td>
+                        {% endif %}
+                        {% with 'input_' as input %}
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled{% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
+                                {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </table>
+                        </td>
+                        {% endwith %}
+                    </tr>
+                {% endfor %}
+
+                <!-- ################## PM #######################################-->
+                {% for i in 12|get_range %}
+                    <tr>
+                        {% if forloop.first %}
+                            <td class="cubg2">{{i|add:12|concatenate:':00'}} PM</td>
+                        {% else %}
+                        <td class="cubg2">{{i|concatenate:':00'}} PM</td>
+                        {% endif %}
+                        {% with 'input_' as input %}
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %}/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        {% endwith %}
+                    </tr>
+                    <tr>
+                        {% if forloop.first %}
+                            <td class="cubg2">{{i|add:12|concatenate:':30'}} PM</td>
+                        {% else %}
+                        <td class="cubg2">{{i|concatenate:':30'}} PM</td>
+                        {% endif %}
+                        {% with 'input_' as input %}
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="0" cellpadding="0">
+                                {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                    {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %} /></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+
+                            </table>
+                        </td>
+                        {% endwith %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td class="cubg2">Total</td>
+                    {% for slot in total_slots %}
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="2">
+                                <tr>
+                                    <td class="cubg3">{{slot.booked}}</td>
+                                    <td class="cubg4">{{slot.available}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    {% endfor %}
+                </tr>
+            </table>
+            <div style="text-align:center;" >
+                <input type="submit" value="Schedule" class="btn std-btn">
+            </div>
+        </div>
+    </form>
     </div>
-</div>
+</section>
 {% endblock content %}
 
 {% block main_js %}
