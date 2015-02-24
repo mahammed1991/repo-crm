@@ -280,7 +280,9 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         appointments[key]['booked'] = int(apptmnt.booked_count)
         total_available[datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y')].append(int(apptmnt.availability_count))
         total_booked[datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y')].append(int(apptmnt.booked_count))
-
+    total_slots = list()
+    for key, value in sorted(total_available.iteritems()):
+        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})
     teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
     process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
 
@@ -301,8 +303,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
          'process_type': process_type,
          'process_types': process_types,
          'selected_team': selected_team,
-         'total_booked': total_booked,
-         'total_available': total_available
+         'total_slots': total_slots,
          }
     )
 
