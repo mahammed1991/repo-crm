@@ -20,9 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'm_=j)c^5#3p+jo4yiupue)z39a90dd@y*rflz=+g5b7i=@ns#j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com']
 
@@ -64,7 +64,7 @@ USE_TZ = False
 
 STATIC_FOLDER = os.path.join(BASE_DIR, "static")
 
-#TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'))
+# TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'))
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'templates'),
     os.path.join(BASE_DIR, 'forum/skins/default/templates'),
@@ -104,8 +104,8 @@ LOGIN_ERROR_URL = '/auth/error'
 
 # Social auth settings
 # APP settings
-#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '124672404110-8i8oatin6gg2r2b8611o0qgmvmiuvlme.apps.googleusercontent.com'
-#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'm9U_OqVgSYcLTQ8DFdjndo7B'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '124672404110-8i8oatin6gg2r2b8611o0qgmvmiuvlme.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'm9U_OqVgSYcLTQ8DFdjndo7B'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '306443257786-qav8khr2je2ocpftb4pg3pgjhc7h89e1.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'moS9p0suOUzkzAEWJGAsCWg9'
