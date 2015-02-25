@@ -178,7 +178,7 @@
       $('#g_case_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
-    }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+    }else if(selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
       if (window.is_loc_changed){
         setLocations(window.locations);
         window.is_loc_changed = false;

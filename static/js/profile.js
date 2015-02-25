@@ -2,13 +2,13 @@ $(document).ready(function(){
     if (window.loc_id){
         $("#user_location").val(window.loc_id);    
     }else{
-        $("#user_location").val("");
+        $("#user_location").val("0");
     }
 
     if (window.team_id){
         $("#user_team").val(window.team_id);
     }else{
-        $("#user_team").val("");
+        $("#user_team").val("0");
     }
 
     // Click on edit button on profile
@@ -52,17 +52,17 @@ function validateProfile(){
     }
 
     // Phone Validation
-    user_phone = $("#user_phone");
-    if (user_phone.val() == "") {
-       $(user_phone).addClass('error-box');
-       // $(user_phone).after('<span class="error-txt">Please Enter Phone name</span>');
-       $(user_phone).focus();   
-        return false;
-    }
+    // user_phone = $("#user_phone");
+    // if (user_phone.val() == "") {
+    //    $(user_phone).addClass('error-box');
+    //    // $(user_phone).after('<span class="error-txt">Please Enter Phone name</span>');
+    //    $(user_phone).focus();   
+    //     return false;
+    // }
 
     // Team Validation
     team_elem = $("#user_team");
-    if (team_elem.val() == "") {
+    if (team_elem.val() == "" || team_elem.val() == '0') {
        $(team_elem).addClass('error-box');
        // $(team_elem).after('<span class="error-txt">Please choose Team name</span>');
        $(team_elem).focus();   
@@ -106,7 +106,7 @@ function validateProfile(){
 
     // User Location Validation
     location_elem = $("#user_location");
-    if (location_elem.val() == "") {
+    if (location_elem.val() == "" || location_elem.val() == "0") {
        $(location_elem).addClass('error-box');
        $(location_elem).after('<span class="error-txt">Please choose Location name</span>');
        $(location_elem).focus();   

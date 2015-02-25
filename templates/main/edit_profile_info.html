@@ -37,7 +37,7 @@
         {% if 'google' in request.user.email %}
           <label>Team</label>
            <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team">
-              <option value="">Select Team</option>
+              <option value="0">Select Team</option>
               {% for team in teams %}
               <option value="{{team.id}}">{{team.team_name}}</option>
               {% endfor %}
@@ -51,7 +51,7 @@
         {% if 'google' in request.user.email %}
           <label>Market Served</label>
           <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
-              <option value="">Market Served</option>
+              <option value="0">Market Served</option>
               {% for loc in locations %}
               <option value="{{loc.id}}">{{loc.location_name}}</option>
               {% endfor %}

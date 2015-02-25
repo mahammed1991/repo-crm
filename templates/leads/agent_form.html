@@ -57,7 +57,7 @@
               <select class="form-control" id="country" title="Program Location" name="country">
                 <option value="0">Program Location</option>
                 {% for loc in locations %}
-                  <option value="{{loc.id}}" location_id="{{loc.id}}">{{loc.name}}</option>
+                  <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
                 {% endfor %}
               </select>
             </div>
