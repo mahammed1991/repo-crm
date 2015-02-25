@@ -18,6 +18,7 @@
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
     <input type="hidden" name="oid" value="00DZ000000MipUa">
     <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <div class="std-sub-title">Google Rep Information</div>
@@ -300,8 +301,8 @@
         <div class="col-md-4">
           <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
         </div>
-        <input id="00Nd00000077T9o" name="00Nd00000077T9o" size="20" class="form-control" type="hidden">
-        <select id="webinventory" name="00Nd00000077T9t" class="form-control" title="Client's Web inventory" style="display:none">
+        <input id="mc_id" name="mc_id" size="20" class="form-control" type="hidden">
+        <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
           <option value="Under 100">Under 100</option>
         </select>
        <!--  <div class="col-md-4">
