@@ -29,7 +29,7 @@ from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
-from lib.helpers import date_range_by_quarter
+from lib.helpers import date_range_by_quarter, first_day_of_month, last_day_of_month
 from django.db.models import Q
 from random import randint
 from lib.sf_lead_ids import SalesforceLeads
@@ -216,6 +216,28 @@ def get_common_salesforce_lead_data(post_data):
         basic_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else '',   # Last Name
 
     return basic_data
+
+
+@login_required
+@csrf_exempt
+def agency_lead_form(request):
+    """ New Agency Lead Form """
+    template_args = dict()
+
+    # Get all location, teams codetypes
+    lead_args = get_basic_lead_data()
+    template_args.update(lead_args)
+
+    template_args.update({'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
+
+    if request.method == 'POST':
+        pass
+
+    return render(
+        request,
+        'leads/agent_lead_form.html',
+        template_args
+    )
 
 
 @login_required
@@ -1358,15 +1380,12 @@ def send_calendar_invite_to_advertiser(advertiser_details):
 def get_lead_summary(request, lid=None):
     """ Lead Status page """
 
-    lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+    lead_status = settings.LEAD_STATUS
     email = request.user.email
-    # email = 'tkhan@regalix-inc.com'
-    if email in settings.SEPERVIEWUSER:
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+    if request.user.groups.filter(name='SUPERUSER'):
+        start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
         leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)
-        # leads = Leads.objects.filter(google_rep_email="bhavinb@google.com")
 
-        status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
         lead_status_dict = {'total_leads': 0,
                             'implemented': 0,
                             'in_progress': 0,
@@ -1375,13 +1394,19 @@ def get_lead_summary(request, lid=None):
                             'in_active': 0,
                             'in_progress': 0,
                             }
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', created_date__gte=start_date, created_date__lte=end_date).count()
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        lead_status_dict['total_leads'] = Leads.objects.filter(
+            lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count()
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)

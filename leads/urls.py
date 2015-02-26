@@ -28,4 +28,5 @@ urlpatterns = patterns(
     url(r'^lead-summary-by-user/$', views.get_lead_status_by_ldap),
     url(r'^agency/(?P<agency_name>[\w -]+)/(?P<pid>[\w -][^/]+)$', views.agent_bulk_upload),
     url(r'^get-timezones/$', views.get_timezones),
+    url(r'^agency-lead-form/$', views.agency_lead_form),
 )

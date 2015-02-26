@@ -55,11 +55,9 @@ def main_home(request):
 
     """
     user_profile = get_user_profile(request.user)
-
-    if request.user.email in settings.SEPERVIEWUSER:
+    lead_status = settings.LEAD_STATUS
+    if request.user.groups.filter(name='SUPERUSER'):
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-
-        status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
         lead_status_dict = {'total_leads': 0,
                             'implemented': 0,
                             'in_progress': 0,
@@ -68,13 +66,19 @@ def main_home(request):
                             'in_active': 0,
                             'in_progress': 0,
                             }
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', created_date__gte=start_date, created_date__lte=end_date).count()
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        lead_status_dict['total_leads'] = Leads.objects.filter(
+            lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(
+            lead_status__=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count()
     else:
         # 1. Current User/Rep LEADS SUMMARY
         # Get Lead status count by current user
@@ -564,6 +568,7 @@ def get_contacts(request):
     contacts = {'management': list(),
                 'representatives': list()
                 }
+    groups = dict()
     for cnt in contact_list:
         contact = dict()
         contact['name'] = "%s %s" % (cnt.first_name, cnt.last_name)
@@ -572,10 +577,16 @@ def get_contacts(request):
         contact['skype'] = cnt.skype_id
         contact['picture'] = cnt.profile_photo.name.split('/')[-1]
         contact['photo_url'] = get_profile_avatar_by_email(cnt.email)
+        contact['position_type'] = cnt.position_type
         if cnt.position_type == 'MGMT':
             contacts['management'].append(contact)
         else:
-            contacts['representatives'].append(contact)
+            if cnt.position_type not in groups:
+                groups[cnt.position_type] = [contact]
+            else:
+                groups[cnt.position_type].append(contact)
+
+    contacts['representatives'].append(groups)
     return contacts
 
 

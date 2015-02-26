@@ -160,7 +160,7 @@ def get_weeks_in_quarter_to_date():
     qtr_week_end = qtr_end.isocalendar()[1]
     qtr_week_cur = datetime.utcnow().isocalendar()[1]
     week_dates = []
-    if qtr_week_cur < 8:
+    if qtr_week_cur > 8:
         week_range = range(qtr_week_star, qtr_week_cur + 1)
     else:
         week_range = range(qtr_week_star + (qtr_week_end - 6), qtr_week_end + 1)
@@ -207,7 +207,7 @@ def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
     else:
         email_list = [email]
 
-    status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
+    lead_status = settings.LEAD_STATUS
     lead_status_dict = {'total_leads': 0,
                         'implemented': 0,
                         'in_progress': 0,
@@ -218,19 +218,31 @@ def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
                         }
 
     if 'regalix' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, lead_owner_email__in=email_list).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', lead_owner_email__in=email_list).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', lead_owner_email__in=email_list).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', lead_owner_email__in=email_list).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', lead_owner_email__in=email_list).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', lead_owner_email__in=email_list).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(
+            lead_status__in=lead_status, lead_owner_email__in=email_list).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], lead_owner_email__in=email_list).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], lead_owner_email__in=email_list).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], lead_owner_email__in=email_list).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], lead_owner_email__in=email_list).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], lead_owner_email__in=email_list).count()
     elif 'google' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(lead_status__in=status, google_rep_email__in=email_list).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(lead_status='Implemented', google_rep_email__in=email_list).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(lead_status='In Progress', google_rep_email__in=email_list).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(lead_status='Attempting Contact', google_rep_email__in=email_list).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(lead_status='In Queue', google_rep_email__in=email_list).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(lead_status='In Active', google_rep_email__in=email_list).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(
+            lead_status__in=lead_status, google_rep_email__in=email_list).count()
+        lead_status_dict['implemented'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], google_rep_email__in=email_list).count()
+        lead_status_dict['in_progress'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], google_rep_email__in=email_list).count()
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], google_rep_email__in=email_list).count()
+        lead_status_dict['in_queue'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], google_rep_email__in=email_list).count()
+        lead_status_dict['in_active'] = Leads.objects.filter(
+            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], google_rep_email__in=email_list).count()
 
     return lead_status_dict
 
