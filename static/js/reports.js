@@ -51,7 +51,7 @@ $(document).ready(function() {
 $("#filter_report_type").change(function() {
 
   var report_type = $(this).val();
-
+  $("#filter_team input[type=checkbox]").attr('checked', false)
   setDefaultDropdown();
   showFilters();
 
@@ -113,6 +113,7 @@ $('#filter_timeline').change(function(){
 
 /*=========== Gettin Countries for selected Region ===============*/
 $('#filter_region select').change(function(){
+    $("#filter_country input[type=checkbox]").attr('checked', false)
     $("#filter_country").hide();
     $("#split_location").hide();
     var region = $(this).val();
@@ -200,7 +201,13 @@ $("#get_report").click(function(){
     if ($("#filter_country:visible")){
       $("#filter_country .checkbox input:checked").each(function(){
           selectedCountries.push($(this).val());
-      });  
+      }); 
+      console.log(dataString['region'])
+      if (dataString['region'] != 'all' && selectedCountries.length < 1){
+        var errMsg = "Please select Countries from Countr list";
+        showErrorMessage(errMsg);
+        isError = true;
+      }
     }
     
     dataString['countries'] = selectedCountries;
@@ -208,9 +215,15 @@ $("#get_report").click(function(){
     var selectedTeam = [];
 
     if ($("#filter_team:visible")){
+
       $("#filter_team .checkbox input:checked").each(function(){
           selectedTeam.push($(this).val());
-      });  
+      }); 
+      if (selectedTeam.length < 1){
+        var errMsg = "Please select Program from programs list";
+        showErrorMessage(errMsg);
+        isError = true;
+      }
     }
 
     dataString['team'] = selectedTeam;
@@ -270,6 +283,11 @@ function callAjax(dataString){
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
             showReport(report);
+            if(window.current_ldap == window.user_id){
+              $("#profile_div").show();
+            }else{
+              $("#profile_div").hide();
+            }
         $('#preloaderOverlay').hide()
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -815,7 +833,7 @@ function downloadReport(dataString){
 }
 
 $('.ldap').on("keyup", function() {
-  $("#profile_div").show();
+  // $("#profile_div").hide();
   return $(this).autocomplete({
     source: "/reports/get-user-name",
     minLength: 2,

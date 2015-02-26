@@ -196,7 +196,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Use for generating reports
 # lead status should be this order
-LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'Dead Lead', 'Implemented']
+LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Dead Lead',
+               'Implemented', 'ON CALL', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
 
 LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
                     'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required'],

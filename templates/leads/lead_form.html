@@ -63,13 +63,8 @@
         <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
       </div>
       <div class="col-md-4">
-        <label for="country">Market Served</label>
-        <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
-          <option value="0">Market Served</option>
-          {% for loc in locations %}
-            <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
-          {% endfor %}
-        </select>
+        <label for="country">Google Rep Location</label>
+          <input type="text" class="form-control" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
       </div>
     </div>
     <div class="std-sub-title">Advertiser Info</div>
@@ -91,7 +86,12 @@
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Enter Advertiser Location" autocomplete="off">
+        <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
+          <option value="0">Market Served</option>
+          {% for loc in locations %}
+            <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="col-md-4" id='tr_language'>
         <select class="form-control" id="language" title="language" name="language">
@@ -375,11 +375,10 @@
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
  <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
-    initialize();
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;

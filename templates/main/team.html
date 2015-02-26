@@ -30,27 +30,30 @@
             {% endfor %}
         </div>
         <h2>THE IMPLEMENTATION TEAM</h2>
-
-        <div class="team-slider">
-            {% for rep in contacts_list.representatives %}
-            <div class="team-slide">
-                {% if 'http' in rep.photo_url %}
-                    <img src="{{rep.photo_url}}">
-                {% else %}
-                    <img src="{% static rep.photo_url %}">
-                {% endif %}
-                <div class="slide-copy">
-                    <span class="member-name">{{rep.name}}</span>
-                    {{rep.email}}<br>
-                    {{rep.phone}}<br>
-                    {% if rep.skype %}
-                        Skype: <span>{{rep.skype}}</span>
-                    {% endif %}
+        {% for group in contacts_list.representatives %}
+            {% for key, value in group.iteritems %}
+                <h2>{{key}}</h2>
+                <div class="team-slider">
+                    {% for rep in value %}
+                    <div class="team-slide">
+                        {% if 'http' in rep.photo_url %}
+                            <img src="{{rep.photo_url}}">
+                        {% else %}
+                            <img src="{% static rep.photo_url %}">
+                        {% endif %}
+                        <div class="slide-copy">
+                            <span class="member-name">{{rep.name}}</span>
+                            {{rep.email}}<br>
+                            {{rep.phone}}<br>
+                            {% if rep.skype %}
+                                Skype: <span>{{rep.skype}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
             {% endfor %}
-        </div>
-        
+        {% endfor %}  
       
     </div>
   </section>

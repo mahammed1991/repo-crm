@@ -67,7 +67,7 @@ USE_TZ = False
 
 STATIC_FOLDER = os.path.join(BASE_DIR, "static")
 
-#TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'))
+# TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'))
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'templates'),
     os.path.join(BASE_DIR, 'forum/skins/default/templates'),
@@ -196,7 +196,9 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Use for generating reports
 # lead status should be this order
-LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'Dead Lead', 'Implemented']
+LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Dead Lead',
+               'Implemented', 'ON CALL', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
+
 LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
                     'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required'],
                     'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented'], 'ON CALL': ['ON CALL']}

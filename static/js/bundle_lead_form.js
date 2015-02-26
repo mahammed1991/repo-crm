@@ -70,7 +70,7 @@
     
   $('#team').change(function(){
     var selectedTeam = $(this).val();
-    if (selectedTeam == 'Gem Central America English' || selectedTeam == 'Gem Central America Spanish'){
+    if (selectedTeam == 'Gem Central America' || selectedTeam == 'Gem Central America'){
       console.log(window.is_loc_changed, "status")
       if(!window.is_loc_changed){
         setLocations(window.new_locations); 
@@ -83,7 +83,7 @@
       $('#g_cases_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
-    }else if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+    }else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
       if (window.is_loc_changed){
         setLocations(window.locations);
         window.is_loc_changed = false;

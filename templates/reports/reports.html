@@ -106,7 +106,7 @@ Reports
     </div>
     <div class="auth-user-info" id="auth_user_info" style="display:none;">
       <label>Name:</label>
-        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a href="#" class="ldap-update"><i id="refresh" class="fa fa-refresh"></i></a></div>
+        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a class="ldap-update"><i id="refresh" class="fa fa-refresh"></i></a></div>
         <label class="manager">Manager:</label>
         {% if request.user.profile.user_manager_name %}
             <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
@@ -329,5 +329,15 @@ google.load("visualization", "1", {packages:["corechart"]});
 $("#refresh").on('click', function(){
   $( "#get_report" ).trigger( "click" );
 });
+
+
+$('#ldap').keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+    $( "#get_report" ).trigger( "click" );
+  }
+}); 
+
 </script>
 {% endblock main_js %}

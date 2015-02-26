@@ -110,20 +110,24 @@ def get_new_reports(request):
             else:
                 team_members = team_members
 
-        if region == 'all':
-            countries = ReportService.get_all_locations()
-        else:
-            if 'all' in countries:
-                if len(countries) > 1:
-                    countries.remove('all')
-                    countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
-                else:
-                    countries = ReportService.get_all_locations()
-            elif countries:
-                countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
-            else:
-                countries = list(Location.objects.values_list('location_name', flat=True).filter().distinct().order_by('location_name'))
+        final_countries = list()
 
+        if region:
+            if region == 'all':
+                final_countries = ReportService.get_all_locations()
+            else:
+                if 'all' in countries:
+                    if len(countries) > 1:
+                        countries.remove('all')
+                        final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                    else:
+                        final_countries = ReportService.get_all_locations()
+                else:
+                    final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+        else:
+            final_countries = ReportService.get_all_locations()
+
+        countries = final_countries
         code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types]
 
@@ -617,11 +621,12 @@ def get_trends_reports(request):
         elif(reportType == 'trends_report_for_win_and_total'):
             reports = TrendsReportServices.get_for_win_total_and_conversionratio(teams, code_types, timeline)
     # creating this tableReports for draw table
-    tableReports = list()
+
+    table_reports = list()
     for i in range(len(reports[0])):
-        tableReports.append([row[i] for row in reports])
+        table_reports.append([row[i] for row in reports])
     mimetype = 'application/json'
-    return HttpResponse(json.dumps({'reports': reports, 'tableReports': tableReports,
+    return HttpResponse(json.dumps({'reports': reports, 'tableReports': table_reports,
                                     'timeline': timeline, 'teams': teams, 'code_types': code_types, 'report_type': reportType}), mimetype)
 
 
