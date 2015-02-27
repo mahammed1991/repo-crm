@@ -72,6 +72,9 @@ def lead_form(request):
 def lead_to_sandbox(request):
     """ Lead posting to sandbox """
     sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+    ret_url = ''
+    error_url = ''
+
     if request.POST.get('is_tag_lead') == 'yes':
 
         # Get Basic/Common form field data
@@ -79,6 +82,8 @@ def lead_to_sandbox(request):
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
         basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
         basic_data['oid'] = '00DZ000000MipUa'
+        ret_url = basic_data['retURL']
+        error_url = basic_data['errorURL']
 
         tag_data = basic_data
 
@@ -106,6 +111,8 @@ def lead_to_sandbox(request):
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
         basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
         basic_data['oid'] = '00DZ000000MipUa'
+        ret_url = basic_data['retURL']
+        error_url = basic_data['errorURL']
 
         setup_data = basic_data
         for key, value in SalesforceLeads.SANDBOX_SHOPPING_ARGS.items():
@@ -126,12 +133,14 @@ def lead_to_sandbox(request):
             print e
             return basic_data['errorURL']
 
-    return basic_data['retURL']
+    return ret_url
 
 
 def lead_to_salesforce(request):
     """ Lead posting to sandbox """
 
+    ret_url = ''
+    error_url = ''
     if request.POST.get('is_tag_lead') == 'yes':
 
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -140,7 +149,8 @@ def lead_to_salesforce(request):
         basic_data = get_common_salesforce_lead_data(request.POST)
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
         basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-
+        ret_url = basic_data['retURL']
+        error_url = basic_data['errorURL']
         tag_data = basic_data
 
         for key, value in SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.items():
@@ -168,6 +178,8 @@ def lead_to_salesforce(request):
         basic_data = get_common_salesforce_lead_data(request.POST)
         basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
         basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+        ret_url = basic_data['retURL']
+        error_url = basic_data['errorURL']
 
         setup_data = basic_data
         for key, value in SalesforceLeads.PRODUCTION_SHOPPING_ARGS.items():
@@ -186,7 +198,7 @@ def lead_to_salesforce(request):
             print e
             return basic_data['errorURL']
 
-    return basic_data['retURL']
+    return ret_url
 
 
 def get_common_sandbox_lead_data(post_data):

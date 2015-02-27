@@ -401,14 +401,14 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-    // Advertiser Location validation
-    if (frm.advertiser_location.value == "") {
-      //alert("Please Enter Customer ID");
-      $(frm.advertiser_location).addClass('error-box');
-      //$(frm.advertiser_location).after('<span class="error-txt">Please Enter Advertiser location</span>')
-      frm.advertiser_location.focus();
-      window.is_error = true;
-    }
+    // // Advertiser Location validation
+    // if (frm.advertiser_location.value == "") {
+    //   //alert("Please Enter Customer ID");
+    //   $(frm.advertiser_location).addClass('error-box');
+    //   //$(frm.advertiser_location).after('<span class="error-txt">Please Enter Advertiser location</span>')
+    //   frm.advertiser_location.focus();
+    //   window.is_error = true;
+    // }
     
     // Language validation
     if (frm.language.value == "") {

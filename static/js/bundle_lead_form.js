@@ -253,8 +253,8 @@ function validatethis(frm) {
     }
 
     // Advertiser Location validation
-    advertiserLocationElem = document.getElementById('advertiser_location');
-    validateFiled(advertiserLocationElem);
+    // advertiserLocationElem = document.getElementById('advertiser_location');
+    // validateFiled(advertiserLocationElem);
 
     // Language validation
     languageElem = document.getElementById('language');
