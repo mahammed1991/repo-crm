@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  Lead Form
+  Batch Lead Form
 {% endblock title %}
 {% block main_css %}
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
@@ -11,7 +11,7 @@
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
-  <h1>Submit Lead</h1>
+  <h1>Submit Batch Lead</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
