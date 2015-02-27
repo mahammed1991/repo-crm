@@ -276,6 +276,7 @@ class ReportService(object):
     @staticmethod
     def get_program_report_by_locations(teams, countries):
         """ Get reports for each Programs by all locations """
+        
         week = int(time.strftime("%W")) + 1
         year = int(time.strftime("%Y"))
         week_start_date, week_end_date = get_week_start_end_days(year, week)
@@ -342,12 +343,16 @@ class ReportService(object):
                 detail[lead.team]['end_qtr_total'] = detail[lead.team]['end_qtr_total'] + 1
                 if lead.country in detail[lead.team]['locations'].keys():
                     detail[lead.team]['locations'][lead.country]['end_qtr_total'] = detail[lead.team]['locations'][lead.country]['end_qtr_total'] + 1
-                    if "%s_%s_%s_%s" % (team_dict[lead.team], location_dict[lead.country], quarter, prev_qtr_year) not in target_leads.keys():
-                        detail[lead.team]['locations'][lead.country]['end_qtr_target'] = 0
+                    if lead.team in team_dict and lead.country in location_dict:
+                        if "%s_%s_%s_%s" % (team_dict[lead.team], location_dict[lead.country], quarter, prev_qtr_year) not in target_leads.keys():
+                            detail[lead.team]['locations'][lead.country]['end_qtr_target'] = 0
+                        else:
+                            detail[lead.team]['locations'][lead.country]['end_qtr_target'] = target_leads["%s_%s_%s_%s" % (team_dict[lead.team], location_dict[lead.country], quarter, prev_qtr_year)]
+                        loc_out_vs_trgt = float(detail[lead.team]['locations'][lead.country]['end_qtr_total']) / detail[lead.team]['locations'][lead.country]['end_qtr_target'] if detail[lead.team]['locations'][lead.country]['end_qtr_target'] != 0 else 0
+                        detail[lead.team]['locations'][lead.country]['out_vs_trgt'] = round(loc_out_vs_trgt, 2) * 100
                     else:
-                        detail[lead.team]['locations'][lead.country]['end_qtr_target'] = target_leads["%s_%s_%s_%s" % (team_dict[lead.team], location_dict[lead.country], quarter, prev_qtr_year)]
-                    loc_out_vs_trgt = float(detail[lead.team]['locations'][lead.country]['end_qtr_total']) / detail[lead.team]['locations'][lead.country]['end_qtr_target'] if detail[lead.team]['locations'][lead.country]['end_qtr_target'] != 0 else 0
-                    detail[lead.team]['locations'][lead.country]['out_vs_trgt'] = round(loc_out_vs_trgt, 2) * 100
+                        detail[lead.team]['locations'][lead.country]['end_qtr_target'] = 0
+                        detail[lead.team]['locations'][lead.country]['out_vs_trgt'] = 0
 
         for program in detail.keys():
             program_target = list()
@@ -356,7 +361,6 @@ class ReportService(object):
             detail[program]['end_qtr_target'] = sum(program_target)
             out_vs_trgt = float(detail[program]['end_qtr_total']) / detail[program]['end_qtr_target'] if detail[program]['end_qtr_target'] != 0 else 0
             detail[program]['out_vs_trgt'] = round(out_vs_trgt, 2) * 100
-
         return detail
 
     @staticmethod
@@ -399,9 +403,14 @@ class ReportService(object):
             target_loc = list()
             detail[location] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'programs': {}, 'end_qtr_total': 0, 'end_qtr_target': 0, 'out_vs_trgt': 0}
             for team in teams:
-                target_key = "%s_%s_%s_%s" % (location_dict[location], team_dict[team], quarter, prev_qtr_year)
-                target_loc.append(target_leads.get(target_key, 0))
-                detail[location]['programs'][team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'end_qtr_total': 0, 'end_qtr_target': target_leads.get(target_key, 0), 'out_vs_trgt': 0}
+                if team in team_dict and location in location_dict:
+                    target_key = "%s_%s_%s_%s" % (location_dict[location], team_dict[team], quarter, prev_qtr_year)
+                    target_loc.append(target_leads.get(target_key, 0))
+                    detail[location]['programs'][team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'end_qtr_total': 0, 'end_qtr_target': target_leads.get(target_key, 0), 'out_vs_trgt': 0}
+                else:
+                    target_loc.append(0)
+                    detail[location]['programs'][team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'end_qtr_total': 0, 'end_qtr_target': 0, 'out_vs_trgt': 0}
+
             detail[location]['end_qtr_target'] = sum(target_loc)
 
         for lead in week_wise_leads:
@@ -430,9 +439,13 @@ class ReportService(object):
             if lead.country in detail.keys():
                 detail[lead.country]['end_qtr_total'] = detail[lead.country]['end_qtr_total'] + 1
                 if lead.team in detail[lead.country]['programs'].keys():
-                    detail[lead.country]['programs'][lead.team]['end_qtr_total'] = detail[lead.country]['programs'][lead.team]['end_qtr_total'] + 1
-                    pgm_out_vs_trgt = float(detail[lead.country]['programs'][lead.team]['end_qtr_total']) / detail[lead.country]['programs'][lead.team]['end_qtr_target'] if detail[lead.country]['programs'][lead.team]['end_qtr_target'] != 0 else 0
-                    detail[lead.country]['programs'][lead.team]['out_vs_trgt'] = round(pgm_out_vs_trgt, 2) * 100
+                    if lead.team in team_dict and lead.country in location_dict:
+                        detail[lead.country]['programs'][lead.team]['end_qtr_total'] = detail[lead.country]['programs'][lead.team]['end_qtr_total'] + 1
+                        pgm_out_vs_trgt = float(detail[lead.country]['programs'][lead.team]['end_qtr_total']) / detail[lead.country]['programs'][lead.team]['end_qtr_target'] if detail[lead.country]['programs'][lead.team]['end_qtr_target'] != 0 else 0
+                        detail[lead.country]['programs'][lead.team]['out_vs_trgt'] = round(pgm_out_vs_trgt, 2) * 100
+                    else:
+                        detail[lead.country]['programs'][lead.team]['end_qtr_total'] = 0
+                        detail[lead.country]['programs'][lead.team]['out_vs_trgt'] = 0
 
         for location in detail.keys():
             out_vs_trgt = float(detail[location]['end_qtr_total']) / detail[location]['end_qtr_target'] if detail[location]['end_qtr_target'] != 0 else 0
