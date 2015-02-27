@@ -1,0 +1,403 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Agency Lead Form
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Agency Lead Form </h1>
+      <div class="lead-form agents-form-selection" id="agency_lead_div">
+         <!-- google rep info -->
+          <form class="lead-form" id="agency_lead_form" method="POST">
+              <div class="std-sub-title">Google Rep Info</div>
+              <div class="row">
+                <div class="col-md-4">
+                  <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+                </div>
+                <div class="col-md-4">
+                  <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control bgicon" id="team" title="Program Name" name="team">
+                    <option value="">Program name</option>
+                    {% for team in teams %}
+                      <option value='{{team.team_name}}'>{{team.team_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+                </div>
+                <div class="col-md-4">
+                  <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
+                    <option value="0">Market Served</option>
+                    {% for loc in locations %}
+                      <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            <div class="bg_custom">
+             <div class="form-heading">Will end customers be involved in the implementation process, or will we only be working with the Agency?</div>
+              <div class="checkbox web-access">
+                <input type="radio" name="customer_type" id="agency" value="agency" class="customer_type">
+                <span style="padding-right:2.5%;"> Agency </span>
+                <input type="radio" name="customer_type" id="end_customer" value="End Customer" class="customer_type">
+                <span style="padding-right:2.5%;">End Customer</span>
+              </div>
+            <div class="form-heading">Will the same task be implemented across different CID or will it be different tasks?</div>
+            <div>
+               <input type="radio" name="task_type" value="same-task" id="same_task" class="task_type" checked>
+               <span style="padding-right:2.5%;"> Same task</span>
+                <input type="radio" name="task_type" id="diff_task" value="Different-task" class="task_type">
+                <span style="padding-right:2.5%;">Different tasks </span>
+            </div>
+          </div>
+          <br />
+          <div class="form-heading">Set Appointment</div>
+           <div class="row">
+           <div class="col-md-4">
+              <select title="Time Zone" class="form-control" id="tzone" name="tzone">
+                <option value="">Select Time Zone</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+            </div>
+          </div>
+         
+           <div class="std-sub-title">Agency Conatct Info</div>
+              <div class="row">
+                <div class="col-md-4">
+                  <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
+                </div>
+                <div class="col-md-4">
+                  <input type="email" class="form-control" id="agency_email" name="agency_email" placeholder="Email">
+                </div>
+                <div class="col-md-4">
+                  <input type="text" class="form-control" id="agency_phone" name="agency_phone" placeholder="Telephone">
+                </div>
+
+              </div>
+        <!-- ##################### Same Task Functionality Starts #################### --> 
+          <div id="same_task_div">
+            <div class="std-sub-title">Same Task</div>
+              <div class="row">
+                <div class="col-md-4">
+                  <select title="Code Type" class="form-control bgicon" name="same_task_ctype" id="same_task_ctype">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+                </div>
+              </div>
+
+            <!-- ################### Code Type 1 ############################### -->
+            <div class="row tag" id="same_tag_1" style="display:none;">
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="cid1" name="cid1" placeholder="CID">
+              </div>
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+              </div>
+              <div class="col-md-3">
+                 <input type="text" class="form-control" id="comment1" name="comment1" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1">
+              <span  onclick="addMoreRows(2, 'same_tag');" class="add_tag_1"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+            <!-- ################### Code Type 1 ############################### -->
+
+
+            <!-- ################### Code Type 2 ############################### -->
+            <div class="row tag" id="same_tag_2" style="display:none;">
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="cid2" name="cid3" placeholder="CID">
+              </div>
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="url2" name="url3" placeholder="URL">
+              </div>
+              <div class="col-md-3">
+                 <input type="text" class="form-control" id="comment2" name="comment3" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1">
+                <span  onclick="addMoreRows(3, 'same_tag');" class="add_tag_2"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+                <span  onclick="deleteRows(2, 'same_tag');" class="delete_tag_2"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+            <!-- ################### Code Type 2 ############################### -->
+
+            <!-- ################### Code Type 3 ############################### -->
+            <div class="row tag" id="same_tag_3" style="display:none;">
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="cid3" name="cid3" placeholder="CID">
+              </div>
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
+              </div>
+              <div class="col-md-3">
+                 <input type="text" class="form-control" id="comment3" name="comment3" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1">
+                <span  onclick="addMoreRows(4, 'same_tag');" class="add_tag_3" ><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+                <span  onclick="deleteRows(3, 'same_tag');" class="delete_tag_3"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+            <!-- ################### Code Type 3 ############################### -->
+
+            <!-- ################### Code Type 4 ############################### -->
+            <div class="row tag" id="same_tag_4" style="display:none;">
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="cid4" name="cid4" placeholder="CID">
+              </div>
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="url4" name="url4" placeholder="URL">
+              </div>
+              <div class="col-md-3">
+                 <input type="text" class="form-control" id="comment4" name="comment4" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1">
+                <span  onclick="addMoreRows(5, 'same_tag');" class="add_tag_4"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+                <span  onclick="deleteRows(4, 'same_tag');" class="delete_tag_4"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+            <!-- ################### Code Type 4 ############################### -->
+
+            <!-- ################### Code Type 5 ############################### -->
+            <div class="row tag" id="same_tag_5" style="display:none;">
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="cid5" name="cid5" placeholder="CID">
+              </div>
+              <div class="col-md-4">
+                 <input type="text" class="form-control" id="url5" name="url5" placeholder="URL">
+              </div>
+              <div class="col-md-3">
+                 <input type="text" class="form-control" id="comment5" name="comment5" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1">
+              <span  onclick="deleteRows(5, 'same_tag');" class="add_tag_5"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+            <!-- ################### Code Type 5 ############################### -->
+
+          </div> 
+          <!-- ##################### Same Task Functionality Ends #################### --> 
+
+          <!-- ##################### Different Task Functionality #################### --> 
+          <div id="different_task_div" style="display:none;">  
+            <div class="std-sub-title">Different Task</div>
+            <div class="row fixallit" id="addedRows"></div>
+
+            <!--  Different TAG Lead 1 -->
+            <div class="row" id="diff_tag_1">
+              <div class="col-md-4  customwidth custom2">
+                 <select title="Code Type" class="form-control bgicon" name="diff_ctype1" id="diff_ctype1">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_cid1" name="diff_cid1" placeholder="CID">
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_url1" name="diff_url1" placeholder="URL">
+              </div>
+              <div class="col-md-3 customwidth">
+                 <input type="text" class="form-control" id="diff_comment1" name="diff_comment1" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1 allcenter customwidthplus">
+              <span onclick="addMoreRows(2, 'diff_tag');" class="add_tag_1"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+
+            <!--  Different TAG Lead 2 -->
+            <div class="row" id="diff_tag_2" style="display:none;">
+              <div class="col-md-4  customwidth custom2">
+                 <select title="Code Type" class="form-control bgicon" name="diff_ctype2" id="diff_ctype2">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_cid2" name="diff_cid2" placeholder="CID">
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_url2" name="diff_url2" placeholder="URL">
+              </div>
+              <div class="col-md-3 customwidth">
+                 <input type="text" class="form-control" id="diff_comment2" name="diff_comment2" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1 allcenter customwidthplus">
+                <span onclick="deleteRows(2, 'diff_tag');" class="delete_tag_2"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+                <span onclick="addMoreRows(3, 'diff_tag');" class="add_tag_2"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+
+            <!--  Different TAG Lead 3 -->
+            <div class="row" id="diff_tag_3" style="display:none;">
+              <div class="col-md-4  customwidth custom2">
+                 <select title="Code Type" class="form-control bgicon" name="diff_ctype3" id="diff_ctype3">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_cid3" name="diff_cid3" placeholder="CID">
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_url3" name="diff_url3" placeholder="URL">
+              </div>
+              <div class="col-md-3 customwidth">
+                 <input type="text" class="form-control" id="diff_comment3" name="diff_comment3" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1 allcenter customwidthplus">
+                <span onclick="deleteRows(3, 'diff_tag');" class="delete_tag_3"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+                <span onclick="addMoreRows(4, 'diff_tag');" class="add_tag_3"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+
+            <!--  Different TAG Lead 3 -->
+            <div class="row" id="diff_tag_4" style="display:none;">
+              <div class="col-md-4  customwidth custom2">
+                 <select title="Code Type" class="form-control bgicon" name="diff_ctype4" id="diff_ctype4">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_cid3" name="diff_cid4" placeholder="CID">
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_url3" name="diff_url4" placeholder="URL">
+              </div>
+              <div class="col-md-3 customwidth">
+                 <input type="text" class="form-control" id="diff_comment3" name="diff_comment4" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1 allcenter customwidthplus">
+                <span onclick="deleteRows(4, 'diff_tag');" class="delete_tag_4"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+                <span onclick="addMoreRows(5, 'diff_tag');" class="add_tag_4"><img src="{% static 'images/plus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+
+            <!--  Different TAG Lead 5 -->
+            <div class="row" id="diff_tag_5" style="display:none;">
+              <div class="col-md-4  customwidth custom2">
+                 <select title="Code Type" class="form-control bgicon" name="diff_ctype5" id="diff_ctype5">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_cid5" name="diff_cid5" placeholder="CID">
+              </div>
+              <div class="col-md-2 customwidth">
+                 <input type="text" class="form-control" id="diff_url5" name="diff_url5" placeholder="URL">
+              </div>
+              <div class="col-md-3 customwidth">
+                 <input type="text" class="form-control" id="diff_comment5" name="diff_comment5" placeholder="Special Instruction (Optional)">
+              </div>
+              <div class="col-md-1 allcenter customwidthplus">
+                <span onclick="deleteRows(5, 'diff_tag');" class="add_tag_5"><img src="{% static 'images/minus.png' %}" class="img-responsive plusicon"></span>
+              </div>
+            </div>
+
+          </div>
+          <!-- ##################### Different Task Functionality Ends #################### --> 
+
+          <div class="btns text-center" id="submit_buttons">
+              <div class="btn-group">
+                  <button class="btn std-btn">Submit</button>
+                  <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+              </div>
+          </div>
+        </form>
+      </div>  
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+
+// Task Type 
+$(".task_type").click(function(){
+    taskId = $(this).attr('id');
+    if(taskId == 'same_task'){
+      $("#same_task_div").show();
+      $("#different_task_div").hide();
+    }else if(taskId == 'diff_task'){
+      $("#different_task_div").show();
+      $("#same_task_div").hide();
+    }
+});
+
+// Same Task and select the Code type
+$("#same_task_ctype").change(function(){
+    selectedCtype = $(this).val();
+    if(selectedCtype == 'Google Shopping Setup'){
+        $("#same_shop_1").show();
+    }else if(selectedCtype == '0' || selectedCtype == ''){
+        $("#same_tag_1").hide();
+        $("#same_shop_1").hide();
+    }else{
+        $("#same_tag_1").show();
+    }
+});
+
+
+// addMoreRows Click functionality
+function addMoreRows(indx, elem){
+    elemId = elem + '_' + indx;
+    $("#" + elemId).show();
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+}
+
+// deleteRows Click functionality
+function deleteRows(indx, elem){
+    elemId = elem + '_' + indx;
+    $("#" + elemId).hide();
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).show();
+    $(".delete_tag_" + prevIndx).show();
+}
+
+</script>
+{% endblock main_js %}
