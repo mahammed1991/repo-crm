@@ -204,7 +204,7 @@ $("#get_report").click(function(){
       }); 
       console.log(dataString['region'])
       if (dataString['region'] != 'all' && selectedCountries.length < 1){
-        var errMsg = "Please select Countries from Countr list";
+        var errMsg = "Please select Countries from Countries list";
         showErrorMessage(errMsg);
         isError = true;
       }
