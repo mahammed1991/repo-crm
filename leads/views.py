@@ -94,9 +94,10 @@ def lead_to_sandbox(request):
         if request.POST.get('tag_contact_person_name'):
             full_name = request.POST.get('tag_contact_person_name')
         else:
-            full_name = request.POST.get('tag_contact_person_name')
+            full_name = request.POST.get('advertiser_name')
         tag_data['first_name'] = full_name.rsplit(' ', 1)[0]  # Primary Contact Name
         tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+        print tag_data, "TAG LEADS"
         try:
             requests.post(url=sf_api_url, data=tag_data)
         except Exception as e:
@@ -562,62 +563,72 @@ def bundle_lead_to_sandbox(request):
     code_type2 = request.POST.get('ctype2')
     code_type3 = request.POST.get('ctype3')
     code_types = list()
+
     # Get Basic/Common form filed data
     basic_data = dict()
-    # basic_data = get_common_lead_data(request.POST)
-    # Get Basic/Common form field data
-    basic_data = get_common_sandbox_lead_data(request.POST)
-    basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
-    basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    basic_data['oid'] = '00DZ000000MipUa'
+    ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+    error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+    oid = '00DZ000000MipUa'
     lead_bundle = "%s-%s" % (request.user.email.split('@')[0], randint(0, 99999))
 
-    basic_data['00Nd0000007f4St'] = lead_bundle
-
     if code_type1 in complex_code_type:
-        tag_data = dict()
+        basic_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_sandbox_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
         if code_type1 != 'Google Shopping Setup':
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_tag_lead_to_sb(request, request.POST, tag_data, [1])
+            post_tag_lead_to_sb(request, request.POST, basic_data, [1])
         else:
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_shopping_lead_to_sb(request, request.POST, tag_data, 1)
+            post_shopping_lead_to_sb(request, request.POST, basic_data, 1)
     elif code_type1:
         code_types.append(1)
 
     if code_type2 in complex_code_type:
-        tag_data = dict()
+        basic_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_sandbox_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
         if code_type2 != 'Google Shopping Setup':
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_tag_lead_to_sb(request, request.POST, tag_data, [2])
+            post_tag_lead_to_sb(request, request.POST, basic_data, [2])
         else:
-            for key, value in basic_data.items():
-                tag_data[key] = value
             post_shopping_lead_to_sb(request, request.POST, basic_data, 2)
     elif code_type2:
         code_types.append(2)
 
     if code_type3 in complex_code_type:
-        tag_data = dict()
+        basic_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_sandbox_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
         if code_type3 != 'Google Shopping Setup':
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_tag_lead_to_sb(request, request.POST, tag_data, [3])
+            post_tag_lead_to_sb(request, request.POST, basic_data, [3])
         else:
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_shopping_lead_to_sb(request, request.POST, tag_data, 3)
+            post_shopping_lead_to_sb(request, request.POST, basic_data, 3)
     elif code_type3:
         code_types.append(3)
 
     if code_types:
-        tag_data = dict()
-        for key, value in basic_data.items():
-                tag_data[key] = value
-        post_tag_lead_to_sb(request, request.POST, tag_data, code_types)
+        basic_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_sandbox_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
+        post_tag_lead_to_sb(request, request.POST, basic_data, code_types)
 
     # Create Icallender (*.ics) file for send mail
     # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -645,7 +656,7 @@ def post_tag_lead_to_sb(request, post_data, basic_data, code_types):
     if post_data.get('tag_contact_person_name1'):
         full_name = post_data.get('tag_contact_person_name1')
     else:
-        full_name = post_data.get('shop_contact_person_name1')
+        full_name = post_data.get('advertiser_name')
     if full_name:
         tag_data['first_name'] = full_name.rsplit(' ', 1)[0] if full_name else ''  # Primary Contact Name
         tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
@@ -687,7 +698,6 @@ def post_tag_lead_to_sb(request, post_data, basic_data, code_types):
 
     # Sandbox ID for TAD VIA GTM
     tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS.get('tag_via_gtm')] = post_data.get('tag_via_gtm')  # Tag Via  GTM
-    print tag_data, "TAG Data"
     requests.post(url=sf_api_url, data=tag_data)
 
 
@@ -711,7 +721,7 @@ def post_shopping_lead_to_sb(request, post_data, basic_data, indx):
     if post_data.get('shop_contact_person_name1'):
         full_name = post_data.get('shop_contact_person_name1')
     else:
-        full_name = post_data.get('tag_contact_person_name1')
+        full_name = post_data.get('advertiser_name')
     first_name = full_name.rsplit(' ', 1)[0]
     last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
     setup_data['first_name'] = first_name  # Primary Contact First Name
@@ -728,76 +738,79 @@ def post_shopping_lead_to_sb(request, post_data, basic_data, indx):
 
     # SandBox ID for IS SHOPPING POLICIES
     setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('is_shopping_policies')] = post_data.get('is_shopping_policies')  # Shopping Policies
-    print setup_data, "Shopping"
     requests.post(url=sf_api_url, data=setup_data)
 
 
 def bundle_lead_to_salesforce(request):
     """ Bundle Lead to Salesforce  """
 
-    complex_code_type = ['Dynamic Remarketing - Extension (non retail)', 'Google Shopping Setup',
-                         'Dynamic Remarketing - Retail', 'Cross Domain Tracking']
+    complex_code_type = ['Google Shopping Setup']
 
     code_type1 = request.POST.get('ctype1')
     code_type2 = request.POST.get('ctype2')
     code_type3 = request.POST.get('ctype3')
     code_types = list()
 
-    # Get Basic/Common form filed data
-    basic_data = dict()
-    # Get Basic/Common form field data
-    basic_data = get_common_salesforce_lead_data(request.POST)
-    basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
-    basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    basic_data['oid'] = '00Dd0000000fk18'
+    ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+    error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+    oid = '00Dd0000000fk18'
     lead_bundle = "%s-%s" % (request.user.email.split('@')[0], randint(0, 99999))
 
-    basic_data['00Nd0000007f4St'] = lead_bundle
-
     if code_type1 in complex_code_type:
-        tag_data = dict()
+        basic_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
         if code_type1 != 'Google Shopping Setup':
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_tag_lead_to_sf(request, request.POST, tag_data, [1])
+            post_tag_lead_to_sf(request, request.POST, basic_data, [1])
         else:
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_shopping_lead_to_sf(request, request.POST, tag_data, 1)
+            post_shopping_lead_to_sf(request, request.POST, basic_data, 1)
     elif code_type1:
         code_types.append(1)
 
     if code_type2 in complex_code_type:
-        tag_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
         if code_type2 != 'Google Shopping Setup':
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_tag_lead_to_sf(request, request.POST, tag_data, [2])
+            post_tag_lead_to_sf(request, request.POST, basic_data, [2])
         else:
-            for key, value in basic_data.items():
-                tag_data[key] = value
             post_shopping_lead_to_sf(request, request.POST, basic_data, 2)
     elif code_type2:
         code_types.append(2)
 
     if code_type3 in complex_code_type:
-        tag_data = dict()
+        # Get Basic/Common form field data
+        basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
         if code_type3 != 'Google Shopping Setup':
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_tag_lead_to_sf(request, request.POST, tag_data, [3])
+            post_tag_lead_to_sf(request, request.POST, basic_data, [3])
         else:
-            for key, value in basic_data.items():
-                tag_data[key] = value
-            post_shopping_lead_to_sf(request, request.POST, tag_data, 3)
+            post_shopping_lead_to_sf(request, request.POST, basic_data, 3)
     elif code_type3:
         code_types.append(3)
 
     if code_types:
-        tag_data = dict()
-        for key, value in basic_data.items():
-                tag_data[key] = value
-        post_tag_lead_to_sf(request, request.POST, tag_data, code_types)
+        # Get Basic/Common form field data
+        basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = ret_url
+        basic_data['errorURL'] = error_url
+        basic_data['oid'] = oid
+        basic_data['00Nd0000007f4St'] = lead_bundle
+
+        post_tag_lead_to_sf(request, request.POST, basic_data, code_types)
 
     # Create Icallender (*.ics) file for send mail
     # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
@@ -866,7 +879,6 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
 
     # Sandbox ID for TAD VIA GTM
     tag_data[SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.get('tag_via_gtm')] = post_data.get('tag_via_gtm')  # Tag Via  GTM
-    print tag_data, "TAG Data"
     requests.post(url=sf_api_url, data=tag_data)
 
 
@@ -907,7 +919,6 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
 
     # SandBox ID for IS SHOPPING POLICIES
     setup_data[SalesforceLeads.PRODUCTION_SHOPPING_ARGS.get('is_shopping_policies')] = post_data.get('is_shopping_policies')  # Shopping Policies
-    print setup_data, "Shopping"
     requests.post(url=sf_api_url, data=setup_data)
 
 
