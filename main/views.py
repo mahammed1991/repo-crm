@@ -76,7 +76,7 @@ def main_home(request):
         lead_status_dict['attempting_contact'] = Leads.objects.filter(
             lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
         lead_status_dict['in_queue'] = Leads.objects.filter(
-            lead_status__=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
+            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
         lead_status_dict['in_active'] = Leads.objects.filter(
             lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count()
     else:
