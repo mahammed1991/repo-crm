@@ -2172,6 +2172,19 @@ margin-bottom:2px;
 	width:50px;
 }
 
+.bggrey{background: rgba(128, 128, 128, 0.11);}
+.bgred{background: rgba(195, 189, 124, 0.2);}
+.paddleft{
+	padding-left: 2%;
+	padding-right: 2%;
+}
+
+.bg_custom {
+	background: #EEEEEE;
+	padding: 1%;
+}
+
+
 
 /* ==========================================================================
    End of Leads Status
@@ -2179,6 +2192,13 @@ margin-bottom:2px;
 
 
 /* media queries */
+
+@media screen and (min-width: 600px){
+.width_reduced {
+	float: left;
+	width: 25.6%;
+}
+}
 
 @media screen and (min-width: 1280px) {
 	.navbar-nav.main-nav>li:hover .dropdown-menu {
