@@ -1,0 +1,422 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Batch Lead Form
+{% endblock title %}
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Batch Lead</h1>
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
+    <input type="hidden" name="oid" value="00DZ000000MipUa">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <div class="std-sub-title">Google Rep Information</div>
+    <div class="row">
+      <div class="col-md-4">
+        <label for="gref">Google Rep Name</label>
+        <!-- <input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /> -->
+        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+      </div>
+      <div class="col-md-4">
+        <label for="emailref">Google Rep Email</label>
+        <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+      </div>
+      <div class="col-md-4">
+        <label for="team">Program name</label>
+        <select class="form-control" id="team" title="Program Name" name="team">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+        <!-- <input type="text" id="team" class="form-control" title="Program Name"> -->
+      </div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment">
+        <label for="service_segment">Service Segment</label>
+          <select id="service_segment" title="service_segment" class="form-control" name="service_segment">
+              <option value="">Service Segment</option>
+              <option value="SBA">SBA</option>
+              <option value="HPA">HPA</option>
+              <option value="HPA+">HPA+</option>
+          </select>
+          <!-- <div class="col-md-4" style="display:none" id='GCaseId'> -->
+            <label for="g_case_id">Google Cases-ID</label>
+            <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+        <!-- </div> -->
+      </div>
+      <div class="col-md-4">
+        <label for="manager_name">Manager Name</label>
+        <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+      </div>
+      <div class="col-md-4">
+        <label for="manager_email">Manager Email</label>
+        <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+      </div>
+      <div class="col-md-4">
+        <label for="country">Google Rep Location</label>
+          <input type="text" class="form-control" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Info</div>
+    <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="advertiser_name" name="advertiser_name" placeholder="Advertiser Name">
+        </div>
+        <div class="col-md-4">
+          <input type="email" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email">
+        </div>
+        <div class="col-md-4">
+          <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+        </div>
+        <div class="col-md-4">
+          <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
+            <option value="0">Market Served</option>
+            {% for loc in locations %}
+              <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4" id='tr_language'>
+          <select class="form-control" id="language" title="language" name="language">
+            <option value="">Select Language</option>
+            <option value="English">English</option>
+            <option value="Dutch">Dutch</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select title="Time Zone" class="form-control" id="tzone" name="tzone">
+            <option value="">Select Time Zone</option>
+          </select>
+        </div>
+        <!-- <div class="col-md-4">
+            <input type="text" class="form-control" id="advertiser_location" name="advertiser_location" placeholder="Enter Advertiser Location" autocomplete="off">
+        </div> -->
+    </div>
+    <div class="webmasterCheck">        
+      <div class="form-heading">Does the advertiser have web access or a Webmaster?</div>
+      <div class="checkbox web-access">
+            <label>
+              <input type="checkbox" value="" name="web_access" id="web_access">
+              Web Access
+            </label>
+            <label>
+              <input id="webmasterCheck" type="checkbox" name="webmasterCheck" value="">
+              Webmaster
+            </label>
+      </div>
+      <div id="webmaster" class="row" style="display:none;">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="fopt" name="fopt" placeholder="Webmaster Name">
+          <input type="hidden" class="form-control" id="lopt" name="lopt">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Email">
+        </div>
+        <div class="col-md-4">
+           <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
+        </div>
+      </div>
+    </div>
+    <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
+    <input type="hidden" class="form-control" id="is_shopping_lead" name="is_shopping_lead" value="no">
+    <div class="tasks" id="bundles">
+        <div class="task" id="bundle_1">
+          <div class="std-sub-title">Choose upto 3 tasks</div>
+          <div class="row">
+
+              <!--  Bundle Codetype 1 -->
+              <div class="col-md-4">
+                <select title="Code Type" class="form-control ctype" name="ctype1" id="ctype1">
+                  <option value="">Select Code Type</option>
+                  {% for c_type in code_types %}
+                    <option value="{{c_type.name}}" id="ctype1_{{c_type.id}}">{{c_type.name}}</option>
+                  {% endfor %}
+                  <option value="Google Shopping Setup" id="ctype1_Google-Shopping-Setup">Google Shopping Setup</option>
+                </select>
+
+                <div id='ctype1_campaign' style="display:none">
+                  <label style="height:48px;margin-bottom: 20px;">
+                    <input type="checkbox" value="0" name="is_campaign_created1" id="is_campaign_created1">
+                    Is campaign created?
+                  </label>
+                  <input id="rbid_campaign1" name="rbid_campaign1" class="form-control" type="text" placeholder="Recommended Bid">
+                  <input type="text" id="rbudget_campaign1" class="form-control" name="rbudget_campaign1" placeholder="Budget">
+                </div>
+
+                <div id='ctype1_shopping' style="display:none;">
+                  <input id="rbid1" name="rbid1" class="form-control" type="text" placeholder="Recommended Bid">
+                  <input id="rbidmodifier1" name="rbidmodifier1" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+                  <input type="text" id="rbudget1" class="form-control" name="rbudget1" placeholder="Budget">
+                  <input id="mc_id" name="mc_id" size="20" class="form-control" type="hidden">
+                  <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
+                    <option value="Under 100">Under 100</option>
+                  </select>
+                </div>
+
+                <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+                <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
+              </div>
+
+              <!--  Bundle Codetype 2 -->
+              <div class="col-md-4">
+                  <select title="Code Type" class="form-control ctype" name="ctype2" id="ctype2">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}" id="ctype2_{{c_type.id}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup" id="ctype2_Google-Shopping-Setup">Google Shopping Setup</option>
+                  </select>
+
+                  <div id='ctype2_campaign' style="display:none">
+                  <label style="height:48px;margin-bottom:20px;">
+                    <input type="checkbox" value="0" name="is_campaign_created2" id="is_campaign_created2">
+                    Is campaign created?
+                  </label>
+                  <input id="rbid_campaign2" name="rbid_campaign2" class="form-control" type="text" placeholder="Recommended Bid">
+                  <input type="text" id="rbudget_campaign2" class="form-control" name="rbudget_campaign2" placeholder="Budget">
+                </div>
+
+                  <div id='ctype2_shopping' style="display:none;">
+                   <input id="rbid2" name="rbid2" class="form-control" type="text" placeholder="Recommended Bid">
+                      <input id="rbidmodifier2" name="rbidmodifier2" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+                      <input type="text" id="rbudget2" class="form-control" name="rbudget2" placeholder="Budget">
+                      <input id="00Nd00000077T9o" name="00Nd00000077T9o" size="20" class="form-control" type="hidden">
+                      <select id="webinventory2" name="00Nd00000077T9t" class="form-control" title="Client's Web inventory" style="display:none">
+                        <option value="Under 100">Under 100</option>
+                      </select>
+                  </div>
+
+                    <input type="text" class="form-control ctype" id="url2" name="url2" placeholder="URL">
+                    <textarea class="form-control" id="comment2" name="comment2" placeholder="Special Instructions (Optional)"></textarea>
+              </div>  
+
+            <!--  Bundle Codetype 3 -->
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control ctype" name="ctype3" id="ctype3">
+                <option value="">Select Code Type</option>
+                {% for c_type in code_types %}
+                  <option value="{{c_type.name}}" id="ctype3_{{c_type.id}}">{{c_type.name}}</option>
+                {% endfor %}
+                <option value="Google Shopping Setup" id="ctype3_Google-Shopping-Setup">Google Shopping Setup</option>
+              </select>
+
+              <div id='ctype3_campaign' style="display:none">
+                  <label style="height:48px;margin-bottom:20px;">
+                    <input type="checkbox" value="0" name="is_campaign_created3" id="is_campaign_created3">
+                    Is campaign created?
+                  </label>
+                  <input id="rbid_campaign3" name="rbid_campaign3" class="form-control" type="text" placeholder="Recommended Bid">
+                  <input type="text" id="rbudget_campaign3" class="form-control" name="rbudget_campaign3" placeholder="Budget">
+                </div>
+
+              <div id='ctype3_shopping' style="display:none;">
+                <input id="rbid3" name="rbid3" class="form-control" type="text" placeholder="Recommended Bid">
+                <input id="rbidmodifier3" name="rbidmodifier3" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+                <input type="text" id="rbudget3" class="form-control" name="rbudget3" placeholder="Budget">
+                <input id="00Nd00000077T9o" name="00Nd00000077T9o" size="20" class="form-control" type="hidden">
+                  <select id="webinventory3" name="00Nd00000077T9t" class="form-control" title="Client's Web inventory" style="display:none">
+                    <option value="Under 100">Under 100</option>
+                  </select>
+              </div>
+                <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
+                <textarea class="form-control" id="comment3" name="comment3" placeholder="Special Instructions (Optional)"></textarea>
+            </div>   
+          </div>
+        </div>
+
+        <div class="appointment">
+          <div class="checkbox">
+              <label>
+                <input id="appointmentCheck" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+            <div class="row" id="tag_appointment">
+
+                <!-- Appointment 1 -->
+                <div class="tag_appointment-1">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="tag_contact_person_name1" name="tag_contact_person_name1" placeholder="Contact Person Name">
+                    </div>
+                    <div class="col-md-4">
+                      <select title="Primary Contact Role" class="form-control" name="tag_primary_role" id="tag_primary_role">
+                      <option value="">Primary Contact Role</option>
+                      <option value="Owner">Owner</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="Webmaster">Webmaster</option>
+                    </select>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="tag_datepick1" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick1" autocomplete='off'>       
+                    </div>
+                </div>
+
+                <div class="shop_appointment-1" style="display:none;">
+                  <div class="col-md-4">
+                    <input type="text" class="form-control" id="shop_contact_person_name1" name="shop_contact_person_name1" placeholder="Contact Person Name">
+                  </div>
+                  <div class="col-md-4">
+                      <select title="Primary Contact Role" class="form-control" name="shop_primary_role" id="shop_primary_role">
+                      <option value="">Primary Contact Role</option>
+                      <option value="Owner">Owner</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="Webmaster">Webmaster</option>
+                    </select>
+                    </div>
+                  <div class="col-md-4">
+                    <input type="text" class="form-control" id="setup_datepick1" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick1" autocomplete='off'>
+                  </div>
+                </div>
+
+
+              <!-- Appointment 2 -->
+              <!-- <div class="row">
+                  <div class="col-md-4" style="display:none;" id='ctype2_appointment'>
+                    <div class="checkbox">
+                      <label>
+                        <input id="appointmentCheck_2" type="checkbox" value="">
+                        Do you want to setup a fresh appointment for <span id="ctype2_name"></span>? 
+                      </label>
+                      </div>
+                    </div>
+
+                  <div class="tag_appointment-2" style="display:none;">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="tag_contact_person_name2" name="tag_contact_person_name2" placeholder="Contact Person Name">
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="tag_datepick2" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
+                    </div>
+                    </div>
+
+                  <div class="shop_appointment-2" style="display:none;">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="shop_contact_person_name2" name="shop_contact_person_name2" placeholder="Contact Person Name">
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="setup_datepick2" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
+                    </div>
+                  </div>
+                </div> -->
+
+                <!-- Appointment 3 -->
+                <!-- <div class="row">
+                    <div class="col-md-4" style="display:none;" id='ctype3_appointment'>
+                      <div class="checkbox">
+                          <label>
+                            <input id="appointmentCheck_3" type="checkbox" value="">
+                            Do you want to setup a fresh appointment for <span id="ctype3_name"></span>? 
+                          </label>
+                      </div>
+                    </div>
+
+                    <div class="tag_appointment-3" style="display:none;">
+                      <div class="col-md-4">
+                        <input type="text" class="form-control" id="tag_contact_person_name3" name="tag_contact_person_name3" placeholder="Contact Person Name">
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <input type="text" class="form-control" id="tag_datepick3" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
+                      </div>
+                      </div>
+
+                    <div class="shop_appointment-3" style="display:none;">
+                      <div class="col-md-4">
+                        <input type="text" class="form-control" id="shop_contact_person_name3" name="shop_contact_person_name3" placeholder="Contact Person Name">
+                      </div>
+                      <div class="col-md-4">
+                        <input type="text" class="form-control" id="setup_datepick3" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
+                      </div>
+                    </div>
+                </div>
+          </div> -->
+        </div>    
+    </div>
+
+  <!-- ############### Shopping Heads UP ######################## -->
+  <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
+    <div class="checkbox">
+          <label id="tagCheck" class="tag-policies" style="display:none;">
+             <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm">
+            Do you want to install this Tag via Google Tag Manager?
+          </label>
+          <label class="shopping-policy" style="display:none;">
+            <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
+            Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
+          </label>
+          <ol class="subitems" id="shoppingTerms" style="display:none;">
+            <li>This advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
+              <li>This advertiser's website meets Google Shopping's <a href="https://support.google.com/merchants/answer/188486?ref_topic=3163841" target="_blank">user safety requirements</a>. Notably, this advertiser's website contains:
+                <ul>
+                    <li>Shopping cart functionality with secure checkout (https://);</li>
+                      <li>Clearly labeled contact info</li>
+                      <li>Refund policy</li>
+                      <li>Billing terms & conditions</li>
+                  </ul>
+              </li>
+          </ol>         
+    </div>
+  </div>
+
+    <div class="btns text-center" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div>
+</form>
+</div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bundle_lead_form.js' %}"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.locations = {{locations|safe}};
+    window.new_locations = {{new_locations|safe}};
+    window.is_loc_changed = false;
+
+
+    var userTeam = "{{user.profile.team.team_name|safe}}"
+    if(userTeam){
+      $('#team').val(userTeam);
+    }
+    var userLocation = "{{user.profile.location.location_name|safe}}"
+    if(userLocation){
+      $('#country').val(userLocation);
+      loc = document.getElementById('country');
+      changetime(loc.options[loc.selectedIndex]);
+    }
+  
+  });
+  // $("#team").autocomplete({
+  //     source: {{programs|safe}},
+  //     select: function(event,ui){
+  //       $("#team").val(ui.item);
+  //     }
+  //   });
+</script>
+{% endblock main_js %}
