@@ -51,20 +51,31 @@
                 </div>
               </div>
             <div class="bg_custom">
-             <div class="form-heading">Will end customers be involved in the implementation process, or will we only be working with the Agency?</div>
-              <div class="checkbox web-access">
-                <input type="radio" name="customer_type" id="agency" value="agency" class="customer_type">
-                <span style="padding-right:2.5%;"> Agency </span>
-                <input type="radio" name="customer_type" id="end_customer" value="End Customer" class="customer_type">
-                <span style="padding-right:2.5%;">End Customer</span>
+              <div class="form-heading">Who will submit the leads?</div>
+               <div class="checkbox">
+                  <input type="radio" name="cusm_type" id="me" value="me" class="cusm_type">
+                  <span style="padding-right:2.5%;"> Me </span>
+                  <input type="radio" name="cusm_type" id="agen" value="agency" class="cusm_type">
+                  <span style="padding-right:2.5%;">Agency</span>
+                  <input type="radio" name="cusm_type" id="poc" value="agency" class="cusm_type">
+                  <span style="padding-right:2.5%;">POC</span>
+                </div>
+
+               <div class="form-heading">Will end customers be involved in the implementation process, or will we only be working with the Agency?</div>
+                <div class="checkbox web-access">
+                  <input type="radio" name="customer_type" id="agency" value="agency" class="customer_type">
+                  <span style="padding-right:2.5%;"> Agency </span>
+                  <input type="radio" name="customer_type" id="end_customer" value="End Customer" class="customer_type">
+                  <span style="padding-right:2.5%;">End Customer</span>
+                </div>
+
+              <div class="form-heading">Will the same task be implemented across different CID or will it be different tasks?</div>
+              <div>
+                 <input type="radio" name="task_type" value="same-task" id="same_task" class="task_type" checked>
+                 <span style="padding-right:2.5%;"> Same task</span>
+                  <input type="radio" name="task_type" id="diff_task" value="Different-task" class="task_type">
+                  <span style="padding-right:2.5%;">Different tasks </span>
               </div>
-            <div class="form-heading">Will the same task be implemented across different CID or will it be different tasks?</div>
-            <div>
-               <input type="radio" name="task_type" value="same-task" id="same_task" class="task_type" checked>
-               <span style="padding-right:2.5%;"> Same task</span>
-                <input type="radio" name="task_type" id="diff_task" value="Different-task" class="task_type">
-                <span style="padding-right:2.5%;">Different tasks </span>
-            </div>
           </div>
           <br />
           <div class="form-heading">Set Appointment</div>
@@ -84,13 +95,16 @@
          
            <div class="std-sub-title">Agency Conatct Info</div>
               <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="poc" name="poc" placeholder="Point of Contact">
+                </div>
+                <div class="col-md-3">
                   <input type="email" class="form-control" id="agency_email" name="agency_email" placeholder="Email">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <input type="text" class="form-control" id="agency_phone" name="agency_phone" placeholder="Telephone">
                 </div>
 
@@ -134,6 +148,7 @@
                  <input type="text" class="form-control" id="cid2" name="cid3" placeholder="CID">
               </div>
               <div class="col-md-4">
+
                  <input type="text" class="form-control" id="url2" name="url3" placeholder="URL">
               </div>
               <div class="col-md-3">
