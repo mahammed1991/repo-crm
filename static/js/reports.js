@@ -19,7 +19,12 @@ $(document).ready(function() {
       dateFormat: "M dd, yy",
       onClose : function(selectedDate) {
         $("#to").datepicker("option", "minDate", selectedDate);
-      }
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() + 1);
+            $("#datepickerTo").datepicker("option", "minDate", dt);
+        }
     });
     $("#datepickerTo").datepicker({
       defaultDate : "+1w",
@@ -28,7 +33,12 @@ $(document).ready(function() {
       dateFormat: "M dd, yy",
       onClose : function(selectedDate) {
         $("#from").datepicker("option", "maxDate", selectedDate);
-      }
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
     });
   });
 
@@ -103,6 +113,8 @@ $("#filter_report_type").change(function() {
 $('#filter_timeline').change(function(){
     var value = $(this).val();
     $('#filter_dateRange').hide();
+    var from_date = $("#datepickerFrom").val('');
+    var to_date = $("#datepickerTo").val('');
 
     if(value == 'dateRange'){
       $('#filter_dateRange').show();
@@ -135,6 +147,7 @@ $('#filter_region select').change(function(){
 
 /*=================Get Reports by clicking view Reports Button=====================*/
 $("#get_report").click(function(){
+    $('#form_ldap_id').prop("value",window.current_ldap);
     var isError = false;
     var dataString = {}
     var selectedReportType = $("#filter_report_type").val();
@@ -198,7 +211,7 @@ $("#get_report").click(function(){
 
      // Get location and team details 
     var selectedCountries = [];
-    if ($("#filter_country:visible")){
+    if ($("#filter_country").is(":visible")){
       $("#filter_country .checkbox input:checked").each(function(){
           selectedCountries.push($(this).val());
       }); 
@@ -214,7 +227,7 @@ $("#get_report").click(function(){
 
     var selectedTeam = [];
 
-    if ($("#filter_team:visible")){
+    if ($("#filter_team").is(":visible")){
 
       $("#filter_team .checkbox input:checked").each(function(){
           selectedTeam.push($(this).val());
@@ -701,6 +714,7 @@ function createTableHeader(param){
 }
 
 $('#download').click(function(){
+
     var isError = false;
     var dataString = {}
     var selectedReportType = $("#filter_report_type").val();

@@ -257,6 +257,7 @@ Reports
           <input type="hidden" name="download_countries" id="download_countries" value="" />
           <input type="hidden" name="download_team" id="download_team" value="" />
           <input type="hidden" name="download_selectedFields" id="download_selectedFields" value="" />
+          <input type="hidden" name="form_ldap_id" id="form_ldap_id" value="" />
           <div class="checkbox">
                 <label>
                   <input type="checkbox" value="Customer ID" id='cid' checked="checked"> CID
@@ -322,6 +323,7 @@ Reports
 $(document).ready(function(){
   window.current_ldap = {{request.user.id|safe}};
   window.user_id = {{request.user.id|safe}};
+
 });
 google.load("visualization", "1", {packages:["corechart"]});
 
@@ -338,6 +340,7 @@ $('#ldap').keypress(function (e) {
     $( "#get_report" ).trigger( "click" );
   }
 }); 
+
 
 </script>
 {% endblock main_js %}
