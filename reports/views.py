@@ -135,7 +135,6 @@ def get_new_reports(request):
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
 
         report_details = dict()
-
         if ldap_id:
             ldap_user = User.objects.get(pk=ldap_id)
             email = ldap_user.email
@@ -179,6 +178,7 @@ def get_download_report(request):
         teams = request.POST.get('download_team')
         team_members = request.POST.get('download_team_members')
         selected_fields = request.POST.get('download_selectedFields')
+        ldap_id = request.POST.get('form_ldap_id')
         report_timeline = report_timeline.split(',') if report_timeline else []
         countries = countries.split(',') if countries else []
         teams = teams.split(',') if teams else []
@@ -218,7 +218,11 @@ def get_download_report(request):
         if report_timeline:
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
 
-        email = request.user.email
+        if ldap_id:
+            ldap_user = User.objects.get(pk=ldap_id)
+            email = ldap_user.email
+        else:
+            email = request.user.email
 
         if report_type == 'default_report':
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())

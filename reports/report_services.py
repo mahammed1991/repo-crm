@@ -222,7 +222,7 @@ class ReportService(object):
 
     @staticmethod
     def get_report_details_for_filters(code_types, teams, countries, start_date, end_date, emails):
-
+        #import ipdb;ipdb.set_trace()
         report_detail = dict()
         if emails and teams and countries:
             leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
@@ -239,6 +239,10 @@ class ReportService(object):
 
         elif not emails and not teams and countries:
             leads = Leads.objects.filter(country__in=countries, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date)
+
+        elif emails and not teams and countries:
+            leads = Leads.objects.filter(country__in=countries, type_1__in=code_types, google_rep_email__in=emails,
                                          created_date__gte=start_date, created_date__lte=end_date)
 
         lead_ids = [lead.id for lead in leads]
