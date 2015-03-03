@@ -8,24 +8,32 @@ class SalesforceLeads(object):
                                 'service_segment': '00Nd0000007e2AF',  # Service Segment
                                 'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
                                 'country': '00Nd0000005WYga',  # Country
-                                'aemail': '00Nd0000005WcNw',  # Advertiser Email
-                                'phone': '00Nd0000005WYgz',  # Advertiser phone
-                                'company': 'company',  # Advertiser Company
                                 'cid': '00Nd0000005WYgV',  # Customer ID
                                 'language': '00Nd0000007clUn',  # Language
                                 'tzone': '00Nd0000005WYhT',  # Time Zone
-                                # Sandbox ID's
+
+                                # Advertiser Details
                                 'advertiser_name': '00NZ0000001X6y7',  # Advertiser Name
                                 'first_name': 'first_name',  # First Name
                                 'last_name': 'last_name',  # Last Name
                                 'advertiser_location': '00Nd0000007es7U',  # Advertiser Location
-                                'web_access': '00Nd0000007esIm',  # Web Access
-                                'web_master_email': '00NZ0000001X6yC',  # Webmaster Email
-                                'popt': '00Nd0000007esIc',  # Webmaster Phone
+                                'aemail': '00Nd0000005WcNw',  # Advertiser Email
+                                'phone': '00Nd0000005WYgz',  # Advertiser phone
+                                'company': 'company',  # Advertiser Company
+
                                 # Webmaster Details
                                 'fopt': '00Nd0000005WYgp',  # Webmaster First Name
                                 'lopt': '00Nd0000005WYgu',  # Webmaster Last Name
+                                'web_access': '00Nd0000007esIm',  # Web Access
+                                'web_master_email': '00NZ0000001X6yC',  # Webmaster Email
+                                'popt': '00Nd0000007esIc',  # Webmaster Phone
                                 'change_lead_owner': '00Nd0000007elYB',    # Default value for Change Lead Owner
+
+                                # Customer Details
+                                'customer_name': '00NZ0000001X6y7',
+                                'customer_email': '00Nd0000005WcNw',
+                                'customer_phone': '00Nd0000005WYgz',
+
                                 'Campaign_ID': 'Campaign_ID',
                                 'oid': 'oid',
                                 '__VIEWSTATE': '__VIEWSTATE',
@@ -39,22 +47,30 @@ class SalesforceLeads(object):
                                    'service_segment': '00Nd0000007e2AF',  # Service Segment
                                    'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
                                    'country': '00Nd0000005WYga',  # Country
-                                   'aemail': '00Nd0000005WcNw',  # Advertiser Email
-                                   'phone': '00Nd0000005WYgz',  # Advertiser phone
-                                   'company': 'company',  # Advertiser Company
                                    'cid': '00Nd0000005WYgV',  # Customer ID
                                    'language': '00Nd0000007clUn',  # Language
                                    'tzone': '00Nd0000005WYhT',  # Time Zone
-                                   # Production ID's
+
+                                   # Advertiser Details
                                    'advertiser_name': '00Nd0000007esJ1',  # Advertiser Name
                                    'advertiser_location': '00Nd0000007es7U',  # Advertiser Location
+                                   'aemail': '00Nd0000005WcNw',  # Advertiser Email
+                                   'phone': '00Nd0000005WYgz',  # Advertiser phone
+                                   'company': 'company',  # Advertiser Company
+
+                                   # Webmaster Details
+                                   'fopt': '00Nd0000005WYgp',  # Webmaster First Name
+                                   'lopt': '00Nd0000005WYgu',  # Webmaster Last Name
                                    'web_access': '00Nd0000007esIm',  # Web Access
                                    'web_master_email': '00Nd0000007esIh',  # Webmaster Email
                                    'popt': '00Nd0000007esIc',  # Webmaster Phone
                                    'change_lead_owner': '00Nd0000007elYB',   # Default value for Change Lead Owner
-                                   # Webmaster Details
-                                   'fopt': '00Nd0000005WYgp',  # Webmaster First Name
-                                   'lopt': '00Nd0000005WYgu',  # Webmaster Last Name
+
+                                   # Customer Details
+                                   'customer_name': '00Nd0000007esJ1',
+                                   'customer_email': '00Nd0000005WcNw',
+                                   'customer_phone': '00Nd0000005WYgz',
+
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
                                    '__VIEWSTATE': '__VIEWSTATE',
