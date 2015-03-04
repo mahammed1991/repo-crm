@@ -39,7 +39,7 @@ CACHE_MAX_KEY_LENGTH = 235
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gtrack',
+        'NAME': 'google_portal',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '',

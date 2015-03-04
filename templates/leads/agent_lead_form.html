@@ -15,8 +15,8 @@
   <div class="container-fluid">
   <h1>Agency Lead Form </h1>
       <div class="lead-form agents-form-selection" id="agency_lead_div">
-         <!-- google rep info -->
           <form class="lead-form" id="agency_lead_form" method="POST">
+              <!-- ################ Google rep info Starts ######################### -->
               <div class="std-sub-title">Google Rep Info</div>
               <div class="row">
                 <div class="col-md-4">
@@ -50,6 +50,7 @@
                   </select>
                 </div>
               </div>
+              <!-- ################ Google rep info Ends ######################### -->
             <div class="bg_custom">
               <div class="form-heading">Who will submit the leads?</div>
                <div class="checkbox">
@@ -63,19 +64,20 @@
                 <div class="checkbox web-access">
                   <input type="radio" name="customer_type" id="agency" value="agency" class="customer_type" checked="">
                   <span style="padding-right:2.5%;"> Agency </span>
-                  <input type="radio" name="customer_type" id="end_customer" value="End Customer" class="customer_type">
+                  <input type="radio" name="customer_type" id="end_customer" value="end_customer" class="customer_type">
                   <span style="padding-right:2.5%;">End Customer</span>
                 </div>
 
               <div class="form-heading">Will the same task be implemented across different CID or will it be different tasks?</div>
               <div>
-                 <input type="radio" name="task_type" value="same-task" id="same_task" class="task_type" checked>
+                 <input type="radio" name="task_type" value="same_task" id="same_task" class="task_type" checked>
                  <span style="padding-right:2.5%;"> Same task</span>
-                  <input type="radio" name="task_type" id="diff_task" value="Different-task" class="task_type">
+                  <input type="radio" name="task_type" id="diff_task" value="diff_task" class="task_type">
                   <span style="padding-right:2.5%;">Different tasks </span>
               </div>
           </div>
           <br />
+          <!-- ################ Set Aoopintment Starts ######################### -->
           <div class="form-heading">Set Appointment</div>
            <div class="row">
            <div class="col-md-4">
@@ -90,7 +92,9 @@
               <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
             </div>
           </div>
+          <!-- ################ Set Aoopintment Ends ######################### -->
          
+         <!-- ################ Agency Conatct Info Starts ######################### -->
            <div class="std-sub-title">Agency Conatct Info</div>
               <div class="row">
                 <div class="col-md-3">
@@ -105,8 +109,9 @@
                 <div class="col-md-3">
                   <input type="text" class="form-control" id="agency_phone" name="agency_phone" placeholder="Telephone">
                 </div>
-
               </div>
+        <!-- ################ Agency Conatct Info Ends ######################### -->
+
         <!-- ##################### Same Task Functionality Starts #################### --> 
           <div id="same_task_agency">
             <div class="std-sub-title">Same Task</div>
@@ -140,11 +145,8 @@
             <!-- ################### Code Type 1 ############################### -->
           <!-- ##################### Same Task Functionality Ends #################### --> 
 
-          <!--- #################Same Shop########################## -->
-
+          <!--- #################Same Shop Functionality ########################## -->
           <!-- ################### Same Shop 1 ############################### -->
-
-
               <div class="row" id="same_shop_1" style="display:none;">
                   <div class="col-md-4">
                      <input type="text" class="form-control" id="shop_bid1" name="shop_bid1" placeholder="Recommended Bid">
@@ -169,9 +171,8 @@
                   </div>
                 </div>
           <!-- ################### Same Shop 1 ############################### -->
-
-          <!--- ####################End Shop######################## -->
         </div>
+        <!--- #################### End Same Shop Functionality ######################## -->
 
           <!-- ##################### Different Task Functionality #################### --> 
           <div id="different_task_agency" style="display:none;">  
@@ -195,7 +196,7 @@
           <!-- ##################### Different Task Functionality Ends #################### --> 
 
 
-          <!-- ##################### End Customer  Same Task Functionality Starts #################### --> 
+          <!-- ##################### Start Customer  Same Task Functionality Starts #################### --> 
           <div id="same_task_customer" style="display:none;">
             <div class="std-sub-title">Same Task</div>
               <div class="row">
@@ -228,11 +229,8 @@
             <!-- ################### Code Type 1 ############################### -->
           <!-- ##################### Customer Same Task Functionality Ends #################### --> 
 
-          <!--- #################Same Shop########################## -->
-
+          <!--- ################# Same Shop Sunctionality Starts ########################## -->
           <!-- ################### Same Shop 1 ############################### -->
-
-
               <div class="row" id="same_cust_shop_1" style="display:none;">
                   <div class="col-md-4">
                      <input type="text" class="form-control" id="shop_bid1" name="shop_bid1" placeholder="Recommended Bid">
@@ -257,19 +255,18 @@
                   </div>
                 </div>
           <!-- ################### Same Shop 1 ############################### -->
-
-          <!--- ####################End Shop######################## -->
         </div>
+        <!--- #################### End Shop Functionality ######################## -->
 
-          <!-- ##################### Different Task Functionality #################### --> 
+          <!-- ##################### Different Task Functionality Starts #################### --> 
           <div id="different_task_customer" style="display:none;">  
             <div class="std-sub-title">Different Task</div>
             <div class="row fixallit" id="addedRows"></div>
 
             <!--  Different TAG Lead 1 -->
-              <div class="row" id="diff_tag_1">
+              <div class="row" id="diff_cust_tag_1">
                         <div class="col-md-4  customwidth custom2">
-                           <select title="Code Type" class="form-control bgicon agency_diff" name="diff_cust_type1" id="diff_cust_type-1">
+                           <select title="Code Type" class="form-control bgicon customer_diff" name="diff_cust_type1" id="diff_cust_type-1">
                               <option value="">Select Code Type</option>
                               {% for c_type in code_types %}
                                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -280,8 +277,7 @@
               </div> 
 
           </div>
-          <!-- ##################### End Customer Different Task Functionality Ends #################### --> 
-
+          <!-- ##################### Customer Different Task Functionality Ends #################### --> 
 
           <div class="btns text-center" id="submit_buttons">
               <div class="btn-group">
@@ -298,79 +294,89 @@
 {% block main_js %}
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/agent_lead_form.js' %}"></script>
 <script type="text/javascript">
 
-// Task Type 
+  // Task Type 
 $(".task_type").click(function(){
+    hideAllFields();
     $('.tagFields, .shopFields').remove();
+     taskId = $(this).attr('id');
+
     if($(".customer_type:checked").val() == 'agency'){
-        $("#same_task_customer").hide();
-        $("#different_task_customer").hide();
-        taskId = $(this).attr('id');
         if(taskId == 'same_task'){
           $("#same_task_agency").show();
           $("#different_task_agency").hide();
         }else if(taskId == 'diff_task'){
           $("#different_task_agency").show();
-          //$('#fields').hide()
           $("#same_task_agency").hide();
         }
-        $("#diff_ctype-1").val('');
-        $("#same_task_ctype").val('');
-        $("#same_tag_1").hide();
-    }else if($(".customer_type:checked").val() == 'End Customer'){
-        $("#same_task_agency").hide();
-        $("#different_task_agency").hide()
-        taskId = $(this).attr('id');
+        hideCustomerFields();
+    }else if($(".customer_type:checked").val() == 'end_customer'){
         if(taskId == 'same_task'){
           $("#same_task_customer").show();
           $("#different_task_customer").hide();
         }else if(taskId == 'diff_task'){
           $("#different_task_customer").show();
-          //$('#fields').hide()
           $("#same_task_customer").hide();
         }
-
-        $("#diff_cust_type-1").val('');
-        $("#same_task_cust_type").val('');
-        $("#same_cust_tag_1").hide();
+        hideAgencyFields();
     }
 });
 
+$(".customer_type").click(function(){
+    hideAllFields();
+    $('.tagFields, .shopFields').remove();
+    customerId = $(this).attr('id');
+    if($(".task_type:checked").val() == 'same_task'){
+        if(customerId == 'agency'){
+          $("#same_task_agency").show();
+          $("#different_task_agency").hide();
+        }else if(customerId == 'end_customer'){
+          $("#different_task_agency").show();
+          $("#same_task_agency").hide();
+        }
+        hideCustomerFields();
+    }else if($(".task_type:checked").val() == 'diff_task'){
+        if(customerId == 'agency'){
+          $("#same_task_customer").show();
+          $("#different_task_customer").hide();
+        }else if(customerId == 'end_customer'){
+          $("#different_task_customer").show();
+          $("#same_task_customer").hide();
+        }
+        hideAgencyFields();
+    }
+});
 
-// // Task Type 
-// $(".customer_type").click(function(){
-//     $('.tagFields, .shopFields').remove();
-//     if($(".customer_type").is("checked") == false){
-//       alert('Please select customer type');
-//     }else if($(".customer_type:checked") == 'agency'){
-//         customerId = $(this).attr('id');
-//         if(customerId == 'agency'){
-//           $("#same_task_agency").show();
-//           $("#different_task_agency").hide();
-//         }else if(customerId == 'diff_task'){
-//           $("#different_task_agency").show();
-//           //$('#fields').hide()
-//           $("#same_task_agency").hide();
-//         }
-//     }else if($(".customer_type:checked") == 'end_customer'){
-//         customerId = $(this).attr('id');
-//         if(customerId == 'same_task'){
-//           $("#same_task_customer").show();
-//           $("#different_task_customer").hide();
-//         }else if(customerId == 'diff_task'){
-//           $("#different_task_customer").show();
-//           //$('#fields').hide()
-//           $("#same_task_customer").hide();
-//         }
-//     }
-// });
+function hideCustomerFields(){
+  $("#same_task_customer").hide();
+  $("#different_task_customer").hide();
+  $("#diff_ctype-1").val('');
+  $("#same_task_ctype").val('');
+  $("#same_tag_1").hide();
+}
 
+function hideAgencyFields(){
+  $("#same_task_agency").hide();
+  $("#different_task_agency").hide();
+  $("#diff_cust_type-1").val('');
+  $("#same_task_cust_type").val('');
+  $("#same_cust_tag_1").hide();
+}
+
+
+function hideAllFields(){
+  // Agency Fields
+  $(".tag").remove();
+  $(".shop").remove();
+  $(".add_tag_1, .add_shop_1").hide();
+}
 // Same Task and select the Code type
 $("#same_task_ctype").change(function(){
     $(".tag").remove();
     $(".shop").remove();
-    $(".add_tag_1, .add_shop_1").show()
+    $(".add_tag_1, .add_shop_1").show();
     selectedCtype = $(this).val();
     if(selectedCtype == 'Google Shopping Setup'){
         $("#same_tag_1").hide();
@@ -602,7 +608,7 @@ function deleteCustomerShopRows(indx){
     $(".delete_shop_" + prevIndx).show();
 }
 
-$(document).on('change', '.agency_diff', function() {
+$(document).on('change', '.customer_diff', function() {
     selectedCtype = $(this).val();
     if(selectedCtype == '' || selectedCtype == '0'){
       $('.fields').hide();
@@ -629,7 +635,7 @@ function addMoreCustomerTagRows(indx){
 }
 
 function deleteCustomerDiffTagRows(indx){
-  $('#diff_tag_'+indx).remove();
+  $('#diff_cust_tag_'+indx).remove();
    prevIndx = parseInt(indx) - 1;
   $(".add_tag_" + prevIndx).show();
   $(".delete_tag_" + prevIndx).show();
@@ -682,13 +688,13 @@ function createCustomerTagFields(indx){
                   '</div>'
         }
 
-    $("#diff_tag_"+indx).append(ele+tail);
+    $("#diff_cust_tag_"+indx).append(ele+tail);
 }
 
 function createCustomerCodeTypeForTag(indx){
-  ele  = '<div class="row" id="diff_tag_' + indx + '">'+
+  ele  = '<div class="row" id="diff_cust_tag_' + indx + '">'+
                       '<div class="col-md-4  customwidth custom2">'+
-                         '<select title="Code Type" class="form-control bgicon agency_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'+
+                         '<select title="Code Type" class="form-control bgicon customer_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'+
                             '<option value="">Select Code Type</option>'+
                             '{% for c_type in code_types %}'+
                               '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
@@ -722,7 +728,7 @@ function createCustomerShopFields(indx){
                   '</div>'
         }
 
-      $("#diff_tag_"+indx).append(ele + shop + tail);
+      $("#diff_cust_tag_"+indx).append(ele + shop + tail);
 
 }
 
