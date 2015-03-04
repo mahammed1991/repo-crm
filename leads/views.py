@@ -284,6 +284,8 @@ def agency_lead_form(request):
                                 basic_data['first_name'] = full_name.split(' ')[0]
                                 basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
                             tag_data = basic_data
+                            if int(indx) == 1:
+                                tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
                             # tag fields
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = same_task_ctype
                             tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
@@ -314,6 +316,8 @@ def agency_lead_form(request):
                                 basic_data['first_name'] = full_name.split(' ')[0]
                                 basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
                             shop_data = basic_data
+                            if int(indx) == 1:
+                                shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
                             # Shop fields
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = same_task_ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
@@ -345,6 +349,8 @@ def agency_lead_form(request):
                             basic_data['first_name'] = full_name.split(' ')[0]
                             basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
                         tag_data = basic_data
+                        if int(indx) == 1:
+                            tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
                         ctype = request.POST.get('diff_ctype-' + indx)
 
                         if ctype != 'Google Shopping Setup':
@@ -365,6 +371,8 @@ def agency_lead_form(request):
                         elif ctype == 'Google Shopping Setup':
                             # Get Shop lead fields
                             shop_data = basic_data
+                            if int(indx) == 1:
+                                shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
@@ -397,6 +405,8 @@ def agency_lead_form(request):
                                 basic_data['first_name'] = full_name.split(' ')[0]
                                 basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
                             tag_data = basic_data
+                            if int(indx) == 1:
+                                tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
 
                             # Get End Customer Name details
                             tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
@@ -432,6 +442,8 @@ def agency_lead_form(request):
                                 basic_data['first_name'] = full_name.split(' ')[0]
                                 basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
                             shop_data = basic_data
+                            if int(indx) == 1:
+                                shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
 
                             # Get End Customer Name details
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
@@ -470,6 +482,8 @@ def agency_lead_form(request):
                             basic_data['first_name'] = full_name.split(' ')[0]
                             basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
                         tag_data = basic_data
+                        if int(indx) == 1:
+                            tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
                         ctype = request.POST.get('diff_cust_type-' + indx)
 
                         if ctype != 'Google Shopping Setup':
@@ -495,6 +509,8 @@ def agency_lead_form(request):
                                 print e
                         elif ctype == 'Google Shopping Setup':
                             shop_data = basic_data
+                            if int(indx) == 1:
+                                shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
 
                             # Get End Customer Name details
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
