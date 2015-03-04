@@ -29,10 +29,10 @@ class SalesforceLeads(object):
                                 'popt': '00Nd0000007esIc',  # Webmaster Phone
                                 'change_lead_owner': '00Nd0000007elYB',    # Default value for Change Lead Owner
 
-                                # Customer Details
-                                'customer_name': '00NZ0000001X6y7',
-                                'customer_email': '00Nd0000005WcNw',
-                                'customer_phone': '00Nd0000005WYgz',
+                                # Agency Details
+                                'agency_name': '00NZ0000001XR8H',
+                                'agency_email': '00NZ0000001XR8M',
+                                'agency_phone': '00NZ0000001XR8R',
 
                                 'Campaign_ID': 'Campaign_ID',
                                 'oid': 'oid',
@@ -66,10 +66,10 @@ class SalesforceLeads(object):
                                    'popt': '00Nd0000007esIc',  # Webmaster Phone
                                    'change_lead_owner': '00Nd0000007elYB',   # Default value for Change Lead Owner
 
-                                   # Customer Details
-                                   'customer_name': '00Nd0000007esJ1',
-                                   'customer_email': '00Nd0000005WcNw',
-                                   'customer_phone': '00Nd0000005WYgz',
+                                   # Agency Details
+                                   'agency_name': '00Nd0000007fGgD',
+                                   'agency_email': '00Nd0000007fGgI',
+                                   'agency_phone': '00Nd0000007fGgN',
 
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
