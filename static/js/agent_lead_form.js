@@ -54,7 +54,8 @@ function setLocations(newLocations){
     $(".lead-form .form-control").removeClass('error-box');
     // $('.shopping-policy').removeClass('error-box');
     // $('.web-access').removeClass('error-box');
-    var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
@@ -84,6 +85,12 @@ function setLocations(newLocations){
     if ($(frm.service_segment).is(":visible")) {
       service_segmentElem = document.getElementById('service_segment');
       validateFiled(service_segmentElem);
+    }
+
+    // GcaseId validation
+    if ($(frm.g_cases_id).is(":visible")) {
+      gCasesIdElem = document.getElementById('g_cases_id');
+      validateFiled(gCasesIdElem);
     }
 
     // Google Manager details validation
@@ -162,6 +169,14 @@ function setLocations(newLocations){
                     cidElem = document.getElementById('cid' + i);
                     validateFiled(cidElem);
 
+                    if(!cidElem.value.match(cidFormat)){
+                      //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                      $(cidElem).addClass('error-box');
+                      //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                      cidElem.focus();
+                      window.is_error = true;
+                    }
+
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
@@ -169,6 +184,19 @@ function setLocations(newLocations){
                     // Comment Validation
                     commentElem = document.getElementById('comment' + i);
                     validateFiled(commentElem);
+
+                    // BID ID
+                    bidElem = document.getElementById('rbid' + i);
+                    if($(bidElem).is(":visible")){
+                      validateFiled(bidElem);  
+                    }
+
+                    // URL Budget
+                    budgetElem = document.getElementById('rbudget' + i);
+                    if($(budgetElem).is(":visible")){
+                      validateFiled(budgetElem);  
+                    }
+
                 }
             }
               var sameShopTask = $(".shop:visible").length;
@@ -178,6 +206,14 @@ function setLocations(newLocations){
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
                         validateFiled(cidElem);
+
+                        if(!cidElem.value.match(cidFormat)){
+                          //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                          $(cidElem).addClass('error-box');
+                          //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                          cidElem.focus();
+                          window.is_error = true;
+                        }
 
                         // URL Validation
                         urlElem = document.getElementById('url' + i);
@@ -210,6 +246,14 @@ function setLocations(newLocations){
                     cidElem = document.getElementById('cid' + i);
                     validateFiled(cidElem);
 
+                    if(!cidElem.value.match(cidFormat)){
+                      //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                      $(cidElem).addClass('error-box');
+                      //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                      cidElem.focus();
+                      window.is_error = true;
+                    }
+
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
@@ -217,6 +261,19 @@ function setLocations(newLocations){
                     // Comment Validation
                     commentElem = document.getElementById('comment' + i);
                     validateFiled(commentElem);
+                    // URL Validation
+
+                    // BID ID
+                    bidElem = document.getElementById('rbid' + i);
+                    if($(bidElem).is(":visible")){
+                      validateFiled(bidElem);  
+                    }
+
+                    // URL Budget
+                    budgetElem = document.getElementById('rbudget' + i);
+                    if($(budgetElem).is(":visible")){
+                      validateFiled(budgetElem);  
+                    }
                 }
             }
 
@@ -227,6 +284,14 @@ function setLocations(newLocations){
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
                         validateFiled(cidElem);
+
+                        if(!cidElem.value.match(cidFormat)){
+                          //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                          $(cidElem).addClass('error-box');
+                          //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                          cidElem.focus();
+                          window.is_error = true;
+                        }
 
                         // URL Validation
                         urlElem = document.getElementById('url' + i);
@@ -276,6 +341,14 @@ function setLocations(newLocations){
                     cidElem = document.getElementById('cid' + i);
                     validateFiled(cidElem);
 
+                    if(!cidElem.value.match(cidFormat)){
+                      //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                      $(cidElem).addClass('error-box');
+                      //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                      cidElem.focus();
+                      window.is_error = true;
+                    }
+
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
@@ -283,7 +356,19 @@ function setLocations(newLocations){
                     // Comment Validation
                     commentElem = document.getElementById('comment' + i);
                     validateFiled(commentElem);
-                }
+
+                    // BID ID
+                    bidElem = document.getElementById('rbid' + i);
+                    if($(bidElem).is(":visible")){
+                      validateFiled(bidElem);  
+                    }
+
+                    // URL Budget
+                    budgetElem = document.getElementById('rbudget' + i);
+                    if($(budgetElem).is(":visible")){
+                      validateFiled(budgetElem);  
+                    }
+            }
             }
 
               var sameShopTask = $(".shop:visible").length;
@@ -306,6 +391,14 @@ function setLocations(newLocations){
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
                         validateFiled(cidElem);
+
+                        if(!cidElem.value.match(cidFormat)){
+                          //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                          $(cidElem).addClass('error-box');
+                          //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                          cidElem.focus();
+                          window.is_error = true;
+                        }
 
                         // URL Validation
                         urlElem = document.getElementById('url' + i);
@@ -338,6 +431,14 @@ function setLocations(newLocations){
                     cidElem = document.getElementById('cid' + i);
                     validateFiled(cidElem);
 
+                    if(!cidElem.value.match(cidFormat)){
+                      //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                      $(cidElem).addClass('error-box');
+                      //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                      cidElem.focus();
+                      window.is_error = true;
+                    }
+
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
@@ -345,6 +446,28 @@ function setLocations(newLocations){
                     // Comment Validation
                     commentElem = document.getElementById('comment' + i);
                     validateFiled(commentElem);
+
+                    bidElem = document.getElementById('rbid' + i);
+                    if($(bidElem).is(":visible")){
+                      validateFiled(bidElem);  
+                    }
+
+                    // URL Validation
+                    budgetElem = document.getElementById('rbudget' + i);
+                    if($(budgetElem).is(":visible")){
+                      validateFiled(budgetElem);  
+                    }
+
+                     cnameElem = document.getElementById('advertiser_name' + i);
+                      validateFiled(cnameElem);
+
+                      // Customer Email Validation
+                      cemailElem = document.getElementById('aemail' + i);
+                      validateFiled(cemailElem);
+
+                      // Customer Telephone Validation
+                      cphoneElem = document.getElementById('phone' + i);
+                      validateFiled(cphoneElem);
                 }
             }
 
@@ -355,6 +478,14 @@ function setLocations(newLocations){
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
                         validateFiled(cidElem);
+
+                        if(!cidElem.value.match(cidFormat)){
+                          //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+                          $(cidElem).addClass('error-box');
+                          //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+                          cidElem.focus();
+                          window.is_error = true;
+                        }
 
                         // URL Validation
                         urlElem = document.getElementById('url' + i);
@@ -405,4 +536,22 @@ function validateFiled(elem){
       window.is_error = true;
       return false;
     }
+}
+
+$(document).on('click', '.is_campaign_created', function() {
+    thisId = $(this).attr('id');
+    if($(this).is(":checked")){
+        $("."+ thisId).hide().val('');
+    }else{
+      $("."+ thisId).show().val('');
+    }
+    
+});
+
+function resetBtn(elem){
+  elemId = $(elem).attr('id');
+  if(elemId == 'formReset'){
+    window.is_reset = true;
+    window.location.reload();
+  }
 }
