@@ -34,6 +34,12 @@ class SalesforceLeads(object):
                                 'agency_email': '00NZ0000001XR8M',
                                 'agency_phone': '00NZ0000001XR8R',
 
+                                # Agency Unique Field
+                                'agency_bundle': '00NZ0000001XIJB',
+
+                                # Bundle Unique Field
+                                'bundle_bundle': '00Nd0000007f4St',
+
                                 'Campaign_ID': 'Campaign_ID',
                                 'oid': 'oid',
                                 '__VIEWSTATE': '__VIEWSTATE',

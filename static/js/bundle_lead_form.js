@@ -162,7 +162,8 @@ function validatethis(frm) {
     $(".lead-form .form-control").removeClass('error-box');
     $('.shopping-policy').removeClass('error-box');
     $('.web-access').removeClass('error-box');
-    var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
@@ -192,6 +193,12 @@ function validatethis(frm) {
     if ($(frm.service_segment).is(":visible")) {
       service_segmentElem = document.getElementById('service_segment');
       validateFiled(service_segmentElem);
+    }
+
+    // GcaseId validation
+    if ($(frm.g_cases_id).is(":visible")) {
+      gCasesIdElem = document.getElementById('g_cases_id');
+      validateFiled(gCasesIdElem);
     }
 
     // Google Manager details validation

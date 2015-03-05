@@ -245,7 +245,7 @@ def agency_lead_form(request):
 
     if request.method == 'POST':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-
+        import ipdb; ipdb.set_trace()
         # Get the Who submit the lead
         is_google_rep = request.POST.get('is_google_rep')
         is_google_rep = True
@@ -254,13 +254,10 @@ def agency_lead_form(request):
         customer_type = request.POST.get('customer_type')
         task_type = request.POST.get('task_type')
 
-        # Get type of tasks
-        # is_same_task = request.POST.get('is_same_task')
-        # is_diff_task = request.POST.get('is_diff_task')
-
         ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
         error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
         oid = '00DZ000000MipUa'
+        agency_bundle = "%s-%s" % (request.user.email.split('@')[0], randint(0, 99999))
 
         if is_google_rep:
             if customer_type == "agency":
@@ -280,6 +277,7 @@ def agency_lead_form(request):
                             basic_data['errorURL'] = error_url
                             basic_data['oid'] = oid
                             full_name = request.POST.get('contact_person_name')
+                            basic_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['agency_bundle']] = agency_bundle
                             if full_name:
                                 basic_data['first_name'] = full_name.split(' ')[0]
                                 basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
@@ -293,8 +291,8 @@ def agency_lead_form(request):
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
 
                             # If Dynamic Remarketing tags
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=tag_data)
@@ -311,6 +309,7 @@ def agency_lead_form(request):
                             basic_data['retURL'] = ret_url
                             basic_data['errorURL'] = error_url
                             basic_data['oid'] = oid
+                            basic_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['agency_bundle']] = agency_bundle
                             full_name = request.POST.get('contact_person_name')
                             if full_name:
                                 basic_data['first_name'] = full_name.split(' ')[0]
@@ -322,10 +321,12 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = same_task_ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['comment1']] = request.POST.get('comment' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -344,6 +345,7 @@ def agency_lead_form(request):
                         basic_data['retURL'] = ret_url
                         basic_data['errorURL'] = error_url
                         basic_data['oid'] = oid
+                        basic_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['agency_bundle']] = agency_bundle
                         full_name = request.POST.get('contact_person_name')
                         if full_name:
                             basic_data['first_name'] = full_name.split(' ')[0]
@@ -361,8 +363,8 @@ def agency_lead_form(request):
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
 
                             # If Dynamic Remarketing tags
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=tag_data)
@@ -376,10 +378,12 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['comment1']] = request.POST.get('comment' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -400,6 +404,7 @@ def agency_lead_form(request):
                             basic_data['retURL'] = ret_url
                             basic_data['errorURL'] = error_url
                             basic_data['oid'] = oid
+                            basic_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['agency_bundle']] = agency_bundle
                             full_name = request.POST.get('contact_person_name')
                             if full_name:
                                 basic_data['first_name'] = full_name.split(' ')[0]
@@ -420,8 +425,8 @@ def agency_lead_form(request):
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
 
                             # If Dynamic Remarketing tags
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=tag_data)
@@ -437,6 +442,7 @@ def agency_lead_form(request):
                             basic_data['retURL'] = ret_url
                             basic_data['errorURL'] = error_url
                             basic_data['oid'] = oid
+                            basic_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['agency_bundle']] = agency_bundle
                             full_name = request.POST.get('contact_person_name')
                             if full_name:
                                 basic_data['first_name'] = full_name.split(' ')[0]
@@ -454,10 +460,12 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = same_task_ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['comment1']] = request.POST.get('comment' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -477,6 +485,7 @@ def agency_lead_form(request):
                         basic_data['retURL'] = ret_url
                         basic_data['errorURL'] = error_url
                         basic_data['oid'] = oid
+                        basic_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['agency_bundle']] = agency_bundle
                         full_name = request.POST.get('contact_person_name')
                         if full_name:
                             basic_data['first_name'] = full_name.split(' ')[0]
@@ -500,8 +509,8 @@ def agency_lead_form(request):
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
 
                             # If Dynamic Remarketing tags
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
-                            # tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=tag_data)
@@ -521,10 +530,12 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['comment1']] = request.POST.get('comment' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
