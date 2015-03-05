@@ -245,7 +245,6 @@ def agency_lead_form(request):
 
     if request.method == 'POST':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        import ipdb; ipdb.set_trace()
         # Get the Who submit the lead
         is_google_rep = request.POST.get('is_google_rep')
         is_google_rep = True
