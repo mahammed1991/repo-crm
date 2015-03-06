@@ -317,7 +317,7 @@ def agency_lead_form(request):
                             if int(indx) == 1:
                                 shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
                             # Shop fields
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = same_task_ctype
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = same_task_ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
                             shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
@@ -352,8 +352,8 @@ def agency_lead_form(request):
                         tag_data = basic_data
                         if int(indx) == 1:
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
-                        ctype = request.POST.get('diff_ctype-' + indx)
-
+                        ctype = request.POST.get('diff_ctype' + indx)
+                        print ctype, "ctype ==============================="
                         if ctype != 'Google Shopping Setup':
                             # tag fields
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = ctype
@@ -364,7 +364,7 @@ def agency_lead_form(request):
                             # If Dynamic Remarketing tags
                             tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
                             tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
-
+                            print tag_data, "tag_data"
                             try:
                                 requests.post(url=sf_api_url, data=tag_data)
                             except Exception as e:
@@ -374,7 +374,7 @@ def agency_lead_form(request):
                             shop_data = basic_data
                             if int(indx) == 1:
                                 shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = ctype
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
                             shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
@@ -413,9 +413,9 @@ def agency_lead_form(request):
                                 tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
 
                             # Get End Customer Name details
-                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
-                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_email']] = request.POST.get('customer_email' + indx)
-                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_phone']] = request.POST.get('customer_phone' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['advertiser_name']] = request.POST.get('advertiser_name' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['aemail']] = request.POST.get('aemail' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['phone']] = request.POST.get('phone' + indx)
 
                             # tag fields
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = same_task_ctype
@@ -451,12 +451,12 @@ def agency_lead_form(request):
                                 shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
 
                             # Get End Customer Name details
-                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_email']] = request.POST.get('customer_email' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_phone']] = request.POST.get('customer_phone' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['advertiser_name']] = request.POST.get('advertiser_name' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['aemail']] = request.POST.get('aemail' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['phone']] = request.POST.get('phone' + indx)
 
                             # Shop fields
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = same_task_ctype
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = same_task_ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
                             shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
@@ -472,6 +472,7 @@ def agency_lead_form(request):
                                 print e
 
                 elif task_type == 'diff_task':
+                    import ipdb; ipdb.set_trace()
                     # Customer Different Task submission
                     customer_diff_tag_count = request.POST.get('customer_diff_tag_count')
                     customer_diff_shop_count = request.POST.get('customer_diff_shop_count')
@@ -492,14 +493,14 @@ def agency_lead_form(request):
                         tag_data = basic_data
                         if int(indx) == 1:
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
-                        ctype = request.POST.get('diff_cust_type-' + indx)
+                        ctype = request.POST.get('diff_cust_type' + indx)
 
                         if ctype != 'Google Shopping Setup':
 
                             # Get End Customer Name details
-                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
-                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_email']] = request.POST.get('customer_email' + indx)
-                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_phone']] = request.POST.get('customer_phone' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['advertiser_name']] = request.POST.get('advertiser_name' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['aemail']] = request.POST.get('aemail' + indx)
+                            tag_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['phone']] = request.POST.get('phone' + indx)
 
                             # tag fields
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = ctype
@@ -521,12 +522,12 @@ def agency_lead_form(request):
                                 shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['setup_datepick']] = request.POST.get('setup_datepick')
 
                             # Get End Customer Name details
-                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_name']] = request.POST.get('customer_name' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_email']] = request.POST.get('customer_email' + indx)
-                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['customer_phone']] = request.POST.get('customer_phone' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['advertiser_name']] = request.POST.get('advertiser_name' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['aemail']] = request.POST.get('aemail' + indx)
+                            shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['phone']] = request.POST.get('phone' + indx)
 
                             # Get Shop lead fields
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['ctype1']] = ctype
+                            shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = ctype
                             shop_data[SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS['cid']] = request.POST.get('cid' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['shopping_url']] = request.POST.get('url' + indx)
                             shop_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['comment1']] = request.POST.get('comment' + indx)
