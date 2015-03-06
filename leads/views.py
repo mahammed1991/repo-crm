@@ -97,7 +97,6 @@ def lead_to_sandbox(request):
             full_name = request.POST.get('advertiser_name')
         tag_data['first_name'] = full_name.rsplit(' ', 1)[0]  # Primary Contact Name
         tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
-        print tag_data, "TAG LEADS"
         try:
             requests.post(url=sf_api_url, data=tag_data)
         except Exception as e:
@@ -353,7 +352,6 @@ def agency_lead_form(request):
                         if int(indx) == 1:
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['tag_datepick']] = request.POST.get('tag_datepick')
                         ctype = request.POST.get('diff_ctype' + indx)
-                        print ctype, "ctype ==============================="
                         if ctype != 'Google Shopping Setup':
                             # tag fields
                             tag_data[SalesforceLeads.SANDBOX_TAG_LEAD_ARGS['ctype1']] = ctype
@@ -364,7 +362,6 @@ def agency_lead_form(request):
                             # If Dynamic Remarketing tags
                             tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
                             tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
-                            print tag_data, "tag_data"
                             try:
                                 requests.post(url=sf_api_url, data=tag_data)
                             except Exception as e:
@@ -472,7 +469,6 @@ def agency_lead_form(request):
                                 print e
 
                 elif task_type == 'diff_task':
-                    import ipdb; ipdb.set_trace()
                     # Customer Different Task submission
                     customer_diff_tag_count = request.POST.get('customer_diff_tag_count')
                     customer_diff_shop_count = request.POST.get('customer_diff_shop_count')
