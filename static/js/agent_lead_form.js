@@ -182,8 +182,8 @@ function setLocations(newLocations){
                     validateFiled(urlElem);
 
                     // Comment Validation
-                    commentElem = document.getElementById('comment' + i);
-                    validateFiled(commentElem);
+                    /*commentElem = document.getElementById('comment' + i);
+                    validateFiled(commentElem);*/
 
                     // BID ID
                     bidElem = document.getElementById('rbid' + i);
@@ -232,8 +232,8 @@ function setLocations(newLocations){
                         validateFiled(modifierElem);
 
                         // Comment Validation
-                        commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);
+                       /* commentElem = document.getElementById('comment' + i);
+                        validateFiled(commentElem);*/
                     }
 
             }
@@ -310,8 +310,8 @@ function setLocations(newLocations){
                         validateFiled(modifierElem);
 
                         // Comment Validation
-                        commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);
+                       /* commentElem = document.getElementById('comment' + i);
+                        validateFiled(commentElem);*/
                     }
             }
         }
@@ -417,8 +417,8 @@ function setLocations(newLocations){
                         validateFiled(modifierElem);
 
                         // Comment Validation
-                        commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);
+                       /* commentElem = document.getElementById('comment' + i);
+                        validateFiled(commentElem);*/
                     }
 
             }
@@ -504,8 +504,8 @@ function setLocations(newLocations){
                         validateFiled(modifierElem);
 
                         // Comment Validation
-                        commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);
+                       /* commentElem = document.getElementById('comment' + i);
+                        validateFiled(commentElem);*/
                     }
             }
         }
