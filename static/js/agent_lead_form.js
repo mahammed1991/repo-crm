@@ -231,9 +231,13 @@ function setLocations(newLocations){
                         modifierElem = document.getElementById('rbidmodifier' + i);
                         validateFiled(modifierElem);
 
-                        // Comment Validation
-                       /* commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);*/
+                        // MCID Validation
+                        shoppingMCIDElem = document.getElementById('is-mc_id' + i);
+                        if(shoppingMCIDElem.checked == true){
+                            shoppingMCElem = document.getElementById('mc_id' + i);
+                            validateFiled(shoppingMCElem);
+                        }
+
                     }
 
             }
@@ -309,9 +313,13 @@ function setLocations(newLocations){
                         modifierElem = document.getElementById('rbidmodifier' + i);
                         validateFiled(modifierElem);
 
-                        // Comment Validation
-                       /* commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);*/
+                         // MCID Validation
+                        shoppingMCIDElem = document.getElementById('is-mc_id' + i);
+                        if(shoppingMCIDElem.checked == true){
+                            shoppingMCElem = document.getElementById('mc_id' + i);
+                            validateFiled(shoppingMCElem);
+                        }
+
                     }
             }
         }
@@ -416,9 +424,13 @@ function setLocations(newLocations){
                         modifierElem = document.getElementById('rbidmodifier' + i);
                         validateFiled(modifierElem);
 
-                        // Comment Validation
-                       /* commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);*/
+                        // MCID Validation
+                        shoppingMCIDElem = document.getElementById('is-mc_id' + i);
+                        if(shoppingMCIDElem.checked == true){
+                            shoppingMCElem = document.getElementById('mc_id' + i);
+                            validateFiled(shoppingMCElem);
+                        }
+                        
                     }
 
             }
@@ -555,3 +567,13 @@ function resetBtn(elem){
     window.location.reload();
   }
 }
+
+$(document).on('click', '.is_mc_id', function() {
+  var thisId = $(this).attr('id');
+  elem = thisId.split('-')[1];
+  if($(this).is(':checked')){
+      $("#" + elem).show();
+  }else{
+      $("#" + elem).hide().val('');
+  }
+})

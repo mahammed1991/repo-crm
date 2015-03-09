@@ -324,7 +324,7 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -379,7 +379,7 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -461,7 +461,7 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -531,7 +531,7 @@ def agency_lead_form(request):
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
                             shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['web_client_inventory']] = request.POST.get('web_client_inventory')
-                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id')
+                            shop_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['mc_id']] = request.POST.get('mc_id' + indx)
 
                             try:
                                 requests.post(url=sf_api_url, data=shop_data)
@@ -1023,7 +1023,7 @@ def post_shopping_lead_to_sb(request, post_data, basic_data, indx):
 
     setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('shop_primary_role')] = post_data.get('shop_primary_role') if post_data.get('shop_primary_role') else post_data.get('tag_primary_role')  # Role
     setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('ctype1')] = u'Google Shopping Setup'  # Code Type
-    setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('mc_id')] = post_data.get('mc_id')  # MC-ID
+    setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('mc_id')] = post_data.get('mc_id' + str(indx))  # MC-ID
     setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('web_client_inventory')] = post_data.get('web_client_inventory')  # Web Inventory
     setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('rbid')] = post_data.get('rbid' + str(indx))  # Recommended Bid
     setup_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS.get('rbudget')] = post_data.get('rbudget' + str(indx))  # Recommended Budget

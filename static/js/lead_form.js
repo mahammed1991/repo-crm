@@ -32,6 +32,7 @@
     
     $("#webmasterCheck" ).click(function() {
       /* this line for uncheck other check box*/ 
+      $("#tag_contact_person_name, #shop_contact_person_name").val(''); 
       $("#web_access").prop("checked", false);
 
       $( "#webmaster" ).animate({
@@ -43,9 +44,18 @@
 
     /* this line for uncheck webmasterCheck box*/ 
     $("#web_access").on('click', function() {
-      
       $("#webmasterCheck").prop("checked", false);
       $( "#webmaster").hide();
+
+      if($("#web_access").is(":checked")){
+          $("#web_access").val(1);
+          var advertiser_name = $("#advertiser_name").val();
+          $("#tag_contact_person_name, #shop_contact_person_name").val(advertiser_name);
+      }else{
+        $("#web_access").val(0);
+        $("#tag_contact_person_name, #shop_contact_person_name").val('');
+      }
+
 
     });
     
@@ -636,6 +646,17 @@ function validatethis(frm) {
         window.is_error = true;
       }
 
+      // MC-ID Validation
+      MCIDElem = document.getElementById('mcIdCheck');
+      if(MCIDElem.checked == true){
+          MCElem = document.getElementById('mc_id');
+          if(MCElem.value == ''){
+              $(MCElem).addClass('error-box');
+              $(MCElem).focus();
+              window.is_error = true;     
+          }
+      }
+
     // Hava an appointment 
     if (document.getElementById("appointmentCheck2").checked == true) {
 
@@ -767,3 +788,30 @@ function resetBtn(elem){
     window.location.reload();
   }
 }
+
+$("#mcIdCheck").click(function(){
+  if($(this).is(':checked')){
+      $("#mc_id").show();
+  }else{
+      $("#mc_id").hide();
+  }
+});
+
+$("#keep_url").click(function(){
+    if($(this).is(":checked")){
+      var tagUrl = $("#url1").val();
+      if(!tagUrl){
+        $("#url1").addClass('error-box');
+        $("#url1").focus();
+        return false;
+      }
+      $("#url2, #url3, #url4, #url5").val(tagUrl);
+    }else{
+      $("#url2, #url3, #url4, #url5").val('');
+    }
+});
+  
+$("#fopt").change(function(){
+    var webmasterName = $(this).val();
+    $("#tag_contact_person_name, #shop_contact_person_name").val(webmasterName);
+});
