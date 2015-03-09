@@ -164,6 +164,13 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
             </div>
+            <div class="col-md-6">
+                <div class="checkbox">
+                  <label>
+                    <input id="keep_url" type="checkbox" value="">
+                    Will this, then URL will be pre-populated for all selections </label>
+                </div>
+            </div>
           </div>
         </div>
 
@@ -293,15 +300,20 @@
         <div class="col-md-4">
         <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
         <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+        <div class="checkbox">
+              <label>
+                <input id="mcIdCheck" type="checkbox" value="" checked>
+                is there an exisitng Merchant Center? </label>
+            </div>
         </div>
         <div class="col-md-4">
           <input type="text" id="rbudget" class="form-control" name="rbudget" placeholder="Budget">
           <input type="text" class="form-control" id="shopping_url" name="shopping_url" placeholder="URL">
+          <input id="mc_id" name="mc_id" size="20" class="form-control" type="text" placeholder="MC-ID">
         </div>
         <div class="col-md-4">
           <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
         </div>
-        <input id="mc_id" name="mc_id" size="20" class="form-control" type="hidden">
         <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
           <option value="Under 100">Under 100</option>
         </select>
@@ -309,7 +321,7 @@
           <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
             Do you want to use same timeslot for Shopping?
         </div> -->
-    </div>
+      </div>
 
     <div class="appointment">
           <div class="checkbox">

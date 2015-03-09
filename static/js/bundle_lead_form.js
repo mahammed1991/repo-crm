@@ -317,6 +317,12 @@ function validatethis(frm) {
 
           shoppingUrlElem = document.getElementById('url1');
           validateFiled(shoppingUrlElem);
+
+          shoppingMCIDElem = document.getElementById('is-mc_id1');
+          if(shoppingMCIDElem.checked == true){
+              shoppingMCElem = document.getElementById('mc_id1');
+              validateFiled(shoppingMCElem);
+          }
           
           // Hava an appointment 
           if (document.getElementById("appointmentCheck").checked == true) {
@@ -401,6 +407,12 @@ function validatethis(frm) {
 
           shoppingUrlElem = document.getElementById('url2');
           validateFiled(shoppingUrlElem);
+
+          shoppingMCIDElem = document.getElementById('is-mc_id2');
+          if(shoppingMCIDElem.checked == true){
+              shoppingMCElem = document.getElementById('mc_id2');
+              validateFiled(shoppingMCElem);
+          } 
           
           // // Hava an appointment 
           // if (document.getElementById("appointmentCheck").checked == true && document.getElementById("appointmentCheck_2").checked == true) {
@@ -477,6 +489,12 @@ function validatethis(frm) {
 
           shoppingUrlElem = document.getElementById('url3');
           validateFiled(shoppingUrlElem);
+
+          shoppingMCIDElem = document.getElementById('is-mc_id3');
+          if(shoppingMCIDElem.checked == true){
+              shoppingMCElem = document.getElementById('mc_id3');
+              validateFiled(shoppingMCElem);
+          }
           
           // Hava an appointment 
           if (document.getElementById("appointmentCheck").checked == true && document.getElementById("appointmentCheck_3").checked == true) {
@@ -733,3 +751,28 @@ function showHeadsUp(){
     $("#heads_up").hide();
   }
 }
+
+$(".is_mc_id").click(function(){
+  var thisId = $(this).attr('id');
+  elem = thisId.split('-')[1];
+  if($(this).is(':checked')){
+      $("#" + elem).show();
+  }else{
+      $("#" + elem).hide().val('');
+  }
+})
+
+
+$("#keep_url").click(function(){
+    if($(this).is(":checked")){
+      var tagUrl = $("#url1").val();
+      if(!tagUrl){
+        $("#url1").addClass('error-box');
+        $("#url1").focus();
+        return false;
+      }
+      $("#url2, #url3").val(tagUrl);
+    }else{
+      $("#url2, #url3").val('');
+    }
+});
