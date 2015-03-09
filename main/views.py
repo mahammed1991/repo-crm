@@ -26,7 +26,8 @@ from leads.models import Location, Leads, Team, Language
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
-                         is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter)
+                         is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter,
+                         get_previous_month_start_end_days)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
@@ -57,7 +58,9 @@ def main_home(request):
     user_profile = get_user_profile(request.user)
     lead_status = settings.LEAD_STATUS
     if request.user.groups.filter(name='SUPERUSER'):
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        end_date = datetime.utcnow()
         lead_status_dict = {'total_leads': 0,
                             'implemented': 0,
                             'in_progress': 0,
@@ -66,7 +69,6 @@ def main_home(request):
                             'in_active': 0,
                             'in_progress': 0,
                             }
-        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         lead_status_dict['total_leads'] = Leads.objects.filter(
             lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
         lead_status_dict['implemented'] = Leads.objects.filter(
