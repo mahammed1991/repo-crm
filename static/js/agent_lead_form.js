@@ -259,8 +259,8 @@ function setLocations(newLocations){
                     validateFiled(urlElem);
 
                     // Comment Validation
-                    commentElem = document.getElementById('comment' + i);
-                    validateFiled(commentElem);
+                   /* commentElem = document.getElementById('comment' + i);
+                    validateFiled(commentElem);*/
                     // URL Validation
 
                     // BID ID
@@ -354,8 +354,8 @@ function setLocations(newLocations){
                     validateFiled(urlElem);
 
                     // Comment Validation
-                    commentElem = document.getElementById('comment' + i);
-                    validateFiled(commentElem);
+                   /* commentElem = document.getElementById('comment' + i);
+                    validateFiled(commentElem);*/
 
                     // BID ID
                     bidElem = document.getElementById('rbid' + i);
@@ -444,8 +444,8 @@ function setLocations(newLocations){
                     validateFiled(urlElem);
 
                     // Comment Validation
-                    commentElem = document.getElementById('comment' + i);
-                    validateFiled(commentElem);
+                   /* commentElem = document.getElementById('comment' + i);
+                    validateFiled(commentElem);*/
 
                     bidElem = document.getElementById('rbid' + i);
                     if($(bidElem).is(":visible")){
