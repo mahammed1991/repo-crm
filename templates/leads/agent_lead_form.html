@@ -384,6 +384,8 @@ $(".task_type").click(function(){
           $("#same_task_agency").show();
           $("#different_task_agency").hide();
         }else if(taskId == 'diff_task'){
+          $('.agency_diff').hide();
+          $('#diff_ctype-1').show()
           $("#different_task_agency").show();
           $("#same_task_agency").hide();
         }
@@ -393,6 +395,8 @@ $(".task_type").click(function(){
           $("#same_task_customer").show();
           $("#different_task_customer").hide();
         }else if(taskId == 'diff_task'){
+          $('.customer_diff').hide();
+          $('#diff_cust_type-1').show();
           $("#different_task_customer").show();
           $("#same_task_customer").hide();
         }
@@ -590,7 +594,7 @@ function deleteDiffTagRows(indx){
 function createAgencySameTag(indx){
 var next_indx = indx + 1;
   ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
-          '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '"  name="cid' + indx + '" placeholder="CID"></div>' +
+          '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '"  name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>' +
           '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '"  name="url' + indx + '" placeholder="URL"></div>' +
           '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
 
@@ -611,7 +615,7 @@ var next_indx = indx + 1;
 function createAgencySameShop(indx){
 var next_indx = indx + 1;
   ele =   '<div class="row shop" id="same_shop_' + indx + '">'+
-            '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
            '<div class="col-md-4"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget"></div>'+
@@ -637,7 +641,7 @@ function createTagFields(indx){
   nextInd = indx + 1; 
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
-         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID"></div>'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
         '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
 
@@ -675,7 +679,7 @@ function createShopFields(indx){
   var nextInd = indx + 1;
 
   ele =  '<div id="shopFields' + indx + '" class="shopFields">'+
-         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID"></div>'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'
 
   shop =  '<div class="col-md-4 customwidth></div>'+
@@ -856,7 +860,7 @@ var next_indx = indx + 1;
         '</div>'+
         '<div class="row">'+
        ' <div class="col-md-4">'+
-                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
@@ -886,7 +890,7 @@ var next_indx = indx + 1;
            '<div class="col-md-4"><input type="text" class="form-control" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="phone' + indx + '" name="phone' + indx + '" placeholder="Customer Phone"></div>'+
-            '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget"></div>'+
@@ -921,7 +925,7 @@ function createCustomerTagFields(indx){
                   '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
                 '</div>'+
               ' <div class="col-md-2">'+
-                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
@@ -973,7 +977,7 @@ function createCustomerShopFields(indx){
                   '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="advertiser_name' + indx + '" placeholder="Telephone">'+
                 '</div>'+
               '<div class="col-md-4">'+
-                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-3">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
@@ -1016,7 +1020,7 @@ var next_indx = indx + 1;
                   '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget">'+
                 '</div>'+
               '<div class="col-md-4">'+
-                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-3">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
@@ -1078,7 +1082,7 @@ var next_indx = indx + 1;
         '</div>'+
         '<div class="row">'+
        ' <div class="col-md-4">'+
-                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
@@ -1126,7 +1130,7 @@ function createAgencyDiffDynamicFields(indx){
          
 
   shop =  '<div class="col-md-4 customwidth></div>'+
-          '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID"></div>'+
+          '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
         '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
 
@@ -1173,7 +1177,7 @@ function createCustomerDiffDynamicFields(indx){
                   '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
                 '</div>'+
               ' <div class="col-md-2">'+
-                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
