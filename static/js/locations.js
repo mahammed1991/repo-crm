@@ -1,15 +1,31 @@
-if(google.loader.ClientLocation)
-  {
-      visitor_lat = google.loader.ClientLocation.latitude;
-      visitor_lon = google.loader.ClientLocation.longitude;
-      visitor_city = google.loader.ClientLocation.address.city;
-      visitor_region = google.loader.ClientLocation.address.region;
-      visitor_country = google.loader.ClientLocation.address.country;
-      visitor_countrycode = google.loader.ClientLocation.address.country_code;
-      var currentLoc = visitor_city + ', ' + visitor_region + ', ' + visitor_country;
-      document.getElementById('rep_location').value = currentLoc;
-  }
-  else
-  {
-      document.getElementById('rep_location').value = '';
-  }
+function getLocation() {
+    if (Modernizr.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    getResult(position.coords.latitude, position.coords.longitude);
+}
+
+function getResult(latitude, longitude){
+   $.ajax({
+        url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false",
+        type: 'GET',
+        dataType: "json",
+        success: function(data) {
+          console.log(data);
+          var start = data['results'].length - 3
+          var end = data['results'].length - 2
+          var repLocObject = data['results'].slice(start, end);
+          var repLoc = repLocObject[0];
+          document.getElementById('rep_location').value = repLoc['formatted_address'];
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log('failure');
+        }
+
+});
+}

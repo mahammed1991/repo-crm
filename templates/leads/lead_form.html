@@ -391,6 +391,7 @@
  <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
+    getLocation();
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
