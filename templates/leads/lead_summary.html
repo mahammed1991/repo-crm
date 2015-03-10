@@ -59,12 +59,18 @@
                 </div> -->
         <div class="row" style="margin-top: -55px !important;margin-bottom: 20px; !important">
                 <div class="auth-user-info" id="ldap_user_info" style="display:block;">
-                  <label style="margin-left: 40px;">LDAP:</label>
+                  <label style="margin-left: 40px;">Search by LDAP/CID: </label>
+                    <div class="value" style="width: 120px;">
+                        <input type="radio" name="search_type" id="search_ldap" value="ldap" class="search_type" checked>
+                        <span style="padding-right:2.5%;"> LDAP </span>
+                        <input type="radio" name="search_type" id="search_cid" value="cid" class="search_type">
+                        <span style="padding-right:2.5%;">CID</span>
+                    </div>
                     <div class="value">
                         <input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}">
                         <a href="#" class="ldap-update"></a>&nbsp; 
                     </div>
-                    <label class="manager" style="width: 56px !important;">Manager:</label>
+                    <!-- <label class="manager" style="width: 56px !important;">Manager:</label>
                     {% if request.user.profile.user_manager_name %}
                         <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
                     {% else %}
@@ -81,7 +87,7 @@
                       <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
                     {% else %}
                       <div class="value" id="ldap_region">N/A</div>
-                    {% endif %}
+                    {% endif %} -->
                     <button id='getLead' class="btn std-btn" style="margin-left: 120px;"> Get Lead</button>
                 </div> 
         </div>
@@ -359,27 +365,33 @@ $("#message").keypress(function(event) {
 });
 
 
-$('.ldap').focus(function() {
-  return $(this).autocomplete({
-    source: "/reports/get-user-name",
-    minLength: 2,
-    close: function(event) {
-    },
-    select: function(event, ui) {
-      if ($("#ldap").val() !== "") {
-        $("#ldap").val(ui.item.id + "-" + ui.item.username);
-        window.current_ldap = ui.item.id;
-        
-
+  $('.ldap').focus(function() {
+    if($('input:radio[name=search_type]:checked').val() == 'ldap'){
+      return $(this).autocomplete({
+      source: "/reports/get-user-name",
+      minLength: 2,
+      close: function(event) {
+      },
+      select: function(event, ui) {
+        if ($("#ldap").val() !== "") {
+          $("#ldap").val(ui.item.id + "-" + ui.item.username);
+          window.current_ldap = ui.item.id;
+          $( "#getLead" ).trigger( "click" );
+        }
       }
+    });
     }
-  });
-});
+    else{
+        //here it goes to select cids
+    }
+  });  
+
 
 
  $('#getLead').click(function(){
-    user_id = window.current_ldap
-    $.ajax({
+    if($('input:radio[name=search_type]:checked').val() == 'ldap'){
+      user_id = window.current_ldap
+      $.ajax({
         url: "/leads/lead-summary-by-user",
         data: {'user_id': user_id},
         type: 'GET',
@@ -388,9 +400,9 @@ $('.ldap').focus(function() {
           if(data){
             setLeadSummary(data['lead_status_dict'])
             setLeadSummaryTable(data['lead_list'])
-            $("#ldap_manager").text(data['ldap_dict'].manager)
-            $("#ldap_program").text(data['ldap_dict'].program)
-            $("#ldap_region").text(data['ldap_dict'].region)
+            //$("#ldap_manager").text(data['ldap_dict'].manager)
+            //$("#ldap_program").text(data['ldap_dict'].program)
+           //$("#ldap_region").text(data['ldap_dict'].region)
             $('#leadstatus').show();
           }else{
             alert('No leads Found')
@@ -398,6 +410,25 @@ $('.ldap').focus(function() {
           }
         }
     });
+    }
+  else if($('input:radio[name=search_type]:checked').val() == 'cid'){
+    //alert('ok have to write the func');
+    cid = $('#ldap').val();
+      $.ajax({
+        url: "/leads/leads-summary-by-cid",
+        data: {'cid': cid},
+        type: 'GET',
+        dataType: 'json',
+        success: function(data){
+          if(data){
+            console.log(data);
+            setLeadSummaryTable(data['lead_list'])
+          }else{
+            alert('No leads Found')
+          }
+        }
+    });
+  }
 
   });
 
@@ -449,6 +480,16 @@ function setLeadSummary(lead_status){
     }
   }
 
+
+$('#ldap').keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+    $( "#getLead" ).trigger( "click" );
+  }
+});
+
 </script>
+
 
 {% endblock main_js %}

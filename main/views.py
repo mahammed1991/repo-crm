@@ -268,6 +268,19 @@ def edit_profile_info(request):
     """ Profile information for user """
     locations = Location.objects.filter(is_active=True)
     teams = Team.objects.filter(is_active=True)
+    managers = User.objects.values_list('email', flat=True)
+    managers = [str(m) for m in managers]
+    users = User.objects.all()
+    manager_details = dict()
+    for user in users:
+        if user.first_name or user.last_name:
+            full_name = "%s %s" % (user.first_name, user.last_name)
+            try:
+                full_name = str(full_name)
+            except Exception:
+                full_name = ''
+            manager_details[str(user.email)] = str(full_name)
+
     if request.method == 'POST':
         next_url = request.POST.get('next_url', None)
         if next_url != 'home':
@@ -284,14 +297,15 @@ def edit_profile_info(request):
 
         user_details.phone = request.POST.get('user_phone', None)
         user_details.team_id = request.POST.get('user_team', None)
-        # user_details.user_manager_name = request.POST.get('user_manager_name', None)
+        user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
         user_details.location_id = request.POST.get('user_location', None)
         user_details.save()
 
         if next_url == 'home':
             return redirect('main.views.home')
-    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'teams': teams})
+    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'managers': managers,
+                                                           'teams': teams, 'manager_details': manager_details})
 
 
 @login_required
@@ -302,8 +316,19 @@ def get_started(request):
     teams = Team.objects.filter(is_active=True)
     managers = User.objects.values_list('email', flat=True)
     managers = [str(m) for m in managers]
+    users = User.objects.all()
+    user_details = dict()
+    for user in users:
+        if user.first_name or user.last_name:
+            full_name = "%s %s" % (user.first_name, user.last_name)
+            try:
+                full_name = str(full_name)
+            except Exception:
+                full_name = ''
+            user_details[str(user.email)] = str(full_name)
     # regalix_team = RegalixTeams.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html', {'locations': locations, 'teams': teams, 'managers': managers})
+    return render(request, 'main/get_started.html', {'locations': locations,
+                                                     'teams': teams, 'managers': managers, 'user_details': user_details})
 
 
 @login_required

@@ -21,9 +21,11 @@
               <input type="hidden" class="form-control" name="next_url" id="next_url" value="home">
               <label style="float:left;"> Phone </label>
               <input type="text" class="form-control edit allow-edit" name="user_phone" id="user_phone" value="{{ user.profile.phone }}" placeholder="Telephone number">
-              <!-- <input type="text" class="form-control edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} placeholder="Manager Name"> -->
+
               <label style="float:left;"> Manager Email </label>
               <input type="text" class="form-control edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} placeholder="Manager email">
+               <label style="float:left;"> Manager Name </label>
+              <input type="text" class="form-control edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} placeholder="Manager Name">
 
               {% if 'google' in request.user.email %}
                 <select class="form-control edit allow-edit" name="user_team" id="user_team">
@@ -55,13 +57,17 @@
     <script type="text/javascript">
       window.loc_id = {{user.profile.location.id|safe}}
       window.team_id = {{user.profile.team.id|safe}}
+      window.user_details = {{user_details|safe}}
+
 
     $("#user_manager_email").autocomplete({
       source: {{managers|safe}},
       select: function(event,ui){
-        $("#user_manager_email").val(ui.item);
+         $("#user_manager_email").val(ui.item);
+         $('#user_manager_name').val(window.user_details[ui.item.value]);
       }
     });
+
 
 </script>
     
