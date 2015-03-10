@@ -136,6 +136,21 @@ def lead_to_sandbox(request):
     return ret_url
 
 
+@login_required
+def get_lead_status_by_cid(request):
+    """ Lead summary for given CID """
+    if request.is_ajax:
+        cid = request.GET.get('cid')
+        leads = Leads.objects.filter(customer_id=cid)
+        lead_list = list()
+        for l in leads:
+            lead = convert_lead_to_dict(l)
+            lead_list.append(lead)
+        mimetype = 'application/json'
+        return HttpResponse(json.dumps({'lead_list': lead_list}), mimetype)
+    return render(request, 'leads/lead_summary.html', {})
+
+
 def lead_to_salesforce(request):
     """ Lead posting to sandbox """
 

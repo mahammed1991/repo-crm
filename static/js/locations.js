@@ -16,7 +16,6 @@ function getResult(latitude, longitude){
         type: 'GET',
         dataType: "json",
         success: function(data) {
-          console.log(data);
           var start = data['results'].length - 3
           var end = data['results'].length - 2
           var repLocObject = data['results'].slice(start, end);
