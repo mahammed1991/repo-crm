@@ -212,7 +212,6 @@ class ReportService(object):
 
             week_on_week_trends[index] = {'leads_won': 0}
             start_date, end_date = weeks_in_qtd[index - 1]
-            print 'start_date, end_date', start_date, end_date
             #leads = Leads.objects.filter(id__in=lead_ids, created_date__gte=start_date, created_date__lte=end_date)
             leads = Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
             for lead in leads:
@@ -224,7 +223,7 @@ class ReportService(object):
 
     @staticmethod
     def get_report_details_for_filters(code_types, teams, countries, start_date, end_date, emails):
-        #import ipdb;ipdb.set_trace()
+
         report_detail = dict()
         if emails and teams and countries:
             leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
@@ -282,22 +281,24 @@ class ReportService(object):
     @staticmethod
     def get_program_report_by_locations(teams, countries):
         """ Get reports for each Programs by all locations """
-        
         week = int(time.strftime("%W")) + 1
         year = int(time.strftime("%Y"))
         week_start_date, week_end_date = get_week_start_end_days(year, week)
         quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
         quarter_end_date = datetime.utcnow()
 
-        week_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+        code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+        week_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                                created_date__gte=week_start_date, created_date__lte=week_end_date)
 
-        quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+        quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                                   created_date__gte=quarter_start_date, created_date__lte=quarter_end_date)
 
         prev_qtr_start_dt, prev_qtr_end_dt = prev_quarter_date_range(datetime.utcnow())
 
-        prev_qtr_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+        prev_qtr_leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                               created_date__gte=prev_qtr_start_dt, created_date__lte=prev_qtr_end_dt)
 
         prev_qtr_year = prev_qtr_start_dt.year
@@ -378,15 +379,18 @@ class ReportService(object):
         quarter_start_date, quarter_end_date = get_quarter_date_slots(datetime.utcnow())
         quarter_end_date = datetime.utcnow()
 
-        week_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+        code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+        week_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                                created_date__gte=week_start_date, created_date__lte=week_end_date)
 
-        quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+        quarter_wise_leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                                   created_date__gte=quarter_start_date, created_date__lte=quarter_end_date)
 
         prev_qtr_start_dt, prev_qtr_end_dt = prev_quarter_date_range(datetime.utcnow())
 
-        prev_qtr_leads = Leads.objects.filter(country__in=countries, team__in=teams,
+        prev_qtr_leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
                                               created_date__gte=prev_qtr_start_dt, created_date__lte=prev_qtr_end_dt)
 
         prev_qtr_year = prev_qtr_start_dt.year
@@ -1079,7 +1083,7 @@ class DownloadLeads(object):
                                          created_date__gte=start_date, created_date__lte=end_date)
 
         return leads
-    
+
     @staticmethod
     def download_lead_report(leads, from_date, to_date, selected_fields):
         filename = "leads-%s-to-%s" % (datetime.strftime(from_date, "%d-%b-%Y"), datetime.strftime(to_date, "%d-%b-%Y"))
@@ -1094,7 +1098,7 @@ class DownloadLeads(object):
         for lead in leads:
             row = dict()
             lead_dict = dict()
-            
+
             row['Email'] = str(lead.google_rep_email.encode('utf-8'))
             row['E-commerce'] = lead.ecommerce
             row['Lead Owner'] = str(lead.lead_owner_name.encode('utf-8'))
@@ -1133,7 +1137,7 @@ class DownloadLeads(object):
                 row['Date of Installation'] = str(datetime.strftime(lead.date_of_installation, "%d/%m/%Y"))
             else:
                 row['Date of Installation'] = None
-            
+
             row['Create Date'] = str(datetime.strftime(lead.created_date, "%d/%m/%Y"))
 
             # Date formate in csv ex: 01/07/2014 03:42:00

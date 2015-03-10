@@ -6,6 +6,10 @@
   User Profile
 {% endblock title %}
 
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+
 {% block content %}
 
 <section class="content-region profile-page">
@@ -43,12 +47,18 @@
               {% endfor %}
           </select>
         {% endif %}
-        <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
-         <!-- <label>Manager Name </label>
-        <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} disabled> -->
+        
          <label>Manager Email</label>
         <input type="text" class="form-control non-edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} disabled>
+
+        <label>Manager Name </label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %}>
+
         {% if 'google' in request.user.email %}
+
+    <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
+        
+
           <label>Market Served</label>
           <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
               <option value="0">Market Served</option>
@@ -72,6 +82,7 @@
 {% endblock content %}
 
 {% block main_js %}
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/profile.js' %}"></script>
      <script type="text/javascript">
       window.user_full_name = "{{user.get_full_name|safe}}"
@@ -80,5 +91,15 @@
       window.manager_name = "{{user.profile.user_manager_name|safe}}"
       window.manager_email = "{{user.profile.user_manager_email|safe}}"
       window.phone = "{{user.profile.phone|safe}}"
+      window.manager_details = {{manager_details|safe}}
+
+
+      $("#user_manager_email").autocomplete({
+      source: {{managers|safe}},
+      select: function(event,ui){
+         $("#user_manager_email").val(ui.item.value);
+         $('#user_manager_name').val(window.manager_details[ui.item.value]);
+      }
+    });
     </script>
 {% endblock main_js %}
