@@ -271,3 +271,5 @@ MODULE_LIST = filter(lambda m: getattr(m, 'CAN_USE', True), [
 
 SEPERVIEWUSER = ['rajuk@regalix-inc.com', 'schaturvedi@google.com', 'rwieker@google.com', 'winstonsingh@google.com', 'sabinaa@google.com', 'tkhan@regalix-inc.com', 'rraghav@regalix-inc.com', 'anoop@regalix-inc.com', 'dkarthik@regalix-inc.com', 'sprasad@regalix-inc.com',
                  'yatharth@google.com', 'vaibhavgoyal@google.com', 'lornamellon@google.com', 'blasieli@google.com']
+
+SFDC = 'STAGE'

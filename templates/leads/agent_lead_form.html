@@ -16,8 +16,8 @@
   <h1>Agency Lead Form </h1>
       <div class="lead-form agents-form-selection" id="agency_lead_div">
           <form class="lead-form" id="agency_lead_form" onsubmit="return validatethis(this);" method="POST">
-              <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=4" name="retURL">
-              <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=4" name="errorURL">
+              <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
+              <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=3" name="errorURL">
               <input type="hidden" name="oid" value="00DZ000000MipUa">
               <input type="hidden" id="campid" name="Campaign_ID" value="None">
               <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
@@ -35,6 +35,7 @@
 
               <input type="hidden" name="customer_same_shop_count" id="customer_same_shop_count" value="0">
               <input type="hidden" name="customer_diff_shop_count" id="customer_diff_shop_count" value="0">
+              <input type="hidden" name="rep_location" id="rep_location" value="">
               <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
                 <option value="Under 100">Under 100</option>
               </select>
@@ -243,9 +244,12 @@
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script src="{% static 'js/agent_lead_form.js' %}"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
 
 $(document).ready(function(){
+    getLocation('rep_location');
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;

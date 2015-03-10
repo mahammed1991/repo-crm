@@ -77,6 +77,12 @@ class SalesforceLeads(object):
                                    'agency_email': '00Nd0000007fGgI',
                                    'agency_phone': '00Nd0000007fGgN',
 
+                                   # Agency Unique Field
+                                   'agency_bundle': '00NZ0000001XIJB',
+
+                                   # Bundle Unique Field
+                                   'bundle_bundle': '00Nd0000007f4St',
+
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
                                    '__VIEWSTATE': '__VIEWSTATE',
@@ -144,6 +150,7 @@ class SalesforceLeads(object):
     SANDBOX_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',
                              'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date
                              'ctype1': '00Nd0000005WYhJ',  # Code Type Shopping
+                             'comment1': '00Nd0000005WZIe',  # Comments1
                              'mc_id': '00Nd00000077T9o',  # MC-ID
                              'web_client_inventory': '00Nd00000077T9t',  # Web Inventory
                              'rbid': '00Nd00000077T9y',  # Recommended Bid
@@ -155,6 +162,7 @@ class SalesforceLeads(object):
     PRODUCTION_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',
                                 'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date
                                 'ctype1': '00Nd0000005WYhJ',  # Code Type Shopping
+                                'comment1': '00Nd0000005WZIe',  # Comments1
                                 'mc_id': '00Nd00000077T9o',  # MC-ID
                                 'web_client_inventory': '00Nd00000077T9t',  # Web Inventory
                                 'rbid': '00Nd00000077T9y',  # Recommended Bid

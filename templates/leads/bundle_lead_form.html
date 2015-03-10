@@ -14,8 +14,8 @@
   <h1>Submit Batch Lead</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
-    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
-    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=2" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=2" name="errorURL">
     <input type="hidden" name="oid" value="00DZ000000MipUa">
     <input type="hidden" id="campid" name="Campaign_ID" value="None">
     <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
@@ -413,6 +413,7 @@
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
+    getLocation('rep_location');
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
