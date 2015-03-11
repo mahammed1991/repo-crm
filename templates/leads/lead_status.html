@@ -1,0 +1,220 @@
+{% extends 'layouts/main.html' %}
+
+{% load leads_filters %}
+
+{% load staticfiles %}
+
+{% block title %}
+Advertiser Lead Status
+{% endblock title %}
+
+{% block main_css %}
+<link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet" type="text/css" />
+<style>
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+    width: 400px;
+  }
+  .ui-autocomplete {
+    max-height: 245px;
+    overflow-y: auto;   /* prevent horizontal scrollbar */
+    overflow-x: hidden; /* add padding to account for vertical scrollbar */
+    z-index:1000 !important;
+  }
+</style>
+{% endblock main_css %}
+
+{% block content %}
+<div id='content' class="clearfix">
+  <div class="main_content">
+      <fieldset style="border:1px solid #d9d9d9; height: 506px;">
+          <legend class="legend">
+              <p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Advertiser Lead Status</p>
+          </legend>
+                      
+          <form action="{% url 'leads.views.leads_report' %}" method="post"><br /><br /><br /><br /><br />
+              {% csrf_token %}
+              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tbody>
+                      <tr>
+                          <td align="right" height="40">
+                             <strong>Google account Manager:</strong>&nbsp;
+                          </td>
+                          <td align="left">
+                              <input type="hidden" id="rep_email" name="rep_email" />
+
+                              <select id="combobox">
+                                  {% for usr in users %}
+                                  <option value="{{usr|get_tup_val:2}}">{{ usr|get_tup_val:0 }} {{ usr|get_tup_val:1 }} - {{usr|get_tup_val:2}}</option>
+                                  {% endfor %}
+                              </select>
+                           </td> 
+                      </tr>
+                  </tbody>
+              </table>
+              <div align="center" style="margin-top:30px;">
+                  <input type="submit" class="logbtn" value="Submit">
+              </div>
+          </form>
+      </fieldset>
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript">
+(function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var _this = this;
+
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" ),
+            select: function( event, ui ) {
+                $('#rep_email').val(ui.item.option.value);
+            },
+            change: function(event, ui) {
+                _this._removeIfInvalid(event, ui)
+            }
+          }); 
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass empty string as value to search for, displaying all results
+            input.autocomplete( "search", "" );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+        response( this.element.children( "option" ).map(function() {
+          var text = $( this ).text();
+          if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" );
+        this.element.val( "" );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+$(function() {
+    $( "#combobox" ).combobox();
+    var availableTags = [
+    {% for usr in users %}
+        {id: '{{usr|get_tup_val:2}}', label: "{{ usr|get_tup_val:0 }} {{ usr|get_tup_val:1 }} - {{usr|get_tup_val:2}}"},
+    {% endfor %}
+    ];
+    $( "#rep_email_auto" ).autocomplete({
+      source: availableTags,
+      select: function( event, ui ) {
+        $( "#rep_email" ).val(ui.item.id);
+      }
+    });
+    $('form').submit(function(e){
+      if(!$('#rep_email').val()){
+        alert('Please select user from drop down');
+        e.preventDefault();
+        return false;
+      }
+    });
+  });
+
+</script>
+{% endblock main_js %}
