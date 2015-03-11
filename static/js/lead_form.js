@@ -815,3 +815,12 @@ $("#fopt").change(function(){
     var webmasterName = $(this).val();
     $("#tag_contact_person_name, #shop_contact_person_name").val(webmasterName);
 });
+
+$("#tagCheck").click(function(){
+    var elem = document.getElementById('tag_via_gtm'); 
+    if(elem.checked == true){
+      $("#comment1, #comment2, #comment3, #comment4, #comment5").val('implement via GTM');
+    }else{
+      $("#comment1, #comment2, #comment3, #comment4, #comment5").val('');
+    }
+});

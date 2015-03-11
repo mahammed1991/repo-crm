@@ -214,7 +214,7 @@ def submit_agency_same_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE':
+    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -298,7 +298,7 @@ def submit_agency_different_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE':
+    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -362,7 +362,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE':
+    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -379,9 +379,9 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         for indx in range(1, customer_same_tag_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.STAGE == 'stage':
+            if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
-            elif settings.STAGE == 'production':
+            elif settings.SFDC == 'PRODUCTION':
                 basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = ret_url
             basic_data['errorURL'] = error_url
@@ -416,9 +416,9 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         customer_same_shop_count = int(customer_same_shop_count) if customer_same_shop_count else 0
         for indx in range(1, customer_same_shop_count + 1):
             # Get Basic/Common form field data
-            if settings.STAGE == 'stage':
+            if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
-            elif settings.STAGE == 'production':
+            elif settings.SFDC == 'PRODUCTION':
                 basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = ret_url
             basic_data['errorURL'] = error_url
@@ -455,7 +455,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE':
+    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -471,9 +471,9 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
-        if settings.STAGE == 'stage':
+        if settings.SFDC == 'STAGE':
             basic_data = get_common_sandbox_lead_data(request.POST)
-        elif settings.STAGE == 'production':
+        elif settings.SFDC == 'PRODUCTION':
             basic_data = get_common_salesforce_lead_data(request.POST)
         basic_data['retURL'] = ret_url
         basic_data['errorURL'] = error_url
@@ -1826,6 +1826,7 @@ def get_all_sfdc_lead_ids(sfdc_type):
 
 def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
+    print sf_api_url
     try:
         requests.post(url=sf_api_url, data=lead_data)
     except Exception as e:

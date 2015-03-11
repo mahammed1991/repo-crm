@@ -349,7 +349,7 @@ function validatethis(frm) {
 
       }else{
 
-          if (task1 == 'Dynamic Remarketing - Extension (non retail)' || task1 == 'Dynamic Remarketing - Retail'){
+          if (task1 == 'Dynamic Remarketing' || task1 == 'Dynamic X Remarketing'){
             if(document.getElementById('is_campaign_created1').checked == false){
                 rbidElem = document.getElementById('rbid_campaign1');
                 validateFiled(rbidElem);
@@ -436,7 +436,7 @@ function validatethis(frm) {
       }else{
           // Validate Tag related fields
 
-          if (task2 == 'Dynamic Remarketing - Extension (non retail)' || task2 == 'Dynamic Remarketing - Retail'){
+          if (task2 == 'Dynamic Remarketing' || task2 == 'Dynamic X Remarketing'){
             if(document.getElementById('is_campaign_created2').checked == false){
                 rbidElem = document.getElementById('rbid_campaign2');
                 validateFiled(rbidElem);
@@ -518,7 +518,7 @@ function validatethis(frm) {
       }else{
           // Validate Tag related fields
 
-          if (task3 == 'Dynamic Remarketing - Extension (non retail)' || task3 == 'Dynamic Remarketing - Retail'){
+          if (task3 == 'Dynamic Remarketing' || task3 == 'Dynamic X Remarketing'){
             if(document.getElementById('is_campaign_created3').checked == false){
                 rbidElem = document.getElementById('rbid_campaign3');
                 validateFiled(rbidElem);
@@ -665,7 +665,7 @@ $(".ctype").change(function(){
         window.lead_type = 'TAG';
     }
 
-    if($(this).val() == 'Dynamic Remarketing - Extension (non retail)' || $(this).val() == 'Dynamic Remarketing - Retail'){
+    if($(this).val() == 'Dynamic Remarketing' || $(this).val() == 'Dynamic X Remarketing'){
         $("#" + curId + '_campaign').show();
     }
 
