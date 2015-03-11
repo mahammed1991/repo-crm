@@ -838,13 +838,20 @@ def bundle_lead_to_salesforce(request):
     code_type2 = request.POST.get('ctype2')
     code_type3 = request.POST.get('ctype3')
     code_types = list()
+    ctypes = ''
+    if code_type1:
+        ctypes += get_codetype_abbreviation(code_type1)
+    if code_type2:
+        ctypes += "+" + get_codetype_abbreviation(code_type2)
+    if code_type3:
+        ctypes += "+" + get_codetype_abbreviation(code_type3)
 
     # Get Basic/Common form filed data
     basic_data = dict()
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    lead_bundle = "%s-%s" % (request.user.email.split('@')[0], randint(0, 99999))
-
+    lead_bundle = "%s-%s/%s/%s/%s" % (ctypes, randint(0, 99999), request.user.email.split('@')[0], datetime.utcnow().day, datetime.utcnow().month)
+    print lead_bundle
     if settings.SFDC == 'STAGE':
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
         oid = '00DZ000000MipUa'
@@ -1748,7 +1755,7 @@ def convert_lead_to_dict(model):
     else:
         lead['date_created'] = ''
     if model.appointment_date:
-        lead['appointment_time'] = datetime.strftime(model.appointment_date, "%m/%d/%Y")
+        lead['appointment_time'] = datetime.strftime(model.appointment_date, "%m/%d/%Y %I:%M %p")
     else:
         lead['appointment_time'] = ''
     if model.date_of_installation:
@@ -1828,6 +1835,18 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
     print sf_api_url
     try:
-        requests.post(url=sf_api_url, data=lead_data)
+        # requests.post(url=sf_api_url, data=lead_data)
+        pass
     except Exception as e:
         print e
+
+
+def get_codetype_abbreviation(code_type):
+    """ Get Short cut Abbrevation for Code Type """
+
+    if 'Analytics' in code_type:
+        return 'GA'
+    elif 'Shopping Setup' in code_type:
+        return 'GS'
+    else:
+        return 'AW'
