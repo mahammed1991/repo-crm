@@ -816,6 +816,25 @@ $("#fopt").change(function(){
     $("#tag_contact_person_name, #shop_contact_person_name").val(webmasterName);
 });
 
+
+$('.code_type').change(function(){
+
+  var selectedCodeType = $(this).val();
+  selectedId = $(this).attr('id')
+  selectedindex = selectedId[selectedId.length-1]
+
+  $('#ctype_campaign'+selectedindex).hide();
+  $('#gasetup'+selectedindex).hide();
+
+  if (selectedCodeType.indexOf('Analytics') != -1){
+    $('#gasetup'+selectedindex).show();
+  }
+  else if(selectedCodeType.indexOf('Dynamic Remarketing') != -1){
+      $('#ctype_campaign'+selectedindex).show();    
+  }
+});
+
+
 $("#tagCheck").click(function(){
     var elem = document.getElementById('tag_via_gtm'); 
     if(elem.checked == true){
