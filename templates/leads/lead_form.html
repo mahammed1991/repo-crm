@@ -7,6 +7,9 @@
 {% endblock title %}
 {% block main_css %}
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+  </style>
 {% endblock main_css %}
 {% block content %}
 <section class="content-region inner-page">
@@ -150,7 +153,7 @@
           <div class="std-sub-title">Code Type Info</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="ctype1" id="ctype1">
+              <select title="Code Type" class="form-control code_type" name="ctype1" id="ctype1">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -164,13 +167,35 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
             </div>
-            <div class="col-md-6">
+            
+            <div id='ctype_campaign1' style="display:none">
+              <div class="col-md-4">
+                <label style="height:48px;margin-bottom:20px;">
+                  <input type="checkbox" value="0" name="is_campaign_created1" id="is_campaign_created1">
+                  Is campaign created?
+                </label>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid_campaign1" name="rbid_campaign1" class="form-control" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget_campaign1" class="form-control" name="rbudget_campaign1" placeholder="Budget">
+              </div>
+              </div>
+              <div class="col-md-12" id="gasetup1" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup1" type="checkbox" name="ga_setup1" value="">
+                    Is there an existign Analytics setup? </label>
+                </div>
+              </div>
+              <div class="col-md-12">
                 <div class="checkbox">
                   <label>
                     <input id="keep_url" type="checkbox" value="">
                     Will this, then URL will be pre-populated for all selections </label>
                 </div>
-            </div>
+              </div>
           </div>
         </div>
 
@@ -180,7 +205,7 @@
           <div class="form-heading">Code Type Info (2)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="ctype2" id="ctype2">
+              <select title="Code Type" class="form-control code_type" name="ctype2" id="ctype2">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -194,7 +219,29 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment2" name="comment2" placeholder="Special Instructions (Optional)"></textarea>
             </div>
+            <div id='ctype_campaign2' style="display:none">
+              <div class="col-md-4">
+                <label style="height:48px;margin-bottom:20px;">
+                  <input type="checkbox" value="0" name="is_campaign_created2" id="is_campaign_created2">
+                  Is campaign created?
+                </label>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid_campaign2" name="rbid_campaign2" class="form-control" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget_campaign2" class="form-control" name="rbudget_campaign2" placeholder="Budget">
+              </div>
+              </div>
+            <div class="col-md-12" id="gasetup2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup2" type="checkbox" name="ga_setup2" value="">
+                    Is there an existign Analytics setup? </label>
+                </div>
+            </div>
           </div>
+          
         </div>
         <a id="addTask_2" class="btn std-btn task-btn add"><i class="fa fa-plus-circle"></i>Add Code Type</a>
 
@@ -204,7 +251,7 @@
           <div class="form-heading">Code Type Info (3)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="ctype3" id="ctype3">
+              <select title="Code Type" class="form-control code_type" name="ctype3" id="ctype3">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -218,6 +265,27 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment3" name="comment3" placeholder="Special Instructions (Optional)"></textarea>
             </div>
+            <div id='ctype_campaign3' style="display:none">
+              <div class="col-md-4">
+                <label style="height:48px;margin-bottom:20px;">
+                  <input type="checkbox" value="0" name="is_campaign_created3" id="is_campaign_created3">
+                  Is campaign created?
+                </label>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid_campaign3" name="rbid_campaign3" class="form-control" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget_campaign3" class="form-control" name="rbudget_campaign3" placeholder="Budget">
+              </div>
+              </div>
+              <div class="col-md-12" id="gasetup3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup3" type="checkbox" name="ga_setup3" value="">
+                    Is there an existign Analytics setup? </label>
+                </div>
+            </div>
           </div>
         </div>
         <a id="addTask_3" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
@@ -228,7 +296,7 @@
           <div class="form-heading">Code Type Info (4)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="ctype4" id="ctype4">
+              <select title="Code Type" class="form-control code_type" name="ctype4" id="ctype4">
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
@@ -241,7 +309,29 @@
             <div class="col-md-4">
               <textarea class="form-control" id="comment4" name="comment4" placeholder="Special Instructions (Optional)"></textarea>
             </div>
+            <div id='ctype_campaign4' style="display:none">
+              <div class="col-md-4">
+                <label style="height:48px;margin-bottom:20px;">
+                  <input type="checkbox" value="0" name="is_campaign_created4" id="is_campaign_created4">
+                  Is campaign created?
+                </label>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid_campaign4" name="rbid_campaign4" class="form-control" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget_campaign4" class="form-control" name="rbudget_campaign4" placeholder="Budget">
+              </div>
+              </div>
+            <div class="col-md-12" id="gasetup4" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup4" type="checkbox" name="ga_setup4" value="">
+                    Is there an existign Analytics setup? </label>
+                </div>
+            </div>
           </div>
+           
         </div>
         <a id="addTask_4" class="btn std-btn task-btn add" style="display:none"><i class="fa fa-plus-circle"></i>Add Code Type</a>
 
@@ -251,7 +341,7 @@
           <div class="form-heading">Code Type Info (5)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control" name="ctype5" id="ctype5">
+              <select title="Code Type" class="form-control code_type" name="ctype5" id="ctype5">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -264,6 +354,27 @@
             </div>
             <div class="col-md-4">
               <textarea class="form-control" id="comment5" name="comment5" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign5' style="display:none">
+              <div class="col-md-4">
+                <label style="height:48px;margin-bottom:20px;">
+                  <input type="checkbox" value="0" name="is_campaign_created5" id="is_campaign_created5">
+                  Is campaign created?
+                </label>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid_campaign5" name="rbid_campaign5" class="form-control" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget_campaign5" class="form-control" name="rbudget_campaign5" placeholder="Budget">
+              </div>
+              </div>
+            <div class="col-md-12" id="gasetup5" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup5" type="checkbox" name="ga_setup5" value="">
+                    Is there an existign Analytics setup? </label>
+                </div>
             </div>
           </div>
         </div>

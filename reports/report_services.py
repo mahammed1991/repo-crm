@@ -203,17 +203,20 @@ class ReportService(object):
         return leads_status_summary
 
     @staticmethod
-    def get_week_on_week_trends_details(lead_ids):
+    def get_week_on_week_trends_details(lead_ids, countries, teams):
         ''' Week on week analysis of leads won over leads submitted '''
         week_on_week_trends = dict()
         weeks_in_qtd = get_weeks_in_quarter_to_date()
-
+        code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
         for index in range(1, len(weeks_in_qtd) + 1):
 
             week_on_week_trends[index] = {'leads_won': 0}
             start_date, end_date = weeks_in_qtd[index - 1]
             #leads = Leads.objects.filter(id__in=lead_ids, created_date__gte=start_date, created_date__lte=end_date)
-            leads = Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
+
+            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                         created_date__gte=start_date, created_date__lte=end_date)
             for lead in leads:
                 if lead.lead_status == 'Implemented':
                     week_on_week_trends[index]['leads_won'] += 1
@@ -269,7 +272,7 @@ class ReportService(object):
             value = cod_typ[key]['Total']
             pie_chart_dict[key] = value
 
-        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids)
+        week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids, countries, teams)
 
         report_detail.update({'lead_status_summary': leads_status_summary,
                               'piechart': pie_chart_dict,
@@ -314,9 +317,6 @@ class ReportService(object):
         target_leads = {"%s_%s_%s_%s" %(target_lead.program_id, target_lead.location_id, target_lead.quarter, target_lead.year): target_lead.target_leads for target_lead in target_leads}
 
         detail = dict()
-
-        if '' in teams:
-            teams.remove('')
 
         for team in teams:
             detail[team] = {'week_total': 0, 'week_win': 0, 'qtd_total': 0, 'qtd_win': 0, 'locations': {}, 'end_qtr_total': 0, 'end_qtr_target': 0, 'out_vs_trgt': 0.0}
