@@ -11,6 +11,7 @@ from django.utils.translation import ugettext as _
 
 
 from leads.models import Location, Team
+from reports.models import Region
 
 
 class Feedback(models.Model):
@@ -94,6 +95,8 @@ class UserDetails(models.Model):
     phone = models.CharField(max_length=50)
     team = models.ForeignKey(Team, blank=True, null=True, default=None)
     location = models.ForeignKey(Location, blank=True, null=True, default=None)
+    rep_location = models.CharField(max_length=255, default=None, blank=True, null=True)
+    region = models.ForeignKey(Region, blank=True, null=True, default=None)
     profile_photo_url = models.CharField(max_length=255, default=None, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)

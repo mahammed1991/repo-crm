@@ -44,7 +44,9 @@ def lead_form(request):
     Lead Submission to Salesforce
     """
 
-    if request.user.profile.team or request.user.profile.location:
+    if request.user.groups.filter(name='AGENCY'):
+        return redirect('leads.views.agency_lead_form')
+    elif request.user.profile.team or request.user.profile.location:
         if request.user.profile.team and request.user.profile.team.team_name in ['Newbie', 'Newbie Plus']:
             return redirect('leads.views.bundle_lead_form')
         if request.user.profile.location and request.user.profile.location.location_name in ['AU/NZ']:
@@ -62,7 +64,6 @@ def lead_form(request):
 
         ret_url = ''
         # error_url = ''
-
         if request.POST.get('is_tag_lead') == 'yes':
 
             # Get Basic/Common form field data
@@ -80,6 +81,15 @@ def lead_form(request):
 
             for key, value in tag_leads.items():
                 tag_data[value] = request.POST.get(key)
+
+            for i in range(1, 6):
+                i = str(i)
+                rbid_key = 'rbid' + i if i > 1 else 'rbid'
+                rbudget_key = 'rbudget' + i if i > 1 else 'rbudget'
+                ga_setup_key = 'ga_setup' + i
+                tag_data[shop_leads[rbid_key]] = request.POST.get(rbid_key)
+                tag_data[shop_leads[rbudget_key]] = request.POST.get(rbudget_key)
+                tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
@@ -969,12 +979,10 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
 
     tag_data[tag_leads.get('tag_primary_role')] = post_data.get('tag_primary_role') if post_data.get('tag_primary_role') else post_data.get('shop_primary_role')  # Role
+    tag_data[tag_leads.get('tag_datepick')] = post_data.get('tag_datepick')  # TAG Appointment Date
 
     for indx in code_types:
         if indx == 1:
-
-            tag_data[tag_leads.get('tag_datepick')] = post_data.get('tag_datepick1')  # TAG Appointment Date
-
             # Code Type 1 Details
             tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
             tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
@@ -990,8 +998,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
 
             if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
-                tag_data[shop_leads.get('rbid')] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-                tag_data[shop_leads.get('rbudget')] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+                tag_data[shop_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data[shop_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
         elif indx == 3:
             # Code Type 3 Details
@@ -1000,8 +1008,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
 
             if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
-                tag_data[shop_leads.get('rbid')] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-                tag_data[shop_leads.get('rbudget')] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+                tag_data[shop_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data[shop_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
     # Sandbox ID for TAD VIA GTM
     tag_data[tag_leads.get('tag_via_gtm')] = post_data.get('tag_via_gtm')  # Tag Via  GTM
@@ -1030,8 +1038,8 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
     #                       'cid_std': post_data.get('cid').rsplit("-", 1)[0] + '-xxxx'
     #                       }
 
-    if post_data.get('setup_datepick1') and indx == 1:
-        setup_data[shop_leads.get('setup_datepick')] = post_data.get('setup_datepick1'),  # TAG Appointment Date
+    # if post_data.get('setup_datepick1') and indx == 1:
+    #     setup_data[shop_leads.get('setup_datepick')] = post_data.get('setup_datepick1'),  # TAG Appointment Date
     if post_data.get('shop_contact_person_name1'):
         full_name = post_data.get('shop_contact_person_name1')
     else:
@@ -1053,6 +1061,7 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
     # SandBox ID for IS SHOPPING POLICIES
     setup_data[shop_leads.get('is_shopping_policies')] = post_data.get('is_shopping_policies')  # Shopping Policies
     # requests.post(url=sf_api_url, data=setup_data)
+    print setup_data
     submit_lead_to_sfdc(sf_api_url, setup_data)
 
 

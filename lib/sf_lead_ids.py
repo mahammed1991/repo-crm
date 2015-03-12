@@ -33,6 +33,7 @@ class SalesforceLeads(object):
                                 'agency_name': '00NZ0000001XR8H',
                                 'agency_email': '00NZ0000001XR8M',
                                 'agency_phone': '00NZ0000001XR8R',
+                                'agency_poc': '00NZ0000001Xdfh',
 
                                 # Agency Unique Field
                                 'agency_bundle': '00NZ0000001XIJB',
@@ -76,6 +77,7 @@ class SalesforceLeads(object):
                                    'agency_name': '00Nd0000007fGgD',
                                    'agency_email': '00Nd0000007fGgI',
                                    'agency_phone': '00Nd0000007fGgN',
+                                   'agency_poc': '00Nd0000007fIl7',
 
                                    # Agency Unique Field
                                    'agency_bundle': '00Nd0000007fIdD',
@@ -94,26 +96,31 @@ class SalesforceLeads(object):
                              'url1': '00Nd0000005WYhE',   # URL1
                              'code1': '00Nd0000005WYh9',   # Code1
                              'comment1': '00Nd0000005WZIe',  # Comments1
+                             'ga_setup1': '00NZ0000001Xdfm',  # Is GS Setup1
                              # Code Type 2 Details
                              'ctype2': '00Nd0000005WYkS',  # Code Type2
                              'url2': '00Nd0000005WYi9',   # URL2
                              'code2': '00Nd0000005WYiv',   # Code2
                              'comment2': '00Nd0000005WYjy',  # Comments2
+                             'ga_setup2': '00NZ0000001Xdfm',  # Is GS Setup2
                              # Code Type 3 Details
                              'ctype3': '00Nd0000005WYkX',  # Code Type3
                              'url3': '00Nd0000005WYjU',   # URL3
                              'code3': '00Nd0000005WYj5',   # Code3
                              'comment3': '00Nd0000005WYjB',  # Comments3
+                             'ga_setup3': '00NZ0000001Xdfm',  # Is GS Setup3
                              # Code Type 4 Details
                              'ctype4': '00Nd0000005WYkm',  # Code Type4
                              'url4': '00Nd0000005WYjZ',   # URL4
                              'code4': '00Nd0000005WYjA',   # Code4
                              'comment4': '00Nd0000005WYkI',  # Comments4
-                             # Code Type 4 Details
-                             'ctype5': '00Nd0000005WYl6',  # Code Type4
-                             'url5': '00Nd0000005WYjo',   # URL4
-                             'code5': '00Nd0000005WYiw',   # Code4
-                             'comment5': '00Nd0000005WYkN',  # Comments4
+                             'ga_setup4': '00NZ0000001Xdfm',  # Is GS Setup4
+                             # Code Type 5 Details
+                             'ctype5': '00Nd0000005WYl6',  # Code Type5
+                             'url5': '00Nd0000005WYjo',   # URL5
+                             'code5': '00Nd0000005WYiw',   # Code5
+                             'comment5': '00Nd0000005WYkN',  # Comments5
+                             'ga_setup5': '00NZ0000001Xdfm',  # Is GS Setup5
                              'tag_via_gtm': '00Nd0000007esIr',
                              }
     PRODUCTION_TAG_LEADS_ARGS = {'first_name': 'first_name',
@@ -125,26 +132,31 @@ class SalesforceLeads(object):
                                  'url1': '00Nd0000005WYhE',   # URL1
                                  'code1': '00Nd0000005WYh9',   # Code1
                                  'comment1': '00Nd0000005WZIe',  # Comments1
+                                 'ga_setup1': '00Nd0000007fIlH',  # Is GS Setup1
                                  # Code Type 2 Details
                                  'ctype2': '00Nd0000005WYkS',  # Code Type2
                                  'url2': '00Nd0000005WYi9',   # URL2
                                  'code2': '00Nd0000005WYiv',   # Code2
                                  'comment2': '00Nd0000005WYjy',  # Comments2
+                                 'ga_setup2': '00Nd0000007fIlH',  # Is GS Setup2
                                  # Code Type 3 Details
                                  'ctype3': '00Nd0000005WYkX',  # Code Type3
                                  'url3': '00Nd0000005WYjU',   # URL3
                                  'code3': '00Nd0000005WYj5',   # Code3
                                  'comment3': '00Nd0000005WYjB',  # Comments3
+                                 'ga_setup3': '00Nd0000007fIlH',  # Is GS Setup3
                                  # Code Type 4 Details
                                  'ctype4': '00Nd0000005WYkm',  # Code Type4
                                  'url4': '00Nd0000005WYjZ',   # URL4
                                  'code4': '00Nd0000005WYjA',   # Code4
                                  'comment4': '00Nd0000005WYkI',  # Comments4
+                                 'ga_setup4': '00Nd0000007fIlH',  # Is GS Setup4
                                  # Code Type 4 Details
-                                 'ctype5': '00Nd0000005WYl6',  # Code Type4
-                                 'url5': '00Nd0000005WYjo',   # URL4
-                                 'code5': '00Nd0000005WYiw',   # Code4
-                                 'comment5': '00Nd0000005WYkN',  # Comments4
+                                 'ctype5': '00Nd0000005WYl6',  # Code Type5
+                                 'url5': '00Nd0000005WYjo',   # URL5
+                                 'code5': '00Nd0000005WYiw',   # Code5
+                                 'comment5': '00Nd0000005WYkN',  # Comments5
+                                 'ga_setup5': '00Nd0000007fIlH',  # Is GS Setup5
                                  'tag_via_gtm': '00Nd0000007esIr',
                                  }
     SANDBOX_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',
@@ -153,8 +165,18 @@ class SalesforceLeads(object):
                              'comment1': '00Nd0000005WZIe',  # Comments1
                              'mc_id': '00Nd00000077T9o',  # MC-ID
                              'web_client_inventory': '00Nd00000077T9t',  # Web Inventory
-                             'rbid': '00Nd00000077T9y',  # Recommended Bid
-                             'rbudget': '00Nd00000077TA3',  # Recommended Budget
+                             'rbid': '00Nd00000077T9y',  # Recommended Bid1
+                             'rbid2': '00Nd00000077T9y',  # Recommended Bid2
+                             'rbid3': '00Nd00000077T9y',  # Recommended Bid3
+                             'rbid4': '00Nd00000077T9y',  # Recommended Bid4
+                             'rbid5': '00Nd00000077T9y',  # Recommended Bid5
+
+                             'rbudget': '00Nd00000077TA3',  # Recommended Budget1
+                             'rbudget2': '00Nd00000077TA3',  # Recommended Budget2
+                             'rbudget3': '00Nd00000077TA3',  # Recommended Budget3
+                             'rbudget4': '00Nd00000077TA3',  # Recommended Budget4
+                             'rbudget5': '00Nd00000077TA3',  # Recommended Budget5
+
                              'rbidmodifier': '00Nd00000077TA8',  # Recommended Mobile Bid Modifier
                              'shopping_url': '00Nd0000005WYhE',  # Shopping URL
                              'is_shopping_policies': '00Nd0000007esIw',  # Shopping policies
@@ -165,8 +187,18 @@ class SalesforceLeads(object):
                                 'comment1': '00Nd0000005WZIe',  # Comments1
                                 'mc_id': '00Nd00000077T9o',  # MC-ID
                                 'web_client_inventory': '00Nd00000077T9t',  # Web Inventory
-                                'rbid': '00Nd00000077T9y',  # Recommended Bid
-                                'rbudget': '00Nd00000077TA3',  # Recommended Budget
+                                'rbid': '00Nd00000077T9y',  # Recommended Bid1s
+                                'rbid2': '00Nd00000077T9y',  # Recommended Bid2
+                                'rbid3': '00Nd00000077T9y',  # Recommended Bid3
+                                'rbid4': '00Nd00000077T9y',  # Recommended Bid4
+                                'rbid5': '00Nd00000077T9y',  # Recommended Bid5
+
+                                'rbudget': '00Nd00000077TA3',  # Recommended Budget1
+                                'rbudget2': '00Nd00000077TA3',  # Recommended Budget2
+                                'rbudget3': '00Nd00000077TA3',  # Recommended Budget3
+                                'rbudget4': '00Nd00000077TA3',  # Recommended Budget4
+                                'rbudget5': '00Nd00000077TA3',  # Recommended Budget5
+
                                 'rbidmodifier': '00Nd00000077TA8',  # Recommended Mobile Bid Modifier
                                 'shopping_url': '00Nd0000005WYhE',  # Shopping URL
                                 'is_shopping_policies': '00Nd0000007esIw',  # Shopping policies
