@@ -521,7 +521,8 @@ $(".ctype").change(function(){
     window.lead_type = '';
     $("#ctype2 option").show();
     $("#ctype3 option").show();
-
+    var selectedId = $(this).attr('id');
+    var indx = selectedId[selectedId.length - 1];
     var selectedId1 = $("#ctype1 option:selected").attr('id');
     if(selectedId1){
         id1 = selectedId1.split('_')[1];
@@ -571,6 +572,13 @@ $(".ctype").change(function(){
 
     if($(this).val() == 'Dynamic Remarketing' || $(this).val() == 'Dynamic X Remarketing'){
         $("#" + curId + '_campaign').show();
+        $("#ga_setup" + indx).attr('checked', false);
+        $("#gasetup" + indx).hide();
+    }else if($(this).val().indexOf('Analytics') != -1){
+      $("#gasetup" + indx).show();   
+    }else{
+      $("#ga_setup" + indx).attr('checked', false);
+      $("#gasetup" + indx).hide();
     }
 
     var ctype1 = $("#ctype1").val()
@@ -669,10 +677,25 @@ $('#region').change(function(){
  function setLocationsForRegion(newLocations, countryIds){
     $("#country option").remove()
     $("#country").append('<option value="0">Market Served</option>');
-    for(i=0; i<newLocations.length; i++){
-      if(countryIds.indexOf(newLocations[i]['id']) != -1){
-       $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
-     }
+    if(countryIds && countryIds.length > 0){
+        for(i=0; i<newLocations.length; i++){
+          if(countryIds.indexOf(newLocations[i]['id']) != -1){
+           $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+         }
+        }
+    }else{
+        for(i=0; i<newLocations.length; i++){
+          $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+        }
     }
+    
    $("#country").val('0');
   }
+
+  $(".is_ga_setup").click(function(){
+    if($(this).is(":checked")){
+      $(this).val(1);
+    }else{
+      $(this).val(0);
+    }
+});

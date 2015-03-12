@@ -161,7 +161,7 @@
                   <option value="Google Shopping Setup" id="ctype1_Google-Shopping-Setup">Google Shopping Setup</option>
                 </select>
 
-                <div class="col-md-12" id="gasetup1">
+                <div class="col-md-12" id="gasetup1" style="display:none;">
                 <div class="checkbox">
                   <label>
                     <input id="ga_setup1" type="checkbox" name="ga_setup1" value="0" class="is_ga_setup">
@@ -212,7 +212,7 @@
                     <option value="Google Shopping Setup" id="ctype2_Google-Shopping-Setup">Google Shopping Setup</option>
                   </select>
 
-                   <div class="col-md-12" id="gasetup2">
+                   <div class="col-md-12" id="gasetup2" style="display:none;">
                     <div class="checkbox">
                       <label>
                         <input id="ga_setup2" type="checkbox" name="ga_setup2" value="0" class="is_ga_setup">
@@ -258,7 +258,7 @@
                 <option value="Google Shopping Setup" id="ctype3_Google-Shopping-Setup">Google Shopping Setup</option>
               </select>
 
-                <div class="col-md-12" id="gasetup3" >
+                <div class="col-md-12" id="gasetup3" style="display:none;">
                     <div class="checkbox">
                       <label>
                         <input id="ga_setup3" type="checkbox" name="ga_setup3" value="0" class="is_ga_setup">
@@ -319,86 +319,6 @@
                       <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
                     </div>
                 </div>
-
-                <!-- <div class="shop_appointment-1" style="display:none;">
-                  <div class="col-md-4">
-                    <input type="text" class="form-control" id="shop_contact_person_name1" name="shop_contact_person_name1" placeholder="Contact Person Name">
-                  </div>
-                  <div class="col-md-4">
-                      <select title="Primary Contact Role" class="form-control" name="shop_primary_role" id="shop_primary_role">
-                      <option value="">Primary Contact Role</option>
-                      <option value="Owner">Owner</option>
-                      <option value="Marketing">Marketing</option>
-                      <option value="Webmaster">Webmaster</option>
-                    </select>
-                    </div>
-                  <div class="col-md-4">
-                    <input type="text" class="form-control" id="setup_datepick1" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick1" autocomplete='off'>
-                  </div>
-                </div> -->
-
-
-              <!-- Appointment 2 -->
-              <!-- <div class="row">
-                  <div class="col-md-4" style="display:none;" id='ctype2_appointment'>
-                    <div class="checkbox">
-                      <label>
-                        <input id="appointmentCheck_2" type="checkbox" value="">
-                        Do you want to setup a fresh appointment for <span id="ctype2_name"></span>? 
-                      </label>
-                      </div>
-                    </div>
-
-                  <div class="tag_appointment-2" style="display:none;">
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="tag_contact_person_name2" name="tag_contact_person_name2" placeholder="Contact Person Name">
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="tag_datepick2" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
-                    </div>
-                    </div>
-
-                  <div class="shop_appointment-2" style="display:none;">
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="shop_contact_person_name2" name="shop_contact_person_name2" placeholder="Contact Person Name">
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="setup_datepick2" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
-                    </div>
-                  </div>
-                </div> -->
-
-                <!-- Appointment 3 -->
-                <!-- <div class="row">
-                    <div class="col-md-4" style="display:none;" id='ctype3_appointment'>
-                      <div class="checkbox">
-                          <label>
-                            <input id="appointmentCheck_3" type="checkbox" value="">
-                            Do you want to setup a fresh appointment for <span id="ctype3_name"></span>? 
-                          </label>
-                      </div>
-                    </div>
-
-                    <div class="tag_appointment-3" style="display:none;">
-                      <div class="col-md-4">
-                        <input type="text" class="form-control" id="tag_contact_person_name3" name="tag_contact_person_name3" placeholder="Contact Person Name">
-                      </div>
-                      
-                      <div class="col-md-4">
-                        <input type="text" class="form-control" id="tag_datepick3" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
-                      </div>
-                      </div>
-
-                    <div class="shop_appointment-3" style="display:none;">
-                      <div class="col-md-4">
-                        <input type="text" class="form-control" id="shop_contact_person_name3" name="shop_contact_person_name3" placeholder="Contact Person Name">
-                      </div>
-                      <div class="col-md-4">
-                        <input type="text" class="form-control" id="setup_datepick3" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
-                      </div>
-                    </div>
-                </div>
-          </div> -->
         </div>    
     </div>
 
@@ -458,12 +378,13 @@
     if(userTeam){
       $('#team').val(userTeam);
     }
-    /*var userLocation = "{{user.profile.location.location_name|safe}}"
+
+    var userLocation = "{{user.profile.location.location_name|safe}}"
     if(userLocation){
       $('#country').val(userLocation);
       loc = document.getElementById('country');
       changetime(loc.options[loc.selectedIndex]);
-    }*/
+    }
   
     var userRegion = "{{user.profile.region.name|safe}}"
    if(userRegion){
@@ -473,11 +394,6 @@
 
 
   });
-  // $("#team").autocomplete({
-  //     source: {{programs|safe}},
-  //     select: function(event,ui){
-  //       $("#team").val(ui.item);
-  //     }
-  //   });
+  
 </script>
 {% endblock main_js %}

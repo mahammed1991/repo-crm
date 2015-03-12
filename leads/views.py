@@ -35,6 +35,7 @@ from random import randint
 from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
 
+
 # Create your views here.
 @login_required
 @csrf_exempt
@@ -982,6 +983,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
             tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
 
+            tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
+
             tag_data[shop_leads.get('rbid')] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
             tag_data[shop_leads.get('rbudget')] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
@@ -990,6 +993,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
             tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
             tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
+
+            tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
             if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
                 tag_data[shop_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
@@ -1000,6 +1005,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
             tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
             tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
+
+            tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
             if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
                 tag_data[shop_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
@@ -1819,7 +1826,6 @@ def get_basic_lead_data():
     lead_args['programs'] = programs
     lead_args['regions'] = all_regions
     lead_args['region_locations'] = region_locations
-
 
     return lead_args
 
