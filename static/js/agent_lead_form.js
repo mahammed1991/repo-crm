@@ -128,10 +128,10 @@ function setLocations(newLocations){
       validateFiled(tagAppointmentElem);
     }
 
-    shopAppointmentElem = document.getElementById('setup_datepick');
-    if($(shopAppointmentElem).is(":visible")){
-      validateFiled(shopAppointmentElem);
-    }
+    // shopAppointmentElem = document.getElementById('setup_datepick');
+    // if($(shopAppointmentElem).is(":visible")){
+    //   validateFiled(shopAppointmentElem);
+    // }
 
     // Advertiser Email Validation
     agencyNameElem = document.getElementById('agency_name');
@@ -163,6 +163,17 @@ function setLocations(newLocations){
         if(document.getElementById('same_task').checked){
             var sameTagTask = $(".tag:visible").length;
             $("#agency_same_tag_count").val(sameTagTask);
+
+            if(sameTagTask){
+                if($("#tag_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'TAG',
+                      'time' : $("#tag_datepick").val()
+                    }
+                  fix_slots.push(slot)  
+                }
+            }
+
             for (i=1; i<=sameTagTask; i++){
                 if($("#same_tag_" + i).is(":visible")){
                     // CID Validation
@@ -180,10 +191,6 @@ function setLocations(newLocations){
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
-
-                    // Comment Validation
-                    /*commentElem = document.getElementById('comment' + i);
-                    validateFiled(commentElem);*/
 
                     // BID ID
                     bidElem = document.getElementById('rbid' + i);
@@ -244,6 +251,17 @@ function setLocations(newLocations){
         }else if(document.getElementById('diff_task').checked){
             var diffTagTask = 5;
             $("#agency_diff_tag_count").val($(".tagFields:visible").length);
+
+            if($(".tagFields:visible").length){
+                if($("#tag_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'TAG',
+                      'time' : $("#tag_datepick").val()
+                    }
+                  fix_slots.push(slot)  
+                }
+            }
+
             for (i=1; i<=diffTagTask; i++){
                 if($("#tagFields" + i).is(":visible")){
                     // CID Validation
@@ -261,12 +279,7 @@ function setLocations(newLocations){
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
-
-                    // Comment Validation
-                   /* commentElem = document.getElementById('comment' + i);
-                    validateFiled(commentElem);*/
-                    // URL Validation
-
+                    
                     // BID ID
                     bidElem = document.getElementById('rbid' + i);
                     if($(bidElem).is(":visible")){
@@ -330,6 +343,15 @@ function setLocations(newLocations){
         if(document.getElementById('same_task').checked){
             var sameTagTask = $(".tag:visible").length;
             $("#customer_same_tag_count").val(sameTagTask);
+            if(sameTagTask){
+                if($("#tag_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'TAG',
+                      'time' : $("#tag_datepick").val()
+                    }
+                  fix_slots.push(slot)  
+                }
+            }
             for (i=1; i<=sameTagTask; i++){
                 if($("#same_cust_tag_" + i).is(":visible")){
 
@@ -437,6 +459,17 @@ function setLocations(newLocations){
         }else if(document.getElementById('diff_task').checked){
             var diffTagTask = 5;
             $("#customer_diff_tag_count").val($(".tagFields:visible").length);
+
+            if($(".tagFields:visible").length){
+                if($("#tag_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'TAG',
+                      'time' : $("#tag_datepick").val()
+                    }
+                  fix_slots.push(slot)  
+                }
+            }
+
             for (i=1; i<=diffTagTask; i++){
                 if($("#tagFields" + i).is(":visible")){
                     // CID Validation
@@ -515,9 +548,12 @@ function setLocations(newLocations){
                         modifierElem = document.getElementById('rbidmodifier' + i);
                         validateFiled(modifierElem);
 
-                        // Comment Validation
-                       /* commentElem = document.getElementById('comment' + i);
-                        validateFiled(commentElem);*/
+                         // MCID Validation
+                        shoppingMCIDElem = document.getElementById('is-mc_id' + i);
+                        if(shoppingMCIDElem.checked == true){
+                            shoppingMCElem = document.getElementById('mc_id' + i);
+                            validateFiled(shoppingMCElem);
+                        }
                     }
             }
         }

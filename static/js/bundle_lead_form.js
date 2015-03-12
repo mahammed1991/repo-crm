@@ -119,26 +119,6 @@
       $(ths).submit();
   }
 
-  // $("#tag_contact_person_name").change(function(){
-  //     var tag_name = $(this).val();
-  //     $("#shop_contact_person_name").val(tag_name);
-  // });
-
-  // $("#shop_contact_person_name").change(function(){
-  //   var shop_name = $(this).val();
-  //     $("#tag_contact_person_name").val(shop_name);
-  // });
-
-  // $("#tag_primary_role").change(function(){
-  //     var tag_role = $(this).val();
-  //     $("#shop_primary_role").val(tag_role);
-  // });
-
-  // $("#shop_primary_role").change(function(){
-  //     var shop_role = $(this).val();
-  //     $("#tag_primary_role").val(shop_role);
-  // });
-
   function setLocations(newLocations){
     $("#country option").remove()
     $("#country").append('<option value="0">Program Location</option>');
@@ -324,28 +304,28 @@ function validatethis(frm) {
               validateFiled(shoppingMCElem);
           }
           
-          // Hava an appointment 
-          if (document.getElementById("appointmentCheck").checked == true) {
-            // Contact Person Name Validation
-            contactElem = document.getElementById('shop_contact_person_name1');
-            validateFiled(contactElem);
+          // Hava an appointment for Google Shopping No Appointments
+          // if (document.getElementById("appointmentCheck").checked == true) {
+          //   // Contact Person Name Validation
+          //   contactElem = document.getElementById('shop_contact_person_name1');
+          //   validateFiled(contactElem);
 
-            // Contact Person Role Validation
-            roleElem = document.getElementById('shop_primary_role');
-            validateFiled(roleElem);
+          //   // Contact Person Role Validation
+          //   roleElem = document.getElementById('shop_primary_role');
+          //   validateFiled(roleElem);
 
-            // Appointments Date and Time Validation
-            setupDateElem = document.getElementById('setup_datepick1');
-            validateFiled(setupDateElem);
+          //   // Appointments Date and Time Validation
+          //   setupDateElem = document.getElementById('setup_datepick1');
+          //   validateFiled(setupDateElem);
 
-            if(setupDateElem.value){
-                var slot = {
-                'type' : 'SHOPPING',
-                'time' : setupDateElem.value
-                }
-                fix_slots.push(slot)
-              }
-            }
+          //   if(setupDateElem.value){
+          //       var slot = {
+          //       'type' : 'SHOPPING',
+          //       'time' : setupDateElem.value
+          //       }
+          //       fix_slots.push(slot)
+          //     }
+          //   }
 
       }else{
 
@@ -363,28 +343,6 @@ function validatethis(frm) {
           tagUrlElem = document.getElementById('url1');
           validateFiled(tagUrlElem);
 
-          // Hava an appointment 
-          if (document.getElementById("appointmentCheck").checked == true) {
-            // Contact Person Name Validation
-            contactElem = document.getElementById('tag_contact_person_name1');
-            validateFiled(contactElem);
-
-            // Contact Person Role Validation
-            roleElem = document.getElementById('tag_primary_role');
-            validateFiled(roleElem);
-
-            // Appointments Date and Time Validation
-            tagDateElem = document.getElementById('tag_datepick1');
-            validateFiled(tagDateElem);
-
-            if(tagDateElem.value){
-                var slot = {
-                'type' : 'TAG',
-                'time' : tagDateElem.value
-                }
-                fix_slots.push(slot)
-              }
-            }
           }
       }
 
@@ -413,25 +371,6 @@ function validatethis(frm) {
               shoppingMCElem = document.getElementById('mc_id2');
               validateFiled(shoppingMCElem);
           } 
-          
-          // // Hava an appointment 
-          // if (document.getElementById("appointmentCheck").checked == true && document.getElementById("appointmentCheck_2").checked == true) {
-          //   // Contact Person Name Validation
-          //   contactElem = document.getElementById('shop_contact_person_name2');
-          //   validateFiled(contactElem);
-
-          //   // Appointments Date and Time Validation
-          //   setupDateElem = document.getElementById('setup_datepick2');
-          //   validateFiled(setupDateElem);
-
-          //   if(setupDateElem.value){
-          //       var slot = {
-          //       'type' : 'SHOPPING',
-          //       'time' : setupDateElem.value
-          //       }
-          //       fix_slots.push(slot)
-          //     }
-          // }
 
       }else{
           // Validate Tag related fields
@@ -448,25 +387,6 @@ function validatethis(frm) {
 
           tagUrlElem = document.getElementById('url2');
           validateFiled(tagUrlElem);
-
-          // // Hava an appointment 
-          // if (document.getElementById("appointmentCheck").checked == true && document.getElementById("appointmentCheck_2").checked == true) {
-          //   // Contact Person Name Validation
-          //   contactElem = document.getElementById('tag_contact_person_name2');
-          //   validateFiled(contactElem);
-
-          //   // Appointments Date and Time Validation
-          //   tagDateElem = document.getElementById('tag_datepick2');
-          //   validateFiled(tagDateElem);
-
-          //   if(tagDateElem.value){
-          //       var slot = {
-          //       'type' : 'TAG',
-          //       'time' : tagDateElem.value
-          //       }
-          //       fix_slots.push(slot)
-          //     }
-          // }
       }
     }
 
@@ -496,25 +416,6 @@ function validatethis(frm) {
               validateFiled(shoppingMCElem);
           }
           
-          // Hava an appointment 
-          if (document.getElementById("appointmentCheck").checked == true && document.getElementById("appointmentCheck_3").checked == true) {
-            // Contact Person Name Validation
-            contactElem = document.getElementById('shop_contact_person_name3');
-            validateFiled(contactElem);
-
-            // Appointments Date and Time Validation
-            setupDateElem = document.getElementById('setup_datepick3');
-            validateFiled(setupDateElem);
-
-            if(setupDateElem.value){
-                var slot = {
-                'type' : 'SHOPPING',
-                'time' : setupDateElem.value
-                }
-                fix_slots.push(slot)
-              }
-
-          }
       }else{
           // Validate Tag related fields
 
@@ -530,29 +431,33 @@ function validatethis(frm) {
 
           tagUrlElem = document.getElementById('url3');
           validateFiled(tagUrlElem);
-
-          // Hava an appointment 
-          // if (document.getElementById("appointmentCheck").checked == true && document.getElementById("appointmentCheck_3").checked == true) {
-          //   // Contact Person Name Validation
-          //   contactElem = document.getElementById('tag_contact_person_name3');
-          //   validateFiled(contactElem);
-
-          //   // Appointments Date and Time Validation
-          //   tagDateElem = document.getElementById('tag_datepick3');
-          //   validateFiled(tagDateElem);
-
-          //   if(tagDateElem.value){
-          //       var slot = {
-          //       'type' : 'TAG',
-          //       'time' : tagDateElem.value
-          //       }
-          //       fix_slots.push(slot)
-          //     }
-
-          // }
+          
       }
 
     }
+
+    // Hava an appointment 
+    if (document.getElementById("appointmentCheck").checked == true) {
+      // Contact Person Name Validation
+      contactElem = document.getElementById('tag_contact_person_name');
+      validateFiled(contactElem);
+
+      // Contact Person Role Validation
+      roleElem = document.getElementById('tag_primary_role');
+      validateFiled(roleElem);
+
+      // Appointments Date and Time Validation
+      tagDateElem = document.getElementById('tag_datepick');
+      validateFiled(tagDateElem);
+
+      if(tagDateElem.value){
+          var slot = {
+          'type' : 'TAG',
+          'time' : tagDateElem.value
+          }
+          fix_slots.push(slot)
+        }
+      }
 
     if($("#is_shopping_policies").is(":visible")){
         if($("#is_shopping_policies").is(":checked")){
@@ -669,46 +574,23 @@ $(".ctype").change(function(){
         $("#" + curId + '_campaign').show();
     }
 
-    if($("#ctype1").val() == 'Google Shopping Setup'){
-        $(".shop_appointment-1").show();
-        $(".tag_appointment-1").hide();
-      }else{
-        $(".tag_appointment-1").show();
-        $(".shop_appointment-1").hide();
-      }
+    var ctype1 = $("#ctype1").val()
+    var ctype2 = $("#ctype2").val()
+    var ctype3 = $("#ctype3").val()
+
+    if(ctype1 && ctype1 != 'Google Shopping Setup'){
+        $(".appointment").show();
+    }else if(ctype2 && ctype2 != 'Google Shopping Setup'){
+        $(".appointment").show();
+    }else if(ctype3 && ctype3 != 'Google Shopping Setup'){
+        $(".appointment").show();
+    }else{
+      $(".appointment").hide();
+    }
 
     showHeadsUp();
 
 });
-
-// $("#appointmentCheck_2").click(function(){
-//     var thisElem = document.getElementById("appointmentCheck_2") ;
-//     if(thisElem.checked){
-//         if($("#ctype2").val() == 'Google Shopping Setup'){
-//           $(".shop_appointment-2").show();
-//         }else if($("#ctype2").val()){
-//           $(".tag_appointment-2").show();
-//         }
-//     }else{
-//         $(".tag_appointment-2").hide();
-//         $(".shop_appointment-2").hide();
-//     }
-// });
-
-
-// $("#ctype3_appointment label").click(function(){
-//   var thisElem = document.getElementById("appointmentCheck_3") ;
-//     if(thisElem.checked){
-//         if($("#ctype3").val() == 'Google Shopping Setup'){
-//           $(".shop_appointment-3").show();
-//         }else if($("#ctype3").val()){
-//           $(".tag_appointment-3").show();
-//         }
-//     }else{
-//         $(".tag_appointment-3").hide();
-//         $(".shop_appointment-3").hide();
-//     }
-// });
 
 
 function showHeadsUp(){

@@ -530,15 +530,29 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        // codeElem = frm.code1;
-        // if(!validateCode(codeElem)){
-        //   window.is_error = true;
-        // }
-
         urlElem = frm.url1;
         if(!validateUrl(urlElem)){
           window.is_error = true;
         }
+
+        // New fields for Dynamic Remarketing Code Types
+        var isCampaign = document.getElementById('is_campaign_created1')
+        if($(isCampaign).is(":visible") && isCampaign.checked == false){
+
+            // rBid validation
+            var rbidElem = document.getElementById('rbid1')
+            if(!validateCtype(rbidElem)){
+              window.is_error = true;
+            }
+
+            // rBudget validation
+            var rbudgetElem = document.getElementById('rbudget1')
+            if(!validateCtype(rbudgetElem)){
+              window.is_error = true;
+            }
+
+        }
+        
       }
       
       if($("#task_2").is(":visible")){
@@ -547,15 +561,29 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        // codeElem2 = frm.code2;
-        // if(!validateCode(codeElem2)){
-        //   window.is_error = true;
-        // }
-
         urlElem2 = frm.url2;
         if(!validateUrl(urlElem2)){
           window.is_error = true;
         }
+
+        // New fields for Dynamic Remarketing Code Types
+        var isCampaign = document.getElementById('is_campaign_created2')
+        if($(isCampaign).is(":visible") && isCampaign.checked == false){
+
+            // rBid validation
+            var rbidElem = document.getElementById('rbid2')
+            if(!validateCtype(rbidElem)){
+              window.is_error = true;
+            }
+
+            // rBudget validation
+            var rbudgetElem = document.getElementById('rbudget2')
+            if(!validateCtype(rbudgetElem)){
+              window.is_error = true;
+            }
+
+        }
+
       }
 
       if($("#task_3").is(":visible")){
@@ -564,15 +592,29 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        // codeElem3 = frm.code3;
-        // if(!validateCode(codeElem3)){
-        //   window.is_error = true;
-        // }
-
         urlElem3 = frm.url3;
         if(!validateUrl(urlElem3)){
           window.is_error = true;
         }
+
+        // New fields for Dynamic Remarketing Code Types
+        var isCampaign = document.getElementById('is_campaign_created3')
+        if($(isCampaign).is(":visible") && isCampaign.checked == false){
+
+            // rBid validation
+            var rbidElem = document.getElementById('rbid3')
+            if(!validateCtype(rbidElem)){
+              window.is_error = true;
+            }
+
+            // rBudget validation
+            var rbudgetElem = document.getElementById('rbudget3')
+            if(!validateCtype(rbudgetElem)){
+              window.is_error = true;
+            }
+
+        }
+
       }
 
       if($("#task_4").is(":visible")){
@@ -581,15 +623,29 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        // codeElem4 = frm.code4;
-        // if(!validateCode(codeElem4)){
-        //   window.is_error = true;
-        // }
-
         urlElem4 = frm.url4;
         if(!validateUrl(urlElem4)){
           window.is_error = true;
         }
+
+        // New fields for Dynamic Remarketing Code Types
+        var isCampaign = document.getElementById('is_campaign_created4')
+        if($(isCampaign).is(":visible") && isCampaign.checked == false){
+
+            // rBid validation
+            var rbidElem = document.getElementById('rbid4')
+            if(!validateCtype(rbidElem)){
+              window.is_error = true;
+            }
+
+            // rBudget validation
+            var rbudgetElem = document.getElementById('rbudget4')
+            if(!validateCtype(rbudgetElem)){
+              window.is_error = true;
+            }
+
+        }
+
       }
 
       if($("#task_5").is(":visible")){
@@ -598,15 +654,29 @@ function validatethis(frm) {
           window.is_error = true;
         }
 
-        // codeElem5 = frm.code5;
-        // if(!validateCode(codeElem5)){
-        //   window.is_error = true;
-        // }
-
         urlElem5 = frm.url5;
         if(!validateUrl(urlElem5)){
           window.is_error = true;
-        } 
+        }
+
+        // New fields for Dynamic Remarketing Code Types
+        var isCampaign = document.getElementById('is_campaign_created5')
+        if($(isCampaign).is(":visible") && isCampaign.checked == false){
+
+            // rBid validation
+            var rbidElem = document.getElementById('rbid5')
+            if(!validateCtype(rbidElem)){
+              window.is_error = true;
+            }
+
+            // rBudget validation
+            var rbudgetElem = document.getElementById('rbudget5')
+            if(!validateCtype(rbudgetElem)){
+              window.is_error = true;
+            }
+
+        }
+
       }
     }else{
       frm.tag_datepick.value = '';
@@ -829,11 +899,20 @@ $('.code_type').change(function(){
   if (selectedCodeType.indexOf('Analytics') != -1){
     $('#gasetup'+selectedindex).show();
   }
-  else if(selectedCodeType.indexOf('Dynamic Remarketing') != -1){
+  else if(selectedCodeType.indexOf('Dynamic') != -1){
       $('#ctype_campaign'+selectedindex).show();    
   }
 });
 
+$(document).on('click', '.is_campaign_created', function() {
+    thisId = $(this).attr('id');
+    if($(this).is(":checked")){
+        $("."+ thisId).hide().val('');
+    }else{
+      $("."+ thisId).show().val('');
+    }
+    
+});
 
 $("#tagCheck").click(function(){
     var elem = document.getElementById('tag_via_gtm'); 
@@ -841,5 +920,13 @@ $("#tagCheck").click(function(){
       $("#comment1, #comment2, #comment3, #comment4, #comment5").val('implement via GTM');
     }else{
       $("#comment1, #comment2, #comment3, #comment4, #comment5").val('');
+    }
+});
+
+$(".is_ga_setup").click(function(){
+    if($(this).is(":checked")){
+      $(this).val(1);
+    }else{
+      $(this).val(0);
     }
 });
