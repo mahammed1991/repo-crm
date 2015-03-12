@@ -651,10 +651,17 @@ $('#region').change(function(){
  function setLocationsForRegion(newLocations, countryIds){
     $("#country option").remove()
     $("#country").append('<option value="0">Market Served</option>');
-    for(i=0; i<newLocations.length; i++){
-      if(countryIds.indexOf(newLocations[i]['id']) != -1){
-       $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
-     }
+    if(countryIds && countryIds.length > 0){
+        for(i=0; i<newLocations.length; i++){
+          if(countryIds.indexOf(newLocations[i]['id']) != -1){
+           $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+         }
+        }
+    }else{
+        for(i=0; i<newLocations.length; i++){
+          $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+        }
     }
+    
    $("#country").val('0');
   }

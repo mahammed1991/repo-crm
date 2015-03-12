@@ -520,13 +520,12 @@
       $('#team').val(userTeam);
     }
 
-
-    // var userLocation = "{{user.profile.location.location_name|safe}}"
-    // if(userLocation){
-    //   $('#country').val(userLocation);
-    //   loc = document.getElementById('country');
-    //   changetime(loc.options[loc.selectedIndex]);
-    // }
+    var userLocation = "{{user.profile.location.location_name|safe}}"
+    if(userLocation){
+      $('#country').val(userLocation);
+      loc = document.getElementById('country');
+      changetime(loc.options[loc.selectedIndex]);
+    }
 
     var userRegion = "{{user.profile.region.name|safe}}"
     if(userRegion){
@@ -538,12 +537,6 @@
   
   });
 
- // $("#team").autocomplete({
- //      source: {{programs|safe}},
- //      select: function(event,ui){
- //        $("#team").val(ui.item);
- //      }
- //    });
 
 </script>
 {% endblock main_js %}
