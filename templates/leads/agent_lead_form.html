@@ -78,6 +78,14 @@
                 <div class="col-md-4">
                   <input type="text" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
                 </div>
+                 <div class="col-md-4">
+                  <select class="form-control" id="region" title="Program Region" name="region">
+                    <option value="0">Region</option>
+                    {% for rgn in regions %}
+                      <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
                 <div class="col-md-4">
                   <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
                     <option value="0">Market Served</option>
@@ -253,18 +261,28 @@ $(document).ready(function(){
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
+    window.regions = {{regions|safe}};
+    window.regionWiseLocations = {{region_locations|safe}};
+
 
     $(".tr_service_segment").hide();
     var userTeam = "{{user.profile.team.team_name|safe}}"
     if(userTeam){
       $('#team').val(userTeam);
     }
-    var userLocation = "{{user.profile.location.location_name|safe}}"
+    /*var userLocation = "{{user.profile.location.location_name|safe}}"
     if(userLocation){
       $('#country').val(userLocation);
       loc = document.getElementById('country');
       changetime(loc.options[loc.selectedIndex]);
-    }
+    }*/
+
+     var userRegion = "{{user.profile.region.name|safe}}"
+   if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+     }
+
   
   });
 

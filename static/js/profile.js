@@ -51,15 +51,6 @@ function validateProfile(){
         return false;
     }
 
-    // Phone Validation
-    // user_phone = $("#user_phone");
-    // if (user_phone.val() == "") {
-    //    $(user_phone).addClass('error-box');
-    //    // $(user_phone).after('<span class="error-txt">Please Enter Phone name</span>');
-    //    $(user_phone).focus();   
-    //     return false;
-    // }
-
     // Team Validation
     team_elem = $("#user_team");
     if (team_elem.val() == "" || team_elem.val() == '0') {
@@ -108,8 +99,17 @@ function validateProfile(){
     location_elem = $("#user_location");
     if (location_elem.val() == "" || location_elem.val() == "0") {
        $(location_elem).addClass('error-box');
-       $(location_elem).after('<span class="error-txt">Please choose Location name</span>');
+       //$(location_elem).after('<span class="error-txt">Please choose Location name</span>');
        $(location_elem).focus();   
         return false;
-    } 
+    }
+
+    // Region Validation
+    region = $("#region");
+    if (region.val() == "") {
+       $(region).addClass('error-box');
+       // $(region).after('<span class="error-txt">Please Enter Phone name</span>');
+       $(region).focus();   
+        return false;
+    }
 }

@@ -253,6 +253,19 @@
     $("#country").val('0');
   }
   
+
+  function setLocationsForRegion(newLocations, countryIds){
+    $("#country option").remove()
+    $("#country").append('<option value="0">Market Served</option>');
+    for(i=0; i<newLocations.length; i++){
+      if(countryIds.indexOf(newLocations[i]['id']) != -1){
+        $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+      }
+    }
+    $("#country").val('0');
+  }
+
+
    //shopping check 
     $("#is_shopping_policies" ).click(function() {
         $(".shopping-policy").removeClass('error-box');
@@ -929,4 +942,11 @@ $(".is_ga_setup").click(function(){
     }else{
       $(this).val(0);
     }
+});
+
+$('#region').change(function(){
+  var regionId = $('option:selected', this).attr('region_id');
+  countryList = regionWiseLocations[regionId];
+  console.log(countryList);
+  setLocationsForRegion(window.locations, countryList);
 });
