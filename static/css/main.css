@@ -1511,7 +1511,7 @@ form label {
 }
 .login-area {
 	background:#eee;
-	max-width:400px;
+	max-width:50%;
 	margin:0 auto;
 	padding:40px;
 }

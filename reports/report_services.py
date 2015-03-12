@@ -684,9 +684,9 @@ class ReportService(object):
         days = 0
         for lead in leads:
             if lead.team in ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']:
-                days += ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date)
+                days += ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date) if lead.date_of_installation else 0
             else:
-                days += ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date)
+                days += ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date) if lead.date_of_installation else 0
 
         if days:
             return round(float(days) / len(leads), 2)
@@ -1152,10 +1152,11 @@ class DownloadLeads(object):
                 row['1st Contacted on'] = None
 
             row['Lead ID'] = lead.sf_lead_id
+            
             if lead.team in ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']:
                 row['TAT'] = ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date) if lead.date_of_installation else 'N/A'
             else:
-                row['TAT'] = ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date)
+                row['TAT'] = ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date) if lead.date_of_installation else 'N/A'
 
             for field in selected_fields:
                 if field in row.keys():
