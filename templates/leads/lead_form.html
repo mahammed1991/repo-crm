@@ -55,7 +55,7 @@
               <option value="HPA">HPA</option>
               <option value="HPA+">HPA+</option>
           </select>
-          
+          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
       </div>
       <div class="col-md-4">
         <label for="manager_name">Manager Name</label>
@@ -89,6 +89,14 @@
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
       <div class="col-md-4">
+        <select class="form-control" id="region" title="Program Region" name="region">
+          <option value="0">Region</option>
+          {% for rgn in regions %}
+            <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
         <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
           <option value="0">Market Served</option>
           {% for loc in locations %}
@@ -108,10 +116,7 @@
           <option value="">Select Time Zone</option>
         </select>
       </div>
-     <div class="col-md-4" style="display:none" id='GCaseId'>
-          <label for="g_case_id">Google Cases-ID</label>
-          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
-      </div>
+     
     </div>
 
     <div class="webmasterCheck">        
@@ -504,6 +509,8 @@
   $(document).ready(function(){
     getLocation('rep_location');
     window.locations = {{locations|safe}};
+    window.regions = {{regions|safe}};
+    window.regionWiseLocations = {{region_locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
 
@@ -512,11 +519,21 @@
     if(userTeam){
       $('#team').val(userTeam);
     }
-    var userLocation = "{{user.profile.location.location_name|safe}}"
-    if(userLocation){
-      $('#country').val(userLocation);
-      loc = document.getElementById('country');
-      changetime(loc.options[loc.selectedIndex]);
+
+
+    // var userLocation = "{{user.profile.location.location_name|safe}}"
+    // if(userLocation){
+    //   $('#country').val(userLocation);
+    //   loc = document.getElementById('country');
+    //   changetime(loc.options[loc.selectedIndex]);
+    // }
+
+    var userRegion = "{{user.profile.region.name|safe}}"
+    if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+     /* rgn = document.getElementById('region');
+      changetime(rgn.options[rgn.selectedIndex]);*/
     }
   
   });

@@ -33,6 +33,7 @@ from django.views.decorators.csrf import csrf_exempt
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.utils.html import strip_tags
 from reports.report_services import ReportService
+from reports.models import Region
 
 
 def home(request):
@@ -272,6 +273,23 @@ def edit_profile_info(request):
     managers = [str(m) for m in managers]
     users = User.objects.all()
     manager_details = dict()
+    locations = Location.objects.filter(is_active=True)
+    regions = Region.objects.all()
+    all_regions = list()
+    region_locations = dict()
+    for rgn in regions:
+        for loc in rgn.location.all():
+            region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+        region_dict = dict()
+        region_dict['id'] = int(rgn.id)
+        region_dict['name'] = str(rgn.name)
+        all_regions.append(region_dict)
+
+    all_locations = list()
+    for loc in locations:
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        all_locations.append(l)
+
     for user in users:
         if user.first_name or user.last_name:
             full_name = "%s %s" % (user.first_name, user.last_name)
@@ -296,16 +314,24 @@ def edit_profile_info(request):
             user_details.user = request.user
 
         user_details.phone = request.POST.get('user_phone', None)
-        user_details.team_id = request.POST.get('user_team', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
-        user_details.location_id = request.POST.get('user_location', None)
+
+        if '@google.com' in request.user.email:
+            user_details.team_id = request.POST.get('user_team', None)
+            if request.POST.get('region', None) == '0':
+                user_details.region_id = None
+            else:
+                user_details.region_id = request.POST.get('region', None)
+            user_details.location_id = request.POST.get('user_location', None)
+
+        user_details.rep_location = request.POST.get('rep_location', None)
         user_details.save()
 
         if next_url == 'home':
             return redirect('main.views.home')
-    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'managers': managers,
-                                                           'teams': teams, 'manager_details': manager_details})
+    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'managers': managers, 'regions': regions,
+                                                           'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details})
 
 
 @login_required
@@ -318,6 +344,23 @@ def get_started(request):
     managers = [str(m) for m in managers]
     users = User.objects.all()
     user_details = dict()
+
+    regions = Region.objects.all()
+    all_regions = list()
+    region_locations = dict()
+    for rgn in regions:
+        for loc in rgn.location.all():
+            region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+        region_dict = dict()
+        region_dict['id'] = int(rgn.id)
+        region_dict['name'] = str(rgn.name)
+        all_regions.append(region_dict)
+
+    all_locations = list()
+    for loc in locations:
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        all_locations.append(l)
+
     for user in users:
         if user.first_name or user.last_name:
             full_name = "%s %s" % (user.first_name, user.last_name)
@@ -327,7 +370,8 @@ def get_started(request):
                 full_name = ''
             user_details[str(user.email)] = str(full_name)
     # regalix_team = RegalixTeams.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html', {'locations': locations,
+    return render(request, 'main/get_started.html', {'locations': locations, 'regions': regions,
+                                                     'all_locations': all_locations, 'region_locations': region_locations,
                                                      'teams': teams, 'managers': managers, 'user_details': user_details})
 
 
@@ -807,11 +851,24 @@ def master_data_upload(request):
 @csrf_exempt
 def migrate_user_data(request):
     """ Update leads to server Database from uploaded file """
+    
     excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
     excel_file = request.POST['file']
     excel_file_path = excel_file_save_path + excel_file
     workbook = open_workbook(excel_file_path)
     sheet = workbook.sheet_by_index(0)
+
+    users = User.objects.all()
+    user_dict = dict()
+    for user in users:
+        if user.first_name or user.last_name:
+            full_name = "%s %s" % (user.first_name, user.last_name)
+            try:
+                full_name = str(full_name)
+            except Exception:
+                full_name = ''
+            user_dict[str(user.email)] = str(full_name)
+
     for r_i in range(1, sheet.nrows):
         rep_email = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager ldap (Google Rep)')).value
         google_rep_email = rep_email + '@google.com'
@@ -821,19 +878,40 @@ def migrate_user_data(request):
         #r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
         #market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
         #rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
+        google_manager_email = str(google_manager) + '@google.com'
+        region = sheet.cell(r_i, get_col_index(sheet, 'Region')).value
+        country = sheet.cell(r_i, get_col_index(sheet, 'Country')).value
         try:
             user = User.objects.get(email=google_rep_email)
             user_details = UserDetails.objects.get(user_id=user.id)
-            user_details.user_manager_email = google_manager
+            user_details.user_manager_email = google_manager_email
+            user_details.user_manager_name = user_dict.get(google_manager_email, '')
             try:
                 program = Team.objects.get(team_name=program)
                 user_details.team_id = program.id
-                user_details.save()
             except ObjectDoesNotExist:
                 program = Team(team_name=program)
                 program.save()
                 user_details.team_id = program.id
-                user_details.save()
+
+            try:
+                region = Region.objects.get(name=region)
+                user_details.region_id = region.id
+            except ObjectDoesNotExist:
+                region = Region(name=region)
+                region.save()
+                user_details.region_id = region.id
+
+            try:
+                location = Location.objects.get(location_name=country)
+                user_details.location_id = location.id
+            except ObjectDoesNotExist:
+                location = Location(location_name=country)
+                location.save()
+                user_details.location_id = location.id
+
+            user_details.save()
+
         except ObjectDoesNotExist:
             continue
 
