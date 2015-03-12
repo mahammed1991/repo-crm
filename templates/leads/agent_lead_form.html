@@ -133,8 +133,8 @@
           <!-- ################ Set Aoopintment Ends ######################### -->
          
          <!-- ################ Agency Conatct Info Starts ######################### -->
-           <div class="std-sub-title">Agency Conatct Info</div>
-              <div class="row">
+           <div class="std-sub-title agency_info">Agency Conatct Info</div>
+              <div class="row agency_info" id="agency_info">
                 <div class="col-md-3">
                   <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
                 </div>
@@ -275,6 +275,7 @@ $(".task_type").click(function(){
      taskId = $(this).attr('id');
 
     if($(".customer_type:checked").val() == 'agency'){
+        $(".agency_info").show();
         if(taskId == 'same_task'){
           $("#same_task_agency").show();
           $("#different_task_agency").hide();
@@ -284,6 +285,7 @@ $(".task_type").click(function(){
         }
         hideCustomerFields();
     }else if($(".customer_type:checked").val() == 'end_customer'){
+      $(".agency_info").hide();
         if(taskId == 'same_task'){
           $("#same_task_customer").show();
           $("#different_task_customer").hide();
@@ -301,20 +303,24 @@ $(".customer_type").click(function(){
     customerId = $(this).attr('id');
     if($(".task_type:checked").val() == 'same_task'){
         if(customerId == 'agency'){
+          $(".agency_info").show();
           $("#same_task_agency").show();
           $("#different_task_agency").hide();
           hideCustomerFields();
         }else if(customerId == 'end_customer'){
+          $(".agency_info").hide();
           $("#same_task_customer").show();
           $("#different_task_customer").hide();
           hideAgencyFields();
         }
     }else if($(".task_type:checked").val() == 'diff_task'){
         if(customerId == 'agency'){
+          $(".agency_info").show();
           $("#different_task_agency").show();
           $("#same_task_agency").hide();
           hideCustomerFields();
         }else if(customerId == 'end_customer'){
+          $(".agency_info").hide();
           $("#different_task_customer").show();
           $("#same_task_customer").hide();
           hideAgencyFields();
@@ -628,13 +634,13 @@ $("#same_task_cust_type").change(function(){
         // $("#same_cust_tag_1").hide();
         // $("#same_cust_shop_1").show();
         addMoreCustomerShopRows(1);
-        $("#tag_datepick").hide().val('');
+        // $("#tag_datepick").hide().val('');
 
-        if($("#setup_datepick").is(":visible")){
-            $("#setup_datepick").show();  
-        }else{
-          $("#setup_datepick").show().val('');
-        }
+        // if($("#setup_datepick").is(":visible")){
+        //     $("#setup_datepick").show();  
+        // }else{
+        //   $("#setup_datepick").show().val('');
+        // }
         
     }else if(selectedCtype == '0' || selectedCtype == ''){
         $("#same_cust_tag_1").hide();
@@ -646,12 +652,12 @@ $("#same_task_cust_type").change(function(){
         // $("#same_cust_tag_1").show();
         addMoreCustomerRows(1);
         // $("#same_cust_shop_1").hide();
-        if($("#tag_datepick").is(":visible")){
-            $("#tag_datepick").show();  
-        }else{
-          $("#tag_datepick").show().val('');  
-        }
-        $("#setup_datepick").hide().val('');
+        // if($("#tag_datepick").is(":visible")){
+        //     $("#tag_datepick").show();  
+        // }else{
+        //   $("#tag_datepick").show().val('');  
+        // }
+        // $("#setup_datepick").hide().val('');
     }
 });
 
@@ -697,41 +703,41 @@ $(document).on('change', '.customer_diff', function() {
       $('.fields').hide();
     }else if(selectedCtype == 'Google Shopping Setup'){
       selectedindex = $(this).attr('id').split('-')[1];
-      if(selectedindex == '1'){
-        $("#tag_datepick").hide().val('');
-        if($("#setup_datepick").is(":visible")){
-            $("#setup_datepick").show();  
-        }else{
-          $("#setup_datepick").show().val('');
-        }
-      }
+      // if(selectedindex == '1'){
+      //   $("#tag_datepick").hide().val('');
+      //   if($("#setup_datepick").is(":visible")){
+      //       $("#setup_datepick").show();  
+      //   }else{
+      //     $("#setup_datepick").show().val('');
+      //   }
+      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createCustomerShopFields(parseInt(selectedindex));
     }
     else if(selectedCtype == 'Dynamic Remarketing - Extension (non retail)' || selectedCtype == 'Dynamic Remarketing - Retail'){
       selectedindex = $(this).attr('id').split('-')[1];
-       if(selectedindex == '1'){
-        if($("#tag_datepick").is(":visible")){
-            $("#tag_datepick").show();  
-        }else{
-          $("#tag_datepick").show().val('');
-        }
-        $("#setup_datepick").hide().val('');
-      }
+      //  if(selectedindex == '1'){
+      //   if($("#tag_datepick").is(":visible")){
+      //       $("#tag_datepick").show();  
+      //   }else{
+      //     $("#tag_datepick").show().val('');
+      //   }
+      //   $("#setup_datepick").hide().val('');
+      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createCustomerDiffDynamicFields(parseInt(selectedindex));
       }else{
       selectedindex = $(this).attr('id').split('-')[1];
-      if(selectedindex == '1'){
-        if($("#tag_datepick").is(":visible")){
-            $("#tag_datepick").show();  
-        }else{
-          $("#tag_datepick").show().val('');
-        }
-        $("#setup_datepick").hide().val('');
-      }
+      // if(selectedindex == '1'){
+      //   if($("#tag_datepick").is(":visible")){
+      //       $("#tag_datepick").show();  
+      //   }else{
+      //     $("#tag_datepick").show().val('');
+      //   }
+      //   $("#setup_datepick").hide().val('');
+      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createCustomerTagFields(parseInt(selectedindex));
@@ -896,7 +902,7 @@ function createCustomerShopFields(indx){
                   '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
                 '</div>'+
                 '<div class="col-md-4">'+
-                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="advertiser_name' + indx + '" placeholder="Telephone">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
                 '</div>'+
               '<div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+

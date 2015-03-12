@@ -123,40 +123,39 @@ function setLocations(newLocations){
     advertiserNameElem = document.getElementById('contact_person_name');
     validateFiled(advertiserNameElem);
 
-    tagAppointmentElem = document.getElementById('tag_datepick');
-    if($(tagAppointmentElem).is(":visible")){
-      validateFiled(tagAppointmentElem);
-    }
-
     // shopAppointmentElem = document.getElementById('setup_datepick');
     // if($(shopAppointmentElem).is(":visible")){
     //   validateFiled(shopAppointmentElem);
     // }
 
-    // Advertiser Email Validation
-    agencyNameElem = document.getElementById('agency_name');
-    validateFiled(agencyNameElem);
+    agencyInfoElem = document.getElementById('agency_info')
+    if($(agencyInfoElem).is(":visible")){
 
-    // Advertiser Email Validation
-    pocElem = document.getElementById('poc');
-    validateFiled(pocElem);
-    
-    // Advertiser Email Validation
-    agencyEmailElem = document.getElementById('agency_email');
-    validateFiled(agencyEmailElem);
+      // Advertiser Email Validation
+      agencyNameElem = document.getElementById('agency_name');
+      validateFiled(agencyNameElem);
 
-    // Email Validation
-    agencyEmailElem.value = agencyEmailElem.value.trim();
-    if (!agencyEmailElem.value.trim().match(check)) {
-      $(agencyEmailElem).addClass('error-box');
-      agencyEmailElem.focus();
-      window.is_error = true;
+      // Advertiser Email Validation
+      pocElem = document.getElementById('poc');
+      validateFiled(pocElem);
+      
+      // Advertiser Email Validation
+      agencyEmailElem = document.getElementById('agency_email');
+      validateFiled(agencyEmailElem);
+
+      // Email Validation
+      agencyEmailElem.value = agencyEmailElem.value.trim();
+      if (!agencyEmailElem.value.trim().match(check)) {
+        $(agencyEmailElem).addClass('error-box');
+        agencyEmailElem.focus();
+        window.is_error = true;
+      }
+
+      // Advertiser Phone Validation
+      phoneElem = document.getElementById('agency_phone');
+      validateFiled(phoneElem);
+
     }
-
-    // Advertiser Phone Validation
-    phoneElem = document.getElementById('agency_phone');
-    validateFiled(phoneElem);
-
 
     // Check Agency fields
     if(document.getElementById('agency').checked){
@@ -171,7 +170,14 @@ function setLocations(newLocations){
                       'time' : $("#tag_datepick").val()
                     }
                   fix_slots.push(slot)  
+                }else{
+                  tagAppointmentElem = document.getElementById('tag_datepick');
+                    if($(tagAppointmentElem).is(":visible")){
+                      validateFiled(tagAppointmentElem);
+                    }
                 }
+            }else{
+              $("#tag_datepick").val('')
             }
 
             for (i=1; i<=sameTagTask; i++){
@@ -259,7 +265,14 @@ function setLocations(newLocations){
                       'time' : $("#tag_datepick").val()
                     }
                   fix_slots.push(slot)  
+                }else{
+                  tagAppointmentElem = document.getElementById('tag_datepick');
+                    if($(tagAppointmentElem).is(":visible")){
+                      validateFiled(tagAppointmentElem);
+                    }
                 }
+            }else{
+              $("#tag_datepick").val('')
             }
 
             for (i=1; i<=diffTagTask; i++){
@@ -350,8 +363,16 @@ function setLocations(newLocations){
                       'time' : $("#tag_datepick").val()
                     }
                   fix_slots.push(slot)  
+                }else{
+                  tagAppointmentElem = document.getElementById('tag_datepick');
+                    if($(tagAppointmentElem).is(":visible")){
+                      validateFiled(tagAppointmentElem);
+                    }
                 }
+            }else{
+              $("#tag_datepick").val('')
             }
+
             for (i=1; i<=sameTagTask; i++){
                 if($("#same_cust_tag_" + i).is(":visible")){
 
@@ -467,7 +488,14 @@ function setLocations(newLocations){
                       'time' : $("#tag_datepick").val()
                     }
                   fix_slots.push(slot)  
+                }else{
+                  tagAppointmentElem = document.getElementById('tag_datepick');
+                    if($(tagAppointmentElem).is(":visible")){
+                      validateFiled(tagAppointmentElem);
+                    }
                 }
+            }else{
+              $("#tag_datepick").val('')
             }
 
             for (i=1; i<=diffTagTask; i++){
@@ -559,7 +587,6 @@ function setLocations(newLocations){
         }
       }
 
-
       // Check If Error in Form
       if(window.is_error){
         return false;
@@ -613,3 +640,21 @@ $(document).on('click', '.is_mc_id', function() {
       $("#" + elem).hide().val('');
   }
 })
+
+$('#region').change(function(){
+  var regionId = $('option:selected', this).attr('region_id');
+  countryList = regionWiseLocations[regionId];
+  console.log(countryList);
+  setLocationsForRegion(window.locations, countryList);
+});
+
+ function setLocationsForRegion(newLocations, countryIds){
+    $("#country option").remove()
+    $("#country").append('<option value="0">Market Served</option>');
+    for(i=0; i<newLocations.length; i++){
+      if(countryIds.indexOf(newLocations[i]['id']) != -1){
+       $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+     }
+    }
+   $("#country").val('0');
+  }

@@ -33,7 +33,7 @@ from lib.helpers import date_range_by_quarter, get_previous_month_start_end_days
 from django.db.models import Q
 from random import randint
 from lib.sf_lead_ids import SalesforceLeads
-
+from reports.models import Region
 
 # Create your views here.
 @login_required
@@ -84,8 +84,8 @@ def lead_form(request):
 
             for i in range(1, 6):
                 i = str(i)
-                rbid_key = 'rbid' + i if i > 1 else 'rbid'
-                rbudget_key = 'rbudget' + i if i > 1 else 'rbudget'
+                rbid_key = 'rbid' + i if int(i) > 1 else 'rbid'
+                rbudget_key = 'rbudget' + i if int(i) > 1 else 'rbudget'
                 ga_setup_key = 'ga_setup' + i
                 tag_data[shop_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[shop_leads[rbudget_key]] = request.POST.get(rbudget_key)
@@ -252,8 +252,9 @@ def submit_agency_same_tasks(request, agency_bundle):
             full_name = request.POST.get('contact_person_name')
             basic_data[basic_leads['agency_bundle']] = agency_bundle
             if full_name:
-                basic_data['first_name'] = full_name.split(' ')[0]
-                basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
+                first_name, last_name = split_fullname(full_name)
+                basic_data['first_name'] = first_name
+                basic_data['last_name'] = last_name
             tag_data = basic_data
             if int(indx) == 1:
                 tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
@@ -285,11 +286,12 @@ def submit_agency_same_tasks(request, agency_bundle):
             basic_data[basic_leads['agency_bundle']] = agency_bundle
             full_name = request.POST.get('contact_person_name')
             if full_name:
-                basic_data['first_name'] = full_name.split(' ')[0]
-                basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
+                first_name, last_name = split_fullname(full_name)
+                basic_data['first_name'] = first_name
+                basic_data['last_name'] = last_name
             shop_data = basic_data
-            if int(indx) == 1:
-                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            # if int(indx) == 1:
+            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
             # Shop fields
             shop_data[shop_leads['ctype1']] = same_task_ctype
             shop_data[basic_leads['cid']] = request.POST.get('cid' + indx)
@@ -333,8 +335,9 @@ def submit_agency_different_tasks(request, agency_bundle):
         basic_data[basic_leads['agency_bundle']] = agency_bundle
         full_name = request.POST.get('contact_person_name')
         if full_name:
-            basic_data['first_name'] = full_name.split(' ')[0]
-            basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
+            first_name, last_name = split_fullname(full_name)
+            basic_data['first_name'] = first_name
+            basic_data['last_name'] = last_name
         tag_data = basic_data
         if int(indx) == 1:
             tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
@@ -353,8 +356,8 @@ def submit_agency_different_tasks(request, agency_bundle):
         elif ctype == 'Google Shopping Setup':
             # Get Shop lead fields
             shop_data = basic_data
-            if int(indx) == 1:
-                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            # if int(indx) == 1:
+            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
             shop_data[shop_leads['ctype1']] = ctype
             shop_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             shop_data[shop_leads['shopping_url']] = request.POST.get('url' + indx)
@@ -399,8 +402,9 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             basic_data[basic_leads['agency_bundle']] = agency_bundle
             full_name = request.POST.get('contact_person_name')
             if full_name:
-                basic_data['first_name'] = full_name.split(' ')[0]
-                basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
+                first_name, last_name = split_fullname(full_name)
+                basic_data['first_name'] = first_name
+                basic_data['last_name'] = last_name
             tag_data = basic_data
             if int(indx) == 1:
                 tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
@@ -436,11 +440,12 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             basic_data[basic_leads['agency_bundle']] = agency_bundle
             full_name = request.POST.get('contact_person_name')
             if full_name:
-                basic_data['first_name'] = full_name.split(' ')[0]
-                basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
+                first_name, last_name = split_fullname(full_name)
+                basic_data['first_name'] = first_name
+                basic_data['last_name'] = last_name
             shop_data = basic_data
-            if int(indx) == 1:
-                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            # if int(indx) == 1:
+            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
 
             # Get End Customer Name details
             shop_data[basic_leads['advertiser_name']] = request.POST.get('advertiser_name' + indx)
@@ -491,8 +496,9 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
         basic_data[basic_leads['agency_bundle']] = agency_bundle
         full_name = request.POST.get('contact_person_name')
         if full_name:
-            basic_data['first_name'] = full_name.split(' ')[0]
-            basic_data['last_name'] = full_name.split(' ')[1] if len(full_name.split(' ')) > 1 else ' '
+            first_name, last_name = split_fullname(full_name)
+            basic_data['first_name'] = first_name
+            basic_data['last_name'] = last_name
         tag_data = basic_data
         if int(indx) == 1:
             tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
@@ -517,8 +523,8 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             submit_lead_to_sfdc(sf_api_url, tag_data)
         elif ctype == 'Google Shopping Setup':
             shop_data = basic_data
-            if int(indx) == 1:
-                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            # if int(indx) == 1:
+            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
 
             # Get End Customer Name details
             shop_data[basic_leads['advertiser_name']] = request.POST.get('advertiser_name' + indx)
@@ -941,12 +947,6 @@ def bundle_lead_to_salesforce(request):
 
         post_tag_lead_to_sf(request, request.POST, basic_data, code_types)
 
-    # Create Icallender (*.ics) file for send mail
-    # advirtiser_details.update({'appointment_date': request.POST.get('setup_datepick')})
-    # if advirtiser_details.get('appointment_date'):
-    # create_icalendar_file(advirtiser_details)
-    # send_calendar_invite_to_advertiser(advirtiser_details)
-
     return basic_data['retURL']
 
 
@@ -962,21 +962,15 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
 
     tag_data = dict()
     tag_data = basic_data
-    # advirtiser_details = {'first_name': post_data.get('advertiser_name'),
-    #                       'last_name': post_dataget('advertiser_name').split(' ')[1] if len(post_data.get('advertiser_name')) > 1 else '',
-    #                       'email': post_data.get('aemail'),
-    #                       'role': post_data.get('primary_role'),
-    #                       'customer_id': post_data.get('cid'),
-    #                       'country': post_data.get('country'),
-    #                       'cid_std': post_data.get('cid').rsplit("-", 1)[0] + '-xxxx'
-    #                       }
+
     if post_data.get('tag_contact_person_name1'):
         full_name = post_data.get('tag_contact_person_name1')
     else:
         full_name = post_data.get('advertiser_name')
     if full_name:
-        tag_data['first_name'] = full_name.rsplit(' ', 1)[0] if full_name else ''  # Primary Contact Name
-        tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+        first_name, last_name = split_fullname(full_name)
+        tag_data['first_name'] = first_name
+        tag_data['last_name'] = last_name
 
     tag_data[tag_leads.get('tag_primary_role')] = post_data.get('tag_primary_role') if post_data.get('tag_primary_role') else post_data.get('shop_primary_role')  # Role
     tag_data[tag_leads.get('tag_datepick')] = post_data.get('tag_datepick')  # TAG Appointment Date
@@ -1494,7 +1488,7 @@ def create_icalendar_file(advirtiser_details):
     f.close()
 
 
-def send_calendar_invite_to_advertiser(advertiser_details):
+def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 
     mail_subject = "Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
 
@@ -1516,15 +1510,13 @@ def send_calendar_invite_to_advertiser(advertiser_details):
     ])
 
     mail_from = "implementation-support@google.com"
-
-    ics_file = open(settings.MEDIA_ROOT + '/icallender_files/appointment.ics', 'r')
-
-    appointment_file = File(ics_file)
-    appointment_file.name = 'appointment.ics'
-
     attachments = list()
 
-    attachments.append(appointment_file)
+    if is_attachment:
+        ics_file = open(settings.MEDIA_ROOT + '/icallender_files/appointment.ics', 'r')
+        appointment_file = File(ics_file)
+        appointment_file.name = 'appointment.ics'
+        attachments.append(appointment_file)
 
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
@@ -1806,6 +1798,17 @@ def get_basic_lead_data():
     programs = ReportService.get_all_teams()
     programs = [str(pgm) for pgm in programs]
 
+    regions = Region.objects.all()
+    all_regions = list()
+    region_locations = dict()
+    for rgn in regions:
+        for loc in rgn.location.all():
+            region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+        region_dict = dict()
+        region_dict['id'] = int(rgn.id)
+        region_dict['name'] = str(rgn.name)
+        all_regions.append(region_dict)
+
     lead_args['locations'] = all_locations
     lead_args['new_locations'] = new_locations
     lead_args['teams'] = teams
@@ -1814,6 +1817,9 @@ def get_basic_lead_data():
     lead_args['time_zone_for_region'] = json.dumps(time_zone_for_region)
     lead_args['language_for_location'] = json.dumps(language_for_location)
     lead_args['programs'] = programs
+    lead_args['regions'] = all_regions
+    lead_args['region_locations'] = region_locations
+
 
     return lead_args
 
@@ -1843,9 +1849,21 @@ def get_all_sfdc_lead_ids(sfdc_type):
 def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
     print sf_api_url
+
     try:
-        # requests.post(url=sf_api_url, data=lead_data)
-        pass
+        requests.post(url=sf_api_url, data=lead_data)
+        # Get Advertiser Details
+        advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
+
+        # Create Icallender (*.ics) file for send mail
+        if advirtiser_details.get('appointment_date'):
+            create_icalendar_file(advirtiser_details)
+            is_attachment = True
+            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+        else:
+            # Send Welcome email
+            is_attachment = False
+            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
     except Exception as e:
         print e
 
@@ -1859,3 +1877,46 @@ def get_codetype_abbreviation(code_type):
         return 'GS'
     else:
         return 'AW'
+
+
+def get_advertiser_details(sf_api_url, lead_data):
+    """ Get Agency Details with appointment date """
+
+    agency_details = dict()
+    if 'www' in sf_api_url:
+        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+    else:
+        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+
+    agency_details['appointment_date'] = lead_data.get(tag_leads.get('tag_datepick'))
+    agency_details['customer_id'] = lead_data.get(basic_leads.get('cid'))
+    agency_details['country'] = lead_data.get(basic_leads.get('country'))
+    agency_details['email'] = lead_data.get(basic_leads.get('aemail'))
+    agency_details['role'] = lead_data.get(tag_leads.get('tag_primary_role'))
+    agency_details['code_type'] = lead_data.get(tag_leads.get('ctype1'))
+    agency_details['cid_std'] = agency_details.get('customer_id').rsplit("-", 1)[0] + '-xxxx'
+
+    full_name = lead_data.get(basic_leads.get('advertiser_name'))
+    if full_name:
+        first_name, last_name = split_fullname(full_name)
+        agency_details['first_name'] = first_name
+        agency_details['last_name'] = last_name
+    else:
+        full_name = lead_data.get(basic_leads.get('agency_name'))
+        first_name, last_name = split_fullname(full_name)
+        agency_details['first_name'] = first_name
+        agency_details['last_name'] = last_name
+        agency_details['email'] = lead_data.get(basic_leads.get('agency_email'))
+
+    return agency_details
+
+
+def split_fullname(full_name):
+    """ Split Full Name as First and Last name """
+    first_name = ''
+    last_name = ''
+    if full_name:
+        first_name = full_name.rsplit(' ', 1)[0]
+        last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ' '
+
+    return first_name, last_name

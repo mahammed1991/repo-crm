@@ -78,9 +78,9 @@
       window.is_loc_changed = true;
     }else if (selectedTeam == 'Services' || selectedTeam == 'Services (Traverwood)' || selectedTeam == 'Services Revenue Program (SRP)'){
       $(".tr_service_segment").show();
-      $('label[for="g_cases_id"]').hide();
+      $('label[for="g_cases_id"]').show();
       $('label[for="service_segment"]').hide();
-      $('#g_cases_id').show();
+      $('#g_case_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
     }else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
@@ -92,8 +92,7 @@
       $("#service_segment").val('');
       $(".tr_service_segment").show();
       $('#g_cases_id').hide();
-
-      $('label[for="g_cases_id"]').hide();
+      $('label[for="g_case_id"]').hide();
       $('label[for="service_segment"]').show();
     }else{
       if (window.is_loc_changed){
@@ -104,7 +103,7 @@
       $('#g_cases_id').hide();
       $('#GCaseId').hide();
 
-      $('label[for="g_cases_id"]').hide();
+      $('label[for="g_case_id"]').hide();
       $('label[for="service_segment"]').hide();
     }
   });
@@ -658,3 +657,22 @@ $("#keep_url").click(function(){
       $("#url2, #url3").val('');
     }
 });
+
+
+$('#region').change(function(){
+  var regionId = $('option:selected', this).attr('region_id');
+  countryList = regionWiseLocations[regionId];
+  console.log(countryList);
+  setLocationsForRegion(window.locations, countryList);
+});
+
+ function setLocationsForRegion(newLocations, countryIds){
+    $("#country option").remove()
+    $("#country").append('<option value="0">Market Served</option>');
+    for(i=0; i<newLocations.length; i++){
+      if(countryIds.indexOf(newLocations[i]['id']) != -1){
+       $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+     }
+    }
+   $("#country").val('0');
+  }
