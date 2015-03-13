@@ -302,6 +302,7 @@
           <div class="row">
             <div class="col-md-4">
               <select title="Code Type" class="form-control code_type bgicon" name="ctype4" id="ctype4">
+              <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
