@@ -17,7 +17,7 @@ Reports
   <h1>Reports</h1>
   <div class="row text-center report-category">
       <div class="col-md-3 centered">
-        <select class="form-control" id="filter_report_type">
+        <select class="form-control bgicon" id="filter_report_type">
           <option value="">Choose Report Type</option>
           <option value="leadreport_individualRep">Individual Rep</option>
           {% if manager %}
@@ -62,7 +62,7 @@ Reports
         </div>
       {% endif %}
       <div id="filter_region" class="col-md-3 centered" style="display:none;">
-        <select  class="form-control">
+        <select  class="form-control bgicon">
           <option value="">Choose Region</option>
           <option value="all">All Region</option>
           {% for team in rgx_teams %}
@@ -83,7 +83,7 @@ Reports
       </div> -->
       
       <div class="col-md-3 centered">
-        <select name="type" id="filter_timeline" style="display:block;" class="form-control">
+        <select name="type" id="filter_timeline" style="display:block;" class="form-control bgicon">
             <option value="">Choose Timeline</option>
             <option value="this_week">This Week</option>
             <option value="last_week">Last Week</option>

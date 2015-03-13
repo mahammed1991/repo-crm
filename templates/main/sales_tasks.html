@@ -1,0 +1,212 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Sales Tasks
+{% endblock title %}
+
+{% load static %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/sales_tasks.css' %}">
+{% endblock main_css %}
+
+{% block content %}
+<!-- content-region -->
+  <!-- content-region -->
+<section class="content-region">
+  <div class="container-fluid" style="padding-bottom:4%;">
+      <h1>SALES TASKS</h1>
+    <div class="row">
+      <div class="col-md-3 col-sm-3 col-xs-12 cx">
+        <ul class="nav nav-pills nav-stacked nav_bg">
+          <li role="presentation" class="bob active " id="tag_block" ><a id ="tt" href="#" id="show_sub_menu"><img src="{% static 'images//menu_tag/tag.png' %}" class="img_icon">Tag</a>
+            <ul class="nav nav-pills nav-stacked custom_li">
+              <li role="presentation" class="bob" id="adwords_block" style="border-top:1px solid #E6E6E6"><a href="#"><img src="{% static 'images//menu_tag/code.png' %}" class="img_icon">Adwords</a></li>
+              <li role="presentation" class="bob" id="analytics_block"><a href="#"><img src="{% static 'images//menu_tag/an.png' %}" class="img_icon">Analytics</a></li>
+              <li role="presentation" id="gtm_block"><a href="#"><img src="{% static 'images//menu_tag/gsm.png' %}" class="img_icon">GTM</a></li>
+            </ul>
+          </li>
+          <li role="presentation" class="ca5" id="shopping_block"><a href="#"><img src="{% static 'images//menu_tag/shopping.png' %}" class="img_icon">Shopping</a></li>
+        </ul>
+      </div>
+      
+      <!-- Default TAG block -->
+      <div class="col-md-9 col-xs-12 col-sm-9 default_tag_block" >
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <p class="cu_h3">Tag Implementation</p>
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <img src="{% static 'images//menu_tag/gtrack_Services.jpg' %}" class="img-responsive" height="100%" width="100%">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-xs-12">
+          <p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          </p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          <p>
+          
+          </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- addwords block -->
+      <div class="col-md-9 col-sm-9 col-xs-12 hide_all_start adwords_block" >
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <p class="cu_h3">Adwords</p>
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <img src="{% static 'images//menu_tag/gtrack_Services.jpg' %}" class="img-responsive" height="100%" width="100%">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-xs-12">
+          <p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          </p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          <p>
+          
+          </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- analytics block -->
+      <div class="col-md-9 col-sm-9 col-xs-12 hide_all_start analytics_block" >
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <p class="cu_h3">Analytics</p>
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <img src="{% static 'images//menu_tag/gtrack_Services.jpg' %}" class="img-responsive" height="100%" width="100%">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-xs-12">
+          <p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          </p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          <p>
+          
+          </p>
+          </div>
+        </div>
+      </div>
+      <!-- gtm block -->
+      <div class="col-md-9 col-sm-9 col-xs-12 hide_all_start gtm_block" >
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <p class="cu_h3">GTM</p>
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <img src="{% static 'images//menu_tag/gtrack_Services.jpg' %}" class="img-responsive" height="100%" width="100%">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-xs-12">
+          <p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          </p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          <p>
+          
+          </p>
+          </div>
+        </div>
+      </div>
+      <!-- shopping block -->
+      <div class="col-md-9 col-sm-9 col-xs-12 hide_all_start shopping_block" >
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <p class="cu_h3">Shopping</p>
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-md-12 col-xs-12">
+          <img src="{% static 'images//menu_tag/gtrack_Services.jpg' %}" class="img-responsive" height="100%" width="100%">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-xs-12">
+          <p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          </p>
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          My name is {Implementation Specialist Name} and I’m one of Google’s Implementation Specialists. I will be assisting you with your AdWords Customer ID:{999-999-xxxx}. To follow up on your conversation with your Google Account Manager, I will be working with you to guide you through the installation of {Code Type} on your website on {Date}.
+          <p>
+          
+          </p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  </section>
+  <!-- content-region ends --> 
+ {% endblock content %}
+{% block main_js %}
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $("#adwords_block").click(function(){
+        $(".hide_all_start").hide();
+    $(".default_tag_block").hide();
+    
+    $(".adwords_block").show();
+    
+    });
+  $("#analytics_block").click(function(){
+        $(".hide_all_start").hide();
+    $(".analytics_block").show();
+    $(".default_tag_block").hide();
+    
+    });
+  $("#gtm_block").click(function(){
+        $(".hide_all_start").hide();
+    $(".gtm_block").show();
+    $(".default_tag_block").hide();
+    
+    });
+  $("#shopping_block").click(function(){
+        $(".hide_all_start").hide();
+    $(".default_tag_block").hide();
+    $(".shopping_block").show();
+     
+    });
+
+  $("#tt").click(function(){
+        $(".custom_li").toggle("slow");
+     $(".hide_all_start").hide();
+    $(".default_tag_block").show();
+    });
+
+});
+
+</script>
+{% endblock main_js%}

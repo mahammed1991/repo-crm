@@ -44,12 +44,15 @@
               <div class="std-sub-title">Google Rep Info</div>
               <div class="row">
                 <div class="col-md-4">
+                   <label for="gref">Google Rep Name</label>
                   <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
                 </div>
                 <div class="col-md-4">
+                   <label for="manager_email">Manager Email</label>
                   <input type="text" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
                 </div>
                 <div class="col-md-4">
+                  <label for="team">Program name</label>
                   <select class="form-control bgicon" id="team" title="Program Name" name="team">
                     <option value="">Program name</option>
                     {% for team in teams %}
@@ -73,13 +76,16 @@
               </div>
               <div class="row">
                 <div class="col-md-4">
+                  <label for="manager_name">Manager Name</label>
                   <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
                 </div>
                 <div class="col-md-4">
+                  <label for="manager_email">Manager Email</label>
                   <input type="text" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
                 </div>
                  <div class="col-md-4">
-                  <select class="form-control" id="region" title="Program Region" name="region">
+                 <label for="region">Region</label>
+                  <select class="form-control bgicon" id="region" title="Program Region" name="region">
                     <option value="0">Region</option>
                     {% for rgn in regions %}
                       <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
@@ -87,12 +93,17 @@
                   </select>
                 </div>
                 <div class="col-md-4">
+                  <label for="country">Market Served</label>
                   <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
                     <option value="0">Market Served</option>
                     {% for loc in locations %}
                       <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
                     {% endfor %}
                   </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="rep_location">Google Rep Location</label>
+                    <input type="text" class="form-control" id="rep_location" name="rep_location" value="{{user.profile.rep_location}}" placeholder="Enter Rep Location" autocomplete="off">
                 </div>
               </div>
               <!-- ################ Google rep info Ends ######################### -->
@@ -126,7 +137,7 @@
           <div class="form-heading">Set Appointment</div>
            <div class="row">
            <div class="col-md-4">
-              <select title="Time Zone" class="form-control" id="tzone" name="tzone">
+              <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
                 <option value="">Select Time Zone</option>
               </select>
             </div>
@@ -270,12 +281,12 @@ $(document).ready(function(){
     if(userTeam){
       $('#team').val(userTeam);
     }
-    /*var userLocation = "{{user.profile.location.location_name|safe}}"
+    var userLocation = "{{user.profile.location.location_name|safe}}"
     if(userLocation){
       $('#country').val(userLocation);
       loc = document.getElementById('country');
       changetime(loc.options[loc.selectedIndex]);
-    }*/
+    }
 
      var userRegion = "{{user.profile.region.name|safe}}"
    if(userRegion){

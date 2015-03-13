@@ -725,6 +725,13 @@ def get_inbound_locations(request):
 
 
 @login_required
+def sales_tasks(request):
+    """ Sales Tasks Page """
+
+    return render(request, 'main/sales_tasks.html')
+
+
+@login_required
 def get_notifications(request):
     """ Get all Notifications """
     # Notifications list

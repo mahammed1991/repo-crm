@@ -37,7 +37,7 @@
       </div>
       <div class="col-md-4">
         <label for="team">Program name</label>
-        <select class="form-control" id="team" title="Program Name" name="team">
+        <select class="form-control bgicon" id="team" title="Program Name" name="team">
           <option value="">Program name</option>
           {% for team in teams %}
             <option value='{{team.team_name}}'>{{team.team_name}}</option>
@@ -49,7 +49,7 @@
       <div class="col-md-4 tr_service_segment"></div>
       <div class="col-md-4 tr_service_segment">
         <label for="service_segment">Service Segment</label>
-          <select id="service_segment" title="service_segment" class="form-control" name="service_segment">
+          <select id="service_segment" title="service_segment" class="form-control bgicon" name="service_segment">
               <option value="">Service Segment</option>
               <option value="SBA">SBA</option>
               <option value="HPA">HPA</option>
@@ -67,7 +67,7 @@
       </div>
       <div class="col-md-4">
         <label for="country">Google Rep Location</label>
-          <input type="text" class="form-control" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
+          <input type="text" class="form-control" id="rep_location" name="rep_location" value="{{user.profile.rep_location}}" placeholder="Enter Rep Location" autocomplete="off">
       </div>
     </div>
     <div class="std-sub-title">Advertiser Info</div>
@@ -89,7 +89,7 @@
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
       <div class="col-md-4">
-        <select class="form-control" id="region" title="Program Region" name="region">
+        <select class="form-control bgicon" id="region" title="Program Region" name="region">
           <option value="0">Region</option>
           {% for rgn in regions %}
             <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
@@ -97,7 +97,7 @@
         </select>
       </div>
       <div class="col-md-4">
-        <select class="form-control" onchange="changetime(this);" id="country" title="Program Location" name="country">
+        <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
           <option value="0">Market Served</option>
           {% for loc in locations %}
             <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
@@ -105,14 +105,14 @@
         </select>
       </div>
       <div class="col-md-4" id='tr_language'>
-        <select class="form-control" id="language" title="language" name="language">
+        <select class="form-control bgicon" id="language" title="language" name="language">
           <option value="">Select Language</option>
           <option value="English">English</option>
           <option value="Dutch">Dutch</option>
         </select>
       </div>
       <div class="col-md-4">
-        <select title="Time Zone" class="form-control" id="tzone" name="tzone">
+        <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
           <option value="">Select Time Zone</option>
         </select>
       </div>
@@ -158,7 +158,7 @@
           <div class="std-sub-title">Code Type Info</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control code_type" name="ctype1" id="ctype1">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype1" id="ctype1">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -210,7 +210,7 @@
           <div class="form-heading">Code Type Info (2)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control code_type" name="ctype2" id="ctype2">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype2" id="ctype2">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -256,7 +256,7 @@
           <div class="form-heading">Code Type Info (3)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control code_type" name="ctype3" id="ctype3">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype3" id="ctype3">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -301,7 +301,7 @@
           <div class="form-heading">Code Type Info (4)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control code_type" name="ctype4" id="ctype4">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype4" id="ctype4">
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
               {% endfor %}
@@ -346,7 +346,7 @@
           <div class="form-heading">Code Type Info (5)</div>
           <div class="row">
             <div class="col-md-4">
-              <select title="Code Type" class="form-control code_type" name="ctype5" id="ctype5">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype5" id="ctype5">
               <option value="">Select Code Type</option>
               {% for c_type in code_types %}
                 <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -396,7 +396,7 @@
               <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name" placeholder="Contact Person Name">
             </div>
             <div class="col-md-4">
-              <select title="Primary Contact Role" class="form-control" name="tag_primary_role" id="tag_primary_role">
+              <select title="Primary Contact Role" class="form-control bgicon" name="tag_primary_role" id="tag_primary_role">
               <option value="">Primary Contact Role</option>
               <option value="Owner">Owner</option>
               <option value="Marketing">Marketing</option>
@@ -450,7 +450,7 @@
               <input type="text" class="form-control" id="shop_contact_person_name" name="shop_contact_person_name" placeholder="Contact Person Name">
             </div>
             <div class="col-md-4">
-              <select title="Primary Contact Role" class="form-control" name="shop_primary_role" id="shop_primary_role">
+              <select title="Primary Contact Role" class="form-control bgicon" name="shop_primary_role" id="shop_primary_role">
               <option value="">Primary Contact Role</option>
               <option value="Owner">Owner</option>
               <option value="Marketing">Marketing</option>
@@ -503,8 +503,6 @@
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
-<script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
- <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
     getLocation('rep_location');

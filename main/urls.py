@@ -20,7 +20,7 @@ urlpatterns = patterns(
     url(r'^get-notifications$', views.get_notifications),
     url(r'^get-started/$', views.get_started),
     url(r'^portal/feedback$', views.create_portal_feedback),
-    # url(r'^report/$', views.report),
+    url(r'^sales-tasks/$', views.sales_tasks),
     # url(r'^contacts/$', views.get_contacts),
     # url(r'^top-30-cms/$', views.top_30_cms),
     url(r'^user/master-data$', views.master_data_upload),
