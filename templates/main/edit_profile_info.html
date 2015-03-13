@@ -54,7 +54,8 @@
         <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %}>
 
         <label for="country">Google Rep Location</label>
-          <input type="text" class="form-control non-edit allow-edit" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
+          <input type="text" class="form-control non-edit allow-edit" id="rep_location" name="rep_location" 
+          value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off">
 
     <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
           {% if 'google' in request.user.email %}
@@ -95,7 +96,6 @@
     <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
      <script type="text/javascript">
   $(document).ready(function(){
-      getLocation('rep_location');
       window.user_full_name = "{{user.get_full_name|safe}}"
       window.loc_id = {{user.profile.location.id|safe}}
       window.team_id = {{user.profile.team.id|safe}}
@@ -104,7 +104,12 @@
       window.phone = "{{user.profile.phone|safe}}"
       window.manager_details = {{manager_details|safe}}
       window.regionWiseLocations = {{region_locations|safe}};
-      window.all_locations = {{all_locations|safe}}
+      window.all_locations = {{all_locations|safe}};
+      window.rep_location = "{{user.profile.rep_location|safe}}";
+
+      if(!window.rep_location){
+        getLocation('rep_location');
+      }
 
 
       $("#user_manager_email").autocomplete({

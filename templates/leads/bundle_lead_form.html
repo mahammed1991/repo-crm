@@ -364,7 +364,6 @@
 <script type="text/javascript" src="{% static 'js/bundle_lead_form.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
-    getLocation('rep_location');
     window.locations = {{locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
@@ -384,6 +383,7 @@
       changetime(loc.options[loc.selectedIndex]);
     }
   
+    $('#team').trigger('change');
     var userRegion = "{{user.profile.region.name|safe}}"
    if(userRegion){
       $('#region').val(userRegion);

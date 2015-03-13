@@ -183,9 +183,9 @@
       window.is_loc_changed = true;
     }else if (selectedTeam == 'Services' || selectedTeam == 'Services (Traverwood)' || selectedTeam == 'Services Revenue Program (SRP)'){
       $(".tr_service_segment").show();
-      $('label[for="g_case_id"]').hide();
+      $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
-      $('#g_case_id').show();
+      $('#g_cases_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
     }else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
@@ -196,9 +196,9 @@
       $("#service_segment").show();
       $("#service_segment").val('');
       $(".tr_service_segment").show();
-      $('#g_case_id').hide();
+      $('#g_cases_id').hide();
 
-      $('label[for="g_case_id"]').hide();
+      $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').show();
     }else{
       if (window.is_loc_changed){
@@ -206,10 +206,10 @@
         window.is_loc_changed = false;
       }
       $(".tr_service_segment").hide();
-      $('#g_case_id').hide();
+      $('#g_cases_id').hide();
       $('#GCaseId').hide();
 
-      $('label[for="g_case_id"]').hide();
+      $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
     }
   });
