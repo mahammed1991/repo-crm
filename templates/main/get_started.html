@@ -1,0 +1,137 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  User Profile
+{% endblock title %}
+{% block main_css %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+{% endblock main_css %}
+{% block content %}
+
+
+<section class="content-region login auth">
+     <div class="container-fluid text-center">
+        <img src="{% static 'images/GTrack-Regalix-logo.png' %}" alt="GTrack-Regalix-Logo" class="gtack-sign-logo">
+        <h1>Few more to get started</h1>
+        <div class="login-area">
+            <form class="profile" onsubmit="return validateProfile()" action="{% url 'main.views.edit_profile_info' %}" id="edit_profile" method="POST">
+              {% csrf_token %}
+              <input type="hidden" class="form-control" name="next_url" id="next_url" value="home">
+              <div class="row">
+                <div class="col-md-6">
+                  <label style="float:left;"> Phone </label>
+                  <input type="text" class="form-control edit allow-edit" name="user_phone" id="user_phone" value="{{ user.profile.phone }}" placeholder="Telephone number">
+                </div>
+                <div class="col-md-6">
+                  <label style="float:left;"> Manager Email </label>
+                  <input type="text" class="form-control edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} placeholder="Manager email">
+                </div>
+                <div class="col-md-6">
+                   <label style="float:left;"> Manager Name </label>
+                  <input type="text" class="form-control edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} placeholder="Manager Name">
+                </div>
+                <div class="col-md-6">
+                    <label for="country" style="float:left;">Google Rep Location</label>
+                    <input type="text" class="form-control edit allow-edit" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
+                  </div>
+
+            {% if 'google' in request.user.email %}
+              <div class="col-md-6">
+                  <label style="float:left;"> Program Name </label>
+                    <select class="form-control edit allow-edit" name="user_team" id="user_team">
+                      <option value="0">Select Program</option>
+                      {% for team in teams %}
+                        <option value="{{team.id}}">{{team.team_name}}</option>
+                      {% endfor %}
+                     </select>
+              </div>
+            {% endif %}
+
+            {% if 'google' in request.user.email %}
+              <div class="col-md-6">
+                   <label style="float:left;">Region </label>
+                  <select class="form-control edit allow-edit" id="region" title="Program Region" name="region">
+                    <option value="0">Region</option>
+                    {% for rgn in regions %}
+                      <option value="{{rgn.id}}">{{rgn.name}}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+              <div class="col-md-6">
+              <label style="float:left;"> Location Name </label>
+                <select class="form-control edit allow-edit" name="user_location" id="user_location">
+                  <option value="0">Market Served</option>
+                  {% for loc in locations %}
+                  <option value="{{loc.id}}">{{loc.location_name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+              <div class="col-md-12">
+                <button class="btn std-btn">Get Started</button>
+              </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/profile.js' %}"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
+    <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+    <script type="text/javascript">
+  $(document).ready(function(){
+      getLocation('rep_location');
+      window.loc_id = {{user.profile.location.id|safe}}
+      window.team_id = {{user.profile.team.id|safe}}
+      window.user_details = {{user_details|safe}}
+      window.regionWiseLocations = {{region_locations|safe}};
+      window.all_locations = {{all_locations|safe}}
+
+
+    $("#user_manager_email").autocomplete({
+      source: {{managers|safe}},
+      select: function(event,ui){
+         $("#user_manager_email").val(ui.item);
+         $('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+    });
+
+    $("#user_team").val(window.team_id);
+
+    var userRegion = "{{user.profile.region.name|safe}}"
+     var userRegionId = "{{user.profile.region.id|safe}}";
+     if(userRegion){
+        $('#region').val(userRegionId);
+        countryList = regionWiseLocations[parseInt(userRegionId)];
+        console.log(countryList);
+        setLocationsForRegion(window.all_locations, countryList);
+       }
+
+      var userLocationId = "{{user.profile.location.id|safe}}";
+      $("#user_location").val(userLocationId);
+
+      function setLocationsForRegion(newLocations, countryIds){
+          $("#user_location option").remove()
+          $("#user_location").append('<option value="0">Market Served</option>');
+          for(i=0; i<newLocations.length; i++){
+            if(countryIds.indexOf(newLocations[i]['id']) != -1){
+              $("#user_location").append('<option value="'+newLocations[i]['id']+'">'+newLocations[i]['name']+'</option>');
+            }
+        }
+      }
+
+      $('#region').change(function(){
+        var regionId = $(this).val();
+        countryList = regionWiseLocations[regionId];
+        setLocationsForRegion(window.all_locations, countryList);
+      });
+
+});
+</script>
+    
+{% endblock main_js %}

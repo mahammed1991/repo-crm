@@ -1,0 +1,402 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load rep_filters %}
+
+{% block base_css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/representative/style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+
+{% endblock base_css %}
+
+{% block body %}
+<div class="time_zone std-sub-title">
+    <div class="title">
+        <a href="{% url 'representatives.views.availability_list' prev_week.month prev_week.day prev_week.year process_type location_id time_zone %}" class="prev"><i class="fa fa-angle-left"></i>Prev Week</a>
+        TimeZone: {{time_zone_desc}}</span>
+        <a href="{% url 'representatives.views.availability_list' next_week.month next_week.day next_week.year process_type location_id time_zone %}" class="next">Next Week</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                <div class="header">
+                    Mon</br>{{dates|get_dict_val:'day1'|date:"m/d/Y"}}
+                </div></th>
+                <th>
+                <div class="header">
+                    Tue </br>{{dates|get_dict_val:'day2'|date:"m/d/Y"}}
+                </div></th>
+                <th>
+                <div class="header">
+                    Wed </br>{{dates|get_dict_val:'day3'|date:"m/d/Y"}}
+                </div></th>
+                <th>
+                <div class="header">
+                    Thu </br>{{dates|get_dict_val:'day4'|date:"m/d/Y"}}
+                </div></th>
+                <th>
+                <div class="header">
+                    Fri </br>{{dates|get_dict_val:'day5'|date:"m/d/Y"}}
+                </div></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in 12|get_range:7 %}
+            <tr>
+                {% with 'input_' as input and dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day1'|date:"m/d/Y" as data_date %}
+                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                        {% with appointments|get_dict_val:key_subs as avail %}
+                                <td class='content_block'>
+                                <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>{{i|concatenate:"-"|concatenate:'00'}} AM
+                                </div>
+                            </td>
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day2'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day3'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day4'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day5'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                {% endwith %}
+            </tr>
+            <tr class="odd_row">
+                {% with 'input_' as input and dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day1'|date:"m/d/Y" as data_date %}
+                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                        {% with appointments|get_dict_val:key_subs as avail %}
+                                <td class='content_block'>
+                                <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>{{i|concatenate:"-"|concatenate:'30'}} AM
+                                </div>
+                            </td>
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day2'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day3'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day4'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and dates|get_dict_val:'day5'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                    <td class='content_block'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} AM
+                                        </div>
+                                    </td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                {% endwith %}
+            </tr>
+            {% endfor %}
+            {% for i in 8|get_range %}
+            <tr>
+                {% with 'input_' as input %}
+                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day1'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day2'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day3'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day4'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day5'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'00'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                {% endwith %}
+            </tr>
+            <tr class="odd_row">
+                {% with 'input_' as input %}
+                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day1'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day2'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day3'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day4'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop and dates|get_dict_val:'day5'|date:"m/d/Y" as data_date %}
+                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                            {% with appointments|get_dict_val:key_subs as avail %}
+                                {% if forloop.first %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% else %}
+                                <td class='content_block'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        {{i|concatenate:"-"|concatenate:'30'}} PM
+                                    </div>
+                                </td>
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                {% endwith %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock body %}
+
+{% block main_js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.time_slot_avi').click(function(){
+            var selected_date = $(this).attr('data-date');
+            var slot_data = $(this).attr('value');
+            slot_data = slot_data.split('-')
+            selected_slot = parseInt(slot_data[0]);
+            var slot_difference = parseInt(slot_data[1])
+            var minutes = '00';
+            if(slot_data[1]){
+                minutes = slot_data[1].toString();
+            }
+
+            if(selected_slot == 0){
+                hours = '12:' + minutes + ' AM'
+            }else if(selected_slot < 12){
+                hours = (selected_slot).toString() + ':' + minutes + ' AM';
+            }else if(selected_slot == 12){
+                hours = (selected_slot).toString() + ':' + minutes + ' PM';
+            }else{
+                hours = (selected_slot-12).toString() + ':' + minutes + ' PM';
+            }
+            selected_date += ' ' + hours;
+            window.parent.source_ele.val(selected_date);
+            var napplicable = window.parent.source_ele.prop('id')
+            window.parent.$('input[name='+napplicable+'_nApplicable]').prop('checked', false);
+            window.parent.$.colorbox.close();
+        });
+        
+        $('.odd_row').each(function(index, ele){
+            if($(ele).find('div[class="time_slot"]').length == 5){
+                $(ele).hide();
+            }
+        });
+    });
+</script>
+{% endblock main_js %}

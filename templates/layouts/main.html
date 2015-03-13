@@ -1,0 +1,53 @@
+{% extends 'layouts/base.html' %}
+
+{% load staticfiles %}
+
+{% block base_css %}
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'css/owl.theme.css' %} " rel="stylesheet">
+    <link href="{% static 'css/owl.transitions.css' %} " rel="stylesheet">
+    <link href="{% static 'js/google-code-prettify/prettify.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.bxslider.css' %}">
+    <link rel="stylesheet" href="{% static 'css/roboto-styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/slick.css' %}">
+    <link rel="stylesheet" media="all" type="text/css" href="{% static 'css/colorbox.css' %}" />
+    <script src="{% static 'js/vendor/modernizr-2.6.2.min.js' %}"></script>
+    {% block main_css %}{% endblock main_css %}
+{% endblock base_css %}
+
+{% block body %}
+    {% if request.user.is_authenticated %}
+        {% include "layouts/header.html" %}
+    {% endif %}
+    
+        {% block content %}
+                <!-- COntent Block  -->
+        {% endblock content %}
+   
+    {% include "layouts/footer.html" %}
+    {% block model_popup %}
+
+    {% endblock model_popup %}
+{% endblock body %}
+
+{% block base_js %}
+<script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'js/plugins.js' %}"></script> 
+<script src="{% static 'js/bootstrap.min.js' %}"></script> 
+<script src="{% static 'js/npm.js' %}"></script> 
+<script src="{% static 'js/jquery.bxslider.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+<script src="{% static 'js/owl.carousel.js' %}"></script>
+<script src="{% static 'js/google-code-prettify/prettify.js' %}"></script>
+<script src="{% static 'js/application.js' %}"></script>
+<script src="{% static 'js/jquery.tablesorter.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.colorbox-min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/slick.min.js' %}"></script>
+{% block main_js %}{% endblock main_js %}
+{% endblock base_js %}
