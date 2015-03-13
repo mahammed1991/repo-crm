@@ -264,6 +264,7 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
+            tag_data[tag_leads['ga_setup1']] = request.POST.get('gasetup_sameAgency')
 
             # If Dynamic Remarketing tags
             tag_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
@@ -349,6 +350,7 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
+            tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
@@ -420,6 +422,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
+            tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setupSamecustomer')
 
             # If Dynamic Remarketing tags
             tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
@@ -517,6 +520,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
+            tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
