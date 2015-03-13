@@ -85,11 +85,11 @@ def lead_form(request):
 
             for i in range(1, 6):
                 i = str(i)
-                rbid_key = 'rbid' + i if int(i) > 1 else 'rbid'
-                rbudget_key = 'rbudget' + i if int(i) > 1 else 'rbudget'
+                rbid_key = 'rbid' + i
+                rbudget_key = 'rbudget' + i
                 ga_setup_key = 'ga_setup' + i
-                tag_data[shop_leads[rbid_key]] = request.POST.get(rbid_key)
-                tag_data[shop_leads[rbudget_key]] = request.POST.get(rbudget_key)
+                tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
+                tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
                 tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
 
             # Split Tag Contact Person Name to First and Last Name
@@ -148,9 +148,9 @@ def get_common_sandbox_lead_data(post_data):
         basic_data[value] = post_data.get(key)
 
     if post_data.get('advertiser_name'):     # Advertiser Name
-        full_name = post_data.get('advertiser_name')
-        basic_data['first_name'] = full_name.rsplit(' ', 1)[0],    # First Name
-        basic_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else '',   # Last Name
+        first_name, last_name = split_fullname(post_data.get('advertiser_name'))
+        basic_data['first_name'] = first_name
+        basic_data['last_name'] = last_name   # Last Name
 
     return basic_data
 
@@ -163,9 +163,9 @@ def get_common_salesforce_lead_data(post_data):
         basic_data[value] = post_data.get(key)
 
     if post_data.get('advertiser_name'):     # Advertiser Name
-        full_name = post_data.get('advertiser_name')
-        basic_data['first_name'] = full_name.rsplit(' ', 1)[0],    # First Name
-        basic_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else '',   # Last Name
+        first_name, last_name = split_fullname(post_data.get('advertiser_name'))
+        basic_data['first_name'] = first_name
+        basic_data['last_name'] = last_name   # Last Name
 
     return basic_data
 
@@ -267,8 +267,8 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['ga_setup1']] = request.POST.get('gasetup_sameAgency')
 
             # If Dynamic Remarketing tags
-            tag_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
-            tag_data[shop_leads['rbudget']] = request.POST.get('rbudget' + indx)
+            tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
+            tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
             submit_lead_to_sfdc(sf_api_url, tag_data)
     else:
         # Get Shop lead fields
@@ -353,8 +353,8 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
 
             # If Dynamic Remarketing tags
-            tag_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
-            tag_data[shop_leads['rbudget']] = request.POST.get('rbudget' + indx)
+            tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
+            tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
             submit_lead_to_sfdc(sf_api_url, tag_data)
         elif ctype == 'Google Shopping Setup':
             # Get Shop lead fields
@@ -425,8 +425,8 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setupSamecustomer')
 
             # If Dynamic Remarketing tags
-            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbid']] = request.POST.get('rbid' + indx)
-            tag_data[SalesforceLeads.SANDBOX_SHOPPING_ARGS['rbudget']] = request.POST.get('rbudget' + indx)
+            tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
+            tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
             submit_lead_to_sfdc(sf_api_url, tag_data)
     else:
         # Get Shop lead fields
@@ -523,8 +523,8 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
 
             # If Dynamic Remarketing tags
-            tag_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
-            tag_data[shop_leads['rbudget']] = request.POST.get('rbudget' + indx)
+            tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
+            tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
             submit_lead_to_sfdc(sf_api_url, tag_data)
         elif ctype == 'Google Shopping Setup':
             shop_data = basic_data
@@ -989,8 +989,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
 
             tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
-            tag_data[shop_leads.get('rbid')] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-            tag_data[shop_leads.get('rbudget')] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+            tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+            tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
         elif indx == 2:
             # Code Type 2 Details
@@ -1001,8 +1001,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
             if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
-                tag_data[shop_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-                tag_data[shop_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+                tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
         elif indx == 3:
             # Code Type 3 Details
@@ -1013,8 +1013,8 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
             tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
             if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
-                tag_data[shop_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-                tag_data[shop_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+                tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+                tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
     # Sandbox ID for TAD VIA GTM
     tag_data[tag_leads.get('tag_via_gtm')] = post_data.get('tag_via_gtm')  # Tag Via  GTM
@@ -1034,14 +1034,6 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
 
     setup_data = dict()
     setup_data = basic_data
-    # advirtiser_details = {'first_name': post_data.get('advertiser_name'),
-    #                       'last_name': post_dataget('advertiser_name').split(' ')[1] if len(post_data.get('advertiser_name')) > 1 else '',
-    #                       'email': post_data.get('aemail'),
-    #                       'role': post_data.get('primary_role'),
-    #                       'customer_id': post_data.get('cid'),
-    #                       'country': post_data.get('country'),
-    #                       'cid_std': post_data.get('cid').rsplit("-", 1)[0] + '-xxxx'
-    #                       }
 
     # if post_data.get('setup_datepick1') and indx == 1:
     #     setup_data[shop_leads.get('setup_datepick')] = post_data.get('setup_datepick1'),  # TAG Appointment Date
@@ -1066,7 +1058,6 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
     # SandBox ID for IS SHOPPING POLICIES
     setup_data[shop_leads.get('is_shopping_policies')] = post_data.get('is_shopping_policies')  # Shopping Policies
     # requests.post(url=sf_api_url, data=setup_data)
-    print setup_data
     submit_lead_to_sfdc(sf_api_url, setup_data)
 
 
@@ -1861,19 +1852,19 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     print sf_api_url
 
     try:
-        # requests.post(url=sf_api_url, data=lead_data)
+        requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details
         advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
         # Create Icallender (*.ics) file for send mail
         if advirtiser_details.get('appointment_date'):
-            # create_icalendar_file(advirtiser_details)
+            create_icalendar_file(advirtiser_details)
             is_attachment = True
-            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
         else:
             # Send Welcome email
             is_attachment = False
-            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
     except Exception as e:
         print e
 

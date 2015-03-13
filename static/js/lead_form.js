@@ -467,10 +467,10 @@ function validatethis(frm) {
     if(document.getElementById("webmasterCheck").checked == true){
 
       // Contact Person Name
-      if (frm.fopt.value == "") {
-        $(frm.fopt).addClass('error-box');
+      if (frm.webmaster_name.value == "") {
+        $(frm.webmaster_name).addClass('error-box');
         //$(frm.fopt).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
-        frm.fopt.focus();
+        frm.webmaster_name.focus();
         window.is_error = true;
       }
 
@@ -900,7 +900,7 @@ $("#keep_url").click(function(){
     }
 });
   
-$("#fopt").change(function(){
+$("#webmaster_name").change(function(){
     var webmasterName = $(this).val();
     $("#tag_contact_person_name, #shop_contact_person_name").val(webmasterName);
 });
