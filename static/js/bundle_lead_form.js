@@ -260,8 +260,8 @@ function validatethis(frm) {
     if(document.getElementById("webmasterCheck").checked == true){
 
       // Contact Person Name
-      foptElem = document.getElementById('fopt');
-      validateFiled(foptElem);
+      webMasterNameElem = document.getElementById('webmaster_name');
+      validateFiled(webMasterNameElem);
 
       // Contact Person Role
       webMasterEmailElem = document.getElementById('web_master_email');
