@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="country" style="float:left;">Google Rep Location</label>
-                    <input type="text" class="form-control edit allow-edit" id="rep_location" name="rep_location" placeholder="Enter Rep Location" autocomplete="off">
+                    <input type="text" class="form-control edit allow-edit" id="rep_location" name="rep_location" value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off">
                   </div>
 
             {% if 'google' in request.user.email %}
@@ -90,7 +90,12 @@
       window.team_id = {{user.profile.team.id|safe}}
       window.user_details = {{user_details|safe}}
       window.regionWiseLocations = {{region_locations|safe}};
-      window.all_locations = {{all_locations|safe}}
+      window.all_locations = {{all_locations|safe}};
+
+      window.rep_location = "{{user.profile.rep_location|safe}}";
+      if(!window.rep_location){
+        getLocation('rep_location');
+      }
 
 
     $("#user_manager_email").autocomplete({

@@ -1857,19 +1857,19 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     print sf_api_url
 
     try:
-        requests.post(url=sf_api_url, data=lead_data)
+        # requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details
         advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
         # Create Icallender (*.ics) file for send mail
         if advirtiser_details.get('appointment_date'):
-            create_icalendar_file(advirtiser_details)
+            # create_icalendar_file(advirtiser_details)
             is_attachment = True
-            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
         else:
             # Send Welcome email
             is_attachment = False
-            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
     except Exception as e:
         print e
 

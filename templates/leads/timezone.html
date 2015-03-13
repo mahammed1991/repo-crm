@@ -6,6 +6,11 @@
                 $('#tzone').focus();
                 return false;
             }
+            if ($('#country').val() == 0 || $('#country').val() == '0' || $('#country').val() == "") {
+                alert("Please Select Target Location.");
+                $('#country').focus();
+                return false;
+            }
             var process_type = $(this).attr('process_type');
             window.source_ele = $(this);
             $.colorbox({

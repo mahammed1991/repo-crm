@@ -80,7 +80,7 @@
       $(".tr_service_segment").show();
       $('label[for="g_cases_id"]').show();
       $('label[for="service_segment"]').hide();
-      $('#g_case_id').show();
+      $('#g_cases_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
     }else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
@@ -92,7 +92,7 @@
       $("#service_segment").val('');
       $(".tr_service_segment").show();
       $('#g_cases_id').hide();
-      $('label[for="g_case_id"]').hide();
+      $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').show();
     }else{
       if (window.is_loc_changed){
@@ -103,7 +103,7 @@
       $('#g_cases_id').hide();
       $('#GCaseId').hide();
 
-      $('label[for="g_case_id"]').hide();
+      $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
     }
   });
@@ -436,7 +436,7 @@ function validatethis(frm) {
     }
 
     // Hava an appointment 
-    if (document.getElementById("appointmentCheck").checked == true) {
+    if ($("#appointmentCheck").is(":visible") && document.getElementById("appointmentCheck").checked == true) {
       // Contact Person Name Validation
       contactElem = document.getElementById('tag_contact_person_name');
       validateFiled(contactElem);
@@ -565,6 +565,7 @@ $(".ctype").change(function(){
     if($(this).val() == 'Google Shopping Setup'){
         $("#" + curId + '_shopping').show();
         window.lead_type = 'SHOPPING';
+        updateComment(indx, false);
     }else{
         $("#" + curId + '_shopping').hide();
         window.lead_type = 'TAG';
@@ -594,6 +595,8 @@ $(".ctype").change(function(){
     }else{
       $(".appointment").hide();
     }
+
+    tagCheck();
 
     showHeadsUp();
 
@@ -699,3 +702,35 @@ $('#region').change(function(){
       $(this).val(0);
     }
 });
+
+
+$("#tagCheck").click(function(){
+    tagCheck();
+});
+
+function updateComment(indx, isCheck){
+  if($("#ctype" + indx).val() && $("#ctype" + indx).val() != 'Google Shopping Setup'){
+      if(isCheck){
+          $("#comment" + indx).val('implement via GTM');
+      }else{
+          $("#comment" + indx).val('');
+      }
+  }else{
+    $("#comment" + indx).val('');
+  }
+}
+
+function tagCheck(){
+
+  var elem = document.getElementById('tag_via_gtm'); 
+    if(elem.checked == true){
+      updateComment(1, true);
+      updateComment(2, true);
+      updateComment(3, true);
+    }else{
+      updateComment(1, false);
+      updateComment(2, false);
+      updateComment(3, false);
+    }
+
+}
