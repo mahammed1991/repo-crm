@@ -182,6 +182,13 @@
                     <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
                 </div>
+                <div class="col-md-12" id="gasetupSameAgency" style="display:none;">
+                  <div class="checkbox">
+                  <label>
+                    <input id="gasetup_sameAgency" type="checkbox" name="gasetup_sameAgency" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                  </div>
+                </div>
               </div>
           <!-- ################### Same Shop 1 ############################### -->
         </div>
@@ -221,6 +228,13 @@
                     {% endfor %}
                     <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
+                </div>
+                <div class="col-md-12" id="gasetupSameCustomer" style="display:none;">
+                  <div class="checkbox">
+                  <label>
+                    <input id="ga_setupSamecustomer" type="checkbox" name="ga_setupSamecustomer" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                  </div>
                 </div>
               </div>
         </div>
@@ -390,23 +404,18 @@ function hideAllFields(){
   $(".add_tag_1, .add_shop_1").hide();
   hideDiffTasks('agency_diff', 'diff_ctype-1');
   hideDiffTasks('customer_diff', 'diff_cust_type-1');
+  $('#gasetupSameAgency').hide();
+  $('#gasetupSameCustomer').hide();
 }
 // Same Task and select the Code type
 $("#same_task_ctype").change(function(){
     $(".tag").remove();
     $(".shop").remove();
     $(".add_tag_1, .add_shop_1").show();
+    $('#gasetupSameAgency').hide();
     selectedCtype = $(this).val();
     if(selectedCtype == 'Google Shopping Setup'){
-        // $("#same_tag_1").hide();
-        // $("#same_shop_1").show();
         addMoreShopRows(1)
-        // $("#tag_datepick").hide().val('');
-        // if($("#setup_datepick").is(":visible")){
-        //     $("#setup_datepick").show();  
-        // }else{
-        //   $("#setup_datepick").show().val('');
-        // }
     }else if(selectedCtype == '0' || selectedCtype == ''){
         $("#same_tag_1").hide();
         $("#same_shop_1").hide();
@@ -414,13 +423,10 @@ $("#same_task_ctype").change(function(){
     else if(selectedCtype == 'Dynamic Remarketing' || selectedCtype == 'Dynamic X Remarketing'){
         createAgencySameTagForDynamic(1);
     }else{
+      if(selectedCtype.indexOf('Analytics') != -1){
+        $('#gasetupSameAgency').show();
+      }
         addMoreRows(1)
-        // if($("#tag_datepick").is(":visible")){
-        //   $("#tag_datepick").show();  
-        // }else{
-        //   $("#tag_datepick").show().val('');
-        // }
-        // $("#setup_datepick").hide().val('');
       }
 });
 
@@ -462,6 +468,7 @@ function deleteShopRows(indx){
     $(".delete_shop_" + prevIndx).show();
 }
 
+
 $(document).on('change', '.agency_diff', function() {
     selectedCtype = $(this).val();
 
@@ -469,45 +476,27 @@ $(document).on('change', '.agency_diff', function() {
       $('.fields').hide();
     }else if(selectedCtype == 'Google Shopping Setup'){
       selectedindex = $(this).attr('id').split('-')[1]
-      // if(selectedindex == '1'){
-      //   $("#tag_datepick").hide().val('');
-      //   if($("#setup_datepick").is(":visible")){
-      //       $("#setup_datepick").show();  
-      //   }else{
-      //     $("#setup_datepick").show().val('');
-      //   }
-      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createShopFields(parseInt(selectedindex));
     }else if(selectedCtype == 'Dynamic Remarketing - Extension (non retail)' || selectedCtype == 'Dynamic Remarketing - Retail'){
       selectedindex = $(this).attr('id').split('-')[1];
-      //  if(selectedindex == '1'){
-      //   if($("#tag_datepick").is(":visible")){
-      //     $("#tag_datepick").show();  
-      //   }else{
-      //     $("#tag_datepick").show().val('');
-      //   }
-
-      //   $("#setup_datepick").hide().val('');
-      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createAgencyDiffDynamicFields(parseInt(selectedindex));
       }
+      else if(selectedCtype.indexOf('Analytics')!= -1){
+          selectedindex = $(this).attr('id').split('-')[1];
+          $("#shopFields" + selectedindex).remove();
+          $("#tagFields" + selectedindex).remove();
+          createAnalyticsTagFields(parseInt(selectedindex));
+      }
     else{
       selectedindex = $(this).attr('id').split('-')[1];
-      // if(selectedindex == '1'){
-      //   if($("#tag_datepick").is(":visible")){
-      //     $("#tag_datepick").show();  
-      //   }else{
-      //     $("#tag_datepick").show().val('');
-      //   }
-      //   $("#setup_datepick").hide().val('');
-      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createTagFields(parseInt(selectedindex));
+
     }
  });
 
@@ -602,6 +591,36 @@ function createTagFields(indx){
     $("#diff_tag_"+indx).append(ele+tail);
 }
 
+function createAnalyticsTagFields(indx){
+
+  nextInd = indx + 1; 
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+        '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+
+        '<div class="col-md-10" id="gasetup' + indx + '">'+
+                '<div class="checkbox">'+
+                  '<label>'+
+                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup">'+
+                    'Is there an existign Analytics setup? </label>'+
+                '</div>'+
+              '</div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }else if(indx == 5){
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }else{
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+    $("#diff_tag_"+indx).append(ele+tail);
+}
+
 function createCodeTypeForTag(indx){
   ele  = '<div class="row" id="diff_tag_' + indx + '">'+
                       '<div class="col-md-4  customwidth custom2">'+
@@ -659,17 +678,9 @@ $("#same_task_cust_type").change(function(){
     $(".shop").remove();
     $(".add_tag_1, .add_shop_1").show()
     selectedCtype = $(this).val();
+    $('#gasetupSameCustomer').hide();
     if(selectedCtype == 'Google Shopping Setup'){
-        // $("#same_cust_tag_1").hide();
-        // $("#same_cust_shop_1").show();
         addMoreCustomerShopRows(1);
-        // $("#tag_datepick").hide().val('');
-
-        // if($("#setup_datepick").is(":visible")){
-        //     $("#setup_datepick").show();  
-        // }else{
-        //   $("#setup_datepick").show().val('');
-        // }
         
     }else if(selectedCtype == '0' || selectedCtype == ''){
         $("#same_cust_tag_1").hide();
@@ -678,15 +689,10 @@ $("#same_task_cust_type").change(function(){
     else if(selectedCtype == 'Dynamic Remarketing - Extension (non retail)' || selectedCtype == 'Dynamic Remarketing - Retail'){
           createCusetomerSameTagForDynamic(1);
     }else{
-        // $("#same_cust_tag_1").show();
+      if(selectedCtype.indexOf('Analytics') != -1){
+        $('#gasetupSameCustomer').show();
+      }
         addMoreCustomerRows(1);
-        // $("#same_cust_shop_1").hide();
-        // if($("#tag_datepick").is(":visible")){
-        //     $("#tag_datepick").show();  
-        // }else{
-        //   $("#tag_datepick").show().val('');  
-        // }
-        // $("#setup_datepick").hide().val('');
     }
 });
 
@@ -732,44 +738,25 @@ $(document).on('change', '.customer_diff', function() {
       $('.fields').hide();
     }else if(selectedCtype == 'Google Shopping Setup'){
       selectedindex = $(this).attr('id').split('-')[1];
-      // if(selectedindex == '1'){
-      //   $("#tag_datepick").hide().val('');
-      //   if($("#setup_datepick").is(":visible")){
-      //       $("#setup_datepick").show();  
-      //   }else{
-      //     $("#setup_datepick").show().val('');
-      //   }
-      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createCustomerShopFields(parseInt(selectedindex));
-    }
-    else if(selectedCtype == 'Dynamic Remarketing - Extension (non retail)' || selectedCtype == 'Dynamic Remarketing - Retail'){
+    }else if(selectedCtype == 'Dynamic Remarketing - Extension (non retail)' || selectedCtype == 'Dynamic Remarketing - Retail'){
       selectedindex = $(this).attr('id').split('-')[1];
-      //  if(selectedindex == '1'){
-      //   if($("#tag_datepick").is(":visible")){
-      //       $("#tag_datepick").show();  
-      //   }else{
-      //     $("#tag_datepick").show().val('');
-      //   }
-      //   $("#setup_datepick").hide().val('');
-      // }
       $("#shopFields" + selectedindex).remove();
       $("#tagFields" + selectedindex).remove();
       createCustomerDiffDynamicFields(parseInt(selectedindex));
+      }
+      else if(selectedCtype.indexOf('Analytics') != -1){
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        createCustomerAnalyticsTagFields(parseInt(selectedindex));//createCustomerAnalyticsTagFields
       }else{
-      selectedindex = $(this).attr('id').split('-')[1];
-      // if(selectedindex == '1'){
-      //   if($("#tag_datepick").is(":visible")){
-      //       $("#tag_datepick").show();  
-      //   }else{
-      //     $("#tag_datepick").show().val('');
-      //   }
-      //   $("#setup_datepick").hide().val('');
-      // }
-      $("#shopFields" + selectedindex).remove();
-      $("#tagFields" + selectedindex).remove();
-      createCustomerTagFields(parseInt(selectedindex));
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        createCustomerTagFields(parseInt(selectedindex));
     }
  });
 
@@ -868,6 +855,49 @@ function createCustomerTagFields(indx){
   nextInd = indx + 1; 
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-2">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+              ' <div class="col-md-2">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }
+        else{
+            tail =  '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+    $("#diff_cust_tag_"+indx).append(ele+tail);
+}
+
+function createCustomerAnalyticsTagFields(indx){
+
+  nextInd = indx + 1; 
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+                '<div class="col-md-12" id="gasetup' + indx + '"">'+
+                  '<div class="checkbox">'+
+                    '<label>'+
+                      '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup">'+
+                      'Is there an existign Analytics setup? </label>'+
+                  '</div>'+
+                '</div>'+
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
                 '</div>'+
