@@ -980,41 +980,41 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
     tag_data[tag_leads.get('tag_primary_role')] = post_data.get('tag_primary_role') if post_data.get('tag_primary_role') else post_data.get('shop_primary_role')  # Role
     tag_data[tag_leads.get('tag_datepick')] = post_data.get('tag_datepick')  # TAG Appointment Date
 
-    for indx in code_types:
-        if indx == 1:
-            # Code Type 1 Details
-            tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
-            tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
-            tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
+    for indx in range(1, len(code_types) + 1):
+        cindx = code_types[indx - 1]
+        # Code Type 1 Details
+        tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(cindx))  # Code Type1
+        tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(cindx))  # URL1
+        tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(cindx))  # Comments1
 
-            tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
+        tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(cindx))  # Comments1
 
-            tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-            tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+        tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(cindx))  # Recommended Bid
+        tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(cindx))  # Recommended Budget
 
-        elif indx == 2:
-            # Code Type 2 Details
-            tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
-            tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
-            tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
+        # elif indx == 2:
+        #     # Code Type 2 Details
+        #     tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
+        #     tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
+        #     tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
 
-            tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
+        #     tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
-            if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
-                tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-                tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+        #     if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
+        #         tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+        #         tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
-        elif indx == 3:
-            # Code Type 3 Details
-            tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
-            tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
-            tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
+        # elif indx == 3:
+        #     # Code Type 3 Details
+        #     tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
+        #     tag_data[tag_leads.get('url' + str(indx))] = post_data.get('url' + str(indx))  # URL1
+        #     tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(indx))  # Comments1
 
-            tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
+        #     tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(indx))  # Comments1
 
-            if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
-                tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
-                tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
+        #     if post_data.get('rbid_campaign' + str(indx)) and post_data.get('rbudget_campaign' + str(indx)):
+        #         tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(indx))  # Recommended Bid
+        #         tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(indx))  # Recommended Budget
 
     # Sandbox ID for TAD VIA GTM
     tag_data[tag_leads.get('tag_via_gtm')] = post_data.get('tag_via_gtm')  # Tag Via  GTM
@@ -1053,7 +1053,7 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
     setup_data[shop_leads.get('rbid')] = post_data.get('rbid' + str(indx))  # Recommended Bid
     setup_data[shop_leads.get('rbudget')] = post_data.get('rbudget' + str(indx))  # Recommended Budget
     setup_data[shop_leads.get('rbidmodifier')] = post_data.get('rbidmodifier' + str(indx))  # Recommended Mobile Bid Modifier
-    setup_data[shop_leads.get('shopping_url')] = post_data.get('shopping_url' + str(indx))  # Shopping URL
+    setup_data[tag_leads.get('url1')] = post_data.get('url' + str(indx))  # Shopping URL
 
     # SandBox ID for IS SHOPPING POLICIES
     setup_data[shop_leads.get('is_shopping_policies')] = post_data.get('is_shopping_policies')  # Shopping Policies

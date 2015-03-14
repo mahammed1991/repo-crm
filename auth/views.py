@@ -33,8 +33,12 @@ def post_login(request):
 
     try:
         user_profile = UserDetails.objects.get(user_id=request.user.id)
-        if not user_profile.phone or not user_profile.user_manager_email or user_profile.team or user_profile.location:
-            return redirect('main.views.get_started')
+        if "@google.com" in request.user.email:
+            if not user_profile.user_manager_email or not user_profile.team or not user_profile.location or not user_profile.rep_location:
+                return redirect('main.views.get_started')
+        else:
+            if not user_profile.user_manager_email or not user_profile.user_manager_name:
+                return redirect('main.views.get_started')
     except ObjectDoesNotExist:
         return redirect('main.views.get_started')
 
