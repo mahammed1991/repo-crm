@@ -478,6 +478,7 @@ function validatethis(frm) {
           status = check_and_create_appointment(fix_slots);
         }
         if (status) {
+          $('#preloaderOverlay').show();
           $('form input[type=submit]').attr('disabled', 'disabled');
         }
         return status;  

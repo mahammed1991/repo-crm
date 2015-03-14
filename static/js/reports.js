@@ -826,9 +826,6 @@ $('#download').click(function(){
 }); 
  
     
-
-//{'report_type': 'default_report', 'report_timeline': ['today'], 'teams': ['all'], 'countries': ['all']}
-
 function downloadReport(dataString){
    //$('#preloaderOverlay').show();
   $.ajax({
