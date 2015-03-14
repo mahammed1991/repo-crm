@@ -153,6 +153,7 @@
       indx = id.split('_')[1];
       next_id = parseInt(indx) + 1
       prev_id = parseInt(indx) - 1
+      $("#ctype" + indx).val('');
       $( "#task_" + indx).animate({
       height: "toggle"
       }, 300, function() {
@@ -822,6 +823,7 @@ function validatethis(frm) {
       }
       
       if (status) {
+        $('#preloaderOverlay').show();
         $('form input[type=submit]').attr('disabled', 'disabled');
       }
       return status;  

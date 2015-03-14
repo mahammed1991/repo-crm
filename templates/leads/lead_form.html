@@ -498,6 +498,12 @@
   </form>
   </div>
 </section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
 {% endblock content %}
 
 {% block main_js %}
@@ -506,7 +512,6 @@
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
-    getLocation('rep_location');
     window.locations = {{locations|safe}};
     window.regions = {{regions|safe}};
     window.regionWiseLocations = {{region_locations|safe}};
