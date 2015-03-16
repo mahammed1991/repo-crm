@@ -548,8 +548,8 @@ var next_indx = indx + 1;
 function createAgencySameShop(indx){
 var next_indx = indx + 1;
 
-  var mcElem = '<div class="col-md-4"><label style="height:48px;margin-bottom: 20px;">'+
-                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div>'+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div></div>'+
                 '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>'
 
   ele =   '<div class="row shop" id="same_shop_' + indx + '">'+
@@ -647,8 +647,8 @@ function createShopFields(indx){
 
   var nextInd = indx + 1;
 
-  var mcElem = '<div class="col-md-4"><label style="height:48px;margin-bottom: 20px;">'+
-                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div>'+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div></div>'+
                 '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>';
 
   ele =  '<div id="shopFields' + indx + '" class="shopFields">'+
@@ -828,8 +828,8 @@ var next_indx = indx + 1;
 function createCustomerSameShop(indx){
 var next_indx = indx + 1;
 
-  var mcElem = '<div class="col-md-4"><label style="height:48px;margin-bottom: 20px;">'+
-                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div>'+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div></div>'+
                 '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>'
 
   ele =   '<div class="row shop" id="same_cust_shop_' + indx + '">'+
@@ -956,8 +956,8 @@ function createCustomerShopFields(indx){
 
   var nextInd = indx + 1;
 
-  var mcElem = '<div class="col-md-4"><label style="height:48px;margin-bottom: 20px;">'+
-                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div>'+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> is there an exisitng Merchant Center?</label></div></div>'+
                 '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>';
 
   ele =   '<div id="shopFields' + indx + '" class="shopFields">'+
@@ -1002,11 +1002,12 @@ function createAgencySameTagForDynamic(indx){
 var next_indx = indx + 1;
   ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
                '<div class="col-md-4">'+
-                 '<label style="height:48px;margin-bottom: 20px;">'+
+               '<div class="checkbox">'+
+                 '<label >'+
                     '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
                     'Is campaign created?'+
                   '</label>'+
-                '</div>'+
+                '</div></div>'+
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid">'+
                 '</div>'+
@@ -1061,11 +1062,12 @@ var next_indx = indx + 1;
                   '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
                 '</div>'+
               '<div class="col-md-4">'+
-                 '<label style="height:48px;margin-bottom: 20px;">'+
+                 '<div class="checkbox">'+
+                 '<label >'+
                     '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
                     'Is campaign created?'+
                   '</label>'+
-                '</div>'+
+                '</div></div>'+
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid">'+
                 '</div>'+
@@ -1114,11 +1116,12 @@ function createAgencyDiffDynamicFields(indx){
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
           '<div class="col-md-4 customwidth>'+
-                 '<label style="height:48px;margin-bottom: 20px;">'+
+                '<div class="checkbox">'+
+                 '<label >'+
                     '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
                     'Is campaign created?'+
                   '</label>'+
-                '</div>'+
+                '</div></div>'+
           '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'
          
@@ -1152,11 +1155,12 @@ function createCustomerDiffDynamicFields(indx){
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
           '<div class="col-md-4 customwidth>'+
-                 '<label style="height:48px;margin-bottom: 20px;">'+
+              '<div class="checkbox">'+
+                 '<label >'+
                     '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
                     'Is campaign created?'+
                   '</label>'+
-                '</div>'+
+                '</div></div>'+
          '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'
 

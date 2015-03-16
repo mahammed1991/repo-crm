@@ -2184,6 +2184,11 @@ margin-bottom:2px;
 	padding: 1%;
 }
 
+.checkbox .lbl{
+	height: 48px;
+	margin-bottom: 8px;
+}
+
 
 
 /* ==========================================================================
