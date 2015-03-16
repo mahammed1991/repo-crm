@@ -191,6 +191,11 @@ def get_top_performer_list(current_date):
     return top_performer_list
 
 
+def top_30_cms(request):
+    """ Get top 30 CMS """
+    return render(request, 'main/top_30_cms.html')
+
+
 def get_top_performer_by_date_range(start_date, end_date):
     topper_list = Leads.objects.exclude(google_rep_email='').filter(
         created_date__gte=start_date,
