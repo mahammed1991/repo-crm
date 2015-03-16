@@ -597,7 +597,7 @@ $(".ctype").change(function(){
       $(".appointment").hide();
     }
 
-    tagCheck();
+    tagCheck(indx);
 
     showHeadsUp();
 
@@ -706,7 +706,9 @@ $('#region').change(function(){
 
 
 $("#tagCheck").click(function(){
-    tagCheck();
+    tagCheck(1);
+    tagCheck(3);
+    tagCheck(2);
 });
 
 function updateComment(indx, isCheck){
@@ -714,24 +716,24 @@ function updateComment(indx, isCheck){
       if(isCheck){
           $("#comment" + indx).val('implement via GTM');
       }else{
-          $("#comment" + indx).val('');
+          if ($("#comment" + indx).val() == 'implement via GTM'){
+              $("#comment" + indx).val('');
+          }
       }
   }else{
-    $("#comment" + indx).val('');
+    if ($("#comment" + indx).val() == 'implement via GTM'){
+        $("#comment" + indx).val('');
+    }
   }
 }
 
-function tagCheck(){
+function tagCheck(indx){
 
   var elem = document.getElementById('tag_via_gtm'); 
     if(elem.checked == true){
-      updateComment(1, true);
-      updateComment(2, true);
-      updateComment(3, true);
+      updateComment(indx, true);
     }else{
-      updateComment(1, false);
-      updateComment(2, false);
-      updateComment(3, false);
+      updateComment(indx, false);
     }
 
 }

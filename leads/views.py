@@ -233,7 +233,6 @@ def submit_agency_same_tasks(request, agency_bundle):
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00Dd0000000fk18'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
-
     same_task_ctype = request.POST.get('same_task_ctype')
     if same_task_ctype != "Google Shopping Setup":
         # Get Tag lead fields
@@ -324,6 +323,7 @@ def submit_agency_different_tasks(request, agency_bundle):
     agency_diff_tag_count = request.POST.get('agency_diff_tag_count')
     agency_diff_shop_count = request.POST.get('agency_diff_shop_count')
     total_leads = int(agency_diff_tag_count) + int(agency_diff_shop_count)
+    is_appointment_used = False
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
@@ -341,10 +341,11 @@ def submit_agency_different_tasks(request, agency_bundle):
             basic_data['first_name'] = first_name
             basic_data['last_name'] = last_name
         tag_data = basic_data
-        if int(indx) == 1:
-            tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
         ctype = request.POST.get('diff_ctype' + indx)
         if ctype != 'Google Shopping Setup':
+            if not is_appointment_used:
+                is_appointment_used = True
+                tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
             # tag fields
             tag_data[tag_leads['ctype1']] = ctype
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
@@ -433,6 +434,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         customer_same_shop_count = request.POST.get('customer_same_shop_count')
         customer_same_shop_count = int(customer_same_shop_count) if customer_same_shop_count else 0
         for indx in range(1, customer_same_shop_count + 1):
+            indx = str(indx)
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
@@ -486,7 +488,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     customer_diff_tag_count = request.POST.get('customer_diff_tag_count')
     customer_diff_shop_count = request.POST.get('customer_diff_shop_count')
     total_leads = int(customer_diff_tag_count) + int(customer_diff_shop_count)
-
+    is_appointment_used = False
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
@@ -504,12 +506,12 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             basic_data['first_name'] = first_name
             basic_data['last_name'] = last_name
         tag_data = basic_data
-        if int(indx) == 1:
-            tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
         ctype = request.POST.get('diff_cust_type' + indx)
 
         if ctype != 'Google Shopping Setup':
-
+            if not is_appointment_used:
+                is_appointment_used = True
+                tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
             # Get End Customer Name details
             tag_data[basic_leads['advertiser_name']] = request.POST.get('advertiser_name' + indx)
             tag_data[basic_leads['aemail']] = request.POST.get('aemail' + indx)
@@ -1850,7 +1852,6 @@ def get_all_sfdc_lead_ids(sfdc_type):
 def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
     print sf_api_url
-
     try:
         requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details
