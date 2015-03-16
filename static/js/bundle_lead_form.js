@@ -447,7 +447,12 @@ function validatethis(frm) {
 
       // Appointments Date and Time Validation
       tagDateElem = document.getElementById('tag_datepick');
-      validateFiled(tagDateElem);
+      if ($(tagDateElem).val() == "" || $(tagDateElem).val() == "0" || !$(tagDateElem).val()) {
+          $(tagDateElem).addClass('error-box');
+          window.is_error = true;
+          return false;
+        }
+      // validateFiled(tagDateElem);
 
       if(tagDateElem.value){
           var slot = {

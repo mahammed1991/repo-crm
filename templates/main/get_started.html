@@ -19,6 +19,7 @@
             <form class="profile" onsubmit="return validateProfile()" action="{% url 'main.views.edit_profile_info' %}" id="edit_profile" method="POST">
               {% csrf_token %}
               <input type="hidden" class="form-control" name="next_url" id="next_url" value="home">
+              <div class="error-msg" style="display:none;margin-bottom:5px;color:red;">Please enter a valid regalix or google Email ID</div>
               <div class="row">
                 <div class="col-md-6">
                   <label style="float:left;"> Phone </label>
@@ -85,7 +86,7 @@
     <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
     <script type="text/javascript">
   $(document).ready(function(){
-      getLocation('rep_location');
+      // getLocation('rep_location');
       window.loc_id = {{user.profile.location.id|safe}}
       window.team_id = {{user.profile.team.id|safe}}
       window.user_details = {{user_details|safe}}

@@ -41,6 +41,8 @@ $(document).ready(function(){
 function validateProfile(){
     // Remove all error messages
     $(".error-txt").remove();
+    $(".error-box").removeClass('error-box');
+    $(".error-msg").hide();
 
     // Use Full Name Validation
     full_name = $("#user_full_name");
@@ -89,7 +91,7 @@ function validateProfile(){
 
         if(error){
             $(email_elem).addClass('error-box');
-            $(email_elem).after('<span class="error-txt">Please enter a valid regalix or google Email ID</span>');
+            showErrorMessage('Please enter a valid regalix or google Email ID');
             $(email_elem).focus();
             return false;
         }
@@ -112,4 +114,8 @@ function validateProfile(){
        $(region).focus();   
         return false;
     }
+}
+
+function showErrorMessage(errMsg){
+    $(".error-msg").show().text(errMsg);
 }
