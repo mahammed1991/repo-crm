@@ -6,11 +6,32 @@
 Newsletter
 {% endblock title %}
 
+{% block main_css %}
+    <style type="text/css">
+    .archive {
+        text-align:center;
+        line-height:27px;
+        font-size:19px;
+        padding-top:2%;
+        width: 240px;
+        margin: auto;
+    }
+    .archive li a:hover, .archive li a:focus, .archive li a:active {
+        text-decoration: none !important;
+        color: black;
+    }
+    .archive li{
+        border: 1px solid;
+        margin-top: 4px;
+    }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div id="content" class="clearfix">
-    <div class="main_content">
+    <div class="main_content" style="text-align:center;line-height:27px;font-size:19px;padding-top:2%;">
         <ul class="archive">
-            <li>
+            <li >
                 <a href="{% url 'newsletter.views.get_newsletter' '2014' 'september' '1' %}" target="_blank">September, 2014 vol - 1</a>
             </li>
             <li>

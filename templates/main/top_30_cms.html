@@ -6,9 +6,39 @@
 Top 30 CMS
 {% endblock title %}
 
+{% block main_css %}
+    <style type="text/css">
+    .cms {
+        text-align:center;
+        line-height:27px;
+        font-size:19px;
+        padding-top:2%;
+        width: 240px;
+        margin: auto;
+    }
+    .icon_text:hover, .icon_text:focus, .icon_text:active {
+        text-decoration: none !important;
+        color: black;
+    }
+    .cms li{
+        border: 1px solid;
+        margin-top: 4px;
+    }
+    .ul_pdf.doc_10 li a .icon_text, .ul_pdf.doc_20 li a .icon_text, .ul_pdf.doc_30 li a .icon_text {
+      padding: 9px 7px;
+      background: url("/static/images/more_icon.png") no-repeat;
+      background-position: 150px 8px;
+      font-family: 'open_sansbold';
+      font-size: 14px;
+    }
+    </style>
+{% endblock %}
+
+
 {% block content %}
 <div id="content" class="clearfix">
-    <div class="main_content">
+    <div class="main_content" style="margin-left: 17%;float: left;margin-top: 2%">
+        <div style="width:300px; float:left;" class="cms">
         <ul class="ul_pdf doc_10">
             <li>
                 <a href="https://docs.google.com/a/regalix-inc.com/document/d/1IKuBQY6Q9tUoLmdUSqzuFYI2QruJXuWVsY6e5eXln7E/edit" target="_blank">
@@ -61,7 +91,11 @@ Top 30 CMS
                 </a>
             </li>
         </ul>
-        <ul class="ul_pdf doc_20 ">
+
+        </div>
+
+        <div style="width:300px; float:left;" class="cms">
+                <ul class="ul_pdf doc_20 ">
             <li>
                 <a href="https://docs.google.com/a/regalix-inc.com/document/d/1AeUeCrawtigQCEnD7HPJoMZ5pI58hOY4fi-m8qvElSc/edit" target="_blank">
                     <div class="icon_text">Amazon</div>
@@ -113,7 +147,11 @@ Top 30 CMS
                 </a>
             </li>
         </ul>
-        <ul class="ul_pdf doc_30 ">
+        </div>
+
+        
+        <div style="width:300px; float:left;" class="cms">
+            <ul class="ul_pdf doc_30 ">
             <li>
                 <a href="https://docs.google.com/a/regalix-inc.com/document/d/15-AS0lOjAuz8Bc4hhC7TvTLglpUPcj39pRrbsp5B5iQ/edit" target="_blank">
                     <div class="icon_text">Opencart</div>
@@ -165,6 +203,7 @@ Top 30 CMS
                 </a>
             </li>
         </ul>
+        </div>
     </div>
 </div>
 {% endblock content %}
