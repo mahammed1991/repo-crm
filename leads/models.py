@@ -184,6 +184,7 @@ class Location(models.Model):
     class Meta:
         db_table = 'locations'
         ordering = ['location_name']
+        verbose_name_plural = 'Target Location'
 
 
 class RegalixTeams(models.Model):
