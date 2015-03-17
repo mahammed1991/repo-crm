@@ -24,11 +24,11 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-ADMINS = (('Adarsh S', 'adarshs@regalix-inc.com'), ('Raju K R', 'rajuk@regalix-inc.com'))
+ADMINS = (('Raju K R', 'rajuk@regalix-inc.com'))
 
 EMAIL_SUBJECT_PREFIX = '[Production]'
 
-ALLOWED_HOSTS = ['google.regalix.com']
+ALLOWED_HOSTS = ['gtrack.regalix.com']
 
 ROOT_URLCONF = 'google_portal.urls'
 
@@ -42,7 +42,7 @@ CACHE_MAX_KEY_LENGTH = 235
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'google_portal',
+        'NAME': 'gtrack',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '',
@@ -107,8 +107,8 @@ LOGIN_ERROR_URL = '/auth/error'
 
 # Social auth settings
 # APP settings
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '896182802668-9ik36eb1h656j4tuj56lkur0ed38omue.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'zhO1B55obEa7irdiGqYmc1PV'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '728749236818-8112m0a95f3h7ijmvtcvtfc2os91nr0s.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'UYpYphH-_HOLdPIznP79PuTj'
 
 # Social Auth error handling
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = LOGIN_URL
@@ -124,6 +124,7 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 # list of domains allowed
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['google.com', 'regalix-inc.com']
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['rajatraghavg@gmail.com']
+
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
@@ -228,7 +229,7 @@ SITE_SRC_ROOT = BASE_DIR
 
 TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [('django.template.loaders.cached.Loader', template_loaders)]
 
-APP_URL = 'https://google.regalix.com'
+APP_URL = 'https://gtrack.regalix.com'
 
 
 try:
