@@ -212,9 +212,10 @@ Regalix Google Portal
     <section class="notifications">
       <div class="slick-slider container-fluid trans" id="marquee_notofication">
         {% for notification in notifications %}
-          <div>{{notification.text}} <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal">Report a bug</i></a></div>
+          <div>{{notification.text}} </div>
         {% endfor %}
       </div>
+      <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal" style=" <i>!important; padding-right:2%; text-align:center;margin-top:4%;"><i>Report a bug</i></a>
     </section>
 
 
@@ -306,7 +307,7 @@ Regalix Google Portal
               <div class="modal-body" id="feedback-body">
                 <form onsubmit='return portalFeedbackValidation(this);' action="{% url 'main.views.create_portal_feedback' %}" method='POST' enctype="multipart/form-data" id="portalFeedback">
                     {% csrf_token %}
-                   <input type="text" class="form-control" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                   <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
                      <select class="form-control" id="feedbackType" name="type">
                         <option value="Feedback Type">Feedback Type</option>
                         <option value="UI / Design Related"> UI / Design Related</option>
@@ -315,15 +316,26 @@ Regalix Google Portal
                     </select>
                     <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
                     
-                      <input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" />
-                   
-                    
+                      <!--<input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" /> 
+                      <div style="padding-left: 21%;">
+                        <input type="file" id="attachmentfile" style="display:none" name="attachmentfile">
+                        <a href="#"><img src="{% static 'images/browse.png' %}" w id="img1" style="padding-left: 9%;width: 65%;margin: auto;" /></a>
+                      </div>
+                      -->
+                      <div style="width:100%;">  
+                      <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%;"/> 
+                      <input type="file" id="attachmentfile" name="attachmentfile" style="display: none" onChange="Handlechange();" />
+                      <input type="text" id="filename" readonly="true" style="width:58%;" />
+                      
+
+                      </div>                     
+                                          
                     <!-- <i class="fa fa-paperclip" name="attachmentfile"></i> -->
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" style="text-align:center;">
 
                   <div class="btn-group">
-                      <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
+                      <button class="btn std-btn" id='SubmitFeedback' style="border-radius:2px;">Submit</button>
                   </div>
                 </div>
                </form>
@@ -505,5 +517,20 @@ $('.close').click(function(){
 })
 
 /* feed back submit through leads status page end  here */
+</script>
+<script>
+function HandleBrowseClick()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    fileinput.click();
+}
+
+function Handlechange()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+}
+
 </script>
 {% endblock main_js %}

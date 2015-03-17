@@ -8,6 +8,11 @@
 
 {% block main_css %}
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+  <style type="text/css">
+  .tag {
+
+  }
+  </style>
 {% endblock main_css %}
 
 {% block content %}
@@ -217,7 +222,7 @@
 
 
           <!-- ##################### Start Customer  Same Task Functionality Starts #################### --> 
-          <div id="same_task_customer" style="display:none;">
+          <div id="same_task_customer" style="display:none; margin:auto;">
             <div class="std-sub-title">Same Task</div>
               <div class="row">
                 <div class="col-md-4">
@@ -785,7 +790,7 @@ function deleteCustomerDiffTagRows(indx){
 
 function createCustomerSameTag(indx){
 var next_indx = indx + 1;
-  ele =  ele =  '<div class="row tag" id="same_cust_tag_' + indx + '" > '+
+  ele =  '<div  style="margin:auto;" class="row tag" id="same_cust_tag_' + indx + '" > '+
               '<div class="row">'+
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
@@ -1049,7 +1054,7 @@ function addMoreDynamicRowsForSameTag(indx){
 //#################################Dynamic Code Type Rows For Customer Same Task##############################
 function createCusetomerSameTagForDynamic(indx){
 var next_indx = indx + 1;
-  ele =  '<div class="row tag" id="same_cust_tag_' + indx + '" > '+
+  ele =  '<div style="margin:auto;" class="row tag" id="same_cust_tag_' + indx + '" > '+
               '<div class="row">'+
               '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+

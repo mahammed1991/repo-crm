@@ -472,7 +472,7 @@ function displayCodeTypeTable(details){
 }
 
 function displayLineChartTable(details){
-  var rows = '<tr><th class="lbl">Weeks</th><th class="value">Leads Won</th><th class="value">Leads Submitted</th></tr>'
+  var rows = '<tr><th class="lbl">Weeks</th><th class="lbl">Leads Won</th><th class="lbl">Leads Submitted</th></tr>'
   var row = ''
 
   for(key in details){
@@ -570,7 +570,7 @@ function programViewReport(programs){
     rows += '<tr><td colspan="8" class="no-pad no-bor">' +
                 '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
                 '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
-                        '<td class="lbl relative">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                        '<td class="lbl relative" style="font-size:11px !important;">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
                         '<td class="value">'+ programs[key]['week_total'] +'</td>'+
                         '<td class="value">' + programs[key]['week_win'] + '</td>'+
                         '<td class="value">' + programs[key]['qtd_total'] +'</td>'+
