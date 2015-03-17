@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leads.models import Leads, Timezone, RegalixTeams, Location, Team, CodeType, Language
+from leads.models import Leads, Timezone, RegalixTeams, Location, Team, CodeType, Language, LeadForm, LeadFormAccessControl
 
 
 class LeadsAdmin(admin.ModelAdmin):
@@ -45,3 +45,16 @@ class LanguageAdmin(admin.ModelAdmin):
     list_display = ('language_name', 'is_active',)
 
 admin.site.register(Language, LanguageAdmin)
+
+
+class LeadFormAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active',)
+
+admin.site.register(LeadForm, LeadFormAdmin)
+
+
+class LeadFormAccessControlAdmin(admin.ModelAdmin):
+    list_display = ('lead_form', 'program_list', 'location_list',)
+    filter_horizontal = ('programs', 'target_location')
+
+admin.site.register(LeadFormAccessControl, LeadFormAccessControlAdmin)

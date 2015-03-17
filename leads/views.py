@@ -21,7 +21,9 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
-from leads.models import Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, AgencyDetails
+from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson,
+                          AgencyDetails, LeadFormAccessControl
+                          )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
                          is_manager, get_user_list_by_manager, get_manager_by_user)
@@ -44,14 +46,6 @@ def lead_form(request):
     """
     Lead Submission to Salesforce
     """
-
-    if request.user.groups.filter(name='AGENCY'):
-        return redirect('leads.views.agency_lead_form')
-    elif request.user.profile.team or request.user.profile.location:
-        if request.user.profile.team and request.user.profile.team.team_name in ['Newbie', 'Newbie Plus']:
-            return redirect('leads.views.bundle_lead_form')
-        if request.user.profile.location and request.user.profile.location.location_name in ['AU/NZ']:
-            return redirect('leads.views.bundle_lead_form')
 
     if request.method == 'POST':
         if settings.SFDC == 'STAGE':
@@ -131,6 +125,16 @@ def lead_form(request):
 
         return redirect(ret_url)
 
+    # Check The Rep Status and redirect
+    if request.user.groups.filter(name='AGENCY'):
+        return redirect('leads.views.agency_lead_form')
+    form_name = get_lead_form_for_rep(request.user)
+
+    if 'Bundle' in form_name:
+        return redirect('leads.views.bundle_lead_form')
+    elif 'Agency' in form_name:
+        return redirect('leads.views.agency_lead_form')
+
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data()
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
@@ -174,6 +178,7 @@ def get_common_salesforce_lead_data(post_data):
 @csrf_exempt
 def agency_lead_form(request):
     """ New Agency Lead Form """
+
     template_args = dict()
 
     # Get all location, teams codetypes
@@ -211,6 +216,14 @@ def agency_lead_form(request):
                     submit_customer_lead_different_tasks(request, agency_bundle)
 
             return redirect(ret_url)
+
+    # Check The Rep Status and redirect
+    form_name = get_lead_form_for_rep(request.user)
+
+    if 'Lead' in form_name:
+        return redirect('leads.views.lead_form')
+    elif 'Bundle' in form_name:
+        return redirect('leads.views.bundle_lead_form')
 
     return render(
         request,
@@ -839,10 +852,19 @@ def bundle_lead_form(request):
     Bundle Lead Form
     Combination of 3 Code Types
     """
+
     if request.method == 'POST':
 
         return_url = bundle_lead_to_salesforce(request)
         return redirect(return_url)
+
+    # Check the rep status and redirect
+    form_name = get_lead_form_for_rep(request.user)
+
+    if 'Lead' in form_name:
+        return redirect('leads.views.lead_form')
+    elif 'Agency' in form_name:
+        return redirect('leads.views.agency_lead_form')
 
     lead_args = get_basic_lead_data()
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
@@ -1922,3 +1944,24 @@ def split_fullname(full_name):
         last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ' '
 
     return first_name, last_name
+
+
+def get_lead_form_for_rep(user):
+    """ Check the user and redirect based on reps programs and locations """
+
+    l_form = 'Lead From'
+
+    if user.groups.filter(name='AGENCY'):
+        return 'Agency Form'
+
+    if user.profile.team and user.profile.location:
+        access_controls = LeadFormAccessControl.objects.all()
+        for control in access_controls:
+            teams = [t.team_name for t in control.programs.filter()]
+            locations = [l.location_name for l in control.target_location.filter()]
+            if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
+                return control.lead_form.name
+            else:
+                continue
+
+    return l_form
