@@ -184,6 +184,7 @@ class Location(models.Model):
     class Meta:
         db_table = 'locations'
         ordering = ['location_name']
+        verbose_name_plural = 'Target Location'
 
 
 class RegalixTeams(models.Model):
@@ -296,3 +297,43 @@ class ContactPerson(models.Model):
     class Meta:
         db_table = 'contact_person'
         verbose_name_plural = 'Contact Person'
+
+
+class LeadForm(models.Model):
+    """ Lead Form Names """
+    name = models.CharField(max_length=255, null=False)
+    is_active = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'lead_forms'
+        verbose_name_plural = 'Lead Froms'
+
+
+class LeadFormAccessControl(models.Model):
+    """ Lead Form Access Control """
+
+    lead_form = models.ForeignKey(LeadForm)
+    programs = models.ManyToManyField(Team)
+    target_location = models.ManyToManyField(Location)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def program_list(self):
+        return ", ".join(["%s" % (p.team_name) for p in self.programs.all()])
+
+    def location_list(self):
+        return ", ".join(["%s" % (l.location_name) for l in self.target_location.all()])
+
+    # def __str__(self):
+    #     return self.lead_form
+
+    class Meta:
+        db_table = 'lead_form_controls'
+        verbose_name_plural = 'Lead From Access Controls'
