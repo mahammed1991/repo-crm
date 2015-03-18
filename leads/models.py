@@ -321,6 +321,7 @@ class LeadFormAccessControl(models.Model):
     lead_form = models.ForeignKey(LeadForm)
     programs = models.ManyToManyField(Team)
     target_location = models.ManyToManyField(Location)
+    google_rep = models.ManyToManyField(User, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
@@ -330,6 +331,9 @@ class LeadFormAccessControl(models.Model):
 
     def location_list(self):
         return ", ".join(["%s" % (l.location_name) for l in self.target_location.all()])
+
+    def rep_list(self):
+        return ", ".join(["%s" % (r.get_full_name()) for r in self.google_rep.all()])
 
     # def __str__(self):
     #     return self.lead_form

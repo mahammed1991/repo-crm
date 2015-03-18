@@ -98,7 +98,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Media Files (User uploaded files)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = "/srv/uploads/"
+MEDIA_ROOT = "/srv/gtrack-uploads/"
 
 # URLs for login, post login redirect and error
 LOGIN_URL = '/auth/login'
@@ -274,3 +274,5 @@ SEPERVIEWUSER = ['schaturvedi@google.com', 'rwieker@google.com', 'winstonsingh@g
                  'yatharth@google.com', 'vaibhavgoyal@google.com', 'lornamellon@google.com', 'blasieli@google.com']
 
 SFDC = 'PRODUCTION'
+
+API_KEY = 'AIzaSyAOjKRNRkAWs_--R5rK8I8eImBXdzIKqrk'

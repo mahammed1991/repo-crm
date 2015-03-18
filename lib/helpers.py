@@ -31,6 +31,43 @@ def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=Fal
         print e
 
 
+# import smtplib
+# from os.path import basename
+# from email.mime.application import MIMEApplication
+# from email.mime.multipart import MIMEMultipart
+# from email.mime.text import MIMEText
+# from email.utils import COMMASPACE, formatdate
+
+
+# def send_welcome_mail(send_from, send_to, subject, body, files=list()):
+#     # msg = MIMEMultipart(
+#     #     From=send_from,
+#     #     To=COMMASPACE.join(send_to),
+#     #     # Date=formatdate(localtime=True),
+#     #     Subject=subject
+#     # )
+
+#     msg = MIMEMultipart()
+#     msg['Subject'] = subject
+#     msg['From'] = send_from
+#     msg['To'] = COMMASPACE.join(send_to)
+
+#     msg.attach(MIMEText(body.encode('ascii', 'ignore'), 'html'))
+
+#     for f in files:
+#         msg.attach(MIMEApplication(
+#             f.read(),
+#             f.name
+#         ))
+
+#     try:
+#         smtp = smtplib.SMTP('localhost')
+#         smtp.sendmail(send_from, send_to, msg.as_string())
+#         smtp.close()
+#     except Exception:
+#         print Exception
+
+
 def get_quarter_date_slots(input_date):
     # calculate quarter start date form given date
     q_st_day = 1

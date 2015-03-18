@@ -274,3 +274,5 @@ SEPERVIEWUSER = ['rajuk@regalix-inc.com', 'schaturvedi@google.com', 'rwieker@goo
                  'yatharth@google.com', 'vaibhavgoyal@google.com', 'lornamellon@google.com', 'blasieli@google.com']
 
 SFDC = 'STAGE'
+
+API_KEY = 'AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30'

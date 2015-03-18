@@ -46,7 +46,6 @@ def lead_form(request):
     """
     Lead Submission to Salesforce
     """
-
     if request.method == 'POST':
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -255,7 +254,7 @@ def submit_agency_same_tasks(request, agency_bundle):
         for indx in range(1, agency_same_tag_count + 1):
             # Get Basic/Common form field data
             indx = str(indx)
-            if settings.SFDC == 'STAGE':
+            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
             elif settings.SFDC == 'PRODUCTION':
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -289,7 +288,7 @@ def submit_agency_same_tasks(request, agency_bundle):
         for indx in range(1, agency_same_shop_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
+            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
             elif settings.SFDC == 'PRODUCTION':
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -340,7 +339,7 @@ def submit_agency_different_tasks(request, agency_bundle):
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE':
+        if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
             basic_data = get_common_sandbox_lead_data(request.POST)
         elif settings.SFDC == 'PRODUCTION':
             basic_data = get_common_salesforce_lead_data(request.POST)
@@ -409,7 +408,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         for indx in range(1, customer_same_tag_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
+            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
             elif settings.SFDC == 'PRODUCTION':
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -449,7 +448,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         for indx in range(1, customer_same_shop_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
+            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
             elif settings.SFDC == 'PRODUCTION':
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -505,7 +504,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE':
+        if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
             basic_data = get_common_sandbox_lead_data(request.POST)
         elif settings.SFDC == 'PRODUCTION':
             basic_data = get_common_salesforce_lead_data(request.POST)
@@ -896,7 +895,6 @@ def bundle_lead_to_salesforce(request):
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     lead_bundle = "%s-%s/%s/%s/%s" % (ctypes, randint(0, 99999), request.user.email.split('@')[0], datetime.utcnow().day, datetime.utcnow().month)
-    print lead_bundle
     if settings.SFDC == 'STAGE':
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
         oid = '00DZ000000MipUa'
@@ -1515,7 +1513,6 @@ def create_icalendar_file(advirtiser_details):
 
 
 def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
-
     mail_subject = "Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
 
     mail_body = get_template('leads/advertiser_mail/appointment_confirmation.html').render(
@@ -1532,7 +1529,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
     bcc = set()
 
     mail_to = set([
-        advertiser_details['email'],
+        str(advertiser_details['email']),
     ])
 
     mail_from = "implementation-support@google.com"
@@ -1543,6 +1540,8 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         appointment_file = File(ics_file)
         appointment_file.name = 'appointment.ics'
         attachments.append(appointment_file)
+
+    # send_welcome_mail(mail_from, list(mail_to), mail_subject, mail_body, attachments)
 
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
@@ -1875,19 +1874,19 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
     print sf_api_url
     try:
-        requests.post(url=sf_api_url, data=lead_data)
+        # requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details
         advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
         # Create Icallender (*.ics) file for send mail
         if advirtiser_details.get('appointment_date'):
-            create_icalendar_file(advirtiser_details)
+            # create_icalendar_file(advirtiser_details)
             is_attachment = True
-            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
         else:
             # Send Welcome email
             is_attachment = False
-            send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
     except Exception as e:
         print e
 
@@ -1915,7 +1914,10 @@ def get_advertiser_details(sf_api_url, lead_data):
     agency_details['appointment_date'] = lead_data.get(tag_leads.get('tag_datepick'))
     agency_details['customer_id'] = lead_data.get(basic_leads.get('cid'))
     agency_details['country'] = lead_data.get(basic_leads.get('country'))
-    agency_details['email'] = lead_data.get(basic_leads.get('aemail'))
+    if lead_data.get(basic_leads.get('aemail')):
+        agency_details['email'] = lead_data.get(basic_leads.get('aemail'))
+    else:
+        agency_details['email'] = lead_data.get(basic_leads.get('agency_email'))
     agency_details['role'] = lead_data.get(tag_leads.get('tag_primary_role'))
     agency_details['code_type'] = lead_data.get(tag_leads.get('ctype1'))
     agency_details['cid_std'] = agency_details.get('customer_id').rsplit("-", 1)[0] + '-xxxx'
@@ -1954,14 +1956,21 @@ def get_lead_form_for_rep(user):
     if user.groups.filter(name='AGENCY'):
         return 'Agency Form'
 
-    if user.profile.team and user.profile.location:
-        access_controls = LeadFormAccessControl.objects.all()
-        for control in access_controls:
-            teams = [t.team_name for t in control.programs.filter()]
-            locations = [l.location_name for l in control.target_location.filter()]
+    access_controls = LeadFormAccessControl.objects.all()
+    for control in access_controls:
+        teams = [t.team_name for t in control.programs.filter()]
+        locations = [l.location_name for l in control.target_location.filter()]
+        emails = [usr.email for usr in control.google_rep.filter()]
+
+        if user.profile.team and user.profile.location:
+            print user.profile.team.team_name, user.profile.location.location_name
             if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
                 return control.lead_form.name
-            else:
-                continue
+            elif user.email in emails:
+                return control.lead_form.name
+        elif user.email in emails:
+            return control.lead_form.name
+        else:
+            continue
 
     return l_form

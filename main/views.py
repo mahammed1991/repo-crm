@@ -335,7 +335,8 @@ def edit_profile_info(request):
 
         if next_url == 'home':
             return redirect('main.views.home')
-    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'managers': managers, 'regions': regions,
+    api_key = settings.API_KEY
+    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'managers': managers, 'regions': regions, 'api_key': api_key,
                                                            'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details})
 
 
@@ -375,7 +376,8 @@ def get_started(request):
                 full_name = ''
             user_details[str(user.email)] = str(full_name)
     # regalix_team = RegalixTeams.objects.filter(is_active=True)
-    return render(request, 'main/get_started.html', {'locations': locations, 'regions': regions,
+    api_key = settings.API_KEY
+    return render(request, 'main/get_started.html', {'locations': locations, 'regions': regions, 'api_key': api_key,
                                                      'all_locations': all_locations, 'region_locations': region_locations,
                                                      'teams': teams, 'managers': managers, 'user_details': user_details})
 
@@ -789,7 +791,7 @@ def notify_portal_feedback_activity(request, feedback):
         'dkarthik@regalix-inc.com',
         'tkhan@regalix.com',
         'ram@regalix-inc.com',
-        'rajuk@regalix-inc.com'
+        'rajuk@regalix-inc.com',
         'sprasad@regalix-inc.com'
     ])
 

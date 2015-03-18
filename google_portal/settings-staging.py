@@ -228,7 +228,7 @@ SITE_SRC_ROOT = BASE_DIR
 
 TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [('django.template.loaders.cached.Loader', template_loaders)]
 
-APP_URL = 'http://google.regalixdev.com'
+APP_URL = 'http://gtrack.regalixdev.com'
 
 
 try:
@@ -273,3 +273,5 @@ SEPERVIEWUSER = ['rajuk@regalix-inc.com', 'schaturvedi@google.com', 'rwieker@goo
                  'yatharth@google.com', 'vaibhavgoyal@google.com', 'lornamellon@google.com', 'blasieli@google.com']
 
 SFDC = 'STAGE'
+
+API_KEY = 'AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30'

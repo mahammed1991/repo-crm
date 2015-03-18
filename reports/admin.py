@@ -4,6 +4,7 @@ from reports.models import Region, QuarterTargetLeads
 
 class RegionAdmin(admin.ModelAdmin):
     list_display = ('name', 'location_list')
+    filter_horizontal = ('location',)
 
 admin.site.register(Region, RegionAdmin)
 

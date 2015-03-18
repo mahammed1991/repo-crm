@@ -54,7 +54,7 @@ admin.site.register(LeadForm, LeadFormAdmin)
 
 
 class LeadFormAccessControlAdmin(admin.ModelAdmin):
-    list_display = ('lead_form', 'program_list', 'location_list',)
-    filter_horizontal = ('programs', 'target_location')
+    list_display = ('lead_form', 'program_list', 'location_list', 'rep_list',)
+    filter_horizontal = ('programs', 'target_location', 'google_rep')
 
 admin.site.register(LeadFormAccessControl, LeadFormAccessControlAdmin)

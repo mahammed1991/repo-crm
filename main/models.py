@@ -232,3 +232,10 @@ class PortalFeedback(models.Model):
 
     class Meta:
         db_table = 'portal_feedback'
+
+
+def user_unicode_patch(self):
+    return '%s' % (self.email)
+
+User.__unicode__ = user_unicode_patch
+User._meta.get_field('email')._unique = True
