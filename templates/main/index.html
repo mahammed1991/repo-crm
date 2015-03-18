@@ -506,6 +506,14 @@ function portalFeedbackValidation(frm){
     
     }
 
+$(".fa-times-circle").click(function(){
+    $('#feedbackTitle').val('');
+    $('#feedbackType').prop('selectedIndex', 0);
+    $('#comments').val('');
+    $('#filename').val('');
+    $('.close').trigger('click');
+});
+
 
 $('.close').click(function(){
   $('#feedbackModal').hide()
