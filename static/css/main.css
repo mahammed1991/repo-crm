@@ -1440,7 +1440,7 @@ form label {
 	margin-left:15px !important;
 }
 #feedbackModal .form-control {
-	padding:20px 10px;
+	/*padding:20px 10px;*/
 	margin-bottom:15px;
 }
 #feedbackModal select.form-control {
@@ -2100,6 +2100,11 @@ i.fa.fa-comment {
 .comments-container {
 	/*position:relative;*/
 }
+.comments-container2{
+	position: relative !important;
+
+}
+
 .status-table .comments-full {
 	position:absolute;
 	background: #fff9d5;
@@ -3095,7 +3100,7 @@ h2,  h3 {
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
     border-top: 1px solid #ddd;
     line-height: 1.42857;
-    padding: 1% !important;
+   padding: 8px 6px !important;
     vertical-align: top;
 }
 @media(max-width:696px){
