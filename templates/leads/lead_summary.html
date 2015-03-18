@@ -9,7 +9,6 @@
 {% endblock title %}
 
 {% block main_css %}
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
     <style type="text/css">
     #ldap-user-info {
         margin-top: 0 !important;
@@ -174,7 +173,7 @@
                       <td class="hidden-xs hidden-sm">{{ l.date_of_installation |date:"m/d/Y" }}</td>
                       
                       {% if l.regalix_comment  %}
-                          <td class="hidden-xs hidden-sm comments-container"><p>{{ l.regalix_comment | truncatechars:100 }}</p>
+                          <td class="hidden-xs hidden-sm comments-container comments-container2"><p>{{ l.regalix_comment | truncatechars:100 }}</p>
                             <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment}}</p> </td>
                       {% else %}
                           <td class="hidden-xs hidden-sm comments-container"><p></p>
@@ -475,7 +474,7 @@ function setLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].appointment_time + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_of_installation +'</td>'
     
-      commnet = '<td class="hidden-xs hidden-sm comments-container"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
+      commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
         
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'

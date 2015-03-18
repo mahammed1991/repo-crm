@@ -6,9 +6,6 @@
 Reports
 {% endblock title %}
 
-{% block main_css %}
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
-{% endblock main_css %}
 {% block content %}
 <div class="wrapper">
 <!-- content-region -->
@@ -16,7 +13,7 @@ Reports
   <div class="container-fluid">
   <h1>Reports</h1>
   <div class="row text-center report-category">
-      <div class="col-md-3 centered">
+      <div class="col-md-3 centered select-style">
         <select class="form-control bgicon" id="filter_report_type">
           <option value="">Choose Report Type</option>
           <option value="leadreport_individualRep">Individual Rep</option>
