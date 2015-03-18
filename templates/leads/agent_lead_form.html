@@ -7,11 +7,7 @@
 {% endblock title %}
 
 {% block main_css %}
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
   <style type="text/css">
-  .tag {
-
-  }
   </style>
 {% endblock main_css %}
 
@@ -40,7 +36,7 @@
 
               <input type="hidden" name="customer_same_shop_count" id="customer_same_shop_count" value="0">
               <input type="hidden" name="customer_diff_shop_count" id="customer_diff_shop_count" value="0">
-              <input type="hidden" name="rep_location" id="rep_location" value="">
+              <input type="hidden" name="rep_location" id="rep_location" value="{{user.profile.rep_location}}">
               <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
                 <option value="Under 100">Under 100</option>
               </select>
@@ -288,7 +284,6 @@
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script src="{% static 'js/agent_lead_form.js' %}"></script>
-<script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
 
