@@ -256,7 +256,7 @@ def submit_agency_same_tasks(request, agency_bundle):
             indx = str(indx)
             if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
-            elif settings.SFDC == 'PRODUCTION':
+            else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = ret_url
             basic_data['errorURL'] = error_url
@@ -290,7 +290,7 @@ def submit_agency_same_tasks(request, agency_bundle):
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
-            elif settings.SFDC == 'PRODUCTION':
+            else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
 
             basic_data['retURL'] = ret_url
@@ -341,7 +341,7 @@ def submit_agency_different_tasks(request, agency_bundle):
         # Get Basic/Common form field data
         if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
             basic_data = get_common_sandbox_lead_data(request.POST)
-        elif settings.SFDC == 'PRODUCTION':
+        else:
             basic_data = get_common_salesforce_lead_data(request.POST)
         basic_data['retURL'] = ret_url
         basic_data['errorURL'] = error_url
@@ -410,7 +410,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
-            elif settings.SFDC == 'PRODUCTION':
+            else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = ret_url
             basic_data['errorURL'] = error_url
@@ -450,7 +450,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
                 basic_data = get_common_sandbox_lead_data(request.POST)
-            elif settings.SFDC == 'PRODUCTION':
+            else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = ret_url
             basic_data['errorURL'] = error_url
@@ -506,7 +506,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
         # Get Basic/Common form field data
         if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
             basic_data = get_common_sandbox_lead_data(request.POST)
-        elif settings.SFDC == 'PRODUCTION':
+        else:
             basic_data = get_common_salesforce_lead_data(request.POST)
         basic_data['retURL'] = ret_url
         basic_data['errorURL'] = error_url
