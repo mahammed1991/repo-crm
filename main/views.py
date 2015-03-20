@@ -60,7 +60,8 @@ def main_home(request):
     lead_status = settings.LEAD_STATUS
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        start_date = first_day_of_month(datetime.utcnow())
         end_date = datetime.utcnow()
         lead_status_dict = {'total_leads': 0,
                             'implemented': 0,
@@ -865,7 +866,7 @@ def master_data_upload(request):
 @csrf_exempt
 def migrate_user_data(request):
     """ Update leads to server Database from uploaded file """
-    
+
     excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
     excel_file = request.POST['file']
     excel_file_path = excel_file_save_path + excel_file
@@ -888,10 +889,10 @@ def migrate_user_data(request):
         google_rep_email = rep_email + '@google.com'
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'Google Manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'Program')).value
-        #rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
-        #r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
-        #market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
-        #rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
+        # rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
+        # r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
+        # market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
+        # rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
         google_manager_email = str(google_manager) + '@google.com'
         region = sheet.cell(r_i, get_col_index(sheet, 'Region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'Country')).value
@@ -904,7 +905,7 @@ def migrate_user_data(request):
                 program = Team.objects.get(team_name=program)
                 user_details.team_id = program.id
             except ObjectDoesNotExist:
-                program = Team(team_name=program)
+                program = Team(team_name=program, is_active=False)
                 program.save()
                 user_details.team_id = program.id
 
@@ -920,7 +921,7 @@ def migrate_user_data(request):
                 location = Location.objects.get(location_name=country)
                 user_details.location_id = location.id
             except ObjectDoesNotExist:
-                location = Location(location_name=country)
+                location = Location(location_name=country, is_active=False)
                 location.save()
                 user_details.location_id = location.id
 
@@ -931,7 +932,7 @@ def migrate_user_data(request):
 
     return redirect('main.views.master_data_upload')
 
- 
+
 def get_col_index(sheet, col_name):
     for col_index in range(sheet.ncols):
         col_val = sheet.cell(0, col_index).value
