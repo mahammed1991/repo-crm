@@ -31,7 +31,7 @@ from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
-from lib.helpers import date_range_by_quarter, get_previous_month_start_end_days
+from lib.helpers import date_range_by_quarter, get_previous_month_start_end_days, first_day_of_month
 from django.db.models import Q
 from random import randint
 from lib.sf_lead_ids import SalesforceLeads
@@ -1557,10 +1557,11 @@ def get_lead_summary(request, lid=None):
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
         # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        start_date = first_day_of_month(datetime.utcnow())
         end_date = datetime.utcnow()
         leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)
-
+        print len(leads)
         lead_status_dict = {'total_leads': 0,
                             'implemented': 0,
                             'in_progress': 0,
@@ -1593,7 +1594,7 @@ def get_lead_summary(request, lid=None):
             leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
-
+    print "Return to Templates "
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
