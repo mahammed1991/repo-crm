@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from requests import request as request_call
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
@@ -32,7 +32,7 @@ from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.utils.html import strip_tags
-from reports.report_services import ReportService
+from reports.report_services import ReportService, DownloadLeads
 from reports.models import Region
 
 
@@ -884,53 +884,89 @@ def migrate_user_data(request):
                 full_name = ''
             user_dict[str(user.email)] = str(full_name)
 
+    number_of_records = sheet.nrows - 1
+    number_of_saved_records = 0
+    number_of_unsaved_records = 0
+    failed_rows = list()
     for r_i in range(1, sheet.nrows):
+
         rep_email = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager ldap (Google Rep)')).value
         google_rep_email = rep_email + '@google.com'
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'Google Manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'Program')).value
         # rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
-        # r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
+        r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
         # market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
         # rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
         google_manager_email = str(google_manager) + '@google.com'
         region = sheet.cell(r_i, get_col_index(sheet, 'Region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'Country')).value
-        try:
-            user = User.objects.get(email=google_rep_email)
-            user_details = UserDetails.objects.get(user_id=user.id)
-            user_details.user_manager_email = google_manager_email
-            user_details.user_manager_name = user_dict.get(google_manager_email, '')
+        if valid_string(region) and valid_string(program) and valid_string(country):
             try:
-                program = Team.objects.get(team_name=program)
-                user_details.team_id = program.id
+                user = User.objects.get(email=google_rep_email)
+                user_details = UserDetails.objects.get(user_id=user.id)
+                user_details.user_manager_email = google_manager_email
+                user_details.user_manager_name = user_dict.get(google_manager_email, '')
+                try:
+                    program = Team.objects.get(team_name=program)
+                    user_details.team_id = program.id
+                except ObjectDoesNotExist:
+                    program = Team(team_name=program, is_active=False)
+                    program.save()
+                    user_details.team_id = program.id
+
+                try:
+                    region = Region.objects.get(name=region)
+                    user_details.region_id = region.id
+                except ObjectDoesNotExist:
+                    region = Region(name=region)
+                    region.save()
+                    user_details.region_id = region.id
+
+                try:
+                    location = Location.objects.get(location_name=country)
+                    user_details.location_id = location.id
+                except ObjectDoesNotExist:
+                    location = Location(location_name=country, is_active=False)
+                    location.save()
+                    user_details.location_id = location.id
+
+                user_details.save()
+                number_of_saved_records = number_of_saved_records + 1
             except ObjectDoesNotExist:
-                program = Team(team_name=program, is_active=False)
-                program.save()
-                user_details.team_id = program.id
+                continue
+        else:
+            number_of_unsaved_records = number_of_unsaved_records + 1
+            failed_rec = {}
+            failed_rec['Google Account Manager ldap (Google Rep)'] = rep_email
+            failed_rec['Google Manager'] = google_manager
+            failed_rec['r.quarter'] = r_quarter
+            failed_rec['Program'] = program
+            failed_rec['Country'] = country
+            failed_rec['Region'] = region
+            failed_rows.append(failed_rec)
 
-            try:
-                region = Region.objects.get(name=region)
-                user_details.region_id = region.id
-            except ObjectDoesNotExist:
-                region = Region(name=region)
-                region.save()
-                user_details.region_id = region.id
+    path = "/tmp/Unsaved_Records.csv"
+    if os.path.exists(path):
+        os.remove(path)
 
-            try:
-                location = Location.objects.get(location_name=country)
-                user_details.location_id = location.id
-            except ObjectDoesNotExist:
-                location = Location(location_name=country, is_active=False)
-                location.save()
-                user_details.location_id = location.id
+    if len(failed_rows) > 0:
+        filename = "Unsaved_Records"
+        path = "/tmp/%s.csv" % (filename)
+        DownloadLeads.conver_to_csv(path, failed_rows, failed_rows[0].keys())
 
-            user_details.save()
+    template_args = {'number_of_saved_records': number_of_saved_records if number_of_saved_records else 0,
+                     'number_of_unsaved_records': number_of_unsaved_records if number_of_unsaved_records else 0,
+                     'total_record': number_of_records}
 
-        except ObjectDoesNotExist:
-            continue
+    return render(request, 'main/master_upload.html', {'template_args': template_args,
+                                                       'result': True})
 
-    return redirect('main.views.master_data_upload')
+
+def download_failed_records(request):
+    path = "/tmp/Unsaved_Records.csv"
+    response = DownloadLeads.get_downloaded_file_response(path)
+    return response
 
 
 def get_col_index(sheet, col_name):
@@ -938,3 +974,12 @@ def get_col_index(sheet, col_name):
         col_val = sheet.cell(0, col_index).value
         if col_name == col_val:
             return col_index
+
+
+def valid_string(col_val):
+    if type(col_val) in [int, float]:
+        return False
+    elif not col_val:
+        return False
+    else:
+        return True

@@ -74,6 +74,9 @@
             <ul class="dropdown-menu" role="menu">
               <li><a href="{% url 'main.views.edit_profile_info' %}">My Account</a></li>
               <li><a href="{% url 'representatives.views.plan_schedule' %}" >Manage Appointment</a></li>
+              {% if request.user.is_superuser %}
+                <li><a href="{% url 'main.views.master_data_upload' %}" >Master Data Upload</a></li>
+              {% endif %}
               <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
             </ul>
           </li>

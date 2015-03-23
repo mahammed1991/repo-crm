@@ -25,4 +25,5 @@ urlpatterns = patterns(
     url(r'^top-30-cms/$', views.top_30_cms),
     url(r'^user/master-data$', views.master_data_upload),
     url(r'^user/migrate-user-data$', views.migrate_user_data),
+    url(r'^user/failed-records$', views.download_failed_records),
 )
