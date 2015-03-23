@@ -214,9 +214,12 @@ class ReportService(object):
             week_on_week_trends[index] = {'leads_won': 0}
             start_date, end_date = weeks_in_qtd[index - 1]
             #leads = Leads.objects.filter(id__in=lead_ids, created_date__gte=start_date, created_date__lte=end_date)
-
-            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
-                                         created_date__gte=start_date, created_date__lte=end_date)
+            if teams and countries:
+                leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                             created_date__gte=start_date, created_date__lte=end_date)
+            else:
+                leads = Leads.objects.filter(type_1__in=code_types,
+                                             created_date__gte=start_date, created_date__lte=end_date)
             for lead in leads:
                 if lead.lead_status == 'Implemented':
                     week_on_week_trends[index]['leads_won'] += 1

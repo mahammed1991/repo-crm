@@ -6,9 +6,11 @@
 Upload Leads
 {% endblock title %}
 
-
 {% block content %}
-<div id="content" class="clearfix">
+<div class="row">
+<div class="col-md-12">
+<div id="content" class="clearfix custom-w">
+    {% if not result %}
     <div class="main_content">
         <fieldset style="border:1px solid #d9d9d9;">
             <legend class="legend">
@@ -16,12 +18,14 @@ Upload Leads
             </legend>
             <div id="class_content" >
                 <div id="datacontent">
+                    <div class="col-md-12">
                     <form method="post" enctype="multipart/form-data" name='show-form'>
                         {% csrf_token %}
-                        <p>Select Excel: <input type="file" name="file" id="master_data" />
+                        <p >Select Excel: <input type="file" name="file" id="master_data" style="display: inline;" />
                         <input id="show" name="Show" type="submit" value="Show" /></p>
                         <p style="font-family:Times New Roman;font-size:12px;color:red">{{error}}</p>
                     </form>
+                    </div>
                 </div>
                 {% if excel_data %}
                     <div id="div1">
@@ -30,8 +34,8 @@ Upload Leads
                                     {% csrf_token %}
                                     <table width="100%" style="border-collapse: collapse">                
                                         <tr>
-                                            <td>
-                                                <input type="submit" value="Save" />
+                                            <td style="padding: 1%;">
+                                                <input type="submit" value="Save" style="margin: 1% 1% 1% 1%;" />
                                                 <input type="hidden" name='file' value='{{ excel_file }}' />
                                                 <input type="button" value="Cancel" onclick="window.location.href='{% url 'main.views.master_data_upload'%}'">
                                             </td>
@@ -39,7 +43,7 @@ Upload Leads
                                     </table>
                                 </form>
                             </div>
-                        <div id="div2" style="height:390px;width:900px;overflow:auto;" >
+                        <div id="div2" >
                             <table id="xlsxTable" width="100%" cellpadding="3" cellspacing="0" border="1">
                                 {% for row in excel_data %}
                                     <tr align="center">
@@ -61,6 +65,21 @@ Upload Leads
             </div>
         </fieldset>
     </div>
+    {% else  %}
+    <div id="content" class="clearfix">
+        <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
+            Totally you are trying to upload {{template_args.total_record}} records...<br /><br />
+            {{template_args.number_of_saved_records}} records successfully saved.<br /><br />
+            Please click here to upload the data again <a href="{% url 'main.views.master_data_upload' %}"><b>Upload Here</b></a><br /><br />
+            {% if number_of_unsaved_records > 0 %}
+            {{template_args.number_of_unsaved_records}} records not saved.<br /><br />
+             Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
+             {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+</div>
 </div>
 {% endblock content %}
 

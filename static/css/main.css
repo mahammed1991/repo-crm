@@ -3114,3 +3114,17 @@ h2,  h3 {
 	/* margin-right: 20px; */
 }
 }
+
+.custom-w{
+
+width: 70%;
+margin: auto;
+    }
+@media(max-width:672px){
+.custom-w{
+
+width: 100%;
+margin: auto;
+    }
+
+} 
