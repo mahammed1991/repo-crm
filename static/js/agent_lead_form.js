@@ -136,7 +136,7 @@ function setLocations(newLocations){
       validateFiled(agencyNameElem);
 
       // Advertiser Email Validation
-      pocElem = document.getElementById('poc');
+      pocElem = document.getElementById('agency_poc');
       validateFiled(pocElem);
       
       // Advertiser Email Validation

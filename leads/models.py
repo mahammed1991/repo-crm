@@ -312,7 +312,7 @@ class LeadForm(models.Model):
 
     class Meta:
         db_table = 'lead_forms'
-        verbose_name_plural = 'Lead Froms'
+        verbose_name_plural = 'Lead Forms'
 
 
 class LeadFormAccessControl(models.Model):
@@ -340,4 +340,4 @@ class LeadFormAccessControl(models.Model):
 
     class Meta:
         db_table = 'lead_form_controls'
-        verbose_name_plural = 'Lead From Access Controls'
+        verbose_name_plural = 'Lead Form Access Controls'

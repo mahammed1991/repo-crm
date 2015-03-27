@@ -4,7 +4,7 @@ from main import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.home),
-    url(r'^home$', views.main_home),
+    url(r'^home/$', views.main_home),
     url(r'^edit-profile-info/$', views.edit_profile_info),
     url(r'^team/$', views.team),
     url(r'^feedback/create/$', views.create_feedback),

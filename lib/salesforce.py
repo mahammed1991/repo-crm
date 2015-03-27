@@ -7,6 +7,9 @@ from simple_salesforce import Salesforce
 
 def connect_salesforce():
     """ Connect to Salesforce """
-
-    sf = Salesforce(username='tkhan@regalix-inc.com.regalixdev', password='Regalixgoogle123', security_token='mwnt1pnuUdRrtCVx0YpgRW5p', sandbox=True)
-    return sf
+    try:
+        sf = Salesforce(username='rajuk@regalix-inc.com', password='raju@salesforce123', security_token='ZO34D4x7gHWFygngpCOu08gt', sandbox=True)
+        return sf
+    except Exception, e:
+        print Exception, e
+        return None
