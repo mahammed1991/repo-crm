@@ -1879,7 +1879,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
     print sf_api_url
     try:
-        # requests.post(url=sf_api_url, data=lead_data)
+        requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details
         advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
