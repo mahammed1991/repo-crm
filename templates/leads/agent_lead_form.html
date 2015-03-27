@@ -159,7 +159,7 @@
                   <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
                 </div>
                 <div class="col-md-3">
-                  <input type="text" class="form-control" id="poc" name="poc" placeholder="Point of Contact">
+                  <input type="text" class="form-control" id="agency_poc" name="agency_poc" placeholder="Point of Contact">
                 </div>
                 <div class="col-md-3">
                   <input type="text" class="form-control" id="agency_email" name="agency_email" placeholder="Email">
@@ -1199,6 +1199,9 @@ function createCustomerDiffDynamicFields(indx){
 
 //#################################Dynamic Code Type Rows For Agency Diff Task##############################
 
+$("#contact_person_name").change(function(){
+  $("#agency_poc").val($(this).val());
+});
 
 </script>
 {% endblock main_js %}
