@@ -422,6 +422,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
                 basic_data['first_name'] = first_name
                 basic_data['last_name'] = last_name
             tag_data = basic_data
+            tag_data[basic_leads['agency_poc']] = ''
             if int(indx) == 1:
                 tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
 
@@ -462,6 +463,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
                 basic_data['first_name'] = first_name
                 basic_data['last_name'] = last_name
             shop_data = basic_data
+            shop_data[basic_leads['agency_poc']] = ''
             # if int(indx) == 1:
             #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
 
@@ -518,6 +520,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             basic_data['first_name'] = first_name
             basic_data['last_name'] = last_name
         tag_data = basic_data
+        tag_data[basic_leads['agency_poc']] = ''
         ctype = request.POST.get('diff_cust_type' + indx)
 
         if ctype != 'Google Shopping Setup':
@@ -542,6 +545,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             submit_lead_to_sfdc(sf_api_url, tag_data)
         elif ctype == 'Google Shopping Setup':
             shop_data = basic_data
+            shop_data[basic_leads['agency_poc']] = ''
             # if int(indx) == 1:
             #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
 
