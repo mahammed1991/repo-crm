@@ -2,12 +2,15 @@ import kronos
 from reports.report_services import ReportService
 from django.conf import settings
 from datetime import datetime
-from lib.helpers import get_quarter_date_slots
+from lib.helpers import get_quarter_date_slots, first_day_of_month, last_day_of_month
 from reports.models import LeadSummaryReports
 import logging
-from lib.salesforce import connect_salesforce
+from lib.salesforce import SalesforceApi
 from leads.models import Leads
 from django.core.exceptions import ObjectDoesNotExist
+from lib.helpers import get_week_start_end_days
+import time
+from representatives.models import GoogeRepresentatives, RegalixRepresentatives
 
 logging.basicConfig(filename='/tmp/cronjob.log',
                     filemode='a',
@@ -16,112 +19,157 @@ logging.basicConfig(filename='/tmp/cronjob.log',
                     level=logging.DEBUG)
 
 
-@kronos.register('0 * * * *')
-def get_current_quarter_summary():
-    logging.info("Initializing kronos")
-    # Get all teams
-    teams = ReportService.get_all_teams()
+# @kronos.register('0 * * * *')
+# def get_current_quarter_summary():
+#     logging.info("Initializing kronos")
+#     # Get all teams
+#     teams = ReportService.get_all_teams()
 
-    # get all code types
-    code_types = ReportService.get_all_code_type()
+#     # get all code types
+#     code_types = ReportService.get_all_code_type()
 
-    # get all lead status
-    lead_status = settings.LEAD_STATUS
-    lead_status.extend(['Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Rework Required', 'Appointment Set (GS)'])
+#     # get all lead status
+#     lead_status = settings.LEAD_STATUS
+#     lead_status.extend(['Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Rework Required', 'Appointment Set (GS)'])
 
-    # get current quarter
-    dt = datetime.now()
-    start_date, end_date = get_quarter_date_slots(dt)
-    logging.info("Get Current Quarter Report from %s to %s" % (datetime.strftime(start_date, "%d %b %Y"), datetime.strftime(end_date, "%d %b %Y")))
+#     # get current quarter
+#     dt = datetime.now()
+#     start_date, end_date = get_quarter_date_slots(dt)
+#     logging.info("Get Current Quarter Report from %s to %s" % (datetime.strftime(start_date, "%d %b %Y"), datetime.strftime(end_date, "%d %b %Y")))
 
-    # get all locations
-    locations = ReportService.get_all_locations()
-    reports = ReportService.get_summary_by_code_types_and_status('all', code_types, lead_status,
-                                                                 start_date, end_date, teams, locations)
-    code_type = reports.keys()
-    for k in code_type:
-        current_quarter = LeadSummaryReports.objects.filter(code_type=k)
-        if current_quarter:
-            current_quarter.code_type = k
-            current_quarter.total_leads = reports[k]['total_leads']
-            current_quarter.win = reports[k]['wins']
-            current_quarter.implemented = reports[k]['Implemented']
-            if 'In Queue' in reports[k]:
-                current_quarter.in_queue = reports[k]['In Queue'] + reports[k].get('Appointment Set (GS)', 0)
-            else:
-                current_quarter.in_queue = 0
+#     # get all locations
+#     locations = ReportService.get_all_locations()
+#     reports = ReportService.get_summary_by_code_types_and_status('all', code_types, lead_status,
+#                                                                  start_date, end_date, teams, locations)
+#     code_type = reports.keys()
+#     for k in code_type:
+#         current_quarter = LeadSummaryReports.objects.filter(code_type=k)
+#         if current_quarter:
+#             current_quarter.code_type = k
+#             current_quarter.total_leads = reports[k]['total_leads']
+#             current_quarter.win = reports[k]['wins']
+#             current_quarter.implemented = reports[k]['Implemented']
+#             if 'In Queue' in reports[k]:
+#                 current_quarter.in_queue = reports[k]['In Queue'] + reports[k].get('Appointment Set (GS)', 0)
+#             else:
+#                 current_quarter.in_queue = 0
 
-            if 'In Progress' in reports[k]:
-                current_quarter.in_progress = reports[k]['In Progress'] + reports[k].get('Pending QC - DEAD LEAD', 0) \
-                    + reports[k].get('Pending QC - WIN', 0) + reports[k].get('Rework Required', 0)
-            else:
-                current_quarter.in_progress = 0
-            current_quarter.tat_implemented = reports[k]['tat_implemented']
-            current_quarter.tat_first_contacted = reports[k]['tat_first_contacted']
-            current_quarter.start_date = start_date
-            current_quarter.end_date = end_date
-            current_quarter.update()
-        else:
-            current_quarter = LeadSummaryReports()
-            current_quarter.code_type = k
-            current_quarter.total_leads = reports[k]['total_leads']
-            current_quarter.win = reports[k]['wins']
-            current_quarter.implemented = reports[k]['Implemented']
-            if 'In Queue' in reports[k]:
-                current_quarter.in_queue = reports[k]['In Queue'] + reports[k].get('Appointment Set (GS)', 0)
-            else:
-                current_quarter.in_queue = 0
+#             if 'In Progress' in reports[k]:
+#                 current_quarter.in_progress = reports[k]['In Progress'] + reports[k].get('Pending QC - DEAD LEAD', 0) \
+#                     + reports[k].get('Pending QC - WIN', 0) + reports[k].get('Rework Required', 0)
+#             else:
+#                 current_quarter.in_progress = 0
+#             current_quarter.tat_implemented = reports[k]['tat_implemented']
+#             current_quarter.tat_first_contacted = reports[k]['tat_first_contacted']
+#             current_quarter.start_date = start_date
+#             current_quarter.end_date = end_date
+#             current_quarter.update()
+#         else:
+#             current_quarter = LeadSummaryReports()
+#             current_quarter.code_type = k
+#             current_quarter.total_leads = reports[k]['total_leads']
+#             current_quarter.win = reports[k]['wins']
+#             current_quarter.implemented = reports[k]['Implemented']
+#             if 'In Queue' in reports[k]:
+#                 current_quarter.in_queue = reports[k]['In Queue'] + reports[k].get('Appointment Set (GS)', 0)
+#             else:
+#                 current_quarter.in_queue = 0
 
-            if 'In Progress' in reports[k]:
-                current_quarter.in_progress = reports[k]['In Progress'] + reports[k].get('Pending QC - DEAD LEAD', 0) \
-                    + reports[k].get('Pending QC - WIN', 0) + reports[k].get('Rework Required', 0)
-            else:
-                current_quarter.in_progress = 0
-            current_quarter.tat_implemented = reports[k]['tat_implemented']
-            current_quarter.tat_first_contacted = reports[k]['tat_first_contacted']
-            current_quarter.start_date = start_date
-            current_quarter.end_date = end_date
-            current_quarter.save()
-    logging.info("Cron job done")
+#             if 'In Progress' in reports[k]:
+#                 current_quarter.in_progress = reports[k]['In Progress'] + reports[k].get('Pending QC - DEAD LEAD', 0) \
+#                     + reports[k].get('Pending QC - WIN', 0) + reports[k].get('Rework Required', 0)
+#             else:
+#                 current_quarter.in_progress = 0
+#             current_quarter.tat_implemented = reports[k]['tat_implemented']
+#             current_quarter.tat_first_contacted = reports[k]['tat_first_contacted']
+#             current_quarter.start_date = start_date
+#             current_quarter.end_date = end_date
+#             current_quarter.save()
+#     logging.info("Cron job done")
 
 
-@kronos.register('0 * * * *')
-def get_leads_from_sfdc():
+@kronos.register('15 * * * *')
+def current_day_leads():
     """ Get Leads from SFDC """
-    """
+    current_day = datetime.utcnow()
+    logging.info("Current Day Leads %s " % (current_day))
+    get_leads_from_sfdc(current_day, current_day)
+
+
+@kronos.register('0 * * * *')
+def current_week_leads():
+    """ Get Leads from SFDC """
+    week = int(time.strftime("%W")) + 1
+    year = int(time.strftime("%Y"))
+    start_date, end_date = get_week_start_end_days(year, week)
+    logging.info("Get Week leads by %s to %s " % (start_date, end_date))
+    get_leads_from_sfdc(start_date, end_date)
+
+
+@kronos.register('0 6 * * *')
+def current_month_leads():
+    """ Get Leads from SFDC """
+
+    start_date = first_day_of_month(datetime.utcnow())
+    end_date = last_day_of_month(datetime.utcnow())
+    logging.info("Current Month Leads by from %s to %s" % (start_date, end_date))
+    get_leads_from_sfdc(start_date, end_date)
+
+
+@kronos.register('0 7 * * *')
+def current_quarter_leads():
+    """ Get Leads from SFDC """
+
+    start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    logging.info("Current Quarted Leads from %s to %s" % (start_date, end_date))
+    get_leads_from_sfdc(start_date, end_date)
+
+
+def get_leads_from_sfdc(start_date, end_date):
+    """ Get Leads from SFDC """
     # get SFDC Connection
-    sf = connect_salesforce()
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
 
-    lead_fields = ['Id', 'LastName', 'FirstName', 'Name', 'Company', 'Phone', 'Email', 'Description',
-                   'Status', 'OwnerId', 'CreatedDate', 'LastModifiedDate', 'gm_email__c', 'X1st_Contact_on__c',
-                   'Customer_ID__c', 'First_Name_optional__c', 'Last_Name_optional__c', 'Phone_optional__c',
-                   'Email_optional__c', 'Code__c', 'URL__c', 'Code_Type__c', 'Regalix_Comment__c', 'Rescheduled_Appointments__c',
-                   'Time_Zone__c', 'Google_Comment__c', 'Code_2__c', 'Code_3__c', 'Code_4__c', 'Code_5__c',
-                   'URL_2__c', 'URL_3__c', 'URL_4__c', 'URL_5__c', 'Comment_2__c', 'Comment_3__c', 'Comment_4__c'
-                   'Comment_5__c', 'Type_2__c', 'Type_3__c', 'Type_4__c', 'Type_5__c', 'Appointment_Date__c', 'Lead_Sub_Status__c',
-                   'qbdialer__Dials__c', 'Comment_1__c', 'E_commerce__c', 'Location__c', 'Primary_Contact_Email__c', 'Google_Rep__c',
-                   'Date_of_installation__c', 'Team__c', 'Type_Of_Installation__c', 'Lead_Implemented_Date_Time__c']
-
-    select_items = ", ".join(lead_fields)
-    where_clause = "where CreatedDate >= '2015-03-01' and CreatedDate <= '2015-03-25'"
+    logging.info("Connect Successfully")
+    start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+    end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+    select_items = settings.SFDC_FIELDS
+    where_clause = "WHERE CreatedDate >= %s AND CreatedDate <= %s" % (start_date, end_date)
     sql_query = "select %s from Lead %s" % (select_items, where_clause)
-    # get_leads = sf.query(sql_query)
-    get_leads = sf.query("select Id, LastName, FirstName, Name, Company, Phone, Email, Description, Status, CreatedDate,\
-        gm_email__c, Customer_ID__c, First_Name_optional__c, Last_Name_optional__c, Phone_optional__c, Email_optional__c,\
-        Code__c, URL__c, Code_Type__c, Regalix_Comment__c, Google_Comment__c, Code_2__c, Code_3__c, Code_4__c, Code_5__c,\
-        URL_2__c, URL_3__c, URL_4__c, URL_5__c, Comment_2__c, Comment_3__c, Comment_4__c, Comment_5__c, Type_2__c, Type_3__c,\
-        Type_4__c, Type_5__c, Appointment_Date__c, qbdialer__Dials__c, Comment_1__c, E_commerce__c, Location__c, X1st_Contact_on__c,\
-        Primary_Contact_Email__c, Google_Rep__c, Date_of_installation__c, Team__c, Type_Of_Installation__c, Lead_Implemented_Date_Time__c\
-        Rescheduled_Appointments__c, Time_Zone__c, Lead_Sub_Status__c from Lead")
+    try:
+        all_leads = sf.query_all(sql_query)
+    except Exception as e:
+        print e
+        logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+        logging.info("%s" % (e))
 
-    for rec in get_leads['records']:
+    logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+    create_or_update_leads(all_leads['records'])
+
+
+def create_or_update_leads(records):
+    """ Create a new leads or update existing lead """
+    logging.info("Start saving leads to our DB")
+    total_leads = 0
+    new_lead_saved = 0
+    new_lead_failed = 0
+
+    exist_lead_saved = 0
+    exist_lead_failed = 0
+
+    is_new_lead = True
+    for rec in records:
+        total_leads += 1
         sf_lead_id = rec.get('Id')
 
         try:
             # check for existing lead
             lead = Leads.objects.get(sf_lead_id=sf_lead_id)
+            is_new_lead = False
         except ObjectDoesNotExist:
             # create new lead
+            is_new_lead = True
             lead = Leads()
 
         # Google Representative email and name
@@ -129,43 +177,44 @@ def get_leads_from_sfdc():
         rep_name = rec.get('Google_Rep__c')
 
         # Lead owner name
-        lead_owner_name = rec.get('Name')
+        lead_owner_name = rec.get('Q2_Manager__c')
         lead_owner_email = rec.get('gm_email__c')
 
         # Team
-        team = rec.get('Team__c')
+        team = rec.get('Team__c') if rec.get('Team__c') else ''
 
         # Below information will be created if its a new lead or else the information will be updated
         lead.google_rep_name = rep_name
         lead.google_rep_email = rep_email
 
-        # if rep_email:
-        #     # Save Google representatives information to Database
-        #     try:
-        #         GoogeRepresentatives.objects.get(email=rep_email)
-        #     except ObjectDoesNotExist:
-        #         google_rep = GoogeRepresentatives()
-        #         rep_name = rep_name.split(' ')
-        #         google_rep.first_name = unicode(rep_name[0])
-        #         google_rep.last_name = unicode((' ').join(rep_name[1:]))
-        #         google_rep.email = unicode(rep_email)
-        #         google_rep.team = team
-        #         google_rep.save()
+        if rep_email and rep_name:
+            # Save Google representatives information to Database
+            try:
+                GoogeRepresentatives.objects.get(email=rep_email)
+            except ObjectDoesNotExist:
+                google_rep = GoogeRepresentatives()
+                rep_name = rep_name.split(' ')
+                google_rep.first_name = unicode(rep_name[0])
+                google_rep.last_name = unicode((' ').join(rep_name[1:]))
+                google_rep.email = unicode(rep_email)
+                google_rep.team = team
+                google_rep.save()
 
-        # # Save Regalix representatives information to Database
-        # try:
-        #     RegalixRepresentatives.objects.get(email=lead_owner_email)
-        # except ObjectDoesNotExist:
-        #     regalix_rep = RegalixRepresentatives()
-        #     regalix_rep.name = lead_owner_name
-        #     regalix_rep.email = lead_owner_email
-        #     regalix_rep.team = team
-        #     regalix_rep.save()
+        # Save Regalix representatives information to Database
+        if lead_owner_email and lead_owner_name:
+            try:
+                RegalixRepresentatives.objects.get(email=lead_owner_email)
+            except ObjectDoesNotExist:
+                regalix_rep = RegalixRepresentatives()
+                regalix_rep.name = lead_owner_name
+                regalix_rep.email = lead_owner_email
+                regalix_rep.team = team
+                regalix_rep.save()
 
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
-        created_date = rec.get('CreateDate')
-        created_date = get_valid_date(created_date)
+        created_date = rec.get('CreatedDate')
+        created_date = SalesforceApi.salesforce_date_to_datetime_format(created_date)
         if not created_date:
             created_date = datetime.utcnow()
 
@@ -176,8 +225,8 @@ def get_leads_from_sfdc():
         except Exception:
             lead.ecommerce = 0
 
-        lead.lead_owner_name = lead_owner_name
-        lead.lead_owner_email = lead_owner_email
+        lead.lead_owner_name = lead_owner_name if lead_owner_name else 'Raju K R'
+        lead.lead_owner_email = lead_owner_email if lead_owner_email else 'rajuk@regalix-inc.com'
         lead.company = unicode(rec.get('Company'))
         lead.lead_status = rec.get('Status')
         lead.country = rec.get('Location__c')
@@ -200,20 +249,20 @@ def get_leads_from_sfdc():
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
         date_of_installation = rec.get('Date_of_installation__c')
-        date_of_installation = get_valid_date(date_of_installation)
+        date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
         lead.date_of_installation = date_of_installation
 
         appointment_date = rec.get('Appointment_Date__c')
-        appointment_date = get_valid_date(appointment_date)
+        appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
         lead.appointment_date = appointment_date
 
         first_contacted_on = rec.get('X1st_Contact_on__c')
-        first_contacted_on = get_valid_date(first_contacted_on)
+        first_contacted_on = SalesforceApi.salesforce_date_to_datetime_format(first_contacted_on)
         lead.first_contacted_on = first_contacted_on
 
         # Rescheduled Appointments
         rescheduled_appointment = rec.get('Rescheduled_Appointments__c')
-        rescheduled_appointment = get_valid_date(rescheduled_appointment)
+        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
         lead.rescheduled_appointment = rescheduled_appointment
 
         try:
@@ -223,35 +272,35 @@ def get_leads_from_sfdc():
 
         lead.lead_sub_status = rec.get('Lead_Sub_Status__c')
 
-        lead.time_zone = rec.get('Time_Zone__c')
+        lead.time_zone = rec.get('Time_Zone__c') if rec.get('Time_Zone__c') else ''
 
         lead.regalix_comment = unicode(rec.get('Regalix_Comment__c')).encode('unicode_escape')
         lead.google_comment = unicode(rec.get('Google_Comment__c')).encode('unicode_escape')
 
-        lead.code_1 = rec.get('Code__c')
-        lead.url_1 = rec.get('URL__c')
-        lead.type_1 = rec.get('Type__c')
-        lead.comment_1 = rec.get('Comment_1__c')
+        lead.code_1 = rec.get('Code__c') if rec.get('Code__c') else ''
+        lead.url_1 = rec.get('URL__c') if rec.get('URL__c') else ''
+        lead.type_1 = rec.get('Code_Type__c') if rec.get('Code_Type__c') else ''
+        lead.comment_1 = rec.get('Comment_1__c') if rec.get('Comment_1__c') else ''
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
-        lead.save()
-    """
-
-
-def get_valid_date(_date):
-    """ Get Formatted date to save in db """
-
-    date_format = None
-    if _date:
         try:
-            date_format = datetime.strptime(_date, '%m/%d/%Y %I:%M %p')
-        except Exception:
-            try:
-                date_format = datetime.strptime(_date, '%m/%d/%Y')
-            except Exception:
-                date_format = None
-    else:
-        date_format = None
+            lead.save()
+            if is_new_lead:
+                new_lead_saved += 1
+            else:
+                exist_lead_saved += 1
+        except Exception as e:
+            print lead, e
+            if is_new_lead:
+                new_lead_failed += 1
+            else:
+                exist_lead_failed += 1
 
-    return date_format
+    logging.info("**********************************************************")
+    logging.info("Total leads saved to our DB: %s" % (total_leads))
+    logging.info("New Leads count: %s" % (new_lead_saved))
+    logging.info("New Leads Failed Count: %s" % (new_lead_failed))
+    logging.info("Exist leads updated Count: %s" % (exist_lead_saved))
+    logging.info("Exist lead failed to update: %s" % (exist_lead_failed))
+    logging.info("**********************************************************")
