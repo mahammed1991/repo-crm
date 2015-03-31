@@ -1,0 +1,554 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Lead Form
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+  </style>
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
+    <input type="hidden" name="oid" value="00DZ000000MipUa">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <div class="std-sub-title">Google Rep Information</div>
+    <div class="row">
+      <div class="col-md-4">
+        <label for="gref">Google Rep Name</label>
+        <!-- <input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /> -->
+        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+      </div>
+      <div class="col-md-4">
+        <label for="emailref">Google Rep Email</label>
+        <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+      </div>
+      <div class="col-md-4">
+        <label for="team">Program name</label>
+        <select class="form-control bgicon" id="team" title="Program Name" name="team">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+        <!-- <input type="text" id="team" class="form-control" title="Program Name"> -->
+      </div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment"></div>
+      <div class="col-md-4 tr_service_segment">
+        <label for="service_segment">Service Segment</label>
+          <select id="service_segment" title="service_segment" class="form-control bgicon" name="service_segment">
+              <option value="">Service Segment</option>
+              <option value="SBA">SBA</option>
+              <option value="HPA">HPA</option>
+              <option value="HPA+">HPA+</option>
+          </select>
+          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="">
+      </div>
+      <div class="col-md-4">
+        <label for="manager_name">Manager Name</label>
+        <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+      </div>
+      <div class="col-md-4">
+        <label for="manager_email">Manager Email</label>
+        <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+      </div>
+      <div class="col-md-4">
+        <label for="country">Google Rep Location</label>
+          <input type="text" class="form-control" id="rep_location" name="rep_location" value="{{user.profile.rep_location}}" placeholder="Enter Rep Location" autocomplete="off">
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_name" name="advertiser_name" placeholder="Advertiser Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email">
+      </div>
+      <div class="col-md-4">
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+            </td>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control bgicon" id="region" title="Program Region" name="region">
+          <option value="0">Region</option>
+          {% for rgn in regions %}
+            <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
+          <option value="0">Market Served</option>
+          {% for loc in locations %}
+            <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4" id='tr_language'>
+        <select class="form-control bgicon" id="language" title="language" name="language">
+          <option value="">Select Language</option>
+          <option value="English">English</option>
+          <option value="Dutch">Dutch</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
+          <option value="">Select Time Zone</option>
+        </select>
+      </div>
+     
+    </div>
+
+    <div class="webmasterCheck">        
+      <div class="form-heading">Does the advertiser have web access or a Webmaster?</div>
+      <div class="checkbox web-access">
+            <label>
+              <input type="checkbox" value="" name="web_access" id="web_access">
+              Web Access
+            </label>
+            <label>
+              <input id="webmasterCheck" type="checkbox" name="webmasterCheck" value="">
+              Webmaster
+            </label>
+      </div>
+      <div id="webmaster" class="row" style="display:none;">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="webmaster_name" name="webmaster_name" placeholder="Webmaster Name">
+          <input type="hidden" class="form-control" id="lopt" name="lopt">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Email">
+        </div>
+        <div class="col-md-4">
+           <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
+        </div>
+      </div>
+      </div>
+
+    <div class="lead-type">
+      <label>Please select the type of lead you want to submit</label>
+      <a class="btn std-btn tag-impl" id="tagImplementation"><div class="check-icon" id="tagImplementationBtn"><i class="fa fa-check"></i></div>Tag Implementation</a>
+      <span>And/Or</span>
+      <a class="btn std-btn shopping-setup" id="shoppingSetup"><div class="check-icon" id="shoppingSetupBtn"><i class="fa fa-check"></i></div>Shopping Campaign Setup</a>
+    </div>
+    <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
+    <input type="hidden" class="form-control" id="is_shopping_lead" name="is_shopping_lead" value="no">
+    <div class="tasks" id="tasks">
+        <div class="task" id="task_1">
+          <div class="std-sub-title">Code Type Info</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype1" id="ctype1">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code1" name="code1" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            
+            <div id='ctype_campaign1' style="display:none">
+              <div class="col-md-4">
+                <div class="checkbox">
+                  <label class="lbl">
+                    <input type="checkbox" value="0" name="is_campaign_created1" id="is_campaign_created1" class="is_campaign_created">
+                    Is campaign created?
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid1" name="rbid1" class="form-control is_campaign_created1" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget1" class="form-control is_campaign_created1" name="rbudget1" placeholder="Budget">
+              </div>
+              </div>
+              <div class="col-md-12" id="gasetup1" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup1" type="checkbox" name="ga_setup1" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="checkbox">
+                  <label>
+                    <input id="keep_url" type="checkbox" value="">
+                    Will this, then URL will be pre-populated for all selections </label>
+                </div>
+              </div>
+              <a id="addTask_2" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 2 ################################################### -->
+        <a id="removeTask_2" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_2" style="display:none;">
+          <div class="form-heading">Code Type Info (2)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype2" id="ctype2">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url2" name="url2" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code2" name="code2" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment2" name="comment2" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign2' style="display:none">
+              <div class="col-md-4">
+                <div class="checkbox">
+                  <label class="lbl">
+                    <input type="checkbox" value="0" name="is_campaign_created2" id="is_campaign_created2" class="is_campaign_created">
+                    Is campaign created?
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid2" name="rbid2" class="form-control is_campaign_created2" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget2" class="form-control is_campaign_created2" name="rbudget2" placeholder="Budget">
+              </div>
+              </div>
+            <div class="col-md-12" id="gasetup2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup2" type="checkbox" name="ga_setup2" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                </div>
+            </div>
+            <a id="addTask_3" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+          </div>
+        </div>
+        
+
+        <!-- ############################################### Code Type 3 ################################################### -->
+        <a id="removeTask_3" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_3" style="display:none;">
+          <div class="form-heading">Code Type Info (3)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype3" id="ctype3">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="code3" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="comment3" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign3' style="display:none">
+              <div class="col-md-4">
+                <div class="checkbox">
+                  <label class="lbl">
+                    <input type="checkbox" value="0" name="is_campaign_created3" id="is_campaign_created3" class="is_campaign_created">
+                    Is campaign created?
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid3" name="rbid3" class="form-control is_campaign_created3" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget3" class="form-control is_campaign_created3" name="rbudget3" placeholder="Budget">
+              </div>
+              </div>
+              <div class="col-md-12" id="gasetup3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup3" type="checkbox" name="ga_setup3" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                </div>
+            </div>
+            <a id="addTask_4" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 4 ################################################### -->
+        <a id="removeTask_4" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_4" style="display:none;">
+          <div class="form-heading">Code Type Info (4)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype4" id="ctype4">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url4" name="url4" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code4" name="code4" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment4" name="comment4" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign4' style="display:none">
+              <div class="col-md-4">
+                <div class="checkbox">
+                  <label class="lbl">
+                    <input type="checkbox" value="0" name="is_campaign_created4" id="is_campaign_created4" class="is_campaign_created">
+                    Is campaign created?
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid4" name="rbid4" class="form-control is_campaign_created4" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget4" class="form-control is_campaign_created4" name="rbudget4" placeholder="Budget">
+              </div>
+              </div>
+            <div class="col-md-12" id="gasetup4" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup4" type="checkbox" name="ga_setup4" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                </div>
+            </div>
+            <a id="addTask_5" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Code Type</a>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 5 ################################################### -->
+        <a id="removeTask_5" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Code Type</a>
+        <div class="task" id="task_5" style="display:none;">
+          <div class="form-heading">Code Type Info (5)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Code Type" class="form-control code_type bgicon" name="ctype5" id="ctype5">
+              <option value="">Select Code Type</option>
+              {% for c_type in code_types %}
+                <option value="{{c_type.name}}">{{c_type.name}}</option>
+              {% endfor %}
+            </select>
+              <input type="text" class="form-control" id="url5" name="url5" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code5" name="code5" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment5" name="comment5" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign5' style="display:none">
+              <div class="col-md-4">
+                <div class="checkbox">
+                  <label class="lbl">
+                    <input type="checkbox" value="0" name="is_campaign_created5" id="is_campaign_created5" class="is_campaign_created">
+                    Is campaign created?
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <input id="rbid5" name="rbid5" class="form-control is_campaign_created5" type="text" placeholder="Recommended Bid">
+              </div>
+              <div class="col-md-4">
+                <input type="text" id="rbudget5" class="form-control is_campaign_created5" name="rbudget5" placeholder="Budget">
+              </div>
+            </div>
+              <div class="col-md-12" id="gasetup5" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup5" type="checkbox" name="ga_setup5" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="appointment">
+          <div class="checkbox">
+              <label>
+                <input id="appointmentCheck1" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+            <div class="row" id="tag_appointment">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <select title="Primary Contact Role" class="form-control bgicon" name="tag_primary_role" id="tag_primary_role">
+              <option value="">Primary Contact Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+            </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
+            </div>
+          </div>
+        </div>    
+
+    </div>
+    <div id="shoppingInfo">
+      <div class="std-sub-title">Shopping Campaign Info</div>
+      <div class="row">
+        <div class="col-md-4">
+        <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
+        <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+        <div class="checkbox">
+              <label>
+                <input id="mcIdCheck" type="checkbox" value="" checked>
+                is there an exisitng Merchant Center? </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="rbudget" class="form-control" name="rbudget" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping_url" name="shopping_url" placeholder="URL">
+          <input id="mc_id" name="mc_id" size="20" class="form-control" type="text" placeholder="MC-ID">
+        </div>
+        <div class="col-md-4">
+          <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
+        </div>
+        <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
+          <option value="Under 100">Under 100</option>
+        </select>
+       <!--  <div class="col-md-4">
+          <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
+            Do you want to use same timeslot for Shopping?
+        </div> -->
+      </div>
+
+    <div class="appointment">
+          <div class="checkbox">
+              <label>
+                <input id="appointmentCheck2" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+          <div class="row" id="shopping_appointment">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="shop_contact_person_name" name="shop_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <select title="Primary Contact Role" class="form-control bgicon" name="shop_primary_role" id="shop_primary_role">
+              <option value="">Primary Contact Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Webmaster">Webmaster</option>
+            </select>
+            </div>
+            <div class="col-md-4">
+            <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>      
+            </div>
+          </div>
+        </div>
+
+  </div>
+     <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
+      <div class="checkbox">
+            <label id="tagCheck" class="tag-policies" style="display:none;">
+               <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm">
+              Do you want to install this Tag via Google Tag Manager?
+            </label>
+            <label class="shopping-policy" style="display:none;">
+              <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
+              Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
+            </label>
+            <ol class="subitems" id="shoppingTerms" style="display:none;">
+              <li>This advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
+                <li>This advertiser's website meets Google Shopping's <a href="https://support.google.com/merchants/answer/188486?ref_topic=3163841" target="_blank">user safety requirements</a>. Notably, this advertiser's website contains:
+                  <ul>
+                      <li>Shopping cart functionality with secure checkout (https://);</li>
+                        <li>Clearly labeled contact info</li>
+                        <li>Refund policy</li>
+                        <li>Billing terms & conditions</li>
+                    </ul>
+                </li>
+            </ol>         
+          </div>
+    </div>
+
+    <div class="btns text-center" style="display:none;" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.locations = {{locations|safe}};
+    window.regions = {{regions|safe}};
+    window.regionWiseLocations = {{region_locations|safe}};
+    window.new_locations = {{new_locations|safe}};
+    window.is_loc_changed = false;
+
+
+    var userTeam = "{{user.profile.team.team_name|safe}}"
+    if(userTeam){
+      $('#team').val(userTeam);
+    }
+
+    var userLocation = "{{user.profile.location.location_name|safe}}"
+    if(userLocation){
+      $('#country').val(userLocation);
+      loc = document.getElementById('country');
+      changetime(loc.options[loc.selectedIndex]);
+    }
+
+    var userRegion = "{{user.profile.region.name|safe}}"
+    if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+    }
+
+    $('#team').trigger('change');
+  
+  });
+
+
+</script>
+{% endblock main_js %}
