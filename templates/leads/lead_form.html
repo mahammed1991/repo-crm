@@ -195,13 +195,6 @@
                     Is there an existign Analytics setup? </label>
                 </div>
               </div>
-              <div class="col-md-12">
-                <div class="checkbox">
-                  <label>
-                    <input id="keep_url" type="checkbox" value="">
-                    Will this, then URL will be pre-populated for all selections </label>
-                </div>
-              </div>
               <a id="addTask_2" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Code Type</a>
           </div>
         </div>
@@ -248,6 +241,14 @@
                     <input id="ga_setup2" type="checkbox" name="ga_setup2" value="0" class="is_ga_setup">
                     Is there an existign Analytics setup? </label>
                 </div>
+            </div>
+            <div class="col-md-12">
+              <div class="checkbox">
+                <label>
+                  <input id="keep_url" type="checkbox" value="">
+                  Check this box if the URL is the same for all code types.
+                </label>
+              </div>
             </div>
             <a id="addTask_3" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Code Type</a>
           </div>
@@ -426,9 +427,9 @@
         <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
         <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
         <div class="checkbox">
-              <label>
+              <label class="lbl">
                 <input id="mcIdCheck" type="checkbox" value="" checked>
-                is there an exisitng Merchant Center? </label>
+                Customer has an existing Merchant Center account </label>
             </div>
         </div>
         <div class="col-md-4">
