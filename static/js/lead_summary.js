@@ -119,11 +119,7 @@
                   // disable it by setting the property sorter to false 
                   sorter: false 
               },
-              10: { 
-                  // disable it by setting the property sorter to false 
-                  sorter: false 
-              },
-              12: { 
+              11: { 
                   // disable it by setting the property sorter to false 
                   sorter: false 
               }

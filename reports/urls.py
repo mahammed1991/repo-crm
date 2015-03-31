@@ -13,5 +13,6 @@ urlpatterns = patterns(
     url(r'^get-countries$', views.get_countries),
     url(r'^get-download-report$', views.get_download_report),
     url(r'^get-user-name$', views.get_user_name),
+    url(r'^get-program-location$', views.get_program_by_location),
 
 )

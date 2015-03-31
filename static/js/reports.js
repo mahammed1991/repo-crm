@@ -6,11 +6,6 @@ $(document).ready(function() {
   callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'team': ['all'], 'countries': ['all']})
 /* ===================== Default Report Ends Here ============= */
 
-// date picker
-  /*$(function() {
-    $("#datepickerFrom, #datepickerTo").datepicker();
-  });*/
-
  $(function() {
     $("#datepickerFrom").datepicker({
       defaultDate : "+1w",
@@ -143,8 +138,6 @@ $('#filter_region select').change(function(){
     }
 });
 
-
-
 /*=================Get Reports by clicking view Reports Button=====================*/
 $("#get_report").click(function(){
     $('#form_ldap_id').prop("value",window.current_ldap);
@@ -185,12 +178,16 @@ $("#get_report").click(function(){
       dataString['report_timeline'] = [selectedTimeline];
     }
 
-
     team_members = [];
     if ($("#filter_team_members").is(":visible")){
       $("#filter_team_members label input:checked").each(function(){
         team_members.push($(this).val());
-      });    
+      });  
+      if (team_members.length < 1){
+          var errMsg = "Please select atleast one member from your team";
+          showErrorMessage(errMsg);
+          isError = true;
+        }  
     }
 
     dataString['team_members'] = team_members;
@@ -270,6 +267,7 @@ $("#get_report").click(function(){
 
 
 function callAjax(dataString){
+  console.log(dataString);
   $('#preloaderOverlay').show();
   $.ajax({
         url: "/reports/get_new_reports",
@@ -277,9 +275,13 @@ function callAjax(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data) {
+          if(dataString['program_split'] || dataString['location_split']){
+            program_vs_location(dataString);
+            $('#preloaderOverlay').show();
+          }
             console.log(data);
             report = data['reports'];
-            if (data['report_type'] == 'leadreport_programview'){
+            /*if (data['report_type'] == 'leadreport_programview'){
               $('#view_reports').empty();
               window.report_type = 'leadreport_programview';
               if(report['program_report']){
@@ -292,7 +294,7 @@ function callAjax(dataString){
               if(report['region_report']){
                 regionViewReport(report['region_report'])
               }
-            }
+            }*/
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
             showReport(report);
@@ -309,6 +311,39 @@ function callAjax(dataString){
         }
       }); 
 
+}
+
+function program_vs_location(dataString){
+  $('#preloaderOverlay').show();
+  $.ajax({
+        url: "/reports/get-program-location",
+        data: dataString,
+        type: 'GET',
+        dataType: "json",
+        success: function(data) {
+            console.log(data);
+            $('#preloaderOverlay').hide();
+            report = data['reports'];
+             if (data['report_type'] == 'leadreport_programview'){
+              $('#view_reports').empty();
+              window.report_type = 'leadreport_programview';
+              if(report['program_report']){
+                programViewReport(report['program_report']);
+              }
+            }
+            else if(data['report_type'] == 'leadreport_regionview'){
+              $('#view_reports').empty();
+              window.report_type = 'leadreport_regionview';
+              if(report['region_report']){
+                regionViewReport(report['region_report'])
+              }
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log('failure');
+            $('#preloaderOverlay').hide()
+        }
+  });
 }
 
 /*========== hide and show filter for changes in report type=========*/
@@ -720,103 +755,141 @@ $('#download').click(function(){
     var selectedReportType = $("#filter_report_type").val();
     var selectedTimeline = $("#filter_timeline").val();
     //var selectedRegion = $('#filter_region').val();
+    var condn = ($("#filter_team_members").is(":visible") || $('#filter_region').is(':visible') || $("#filter_country").is(":visible"))
+    if((!selectedReportType && !selectedTimeline) && (!condn)){
+
+          //dataString = {'download_report_type': 'default_report', 'download_report_timeline': ['today'], 'download_team': ['all'], 'download_countries': ['all']};
+          $("#download_report_type").val('default_report');
+          $("#download_report_timeline").val(['today']);
+          $("#download_team").val(['all']);
+          $("#download_countries").val(['all']);
+          var selectedFields = [];
+          if ($("#download_fields:visible")){
+
+            $("#download_fields .checkbox input:checked").each(function(){
+                selectedFields.push($(this).val());
+            });  
+          }
+
+          dataString['selectedFields'] = selectedFields;
+          $("#download_selectedFields").val(selectedFields);
+        }
+    else{
+                if(!selectedReportType){
+                var errMsg = "Please select report type";
+                  showErrorMessage(errMsg);
+                  isError = true;
+                }else{
+                    dataString['report_type'] = 'default_report';
+                    $("#download_report_type").val(selectedReportType);
+                }
+
+              // Get timeline details
+              if(!selectedTimeline){
+                  var errMsg = "Please select timeline from dropdown list";
+                  showErrorMessage(errMsg);
+                  isError = true;
+              }
+              else if (selectedTimeline == 'dateRange'){
+                var from_date = $("#datepickerFrom").val();
+                var to_date = $("#datepickerTo").val();
+
+                // Validate from and to date
+                if(from_date == "" || to_date == ""){
+                  var errMsg = "Please select from and to date";
+                  showErrorMessage(errMsg);
+                  isError = true;
+                }
+
+                dataString['report_timeline'] = [from_date, to_date];
+                $("#download_report_timeline").val(dataString['report_timeline']);
+              }
+              else{
+                dataString['report_timeline'] = [selectedTimeline];
+                $("#download_report_timeline").val([selectedTimeline]);
+              }
+
+
+              team_members = [];
+              if ($("#filter_team_members").is(":visible")){
+                $("#filter_team_members label input:checked").each(function(){
+                  team_members.push($(this).val());
+                });  
+                if (team_members.length < 1){
+                    var errMsg = "Please select atleast one member from your team";
+                    showErrorMessage(errMsg);
+                    isError = true;
+                  }
+              }
+
+              dataString['team_members'] = team_members;
+              $("#download_team_members").val(team_members);
+              
+              if($('#filter_region').is(':visible')){
+                  var selectedRegion = $('#filter_region select').val();
+
+                  if(!selectedRegion){
+                    var errMsg = "Please select Region from dropdown list";
+                    showErrorMessage(errMsg);
+                    isError = true;
+                  }
+                else{
+                    dataString['region'] = selectedRegion;
+                    $("#download_region").val(selectedRegion);
+                  }
+              }
+
+               // Get location and team details 
+              var selectedCountries = [];
+
+              if ($("#filter_country").is(":visible")){
+                $("#filter_country .checkbox input:checked").each(function(){
+                    selectedCountries.push($(this).val());
+                }); 
+
+                if (dataString['region'] != 'all' && selectedCountries.length < 1){
+                    var errMsg = "Please select Countries from Countries list";
+                    showErrorMessage(errMsg);
+                    isError = true;
+                  } 
+                }
+                  dataString['countries'] = selectedCountries;
+                  $("#download_countries").val(selectedCountries);
+             
+
+              var selectedTeam = [];
+
+              if ($("#filter_team").is(":visible")){
+                $("#filter_team .checkbox input:checked").each(function(){
+                    selectedTeam.push($(this).val());
+                }); 
+                if (selectedTeam.length < 1){
+                    var errMsg = "Please select Program from programs list";
+                    showErrorMessage(errMsg);
+                    isError = true;
+                  } 
+              }
+
+              dataString['team'] = selectedTeam;
+              $("#download_team").val(selectedTeam);
+
+              var selectedFields = [];
+
+               if ($("#download_fields:visible")){
+
+                $("#download_fields .checkbox input:checked").each(function(){
+                    selectedFields.push($(this).val());
+                });  
+              }
+
+              dataString['selectedFields'] = selectedFields;
+              $("#download_selectedFields").val(selectedFields);
+    }
 
     // Get report type details
-    if(!selectedReportType){
-        var errMsg = "Please select report type";
-          showErrorMessage(errMsg);
-          isError = true;
-    }else{
-        dataString['report_type'] = selectedReportType;
-        $("#download_report_type").val(selectedReportType);
-    }
-
-    // Get timeline details
-    if(!selectedTimeline){
-        var errMsg = "Please select timeline from dropdown list";
-        showErrorMessage(errMsg);
-        isError = true;
-    }
-    else if (selectedTimeline == 'dateRange'){
-      var from_date = $("#datepickerFrom").val();
-      var to_date = $("#datepickerTo").val();
-
-      // Validate from and to date
-      if(from_date == "" || to_date == ""){
-        var errMsg = "Please select from and to date";
-        showErrorMessage(errMsg);
-        isError = true;
-      }
-
-      dataString['report_timeline'] = [from_date, to_date];
-      $("#download_report_timeline").val(dataString['report_timeline']);
-    }
-    else{
-      dataString['report_timeline'] = [selectedTimeline];
-      $("#download_report_timeline").val([selectedTimeline]);
-    }
-
-
-    team_members = [];
-    if ($("#filter_team_members").is(":visible")){
-      $("#filter_team_members label input:checked").each(function(){
-        team_members.push($(this).val());
-      });    
-    }
-
-    dataString['team_members'] = team_members;
-    $("#download_team_members").val(team_members);
     
-    if($('#filter_region').is(':visible')){
-      var selectedRegion = $('#filter_region select').val();
 
-      if(!selectedRegion){
-      var errMsg = "Please select Region from dropdown list";
-        showErrorMessage(errMsg);
-        isError = true;
-
-      }
-    else{
-      dataString['region'] = selectedRegion;
-      $("#download_region").val(selectedRegion);
-      }
-    }
-
-     // Get location and team details 
-    var selectedCountries = [];
-    if ($("#filter_country:visible")){
-      $("#filter_country .checkbox input:checked").each(function(){
-          selectedCountries.push($(this).val());
-      });  
-    }
-    
-    dataString['countries'] = selectedCountries;
-    $("#download_countries").val(selectedCountries);
-
-    var selectedTeam = [];
-
-    if ($("#filter_team:visible")){
-      $("#filter_team .checkbox input:checked").each(function(){
-          selectedTeam.push($(this).val());
-      });  
-    }
-
-    dataString['team'] = selectedTeam;
-    $("#download_team").val(selectedTeam);
-
-    var selectedFields = [];
-
-     if ($("#download_fields:visible")){
-
-      $("#download_fields .checkbox input:checked").each(function(){
-          selectedFields.push($(this).val());
-      });  
-    }
-
-    dataString['selectedFields'] = selectedFields;
-    $("#download_selectedFields").val(selectedFields);
-
-    console.log(dataString);
+    console.log(dataString, 'dataString');
 
     if(isError){
         return false;
@@ -851,12 +924,28 @@ $('.ldap').on("keyup", function() {
     close: function(event) {
     },
     select: function(event, ui) {
+      console.log(ui.item)
       if ($("#ldap").val() !== "") {
         $("#ldap").val(ui.item.id + "-" + ui.item.username);
-        window.current_ldap = ui.item.id;
-         $("#ldap_manager").text(ui.item.manager);
-         $("#ldap_program").text(ui.item.program);
-         $("#ldap_region").text(ui.item.region);
+          window.current_ldap = ui.item.id;
+        if(ui.item.manager){
+          $("#ldap_manager").text(ui.item.manager);
+        }
+        else{
+          $("#ldap_manager").text('N/A');
+        }
+        if(ui.item.team){
+          $("#ldap_program").text(ui.item.team);
+        }
+        else{
+          $("#ldap_program").text('N/A');
+        }
+         if(ui.item.region){
+          $("#ldap_region").text(ui.item.region);
+         }
+         else{
+          $("#ldap_region").text('N/A');
+         }
          if (window.user_id == ui.item.id){
           $("#profile_div").show();
          }

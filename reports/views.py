@@ -90,8 +90,6 @@ def get_new_reports(request):
         countries = request.GET.getlist('countries[]')
         teams = request.GET.getlist('team[]')
         team_members = request.GET.getlist('team_members[]')
-        program_split = request.GET.get('program_split', None)
-        location_split = request.GET.get('location_split', None)
         ldap_id = request.GET.get('ldap_id', None)
 
         # Get teams
@@ -136,8 +134,7 @@ def get_new_reports(request):
 
         report_details = dict()
         if ldap_id:
-            ldap_user = User.objects.get(pk=ldap_id)
-            email = ldap_user.email
+            email = User.objects.select_related('email').get(pk=ldap_id)
         else:
             email = request.user.email
 
@@ -153,16 +150,84 @@ def get_new_reports(request):
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
-            if program_split:
-                program_report = ReportService.get_program_report_by_locations(teams, countries)
-                report_detail['program_report'] = program_report
         elif report_type == 'leadreport_regionview':
             report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
-            if location_split:
-                region_report = ReportService.get_region_report_by_program(countries, teams)
-                report_detail['region_report'] = region_report
         else:
             pass
+
+        report_details = {'reports': report_detail, 'code_types': code_types,
+                          'report_type': report_type, 'report_timeline': report_timeline,
+                          'region': region, 'team': teams, }
+        return HttpResponse(json.dumps(report_details))
+
+
+def get_program_by_location(request):
+    """Ajax call to get program by location"""
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        region = request.GET.get('region')
+        countries = request.GET.getlist('countries[]')
+        teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+
+        # Get teams
+        if 'all' in teams:
+            if len(teams) > 1:
+                teams.remove('all')
+            else:
+                teams = ReportService.get_all_teams()
+        else:
+            teams = teams
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        final_countries = list()
+
+        if region:
+            if region == 'all':
+                final_countries = ReportService.get_all_locations()
+            else:
+                if 'all' in countries:
+                    if len(countries) > 1:
+                        countries.remove('all')
+                        final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                    else:
+                        final_countries = ReportService.get_all_locations()
+                else:
+                    final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+        else:
+            final_countries = ReportService.get_all_locations()
+
+        countries = final_countries
+        code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+
+        if '' in teams:
+            teams.remove('')
+
+        report_detail = dict()
+        if report_type == 'leadreport_programview':
+            if program_split:
+                program_report = ReportService.get_program_report_by_locations(teams, countries, code_types)
+                report_detail['program_report'] = program_report
+        elif report_type == 'leadreport_regionview':
+            if location_split:
+                region_report = ReportService.get_region_report_by_program(countries, teams, code_types)
+                report_detail['region_report'] = region_report
+
+        else:
+            report_detail = None
 
         report_details = {'reports': report_detail, 'code_types': code_types,
                           'report_type': report_type, 'report_timeline': report_timeline,
@@ -173,6 +238,7 @@ def get_new_reports(request):
 @csrf_exempt
 @login_required
 def get_download_report(request):
+    #import ipdb;ipdb.set_trace();
     if request.method == 'POST':
         report_type = request.POST.get('download_report_type')
         report_timeline = request.POST.get('download_report_timeline')
@@ -222,8 +288,7 @@ def get_download_report(request):
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
 
         if ldap_id:
-            ldap_user = User.objects.get(pk=ldap_id)
-            email = ldap_user.email
+            email = User.objects.select_related('email').get(pk=ldap_id)
         else:
             email = request.user.email
 
@@ -265,11 +330,11 @@ def get_user_name(request):
                 user_details = UserDetails.objects.get(user_id=user.id)
                 user_json['manager'] = user_details.user_manager_name if user_details.user_manager_name else None
                 user_json['team'] = user_details.team_id if user_details.team_id else None
-                user_json['location'] = user_details.location_id if user_details.location_id else None
+                user_json['region'] = user_details.location_id if user_details.location_id else None
             except UserDetails.DoesNotExist:
                 user_json['manager'] = None
                 user_json['team'] = None
-                user_json['location'] = None
+                user_json['region'] = None
             results.append(user_json)
         data = json.dumps(results)
     else:

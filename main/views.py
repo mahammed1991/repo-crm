@@ -906,7 +906,7 @@ def migrate_user_data(request):
                 user = User.objects.get(email=google_rep_email)
                 user_details = UserDetails.objects.get(user_id=user.id)
                 user_details.user_manager_email = google_manager_email
-                user_details.user_manager_name = user_dict.get(google_manager_email, '')
+                user_details.user_manager_name = user_dict.get(google_manager_email, None)
                 try:
                     program = Team.objects.get(team_name=program)
                     user_details.team_id = program.id

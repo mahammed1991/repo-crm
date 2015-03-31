@@ -13,7 +13,7 @@ function showPosition(position) {
 
 function getResult(latitude, longitude){
    $.ajax({
-        url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false",
+        url: "https://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false",
         type: 'GET',
         dataType: "json",
         success: function(data) {

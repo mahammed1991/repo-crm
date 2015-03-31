@@ -1,4 +1,4 @@
-{% extends 'layouts/main.html' %}
+  {% extends 'layouts/main.html' %}
 
 {% load staticfiles %}
 
@@ -105,7 +105,7 @@ Reports
       <label>Name:</label>
         <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a class="ldap-update"><i id="refresh" class="fa fa-refresh"></i></a></div>
         <label class="manager">Manager:</label>
-        {% if request.user.profile.user_manager_name %}
+        {% if request.user.profile.user_manager_name and request.user.profile.user_manager_name != '' %}
             <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
         {% else %}
             <div class="value" id="ldap_manager">N/A</div>
