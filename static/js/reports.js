@@ -793,6 +793,8 @@ $('#download').click(function(){
               else if (selectedTimeline == 'dateRange'){
                 var from_date = $("#datepickerFrom").val();
                 var to_date = $("#datepickerTo").val();
+                from_date = from_date.replace(',', '-');
+                to_date = to_date.replace(',', '-');
 
                 // Validate from and to date
                 if(from_date == "" || to_date == ""){
