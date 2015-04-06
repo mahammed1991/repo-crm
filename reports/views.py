@@ -131,6 +131,7 @@ def get_new_reports(request):
 
         if report_timeline:
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
 
         report_details = dict()
         if ldap_id:
@@ -212,6 +213,7 @@ def get_program_by_location(request):
 
         if report_timeline:
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
 
         if '' in teams:
             teams.remove('')
@@ -285,7 +287,13 @@ def get_download_report(request):
         code_types = [str(codes.encode('utf-8')) for codes in code_types]
 
         if report_timeline:
-            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            if report_timeline > 1:
+                report_timeline = [dt.replace('-', ',') for dt in report_timeline]
+                start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+                end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+            else:
+                start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+                end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
 
         if ldap_id:
             email = User.objects.select_related('email').get(pk=ldap_id)
