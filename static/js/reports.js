@@ -604,8 +604,8 @@ function programViewReport(programs){
     i = i + 1;
     rows += '<tr><td colspan="8" class="no-pad no-bor">' +
                 '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
-                '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
-                        '<td class="lbl relative" style="font-size:11px !important;">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                '<tr class="clickable collapsed" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                        '<td class="lbl relative" style="font-size:11px !important;">'+ key + '<span class="row-expand"></span> <span class="row-collapse"></span></td>' +
                         '<td class="value">'+ programs[key]['week_total'] +'</td>'+
                         '<td class="value">' + programs[key]['week_win'] + '</td>'+
                         '<td class="value">' + programs[key]['qtd_total'] +'</td>'+
@@ -674,8 +674,8 @@ function regionViewReport(locations){
 
     rows += '<tr><td colspan="8" class="no-pad no-bor">' +
                 '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
-                '<tr class="clickable" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
-                        '<td class="lbl relative">'+ key + '<span class="row-expand">+</span> <span class="row-collapse">_</span></td>' +
+                '<tr class="clickable collapsed" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
+                        '<td class="lbl relative">'+ key + '<span class="row-expand"></span> <span class="row-collapse"></span></td>' +
                         '<td class="value">'+ locations[key]['week_total'] +'</td>'+
                         '<td class="value">' + locations[key]['week_win'] + '</td>'+
                         '<td class="value">' + locations[key]['qtd_total'] +'</td>'+

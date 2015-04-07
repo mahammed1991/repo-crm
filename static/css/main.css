@@ -1151,6 +1151,7 @@ p {
 }
 .main-row td {
 	background: #fffdf7;
+	position: relative;
 }
 .clickable {
 	cursor: pointer;
@@ -1187,6 +1188,7 @@ p {
 }
 .main-row td {
 	width: 121px;
+	position: relative;
 }
 .relative {
 	/*position: relative;*/
@@ -1201,12 +1203,29 @@ p {
 	display: none;
 	margin-top:-11px;
 }
+.row-expand {
+	content: "+";
+	display: none;
+}
+.row-expand:after{
+	content: "+";
+}
 .row-collapse {
-	margin-top: -16px;
+	content: "-";
+	display: block;
+}
+.row-collapse:after{
+	content: "-";
+}
+.row-collapse {
+	margin-top: -10px;
 	font-size: 15px;
 }
-.row-expand {
+.collapsed .row-expand {
 	display: block;
+}
+.collapsed .row-collapse {
+	display: none;
 }
 .trans {
 	transition: all ease .5s;
