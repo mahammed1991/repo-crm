@@ -93,8 +93,10 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def current_day_leads():
     """ Get Leads from SFDC """
     current_day = datetime.utcnow()
-    logging.info("Current Day Leads %s " % (current_day))
-    get_leads_from_sfdc(current_day, current_day)
+    start_date = datetime(current_day.year, current_day.month, current_day.day, 0, 0, 0)
+    end_date = datetime(current_day.year, current_day.month, current_day.day, 23, 59, 59)
+    logging.info("Current Day Leads %s to %s " % (start_date, end_date))
+    get_leads_from_sfdc(start_date, end_date)
 
 
 @kronos.register('0 * * * *')
