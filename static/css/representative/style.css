@@ -50,7 +50,7 @@
   border: 0;
 }
 .time_zone table tr th .header {
-  width: 135px;
+  /*width: 135px;*/
   padding: 5px 0;
   font-size: 14px color :#000000;
   background: #9a9cff;
@@ -65,7 +65,7 @@
 .time_zone table tr td .time_slot {  
   position: relative;
   z-index: 999;
-  width: 137px;
+  /*width: 137px;*/
   height: 22px !important;
 }
 .time_zone table tr td.content_block .time_slot_avi {
