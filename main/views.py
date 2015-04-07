@@ -895,26 +895,37 @@ def migrate_user_data(request):
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'Google Manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'Program')).value
         # rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
-        r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
+        # r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
         # market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
         # rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
         google_manager_email = str(google_manager) + '@google.com'
         region = sheet.cell(r_i, get_col_index(sheet, 'Region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'Country')).value
-        if valid_string(region) and valid_string(program) and valid_string(country):
+        if valid_string(program) and valid_string(country):
             try:
                 user = User.objects.get(email=google_rep_email)
+            except ObjectDoesNotExist:
+                user = User()
+                user.email = google_rep_email
+                user.username = rep_email
+                user.save()
+            try:
                 user_details = UserDetails.objects.get(user_id=user.id)
-                user_details.user_manager_email = google_manager_email
-                user_details.user_manager_name = user_dict.get(google_manager_email, None)
-                try:
-                    program = Team.objects.get(team_name=program)
-                    user_details.team_id = program.id
-                except ObjectDoesNotExist:
-                    program = Team(team_name=program, is_active=False)
-                    program.save()
-                    user_details.team_id = program.id
+            except ObjectDoesNotExist:
+                user_details = UserDetails()
+                user_details.user_id = user.id
 
+            user_details.user_manager_email = google_manager_email
+            user_details.user_manager_name = user_dict.get(google_manager_email, '')
+            try:
+                program = Team.objects.get(team_name=program)
+                user_details.team_id = program.id
+            except ObjectDoesNotExist:
+                program = Team(team_name=program, is_active=False)
+                program.save()
+                user_details.team_id = program.id
+
+            if region:
                 try:
                     region = Region.objects.get(name=region)
                     user_details.region_id = region.id
@@ -923,24 +934,23 @@ def migrate_user_data(request):
                     region.save()
                     user_details.region_id = region.id
 
-                try:
-                    location = Location.objects.get(location_name=country)
-                    user_details.location_id = location.id
-                except ObjectDoesNotExist:
-                    location = Location(location_name=country, is_active=False)
-                    location.save()
-                    user_details.location_id = location.id
-
-                user_details.save()
-                number_of_saved_records = number_of_saved_records + 1
+            try:
+                location = Location.objects.get(location_name=country)
+                user_details.location_id = location.id
             except ObjectDoesNotExist:
-                continue
+                location = Location(location_name=country, is_active=False)
+                location.save()
+                user_details.location_id = location.id
+
+            user_details.save()
+            number_of_saved_records = number_of_saved_records + 1
+
         else:
             number_of_unsaved_records = number_of_unsaved_records + 1
             failed_rec = {}
             failed_rec['Google Account Manager ldap (Google Rep)'] = rep_email
             failed_rec['Google Manager'] = google_manager
-            failed_rec['r.quarter'] = r_quarter
+            # failed_rec['r.quarter'] = r_quarter
             failed_rec['Program'] = program
             failed_rec['Country'] = country
             failed_rec['Region'] = region
@@ -954,7 +964,6 @@ def migrate_user_data(request):
         filename = "Unsaved_Records"
         path = "/tmp/%s.csv" % (filename)
         DownloadLeads.conver_to_csv(path, failed_rows, failed_rows[0].keys())
-
     template_args = {'number_of_saved_records': number_of_saved_records if number_of_saved_records else 0,
                      'number_of_unsaved_records': number_of_unsaved_records if number_of_unsaved_records else 0,
                      'total_record': number_of_records}

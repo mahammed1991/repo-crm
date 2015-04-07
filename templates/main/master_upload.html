@@ -71,10 +71,8 @@ Upload Leads
             Totally you are trying to upload {{template_args.total_record}} records...<br /><br />
             {{template_args.number_of_saved_records}} records successfully saved.<br /><br />
             Please click here to upload the data again <a href="{% url 'main.views.master_data_upload' %}"><b>Upload Here</b></a><br /><br />
-            {% if number_of_unsaved_records > 0 %}
             {{template_args.number_of_unsaved_records}} records not saved.<br /><br />
              Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
-             {% endif %}
         </div>
     </div>
     {% endif %}
