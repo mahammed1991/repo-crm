@@ -1,7 +1,7 @@
 import kronos
 from reports.report_services import ReportService
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, timedelta
 from lib.helpers import get_quarter_date_slots, first_day_of_month, last_day_of_month
 from reports.models import LeadSummaryReports
 import logging
@@ -10,6 +10,7 @@ from leads.models import Leads
 from django.core.exceptions import ObjectDoesNotExist
 from lib.helpers import get_week_start_end_days
 import time
+import pytz
 from representatives.models import GoogeRepresentatives, RegalixRepresentatives
 
 logging.basicConfig(filename='/tmp/cronjob.log',
@@ -123,6 +124,30 @@ def current_quarter_leads():
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     logging.info("Current Quarted Leads from %s to %s" % (start_date, end_date))
     get_leads_from_sfdc(start_date, end_date)
+
+
+@kronos.register('30 0 * * *')
+def get_updated_leads():
+    """ Get Current Quarter updated Leads from SFDC """
+    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    start_date = end_date - timedelta(days=2)
+    logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
+    logging.info("Connect Successfully")
+    leads = sf.Lead.updated(start_date, end_date)
+    ids = [str(lid) for lid in leads['ids']]
+    ids = tuple(ids)
+    select_items = settings.SFDC_FIELDS
+    where_clause = "WHERE Id IN %s" % (str(ids))
+    sql_query = "select %s from Lead %s" % (select_items, where_clause)
+    try:
+        all_leads = sf.query_all(sql_query)
+        create_or_update_leads(all_leads['records'])
+    except Exception as e:
+        print e
+        logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+        logging.info("%s" % (e))
 
 
 def get_leads_from_sfdc(start_date, end_date):
