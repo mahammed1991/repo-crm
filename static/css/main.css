@@ -1689,7 +1689,7 @@ ul li, ol li {
     font-size: 13px;
     height: 53px;
     padding-top: 19px;
-    width: 140px;
+    /*width: 140px;*/
 	font-family: sans-serif !important;
 	border-radius: 0;
 	text-transform: uppercase;;
@@ -1698,7 +1698,7 @@ ul li, ol li {
     background: #ffe5e5 url("../images/timslot.png") no-repeat center !important;
     height: 35px;
     position: relative;
-    width: 140px;
+    /*width: 140px;*/
     z-index: 999;
 	font-family: sans-serif !important;
 	padding: 8px 0;
