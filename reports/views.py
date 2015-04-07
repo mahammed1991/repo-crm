@@ -337,8 +337,8 @@ def get_user_name(request):
             try:
                 user_details = UserDetails.objects.get(user_id=user.id)
                 user_json['manager'] = user_details.user_manager_name if user_details.user_manager_name else None
-                user_json['team'] = user_details.team_id if user_details.team_id else None
-                user_json['region'] = user_details.location_id if user_details.location_id else None
+                user_json['team'] = user_details.team.team_name if user_details.team else None
+                user_json['region'] = user_details.location.location_name if user_details.location else None
             except UserDetails.DoesNotExist:
                 user_json['manager'] = None
                 user_json['team'] = None

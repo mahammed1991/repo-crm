@@ -1166,6 +1166,7 @@ class DownloadLeads(object):
     def download_lead_data(from_date, to_date, fields_type):
         from_date = datetime.strptime(from_date, "%b %d, %Y")
         to_date = datetime.strptime(to_date, "%b %d, %Y")
+        to_date = datetime(to_date.year, to_date.month, to_date.day, 23, 59, 59)
         filename = "leads-%s-to-%s" % (datetime.strftime(from_date, "%d-%b-%Y"), datetime.strftime(to_date, "%d-%b-%Y"))
         leads = DownloadLeads.get_leads(from_date, to_date, fields_type)
         path = "/tmp/%s.csv" % (filename)
