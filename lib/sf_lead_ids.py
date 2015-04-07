@@ -44,6 +44,10 @@ class SalesforceLeads(object):
                                 # Bundle Unique Field
                                 'bundle_bundle': '00Nd0000007f4St',
 
+                                # WPP Related Fields
+                                'invision_link': '00NZ0000001XznO',
+                                'conversion_goal': '00NZ0000001XznT',
+
                                 'Campaign_ID': 'Campaign_ID',
                                 'oid': 'oid',
                                 '__VIEWSTATE': '__VIEWSTATE',
@@ -90,6 +94,10 @@ class SalesforceLeads(object):
 
                                    # Bundle Unique Field
                                    'bundle_bundle': '00Nd0000007f4St',
+
+                                   # WPP Related Fields
+                                   'invision_link': '00Nd0000007fa8K',
+                                   'conversion_goal': '00Nd0000007fa8P',
 
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
