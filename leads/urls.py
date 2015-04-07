@@ -27,5 +27,6 @@ urlpatterns = patterns(
     url(r'^agency/(?P<agency_name>[\w -]+)/(?P<pid>[\w -][^/]+)$', views.agent_bulk_upload),
     url(r'^get-timezones/$', views.get_timezones),
     url(r'^agency-lead-form/$', views.agency_lead_form),
-    url(r'^leads-summary-by-cid/$', views.get_lead_status_by_cid)
+    url(r'^leads-summary-by-cid/$', views.get_lead_status_by_cid),
+    url(r'^wpp-lead-form/$', views.wpp_lead_form),
 )

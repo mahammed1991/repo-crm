@@ -192,8 +192,9 @@ class RegalixTeams(models.Model):
     location = models.ManyToManyField(Location)
     process_type = models.CharField(max_length=50, choices=(
         ('TAG', 'TAG'),
-        ('MIGRATION', 'MIGRATION'),
         ('SHOPPING', 'SHOPPING'),
+        ('WPP', 'WPP'),
+        ('MIGRATION', 'MIGRATION'),
     ), default='TAG')
 
     is_active = models.BooleanField(default=True)

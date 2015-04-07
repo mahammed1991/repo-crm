@@ -144,10 +144,57 @@ def lead_form(request):
     )
 
 
+@login_required
+@csrf_exempt
+def wpp_lead_form(request):
+
+    """
+    Lead Submission to Salesforce
+    """
+    # Check The Rep Status and redirect
+    if request.method == 'POST':
+        if settings.SFDC == 'STAGE':
+            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+            oid = '00DZ000000MipUa'
+        elif settings.SFDC == 'PRODUCTION':
+            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+            oid = '00Dd0000000fk18'
+
+        ret_url = ''
+        # Get Basic/Common form field data
+        if settings.SFDC == 'STAGE':
+            basic_data = get_common_sandbox_lead_data(request.POST)
+        else:
+            basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+        basic_data['oid'] = oid
+        basic_data['Campaign_ID'] = None
+        ret_url = basic_data['retURL']
+        wpp_data = basic_data
+
+        for key, value in tag_leads.items():
+            wpp_data[value] = request.POST.get(key)
+
+        submit_lead_to_sfdc(sf_api_url, wpp_data)
+
+        return redirect(ret_url)
+
+    # Get all location, teams codetypes
+    lead_args = get_basic_lead_data()
+    return render(
+        request,
+        'leads/wpp_lead_form.html',
+        lead_args
+    )
+
+
 def get_common_sandbox_lead_data(post_data):
     """ Get basic data from both lead forms """
     basic_data = dict()
-    for key, value in SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.iteritems():
+    for key, value in SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.items():
         basic_data[value] = post_data.get(key)
 
     if post_data.get('advertiser_name'):     # Advertiser Name
@@ -1122,6 +1169,7 @@ def thankyou(request):
         '1': reverse('leads.views.lead_form'),
         '2': reverse('leads.views.bundle_lead_form'),
         '3': reverse('leads.views.agency_lead_form'),
+        '4': reverse('leads.views.wpp_lead_form'),
     }
 
     if redirect_page in redirect_page_source.keys():
@@ -1565,7 +1613,6 @@ def get_lead_summary(request, lid=None):
         start_date = first_day_of_month(datetime.utcnow())
         end_date = datetime.utcnow()
         leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)
-        print len(leads)
         lead_status_dict = {'total_leads': 0,
                             'implemented': 0,
                             'in_progress': 0,
@@ -1598,7 +1645,6 @@ def get_lead_summary(request, lid=None):
             leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
-    print "Return to Templates "
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
