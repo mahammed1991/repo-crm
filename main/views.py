@@ -674,18 +674,21 @@ def get_profile_avatar_by_email(email):
 
     avatar_url = 'images/avtar-big.jpg'
     try:
-        user = User.objects.get(email=email)
         try:
-            user_profile = UserDetails.objects.get(user_id=user.id)
-            if user_profile.profile_photo_url:
-                avatar_url = user_profile.profile_photo_url
-            else:
-                username = email.split('@')[0]
-                os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username
-                # Check if profile picture exist
-                if os.path.isfile(os_path + '.png') or os.path.isfile(os_path + '.png.gz'):
-                    avatar_url = 'images/GTeam/' + username + '.png'
-        except ObjectDoesNotExist:
+            user = User.objects.get(email=email)
+            try:
+                user_profile = UserDetails.objects.get(user_id=user.id)
+                if user_profile.profile_photo_url:
+                    avatar_url = user_profile.profile_photo_url
+                else:
+                    username = email.split('@')[0]
+                    os_path = settings.STATIC_FOLDER + '/images/GTeam/' + username
+                    # Check if profile picture exist
+                    if os.path.isfile(os_path + '.png') or os.path.isfile(os_path + '.png.gz'):
+                        avatar_url = 'images/GTeam/' + username + '.png'
+            except ObjectDoesNotExist:
+                avatar_url = 'images/avtar-big.jpg'
+        except Exception:
             avatar_url = 'images/avtar-big.jpg'
     except ObjectDoesNotExist:
         if email:
