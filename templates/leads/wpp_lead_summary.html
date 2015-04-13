@@ -27,23 +27,23 @@
       <h1>WPP Leads Summary</h1>
       <div class="row summary-container">
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_green" id='open'>{{lead_status_dict.open }}</div>
+          <div class="circle_red" id='open'>{{lead_status_dict.open }}</div>
           <div class="sum-lbl">Open</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_red" id='on_hold'>{{lead_status_dict.on_hold}}</div>
+          <div class="circle_pur" id='on_hold'>{{lead_status_dict.on_hold}}</div>
           <div class="sum-lbl">On Hold</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_blue" id="in_mockup" >{{lead_status_dict.in_mockup}}</div>
+          <div class="circle_yellow" id="in_mockup" >{{lead_status_dict.in_mockup}}</div>
           <div class="sum-lbl">In Mockup</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_yellow" id="mockup_review">{{lead_status_dict.mockup_review}}</div>
+          <div class="circle_blue" id="mockup_review">{{lead_status_dict.mockup_review}}</div>
           <div class="sum-lbl">Mockup Review</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle" id="deferred">{{lead_status_dict.deferred}}</div>
+          <div class="circle_pink" id="deferred">{{lead_status_dict.deferred}}</div>
           <div class="sum-lbl">Deferred</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
@@ -51,11 +51,11 @@
           <div class="sum-lbl">Mockup Delivered</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle" id="in_development">{{lead_status_dict.in_development}}</div>
+          <div class="circle_lgreen" id="in_development">{{lead_status_dict.in_development}}</div>
           <div class="sum-lbl">In Development</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle" id="in_stage">{{lead_status_dict.in_stage}}</div>
+          <div class="circle_green" id="in_stage">{{lead_status_dict.in_stage}}</div>
           <div class="sum-lbl">In Stage</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
@@ -249,6 +249,4 @@ $('#ldap').keypress(function (e) {
 });
 
 </script>
-
-
 {% endblock main_js %}
