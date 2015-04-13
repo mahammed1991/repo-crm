@@ -276,7 +276,6 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         lead_status_dict['in_active'] = Leads.objects.filter(**query).count()
 
     elif lead_form == 'wpp':
-        import ipdb;ipdb.set_trace()
 
         lead_status = settings.WPP_LEAD_STATUS
         if start_date and end_date:
