@@ -1451,8 +1451,12 @@ def get_lead(request, cid):
     """ Get lead information """
     lead = {'status': 'FAILED', 'details': None}
     leads = Leads.objects.filter(customer_id=cid)
+    if not leads:
+        return HttpResponse(json.dumps(lead), content_type='application/json')
+
     if len(leads) > 1:
         leads = leads[0]
+
     team = Team.objects.get(team_name=leads.team)
     location = Location.objects.get(location_name=leads.country)
     languages = location.language.all()

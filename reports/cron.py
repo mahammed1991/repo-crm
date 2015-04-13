@@ -311,6 +311,20 @@ def create_or_update_leads(records):
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
+
+        # Calculate TAT for each lead
+        tat = 0
+        if lead.lead_status == 'Implemented':
+            if lead.team in settings.SERVICES:
+                tat = ReportService.get_tat_by_implemented_for_service(
+                    lead.date_of_installation, lead.created_date)
+            else:
+                tat = ReportService.get_tat_by_implemented(
+                    lead.date_of_installation, lead.appointment_date, lead.created_date)
+        else:
+            tat = ReportService.get_tat_by_first_contacted_on(
+                lead.first_contacted_on, lead.appointment_date, lead.created_date)
+        lead.tat = tat
         try:
             lead.save()
             if is_new_lead:
