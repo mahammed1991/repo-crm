@@ -37,12 +37,22 @@ Regalix Google Portal
                 <ul class="bxslider">
                   <li class="leads">
                     <div class="slide-wrap">
-                        <h1> &nbsp    </h1>
-
+                    {% if "WPP" in request.session.groups %}
+                        <h1 style="margin: 5px !important;"> &nbsp    </h1>
+                    {% else %}
+                    <h1> &nbsp    </h1>
+                    {% endif %}
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit A Lead</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Check the Status of Your Leads</button>
                         </div>
+                        <div>&nbsp</div>
+                        {% if "WPP" in request.session.groups %}
+                        <div class="btn-group">
+                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit A WPP Lead</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
+                        </div>
+                        {% endif %}
                         <div class="leads-summary">
                             <h2 class="sub-title">Your Leads Summary</h2>
                             <div class="row">

@@ -1612,27 +1612,9 @@ def get_lead_summary(request, lid=None):
         # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
         start_date = first_day_of_month(datetime.utcnow())
         end_date = datetime.utcnow()
-        leads = Leads.objects.filter(lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date)
-        lead_status_dict = {'total_leads': 0,
-                            'implemented': 0,
-                            'in_progress': 0,
-                            'attempting_contact': 0,
-                            'in_queue': 0,
-                            'in_active': 0,
-                            'in_progress': 0,
-                            }
-        lead_status_dict['total_leads'] = Leads.objects.filter(
-            lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count()
+        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        leads = Leads.objects.filter(**query)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)
@@ -1644,8 +1626,39 @@ def get_lead_summary(request, lid=None):
         elif 'google' in email:
             leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
 
-        lead_status_dict = get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
+
+
+@login_required
+def get_wpp_lead_summary(request, lid=None):
+    """Lead status and summary of wpp leads"""
+
+    lead_status = settings.WPP_LEAD_STATUS
+    email = request.user.email
+    if request.user.groups.filter(name='SUPERUSER'):
+        # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        start_date = first_day_of_month(datetime.utcnow())
+        end_date = datetime.utcnow()
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=start_date, end_date=end_date)
+        query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        leads = Leads.objects.filter(**query)
+    else:
+        if is_manager(email):
+            email_list = get_user_list_by_manager(email)
+        else:
+            email_list = [email]
+
+        if 'regalix' in email:
+            leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email__in=email_list)
+        elif 'google' in email:
+            leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
+
+        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=None, end_date=None)
+    return render(request, 'leads/wpp_lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
 @login_required
@@ -1809,7 +1822,7 @@ def get_lead_status_by_ldap(request):
         for l in leads:
             lead = convert_lead_to_dict(l)
             lead_list.append(lead)
-        lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, start_date=None, end_date=None)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, 'normal', start_date=None, end_date=None)
         mimetype = 'application/json'
         ldap_dict = dict()
         ldap_dict['manager'] = user.profile.user_manager_name

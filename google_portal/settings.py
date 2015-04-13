@@ -200,6 +200,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Dead Lead',
                'Implemented', 'ON CALL', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
 
+WPP_LEAD_STATUS = ['Open', 'On Hold', 'In Mockup', 'Mockup Review', 'Deferred', 'Mockup Delivered', 'In Development', 'In Stage']
+
 LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
                     'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required'],
                     'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented'], 'ON CALL': ['ON CALL']}

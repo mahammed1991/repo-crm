@@ -237,49 +237,81 @@ def get_previous_month_start_end_days(d):
     return start_date, end_day
 
 
-def get_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
+def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_date=None):
     """ get Count of Each Lead Status by rep/manager/email """
     if is_manager(email):
         email_list = get_user_list_by_manager(email)
     else:
         email_list = [email]
 
-    lead_status = settings.LEAD_STATUS
-    lead_status_dict = {'total_leads': 0,
-                        'implemented': 0,
-                        'in_progress': 0,
-                        'attempting_contact': 0,
-                        'in_queue': 0,
-                        'in_active': 0,
-                        'in_progress': 0,
-                        }
+    if lead_form == 'normal':
 
-    if 'regalix' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(
-            lead_status__in=lead_status, lead_owner_email__in=email_list).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], lead_owner_email__in=email_list).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], lead_owner_email__in=email_list).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], lead_owner_email__in=email_list).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], lead_owner_email__in=email_list).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], lead_owner_email__in=email_list).count()
-    elif 'google' in email:
-        lead_status_dict['total_leads'] = Leads.objects.filter(
-            lead_status__in=lead_status, google_rep_email__in=email_list).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], google_rep_email__in=email_list).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], google_rep_email__in=email_list).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], google_rep_email__in=email_list).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], google_rep_email__in=email_list).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], google_rep_email__in=email_list).count()
+        lead_status = settings.LEAD_STATUS
+        lead_status_dict = {'total_leads': 0,
+                            'implemented': 0,
+                            'in_progress': 0,
+                            'attempting_contact': 0,
+                            'in_queue': 0,
+                            'in_active': 0,
+                            'in_progress': 0,
+                            }
+
+        if start_date and end_date:
+            query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        elif not start_date and not end_date and 'regalix' in email:
+            query = {'lead_status__in': lead_status, 'lead_owner_email__in': email_list}
+        elif not start_date and not end_date and 'google' in email:
+            query = {'lead_status__in': lead_status, 'google_rep_email__in': email_list}
+
+        lead_status_dict['total_leads'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = settings.LEAD_STATUS_DICT['Implemented']
+        lead_status_dict['implemented'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = settings.LEAD_STATUS_DICT['In Progress']
+        lead_status_dict['in_progress'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = settings.LEAD_STATUS_DICT['Attempting Contact']
+        lead_status_dict['attempting_contact'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = settings.LEAD_STATUS_DICT['In Queue']
+        lead_status_dict['in_queue'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = settings.LEAD_STATUS_DICT['In Active']
+        lead_status_dict['in_active'] = Leads.objects.filter(**query).count()
+
+    elif lead_form == 'wpp':
+        import ipdb;ipdb.set_trace()
+
+        lead_status = settings.WPP_LEAD_STATUS
+        if start_date and end_date:
+            query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        else:
+            query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'google_rep_email__in': email_list}
+
+        lead_status_dict = {'total_leads': 0,
+                            'open': 0,
+                            'on_hold': 0,
+                            'in_mockup': 0,
+                            'mockup_review': 0,
+                            'deferred': 0,
+                            'mockup_delivered': 0,
+                            'in_development': 0,
+                            'in_stage': 0,
+                            }
+
+        lead_status_dict['total_leads'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['Open']
+        lead_status_dict['open'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['On Hold']
+        lead_status_dict['on_hold'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['In Mockup']
+        lead_status_dict['in_mockup'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['Mockup Review']
+        lead_status_dict['mockup_review'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['Deferred']
+        lead_status_dict['deferred'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['Mockup Delivered']
+        lead_status_dict['mockup_delivered'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['In Development']
+        lead_status_dict['in_development'] = Leads.objects.filter(**query).count()
+        query['lead_status__in'] = ['In Stage']
+        lead_status_dict['in_stage'] = Leads.objects.filter(**query).count()
 
     return lead_status_dict
 
