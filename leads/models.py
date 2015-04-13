@@ -80,6 +80,8 @@ class Leads(models.Model):
     dials = models.IntegerField(default=0)
     lead_sub_status = models.CharField(max_length=100, null=True)
 
+    tat = models.IntegerField(default=0)
+
     created_date = models.DateTimeField(default=datetime.utcnow())
     updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
 

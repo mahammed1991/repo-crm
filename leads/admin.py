@@ -4,7 +4,7 @@ from leads.models import Leads, Timezone, RegalixTeams, Location, Team, CodeType
 
 class LeadsAdmin(admin.ModelAdmin):
     list_display = ('google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
-                    'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'first_contacted_on')
+                    'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'first_contacted_on', 'tat')
 
 admin.site.register(Leads, LeadsAdmin)
 

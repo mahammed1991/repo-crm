@@ -674,7 +674,7 @@ class ReportService(object):
     def get_average_of_implemented(leads):
         days = 0
         for lead in leads:
-            if lead.team in ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']:
+            if lead.team in settings.SERVICES:
                 days += ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date) if lead.date_of_installation else 0
             else:
                 days += ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date) if lead.date_of_installation else 0
@@ -1148,8 +1148,7 @@ class DownloadLeads(object):
                 row['1st Contacted on'] = None
 
             row['Lead ID'] = lead.sf_lead_id
-            
-            if lead.team in ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']:
+            if lead.team in settings.SERVICES:
                 row['TAT'] = ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date) if lead.date_of_installation else 'N/A'
             else:
                 row['TAT'] = ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date) if lead.date_of_installation else 'N/A'
