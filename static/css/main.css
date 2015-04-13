@@ -1946,6 +1946,60 @@ i.fa.fa-filter {
 .status-implemented .status-bor-color {
 	border-left: 6px solid #34b67a;
 }
+
+/* WPP leas status colors starts */
+.status-onhold .status-bor-color {
+	border-left: 6px solid #acacac;
+}
+.status-open .status-bor-color {
+	border-left: 6px solid #e57368;
+}
+.status-inmockup .status-bor-color {
+	border-left: 6px solid #f5b400;
+}
+.status-mockupreview .status-bor-color {
+	border-left: 6px solid #77a7fb;
+}
+.status-mockupdelivered .status-bor-color {
+	border-left: 6px solid #34b67a;
+}
+.status-deferred .status-bor-color {
+	border-left: 6px solid #14b67a;
+}
+.status-indevelopment .status-bor-color {
+	border-left: 6px solid #34b76a;
+}
+.status-instage .status-bor-color {
+	border-left: 6px solid #11b98a;
+}
+
+.status-onhold .status-txt-color {
+	color:#acacac;
+}
+.status-open .status-txt-color {
+	color:#e57368;
+}
+.status-inmockup .status-txt-color {
+	color:#f5b400;
+}
+.status-mockupreview .status-txt-color {
+	color:#77a7fb;
+}
+.status-mockupdelivered .status-txt-color {
+	color:#34b67a;
+}
+.status-deferred .status-txt-color {
+	color:#14b67a;
+}
+.status-indevelopment .status-txt-color {
+	color:#34b76a;
+}
+.status-instage .status-txt-color {
+	color:#11b98a;
+}
+
+/* WPP leas status colors ends */
+
 .status-txt-color {
 	font-family:robotobold;
 }
