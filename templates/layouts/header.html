@@ -15,6 +15,7 @@
                 <li><a href="{% url 'leads.views.lead_form' %}">Submit Leads</a></li>
                 {% if "WPP" in request.session.groups %}
                   <li><a href="{% url 'leads.views.wpp_lead_form' %}">Submit WPP Lead</a></li>
+                  <li><a href="{% url 'leads.views.get_wpp_lead_summary' %}">WPP Lead Status</a></li>
                 {% endif %}
                 <!-- <li><a href="{% url 'leads.views.agency_lead_form' %}">Agency Lead Form </a></li> -->
                 <li><a href="{% url 'leads.views.get_lead_summary' %}">Lead Status</a></li>

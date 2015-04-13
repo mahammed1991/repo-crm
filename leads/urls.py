@@ -29,4 +29,5 @@ urlpatterns = patterns(
     url(r'^agency-lead-form/$', views.agency_lead_form),
     url(r'^leads-summary-by-cid/$', views.get_lead_status_by_cid),
     url(r'^wpp-lead-form/$', views.wpp_lead_form),
+    url(r'^wpp-lead-summary/$', views.get_wpp_lead_summary),
 )

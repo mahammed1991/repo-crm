@@ -21,7 +21,7 @@ class ReportService(object):
     @staticmethod
     def get_all_code_type():
         ''' Get all code types '''
-        return list(Leads.objects.exclude(type_1='').values_list(
+        return list(Leads.objects.exclude(type_1__in=['', 'WPP']).values_list(
             'type_1', flat=True).distinct().order_by('type_1'))
 
     @staticmethod
