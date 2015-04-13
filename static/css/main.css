@@ -1750,7 +1750,7 @@ ul li, ol li {
 .placeholder {
 	text-align: center;
 }
-.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black {
+.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen {
 	width: 120px;
 	height: 120px;
 	border-radius: 120px;
@@ -1777,6 +1777,15 @@ ul li, ol li {
 }
 .circle_black, .total {
 	background: #666;
+}
+.circle_pur{
+	background: #9933FF;
+}
+.circle_pink{
+	background: #FF33CC;
+}
+.circle_lgreen{
+	background: #99CC00;
 }
 .leads_heading {
 	font-family: "robotoblack";
@@ -1949,7 +1958,7 @@ i.fa.fa-filter {
 
 /* WPP leas status colors starts */
 .status-onhold .status-bor-color {
-	border-left: 6px solid #acacac;
+	border-left: 6px solid #9933FF;
 }
 .status-open .status-bor-color {
 	border-left: 6px solid #e57368;
@@ -1961,20 +1970,20 @@ i.fa.fa-filter {
 	border-left: 6px solid #77a7fb;
 }
 .status-mockupdelivered .status-bor-color {
-	border-left: 6px solid #34b67a;
+	border-left: 6px solid #acacac;
 }
 .status-deferred .status-bor-color {
-	border-left: 6px solid #14b67a;
+	border-left: 6px solid #ff33Ca;
 }
 .status-indevelopment .status-bor-color {
-	border-left: 6px solid #34b76a;
+	border-left: 6px solid #99CC00;
 }
 .status-instage .status-bor-color {
 	border-left: 6px solid #11b98a;
 }
 
 .status-onhold .status-txt-color {
-	color:#acacac;
+	color:#9933FF;
 }
 .status-open .status-txt-color {
 	color:#e57368;
@@ -1986,13 +1995,13 @@ i.fa.fa-filter {
 	color:#77a7fb;
 }
 .status-mockupdelivered .status-txt-color {
-	color:#34b67a;
+	color:#acacac;
 }
 .status-deferred .status-txt-color {
-	color:#14b67a;
+	color:#FF33CC;
 }
 .status-indevelopment .status-txt-color {
-	color:#34b76a;
+	color:#99CC00;
 }
 .status-instage .status-txt-color {
 	color:#11b98a;

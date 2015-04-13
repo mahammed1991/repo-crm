@@ -4,7 +4,7 @@
     })
 
     $('#all').click(function(){
-      $('.opn').show()
+      $('.open').show()
       $('.onhold').show()
       $('.inmockup').show()
       $('.mockupreview').show()
@@ -15,7 +15,7 @@
     })
 
     $('#Open').click(function(){
-      $('.opn').show()
+      $('.open').show()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
@@ -26,7 +26,7 @@
     })
 
     $('#OnHold').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').show()
       $('.inmockup').hide()
       $('.mockupreview').hide()
@@ -37,7 +37,7 @@
     })
 
     $('#InMockup').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').show()
       $('.mockupreview').hide()
@@ -48,7 +48,7 @@
     })
 
     $('#MockupReview').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').show()
@@ -59,7 +59,7 @@
     })
 
     $('#Deferred').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
@@ -70,7 +70,7 @@
     })
 
     $('#MockupDelivered').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
@@ -81,7 +81,7 @@
     })
 
     $('#InDevelopment').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
@@ -92,7 +92,7 @@
     })
 
     $('#InStage').click(function(){
-      $('.opn').hide()
+      $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
