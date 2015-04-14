@@ -21,6 +21,7 @@
     <input type="hidden" name="oid" value="00DZ000000MipUa">
     <input type="hidden" id="campid" name="Campaign_ID" value="None">
     <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+    <input type="hidden" id="wpp_lead_status" name="wpp_lead_status" value="Open">
      <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country" style="display:none;">
         {% for loc in locations %}
           {% if loc.name == 'US' %}
