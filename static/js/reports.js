@@ -426,7 +426,7 @@ function showReport(reports){
 
 }
 
-function drawColumnChart(details){
+/*function drawColumnChart(details){
   var keys = [];
   var values = [];
 
@@ -451,6 +451,44 @@ function drawColumnChart(details){
   var columnChart_datatable = [keys, values];
 
   columnChartDraw(columnChart_datatable, '', 'columnchart')
+}*/
+
+function drawColumnChart(details){
+  var keys = [];
+  var values = [];
+
+  for(var key in details){
+    if (key =='total_leads'){
+      keys.splice(0, 0, "Total Leads");
+    }else{
+      if(key != 'TAT')
+        keys.push(key)
+    }
+  } 
+
+  for(var key in details) {
+     if (key =='total_leads'){
+      values.splice(0, 0, details[key]);
+    }else{
+        if (key != 'TAT')
+          values.push(details[key])
+    }
+  }
+
+  var columnChart_datatable = [keys, values];
+
+  colors = ['#000099', '#FF0000', '#FFCC00', '#00CC00', '#660066', '#006699']
+
+  res = [['Lead Status', 'No Of Leads', { role: 'style' }]]
+  console.log(columnChart_datatable);
+  for(var i=0; i<keys.length; i++){
+    temp = []
+    temp.push(keys[i]);
+    temp.push(values[i]);
+    temp.push(colors[i]);
+    res.push(temp);
+  }
+  columnChartDraw(res, '', 'columnchart')
 }
 
 
