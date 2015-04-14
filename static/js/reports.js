@@ -526,7 +526,11 @@ function displayLeadStatusTable(details){
     if(key == 'total_leads'){
         total = '<tr><td class="lbl">Total Leads</td><td class="value">' + details[key] + '</td></tr>'
     }else if (key == 'TAT'){
-      end = '<tr><td class="lbl"> Average ' + key + '</td><td class="value">' + details[key] + ' days</td></tr>'
+      if(details[key] != null){
+        end = '<tr><td class="lbl"> Average ' + key + '</td><td class="value">' + details[key] + ' days</td></tr>'
+      }else{
+        end = '<tr><td class="lbl"> Average ' + key + '</td><td class="value">' + 0 + ' days</td></tr>'
+      }
     }else{
       rows += '<tr><td class="lbl">' + key + '</td><td class="value">' + details[key] + '</td></tr>'
     }

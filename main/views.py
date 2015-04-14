@@ -86,7 +86,7 @@ def main_home(request):
     else:
         # 1. Current User/Rep LEADS SUMMARY
         # Get Lead status count by current user
-        lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, start_date=None, end_date=None)
+        lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
 
     # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
