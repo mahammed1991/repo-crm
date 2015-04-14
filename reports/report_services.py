@@ -10,7 +10,7 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarte
 from django.conf import settings
 from django.http import HttpResponse
 import time
-from django.db.models import Count
+from django.db.models import Count, Avg
 
 
 class ReportService(object):
@@ -246,7 +246,8 @@ class ReportService(object):
                     total_leads += leads_status_summary[key]
 
         leads_status_summary['total_leads'] = len(lead_ids)
-        leads_status_summary['TAT'] = 0
+
+        leads_status_summary['TAT'] = Leads.objects.filter(id__in=lead_ids, lead_status='Implemented').aggregate(Avg('tat'))['tat__avg']
         return leads_status_summary
 
     @staticmethod
@@ -1148,10 +1149,7 @@ class DownloadLeads(object):
                 row['1st Contacted on'] = None
 
             row['Lead ID'] = lead.sf_lead_id
-            if lead.team in settings.SERVICES:
-                row['TAT'] = ReportService.get_tat_by_implemented_for_service(lead.date_of_installation, lead.created_date) if lead.date_of_installation else 'N/A'
-            else:
-                row['TAT'] = ReportService.get_tat_by_implemented(lead.date_of_installation, lead.appointment_date, lead.created_date) if lead.date_of_installation else 'N/A'
+            row['TAT'] = lead.tat
 
             for field in selected_fields:
                 if field in row.keys():

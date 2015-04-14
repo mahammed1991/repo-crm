@@ -89,7 +89,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 #     logging.info("Cron job done")
 
 
-@kronos.register('15 * * * *')
+@kronos.register('5 * * * *')
 def current_day_leads():
     """ Get Leads from SFDC """
     current_day = datetime.utcnow()
