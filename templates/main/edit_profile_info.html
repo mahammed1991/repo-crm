@@ -53,6 +53,15 @@
           <input type="text" class="form-control non-edit allow-edit" id="rep_location" name="rep_location" 
           value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off">
 
+          <div class="rep_cur_loc" style="display:none;position: relative;">
+          <label for="current_location">Your Current Location</label>
+          <input type="text" class="form-control non-edit" id="cur_location" name="cur_location" 
+          value="" autocomplete="off" disabled="">
+          <div style="position: relative;display: inline-block;">
+            <label style="width: auto;float: left;">Copy Current Location as Rep Location</label>
+            <input type="checkbox" id='location_copy' class="checkbox" style="position: relative;right: 0px;margin-top: 18px;">
+          </div>
+          </div>
     <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
           {% if 'google' in request.user.email %}
             <label>Region </label>
@@ -103,11 +112,12 @@
       window.regionWiseLocations = {{region_locations|safe}};
       window.all_locations = {{all_locations|safe}};
       window.rep_location = "{{user.profile.rep_location|safe}}";
-
-      if(!window.rep_location){
-        getLocation('rep_location');
-      }
-
+      window.toggle_loc = "{{user.profile.rep_location|safe}}";
+      /*if(!window.rep_location){
+        getLocation('cur_location');
+      }*/
+      
+      getLocation('cur_location');
 
       $("#user_manager_email").autocomplete({
       source: {{managers|safe}},

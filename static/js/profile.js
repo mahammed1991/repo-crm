@@ -18,6 +18,7 @@ $(document).ready(function(){
         $("#profileCancel").show();
         $(".allow-edit").removeClass('non-edit');
         $(".allow-edit").attr('disabled', false);
+        $(".rep_cur_loc").css({"display":"inline-block"});
         return false;
     });
 
@@ -34,6 +35,7 @@ $(document).ready(function(){
         $("#user_location").val(window.loc_id);
         $(".allow-edit").addClass('non-edit');
         $(".allow-edit").attr('disabled', true);
+        $(".rep_cur_loc").hide();
         return false;
     });
 });
@@ -119,3 +121,12 @@ function validateProfile(){
 function showErrorMessage(errMsg){
     $(".error-msg").show().text(errMsg);
 }
+
+$(".checkbox").change(function() {
+    if(this.checked) {
+        $('#rep_location').val($('#cur_location').val());
+    }
+    else{
+        $('#rep_location').val(window.toggle_loc);
+    }
+});

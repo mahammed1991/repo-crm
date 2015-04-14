@@ -1165,6 +1165,7 @@ def leads_report(request):
 def thankyou(request):
     """ Thank user after sucessful submitting form to salesforce """
     redirect_page = request.GET.get('n', reverse('main.views.home'))
+    lead_category = redirect_page
     redirect_page_source = {
         '1': reverse('leads.views.lead_form'),
         '2': reverse('leads.views.bundle_lead_form'),
@@ -1175,7 +1176,12 @@ def thankyou(request):
     if redirect_page in redirect_page_source.keys():
         redirect_page = redirect_page_source[redirect_page]
 
-    return render(request, 'leads/thankyou.html', {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
+    if str(lead_category) == '4':
+        template = 'leads/thankyou_wpp.html'
+    else:
+        template = 'leads/thankyou.html'
+
+    return render(request, template, {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
 
 
 @login_required
