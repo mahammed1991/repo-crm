@@ -160,7 +160,11 @@ class ContectList(models.Model):
         image = self.profile_photo
 
         if image:
-            img = Image.open(image)
+            try:
+                img = Image.open(image)
+            except Exception as e:
+                print e
+                raise ValidationError('Profile photo doesnot exist on the path, please clear the photo or upload a new profile photo.')
             w, h = img.size
 
             # validate dimensions
