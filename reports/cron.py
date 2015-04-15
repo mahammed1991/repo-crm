@@ -6,7 +6,7 @@ from lib.helpers import get_quarter_date_slots, first_day_of_month, last_day_of_
 from reports.models import LeadSummaryReports
 import logging
 from lib.salesforce import SalesforceApi
-from leads.models import Leads
+from leads.models import Leads, SfdcUsers
 from django.core.exceptions import ObjectDoesNotExist
 from lib.helpers import get_week_start_end_days
 import time
@@ -145,7 +145,7 @@ def get_updated_leads():
     sql_query = "select %s from Lead %s" % (select_items, where_clause)
     try:
         all_leads = sf.query_all(sql_query)
-        create_or_update_leads(all_leads['records'])
+        create_or_update_leads(all_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
@@ -159,6 +159,7 @@ def get_leads_from_sfdc(start_date, end_date):
     sf = SalesforceApi.connect_salesforce()
 
     logging.info("Connect Successfully")
+    # import ipdb; ipdb.set_trace()
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     select_items = settings.SFDC_FIELDS
@@ -166,16 +167,15 @@ def get_leads_from_sfdc(start_date, end_date):
     sql_query = "select %s from Lead %s" % (select_items, where_clause)
     try:
         all_leads = sf.query_all(sql_query)
+        logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+        create_or_update_leads(all_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
         logging.info("%s" % (e))
 
-    logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
-    create_or_update_leads(all_leads['records'])
 
-
-def create_or_update_leads(records):
+def create_or_update_leads(records, sf):
     """ Create a new leads or update existing lead """
     logging.info("Start saving leads to our DB")
     total_leads = 0
@@ -184,8 +184,8 @@ def create_or_update_leads(records):
 
     exist_lead_saved = 0
     exist_lead_failed = 0
-
     is_new_lead = True
+    owners_list = {u.user_id: {'name': u.full_name, 'email': u.email} for u in SfdcUsers.objects.all()}
     for rec in records:
         total_leads += 1
         sf_lead_id = rec.get('Id')
@@ -204,8 +204,19 @@ def create_or_update_leads(records):
         rep_name = rec.get('Google_Rep__c')
 
         # Lead owner name
-        lead_owner_name = rec.get('Q2_Manager__c')
-        lead_owner_email = rec.get('gm_email__c')
+        owner_id = rec.get('OwnerId')
+        if owner_id and owner_id in owners_list:
+            details = owners_list.get(owner_id)
+            lead_owner_name = details.get('name')
+            lead_owner_email = details.get('email')
+        else:
+            try:
+                user_details = sf.User.get('owner_id')
+                lead_owner_name = user_details.get('Email')
+                lead_owner_email = user_details.get('Name')
+            except ObjectDoesNotExist:
+                lead_owner_name = "%s %s" % (settings.DEFAULT_LEAD_OWNER_FNAME, settings.DEFAULT_LEAD_OWNER_LNAME)
+                lead_owner_email = settings.DEFAULT_LEAD_OWNER_EMAIL
 
         # Team
         team = rec.get('Team__c') if rec.get('Team__c') else ''
@@ -311,6 +322,8 @@ def create_or_update_leads(records):
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
+        if lead.type_1 == 'WPP':
+            lead.lead_status = rec.get('Wpp_Lead_Status__c')
 
         # Calculate TAT for each lead
         tat = 0
@@ -345,3 +358,37 @@ def create_or_update_leads(records):
     logging.info("Exist leads updated Count: %s" % (exist_lead_saved))
     logging.info("Exist lead failed to update: %s" % (exist_lead_failed))
     logging.info("**********************************************************")
+
+
+@kronos.register('0 10 * * *')
+def get_salesforce_users():
+    """ Get all Users from SFDC """
+
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
+    logging.info("Connect Successfully")
+    user_details = sf.query_all("Select Id, Email, Name, Username from User")
+    users = user_details.get('records')
+    for user in users:
+        details = {
+            'user_id': user.get('Id'),
+            'full_name': user.get('Name'),
+            'email': user.get('Email'),
+            'username': user.get('Username')
+        }
+
+        create_sfdc_user(details)
+
+
+def create_sfdc_user(details):
+    """ Create users in to db """
+
+    try:
+        user = SfdcUsers.objects.get(user_id=details.get('user_id'))
+    except ObjectDoesNotExist:
+        user = SfdcUsers()
+    user.user_id = details.get('user_id')
+    user.full_name = details.get('full_name')
+    user.email = details.get('email')
+    user.username = details.get('username')
+    user.save()

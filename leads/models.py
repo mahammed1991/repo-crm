@@ -322,8 +322,8 @@ class LeadFormAccessControl(models.Model):
     """ Lead Form Access Control """
 
     lead_form = models.ForeignKey(LeadForm)
-    programs = models.ManyToManyField(Team)
-    target_location = models.ManyToManyField(Location)
+    programs = models.ManyToManyField(Team, blank=True, null=True)
+    target_location = models.ManyToManyField(Location, blank=True, null=True)
     google_rep = models.ManyToManyField(User, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
@@ -344,3 +344,19 @@ class LeadFormAccessControl(models.Model):
     class Meta:
         db_table = 'lead_form_controls'
         verbose_name_plural = 'Lead Form Access Controls'
+
+
+class SfdcUsers(models.Model):
+    """ SFDC Users List """
+
+    user_id = models.CharField(max_length=255, null=False)
+    full_name = models.CharField(max_length=255, null=False)
+    email = models.CharField(max_length=255, null=False)
+    username = models.CharField(max_length=255, null=False)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'sfdc_users'
+        verbose_name_plural = 'SFDC Users'
