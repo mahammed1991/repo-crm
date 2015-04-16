@@ -796,7 +796,6 @@ def agent_bulk_upload(request, agency_name, pid):
             return render(request, 'leads/agent_bulk_form.html', template_args)
 
         if 'paramcounts' in request.POST:
-            import ipdb; ipdb.set_trace()
             if settings.SFDC == 'STAGE':
                 sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
                 basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
