@@ -621,7 +621,6 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
 @csrf_exempt
 def agency_form(request):
     """ Agency Form """
-
     template_args = dict()
 
     # Get all location, teams codetypes
@@ -797,6 +796,16 @@ def agent_bulk_upload(request, agency_name, pid):
             return render(request, 'leads/agent_bulk_form.html', template_args)
 
         if 'paramcounts' in request.POST:
+            import ipdb; ipdb.set_trace()
+            if settings.SFDC == 'STAGE':
+                sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+                basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+                oid = '00DZ000000MipUa'
+            elif settings.SFDC == 'PRODUCTION':
+                sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+                basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+                oid = '00Dd0000000fk18'
+
             params_count = request.POST.get('paramcounts')
             google_rep_id = request.POST.get('google_rep_id')
             poc_id = request.POST.get('poc_id')
@@ -812,43 +821,6 @@ def agent_bulk_upload(request, agency_name, pid):
                 pass
 
             for i in range(1, int(params_count) + 1):
-
-                basic_lead_args = {
-                    # Google Rep Information
-                    '00Nd0000005WYgk': goggle_rep.first_name + ' ' + goggle_rep.last_name,  # Full Name
-                    'email': goggle_rep.email,                   # Rep Email
-                    '00Nd00000075Crj': goggle_rep.profile.user_manager_name,  # Manager Name
-                    '00Nd00000077r3s': goggle_rep.profile.user_manager_email,  # Manager Email
-                    '00Nd0000005XIWB': goggle_rep.profile.team.team_name,  # Team
-                    '00Nd0000007e2AF': None,  # Service Segment
-                    '00Nd0000007dWIH': None,  # G Cases Id
-                    '00Nd0000005WYga': '',  # Country
-
-                    '00Nd0000005WcNw': '',  # Advertiser Email
-                    '00Nd0000005WYgz': '',  # Advertiser Phone
-                    'company': '',    # Advertiser Company
-                    '00Nd0000005WYgV': '',  # Customer ID
-
-                    '00Nd0000007clUn': poc.agency.language.language_name,  # Language
-                    '00Nd0000005WYhT': '',  # Time Zone
-
-
-                    # Sandbox ID's
-                    '00NZ0000001X6y7': '',  # Advertiser Name
-                    '00Nd0000007es7U': '',  # Advertiser Location
-                    '00Nd0000007esIm': 0,  # Web Access
-                    '00NZ0000001X6yC': '',  # Webmaster Email
-                    '00Nd0000007esIc': '',  # Webmaster Phone
-
-                    # Webmaster Details
-                    '00Nd0000005WYgp': None,  # Webmaster First Name
-                    '00Nd0000005WYgu': None,  # Webmaster Last Name
-                    '00Nd0000007elYB': 1,    # Default value for Change Lead Owner
-                    'Campaign_ID': None,
-                    'oid': request.POST.get('oid'),
-                    '__VIEWSTATE': request.POST.get('__VIEWSTATE'),
-                }
-                lead_args = dict()
                 customer_id = request.POST.get('customer_id_' + str(i))
                 location = request.POST.get('location_' + str(i))
                 timezone = request.POST.get('timezone_' + str(i))
@@ -859,38 +831,86 @@ def agent_bulk_upload(request, agency_name, pid):
                 url = request.POST.get('url_' + str(i))
                 special_instructions = request.POST.get('special_instructions_' + str(i))
 
-                lead_args = basic_lead_args
-                lead_args['00NZ0000001X6y7'] = agency_name     # Advertiser Name
-                lead_args['first_name'] = agency_name.rsplit(' ', 1)[0]    # First Name
-                lead_args['last_name'] = agency_name.rsplit(' ', 1)[1] if len(agency_name.rsplit(' ', 1)) > 1 else ''   # Last Name
-                lead_args['00Nd0000005WcNw'] = agency_email     # Advertiser Email
-                lead_args['00Nd0000005WYgz'] = agency_phone     # Advertiser Phone
-                lead_args['00Nd0000005WYgV'] = customer_id     # Customer ID
-                lead_args['00Nd0000007es7U'] = location     # Agency Location
-                lead_args['00Nd0000005WYhT'] = timezone     # Time Zone
+                first_name, last_name = split_fullname(agency_name)
 
-                # Code Type 1 Details
-                lead_args['00Nd0000005WYhJ'] = code_type  # Code Type1
-                lead_args['00Nd0000005WYhE'] = url  # URL1
-                lead_args['00Nd0000005WYh9'] = None  # Code1
-                lead_args['00Nd0000005WZIe'] = special_instructions  # Comments1
+                basic_lead_args = {
+                    # Google Rep Information
+                    'gref': goggle_rep.first_name + ' ' + goggle_rep.last_name,  # Full Name
+                    'email': goggle_rep.email,                   # Rep Email
+                    'manager_name': goggle_rep.profile.user_manager_name,  # Manager Name
+                    'manager_email': goggle_rep.profile.user_manager_email,  # Manager Email
+                    'team': goggle_rep.profile.team.team_name if goggle_rep.profile.team else '',  # Team
+                    'service_segment': None,  # Service Segment
+                    'g_cases_id': None,  # G Cases Id
+                    'country': location,  # Country
 
+                    'advertiser_name': '',  # Advertiser Email
+                    'phone': '',  # Advertiser Phone
+                    'company': '',    # Advertiser Company
+                    'cid': customer_id,  # Customer ID
+
+                    'language': poc.agency.language.language_name,  # Language
+                    'tzone': timezone,  # Time Zone
+
+                    # Advertiser Details
+                    'advertiser_name': '',  # Advertiser Name
+                    'first_name': first_name,  # First Name
+                    'last_name': last_name,  # Last Name
+                    'advertiser_location': '',  # Advertiser Location
+                    'aemail': '',  # Advertiser Email
+                    'phone': '',  # Advertiser phone
+                    'company': '',  # Advertiser Company
+
+                    # Webmaster Details
+                    'fopt': '',  # Webmaster First Name
+                    'lopt': '',  # Webmaster Last Name
+                    'webmaster_name': '',    # Webmaster Name
+                    'web_access': '',  # Web Access
+                    'web_master_email': '',  # Webmaster Email
+                    'popt': '',  # Webmaster Phone
+                    'change_lead_owner': '1',    # Default value for Change Lead Owner
+
+                    # Agency Details
+                    'agency_name': agency_name,
+                    'agency_email': agency_email,
+                    'agency_phone': agency_phone,
+                    'agency_poc': '',
+
+                    'rep_location': '',
+                    'Campaign_ID': None,
+                    'oid': request.POST.get('oid'),
+                    '__VIEWSTATE': request.POST.get('__VIEWSTATE'),
+                }
+
+                tag_data = {
+                    'tag_datepick': '',  # TAG Appointment Date
+                    'tag_primary_role': '',  # Role
+                    # Code Type 1 Details
+                    'ctype1': code_type,  # Code Type1
+                    'url1': url,   # URL1
+                    'code1': '',   # Code1
+                    'comment1': special_instructions,  # Comments1
+                    'rbid1': '',  # Recommended Bid1
+                    'rbudget1': '',  # Recommended Budget1
+                    'ga_setup1': '',  # Is GS Setup1
+                }
+
+                lead_args = dict()
+                for key, value in basic_leads.items():
+                    lead_args[value] = basic_lead_args.get(key)
+
+                for key, value in tag_leads.items():
+                    lead_args[value] = tag_data.get(key)
+                lead_args['oid'] = oid
                 lead_args['create_date'] = datetime.utcnow()  # Created Date
                 # Post Lead data to SalesForce
                 try:
-                    post_lead_to_sf(request, lead_args)
+                    submit_lead_to_sfdc(sf_api_url, lead_args)
                 except Exception as e:
                     print e
 
             template_args.update({'is_csv': True})
-    return render(request, 'leads/agent_bulk_form_new.html', template_args)
-
-
-def post_lead_to_sf(request, lead_data):
-    """ Post lead to SalesForce """
-    sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-    # requests.request('POST', url=sf_api_url, data=lead_data)
-    submit_lead_to_sfdc(sf_api_url, lead_data)
+    return render(request, 'leads/agent_bulk_form.html', template_args)
 
 
 # Create your views here.
@@ -1884,13 +1904,13 @@ def get_basic_lead_data():
             all_locations.append(l)
         loc_name = str(loc.location_name)
         time_zone_for_region[loc_name] = [{'zone_name': str(tz[
-            'zone_name']), 'time_value': str(tz['time_value'])} for tz in loc.time_zone.values()]
+            'zone_name']), 'time_value': str(tz['time_value']), 'id': str(tz['id'])} for tz in loc.time_zone.values()]
         language_for_location[loc_name] = [{'language_name': str(lang[
             'language_name'])} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
         if language_for_location[loc_name]:
-            language_for_location[loc_name].insert(0, {'language_name': str(loc.primary_language.language_name)})
+            language_for_location[loc_name].insert(0, {'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
         else:
-            language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name)})
+            language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
     teams = Team.objects.filter(is_active=True)
     code_types = CodeType.objects.filter(is_active=True)
