@@ -255,7 +255,6 @@ class ReportService(object):
         ''' Week on week analysis of leads won over leads submitted '''
         week_on_week_trends = dict()
         weeks_in_qtd = get_weeks_in_quarter_to_date()
-
         for index in range(1, len(weeks_in_qtd) + 1):
 
             week_on_week_trends[index] = {'leads_won': 0}
@@ -270,21 +269,26 @@ class ReportService(object):
                 start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
                 end_date = datetime(start_date.year, start_date.month, last_day_of_month(start_date).day, 23, 59, 59)
 
+            else:
+                start_date, end_date = weeks_in_qtd[index - 1]
+                start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+                end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
             if teams and countries:
-                week_on_week_trends[index]['leads_won'] = Leads.objects.filter(country__in=countries, lead_status='Implemented',
+                week_on_week_trends[index]['leads_won'] = Leads.objects.filter(id__in=lead_ids, country__in=countries, lead_status='Implemented',
                                                                                team__in=teams, type_1__in=code_types,
                                                                                created_date__gte=start_date, created_date__lte=end_date).count()
 
-                week_on_week_trends[index]['total_leads_submitted'] = Leads.objects.filter(country__in=countries,
+                week_on_week_trends[index]['total_leads_submitted'] = Leads.objects.filter(id__in=lead_ids, country__in=countries,
                                                                                            team__in=teams, type_1__in=code_types,
                                                                                            created_date__gte=start_date,
                                                                                            created_date__lte=end_date).count()
             else:
-                week_on_week_trends[index]['leads_won'] = Leads.objects.filter(lead_status='Implemented',
+                week_on_week_trends[index]['leads_won'] = Leads.objects.filter(id__in=lead_ids, lead_status='Implemented',
                                                                                type_1__in=code_types, created_date__gte=start_date,
                                                                                created_date__lte=end_date).count()
 
-                week_on_week_trends[index]['total_leads_submitted'] = Leads.objects.filter(type_1__in=code_types,
+                week_on_week_trends[index]['total_leads_submitted'] = Leads.objects.filter(id__in=lead_ids, type_1__in=code_types,
                                                                                            created_date__gte=start_date,
                                                                                            created_date__lte=end_date).count()
         return week_on_week_trends
