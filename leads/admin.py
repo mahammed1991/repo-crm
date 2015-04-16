@@ -16,21 +16,22 @@ admin.site.register(Timezone, TimezoneAdmin)
 
 
 class RegalixTeamsAdmin(admin.ModelAdmin):
-    list_display = ('team_name', 'location_list')
+    list_display = ('team_name', 'location_list', 'process_type')
     filter_horizontal = ('location',)
 
 admin.site.register(RegalixTeams, RegalixTeamsAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('location_name', 'timezone_list', 'flag_image')
+    list_display = ('location_name', 'timezone_list', 'primary_language',
+                    'secondary_language_list', 'flag_image', 'phone', 'is_active')
     filter_horizontal = ('time_zone', 'language')
 
 admin.site.register(Location, LocationAdmin)
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('team_name',)
+    list_display = ('team_name', 'is_active',)
 
 admin.site.register(Team, TeamAdmin)
 

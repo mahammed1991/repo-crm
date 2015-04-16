@@ -150,6 +150,9 @@ class Location(models.Model):
     def timezone_list(self):
         return ", ".join(["%s (UTC %s)" % (t.zone_name, t.time_value) for t in self.time_zone.all()])
 
+    def secondary_language_list(self):
+        return ", ".join(["%s" % (l.language_name) for l in self.language.all()])
+
     @property
     def flag_filename(self):
         return os.path.basename(self.flag_image.name)
