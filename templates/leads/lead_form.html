@@ -66,7 +66,7 @@
       </div>
       <div class="col-md-4">
         <label for="country">Google Rep Location</label>
-          <input type="text" class="form-control" id="rep_location" name="rep_location" value="{{user.profile.rep_location}}" placeholder="Enter Rep Location" autocomplete="off">
+          <input type="text" class="form-control" id="rep_location" name="rep_location" value="" placeholder="Enter Rep Location" autocomplete="off">
       </div>
     </div>
     <div class="std-sub-title">Advertiser Info</div>
@@ -519,6 +519,7 @@
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
     window.locations = {{locations|safe}};
@@ -526,6 +527,14 @@
     window.regionWiseLocations = {{region_locations|safe}};
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
+
+    window.rep_location = "{{user.profile.rep_location|safe}}";
+
+    if(window.rep_location){
+      $('#rep_location').val(window.rep_location);
+    }else{
+      getLocation('rep_location');
+    }
 
 
     var userTeam = "{{user.profile.team.team_name|safe}}"
