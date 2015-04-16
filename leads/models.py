@@ -92,7 +92,7 @@ class Leads(models.Model):
 
 
 class Timezone(models.Model):
-    zone_name = models.CharField(max_length=20)
+    zone_name = models.CharField(max_length=20, unique=True)
     time_value = models.CharField(max_length=6)
     is_active = models.BooleanField(default=True)
 
@@ -136,7 +136,7 @@ class Location(models.Model):
             filename = flag_filename
         return os.path.join('country_flag/', filename)
 
-    location_name = models.CharField(max_length=100)
+    location_name = models.CharField(max_length=100, unique=True)
     phone = models.CharField(max_length=50, null=True, default=None, blank=True)
     time_zone = models.ManyToManyField(Timezone)
     primary_language = models.ForeignKey(Language, related_name="primary_language", null=False, blank=False, default=1)
@@ -190,7 +190,7 @@ class Location(models.Model):
 
 
 class RegalixTeams(models.Model):
-    team_name = models.CharField(max_length=100)
+    team_name = models.CharField(max_length=100, unique=True)
     location = models.ManyToManyField(Location)
     process_type = models.CharField(max_length=50, choices=(
         ('TAG', 'TAG'),
