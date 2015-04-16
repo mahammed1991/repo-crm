@@ -56,7 +56,7 @@
               <select class="form-control" id="country" title="Program Location" name="country">
                 <option value="0">Program Location</option>
                 {% for loc in locations %}
-                  <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+                  <option value="{{loc.id}}" location_name="{{loc.name}}">{{loc.name}}</option>
                 {% endfor %}
               </select>
             </div>
@@ -295,15 +295,16 @@ $('#set_appointment').datetimepicker({
 
 $("#country").change(function(){
     var locations = {{time_zone_for_region|safe}};
-    loc_id = $(this).val();
-        if(locations[loc_id].length == 1){
-            var tz_info = locations[loc_id];
+    // loc_name = $(this).attr('location_name');
+    var loc_name = $('option:selected', this).attr('location_name');
+        if(locations[loc_name].length == 1){
+            var tz_info = locations[loc_name];
             var option = "<option value='" + tz_info[0]['id'] + "' selected>"+ tz_info[0]['zone_name'] +"(UTC"+tz_info[0]['time_value']+")</option>"
             $('#tzone').html(option);
         }else{
             var option = "<option value='0'>--Select--</option>"
-            var tz_info = locations[loc_id];
-            for(var i=0;i<locations[loc_id].length;i++){
+            var tz_info = locations[loc_name];
+            for(var i=0;i<locations[loc_name].length;i++){
                 option += "<option value='" + tz_info[i]['id'] + "'>"+ tz_info[i]['zone_name'] +"(UTC"+tz_info[i]['time_value']+")</option>"
             }
             $('#tzone').html(option);
@@ -313,19 +314,19 @@ $("#country").change(function(){
         var languages = {{language_for_location|safe}}
         
         $('#language').html('');
-        if(languages[loc_id].length == 1){
-            var lang_info = languages[loc_id];
+        if(languages[loc_name].length == 1){
+            var lang_info = languages[loc_name];
             var option = "<option value='" + lang_info[0]['id'] + "' selected>"+ lang_info[0]['language_name'] +"</option>"
             $('#language').html(option);
             //$('#language').val(lang_info[0]['language_name']);
         }else{
             var option = "<option value='0'>--Select--</option>"
-            var lang_info = languages[loc_id];
-            for(var i=0;i<languages[loc_id].length;i++){
+            var lang_info = languages[loc_name];
+            for(var i=0;i<languages[loc_name].length;i++){
                 option += "<option value='" + lang_info[i]['id'] + "'>"+ lang_info[i]['language_name'] +"</option>"
             }
             $('#language').html(option);
-            $('#language').val(0);
+            // $('#language').val(0);
         }
 });
 
