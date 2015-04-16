@@ -1,0 +1,1212 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Agency Lead Form
+{% endblock title %}
+
+{% block main_css %}
+  <style type="text/css">
+  </style>
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Agency Lead Form </h1>
+      <div class="lead-form agents-form-selection" id="agency_lead_div">
+          <form class="lead-form" id="agency_lead_form" onsubmit="return validatethis(this);" method="POST">
+              <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=3" name="retURL">
+              <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=3" name="errorURL">
+              <input type="hidden" name="oid" value="00DZ000000MipUa">
+              <input type="hidden" id="campid" name="Campaign_ID" value="None">
+              <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+
+              <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+
+              <input type="hidden" name="agency_same_shop_count" id="agency_same_shop_count" value="0">
+              <input type="hidden" name="agency_same_tag_count" id="agency_same_tag_count" value="0">
+
+              <input type="hidden" name="agency_diff_tag_count" id="agency_diff_tag_count" value="0">
+              <input type="hidden" name="agency_diff_shop_count" id="agency_diff_shop_count" value="0">
+
+              <input type="hidden" name="customer_same_tag_count" id="customer_same_tag_count" value="0">
+              <input type="hidden" name="customer_diff_tag_count" id="customer_diff_tag_count" value="0">
+
+              <input type="hidden" name="customer_same_shop_count" id="customer_same_shop_count" value="0">
+              <input type="hidden" name="customer_diff_shop_count" id="customer_diff_shop_count" value="0">
+             
+              <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
+                <option value="Under 100">Under 100</option>
+              </select>
+
+              <!-- ################ Google rep info Starts ######################### -->
+              <div class="std-sub-title">Google Rep Info</div>
+              <div class="row">
+                <div class="col-md-4">
+                   <label for="gref">Google Rep Name</label>
+                  <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+                </div>
+                <div class="col-md-4">
+                   <label for="manager_email">Manager Email</label>
+                  <input type="text" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+                </div>
+                <div class="col-md-4">
+                  <label for="team">Program name</label>
+                  <select class="form-control bgicon" id="team" title="Program Name" name="team">
+                    <option value="">Program name</option>
+                    {% for team in teams %}
+                      <option value='{{team.team_name}}'>{{team.team_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 tr_service_segment"></div>
+                <div class="col-md-4 tr_service_segment"></div>
+                <div class="col-md-4 tr_service_segment">
+                    <select id="service_segment" title="service_segment" class="form-control" name="service_segment">
+                        <option value="">Service Segment</option>
+                        <option value="SBA">SBA</option>
+                        <option value="HPA">HPA</option>
+                        <option value="HPA+">HPA+</option>
+                    </select>
+                    <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="G Case ID (x-xxxxxxxxxxxxx)" value="" style="display:none;">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <label for="manager_name">Manager Name</label>
+                  <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+                </div>
+                <div class="col-md-4">
+                  <label for="manager_email">Manager Email</label>
+                  <input type="text" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+                </div>
+                 <div class="col-md-4">
+                 <label for="region">Region</label>
+                  <select class="form-control bgicon" id="region" title="Program Region" name="region">
+                    <option value="0">Region</option>
+                    {% for rgn in regions %}
+                      <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="country">Market Served</label>
+                  <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
+                    <option value="0">Market Served</option>
+                    {% for loc in locations %}
+                      <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="rep_location">Google Rep Location</label>
+                    <input type="text" class="form-control" id="rep_location" name="rep_location" value="" placeholder="Enter Rep Location" autocomplete="off">
+                </div>
+              </div>
+              <!-- ################ Google rep info Ends ######################### -->
+            <div class="bg_custom">
+              <div class="form-heading">Who will submit the leads?</div>
+               <div class="checkbox">
+                  <input type="radio" name="cusm_type" id="me" value="me" class="cusm_type" checked="">
+                  <span style="padding-right:2.5%;"> Me </span>
+                  <input type="radio" name="cusm_type" id="agen" value="agency" class="cusm_type">
+                  <span style="padding-right:2.5%;">Agency POC</span>
+                </div>
+
+               <div class="form-heading">Will end customers be involved in the implementation process, or will we only be working with the Agency?</div>
+                <div class="checkbox web-access">
+                  <input type="radio" name="customer_type" id="agency" value="agency" class="customer_type" checked="">
+                  <span style="padding-right:2.5%;"> Agency </span>
+                  <input type="radio" name="customer_type" id="end_customer" value="end_customer" class="customer_type">
+                  <span style="padding-right:2.5%;">End Customer</span>
+                </div>
+
+              <div class="form-heading">Will the same task be implemented across different CID or will it be different tasks?</div>
+              <div>
+                 <input type="radio" name="task_type" value="same_task" id="same_task" class="task_type" checked>
+                 <span style="padding-right:2.5%;"> Same task</span>
+                  <input type="radio" name="task_type" id="diff_task" value="diff_task" class="task_type">
+                  <span style="padding-right:2.5%;">Different tasks </span>
+              </div>
+          </div>
+          <br />
+          <!-- ################ Set Aoopintment Starts ######################### -->
+          <div class="form-heading">Set Appointment</div>
+           <div class="row">
+           <div class="col-md-4">
+              <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
+                <option value="">Select Time Zone</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+               <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off' style="display:none;">             
+              </div>
+          </div>
+          <!-- ################ Set Aoopintment Ends ######################### -->
+         
+         <!-- ################ Agency Conatct Info Starts ######################### -->
+           <div class="std-sub-title agency_info">Agency Contact Info</div>
+              <div class="row agency_info" id="agency_info">
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="agency_poc" name="agency_poc" placeholder="Point of Contact">
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="agency_email" name="agency_email" placeholder="Email">
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="agency_phone" name="agency_phone" placeholder="Telephone">
+                </div>
+              </div>
+        <!-- ################ Agency Conatct Info Ends ######################### -->
+
+        <!-- ##################### Same Task Functionality Starts #################### --> 
+          <div id="same_task_agency">
+            <div class="std-sub-title">Same Task</div>
+              <div class="row">
+                <div class="col-md-4">
+                  <select title="Code Type" class="form-control bgicon" name="same_task_ctype" id="same_task_ctype">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+                </div>
+                <div class="col-md-12" id="gasetupSameAgency" style="display:none;">
+                  <div class="checkbox">
+                  <label>
+                    <input id="gasetup_sameAgency" type="checkbox" name="gasetup_sameAgency" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                  </div>
+                </div>
+              </div>
+          <!-- ################### Same Shop 1 ############################### -->
+        </div>
+        <!--- #################### End Same Shop Functionality ######################## -->
+
+          <!-- ##################### Different Task Functionality #################### --> 
+          <div id="different_task_agency" style="display:none;">  
+            <div class="std-sub-title">Different Task</div>
+            <div class="row fixallit" id="addedRows"></div>
+
+            <!--  Different TAG Lead 1 -->
+              <div class="row" id="diff_tag_1">
+                        <div class="col-md-4  customwidth custom2">
+                           <select title="Code Type" class="form-control bgicon agency_diff" name="diff_ctype1" id="diff_ctype-1">
+                              <option value="">Select Code Type</option>
+                              {% for c_type in code_types %}
+                                <option value="{{c_type.name}}">{{c_type.name}}</option>
+                              {% endfor %}
+                              <option value="Google Shopping Setup">Google Shopping Setup</option>
+                            </select>
+                        </div>
+              </div> 
+
+          </div>
+          <!-- ##################### Different Task Functionality Ends #################### --> 
+
+
+          <!-- ##################### Start Customer  Same Task Functionality Starts #################### --> 
+          <div id="same_task_customer" style="display:none; margin:auto;">
+            <div class="std-sub-title">Same Task</div>
+              <div class="row">
+                <div class="col-md-4">
+                  <select title="Code Type" class="form-control bgicon" name="same_task_cust_type" id="same_task_cust_type">
+                    <option value="">Select Code Type</option>
+                    {% for c_type in code_types %}
+                      <option value="{{c_type.name}}">{{c_type.name}}</option>
+                    {% endfor %}
+                    <option value="Google Shopping Setup">Google Shopping Setup</option>
+                  </select>
+                </div>
+                <div class="col-md-12" id="gasetupSameCustomer" style="display:none;">
+                  <div class="checkbox">
+                  <label>
+                    <input id="ga_setupSamecustomer" type="checkbox" name="ga_setupSamecustomer" value="0" class="is_ga_setup">
+                    Is there an existign Analytics setup? </label>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <!--- #################### End Shop Functionality ######################## -->
+
+          <!-- ##################### Different Task Functionality Starts #################### --> 
+          <div id="different_task_customer" style="display:none;">  
+            <div class="std-sub-title">Different Task</div>
+            <div class="row fixallit" id="addedRows"></div>
+
+            <!--  Different TAG Lead 1 -->
+              <div class="row" id="diff_cust_tag_1">
+                        <div class="col-md-4  customwidth custom2">
+                           <select title="Code Type" class="form-control bgicon customer_diff" name="diff_cust_type1" id="diff_cust_type-1">
+                              <option value="">Select Code Type</option>
+                              {% for c_type in code_types %}
+                                <option value="{{c_type.name}}">{{c_type.name}}</option>
+                              {% endfor %}
+                              <option value="Google Shopping Setup">Google Shopping Setup</option>
+                            </select>
+                        </div>
+              </div> 
+
+          </div>
+          <!-- ##################### Customer Different Task Functionality Ends #################### --> 
+
+          <div class="btns text-center" id="submit_buttons">
+              <div class="btn-group">
+                  <button class="btn std-btn">Submit</button>
+                  <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+              </div>
+          </div>
+        </form>
+      </div>  
+  </div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/agent_lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+    window.locations = {{locations|safe}};
+    window.new_locations = {{new_locations|safe}};
+    window.is_loc_changed = false;
+    window.regions = {{regions|safe}};
+    window.regionWiseLocations = {{region_locations|safe}};
+    window.rep_location = "{{user.profile.rep_location|safe}}";
+
+    if(window.rep_location){
+      $('#rep_location').val(window.rep_location);
+    }else{
+      getLocation('rep_location');
+    }
+
+    $(".tr_service_segment").hide();
+    var userTeam = "{{user.profile.team.team_name|safe}}"
+    if(userTeam){
+      $('#team').val(userTeam);
+    }
+    var userLocation = "{{user.profile.location.location_name|safe}}"
+    if(userLocation){
+      $('#country').val(userLocation);
+      loc = document.getElementById('country');
+      changetime(loc.options[loc.selectedIndex]);
+    }
+
+     var userRegion = "{{user.profile.region.name|safe}}"
+    if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+     }
+
+     $('#team').trigger('change');
+  
+  });
+
+  // Task Type 
+$(".task_type").click(function(){
+    hideAllFields();
+    $('.tagFields, .shopFields').remove();
+     taskId = $(this).attr('id');
+
+    if($(".customer_type:checked").val() == 'agency'){
+        $(".agency_info").show();
+        if(taskId == 'same_task'){
+          $("#same_task_agency").show();
+          $("#different_task_agency").hide();
+        }else if(taskId == 'diff_task'){
+          $("#different_task_agency").show();
+          $("#same_task_agency").hide();
+        }
+        hideCustomerFields();
+    }else if($(".customer_type:checked").val() == 'end_customer'){
+      $(".agency_info").hide();
+        if(taskId == 'same_task'){
+          $("#same_task_customer").show();
+          $("#different_task_customer").hide();
+        }else if(taskId == 'diff_task'){
+          $("#different_task_customer").show();
+          $("#same_task_customer").hide();
+        }
+        hideAgencyFields();
+    }
+});
+
+$(".customer_type").click(function(){
+    hideAllFields();
+    $('.tagFields, .shopFields').remove();
+    customerId = $(this).attr('id');
+    if($(".task_type:checked").val() == 'same_task'){
+        if(customerId == 'agency'){
+          $(".agency_info").show();
+          $("#same_task_agency").show();
+          $("#different_task_agency").hide();
+          hideCustomerFields();
+        }else if(customerId == 'end_customer'){
+          $(".agency_info").hide();
+          $("#same_task_customer").show();
+          $("#different_task_customer").hide();
+          hideAgencyFields();
+        }
+    }else if($(".task_type:checked").val() == 'diff_task'){
+        if(customerId == 'agency'){
+          $(".agency_info").show();
+          $("#different_task_agency").show();
+          $("#same_task_agency").hide();
+          hideCustomerFields();
+        }else if(customerId == 'end_customer'){
+          $(".agency_info").hide();
+          $("#different_task_customer").show();
+          $("#same_task_customer").hide();
+          hideAgencyFields();
+        }
+    }
+});
+
+function hideDiffTasks(clsName, firstId){
+  $('.' + clsName).each(function(){
+      thisId = $(this).attr('id');
+      if(thisId != firstId){
+        $(this).closest('.row').remove();
+      }
+  });
+}
+
+function hideCustomerFields(){
+  $("#same_task_customer").hide();
+  $("#different_task_customer").hide();
+  $("#diff_ctype-1").val('');
+  $("#same_task_ctype").val('');
+  $("#same_tag_1").hide();
+}
+
+function hideAgencyFields(){
+  $("#same_task_agency").hide();
+  $("#different_task_agency").hide();
+  $("#diff_cust_type-1").val('');
+  $("#same_task_cust_type").val('');
+  $("#same_cust_tag_1").hide();
+}
+
+
+function hideAllFields(){
+  // Agency Fields
+  $(".tag").remove();
+  $(".shop").remove();
+  $(".add_tag_1, .add_shop_1").hide();
+  hideDiffTasks('agency_diff', 'diff_ctype-1');
+  hideDiffTasks('customer_diff', 'diff_cust_type-1');
+  $('#gasetupSameAgency').hide();
+  $('#gasetupSameCustomer').hide();
+}
+// Same Task and select the Code type
+$("#same_task_ctype").change(function(){
+    $(".tag").remove();
+    $(".shop").remove();
+    $(".add_tag_1, .add_shop_1").show();
+    $('#gasetupSameAgency').hide();
+    selectedCtype = $(this).val();
+    if(selectedCtype == 'Google Shopping Setup'){
+        addMoreShopRows(1)
+    }else if(selectedCtype == '0' || selectedCtype == ''){
+        $("#same_tag_1").hide();
+        $("#same_shop_1").hide();
+    }
+    else if(selectedCtype.indexOf('Dynamic') != -1){
+        createAgencySameTagForDynamic(1);
+    }else{
+      if(selectedCtype.indexOf('Analytics') != -1){
+        $('#gasetupSameAgency').show();
+      }
+        addMoreRows(1)
+      }
+});
+
+
+//if code type is null then hide fields
+
+// addMoreRows Click functionality
+function addMoreRows(indx){
+    createAgencySameTag(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+}
+
+// deleteRows Click functionality
+function deleteRows(indx){
+    var elemId = 'same_tag_' + indx;
+    $("#"+elemId).remove()
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).show();
+    $(".delete_tag_" + prevIndx).show();
+}
+
+
+// addMoreRows Click functionality
+function addMoreShopRows(indx){
+    createAgencySameShop(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_shop_" + prevIndx).hide();
+    $(".delete_shop_" + prevIndx).hide();
+}
+
+// deleteRows Click functionality
+function deleteShopRows(indx){
+   var  elemId = 'same_shop_' + indx;
+    $("#" + elemId).remove();
+    prevIndx = parseInt(indx) - 1;
+    $(".add_shop_" + prevIndx).show();
+    $(".delete_shop_" + prevIndx).show();
+}
+
+
+$(document).on('change', '.agency_diff', function() {
+    selectedCtype = $(this).val();
+
+    if(selectedCtype == '' || selectedCtype == '0'){
+      $('.fields').hide();
+    }else if(selectedCtype == 'Google Shopping Setup'){
+      selectedindex = $(this).attr('id').split('-')[1]
+      $("#shopFields" + selectedindex).remove();
+      $("#tagFields" + selectedindex).remove();
+      createShopFields(parseInt(selectedindex));
+    }else if(selectedCtype.indexOf('Dynamic') != -1){
+      selectedindex = $(this).attr('id').split('-')[1];
+      $("#shopFields" + selectedindex).remove();
+      $("#tagFields" + selectedindex).remove();
+      createAgencyDiffDynamicFields(parseInt(selectedindex));
+      }
+      else if(selectedCtype.indexOf('Analytics')!= -1){
+          selectedindex = $(this).attr('id').split('-')[1];
+          $("#shopFields" + selectedindex).remove();
+          $("#tagFields" + selectedindex).remove();
+          createAnalyticsTagFields(parseInt(selectedindex));
+      }
+    else{
+      selectedindex = $(this).attr('id').split('-')[1];
+      $("#shopFields" + selectedindex).remove();
+      $("#tagFields" + selectedindex).remove();
+      createTagFields(parseInt(selectedindex));
+
+    }
+ });
+
+
+// addMoreRows Click functionality
+function addMoreTagRows(indx){
+  createCodeTypeForTag(indx);
+  prevIndx = parseInt(indx) - 1;
+  $(".add_tag_" + prevIndx).hide();
+  $(".delete_tag_" + prevIndx).hide();
+}
+
+function deleteDiffTagRows(indx){
+  $('#diff_tag_'+indx).remove();
+   prevIndx = parseInt(indx) - 1;
+  $(".add_tag_" + prevIndx).show();
+  $(".delete_tag_" + prevIndx).show();
+
+}
+
+function createAgencySameTag(indx){
+var next_indx = indx + 1;
+  ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
+          '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '"  name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>' +
+          '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '"  name="url' + indx + '" placeholder="URL"></div>' +
+          '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
+
+  if(indx == 1){
+      tail = '<div class="col-md-1"><span  onclick="addMoreRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+  }else if(indx == 5){
+      tail = '<div class="col-md-1"><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+  }else{
+      tail = '<div class="col-md-1"><span  onclick="addMoreRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+  }
+  
+
+  $("#same_task_agency").append(ele + tail);
+}
+
+function createAgencySameShop(indx){
+var next_indx = indx + 1;
+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> Customer has an existing Merchant Center account</label></div></div>'+
+                '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>'
+
+  ele =   '<div class="row shop" id="same_shop_' + indx + '">'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+           '<div class="col-md-4"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
+             '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+ mcElem
+
+  if(indx == 1){
+      tail = '<div class="col-md-1"><span onclick="addMoreShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+  }else if(indx == 5){
+      tail = '<div class="col-md-1"><span  onclick="deleteShopRows(' + indx + ');" class="delete_shop_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>'+
+            '</div>'
+  }else{
+      tail = '<div class="col-md-1"><span onclick="addMoreShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteShopRows(' + indx + ');" class="delete_shop_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>'+
+            '</div>'
+  }
+  
+
+  $("#same_task_agency").append(ele + tail);
+}
+
+
+function createTagFields(indx){
+
+  nextInd = indx + 1; 
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+        '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }else if(indx == 5){
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }else{
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+    $("#diff_tag_"+indx).append(ele+tail);
+}
+
+function createAnalyticsTagFields(indx){
+
+  nextInd = indx + 1; 
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+        '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+
+        '<div class="col-md-10" id="gasetup' + indx + '">'+
+                '<div class="checkbox">'+
+                  '<label>'+
+                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup">'+
+                    'Is there an existign Analytics setup? </label>'+
+                '</div>'+
+              '</div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }else if(indx == 5){
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }else{
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+    $("#diff_tag_"+indx).append(ele+tail);
+}
+
+function createCodeTypeForTag(indx){
+  ele  = '<div class="row" id="diff_tag_' + indx + '">'+
+                      '<div class="col-md-4  customwidth custom2">'+
+                         '<select title="Code Type" class="form-control bgicon agency_diff" name="diff_ctype' + indx + '" id="diff_ctype-' + indx + '">'+
+                            '<option value="">Select Code Type</option>'+
+                            '{% for c_type in code_types %}'+
+                              '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
+                            '{% endfor %}'+
+                            '<option value="Google Shopping Setup">Google Shopping Setup</option>'+
+                          '</select>'+
+                      '</div>'+
+            '</div>'
+  $('#different_task_agency').append(ele);
+}
+
+function createShopFields(indx){
+
+  var nextInd = indx + 1;
+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> Customer has an existing Merchant Center account</label></div></div>'+
+                '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>';
+
+  ele =  '<div id="shopFields' + indx + '" class="shopFields">'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'
+
+  shop =  '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
+        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'+
+        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
+        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>' + mcElem
+
+        if(indx == 1){
+              tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                    '</div>'
+        }else if(indx == 5){
+              tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }else{
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+      $("#diff_tag_"+indx).append(ele + shop + tail);
+
+}
+
+
+/* ############################################ End Customer ################################## */
+
+// Same Task and select the Code type
+$("#same_task_cust_type").change(function(){
+    $(".tag").remove();
+    $(".shop").remove();
+    $(".add_tag_1, .add_shop_1").show()
+    selectedCtype = $(this).val();
+    $('#gasetupSameCustomer').hide();
+    if(selectedCtype == 'Google Shopping Setup'){
+        addMoreCustomerShopRows(1);
+        
+    }else if(selectedCtype == '0' || selectedCtype == ''){
+        $("#same_cust_tag_1").hide();
+        $("#same_cust_shop_1").hide();
+    }
+    else if(selectedCtype.indexOf('Dynamic') != -1){
+          createCusetomerSameTagForDynamic(1);
+    }else{
+      if(selectedCtype.indexOf('Analytics') != -1){
+        $('#gasetupSameCustomer').show();
+      }
+        addMoreCustomerRows(1);
+    }
+});
+
+
+// addMoreCustomerRows Click functionality
+function addMoreCustomerRows(indx){
+    createCustomerSameTag(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+}
+
+// deleteRows Click functionality
+function deleteCustomerRows(indx){
+    var elemId = 'same_cust_tag_' + indx;
+    $("#"+elemId).remove()
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).show();
+    $(".delete_tag_" + prevIndx).show();
+}
+
+
+// addMoreRows Click functionality
+function addMoreCustomerShopRows(indx){
+    createCustomerSameShop(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_shop_" + prevIndx).hide();
+    $(".delete_shop_" + prevIndx).hide();
+}
+
+// deleteRows Click functionality
+function deleteCustomerShopRows(indx){
+   var  elemId = 'same_cust_shop_' + indx;
+    $("#" + elemId).remove();
+    prevIndx = parseInt(indx) - 1;
+    $(".add_shop_" + prevIndx).show();
+    $(".delete_shop_" + prevIndx).show();
+}
+
+$(document).on('change', '.customer_diff', function() {
+    selectedCtype = $(this).val();
+    if(selectedCtype == '' || selectedCtype == '0'){
+      $('.fields').hide();
+    }else if(selectedCtype == 'Google Shopping Setup'){
+      selectedindex = $(this).attr('id').split('-')[1];
+      $("#shopFields" + selectedindex).remove();
+      $("#tagFields" + selectedindex).remove();
+      createCustomerShopFields(parseInt(selectedindex));
+    }else if(selectedCtype.indexOf('Dynamic') != -1){
+      selectedindex = $(this).attr('id').split('-')[1];
+      $("#shopFields" + selectedindex).remove();
+      $("#tagFields" + selectedindex).remove();
+      createCustomerDiffDynamicFields(parseInt(selectedindex));
+      }
+      else if(selectedCtype.indexOf('Analytics') != -1){
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        createCustomerAnalyticsTagFields(parseInt(selectedindex));//createCustomerAnalyticsTagFields
+      }else{
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        createCustomerTagFields(parseInt(selectedindex));
+    }
+ });
+
+
+// addMoreRows Click functionality
+function addMoreCustomerTagRows(indx){
+  createCustomerCodeTypeForTag(indx);
+  prevIndx = parseInt(indx) - 1;
+  $(".add_tag_" + prevIndx).hide();
+  $(".delete_tag_" + prevIndx).hide();
+}
+
+function deleteCustomerDiffTagRows(indx){
+  $('#diff_cust_tag_'+indx).remove();
+   prevIndx = parseInt(indx) - 1;
+  $(".add_tag_" + prevIndx).show();
+  $(".delete_tag_" + prevIndx).show();
+
+}
+
+function createCustomerSameTag(indx){
+var next_indx = indx + 1;
+  ele =  '<div  style="margin:auto;" class="row tag" id="same_cust_tag_' + indx + '" > '+
+              '<div class="row">'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+         '<div class="col-md-1"></div>'+
+        '</div>'+
+        '<div class="row">'+
+       ' <div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'
+
+    if(indx == 1){
+        tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+    }else if(indx == 5){
+          tail = '<div class="col-md-1"><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+    }else{
+        tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+    }
+    
+
+  $("#same_task_customer").append(ele + tail);
+}
+
+
+function createCustomerSameShop(indx){
+var next_indx = indx + 1;
+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> Customer has an existing Merchant Center account</label></div></div>'+
+                '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>'
+
+  ele =   '<div class="row shop" id="same_cust_shop_' + indx + '">'+
+           '<div class="col-md-4"><input type="text" class="form-control" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="phone' + indx + '" name="phone' + indx + '" placeholder="Customer Phone"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
+            '<div class="col-md-4"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>' + mcElem
+
+  if(indx == 1){
+      tail = '<div class="col-md-1"><span onclick="addMoreCustomerShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+  }else if(indx == 5){
+      tail = '<div class="col-md-1"><span  onclick="deleteCustomerShopRows(' + indx + ');" class="delete_shop_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>'+
+            '</div>'
+  }else{
+      tail = '<div class="col-md-1"><span onclick="addMoreCustomerShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerShopRows(' + indx + ');" class="delete_shop_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>'+
+            '</div>'
+  }
+
+  $("#same_task_customer").append(ele + tail);
+}
+
+
+function createCustomerTagFields(indx){
+
+  nextInd = indx + 1; 
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-2">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+              ' <div class="col-md-2">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }
+        else{
+            tail =  '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+    $("#diff_cust_tag_"+indx).append(ele+tail);
+}
+
+function createCustomerAnalyticsTagFields(indx){
+
+  nextInd = indx + 1; 
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+                '<div class="col-md-12" id="gasetup' + indx + '"">'+
+                  '<div class="checkbox">'+
+                    '<label>'+
+                      '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup">'+
+                      'Is there an existign Analytics setup? </label>'+
+                  '</div>'+
+                '</div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-2">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+              ' <div class="col-md-2">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }
+        else{
+            tail =  '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+    $("#diff_cust_tag_"+indx).append(ele+tail);
+}
+
+
+function createCustomerCodeTypeForTag(indx){
+  ele  = '<div class="row" id="diff_cust_tag_' + indx + '">'+
+                      '<div class="col-md-4  customwidth custom2">'+
+                         '<select title="Code Type" class="form-control bgicon customer_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'+
+                            '<option value="">Select Code Type</option>'+
+                            '{% for c_type in code_types %}'+
+                              '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
+                            '{% endfor %}'+
+                            '<option value="Google Shopping Setup">Google Shopping Setup</option>'+
+                          '</select>'+
+                      '</div>'+
+            '</div>'
+  $('#different_task_customer').append(ele);
+}
+
+function createCustomerShopFields(indx){
+
+  var nextInd = indx + 1;
+
+  var mcElem = '<div class="col-md-4"><div class="checkbox"><label >'+
+                  '<input type="checkbox" value="0" name="is-mc_id'+ indx +'" id="is-mc_id'+ indx +'" class="is_mc_id" checked> Customer has an existing Merchant Center account</label></div></div>'+
+                '<div class="col-md-4"><input id="mc_id'+ indx +'" name="mc_id'+ indx +'" size="20" class="form-control" type="text" placeholder="MC-ID"></div>';
+
+  ele =   '<div id="shopFields' + indx + '" class="shopFields">'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'
+             
+
+  shop =  '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'+
+        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
+        '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>' + mcElem
+
+        if(indx == 1){
+              tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                    '</div>'
+        }else{
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+      $("#diff_cust_tag_"+indx).append(ele + shop + tail);
+
+}
+
+//################################# Code Type Rows For Agency Same Task##############################
+function createAgencySameTagForDynamic(indx){
+var next_indx = indx + 1;
+  ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
+               '<div class="col-md-4">'+
+               '<div class="checkbox">'+
+                 '<label>'+
+                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
+                    'Is campaign created?'+
+                  '</label>'+
+                '</div></div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget">'+
+                '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"">'+
+                '</div>'
+             
+
+  if(indx == 1){
+      tail = '<div class="col-md-1"><span  onclick="addMoreDynamicRowsForSameTag('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+  }else if(indx == 5){
+      tail = '<div class="col-md-1"><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+  }else{
+      tail = '<div class="col-md-1"><span  onclick="addMoreDynamicRowsForSameTag('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+  }
+
+$("#same_task_agency").append(ele + tail);
+}
+
+
+function addMoreDynamicRowsForSameTag(indx){
+    createAgencySameTagForDynamic(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+}
+//#################################End of Dynamic Code Type Rows For Agency Same Task##############################
+
+//#################################Dynamic Code Type Rows For Customer Same Task##############################
+function createCusetomerSameTagForDynamic(indx){
+var next_indx = indx + 1;
+  ele =  '<div style="margin:auto;" class="row tag" id="same_cust_tag_' + indx + '" > '+
+              '<div class="row">'+
+              '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+              '<div class="col-md-4">'+
+                 '<div class="checkbox">'+
+                 '<label>'+
+                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
+                    'Is campaign created?'+
+                  '</label>'+
+                '</div></div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget">'+
+                '</div>'+
+         '<div class="col-md-1"></div>'+
+        '</div>'+
+        '<div class="row">'+
+       ' <div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'
+
+    if(indx == 1){
+        tail = '<div class="col-md-1"><span  onclick="addMoreCusetomerDynamicRowsForSameTag('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+    }else if(indx == 5){
+          tail = '<div class="col-md-1"><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+    }else{
+        tail = '<div class="col-md-1"><span  onclick="addMoreCusetomerDynamicRowsForSameTag('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+    }
+    
+
+  $("#same_task_customer").append(ele + tail);
+}
+
+function addMoreCusetomerDynamicRowsForSameTag(indx){
+    createCusetomerSameTagForDynamic(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+}
+//#################################Dynamic Code Type Rows For Customer Same Task##############################
+
+//#################################Dynamic Code Type Rows For Agency Diff Task##############################
+
+function createAgencyDiffDynamicFields(indx){
+  var nextInd = indx + 1;
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+          '<div class="col-md-4 customwidth">'+
+                '<div class="checkbox">'+
+                 '<label>'+
+                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
+                    'Is campaign created?'+
+                  '</label>'+
+                '</div></div>'+
+          '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'
+         
+
+  shop =  '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
+
+        if(indx == 1){
+              tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                    '</div>'
+        }else if(indx == 5){
+              tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }else{
+            tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+      $("#diff_tag_"+indx).append(ele + shop + tail);
+
+}
+
+//#################################Dynamic Code Type Rows For Agency Diff Task##############################
+
+//#################################Dynamic Code Type Rows For Customer Diff Task##############################
+
+function createCustomerDiffDynamicFields(indx){
+  var nextInd = indx + 1;
+
+  ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
+          '<div class="col-md-4 customwidth">'+
+              '<div class="checkbox">'+
+                 '<label>'+
+                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
+                    'Is campaign created?'+
+                  '</label>'+
+                '</div></div>'+
+         '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
+        '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'
+
+   shop =  '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-2">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+              ' <div class="col-md-2">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'
+
+        if(indx == 1){
+            tail = '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
+                  '</div>'
+        }else if(indx == 5){
+              tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+        else{
+            tail =  '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
+                  '</div>'
+        }
+
+      $("#diff_cust_tag_"+indx).append(ele + shop + tail);
+
+}
+
+//#################################Dynamic Code Type Rows For Agency Diff Task##############################
+
+$("#contact_person_name").change(function(){
+  $("#agency_poc").val($(this).val());
+});
+
+</script>
+{% endblock main_js %}
