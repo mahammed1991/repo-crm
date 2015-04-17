@@ -1965,7 +1965,6 @@ def get_all_sfdc_lead_ids(sfdc_type):
 
 def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
-    print sf_api_url
     try:
         requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details

@@ -36,7 +36,7 @@
                     <input type="hidden" name="oid" value="00DZ000000MipUa">
                       <input type="hidden" value="{{poc_details.agency.google_rep.id}}" name="google_rep_id" id="google_rep_id">
                       <input type="hidden" value="{{poc_details.id}}" name="poc_id" id="poc_id">
-                      <table style="width:100%" class="csv-table">
+                      <table style="width:100%" class="csv-table" id="csv_table">
                       <tr>
                         <th width="100px">Google Rep Name</th>
                         <th width="80px">Customer ID</th>
@@ -50,7 +50,7 @@
                         <th>Special Instructions</th>
                       </tr>
                       {% for rec in data %}
-                      <tr class="leads">
+                      <tr class="leads" id="tr_{{forloop.counter}}">
                         <td><input type="text" value="{{poc_details.agency.google_rep.first_name}} {{poc_details.agency.google_rep.last_name}}" name="rep_name_{{forloop.counter}}" id="rep_name_{{forloop.counter}}" disabled=""></td>
                         <td><input type="text" value="{{rec.customer_id }}" name="customer_id_{{forloop.counter}}" id="customer_id_{{forloop.counter}}" ></td>
 
@@ -102,52 +102,9 @@
                         <td><input type="textarea" value="{{rec.special_instructions}}" name="special_instructions_{{forloop.counter}}" id="special_instructions_{{forloop.counter}}"></td>
                       </tr>
                       {% endfor %}
-                      {% for indx in remaining %}
-                          <tr class="leads snew-tr" id="tr_{{indx}}" style="display:none;">
-                            <td><input type="text" value="" name="rep_name_{{indx}}" id="rep_name_{{indx}}" disabled=""></td>
-                            <td><input type="text" value="" name="customer_id_{{indx}}" id="customer_id_{{indx}}" ></td>
-
-                             <td>
-                              <select name="code_type_{{indx}}" id="code_type_{{indx}}">
-                                  <option value="">Choose an Code type</option>
-                                {% for type in code_types %}
-                                    <option value="{{type}}">{{type}}</option>
-                                {% endfor %}
-                              </select>
-                            </td>
-
-                           <td><input type="text" value="" name="url_{{indx}}" id="url_{{indx}}"></td>
-                           <td>
-                              <select name="location_{{indx}}" id="location_{{indx}}" class="location">
-                                  <option value="">Choose an Location</option>
-                                {% for loc in locations %}
-                                    <option value="{{loc.name}}">{{loc.name}}</option>
-                                {% endfor %}
-                              </select>
-                            </td>
-                            <td>
-                              <select name="timezone_{{indx}}" id="timezone_{{indx}}" class="timezone">
-                              </select>
-                            </td>
-
-                            <td>
-                              <input type="text" value="" name="agency_name_{{indx}}" id="agency_name_{{indx}}">
-                            </td>
-
-                            <td>
-                              <input type="text" value="" name="agency_phone_{{indx}}" id="agency_phone_{{indx}}">
-                            </td>
-
-                            <td>
-                              <input type="text" value="" name="agency_email_{{indx}}" id="agency_email_{{indx}}">
-                            </td>
-
-                            <td><input type="textarea" value="" name="special_instructions_{{indx}}" id="special_instructions_{{indx}}"></td>
-                            <td><a href="javascript:void(0);" class="deletePrev" id="deletePrev_{{data|length}}">Delete Prev</a></td>
-                          </tr>
-                      {% endfor %}
                       <tr>
                       <td><a href="javascript:void(0);" class="addMore" id="addMore_{{data|length}}">Add new</a></td>
+                      <td><a href="javascript:void(0);" class="deletePrev" id="deletePrev_{{data|length}}">Delete Prev</a></td>
                         
                       </tr>
                       <input type="hidden" value="{{data|length}}" name="paramcounts" id="paramcounts">
@@ -172,6 +129,8 @@
  <script type="text/javascript">
 
  $(document).ready(function(){
+    $(".deletePrev").hide();
+    window.fileLen = parseInt('{{data|length}}');
     var loc_length = $(".location").length;
     for(i=1; i<=loc_length; i++){
       locElem = "#location_" + i;
@@ -182,7 +141,31 @@
     }
  });
 
-    $(".addMore").click(function(){
+ $(".addMore").click(function(){
+  cnt = $('#csv_table tr').length
+  indx = cnt - 1
+  ele =  '<tr class="leads snew-tr" id="tr_' + indx + '">'+
+        '<td><input type="text" value="" name="rep_name_' + indx + '" id="rep_name_' + indx + '" disabled=""></td>'+
+        '<td><input type="text" value="" name="customer_id_' + indx + '" id="customer_id_' + indx + '" ></td>'+
+         '<td><select name="code_type_' + indx + '" id="code_type_' + indx + '">'+
+              '<option value="">Choose an Code type</option>{% for type in code_types %}<option value="{{type}}">{{type}}</option>{% endfor %}</select></td>'+
+        '<td><input type="text" value="" name="url_' + indx + '" id="url_' + indx + '"></td>'+
+        '<td><select name="location_' + indx + '" id="location_' + indx + '" class="location">'+
+              '<option value="">Choose an Location</option>{% for loc in locations %}<option value="{{loc.name}}">{{loc.name}}</option>{% endfor %}</select></td>'+
+        '<td><select name="timezone_' + indx + '" id="timezone_' + indx + '" class="timezone"></select></td>'+
+        '<td><input type="text" value="" name="agency_name_' + indx + '" id="agency_name_' + indx + '"></td>'+
+        '<td><input type="text" value="" name="agency_phone_' + indx + '" id="agency_phone_' + indx + '"></td>'+
+        '<td><input type="text" value="" name="agency_email_' + indx + '" id="agency_email_' + indx + '"></td>'+
+        '<td><input type="textarea" value="" name="special_instructions_' + indx + '" id="special_instructions_' + indx + '"></td>'+
+    '</tr>'
+    
+    $('#csv_table tr:last').before(ele);
+    $('#rep_name_'+indx).val($('#rep_name_1').val());
+    $(".deletePrev").show();
+ 
+ })
+
+    /*$(".addMore").click(function(){
         var thisid = $(this).attr('id')
         var indx = thisid.split('_')[1]
         var elm = thisid.split('_')[0]
@@ -193,15 +176,26 @@
         $('#rep_name_'+idx).val($('#rep_name_1').val());
         $('#customer_id_'+idx).val($('#customer_id_1').val());
     });
-
+*/
     $(".deletePrev").click(function(){
-        var row = $(this).parents('tr').remove();
+        cnt = $('#csv_table tr').length;
+        noOftrs = cnt-2;
+        if (noOftrs>window.fileLen){
+            prevID = cnt - 2;
+            $('#tr_'+prevID).remove();
+            if(noOftrs == window.fileLen + 1){
+              $(".deletePrev").hide();
+            }
+        }
+
     });
 
 
     $("#bulkForm").submit(function(event){
         $(".error-txt").remove();
         $(".lead-form .form-control").removeClass('error-box');
+        $("select").removeClass('error-box');
+        $('input[type=text]').removeClass('error-box');
         var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
         var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -249,7 +243,7 @@
           return false;
         }
     }
-$('.location').change(function(){
+$(document).on("change", '.location', function(){
     
     var loc = $(this).val();
     var id = $(this).attr('id')
