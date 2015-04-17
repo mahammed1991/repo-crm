@@ -875,6 +875,8 @@ def agent_bulk_upload(request, agency_name, pid):
                     'agency_phone': agency_phone,
                     'agency_poc': '',
 
+                    'lead_type': 'Agency Bulk Lead',
+
                     'rep_location': '',
                     'Campaign_ID': None,
                     'oid': request.POST.get('oid'),
