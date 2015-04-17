@@ -49,6 +49,9 @@ class SalesforceLeads(object):
                                 'conversion_goal': '00NZ0000001XznT',
                                 'wpp_lead_status': '00Nd0000007faZ6',
 
+                                # Lead Type
+                                'lead_type': '00NZ0000001Y8hF',
+
                                 'Campaign_ID': 'Campaign_ID',
                                 'oid': 'oid',
                                 '__VIEWSTATE': '__VIEWSTATE',
@@ -100,6 +103,9 @@ class SalesforceLeads(object):
                                    'invision_link': '00Nd0000007fa8K',
                                    'conversion_goal': '00Nd0000007fa8P',
                                    'wpp_lead_status': '00Nd0000007faZ6',
+
+                                   # Lead Type
+                                   'lead_type': '00Nd0000007fftD',
 
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
