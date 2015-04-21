@@ -30,7 +30,7 @@
                   {% endif %}
             </div>
             {% if data %}
-            <div class="row table-container" style="width:800px !important">
+            <div class="row table-container" style="width:100% !important;overflow:auto">
                   <form method="post" id="bulkForm" name="buklForm" action="{% url 'leads.views.agent_bulk_upload' agency_name pid %}">
                     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
                     <input type="hidden" name="oid" value="00DZ000000MipUa">

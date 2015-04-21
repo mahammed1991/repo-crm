@@ -60,9 +60,11 @@ def auth_error(request):
 
 # Check user's email
 def check_email(strategy, details, *args, **kwargs):
-    email = details.get('email').split('@')[1]
-    if email not in settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS:
-        return HttpResponseRedirect(reverse('auth.views.auth_error') + "?email=" + details.get('email'))
+    email = details.get('email')
+    domain = details.get('email').split('@')[1]
+    if domain not in settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS:
+        if email not in settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS:
+            return HttpResponseRedirect(reverse('auth.views.auth_error') + "?email=" + details.get('email'))
 
 
 def handle_page_not_found(request):

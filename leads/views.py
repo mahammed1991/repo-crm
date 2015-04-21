@@ -21,6 +21,7 @@ from representatives.models import (
     GoogeRepresentatives,
     RegalixRepresentatives
 )
+from lib.salesforce import SalesforceApi
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson,
                           AgencyDetails, LeadFormAccessControl
                           )
@@ -36,6 +37,7 @@ from django.db.models import Q
 from random import randint
 from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
+from reports.cron import create_or_update_leads
 
 
 # Create your views here.
@@ -1667,6 +1669,19 @@ def get_wpp_lead_summary(request, lid=None):
 
     lead_status = settings.WPP_LEAD_STATUS
     email = request.user.email
+
+    # get SFDC Connection
+    sf = SalesforceApi.connect_salesforce()
+
+    select_items = settings.SFDC_FIELDS
+    where_clause = "WHERE Email = '%s'" % (email)
+    sql_query = "select %s from Lead %s" % (select_items, where_clause)
+    try:
+        all_leads = sf.query_all(sql_query)
+        create_or_update_leads(all_leads['records'], sf)
+    except Exception as e:
+        print e
+
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
         # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
