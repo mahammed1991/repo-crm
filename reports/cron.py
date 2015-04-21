@@ -323,7 +323,7 @@ def create_or_update_leads(records, sf):
         lead.team = team
         lead.sf_lead_id = sf_lead_id
         if lead.type_1 == 'WPP':
-            lead.lead_status = rec.get('Wpp_Lead_Status__c')
+            lead.lead_status = rec.get('WPP_Lead_Status__c')
 
         # Calculate TAT for each lead
         tat = 0
