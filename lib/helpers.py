@@ -11,6 +11,8 @@ from django.conf import settings
 from collections import defaultdict
 from main.models import UserDetails
 from leads.models import Leads
+from django.db.models import Q
+import operator
 
 from django.contrib.auth.models import User
 
@@ -241,6 +243,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
     """ get Count of Each Lead Status by rep/manager/email """
     if is_manager(email):
         email_list = get_user_list_by_manager(email)
+        email_list.append(email)
     else:
         email_list = [email]
 
@@ -281,7 +284,10 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         if start_date and end_date:
             query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
         else:
-            query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'google_rep_email__in': email_list}
+            mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+            query = {'lead_status__in': lead_status}
+            # lead_status_dict['total_leads'] = Leads.objects.exclude(team='').filter(reduce(operator.or_, mylist), **query).count()
+            # query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'google_rep_email__in': email_list}
 
         lead_status_dict = {'total_leads': 0,
                             'open': 0,
@@ -294,23 +300,23 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
                             'in_stage': 0,
                             }
 
-        lead_status_dict['total_leads'] = Leads.objects.filter(**query).count()
+        lead_status_dict['total_leads'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['Open']
-        lead_status_dict['open'] = Leads.objects.filter(**query).count()
+        lead_status_dict['open'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['On Hold']
-        lead_status_dict['on_hold'] = Leads.objects.filter(**query).count()
+        lead_status_dict['on_hold'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['In Mockup']
-        lead_status_dict['in_mockup'] = Leads.objects.filter(**query).count()
+        lead_status_dict['in_mockup'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['Mockup Review']
-        lead_status_dict['mockup_review'] = Leads.objects.filter(**query).count()
+        lead_status_dict['mockup_review'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['Deferred']
-        lead_status_dict['deferred'] = Leads.objects.filter(**query).count()
+        lead_status_dict['deferred'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['Mockup Delivered']
-        lead_status_dict['mockup_delivered'] = Leads.objects.filter(**query).count()
+        lead_status_dict['mockup_delivered'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['In Development']
-        lead_status_dict['in_development'] = Leads.objects.filter(**query).count()
+        lead_status_dict['in_development'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['In Stage']
-        lead_status_dict['in_stage'] = Leads.objects.filter(**query).count()
+        lead_status_dict['in_stage'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
     return lead_status_dict
 

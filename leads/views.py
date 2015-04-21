@@ -38,6 +38,7 @@ from random import randint
 from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
 from reports.cron import create_or_update_leads
+import operator
 
 
 # Create your views here.
@@ -1681,7 +1682,6 @@ def get_wpp_lead_summary(request, lid=None):
         create_or_update_leads(all_leads['records'], sf)
     except Exception as e:
         print e
-
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
         # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
@@ -1695,13 +1695,14 @@ def get_wpp_lead_summary(request, lid=None):
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)
+            email_list.append(email)
         else:
             email_list = [email]
 
-        if 'regalix' in email:
-            leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email__in=email_list)
-        elif 'google' in email:
-            leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
+        mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+        query = {'lead_status__in': lead_status}
+        # lead_status_dict['total_leads'] = Leads.objects.exclude(team='').filter(reduce(operator.or_, mylist), **query).count()
+        leads = Leads.objects.filter(reduce(operator.or_, mylist), **query)
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=None, end_date=None)
     return render(request, 'leads/wpp_lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
