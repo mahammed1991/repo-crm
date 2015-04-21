@@ -59,6 +59,14 @@
           <div class="sum-lbl">In Stage</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_orange" id="in_ab_test">{{lead_status_dict.in_ab_test}}</div>
+          <div class="sum-lbl">In A/B Test</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_purple" id="launched">{{lead_status_dict.launched}}</div>
+          <div class="sum-lbl">Launched</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_black" id="total_leads">{{lead_status_dict.total_leads}}</div>
           <div class="sum-lbl">Total</div>
         </div>
@@ -76,6 +84,8 @@
               <li><a class="page" href="javascript:void(0);" id='MockupDelivered'>Mockup Delivered</a></li>
               <li><a class="page" href="javascript:void(0);" id='InDevelopment'>In Development</a></li>
               <li><a class="page" href="javascript:void(0);" id='InStage'>In Stage</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InABTest'>In A/B Test</a></li>
+              <li><a class="page" href="javascript:void(0);" id='Launched'>Launched</a></li>
             </ul>
             <div class="table-search">
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
@@ -136,8 +146,14 @@
                         {% elif l.lead_status == 'In Development' %}
                       <tr class='status-indevelopment indevelopment searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
+                        {% elif l.lead_status == 'In Stage' %}
+                          <tr class='status-instage instage searchable'>
+                            <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
+                        {% elif l.lead_status == 'In A/B Test' %}
+                      <tr class='status-inabtest inabtest searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% else %}
-                        <tr class='status-instage instage searchable'>
+                        <tr class='status-launched launched searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       <td class="hidden-xs hidden-sm">{{ l.company }}</td>
@@ -192,6 +208,8 @@ function setWppLeadSummary(lead_status){
     $('#mockup_delivered').text(lead_status['mockup_delivered'])
     $('#in_development').text(lead_status['in_development'])
     $('#in_stage').text(lead_status['in_stage'])
+    $('#in_ab_test').text(lead_status['in_ab_test'])
+    $('#launched').text(lead_status['launched'])
     $('#total_leads').text(lead_status['total_leads'])
     
   }
@@ -216,11 +234,13 @@ function setWppLeadSummary(lead_status){
         }
         else if (leads[i].lead_status == 'In Development') {
         counter = '<tr class="status-indevelopment indevelopment searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-        }
-        else{
+        }else if{
           counter = '<tr class="status-instage instage searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        }else if{
+          counter = '<tr class="status-inabtest inabtest searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        }else{
+          counter = '<tr class="status-launched launched searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
-
 
        other =  '<td class="hidden-xs hidden-sm">' + leads[i].Advertiser + '</td>' +
                 '<td>' + leads[i].cid + '</td>'+

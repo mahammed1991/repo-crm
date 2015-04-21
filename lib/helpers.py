@@ -298,6 +298,8 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
                             'mockup_delivered': 0,
                             'in_development': 0,
                             'in_stage': 0,
+                            'in_ab_test': 0,
+                            'launched': 0
                             }
 
         lead_status_dict['total_leads'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
@@ -317,7 +319,10 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         lead_status_dict['in_development'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = ['In Stage']
         lead_status_dict['in_stage'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
-
+        query['lead_status__in'] = ['In A/B Test']
+        lead_status_dict['in_ab_test'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+        query['lead_status__in'] = ['Launched']
+        lead_status_dict['launched'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
     return lead_status_dict
 
 

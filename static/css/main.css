@@ -1750,7 +1750,7 @@ ul li, ol li {
 .placeholder {
 	text-align: center;
 }
-.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen {
+.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen, .circle_orange, .circle_purple {
 	width: 120px;
 	height: 120px;
 	border-radius: 120px;
@@ -1786,6 +1786,12 @@ ul li, ol li {
 }
 .circle_lgreen{
 	background: #99CC00;
+}
+.circle_orange{
+	background: orange;
+}
+.circle_purple{
+	background: purple;
 }
 .leads_heading {
 	font-family: "robotoblack";
@@ -1981,6 +1987,12 @@ i.fa.fa-filter {
 .status-instage .status-bor-color {
 	border-left: 6px solid #11b98a;
 }
+.status-inabtest .status-bor-color {
+	border-left: 6px solid orange;
+}
+.status-launched .status-bor-color {
+	border-left: 6px solid purple;
+}
 
 .status-onhold .status-txt-color {
 	color:#9933FF;
@@ -2005,6 +2017,12 @@ i.fa.fa-filter {
 }
 .status-instage .status-txt-color {
 	color:#11b98a;
+}
+.status-inabtest .status-txt-color {
+	color:orange;
+}
+.status-launched .status-txt-color {
+	color:purple;
 }
 
 /* WPP leas status colors ends */
@@ -2835,7 +2853,7 @@ margin-bottom:2px;
 }
 
 @media (max-width: 480px) {
-	.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen {
+	.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen, .circle_orange, .circle_purple {
 		width: 100px;
 		height: 100px;
 		border-radius: 100px;

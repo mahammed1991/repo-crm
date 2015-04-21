@@ -102,6 +102,30 @@
       $('.instage').show()
     })
 
+    $('#InABTest').click(function(){
+      $('.open').hide()
+      $('.onhold').hide()
+      $('.inmockup').hide()
+      $('.mockupreview').hide()
+      $('.deferred').hide()
+      $('.mockupdelivered').hide()
+      $('.indevelopment').hide()
+      $('.instage').hide()
+      $('.launched').hide()
+    })
+
+    $('#Launched').click(function(){
+      $('.open').hide()
+      $('.onhold').hide()
+      $('.inmockup').hide()
+      $('.mockupreview').hide()
+      $('.deferred').hide()
+      $('.mockupdelivered').hide()
+      $('.indevelopment').hide()
+      $('.instage').hide()
+      $('.inabtest').hide()
+    })
+
     $('#CID').click(function(){
       $('#CIDText').toggle()
     })
