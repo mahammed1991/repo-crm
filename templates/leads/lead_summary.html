@@ -93,7 +93,7 @@
               </div>
         </div>
       {% endif %}
-      <div class="row">
+      <div class="row pagination1">
           <div class="col-xs-10 col-sm-12 col-md-10">
             <ul class="pagination pull-left">
               <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
@@ -107,7 +107,6 @@
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
               <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
             </div>
-            
           </div>
           <div class="col-xs-2 col-md-2">            
               <ul class="filter-area navbar-right">
@@ -122,7 +121,7 @@
               </ul>
             </div>
           </div>
-        <div class="table-container">
+        <div class="table-container pagination1">
           <table class="table status-table tablesorter" id='Leads'>
             <thead>
                 <tr class="table_bg">
@@ -199,9 +198,75 @@
                     
                 {% endfor %}
           </tbody>
+
         </table>
         <!-- <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/> -->
+        <center style="padding-bottom: 15px;"> 
+             <span class="step-links">
+              {% if leads.has_previous %}
+                  <a href="?page={{ leads.previous_page_number }}">Previous</a>
+              {% endif %}
+
+              <span class="current">
+                  Page {{ leads.number }} of {{ leads.paginator.num_pages }}.
+              </span>
+
+              {% if leads.has_next %}
+                  <a href="?page={{ leads.next_page_number }}">Next</a>
+              {% endif %}
+              </span>
+            </center>
         </div>
+        <div class="row pagination2" style="display:none;">
+          <div class="col-xs-10 col-sm-12 col-md-10">
+            <ul class="pagination pull-left">
+             <li><a class="tag all" href="javascript:void(0);" >All</a></li>
+              <li><a class="page Inactive" href="javascript:void(0);" >Inactive</a></li>
+              <li><a class="page InQueue" href="javascript:void(0);" >In Queue</a></li>
+              <li><a class="page AttemptingContact" href="javascript:void(0);" >Attempting Contact</a></li>
+              <li><a class="page InProgress" href="javascript:void(0);" >In Progress </a></li>
+              <li><a class="page Implemented" href="javascript:void(0);" >Implemented</a></li>
+            </ul>
+            <div class="table-search">
+              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'ldapLeads')"/>
+              <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
+            </div>
+          </div>
+          <div class="col-xs-2 col-md-2">            
+              <ul class="filter-area navbar-right">
+                <li class="lbl">Sort by: </li>
+                <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class='sortBy'>Recent</span> <i class="fa fa-angle-down"></i></a>
+                  <ul class="dropdown-menu light" role="menu">
+                    <li><a href="javascript:void(0);" class="RecentHeader">Recent</a></li>
+                    <li><a href="javascript:void(0);" class='CodeTypeHeader'>Code Type</a></li>
+                    <li><a href="javascript:void(0);" class="statusHeader">Status</a></li>
+                  </ul>
+                  </li>
+              </ul>
+            </div>
+          </div>
+          <div class="table-container pagination2" style="display:none;">
+          <table class="table status-table tablesorter" id='ldapLeads'>
+            <thead>
+                <tr class="table_bg">
+                  <th class="hidden-xs hidden-sm nthchild">No.</th>
+                  <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
+                  <th width="20%" class="nthchild2">CID </th>
+                  <th class="hidden-xs hidden-sm nthchild3 CodeTypeRow">Code Type </th>
+                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3 RecentRow" >Date Created</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Appointment Time</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
+                  <!-- <th class="hidden-xs hidden-sm nthchild8">Google Comments</th> -->
+                  <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
+                  <th class="nthchild3 StatusRow">Status </th>
+                </tr>
+            </thead>
+            <tbody id="ldapTableBody">
+            </tbody>
+          </table>
+          </div>
     </div>
   </section>
   <!-- content-region ends --> 
@@ -402,6 +467,8 @@ $(".search_type").click(function(){
         type: 'GET',
         dataType: 'json',
         success: function(data){
+              $(".pagination1").hide();
+              $(".pagination2").show();
           if(data){
             setLeadSummary(data['lead_status_dict'])
             setLeadSummaryTable(data['lead_list'])
@@ -447,7 +514,8 @@ function setLeadSummary(lead_status){
   }
   function setLeadSummaryTable(leads){
 
-    $('#tableBody').html('')
+    //$('#tableBody').html('')
+    $('#ldapTableBody').html('');
     for(i=0; i<leads.length; i += 1){
         c = i + 1
         if(leads[i].lead_status == 'Implemented' ){
@@ -478,8 +546,7 @@ function setLeadSummary(lead_status){
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
         
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
-      action = '<td><span class="status-txt-color">'+ '' +'</span></td></tr>'
-      $('#tableBody').append(counter+other+commnet+status+action)
+      $('#ldapTableBody').append(counter+other+commnet+status)
       
     }
   }
