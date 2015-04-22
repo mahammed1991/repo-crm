@@ -187,11 +187,6 @@
                   // disable it by setting the property sorter to false 
                   sorter: false 
               },
-                
-              8: { 
-                  // disable it by setting the property sorter to false 
-                  sorter: false 
-              },
           } 
       });
     /*end sorting function*/

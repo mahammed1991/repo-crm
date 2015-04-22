@@ -3,7 +3,7 @@
         $("#form-filter").show()
     })
 
-    $('#all').click(function(){
+    $('#all, .all').click(function(){
       $('.implemented').show()
       $('.inactive').show()
       $('.inprogress').show()
@@ -11,35 +11,35 @@
       $('.inqueue').show()
     })
 
-    $('#Inactive').click(function(){
+    $('#Inactive, .Inactive').click(function(){
       $('.implemented').hide()
       $('.inactive').show()
       $('.inprogress').hide()
       $('.attemptingcontact').hide()
       $('.inqueue').hide()
     })
-    $('#InQueue').click(function(){
+    $('#InQueue, .InQueue').click(function(){
       $('.implemented').hide()
       $('.inactive').hide()
       $('.inprogress').hide()
       $('.attemptingcontact').hide()
       $('.inqueue').show()
     })
-    $('#AttemptingContact').click(function(){
+    $('#AttemptingContact, .AttemptingContact').click(function(){
       $('.implemented').hide()
       $('.inactive').hide()
       $('.inprogress').hide()
       $('.attemptingcontact').show()
       $('.inqueue').hide()
     })
-    $('#Implemented').click(function(){
+    $('#Implemented, .Implemented').click(function(){
       $('.implemented').show()
       $('.inactive').hide()
       $('.inprogress').hide()
       $('.attemptingcontact').hide()
       $('.inqueue').hide()
     })
-    $('#InProgress').click(function(){
+    $('#InProgress, .InProgress').click(function(){
       $('.implemented').hide()
       $('.inactive').hide()
       $('.inprogress').show()
@@ -82,7 +82,7 @@
       })
 
       /* sorting function start here*/
-        $("#Leads").tablesorter({ 
+        $("#Leads, #ldapLeads").tablesorter({ 
           // pass the headers argument and assing a object 
           headers: { 
               // assign the secound column (we start counting zero) 
@@ -152,25 +152,29 @@ $('#habla_panel_div').click(function(){
 // sorting function statrt here
 
 
- $("#statusHeader").click(function(){
+ $("#statusHeader, .statusHeader").click(function(){
 
-      $('#sortBy').text($("#statusHeader").text());
-      $("#StatusRow").trigger("click");
+      var txt = $(this).text()
+      $('#sortBy, .sortBy').text(txt);
+      $("#StatusRow, .StatusRow").trigger("click");
       
    })
 
-   $("#CodeTypeHeader").click(function(){
-      $('#sortBy').text($("#CodeTypeHeader").text());
-      $("#CodeTypeRow").trigger("click");
+   $("#CodeTypeHeader, .CodeTypeHeader").click(function(){
+      var txt = $(this).text()
+      $('#sortBy, .sortBy').text(txt);
+      $("#CodeTypeRow, .CodeTypeRow").trigger("click");
 
    })
 
-   $("#RecentHeader").click(function(){
-      $('#sortBy').text($("#RecentHeader").text());
-      $("#RecentRow").trigger("click");
+   $("#RecentHeader, .RecentHeader").click(function(){
+      var txt = $(this).text()
+      $('#sortBy, .sortBy').text(txt);
+      $("#RecentRow, .RecentRow").trigger("click");
    })
 
    $('#Leads thead>tr>th').unbind('click');
+   $('#ldapLeads thead>tr>th').unbind('click');
 
 /* sorting function end here*/
 
@@ -226,6 +230,3 @@ $('.close').click(function(){
 })
 
 /* feed back submit through leads status page end  here */
-
-
-/* */

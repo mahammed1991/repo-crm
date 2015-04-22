@@ -39,6 +39,7 @@ from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
 from reports.cron import create_or_update_leads
 import operator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -622,7 +623,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
 
 @login_required
 @csrf_exempt
-def agency_form(request):
+def agency_introduction_form(request):
     """ Agency Form """
     template_args = dict()
 
@@ -746,7 +747,8 @@ def download_agency_csv(request):
 
 
 @csrf_exempt
-def agent_bulk_upload(request, agency_name, pid):
+# def agent_bulk_upload(request, agency_name, pid):
+def agent_bulk_upload(request):
     """ Agency Bulk Upload """
     template_args = dict()
     locations = Location.objects.filter(is_active=True)
@@ -772,15 +774,15 @@ def agent_bulk_upload(request, agency_name, pid):
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name)})
 
     code_types = CodeType.objects.filter(is_active=True)
-    template_args.update({'code_types': code_types, 'locations': all_locations, 'teams': teams,
+    template_args.update({'code_types': code_types, 'locations': all_locations, 'teams': teams, 'google_rep': request.user,
                           'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
 
-    try:
-        poc_details = ContactPerson.objects.get(person_id=pid)
-        template_args['poc_details'] = poc_details
-    except ObjectDoesNotExist:
-        template_args.update({'status': 'fail', 'error': 'Invalid POC'})
-        return render(request, 'leads/agent_bulk_form.html', template_args)
+    # try:
+    #     poc_details = ContactPerson.objects.get(person_id=pid)
+    #     template_args['poc_details'] = poc_details
+    # except ObjectDoesNotExist:
+    #     template_args.update({'status': 'fail', 'error': 'Invalid POC'})
+    #     return render(request, 'leads/agent_bulk_form.html', template_args)
     if request.method == "POST":
         if request.FILES:
             myfile = request.FILES['csvfile']
@@ -794,7 +796,7 @@ def agent_bulk_upload(request, agency_name, pid):
                 data_list.append(each_rec)
 
             remaining = len(data_list) + 11
-            template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True, 'agency_name': agency_name, 'pid': pid,
+            template_args.update({'data': data_list, 'code_types': code_types, 'is_csv': True,
                                   'remaining': range(len(data_list) + 1, remaining)})
             return render(request, 'leads/agent_bulk_form.html', template_args)
 
@@ -809,18 +811,19 @@ def agent_bulk_upload(request, agency_name, pid):
                 oid = '00Dd0000000fk18'
 
             params_count = request.POST.get('paramcounts')
+            import ipdb; ipdb.set_trace()
             google_rep_id = request.POST.get('google_rep_id')
-            poc_id = request.POST.get('poc_id')
+            # poc_id = request.POST.get('poc_id')
 
             try:
                 goggle_rep = User.objects.get(id=int(google_rep_id))
             except ObjectDoesNotExist:
                 pass
 
-            try:
-                poc = ContactPerson.objects.get(id=poc_id)
-            except ObjectDoesNotExist:
-                pass
+            # try:
+            #     poc = ContactPerson.objects.get(id=poc_id)
+            # except ObjectDoesNotExist:
+            #     pass
 
             for i in range(1, int(params_count) + 1):
                 customer_id = request.POST.get('customer_id_' + str(i))
@@ -838,7 +841,7 @@ def agent_bulk_upload(request, agency_name, pid):
                 basic_lead_args = {
                     # Google Rep Information
                     'gref': goggle_rep.first_name + ' ' + goggle_rep.last_name,  # Full Name
-                    'email': goggle_rep.email,                   # Rep Email
+                    'emailref': goggle_rep.email,                   # Rep Email
                     'manager_name': goggle_rep.profile.user_manager_name,  # Manager Name
                     'manager_email': goggle_rep.profile.user_manager_email,  # Manager Email
                     'team': goggle_rep.profile.team.team_name if goggle_rep.profile.team else '',  # Team
@@ -851,7 +854,8 @@ def agent_bulk_upload(request, agency_name, pid):
                     'company': '',    # Advertiser Company
                     'cid': customer_id,  # Customer ID
 
-                    'language': poc.agency.language.language_name,  # Language
+                    # 'language': poc.agency.language.language_name,  # Language
+                    'language': '',  # Language
                     'tzone': timezone,  # Time Zone
 
                     # Advertiser Details
@@ -1635,7 +1639,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 
 
 @login_required
-def get_lead_summary(request, lid=None):
+def get_lead_summary(request, lid=None, page=None):
     """ Lead Status page """
 
     lead_status = settings.LEAD_STATUS
@@ -1652,15 +1656,25 @@ def get_lead_summary(request, lid=None):
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)
+            email_list.append(email)
         else:
             email_list = [email]
 
-        if 'regalix' in email:
-            leads = Leads.objects.filter(lead_status__in=lead_status, lead_owner_email__in=email_list)
-        elif 'google' in email:
-            leads = Leads.objects.filter(lead_status__in=lead_status, google_rep_email__in=email_list)
+        leads = Leads.objects.filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), lead_status__in=lead_status)
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
+
+    paginator = Paginator(leads, 150)
+    page = request.GET.get('page')
+    try:
+        leads = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        leads = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        leads = paginator.page(paginator.num_pages)
+
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
@@ -1860,11 +1874,13 @@ def create_locations(request):
 @login_required
 def get_lead_status_by_ldap(request):
     if request.is_ajax():
-        lead_status = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Implemented']
         user_id = request.GET['user_id']
         user = User.objects.get(id=user_id)
-        leads = Leads.objects.filter(Q(google_rep_email=user.email) | Q(lead_owner_email=user.email))
-        leads = leads.filter(lead_status__in=lead_status)
+
+        lead_status = settings.LEAD_STATUS
+        leads_ids = Leads.objects.values_list(
+            'id', flat=True).exclude(team='').filter(Q(google_rep_email=user.email) | Q(lead_owner_email=user.email), lead_status__in=lead_status)
+        leads = Leads.objects.filter(id__in=leads_ids)
         lead_list = list()
         for l in leads:
             lead = convert_lead_to_dict(l)
@@ -1883,6 +1899,7 @@ def get_lead_status_by_ldap(request):
 def convert_lead_to_dict(model):
     lead = {}
     lead['Advertiser'] = model.company
+    lead['url'] = model.url_1
     lead['cid'] = model.customer_id
     lead['code_type'] = model.type_1
     lead['google_rep'] = model.google_rep_name
