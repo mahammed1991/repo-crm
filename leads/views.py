@@ -1491,9 +1491,18 @@ def get_lead(request, cid):
     if len(leads) > 1:
         leads = leads[0]
 
-    team = Team.objects.get(team_name=leads.team)
-    location = Location.objects.get(location_name=leads.country)
-    languages = location.language.all()
+    try:
+        team = Team.objects.get(team_name=leads.team)
+    except ObjectDoesNotExist:
+        team = None
+
+    try:
+        location = Location.objects.get(location_name=leads.country)
+        languages = location.language.all()
+    except ObjectDoesNotExist:
+        languages = None
+        location = None
+
     if not languages:
         languages = Language.objects.all()
     languages_list = list()
@@ -1506,9 +1515,9 @@ def get_lead(request, cid):
             'name': leads.first_name + ' ' + leads.last_name,
             'email': leads.lead_owner_email,
             'google_rep_email': leads.google_rep_email,
-            'location': leads.country,
-            'team': team.team_name,
-            'team_id': team.id,
+            'loc': location if location else 0,
+            'team': team.team_name if team else '',
+            'team_id': team.id if team else 0,
             'languages_list': languages_list
 
         }

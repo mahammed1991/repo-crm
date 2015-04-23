@@ -472,7 +472,7 @@ def create_feedback(request, lead_id=None):
             feedback_details.attachment = request.FILES['attachment_name']
 
         feedback_details.save()
-        # feedback_details = notify_feedback_activity(request, comment=None, feedback_details)
+        feedback_details = notify_feedback_activity(request, feedback_details, comment=None)
 
         return redirect('main.views.list_feedback')
     return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
@@ -576,7 +576,7 @@ def create_feedback_from_lead_status(request):
             pass
 
         feedback_details.save()
-        # feedback_details = notify_feedback_activity(request, feedback_details)
+        feedback_details = notify_feedback_activity(request, feedback_details)
 
         # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))
@@ -596,7 +596,7 @@ def reopen_feedback(request, id):
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
-    # notify_feedback_activity(request, feedback, comment)
+    notify_feedback_activity(request, feedback, comment)
 
     feedback.save()
     return redirect('main.views.view_feedback', id=id)
@@ -606,13 +606,11 @@ def reopen_feedback(request, id):
 @manager_info_required
 def comment_feedback(request, id):
     """ Comment on a feedback """
-
     action_type = request.POST['feedback_action']
     feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
     comment.feedback = feedback
     comment.comment = request.POST['comment']
-
     comment.comment_by = request.user
     if action_type == 'Resolved':
         comment.feedback_status = 'RESOLVED'
@@ -631,13 +629,14 @@ def comment_feedback(request, id):
             feedback.third_resolved_date = datetime.utcnow()
     else:
         comment.feedback_status = 'IN PROGRESS'
+        feedback.status = 'IN PROGRESS'
         comment.save()
-    # comment.created_date = datetime.utcnow()
+
     feedback.save()
-    # if action_type == 'Resolved':
-    #     # notify_feedback_activity(request, feedback, comment, is_resolved=True)
-    # else:
-    #     notify_feedback_activity(request, feedback, comment, is_resolved=False)
+    if action_type == 'Resolved':
+        notify_feedback_activity(request, feedback, comment, is_resolved=True)
+    else:
+        notify_feedback_activity(request, feedback, comment, is_resolved=False)
     return redirect('main.views.view_feedback', id=id)
 
 
