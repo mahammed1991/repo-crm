@@ -81,7 +81,7 @@ window.cancel_clicked = false;
                         $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
                         $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
                         setSelectValue('advProgram', response.details.team_id);
-                        setSelectValue('feedbackLocation', response.details.location);
+                        setSelectValue('feedbackLocation', response.details.loc);
                         setSelectValue('googleAcManager', response.details.google_rep_email);
                         setLanguages(response.details.languages_list);
                         

@@ -118,7 +118,7 @@ Manage Help
                                 {% endif %}
                             </div>
                         
-                         {% elif 'Google' in c.comment_by.email %}
+                         {% elif 'google' in c.comment_by.email %}
                             <div class="feedback-comment google">
                                 <p>{{c.comment}}</p>
                                 {% if c.feedback_status == 'RESOLVED' %}
