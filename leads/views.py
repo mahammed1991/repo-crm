@@ -23,7 +23,7 @@ from representatives.models import (
 )
 from lib.salesforce import SalesforceApi
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson,
-                          AgencyDetails, LeadFormAccessControl
+                          AgencyDetails, LeadFormAccessControl, RegalixTeams
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
@@ -188,6 +188,12 @@ def wpp_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data()
+    wpp_loc = list()
+    regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
+    for tm in regalix_team:
+        for loc in tm.location.all():
+            wpp_loc.append(loc)
+    lead_args.update({'wpp_loc': wpp_loc})
     return render(
         request,
         'leads/wpp_lead_form.html',
@@ -747,6 +753,7 @@ def download_agency_csv(request):
 
 
 @csrf_exempt
+@login_required
 # def agent_bulk_upload(request, agency_name, pid):
 def agent_bulk_upload(request):
     """ Agency Bulk Upload """
