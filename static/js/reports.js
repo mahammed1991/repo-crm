@@ -297,6 +297,8 @@ function callAjax(dataString){
             }*/
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
+            window.report_timeline = data['report_timeline']
+            $('#tag').text(data['tag']);
             showReport(report);
             if(window.current_ldap == window.user_id){
               $("#profile_div").show();
@@ -426,33 +428,6 @@ function showReport(reports){
 
 }
 
-/*function drawColumnChart(details){
-  var keys = [];
-  var values = [];
-
-  for(var key in details){
-    if (key =='total_leads'){
-      keys.splice(0, 0, "Total Leads");
-    }else{
-      if(key != 'TAT')
-        keys.push(key)
-    }
-  } 
-
-  for(var key in details) {
-     if (key =='total_leads'){
-      values.splice(0, 0, details[key]);
-    }else{
-        if (key != 'TAT')
-          values.push(details[key])
-    }
-  }
-
-  var columnChart_datatable = [keys, values];
-
-  columnChartDraw(columnChart_datatable, '', 'columnchart')
-}*/
-
 function drawColumnChart(details){
   var keys = [];
   var values = [];
@@ -480,7 +455,6 @@ function drawColumnChart(details){
   colors = ['#000099', '#FF0000', '#FFCC00', '#00CC00', '#660066', '#006699']
 
   res = [['Lead Status', 'No Of Leads', { role: 'style' }]]
-  console.log(columnChart_datatable);
   for(var i=0; i<keys.length; i++){
     temp = []
     temp.push(keys[i]);
@@ -518,6 +492,8 @@ function drawLineChart(details){
   }
   lineChartDraw(lineChart_datatable, '', 'linechart')
 }
+
+
 
 function displayLeadStatusTable(details){
   var rows = ""
@@ -568,6 +544,48 @@ function displayLineChartTable(details){
   $("#line_chart_table").append(rows+row)
 }
 
+function customeTimeLineChartTable(details, s_keys, timeline){
+  customDrawLineChart(details, s_keys, timeline);
+  var rows = '<tr><th class="lbl">'+ timeline +'</th><th class="lbl">Leads Won</th><th class="lbl">Leads Submitted</th></tr>'
+  var row = ''
+
+  for(var i = 0;  i < s_keys.length; i++){
+
+      row += '<tr><td class="lbl">'+ s_keys[i] +'</td>'
+      var week_dict = details[s_keys[i]]
+
+      for (s_keys[i] in week_dict){
+
+      row += '<td class="value">' + week_dict[s_keys[i]] + '</td>'
+   
+      }
+      row +='</tr>'
+
+   }
+  $("#line_chart_table").append(rows+row)
+}
+
+function customDrawLineChart(details, s_keys, timeline){
+
+  var lineChart_datatable = [[timeline, 'Leads Won', 'Leads Submitted']]
+
+  for(var indx=0; indx<s_keys.length; indx++){
+      var record = [];
+      record.push(s_keys[indx]);
+      week_dict = details[s_keys[indx]];
+
+      for(key in week_dict){
+        record.push(week_dict[key]);
+      }
+
+      lineChart_datatable.push(record);
+  }
+  lineChartDraw(lineChart_datatable, '', 'linechart')
+
+
+}
+
+
 function clearTables(){
   $('#lead_status_table').empty();
   $('#code_type_table').empty();
@@ -579,9 +597,20 @@ function draw_and_display_tables(reports){
     drawColumnChart(reports['lead_status_summary']);
     displayLeadStatusTable(reports['lead_status_summary']);
     drawPieChart(reports['piechart']);
-    newTable(reports['table_header'], reports['lead_code_type_analysis'])
-    drawLineChart(reports['week_on_week_details_in_qtd'])
-    displayLineChartTable(reports['week_on_week_details_in_qtd'])
+    newTable(reports['table_header'], reports['lead_code_type_analysis']);
+    drawLineChart(reports['week_on_week_details_in_qtd']);
+    //displayLineChartTable(reports['week_on_week_details_in_qtd']);
+    if (window.report_timeline[0] == "this_quarter"){
+      customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Months');
+      
+    }
+    else if(window.report_timeline.length > 1){
+      displayLineChartTable(reports['week_on_week_details_in_qtd']);
+    }
+    else{
+      customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Weeks');
+    }
+    
 }
 
 function newTable(firstrow, details){
@@ -933,7 +962,7 @@ $('#download').click(function(){
     // Get report type details
     
 
-    console.log(dataString, 'dataString');
+    //console.log(dataString, 'dataString');
 
     if(isError){
         return false;
@@ -968,7 +997,6 @@ $('.ldap').on("keyup", function() {
     close: function(event) {
     },
     select: function(event, ui) {
-      console.log(ui.item)
       if ($("#ldap").val() !== "") {
         $("#ldap").val(ui.item.id + "-" + ui.item.username);
           window.current_ldap = ui.item.id;

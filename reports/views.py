@@ -99,7 +99,10 @@ def get_new_reports(request):
             else:
                 teams = ReportService.get_all_teams()
         else:
-            teams = teams
+            if not teams:
+                teams = ReportService.get_all_teams()
+            else:
+                teams = teams
 
         # Get teams
         if 'all' in team_members:
@@ -143,22 +146,32 @@ def get_new_reports(request):
             teams.remove('')
 
         if report_type == 'default_report':
-            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
         elif report_type == 'leadreport_individualRep':
-            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, [email])
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, [email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, team_emails)
+            team_emails.append(email)
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
-            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
         elif report_type == 'leadreport_regionview':
-            report_detail = ReportService.get_report_details_for_filters(code_types, teams, countries, start_date, end_date, list())
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
         else:
             pass
 
+        if len(report_timeline) > 1:
+            tag = "Week On Week Trends"
+        else:
+            if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+                tag = "Week On Week Trends"
+            elif str(report_timeline[0]) == 'this_quarter':
+                tag = "Month On Month Trends"
+
         report_details = {'reports': report_detail, 'code_types': code_types,
                           'report_type': report_type, 'report_timeline': report_timeline,
-                          'region': region, 'team': teams, }
+                          'region': region, 'team': teams, 'tag': tag}
+
         return HttpResponse(json.dumps(report_details))
 
 
@@ -240,7 +253,6 @@ def get_program_by_location(request):
 @csrf_exempt
 @login_required
 def get_download_report(request):
-    #import ipdb;ipdb.set_trace();
     if request.method == 'POST':
         report_type = request.POST.get('download_report_type')
         report_timeline = request.POST.get('download_report_timeline')

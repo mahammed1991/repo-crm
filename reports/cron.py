@@ -181,7 +181,6 @@ def create_or_update_leads(records, sf):
     total_leads = 0
     new_lead_saved = 0
     new_lead_failed = 0
-
     exist_lead_saved = 0
     exist_lead_failed = 0
     is_new_lead = True
@@ -211,7 +210,7 @@ def create_or_update_leads(records, sf):
             lead_owner_email = details.get('email')
         else:
             try:
-                user_details = sf.User.get('owner_id')
+                user_details = sf.User.get(owner_id)
                 lead_owner_name = user_details.get('Email')
                 lead_owner_email = user_details.get('Name')
             except ObjectDoesNotExist:

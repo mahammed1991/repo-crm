@@ -372,3 +372,16 @@ def prev_quarter_date_range(ref):
     elif ref.month < 10:
         return get_quarter_date_slots(date(ref.year, 6, 30))
     return get_quarter_date_slots(date(ref.year, 9, 30))
+
+
+def get_months_from_date(dt):
+    month = dt.month
+    if month in [1, 2, 3]:
+        months = [1, 2, 3]
+    elif month in [4, 5, 6]:
+        months = [4, 5, 6]
+    elif month in [7, 8, 9]:
+        months = [7, 8, 9]
+    else:
+        months = [10, 11, 12]
+    return months

@@ -5,7 +5,7 @@ from datetime import datetime, date
 from leads.models import Leads, RegalixTeams, Team, Location
 from reports.models import QuarterTargetLeads
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
-                         last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range,
+                         last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range, get_months_from_date,
                          get_previous_month_start_end_days, get_weeks_in_quarter_to_date, is_manager)
 from django.conf import settings
 from django.http import HttpResponse
@@ -168,7 +168,7 @@ class ReportService(object):
     #========================================================optimization ======================
 
     @staticmethod
-    def get_report_details_for_filters(code_types, teams, countries, start_date, end_date, emails):
+    def get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, emails):
         report_detail = dict()
         if emails and teams and countries:
             leads = Leads.objects.values_list('id', flat=True).filter(country__in=countries,
@@ -227,11 +227,15 @@ class ReportService(object):
 
         week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids, countries, teams, code_types)
 
+        timeline_chart_details = ReportService.get_timeline_chart_details(report_timeline, lead_ids, countries, teams, code_types, emails)
+
         report_detail.update({'lead_status_summary': leads_status_summary,
                               'piechart': pie_chart_dict,
                               'table_header': settings.LEAD_STATUS_DICT,
                               'lead_code_type_analysis': lead_status_analysis_table,
-                              'week_on_week_details_in_qtd': week_on_week_trends})
+                              'week_on_week_details_in_qtd': week_on_week_trends,
+                              'timeline_chart_details': timeline_chart_details,
+                              'sort_keys': sorted(timeline_chart_details)})
         return report_detail
 
     @staticmethod
@@ -249,6 +253,85 @@ class ReportService(object):
 
         leads_status_summary['TAT'] = Leads.objects.filter(id__in=lead_ids, lead_status='Implemented').aggregate(Avg('tat'))['tat__avg']
         return leads_status_summary
+
+    @staticmethod
+    def get_timeline_chart_details(report_timeline, lead_ids, countries, teams, code_types, emails):
+        if len(report_timeline) <= 1:
+            timeline = str(report_timeline[0])
+            if timeline in ['this_week', 'last_week', 'today']:
+                week_on_week_trends = dict()
+                cur_week = date.today().isocalendar()[1]
+                year = datetime.utcnow().year
+                for week_num in range(cur_week - 3, cur_week + 1):
+                    start_date, end_date = get_week_start_end_days(year, week_num)
+                    week_on_week_trends['Week ' + str(week_num)] = {'leads_won': 0, 'total_leads_submitted': 0}
+                    if emails:
+                        query_total = {'google_rep_email__in': emails, 'country__in': countries, 'team__in': teams, 'type_1__in': code_types}
+                    else:
+                        query_total = {'country__in': countries, 'team__in': teams, 'type_1__in': code_types}
+                    start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+                    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+                    query_total['created_date__gte'] = start_date
+                    query_total['created_date__lte'] = end_date
+                    week_on_week_trends['Week ' + str(week_num)]['total_leads_submitted'] = Leads.objects.filter(**query_total).count()
+                    query_total['lead_status'] = 'Implemented'
+                    week_on_week_trends['Week ' + str(week_num)]['leads_won'] = Leads.objects.filter(**query_total).count()
+                return week_on_week_trends
+            elif timeline in ['this_month', 'last_month']:
+                week_on_week_trends = dict()
+                year = datetime.utcnow().year
+                if timeline == 'this_month':
+                    first_day = first_day_of_month(datetime.utcnow())
+                    last_day = last_day_of_month(datetime.utcnow())
+                else:
+                    first_day, last_day = get_previous_month_start_end_days(datetime.utcnow())
+
+                index = 0
+                for i in range(first_day.isocalendar()[1], last_day.isocalendar()[1] + 1):
+                    index = index + 1
+                    start_date, end_date = get_week_start_end_days(year, i)
+                    if i == first_day.isocalendar()[1]:
+                        start_date = first_day
+                        end_date = end_date
+                    elif i == last_day.isocalendar()[1]:
+                        start_date = start_date
+                        end_date = last_day
+                    start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+                    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+                    week_on_week_trends['Week ' + str(index)] = {'leads_won': 0, 'total_leads_submitted': 0}
+                    if emails:
+                        query_total = {'google_rep_email__in': emails, 'country__in': countries, 'team__in': teams, 'type_1__in': code_types}
+                    else:
+                        query_total = {'country__in': countries, 'team__in': teams, 'type_1__in': code_types}
+                    query_total['created_date__gte'] = start_date
+                    query_total['created_date__lte'] = end_date
+                    week_on_week_trends['Week ' + str(index)]['total_leads_submitted'] = Leads.objects.filter(**query_total).count()
+                    query_total['lead_status'] = 'Implemented'
+                    week_on_week_trends['Week ' + str(index)]['leads_won'] = Leads.objects.filter(**query_total).count()
+                    
+                return week_on_week_trends
+
+            elif timeline in ['this_quarter']:
+                month_on_month_trends = dict()
+                months = get_months_from_date(datetime.utcnow())
+                for idx, month in enumerate(months):
+                    month_on_month_trends['Month ' + str(idx + 1)] = {'leads_won': 0, 'total_leads_submitted': 0}
+                    start_date = datetime(datetime.utcnow().year, month, 1, 0, 0, 0)
+                    last_day = last_day_of_month(start_date)
+                    end_date = datetime(last_day.year, last_day.month, last_day.day, 23, 59, 59)
+                    if emails:
+                        query_total = {'google_rep_email__in': emails, 'country__in': countries, 'team__in': teams, 'type_1__in': code_types}
+                    else:
+                        query_total = {'country__in': countries, 'team__in': teams, 'type_1__in': code_types}
+                    query_total['created_date__gte'] = start_date
+                    query_total['created_date__lte'] = end_date
+                    month_on_month_trends['Month ' + str(idx + 1)]['total_leads_submitted'] = Leads.objects.filter(**query_total).count()
+                    query_total['lead_status'] = 'Implemented'
+                    month_on_month_trends['Month ' + str(idx + 1)]['leads_won'] = Leads.objects.filter(**query_total).count()
+                return month_on_month_trends
+        else:
+            week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids, countries, teams, code_types)
+            return week_on_week_trends
 
     @staticmethod
     def get_week_on_week_trends_details(lead_ids, countries, teams, code_types):
