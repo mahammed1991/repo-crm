@@ -195,6 +195,15 @@
           validateFiled(rep_name);
           cid = document.getElementById('customer_id_' + i);
           validateFiled(cid)
+
+          if(!$(cid).val().match(cidFormat)){
+            //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+            $(cid).addClass('error-box');
+            //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+            $(cid).focus();
+            window.is_error = true;
+          }
+
           loc = document.getElementById('location_' + i);
           validateFiled(loc)
           timezone = document.getElementById('timezone_' + i);
