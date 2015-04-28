@@ -255,7 +255,7 @@ function setLocations(newLocations){
 
             }
         }else if(document.getElementById('diff_task').checked){
-            var diffTagTask = 5;
+            var diffTagTask = $(".tagFields:visible").length;
             $("#agency_diff_tag_count").val($(".tagFields:visible").length);
 
             if($(".tagFields:visible").length){
@@ -307,7 +307,7 @@ function setLocations(newLocations){
                 }
             }
 
-              var diffShopTask = 5;
+              var diffShopTask = $(".shopFields:visible").length;
               $("#agency_diff_shop_count").val($(".shopFields:visible").length);
                 for (i=1; i<=diffShopTask; i++){
                     if($("#shopFields" + i).is(":visible")){
@@ -478,7 +478,7 @@ function setLocations(newLocations){
 
             }
         }else if(document.getElementById('diff_task').checked){
-            var diffTagTask = 5;
+            var diffTagTask = $(".tagFields:visible").length;
             $("#customer_diff_tag_count").val($(".tagFields:visible").length);
 
             if($(".tagFields:visible").length){
@@ -544,7 +544,7 @@ function setLocations(newLocations){
                 }
             }
 
-              var diffShopTask = 5;
+              var diffShopTask = $(".shopFields:visible").length;
               $("#customer_diff_shop_count").val($(".shopFields:visible").length);
                 for (i=1; i<=diffShopTask; i++){
                     if($("#shopFields" + i).is(":visible")){

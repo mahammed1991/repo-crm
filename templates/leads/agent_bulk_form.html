@@ -12,22 +12,7 @@
   <h1>Submit Lead</h1>
     <!-- BULK UPLOAD FORM FORM REP -->
     <div class="container-fluid">
-    {% if not data %}
       <div class="lead-form agents-form-selection" id="agency_bulk_upload">
-              <div class="table-container" style="float:left;">
-                <form action="{% url 'leads.views.download_agency_csv' %}">
-                  <input type="submit" class="btn std-btn sm-btn" value="Download CSV format">
-                </form>
-              </div>
-            <div class="table-container" style="float:left;">
-                <form method="post" enctype="multipart/form-data">
-                  {% csrf_token %}
-                    <label style="float:left;"> Select CSV file to upload: </label>
-                    <input type="file" name="csvfile" id="csvfile" style="float:left;">
-                    <input type="submit" class="btn std-btn sm-btn" value="Upload CSV" name="submit" style="float:left;">
-                  </form>
-                  {% endif %}
-            </div>
             {% if data %}
             <div class="row table-container" style="width:100% !important;overflow:auto">
                   <form method="post" id="bulkForm" name="buklForm" action="{% url 'leads.views.agent_bulk_upload' %}">
@@ -35,6 +20,7 @@
                     <input type="hidden" name="oid" value="00DZ000000MipUa">
                       <input type="hidden" value="{{google_rep.id}}" name="google_rep_id" id="google_rep_id">
                       <input type="hidden" value="{{poc_details.id}}" name="poc_id" id="poc_id">
+                      <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=5" name="retURL">
                       <table style="width:100%" class="csv-table" id="csv_table">
                       <tr>
                         <th width="100px">Google Rep Name</th>
@@ -115,7 +101,6 @@
           </div>
        {% endif %}
       </div>
-    
     </div>
 </div>
 </section>
