@@ -318,6 +318,7 @@ def get_download_report(request):
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, [email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            team_emails.append(email)
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())

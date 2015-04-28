@@ -811,9 +811,10 @@ def agent_bulk_upload(request):
                 oid = '00Dd0000000fk18'
 
             params_count = request.POST.get('paramcounts')
-            import ipdb; ipdb.set_trace()
             google_rep_id = request.POST.get('google_rep_id')
             # poc_id = request.POST.get('poc_id')
+
+            ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
 
             try:
                 goggle_rep = User.objects.get(id=int(google_rep_id))
@@ -916,8 +917,16 @@ def agent_bulk_upload(request):
                     submit_lead_to_sfdc(sf_api_url, lead_args)
                 except Exception as e:
                     print e
-
+            return redirect(ret_url)
             template_args.update({'is_csv': True})
+    data_list = list()
+    each_rec = dict()
+    each_rec['customer_id'] = ''
+    each_rec['code_type'] = ''
+    each_rec['url'] = ''
+    each_rec['special_instructions'] = ''
+    data_list.append(each_rec)
+    template_args.update({'data': data_list})
     return render(request, 'leads/agent_bulk_form.html', template_args)
 
 
@@ -1199,6 +1208,7 @@ def thankyou(request):
         '2': reverse('leads.views.bundle_lead_form'),
         '3': reverse('leads.views.agency_lead_form'),
         '4': reverse('leads.views.wpp_lead_form'),
+        '5': reverse('leads.views.agent_bulk_upload'),
     }
 
     if redirect_page in redirect_page_source.keys():
@@ -1220,6 +1230,8 @@ def lead_error(request):
         '1': reverse('leads.views.lead_form'),
         '2': reverse('leads.views.bundle_lead_form'),
         '3': reverse('leads.views.agency_lead_form'),
+        '4': reverse('leads.views.wpp_lead_form'),
+        '5': reverse('leads.views.agent_bulk_upload'),
     }
 
     if redirect_page in redirect_page_source.keys():
