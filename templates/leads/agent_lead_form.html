@@ -540,7 +540,7 @@ var next_indx = indx + 1;
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span  onclick="addMoreRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
-  }else if(indx == 5){
+  }else if(indx == 10){
       tail = '<div class="col-md-1"><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
         '</div>'
   }else{
@@ -569,7 +569,7 @@ var next_indx = indx + 1;
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span onclick="addMoreShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
-  }else if(indx == 5){
+  }else if(indx == 10){
       tail = '<div class="col-md-1"><span  onclick="deleteShopRows(' + indx + ');" class="delete_shop_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>'+
             '</div>'
   }else{
@@ -594,7 +594,7 @@ function createTagFields(indx){
         if(indx == 1){
             tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
                   '</div>'
-        }else if(indx == 5){
+        }else if(indx == 10){
             tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
                   '</div>'
         }else{
@@ -624,7 +624,7 @@ function createAnalyticsTagFields(indx){
         if(indx == 1){
             tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
                   '</div>'
-        }else if(indx == 5){
+        }else if(indx == 10){
             tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
                   '</div>'
         }else{
@@ -670,7 +670,7 @@ function createShopFields(indx){
         if(indx == 1){
               tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
                     '</div>'
-        }else if(indx == 5){
+        }else if(indx == 10){
               tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
                   '</div>'
         }else{
@@ -818,7 +818,7 @@ var next_indx = indx + 1;
 
     if(indx == 1){
         tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
-    }else if(indx == 5){
+    }else if(indx == 10){
           tail = '<div class="col-md-1"><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
         '</div>'
     }else{
@@ -851,7 +851,7 @@ var next_indx = indx + 1;
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span onclick="addMoreCustomerShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
-  }else if(indx == 5){
+  }else if(indx == 10){
       tail = '<div class="col-md-1"><span  onclick="deleteCustomerShopRows(' + indx + ');" class="delete_shop_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>'+
             '</div>'
   }else{
@@ -1033,7 +1033,7 @@ var next_indx = indx + 1;
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span  onclick="addMoreDynamicRowsForSameTag('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
-  }else if(indx == 5){
+  }else if(indx == 10){
       tail = '<div class="col-md-1"><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
         '</div>'
   }else{
@@ -1095,7 +1095,7 @@ var next_indx = indx + 1;
 
     if(indx == 1){
         tail = '<div class="col-md-1"><span  onclick="addMoreCusetomerDynamicRowsForSameTag('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
-    }else if(indx == 5){
+    }else if(indx == 10){
           tail = '<div class="col-md-1"><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
         '</div>'
     }else{
@@ -1139,7 +1139,7 @@ function createAgencyDiffDynamicFields(indx){
         if(indx == 1){
               tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
                     '</div>'
-        }else if(indx == 5){
+        }else if(indx == 10){
               tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
                   '</div>'
         }else{
@@ -1191,7 +1191,7 @@ function createCustomerDiffDynamicFields(indx){
         if(indx == 1){
             tail = '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
                   '</div>'
-        }else if(indx == 5){
+        }else if(indx == 10){
               tail =  '<div class="col-md-1 allcenter customwidthplus"><span  onclick="deleteCustomerDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
                   '</div>'
         }
