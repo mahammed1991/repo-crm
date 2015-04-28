@@ -165,8 +165,13 @@
                       <!-- <td class="hidden-xs hidden-sm">{{ l.date_of_installation |date:"m/d/Y" }}</td> -->
                       
                       {% if l.regalix_comment  %}
-                          <td class="hidden-xs hidden-sm comments-container comments-container2"><p>{{ l.regalix_comment | truncatechars:100 }}</p>
-                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment}}</p> </td>
+                          <td class="hidden-xs hidden-sm comments-container comments-container2">
+                          <p>
+                          {% if l.regalix_comment != 'None' %}
+                            {{ l.regalix_comment | truncatechars:100 }}
+                          {% endif %}
+                          </p>
+                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {% if l.regalix_comment != 'None' %} {{ l.regalix_comment}} {% endif %}</p> </td>
                       {% else %}
                           <td class="hidden-xs hidden-sm comments-container"><p></p>
                             </td>

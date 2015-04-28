@@ -68,7 +68,11 @@
 
                         <td>
                           <select name="timezone_{{forloop.counter}}" id="timezone_{{forloop.counter}}">
-                              <option value="{{google_rep.profile.timezone.zone_name}}">{{google_rep.profile.timezone.zone_name}}</option>
+                              {% if google_rep.profile.timezone.zone_name %}
+                                <option value="{{google_rep.profile.timezone.zone_name}}">{{google_rep.profile.timezone.zone_name}}</option>
+                              {% else %}
+                                <option value="">Select Timezone</option>
+                              {% endif %}
                           </select>
                         </td>
 
@@ -133,8 +137,8 @@
               '<option value="">Choose an Code type</option>{% for type in code_types %}<option value="{{type}}">{{type}}</option>{% endfor %}</select></td>'+
         '<td><input type="text" value="" name="url_' + indx + '" id="url_' + indx + '"></td>'+
         '<td><select name="location_' + indx + '" id="location_' + indx + '" class="location">'+
-              '<option value="">Choose an Location</option>{% for loc in locations %}<option value="{{loc.name}}">{{loc.name}}</option>{% endfor %}</select></td>'+
-        '<td><select name="timezone_' + indx + '" id="timezone_' + indx + '" class="timezone"></select></td>'+
+              '<option value="">Market Served</option>{% for loc in locations %}<option value="{{loc.name}}">{{loc.name}}</option>{% endfor %}</select></td>'+
+        '<td><select name="timezone_' + indx + '" id="timezone_' + indx + '" class="timezone"><option value="">Select Timezone</option></select></td>'+
         '<td><input type="text" value="" name="agency_name_' + indx + '" id="agency_name_' + indx + '"></td>'+
         '<td><input type="text" value="" name="agency_phone_' + indx + '" id="agency_phone_' + indx + '"></td>'+
         '<td><input type="text" value="" name="agency_email_' + indx + '" id="agency_email_' + indx + '"></td>'+

@@ -22,13 +22,6 @@
     <input type="hidden" id="campid" name="Campaign_ID" value="None">
     <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
     <input type="hidden" id="wpp_lead_status" name="wpp_lead_status" value="Open">
-     <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country" style="display:none;">
-        {% for loc in locations %}
-          {% if loc.name == 'US' %}
-            <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
     <input type="hidden" id="ctype1" name="ctype1" value="WPP">
     <input type="hidden" id="code1" name="code1" value="">
 
@@ -100,6 +93,14 @@
       </div>
     <div class="std-sub-title">Appointment Details</div>
       <div class="row">
+        <div class="col-md-6">
+            <label for="country"> Market Served</label>
+              <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
+                {% for loc in wpp_loc %}
+                    <option value="{{loc.location_name}}" location_id="{{loc.id}}">{{loc.location_name}}</option>
+                {% endfor %}
+              </select>
+        </div>
         <div class="col-md-6">
             <label for="tzone">Time zone</label>
               <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
