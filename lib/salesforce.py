@@ -14,7 +14,7 @@ class SalesforceApi(object):
         """ Connect to Salesforce """
         try:
             # sf = Salesforce(username='rajuk@regalix-inc.com', password='raju@salesforce123', security_token='ZO34D4x7gHWFygngpCOu08gt', sandbox=True)
-            sf = Salesforce(username='skamat@regalix-inc.com', password='Password@1234', security_token='9gJDXMscBkXomNVan3IoE1QW')
+            sf = Salesforce(username='google.tech@regalix-inc.com', password='1q2w3e4r', security_token='t5gGSv6yxcQm99gfso28RJV9I')
             return sf
         except Exception, e:
             print Exception, e

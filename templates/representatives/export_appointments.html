@@ -1,0 +1,131 @@
+{% extends 'layouts/main.html' %}
+
+{% load rep_filters %}
+{% load staticfiles %}
+
+{% block title %}
+Manage Appointments
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+{% endblock main_css %}
+
+{% block content %}
+<!-- content-region -->
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>EXPORT APPOINTMENTS</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                <input id="datepickerFrom" type="text" class="form-control date-from" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-2">
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+            <div class="col-md-1">
+                <label class="lab2">Process</label>
+            </div>
+            <div class="col-md-2 box2 bb">
+                <select class="form-control bgicon" name="process_type">
+                    {% for type in process_types %}
+                        <option value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1 cutomwid1">
+                <label class="lab2">Team</label>
+            </div>
+            <div class="col-md-2 box2 bb">
+                 <select class="form-control bgicon" name="team" id="team">
+                    {% for team in teams %}
+                        <option value="{{team.id}}" {% if team.id == selected_team.id %}selected{% endif %}>{{team}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+            <div class="checkbox" style="text-align:center;">
+                <label style="margin-right:20px;font-weight:bold;">
+                    <input type="checkbox" name="appointment-type" value="appointment_booked"/>
+                        Appointments Booked
+                </label>
+                <label style="margin-right:20px;font-weight:bold;">
+                    <input type="checkbox" name="appointment-type" value="appointment_available"/>
+                    Slots Available
+              </label>
+            </div>
+        </div>
+    </div>
+        <div style="text-align:center;">
+            <input type="submit" value="Export" class="btn std-btn">
+        </div>
+    </form>
+    </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        window.tagByTeams = {{tag_by_team|safe}};
+        $('select[name=process_type]').trigger('change');
+
+        $("#datepickerFrom").datepicker({
+          defaultDate : "+1w",
+          changeMonth : true,
+          numberOfMonths : 1,
+          dateFormat: "M dd, yy",
+          onClose : function(selectedDate) {
+            $("#to").datepicker("option", "minDate", selectedDate);
+          },
+          onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() + 1);
+                $("#datepickerTo").datepicker("option", "minDate", dt);
+            }
+        });
+        $("#datepickerTo").datepicker({
+          defaultDate : "+1w",
+          changeMonth : true,
+          numberOfMonths : 1,
+          dateFormat: "M dd, yy",
+          onClose : function(selectedDate) {
+            $("#from").datepicker("option", "maxDate", selectedDate);
+          },
+          onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() - 1);
+                $("#datepickerFrom").datepicker("option", "maxDate", dt);
+            }
+        });
+
+    });
+    
+    $('select[name=process_type]').change(function(){
+            var selected_process = $(this).val();
+            setTeams(selected_process);
+        });
+
+    function setTeams(selected_process){
+        var selectTeams = window.tagByTeams[selected_process];
+
+        $("#team").html();
+        var option = '<option value="all">All</option>';
+        for(var i=0;i<selectTeams.length;i++){
+            option += "<option value='" + selectTeams[i]['id'] + "'>"+ selectTeams[i]['name']+ "</option>"
+        }
+        $('#team').html(option);
+    }
+
+</script>
+{% endblock main_js %}
