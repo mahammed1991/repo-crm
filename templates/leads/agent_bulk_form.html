@@ -108,6 +108,11 @@
     </div>
 </div>
 </section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
 {% endblock content %}
 
 {% block main_js %}
@@ -214,6 +219,13 @@
           validateFiled(agency_phone)
           agency_email = document.getElementById('agency_email_' + i);
           validateFiled(agency_email)
+
+          if (!$(agency_email).val().trim().match(check)) {
+            $(agency_email).addClass('error-box');
+            $(agency_email).focus();
+            window.is_error = true;
+          }
+
           ctype = document.getElementById('code_type_' + i);
           validateFiled(ctype);
           url = document.getElementById('url_' + i);
@@ -224,6 +236,7 @@
           event.preventDefault();
           return false;
         }else{
+          $('#preloaderOverlay').show();
           $("#paramcounts").val(row_len);
         }
       });

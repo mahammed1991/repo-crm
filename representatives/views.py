@@ -15,6 +15,7 @@ from representatives.models import (
     Availability,
     ScheduleLog
 )
+from reports.report_services import DownloadLeads
 
 
 # Create your views here.
@@ -543,3 +544,67 @@ def copy_appointment_to_next_week(request, plan_month=0, plan_day=0, plan_year=0
 
     response['appointment'] = appointment_list
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+@login_required
+def export_appointments(request):
+    """ Export Appointments by Availability/Booked """
+
+    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+    teams = RegalixTeams.objects.filter(process_type__in=process_types).exclude(team_name='default team')
+
+    tag_by_team = dict()
+    for team in teams:
+        rec = {
+            'name': str(team.team_name),
+            'id': str(team.id)
+        }
+        if team.process_type not in tag_by_team:
+            tag_by_team[str(team.process_type)] = [rec]
+        else:
+            tag_by_team[str(team.process_type)].append(rec)
+
+    if request.method == 'POST':
+        from_date = request.POST.get('date_from')
+        to_date = request.POST.get('date_to')
+        process_type = request.POST.get('process_type')
+        regalix_team = request.POST.get('team')
+        appointment_type = request.POST.get('appointment-type')
+
+        from_date = datetime.strptime(from_date, "%b %d, %Y")
+        to_date = datetime.strptime(to_date, "%b %d, %Y")
+
+        if regalix_team == 'all':
+            regalix_teams = RegalixTeams.objects.filter(process_type=process_type).values_list('id', flat=True).distinct()
+        else:
+            regalix_teams = [regalix_team]
+        print from_date, to_date, process_type, regalix_team, appointment_type
+        # time_zone = 'IST'
+        # tzone = Timezone.objects.get(zone_name=time_zone)
+        # utc_start_date = get_utc_date(from_date, tzone.time_value)
+        # utc_end_date = get_utc_date(to_date, tzone.time_value)
+
+        collumn_attr = []
+        # get all appointments for selected dates in given range
+        slots_data = Availability.objects.filter(
+            date_in_utc__range=(from_date, to_date),
+            team__id__in=regalix_teams,
+            team__process_type=process_type
+        ).order_by('team')
+
+        result = list()
+
+        filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%b-%d-%Y"), datetime.strftime(to_date, "%b-%d-%Y"))
+        path = write_appointments_to_csv(result, collumn_attr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+    return render(request, 'representatives/export_appointments.html', {'teams': teams,
+                                                                        'process_types': process_types,
+                                                                        'tag_by_team': tag_by_team})
+
+
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path

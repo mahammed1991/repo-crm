@@ -17,5 +17,7 @@ urlpatterns = patterns(
         views.availability_list
     ),
     url(r'^check-and-add/$', views.check_and_add_appointment),
-    url(r'^copy-appointment/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/(?P<team_id>\d+)/$', views.copy_appointment_to_next_week)
+    url(r'^copy-appointment/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/(?P<team_id>\d+)/$', views.copy_appointment_to_next_week),
+    url(r'^export-appointments/$', views.export_appointments),
+
 )
