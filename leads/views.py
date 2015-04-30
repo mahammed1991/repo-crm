@@ -183,6 +183,8 @@ def wpp_lead_form(request):
             wpp_data[value] = request.POST.get(key)
 
         submit_lead_to_sfdc(sf_api_url, wpp_data)
+        advirtiser_details = get_advertiser_details(sf_api_url, wpp_data)
+        send_calendar_invite_to_advertiser(advirtiser_details, False)
 
         return redirect(ret_url)
 
@@ -1631,7 +1633,7 @@ def create_icalendar_file(advirtiser_details):
 
 
 def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
-    mail_subject = "Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
+    mail_subject = "WPP Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
 
     mail_body = get_template('leads/advertiser_mail/appointment_confirmation.html').render(
         Context({
@@ -1647,7 +1649,9 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
     bcc = set()
 
     mail_to = set([
-        str(advertiser_details['email']),
+        # str(advertiser_details['email']),
+        'skumar@regalix-inc.com',
+        'sprasad@regalix-inc.com',
     ])
 
     mail_from = "implementation-support@google.com"
