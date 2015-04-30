@@ -43,7 +43,7 @@ function validatethis(frm) {
     lnameElem = document.getElementById('last_name');
     validateFiled(lnameElem);
 
-    aemailElem = document.getElementById('aemail');
+    aemailElem = document.getElementById('wpp_aemail');
     validateFiled(aemailElem);
 
     phoneElem = document.getElementById('phone');
@@ -77,6 +77,8 @@ function validatethis(frm) {
     if(window.is_error){
       return false;
     }else{
+      var url = $(urlElem).val();
+      $("#company").val(url);
       var status = true;
       if (fix_slots.length) {
         status = check_and_create_appointment(fix_slots);

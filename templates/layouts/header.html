@@ -77,7 +77,9 @@
             </a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="{% url 'main.views.edit_profile_info' %}">My Account</a></li>
-              <li><a href="{% url 'representatives.views.plan_schedule' %}" >Manage Appointment</a></li>
+              {% if 'regalix-inc.com' in request.user.email %}
+                <li><a href="{% url 'representatives.views.plan_schedule' %}" >Manage Appointment</a></li>
+              {% endif %}
               {% if request.user.is_superuser %}
                 <li><a href="{% url 'main.views.master_data_upload' %}" >Master Data Upload</a></li>
               {% endif %}
