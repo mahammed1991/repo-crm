@@ -20,7 +20,7 @@ Manage Appointments
 
         <div class="row std-sub-top">
         </div>
-    <form method="post">
+    <form method="post" onsubmit="return validatethis(this);">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-2">
@@ -50,26 +50,19 @@ Manage Appointments
                 </select>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-            <div class="checkbox" style="text-align:center;">
-                <label style="margin-right:20px;font-weight:bold;">
-                    <input type="checkbox" name="appointment-type" value="appointment_booked"/>
-                        Appointments Booked
-                </label>
-                <label style="margin-right:20px;font-weight:bold;">
-                    <input type="checkbox" name="appointment-type" value="appointment_available"/>
-                    Slots Available
-              </label>
-            </div>
-        </div>
-    </div>
+        
         <div style="text-align:center;">
             <input type="submit" value="Export" class="btn std-btn">
         </div>
     </form>
     </div>
 </section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
 {% endblock content %}
 
 {% block main_js %}
@@ -120,12 +113,42 @@ Manage Appointments
         var selectTeams = window.tagByTeams[selected_process];
 
         $("#team").html();
-        var option = '<option value="all">All</option>';
+        var option = '';
         for(var i=0;i<selectTeams.length;i++){
             option += "<option value='" + selectTeams[i]['id'] + "'>"+ selectTeams[i]['name']+ "</option>"
         }
         $('#team').html(option);
     }
+
+    function validatethis(frm) {
+
+        window.is_error = false;
+
+        if (frm.date_from.value == "0" || frm.date_from.value == "") {
+          $(frm.date_from).addClass('error-box');
+          frm.date_from.focus();
+          window.is_error = true;
+        }
+
+        if (frm.date_to.value == "0" || frm.date_to.value == "") {
+          $(frm.date_to).addClass('error-box');
+          frm.date_to.focus();
+          window.is_error = true;
+        }
+
+        if(window.is_error){
+          return false;
+        }else{
+          var status = true;
+          
+          if (status) {
+            // $('#preloaderOverlay').show();
+            $('form input[type=submit]').attr('disabled', 'disabled');
+          }
+          return status;
+        }
+    }
+
 
 </script>
 {% endblock main_js %}
