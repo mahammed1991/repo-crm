@@ -182,7 +182,10 @@
         setLocations(window.new_locations); 
       }
       window.is_loc_changed = true;
-    }else if (selectedTeam == 'Services' || selectedTeam == 'Services (Traverwood)' || selectedTeam == 'Services Revenue Program (SRP)'){
+    }else if (selectedTeam.indexOf('Services') != -1){
+      if(selectedTeam == 'Services/GCE'){
+        alert("Only Pinnacle and HiPo Newbie customers are eligible for Regalix support");
+      }
       $(".tr_service_segment").show();
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
