@@ -106,6 +106,17 @@ class UserDetails(models.Model):
         verbose_name_plural = 'User Details'
 
 
+# class Positions(models.Model):
+#     """ Positions for Regalix reps """
+#     name = models.CharField(max_length=100, blank=False, unique=True)
+
+#     created_date = models.DateTimeField(auto_now_add=True)
+#     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+#     class Meta:
+#         verbose_name_plural = 'Rep Positions'
+
+
 class ContectList(models.Model):
     """ Contect List information """
 

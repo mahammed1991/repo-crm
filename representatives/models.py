@@ -61,3 +61,4 @@ class ScheduleLog(models.Model):
 
     class Meta:
         db_table = 'schedule_log'
+        verbose_name_plural = "Schedule Log"

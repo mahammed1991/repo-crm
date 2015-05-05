@@ -1652,6 +1652,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         # str(advertiser_details['email']),
         'skumar@regalix-inc.com',
         'sprasad@regalix-inc.com',
+        'abraham@regalix-inc.com',
     ])
 
     mail_from = "implementation-support@google.com"

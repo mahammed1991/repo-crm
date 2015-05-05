@@ -87,6 +87,19 @@ Manage Appointments
                     <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Fri</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day5'|date:"M d, Y"}}</td></tr></table></th>
                     <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Sat</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day6'|date:"M d, Y"}}</td></tr></table></th>
                 </tr>
+                <tr style="background-color: rgb(166, 166, 104);">
+                    <td class="cubg2">Total</td>
+                    {% for slot in total_slots %}
+                        <td class="cubg2">
+                            <table class="table ttb" cellspacing="2">
+                                <tr>
+                                    <td class="cubg3">{{slot.booked}}</td>
+                                    <td class="cubg4">{{slot.available}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    {% endfor %}
+                </tr>
                 {% for i in 12|get_range %}
                     <tr>
                         {% if forloop.first %}
@@ -413,19 +426,6 @@ Manage Appointments
                         {% endwith %}
                     </tr>
                 {% endfor %}
-                <tr>
-                    <td class="cubg2">Total</td>
-                    {% for slot in total_slots %}
-                        <td class="cubg2">
-                            <table class="table ttb" cellspacing="2">
-                                <tr>
-                                    <td class="cubg3">{{slot.booked}}</td>
-                                    <td class="cubg4">{{slot.available}}</td>
-                                </tr>
-                            </table>
-                        </td>
-                    {% endfor %}
-                </tr>
             </table>
             <div style="text-align:center;" >
                 <input type="submit" value="Schedule" class="btn std-btn">
