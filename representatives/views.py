@@ -569,22 +569,28 @@ def export_appointments(request):
         to_date = request.POST.get('date_to')
         process_type = request.POST.get('process_type')
         regalix_team = request.POST.get('team')
-        appointment_type = request.POST.get('appointment-type')
+        # appointment_type = request.POST.get('appointment-type')
 
         from_date = datetime.strptime(from_date, "%b %d, %Y")
         to_date = datetime.strptime(to_date, "%b %d, %Y")
 
-        if regalix_team == 'all':
-            regalix_teams = RegalixTeams.objects.filter(process_type=process_type).values_list('id', flat=True).distinct()
-        else:
-            regalix_teams = [regalix_team]
-        print from_date, to_date, process_type, regalix_team, appointment_type
+        # if regalix_team == 'all':
+        #     regalix_teams = RegalixTeams.objects.filter(process_type=process_type).values_list('id', flat=True).distinct()
+        # else:
+        regalix_teams = [regalix_team]
         # time_zone = 'IST'
         # tzone = Timezone.objects.get(zone_name=time_zone)
         # utc_start_date = get_utc_date(from_date, tzone.time_value)
         # utc_end_date = get_utc_date(to_date, tzone.time_value)
 
-        collumn_attr = []
+        collumn_attr = ['Hours', 'Team']
+        s_date = from_date
+        while True:
+            if s_date <= to_date:
+                collumn_attr.append(datetime.strftime(s_date, "%d/%b/%Y"))
+                s_date = s_date + timedelta(days=1)
+            else:
+                break
         # get all appointments for selected dates in given range
         slots_data = Availability.objects.filter(
             date_in_utc__range=(from_date, to_date),
@@ -593,6 +599,37 @@ def export_appointments(request):
         ).order_by('team')
 
         result = list()
+        team = RegalixTeams.objects.filter(id__in=regalix_teams)
+        team_name = team[0].team_name
+
+        for i in range(0, 24):
+            for j in ['00', '30']:
+                mydict = {}
+                hour = "%s:%s" % (i, j)
+                for ele in collumn_attr:
+                    if ele == 'Team':
+                        mydict[ele] = team_name
+                    elif ele == 'Hours':
+                        mydict[ele] = hour
+                    else:
+                        mydict[ele] = '0/0'
+
+                result.append(mydict)
+
+        for slot in slots_data:
+            # time zone conversion
+            tz = Timezone.objects.get(zone_name='IST')
+            requested_date = slot.date_in_utc
+            utc_date = get_ist_date(requested_date, tz.time_value)
+            _date = datetime.strftime(utc_date, "%d/%b/%Y")
+            _time = datetime.strftime(utc_date, "%H:%M")
+            availability_count = slot.availability_count
+            booked_count = slot.booked_count
+            val = "%s/%s" % (booked_count, availability_count)
+
+            for rec in result:
+                if str(_time) in rec.values():
+                    rec[_date] = val
 
         filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%b-%d-%Y"), datetime.strftime(to_date, "%b-%d-%Y"))
         path = write_appointments_to_csv(result, collumn_attr, filename)
@@ -608,3 +645,18 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+
+def get_ist_date(date, t_zone):
+    time_zone = t_zone.split(':')
+    hours = int(time_zone[0])
+    minutes = int(time_zone[1])
+
+    diff_in_min = (abs(hours) * 60) + minutes
+
+    if hours < 0:
+        utc_date = date - timedelta(minutes=diff_in_min)
+    else:
+        utc_date = date + timedelta(minutes=diff_in_min)
+
+    return utc_date
