@@ -10,8 +10,11 @@ from PIL import Image
 from django.utils.translation import ugettext as _
 
 
-from leads.models import Location, Team
+from leads.models import Location, Team, Leads
 from reports.models import Region
+from django.template.loader import get_template
+from django.template import Context
+from django.core.mail import EmailMultiAlternatives
 
 
 class Feedback(models.Model):
@@ -106,17 +109,6 @@ class UserDetails(models.Model):
         verbose_name_plural = 'User Details'
 
 
-# class Positions(models.Model):
-#     """ Positions for Regalix reps """
-#     name = models.CharField(max_length=100, blank=False, unique=True)
-
-#     created_date = models.DateTimeField(auto_now_add=True)
-#     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-
-#     class Meta:
-#         verbose_name_plural = 'Rep Positions'
-
-
 class ContectList(models.Model):
     """ Contect List information """
 
@@ -132,16 +124,15 @@ class ContectList(models.Model):
         return os.path.join('profile_photo/', filename)
 
     position_type = models.CharField(max_length=100, blank=False, choices=(
+        ('MANAGEMENT', 'MANAGEMENT'),
         ('OPERATIONS', 'OPERATIONS'),
-        ('MGMT', 'MANAGEMENT'),
-        ('QUALLITY', 'QUALLITY'),
-        ('TECH', 'TECH'),
+        ('QUALITY', 'QUALITY'),
+        ('TECH/SME', 'TECH/SME'),
         ('TAG', 'TAG'),
         ('SHOPPING', 'SHOPPING'),
         ('POD', 'POD'),
         ('MIS', 'MIS'),
-        ('DESIGN', 'DESIGN'),
-        ('TRAINING', 'TRAINING'),)
+        ('DESIGN/DEV', 'DESIGN/DEV'),)
     )
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
@@ -207,12 +198,31 @@ class CustomerTestimonials(models.Model):
     email = models.EmailField(max_length=100, blank=True)
     company_name = models.CharField(max_length=100, blank=True, null=True)
     url = models.CharField(max_length=200, blank=True, null=True)
+    customer_id = models.CharField(max_length=50, blank=True, null=True)
     created_date = models.DateTimeField(default=datetime.utcnow())
     updated_date = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        # Either email or google_id. Both cannot be empty.
+        if self.customer_id and not self.email:
+            leads = Leads.objects.filter(customer_id=self.customer_id)
+            if leads and len(leads) > 1:
+                raise ValidationError('We found multiple leads on this customer ID! please enter customer email on Email field')
 
     class Meta:
         db_table = 'customer_testimonials'
         ordering = ['-created_date']
+
+    # Overriding
+    def save(self, *args, **kwargs):
+        super(CustomerTestimonials, self).save(*args, **kwargs)
+        # Send Mails to google rep and their manager
+        lead = Leads.objects.filter(customer_id=self.customer_id)
+        if lead:
+            if len(lead) > 1:
+                pass
+            else:
+                send_testimonial_notification(lead[0], self)
 
 
 class Notification(models.Model):
@@ -250,6 +260,49 @@ class PortalFeedback(models.Model):
 
     class Meta:
         db_table = 'portal_feedback'
+
+
+def send_testimonial_notification(lead, testimonial):
+    """ Email Testimonial details to Google reps """
+
+    mail_subject = "Customer Testimonial"
+    mail_body = get_template('main/email/testimonial_feedback_mail.html').render(
+        Context({
+            'testimonial': testimonial,
+            'site_url': 'gtrack.regalix.com'
+        })
+    )
+
+    # get feedback user manager and lead owner managers information
+    bcc = set([])
+
+    mail_to = set([
+        lead.google_rep_email,
+        lead.lead_owner_email,
+        'g-crew@regalix-inc.com',
+        'rwieker@google.com',
+        'tkhan@regalix-inc.com',
+        'sabinaa@google.com',
+        'anak@google.com',
+        'analytics.support@regalix-inc.com'
+    ])
+
+    mail_from = ''
+
+    attachments = list()
+
+    email = EmailMultiAlternatives(mail_subject, mail_body, mail_from, mail_to, list(bcc))
+    email.attach_alternative(mail_body, "text/html")
+
+    for attachment in attachments:
+        email.attach(
+            attachment.name,
+            attachment.read()
+        )
+    try:
+        email.send()
+    except Exception, e:
+        print e
 
 
 def user_unicode_patch(self):
