@@ -78,7 +78,7 @@ window.cancel_clicked = false;
                         $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
                     }
                     else if(response['status'] == 'MULTIPLE'){
-                        alert("This is multiple");
+                        alert("Getting multiple leads on this " + $('input[name=cid]').val() + " customer id, please choose advertiser name");
                         multiple_leads(response['details']);
                     }
                     else{
