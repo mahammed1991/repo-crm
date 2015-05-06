@@ -113,7 +113,7 @@ Manage Appointments
         var selectTeams = window.tagByTeams[selected_process];
 
         $("#team").html();
-        var option = '';
+        var option = '<option value="all">all</option>';
         for(var i=0;i<selectTeams.length;i++){
             option += "<option value='" + selectTeams[i]['id'] + "'>"+ selectTeams[i]['name']+ "</option>"
         }
@@ -143,7 +143,7 @@ Manage Appointments
           
           if (status) {
             // $('#preloaderOverlay').show();
-            $('form input[type=submit]').attr('disabled', 'disabled');
+            $('form input[type=submit]');
           }
           return status;
         }
