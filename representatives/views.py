@@ -583,7 +583,7 @@ def export_appointments(request):
         diff_in_minutes = diff[0]
 
         if regalix_team == 'all':
-            regalix_teams = RegalixTeams.objects.filter(process_type=process_type)
+            regalix_teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
         else:
             regalix_teams = RegalixTeams.objects.filter(process_type=process_type, id=regalix_team)
 
@@ -622,7 +622,7 @@ def export_appointments(request):
                         elif ele == 'Hours':
                             mydict[ele] = hour
                         else:
-                            mydict[ele] = '0/0'
+                            mydict[ele] = '0|0'
 
                     result.append(mydict)
 
@@ -634,7 +634,7 @@ def export_appointments(request):
                 _time = datetime.strftime(requested_date, "%H:%M")
                 availability_count = slot.availability_count
                 booked_count = slot.booked_count
-                val = "%s/%s" % (booked_count, availability_count)
+                val = "%s|%s" % (booked_count, availability_count)
 
                 for rec in result:
                     if str(_time) in rec.values():
