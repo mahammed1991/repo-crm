@@ -199,15 +199,24 @@ class CustomerTestimonials(models.Model):
     company_name = models.CharField(max_length=100, blank=True, null=True)
     url = models.CharField(max_length=200, blank=True, null=True)
     customer_id = models.CharField(max_length=50, blank=True, null=True)
+    sf_lead_id = models.CharField(max_length=50, blank=True, null=True)
     created_date = models.DateTimeField(default=datetime.utcnow())
     updated_date = models.DateTimeField(auto_now=True)
 
     def clean(self):
         # Either email or google_id. Both cannot be empty.
-        if self.customer_id and not self.email:
+        raise_error = False
+        if self.customer_id:
             leads = Leads.objects.filter(customer_id=self.customer_id)
             if leads and len(leads) > 1:
-                raise ValidationError('We found multiple leads on this customer ID! please enter customer email on Email field')
+                if self.sf_lead_id:
+                    leads = Leads.objects.filter(sf_lead_id=self.sf_lead_id)
+                    if not leads:
+                        raise_error = True
+                else:
+                    raise_error = True
+        if raise_error:
+            raise ValidationError('We found multiple leads on this customer ID!, please enter a valid SFDC lead id on Sf lead id field ')
 
     class Meta:
         db_table = 'customer_testimonials'
@@ -217,12 +226,16 @@ class CustomerTestimonials(models.Model):
     def save(self, *args, **kwargs):
         super(CustomerTestimonials, self).save(*args, **kwargs)
         # Send Mails to google rep and their manager
-        lead = Leads.objects.filter(customer_id=self.customer_id)
-        if lead:
-            if len(lead) > 1:
-                pass
-            else:
-                send_testimonial_notification(lead[0], self)
+        if self.sf_lead_id:
+            lead = Leads.objects.filter(sf_lead_id=self.sf_lead_id)
+            send_testimonial_notification(lead[0], self)
+        else:
+            lead = Leads.objects.filter(customer_id=self.customer_id)
+            if lead:
+                if len(lead) > 1:
+                    pass
+                else:
+                    send_testimonial_notification(lead[0], self)
 
 
 class Notification(models.Model):
