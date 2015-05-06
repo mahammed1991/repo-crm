@@ -768,10 +768,7 @@ def agent_bulk_upload(request):
     language_for_location = dict()
     for loc in locations:
         l = {'id': int(loc.id), 'name': str(loc.location_name)}
-        if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
-            new_locations.append(l)
-        else:
-            all_locations.append(l)
+        all_locations.append(l)
         loc_name = str(loc.location_name)
         time_zone_for_region[loc_name] = [{'zone_name': str(tz[
             'zone_name']), 'time_value': str(tz['time_value'])} for tz in loc.time_zone.values()]
@@ -2013,10 +2010,7 @@ def get_basic_lead_data():
     language_for_location = dict()
     for loc in locations:
         l = {'id': int(loc.id), 'name': str(loc.location_name)}
-        if loc.location_name in ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua', 'Panama']:
-            new_locations.append(l)
-        else:
-            all_locations.append(l)
+        all_locations.append(l)
         loc_name = str(loc.location_name)
         time_zone_for_region[loc_name] = [{'zone_name': str(tz[
             'zone_name']), 'time_value': str(tz['time_value']), 'id': str(tz['id'])} for tz in loc.time_zone.values()]

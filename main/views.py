@@ -656,7 +656,7 @@ def get_contacts(request):
         contact['picture'] = cnt.profile_photo.name.split('/')[-1]
         contact['photo_url'] = get_profile_avatar_by_email(cnt.email)
         contact['position_type'] = cnt.position_type
-        if cnt.position_type == 'MGMT':
+        if cnt.position_type == 'MANAGEMENT':
             contacts['management'].append(contact)
         else:
             if cnt.position_type not in groups:
