@@ -1,0 +1,96 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Upload Leads
+{% endblock title %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-12">
+<div id="content" class="clearfix custom-w">
+    {% if not result %}
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend">
+                <p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Upload Data From Excel</p>
+            </legend>
+            <div id="class_content" >
+                <div id="datacontent">
+                    <div class="col-md-12">
+                    <form method="post" enctype="multipart/form-data" name='show-form'>
+                        {% csrf_token %}
+                        <p >Select Excel: <input type="file" name="file" id="master_data" style="display: inline;" />
+                        <input id="show" name="Show" type="submit" value="Show" /></p>
+                        <p style="font-family:Times New Roman;font-size:12px;color:red">{{error}}</p>
+                    </form>
+                    </div>
+                </div>
+                {% if excel_data %}
+                    <div id="div1">
+                            <div id="buttonAction"><br>
+                                <form method="post" action="{% url 'main.views.migrate_user_data' %}">
+                                    {% csrf_token %}
+                                    <table width="100%" style="border-collapse: collapse">                
+                                        <tr>
+                                            <td style="padding: 1%;">
+                                                <input type="submit" value="Save" style="margin: 1% 1% 1% 1%;" />
+                                                <input type="hidden" name='file' value='{{ excel_file }}' />
+                                                <input type="button" value="Cancel" onclick="window.location.href='{% url 'main.views.master_data_upload'%}'">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
+                            </div>
+                        <div id="div2" >
+                            <table id="xlsxTable" width="100%" cellpadding="3" cellspacing="0" border="1">
+                                {% for row in excel_data %}
+                                    <tr align="center">
+                                    {% if forloop.first %}
+                                        {% for col in row %}
+                                        <td style="background:#E6E7E9"><b>{{ col }}</b></td>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for col in row %}
+                                                <td>{{ col }}</td>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </fieldset>
+    </div>
+    {% else  %}
+    <div id="content" class="clearfix">
+        <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
+            Totally you are trying to upload {{template_args.total_record}} records...<br /><br />
+            {{template_args.number_of_saved_records}} records successfully saved.<br /><br />
+            Please click here to upload the data again <a href="{% url 'main.views.master_data_upload' %}"><b>Upload Here</b></a><br /><br />
+            {{template_args.number_of_unsaved_records}} records not saved.<br /><br />
+             Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
+        </div>
+    </div>
+    {% endif %}
+</div>
+</div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script type='text/javascript'>
+    $(document).ready(function(){
+        $('#show').click(function(){
+            if($("#master_data").val() == ""){
+                alert('Please select an excel file to upload data.');
+                return false;
+            }
+        });
+    });
+
+</script>
+{% endblock main_js %}
