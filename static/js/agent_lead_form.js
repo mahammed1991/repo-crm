@@ -1,12 +1,6 @@
 $('#team').change(function(){
     var selectedTeam = $(this).val();
-    if (selectedTeam == 'Gem Central America' || selectedTeam == 'Gem Central America'){
-      console.log(window.is_loc_changed, "status")
-      if(!window.is_loc_changed){
-        setLocations(window.new_locations); 
-      }
-      window.is_loc_changed = true;
-    }else if (selectedTeam.indexOf('Services') != -1){
+    if (selectedTeam.indexOf('Services') != -1){
       if(selectedTeam == 'Services/GCE'){
         alert("Only Pinnacle and HiPo Newbie customers are eligible for Regalix support");
       }
