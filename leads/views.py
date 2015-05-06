@@ -1510,6 +1510,16 @@ def get_lead(request, cid):
         return HttpResponse(json.dumps(lead), content_type='application/json')
 
     if len(leads) > 1:
+        leads = leads
+        adv_list = []
+        for each_lead in leads:
+            details = {'name': each_lead.first_name + ' ' + each_lead.last_name, 'l_id': each_lead.sf_lead_id}
+            adv_list.append(details)
+        lead['status'] = "MULTIPLE"
+        lead['details'] = adv_list
+        return HttpResponse(json.dumps(lead), content_type='application/json')
+
+    else:
         leads = leads[0]
 
     try:
@@ -1537,6 +1547,44 @@ def get_lead(request, cid):
             'email': leads.lead_owner_email,
             'google_rep_email': leads.google_rep_email,
             'loc': location if location else 0,
+            'team': team.team_name if team else '',
+            'team_id': team.id if team else 0,
+            'languages_list': languages_list
+
+        }
+    return HttpResponse(json.dumps(lead), content_type='application/json')
+
+
+def get_lead_by_lid(request, lid):
+    """ Get lead information """
+    lead = {'status': 'FAILED', 'details': None}
+    leads = Leads.objects.get(sf_lead_id=lid)
+
+    try:
+        team = Team.objects.get(team_name=leads.team)
+    except ObjectDoesNotExist:
+        team = None
+
+    try:
+        location = Location.objects.get(location_name=leads.country)
+        languages = location.language.all()
+    except ObjectDoesNotExist:
+        languages = None
+        location = None
+
+    if not languages:
+        languages = Language.objects.all()
+    languages_list = list()
+    for lang in languages:
+        languages_list.append({'l_id': lang.id, 'language_name': lang.language_name})
+    if leads:
+        lead['status'] = 'SUCCESS'
+
+        lead['details'] = {
+            'name': leads.first_name + ' ' + leads.last_name,
+            'email': leads.lead_owner_email,
+            'google_rep_email': leads.google_rep_email,
+            'loc': location.location_name if location else 0,
             'team': team.team_name if team else '',
             'team_id': team.id if team else 0,
             'languages_list': languages_list

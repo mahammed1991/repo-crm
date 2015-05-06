@@ -76,7 +76,12 @@ window.cancel_clicked = false;
                     if(response['status'] == 'FAILED'){
                         alert('Lead for Selected CID not available.');
                         $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
-                    }else{
+                    }
+                    else if(response['status'] == 'MULTIPLE'){
+                        alert("This is multiple");
+                        multiple_leads(response['details']);
+                    }
+                    else{
                         $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
                         $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
                         $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
@@ -94,3 +99,46 @@ window.cancel_clicked = false;
             })
         }
     });
+
+function multiple_leads(details){
+    $('#feedbackCID').hide();
+    $('#advertiserNames').show();
+    var html = '<option value>Select Advertiser</option>'
+    for(var i=0; i<details.length; i++){
+        var obj = details[i];
+        var rec = '<option value='+ obj['l_id']+'>'+ obj['name'] +'</option>';
+        html += rec
+    }
+    $('#advertiserNames').append(html);
+}
+
+$('#advertiserNames').change(function(){
+    var lid = $(this).val();
+    if(lid){
+        $.ajax({
+          url: "/leads/get-lead-by-lid/"+ lid,
+          dataType: "json",
+          type: 'GET',
+          success: function(response) {
+             if(response['status'] == 'FAILED'){
+                alert('Lead for Selected CID not available.');
+                $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
+                }
+            else{
+                $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
+                $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
+                setSelectValue('advProgram', response.details.team_id);
+                setSelectValue('feedbackLocation', response.details.loc);
+                setSelectValue('googleAcManager', response.details.google_rep_email);
+                setLanguages(response.details.languages_list);
+                
+            }
+          },
+          error: function(errorThrown) {
+              alert('Something went wrong!. Please check CID');
+                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+          }
+    }); 
+  }
+});
