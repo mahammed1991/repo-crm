@@ -573,15 +573,19 @@ def export_appointments(request):
 
         from_date = datetime.strptime(from_date, "%b %d, %Y")
         to_date = datetime.strptime(to_date, "%b %d, %Y")
+        to_date = datetime(to_date.year, to_date.month, to_date.day, 23, 59, 59)
 
-        # if regalix_team == 'all':
-        #     regalix_teams = RegalixTeams.objects.filter(process_type=process_type).values_list('id', flat=True).distinct()
-        # else:
-        regalix_teams = [regalix_team]
-        # time_zone = 'IST'
-        # tzone = Timezone.objects.get(zone_name=time_zone)
-        # utc_start_date = get_utc_date(from_date, tzone.time_value)
-        # utc_end_date = get_utc_date(to_date, tzone.time_value)
+        time_zone = 'IST'
+        selected_tzone = Timezone.objects.get(zone_name=time_zone)
+        from_utc_date = get_utc_date(from_date, selected_tzone.time_value)
+        to_utc_date = get_utc_date(to_date, selected_tzone.time_value)
+        diff = divmod((from_utc_date - from_date).total_seconds(), 60)
+        diff_in_minutes = diff[0]
+
+        if regalix_team == 'all':
+            regalix_teams = RegalixTeams.objects.filter(process_type=process_type)
+        else:
+            regalix_teams = RegalixTeams.objects.filter(process_type=process_type, id=regalix_team)
 
         collumn_attr = ['Hours', 'Team']
         s_date = from_date
@@ -591,48 +595,55 @@ def export_appointments(request):
                 s_date = s_date + timedelta(days=1)
             else:
                 break
-        # get all appointments for selected dates in given range
-        slots_data = Availability.objects.filter(
-            date_in_utc__range=(from_date, to_date),
-            team__id__in=regalix_teams,
-            team__process_type=process_type
-        ).order_by('team')
 
-        result = list()
-        team = RegalixTeams.objects.filter(id__in=regalix_teams)
-        team_name = team[0].team_name
+        total_result = list()
+        for rglx_team in regalix_teams:
+            # get all appointments for selected dates in given range
+            slots_data = Availability.objects.filter(
+                date_in_utc__range=(from_utc_date, to_utc_date),
+                team__id=rglx_team.id,
+                team__process_type=process_type
+            ).order_by('team')
 
-        for i in range(0, 24):
-            for j in ['00', '30']:
-                mydict = {}
-                hour = "%s:%s" % (i, j)
-                for ele in collumn_attr:
-                    if ele == 'Team':
-                        mydict[ele] = team_name
-                    elif ele == 'Hours':
-                        mydict[ele] = hour
+            result = list()
+            team_name = rglx_team.team_name
+
+            for i in range(0, 24):
+                for j in ['00', '30']:
+                    mydict = {}
+                    if len(str(i)) == 1:
+                        indx = '0%s' % (i)
                     else:
-                        mydict[ele] = '0/0'
+                        indx = str(i)
+                    hour = "%s:%s" % (indx, j)
+                    for ele in collumn_attr:
+                        if ele == 'Team':
+                            mydict[ele] = team_name
+                        elif ele == 'Hours':
+                            mydict[ele] = hour
+                        else:
+                            mydict[ele] = '0/0'
 
-                result.append(mydict)
+                    result.append(mydict)
 
-        for slot in slots_data:
-            # time zone conversion
-            tz = Timezone.objects.get(zone_name='IST')
-            requested_date = slot.date_in_utc
-            utc_date = get_ist_date(requested_date, tz.time_value)
-            _date = datetime.strftime(utc_date, "%d/%b/%Y")
-            _time = datetime.strftime(utc_date, "%H:%M")
-            availability_count = slot.availability_count
-            booked_count = slot.booked_count
-            val = "%s/%s" % (booked_count, availability_count)
+            for slot in slots_data:
+                # time zone conversion
+                requested_date = slot.date_in_utc
+                requested_date -= timedelta(minutes=diff_in_minutes)
+                _date = datetime.strftime(requested_date, "%d/%b/%Y")
+                _time = datetime.strftime(requested_date, "%H:%M")
+                availability_count = slot.availability_count
+                booked_count = slot.booked_count
+                val = "%s/%s" % (booked_count, availability_count)
 
-            for rec in result:
-                if str(_time) in rec.values():
-                    rec[_date] = val
+                for rec in result:
+                    if str(_time) in rec.values():
+                        rec[_date] = val
+
+            total_result.extend(result)
 
         filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%b-%d-%Y"), datetime.strftime(to_date, "%b-%d-%Y"))
-        path = write_appointments_to_csv(result, collumn_attr, filename)
+        path = write_appointments_to_csv(total_result, collumn_attr, filename)
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
 
@@ -645,18 +656,3 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
-
-
-def get_ist_date(date, t_zone):
-    time_zone = t_zone.split(':')
-    hours = int(time_zone[0])
-    minutes = int(time_zone[1])
-
-    diff_in_min = (abs(hours) * 60) + minutes
-
-    if hours < 0:
-        utc_date = date - timedelta(minutes=diff_in_min)
-    else:
-        utc_date = date + timedelta(minutes=diff_in_min)
-
-    return utc_date
