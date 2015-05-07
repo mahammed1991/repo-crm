@@ -8,8 +8,8 @@ def update_forum_user(request):
 
     try:
         # Customise User Model
-        username = request.user.username.split('@')[0]
-        user = User.objects.get(username=username)
+        # username = request.user.username.split('@')[0]
+        user = User.objects.get(user_ptr_id=request.user.id)
         user.user_ptr = request.user
         user.save()
     except ObjectDoesNotExist:
