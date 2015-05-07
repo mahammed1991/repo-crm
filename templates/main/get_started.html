@@ -32,14 +32,14 @@
                 </div>
                 <div class="col-md-6">
                     <label for="country" style="float:left;">Google Rep Location</label>
-                    <input type="text" class="form-control edit allow-edit" id="rep_location" name="rep_location" value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off">
+                    <input type="text" class="form-control edit allow-edit" id="rep_location" name="rep_location" {% if user.profile.rep_location == "" or user.profile.rep_location == "None" %} value="" {% else %} value="{{ user.profile.rep_location }}" {% endif %} placeholder="Enter Rep Location" autocomplete="off">
                   </div>
 
             {% if 'google' in request.user.email %}
               <div class="col-md-6">
                   <label style="float:left;"> Program Name </label>
                     <select class="form-control edit allow-edit" name="user_team" id="user_team">
-                      <option value="0">Select Program</option>
+                      <option value="">Select Program</option>
                       {% for team in teams %}
                         <option value="{{team.id}}">{{team.team_name}}</option>
                       {% endfor %}
@@ -51,7 +51,7 @@
               <div class="col-md-6">
                    <label style="float:left;">Region </label>
                   <select class="form-control edit allow-edit" id="region" title="Program Region" name="region">
-                    <option value="0">Region</option>
+                    <option value="">Region</option>
                     {% for rgn in regions %}
                       <option value="{{rgn.id}}">{{rgn.name}}</option>
                     {% endfor %}
@@ -60,7 +60,7 @@
               <div class="col-md-6">
               <label style="float:left;"> Location Name </label>
                 <select class="form-control edit allow-edit" name="user_location" id="user_location">
-                  <option value="0">Market Served</option>
+                  <option value="">Market Served</option>
                   {% for loc in locations %}
                   <option value="{{loc.id}}">{{loc.location_name}}</option>
                   {% endfor %}
@@ -84,14 +84,14 @@
     <script type="text/javascript">
   $(document).ready(function(){
       // getLocation('rep_location');
-      window.loc_id = {{user.profile.location.id|safe}}
-      window.team_id = {{user.profile.team.id|safe}}
+      window.loc_id = "{{user.profile.location.id|safe}}"
+      window.team_id = "{{user.profile.team.id|safe}}"
       window.user_details = {{user_details|safe}}
       window.regionWiseLocations = {{region_locations|safe}};
       window.all_locations = {{all_locations|safe}};
 
       window.rep_location = "{{user.profile.rep_location|safe}}";
-      if(!window.rep_location){
+      if(!window.rep_location || window.rep_location == 'None'){
         getLocation('rep_location');
       }
 
@@ -104,7 +104,11 @@
       }
     });
 
-    $("#user_team").val(window.team_id);
+    if(window.team_id && window.team_id != 'None'){
+      $("#user_team").val(window.team_id);  
+    }else{
+      $("#user_team").val('');
+    }
 
     var userRegion = "{{user.profile.region.name|safe}}"
      var userRegionId = "{{user.profile.region.id|safe}}";
