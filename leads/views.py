@@ -2097,8 +2097,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
 
             tz_ist = Timezone.objects.get(zone_name='IST')
             appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
-
-    appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
+        appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
     lead_data[appointment_in_ist_key] = appointment_in_ist
 
     try:
