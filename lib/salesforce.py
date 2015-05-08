@@ -5,7 +5,6 @@ Connect to Salesforce API
 from simple_salesforce import Salesforce
 from datetime import datetime, timedelta
 from leads.models import Timezone
-from representatives.views import get_utc_date
 
 
 class SalesforceApi(object):
@@ -61,3 +60,32 @@ class SalesforceApi(object):
 
         print utc_date, "final value"
         return utc_date
+
+    @staticmethod
+    def get_utc_date(date, t_zone):
+        time_zone = t_zone.split(':')
+        hours = int(time_zone[0])
+        minutes = int(time_zone[1])
+
+        diff_in_min = (abs(hours) * 60) + minutes
+
+        if hours < 0:
+            utc_date = date + timedelta(minutes=diff_in_min)
+        else:
+            utc_date = date - timedelta(minutes=diff_in_min)
+        return utc_date
+
+    @staticmethod
+    def convert_utc_to_timezone(date, t_zone):
+        time_zone = t_zone.split(':')
+        hours = int(time_zone[0])
+        minutes = int(time_zone[1])
+
+        diff_in_min = (abs(hours) * 60) + minutes
+
+        if hours < 0:
+            zone_date = date - timedelta(minutes=diff_in_min)
+        else:
+            zone_date = date + timedelta(minutes=diff_in_min)
+
+        return zone_date

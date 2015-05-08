@@ -50,6 +50,9 @@ class SalesforceLeads(object):
                                 'wpp_lead_status': '00Nd0000007faZ6',
                                 'wpp_aemail': '00Nd0000007fk3S',
 
+                                # Appointment IST time
+                                'appointment_in_ist': '00NZ0000001YOzF',
+
                                 # Lead Type
                                 'lead_type': '00NZ0000001Y8hF',
 
@@ -105,6 +108,9 @@ class SalesforceLeads(object):
                                    'conversion_goal': '00Nd0000007fa8P',
                                    'wpp_lead_status': '00Nd0000007faZ6',
                                    'wpp_aemail': '00Nd0000007fk3S',
+
+                                   # Appointment IST time
+                                   'appointment_in_ist': '00Nd0000007fnbe',
 
                                    # Lead Type
                                    'lead_type': '00Nd0000007fftD',

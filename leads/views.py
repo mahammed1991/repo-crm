@@ -23,7 +23,7 @@ from representatives.models import (
 )
 from lib.salesforce import SalesforceApi
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson,
-                          AgencyDetails, LeadFormAccessControl, RegalixTeams
+                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
@@ -2075,6 +2075,32 @@ def get_all_sfdc_lead_ids(sfdc_type):
 
 def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
+
+    if "www" in sf_api_url:
+        time_zone = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('tzone'))
+        appointment_in_ist_key = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('appointment_in_ist')
+        appointment_date = lead_data.get(SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.get('tag_datepick'))
+    else:
+        time_zone = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('tzone'))
+        appointment_in_ist_key = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('appointment_in_ist')
+        appointment_date = lead_data.get(SalesforceLeads.SANDBOX_TAG_LEAD_ARGS.get('tag_datepick'))
+
+    appointment_in_ist = None
+    if appointment_date:
+        # Appointment date format Ex: 05/14/2015 10:30 AM
+        appointment_date = datetime.strptime(appointment_date, "%m/%d/%Y %I:%M %p")
+        if time_zone == 'IST':
+            appointment_in_ist = appointment_date
+        else:
+            tz = Timezone.objects.get(zone_name=time_zone)
+            utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
+
+            tz_ist = Timezone.objects.get(zone_name='IST')
+            appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+
+    appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
+    lead_data[appointment_in_ist_key] = appointment_in_ist
+
     try:
         requests.post(url=sf_api_url, data=lead_data)
         # Get Advertiser Details
