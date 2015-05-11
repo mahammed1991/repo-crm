@@ -1,0 +1,342 @@
+  {% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Reports
+{% endblock title %}
+
+{% block content %}
+<div class="wrapper">
+<!-- content-region -->
+<section class="content-region inner-page-wide reports-page">
+  <div class="container-fluid">
+  <h1>Reports</h1>
+  <div class="row text-center report-category">
+      <div class="col-md-3 centered select-style">
+        <select class="form-control bgicon" id="filter_report_type">
+          <option value="">Choose Report Type</option>
+          <option value="leadreport_individualRep">Individual Rep</option>
+          {% if manager %}
+            <option value="leadreport_teamLead">Team Lead </option>
+          {% endif %}
+          <option value="leadreport_programview">Program View</option>
+          <option value="leadreport_regionview">Region View</option>
+          <!-- <option value="leadreport_deadLeads">Dead Leads</option>
+          <option value="leadreport_deltaReports">Delta Reports</option>
+          <option value="leadreport_exportRawData">Export Raw Data</option> -->
+        </select>
+        <div class="country-pick" id="filter_team" style="display:none;">
+          <div class="checkbox" id="team_checks">
+              <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+              {% for team in teams %}
+                  <label>
+                    {% if team == 'Other'%}
+                      <input type="checkbox" value=""> {{team}} 
+                    {% else %}
+                      <input type="checkbox" value="{{team}}"> {{team}} 
+                    {% endif %}
+                  </label>
+              {% endfor %}
+          </div>
+        </div>
+        <div id="split_program" style="display:none">
+          <label><input type="checkbox" id="program_split"> Split Program-Wise</label>
+        </div>
+      </div>
+      {% if manager %}
+        <div id="filter_team_members"  class="col-md-3  centered" style="display:none;">
+          <div class="country-pick">
+            <div class="checkbox" id="members_checks">
+              <label><input type="checkbox" value="all" class="checkbox_select_all" checked> Select All </label>
+                {% for member in team_members %}
+                    <label>
+                        <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}} 
+                    </label>
+                {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <div id="filter_region" class="col-md-3 centered" style="display:none;">
+        <select  class="form-control bgicon">
+          <option value="">Choose Region</option>
+          <option value="all">All Region</option>
+          {% for team in rgx_teams %}
+            <option value="{{team.id}}">{{team}}</option>
+          {% endfor %}
+         </select>
+         <div class="country-pick"  id="filter_country" style="display:none;">
+          <div class="checkbox" id="country_checks">
+          <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+          </div>
+        </div>
+        <div id="split_location">
+          <label><input type="checkbox" id="location_split">Split Location-Wise</label>          
+        </div>
+      </div>
+      <!-- <div id="filter_country" class="col-md-3 centered" style="display:none;">
+        
+      </div> -->
+      
+      <div class="col-md-3 centered">
+        <select name="type" id="filter_timeline" style="display:block;" class="form-control bgicon">
+            <option value="">Choose Timeline</option>
+            <option value="this_week">This Week</option>
+            <option value="last_week">Last Week</option>
+            <option value="this_month">This Month</option>
+            <option value="last_month">Last Month</option>
+            <option value="this_quarter">This Quarter</option>
+            <option value="dateRange">Date Range</option>
+        </select>
+      </div>      
+      <div class="col-md-3 centered date-range" id="filter_dateRange" style="display:none;">
+        <input id="datepickerFrom" type="text" class="form-control date-from" placeholder="From">
+        <i class="fa fa-calendar"></i>
+        <input id="datepickerTo" type="text" class="form-control date-to" placeholder="To">
+        <i class="fa fa-calendar"></i>
+      </div>
+      
+    </div>
+    <div class="btn-row">
+      <button class="btn std-btn" id='get_report'>View Report</button>
+    </div>
+    <div class="auth-user-info" id="auth_user_info" style="display:none;">
+      <label>Name:</label>
+        <div class="value"><input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}"><a class="ldap-update"><i id="refresh" class="fa fa-refresh"></i></a></div>
+        <label class="manager">Manager:</label>
+        {% if request.user.profile.user_manager_name and request.user.profile.user_manager_name != '' %}
+            <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
+        {% else %}
+            <div class="value" id="ldap_manager">N/A</div>
+        {% endif %}
+        <label>Program:</label>
+        {% if request.user.profile.team.team_name %}
+          <div class="value" id="ldap_program">{{request.user.profile.team.team_name}}</div>
+        {% else %}
+          <div class="value" id="ldap_program">N/A</div>
+        {% endif %}
+        <label>Region:</label>
+        {% if request.user.profile.location.location_name %}
+          <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
+        {% else %}
+          <div class="value" id="ldap_region">N/A</div>
+        {% endif %}
+        <div id="profile_div">
+        {% if request.user.profile.user_manager_email and request.user.profile.team and not request.user.location %}
+          <div></div>
+        {% else %}
+            <label>Complete Your Profile:</label>
+            <a href="{% url 'main.views.edit_profile_info' %}">Your Profile</a>
+        {% endif %}
+        </div>
+    </div>    
+    
+    <h2>Lead Status Summary</h2>
+    <div class="report-section c">      
+        <div class="report-section-content">
+          <div class="report-img" id="columnchart" style="width: 700px; height: 400px;">
+            </div>
+            <div class="report-data">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="lead_status_table">
+                  
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Code Type Analysis</h2>
+    <div class="report-section">      
+        <div class="report-section-content">
+          <div class="report-img" id="piechart" style="width: 720px; height: 400px;">
+            </div>
+            <div class="report-data" style="margin-left:20px !important;">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table">
+                    
+                </table>
+            </div>
+              <div class="report-data" style="margin-left:20px !important;">
+              <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table2">
+                    
+                </table>
+              </div>
+        </div>
+    </div>
+    
+    <h2 id="tag"></h2>
+    <div class="report-section wowt">      
+        <div class="report-section-content">
+          <div id="linechart" style="width: 635px; height: 300px;float: left;">
+            </div>
+            <div class="report-data">
+              <table class="report-table col-3" cellpadding="0" cellspacing="0" border="0" height='300px'id="line_chart_table">
+                </table>
+            </div>
+
+            <div class="report-data fixed-table">
+            <table class="report-table full-width" cellpadding="0" cellspacing="0" border="0" id="view_reports">
+
+           <!--  <tr>
+              <td colspan="8" class="no-pad no-bor">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
+                  <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
+                    <td class="lbl relative">Agency Gold<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                    <td class="value">0</td>
+                  </tr>
+
+                    <tr>
+                      <td colspan="8" class="no-pad no-bor">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
+                        <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
+                          <td class="lbl relative">Agency Hi Touch<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                          <td class="value">0</td>
+                        </tr>
+
+                        <tr id="accordion1" class="collapse">
+                          <td colspan="8" class="no-pad no-bor">
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                              <tr>
+                                <td class="lbl">AU/NZ</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                                <td class="value">0</td>
+                              </tr>
+
+                              <tr id="accordion1" class="collapse">
+                              <td colspan="8" class="no-pad no-bor">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                                    <tr>
+                                      <td class="lbl">India</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                        <td class="value">0</td>
+                                    </tr>
+
+                                    <tr id="accordion1" class="collapse">
+                                      <td colspan="8" class="no-pad no-bor">
+                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
+                                          <tr>
+                                            <td class="lbl">SEA</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                            <td class="value">0</td>
+                                          </tr>
+                                        </table>
+                                      </td>
+                                    </tr>
+                          </table>
+                      </td>
+                  </tr>
+ -->
+            </table>
+             </div>
+        </div>
+    </div>
+
+    <div class="report-download" id='download_fields'>
+    <p>Please select the fields you want to download</p>
+    <form method="POST" action="{% url 'reports.views.get_download_report' %}" name="download_reports" id="download_reports">
+    {% csrf_token %}
+          <input type="hidden" name="download_report_type" id="download_report_type" value="" />
+          <input type="hidden" name="download_region" id="download_region" value="" />
+          <input type="hidden" name="download_report_timeline" id="download_report_timeline" value="" />
+          <input type="hidden" name="download_team_members" id="download_team_members" value="" />
+          <input type="hidden" name="download_countries" id="download_countries" value="" />
+          <input type="hidden" name="download_team" id="download_team" value="" />
+          <input type="hidden" name="download_selectedFields" id="download_selectedFields" value="" />
+          <input type="hidden" name="form_ldap_id" id="form_ldap_id" value="" />
+          <div class="checkbox">
+                <label>
+                  <input type="checkbox" value="Customer ID" id='cid' checked="checked"> CID
+                </label>
+                <label>
+                  <input type="checkbox" value="First Name" checked="checked"> Agent Name
+                </label>
+                <label>
+                  <input type="checkbox" value="Lead Owner" checked="checked"> Google Rep
+                </label>
+                <label>
+                  <input type="checkbox" value="Google Account Manager" checked="checked"> Manager Name
+                </label>
+                <label>
+                  <input type="checkbox" value="Location" checked="checked"> Region
+                </label>
+                <label>
+                  <input type="checkbox" value="Team" checked="checked"> Program
+                </label>
+                <label>
+                  <input type="checkbox" value="Code Type" checked="checked"> Code Type
+                </label>
+                <label>
+                  <input type="checkbox" value="Lead Status" checked="checked"> Lead Status
+                </label>
+                <label>
+                  <input type="checkbox" value="Comment 1" checked="checked"> Comments
+                </label>
+                <label>
+                  <input type="checkbox" value="Date of Installation" checked="checked"> Date of Installation
+                </label>
+                <label>
+                  <input type="checkbox" value="Create Date" checked="checked"> Date of Submission
+                </label>
+                 <label>
+                  <input type="checkbox" value="TAT" checked="checked"> TAT
+                </label>
+          </div>
+          <div class="btn-row">
+            <button class="btn std-btn" id='download'>Download Report</button>
+          </div>
+      </form>
+    </div>
+  
+  </div>
+</section>
+<!-- content-region ends --> 
+</div>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="{% static 'js/reports.js' %}"></script>
+<script src="{% static 'js/chart.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  window.current_ldap = {{request.user.id|safe}};
+  window.user_id = {{request.user.id|safe}};
+
+});
+google.load("visualization", "1", {packages:["corechart"]});
+
+
+$("#refresh").on('click', function(){
+  $( "#get_report" ).trigger( "click" );
+});
+
+
+$('#ldap').keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+    $( "#get_report" ).trigger( "click" );
+  }
+}); 
+
+
+</script>
+{% endblock main_js %}
