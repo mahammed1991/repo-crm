@@ -251,7 +251,7 @@ def create_or_update_leads(records, sf):
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
         created_date = rec.get('CreatedDate')
-        created_date = SalesforceApi.salesforce_date_to_datetime_format(created_date)
+        # created_date = SalesforceApi.salesforce_date_to_datetime_format(created_date)
         if not created_date:
             created_date = datetime.utcnow()
 
@@ -286,20 +286,20 @@ def create_or_update_leads(records, sf):
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
         date_of_installation = rec.get('Date_of_installation__c')
-        date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
+        # date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
         lead.date_of_installation = date_of_installation
 
         appointment_date = rec.get('Appointment_Date__c')
-        appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
+        # appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
         lead.appointment_date = appointment_date
 
         first_contacted_on = rec.get('X1st_Contact_on__c')
-        first_contacted_on = SalesforceApi.salesforce_date_to_datetime_format(first_contacted_on)
+        # first_contacted_on = SalesforceApi.salesforce_date_to_datetime_format(first_contacted_on)
         lead.first_contacted_on = first_contacted_on
 
         # Rescheduled Appointments
         rescheduled_appointment = rec.get('Rescheduled_Appointments__c')
-        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+        # rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
         lead.rescheduled_appointment = rescheduled_appointment
 
         try:

@@ -10,12 +10,14 @@ from django.db.models import F
 from django.views.decorators.csrf import csrf_exempt
 
 from main.models import UserDetails
-from leads.models import Timezone, RegalixTeams
+from leads.models import Timezone, RegalixTeams, Location, TimezoneMapping
 from representatives.models import (
     Availability,
     ScheduleLog
 )
 from reports.report_services import DownloadLeads
+from lib.salesforce import SalesforceApi
+from django.db.models import Q
 
 
 # Create your views here.
@@ -96,7 +98,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
                 slot_date = datetime(slot_year, slot_month, slot_day, slot_hour, slot_minutes)
 
-                utc_date = get_utc_date(slot_date, selected_tzone.time_value)
+                utc_date = SalesforceApi.get_utc_date(slot_date, selected_tzone.time_value)
 
                 # if record already exist update availability count
                 try:
@@ -226,7 +228,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     next_week = plan_date + timedelta(days=7)
 
     tzone = Timezone.objects.get(zone_name=time_zone)
-    utc_date = get_utc_date(plan_date, tzone.time_value)
+    utc_date = SalesforceApi.get_utc_date(plan_date, tzone.time_value)
     utc_start_date = utc_date
     utc_end_date = utc_start_date + timedelta(days=6)
 
@@ -384,7 +386,7 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
 
     # get UTC date for selected based on selected timezone
     tz = Timezone.objects.get(zone_name=time_zone)
-    utc_date = get_utc_date(avail_date, tz.time_value)
+    utc_date = SalesforceApi.get_utc_date(avail_date, tz.time_value)
 
     # filter and block past appointment slots
     today_date = datetime.utcnow()
@@ -407,6 +409,30 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
 
     diff = divmod((utc_date - avail_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
+
+    import ipdb; ipdb.set_trace()
+    # New Feature for future appointment daylight savings
+    try:
+        # get location details
+        location = Location.objects.get(id=location_id)
+
+        # Get Daylight timezone by standerd timezone selected by user/google rep
+        ds_time_zone = TimezoneMapping.objects.filter(Q(standard_timezone_id=tz.id) | Q(daylight_timezone_id=tz.id))
+        if ds_time_zone:
+            ds_time_zone = ds_time_zone[0]
+            if ds_time_zone.standard_timezone_id == tz.id:
+                to_timezone = ds_time_zone.daylight_timezone
+            else:
+                to_timezone = ds_time_zone.standard_timezone
+            utc_ds_date = SalesforceApi.get_utc_date(avail_date, to_timezone.time_value)
+            ds_diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
+            ds_diff_in_minutes = ds_diff[0]
+        else:
+            ds_diff_in_minutes = diff_in_minutes
+    except ObjectDoesNotExist:
+        location = None
+        ds_diff_in_minutes = diff_in_minutes
+
     appointments = dict()
     for key, _date in avail_dates.items():
         for hour in range(24):
@@ -420,7 +446,13 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
 
     slot_diff = 0
     for apptmnt in slots_data:
-        apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+        # If Daylight saving changes in between the slots/appointments
+        # get DS timezone and apply to appointments
+        if location and apptmnt.date_in_utc >= location.daylight_start and apptmnt.date_in_utc <= location.daylight_end:
+            apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
+        else:
+            apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+
         slot_diff = apptmnt.date_in_utc.minute
         key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
             '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
@@ -472,7 +504,7 @@ def check_and_add_appointment(request):
 
             # time zone conversion
             tz = Timezone.objects.get(zone_name=request_tzone)
-            utc_date = get_utc_date(requested_date, tz.time_value)
+            utc_date = SalesforceApi.get_utc_date(requested_date, tz.time_value)
 
             alotted_slots = Availability.objects.filter(
                 date_in_utc=utc_date,
@@ -495,21 +527,6 @@ def check_and_add_appointment(request):
                 break
 
     return HttpResponse(json.dumps(response), content_type="application/json")
-
-
-def get_utc_date(date, t_zone):
-    time_zone = t_zone.split(':')
-    hours = int(time_zone[0])
-    minutes = int(time_zone[1])
-
-    diff_in_min = (abs(hours) * 60) + minutes
-
-    if hours < 0:
-        utc_date = date + timedelta(minutes=diff_in_min)
-    else:
-        utc_date = date - timedelta(minutes=diff_in_min)
-
-    return utc_date
 
 
 @login_required
@@ -577,8 +594,8 @@ def export_appointments(request):
 
         time_zone = 'IST'
         selected_tzone = Timezone.objects.get(zone_name=time_zone)
-        from_utc_date = get_utc_date(from_date, selected_tzone.time_value)
-        to_utc_date = get_utc_date(to_date, selected_tzone.time_value)
+        from_utc_date = SalesforceApi.get_utc_date(from_date, selected_tzone.time_value)
+        to_utc_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
         diff = divmod((from_utc_date - from_date).total_seconds(), 60)
         diff_in_minutes = diff[0]
 

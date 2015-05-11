@@ -760,28 +760,10 @@ def download_agency_csv(request):
 def agent_bulk_upload(request):
     """ Agency Bulk Upload """
     template_args = dict()
-    locations = Location.objects.filter(is_active=True)
-    teams = Team.objects.filter(is_active=True)
-    new_locations = list()
-    all_locations = list()
-    time_zone_for_region = dict()
-    language_for_location = dict()
-    for loc in locations:
-        l = {'id': int(loc.id), 'name': str(loc.location_name)}
-        all_locations.append(l)
-        loc_name = str(loc.location_name)
-        time_zone_for_region[loc_name] = [{'zone_name': str(tz[
-            'zone_name']), 'time_value': str(tz['time_value'])} for tz in loc.time_zone.values()]
-        language_for_location[loc_name] = [{'language_name': str(lang[
-            'language_name'])} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
-        if language_for_location[loc_name]:
-            language_for_location[loc_name].insert(0, {'language_name': str(loc.primary_language.language_name)})
-        else:
-            language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name)})
-
+    lead_args = get_basic_lead_data()
+    template_args = lead_args
     code_types = CodeType.objects.filter(is_active=True)
-    template_args.update({'code_types': code_types, 'locations': all_locations, 'teams': teams, 'google_rep': request.user,
-                          'time_zone_for_region': time_zone_for_region, 'language_for_location': language_for_location})
+    template_args.update({'google_rep': request.user})
 
     # try:
     #     poc_details = ContactPerson.objects.get(person_id=pid)
@@ -2009,11 +1991,24 @@ def get_basic_lead_data():
     time_zone_for_region = dict()
     language_for_location = dict()
     for loc in locations:
+        is_daylight_savings = False
         l = {'id': int(loc.id), 'name': str(loc.location_name)}
         all_locations.append(l)
         loc_name = str(loc.location_name)
-        time_zone_for_region[loc_name] = [{'zone_name': str(tz[
-            'zone_name']), 'time_value': str(tz['time_value']), 'id': str(tz['id'])} for tz in loc.time_zone.values()]
+        if loc.daylight_start and loc.daylight_end:
+            daylight_start = datetime(loc.daylight_start.year, loc.daylight_start.month, loc.daylight_start.day, 0, 0, 0)
+            daylight_end = datetime(loc.daylight_end.year, loc.daylight_end.month, loc.daylight_end.day, 11, 59, 59)
+            if datetime.utcnow() >= daylight_start and datetime.utcnow() <= daylight_end:
+                is_daylight_savings = True
+            else:
+                is_daylight_savings = False
+
+        if is_daylight_savings:
+            time_zone_for_region[loc_name] = [{'zone_name': str(tz[
+                'zone_name']), 'time_value': str(tz['time_value']), 'id': str(tz['id'])} for tz in loc.ds_time_zone.values()]
+        else:
+            time_zone_for_region[loc_name] = [{'zone_name': str(tz[
+                'zone_name']), 'time_value': str(tz['time_value']), 'id': str(tz['id'])} for tz in loc.time_zone.values()]
         language_for_location[loc_name] = [{'language_name': str(lang[
             'language_name'])} for lang in loc.language.values() if lang['language_name'] != loc.primary_language.language_name]
         if language_for_location[loc_name]:

@@ -1,5 +1,7 @@
 from django.contrib import admin
-from leads.models import Leads, Timezone, RegalixTeams, Location, Team, CodeType, Language, LeadForm, LeadFormAccessControl
+from leads.models import (Leads, Timezone, RegalixTeams,
+                          Location, Team, CodeType, Language, LeadForm,
+                          LeadFormAccessControl, TimezoneMapping)
 
 
 class LeadsAdmin(admin.ModelAdmin):
@@ -15,17 +17,23 @@ class TimezoneAdmin(admin.ModelAdmin):
 admin.site.register(Timezone, TimezoneAdmin)
 
 
+class TimezoneMappingAdmin(admin.ModelAdmin):
+    list_display = ('standard_timezone', 'daylight_timezone')
+
+admin.site.register(TimezoneMapping, TimezoneMappingAdmin)
+
+
 class RegalixTeamsAdmin(admin.ModelAdmin):
     list_display = ('team_name', 'location_list', 'process_type')
-    filter_horizontal = ('location',)
+    filter_horizontal = ('location', 'program', 'ldap')
 
 admin.site.register(RegalixTeams, RegalixTeamsAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('location_name', 'timezone_list', 'primary_language',
+    list_display = ('location_name', 'timezone_list', 'ds_timezone_list', 'daylight_start', 'daylight_end', 'primary_language',
                     'secondary_language_list', 'flag_image', 'phone', 'is_active')
-    filter_horizontal = ('time_zone', 'language')
+    filter_horizontal = ('time_zone', 'ds_time_zone', 'language')
 
 admin.site.register(Location, LocationAdmin)
 

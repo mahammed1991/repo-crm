@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from PIL import Image
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your models here.
@@ -94,6 +96,7 @@ class Leads(models.Model):
 class Timezone(models.Model):
     zone_name = models.CharField(max_length=20, unique=True)
     time_value = models.CharField(max_length=6)
+
     is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
@@ -105,6 +108,20 @@ class Timezone(models.Model):
     class Meta:
         db_table = 'timezone'
         ordering = ['zone_name']
+
+
+class TimezoneMapping(models.Model):
+    standard_timezone = models.ForeignKey(Timezone, related_name="std_timezone", unique=True)
+    daylight_timezone = models.ForeignKey(Timezone, related_name="ds_timezone", unique=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'timezone_mapping'
+        ordering = ['standard_timezone']
+        unique_together = ('standard_timezone', 'daylight_timezone')
+        verbose_name_plural = "Timezone Mapping"
 
 
 class Language(models.Model):
@@ -138,7 +155,10 @@ class Location(models.Model):
 
     location_name = models.CharField(max_length=100, unique=True)
     phone = models.CharField(max_length=50, null=True, default=None, blank=True)
-    time_zone = models.ManyToManyField(Timezone)
+    time_zone = models.ManyToManyField(Timezone, related_name="standard_timezone", limit_choices_to={'is_active': True})
+    ds_time_zone = models.ManyToManyField(Timezone, related_name="daylight_timezone", blank=True, null=True, limit_choices_to={'is_active': True})
+    daylight_start = models.DateTimeField(blank=True, null=True, default=None)
+    daylight_end = models.DateTimeField(blank=True, null=True, default=None)
     primary_language = models.ForeignKey(Language, related_name="primary_language", null=False, blank=False, default=1)
     language = models.ManyToManyField(Language)
     flag_image = models.ImageField(upload_to=get_flag_image, null=True, max_length=100, blank=True)
@@ -149,6 +169,9 @@ class Location(models.Model):
 
     def timezone_list(self):
         return ", ".join(["%s (UTC %s)" % (t.zone_name, t.time_value) for t in self.time_zone.all()])
+
+    def ds_timezone_list(self):
+        return ", ".join(["%s (UTC %s)" % (t.zone_name, t.time_value) for t in self.ds_time_zone.all()])
 
     def secondary_language_list(self):
         return ", ".join(["%s" % (l.language_name) for l in self.language.all()])
@@ -192,33 +215,6 @@ class Location(models.Model):
         verbose_name_plural = 'Target Location'
 
 
-class RegalixTeams(models.Model):
-    team_name = models.CharField(max_length=100, unique=True)
-    location = models.ManyToManyField(Location)
-    process_type = models.CharField(max_length=50, choices=(
-        ('TAG', 'TAG'),
-        ('SHOPPING', 'SHOPPING'),
-        ('WPP', 'WPP'),
-        ('MIGRATION', 'MIGRATION'),
-    ), default='TAG')
-
-    is_active = models.BooleanField(default=True)
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-
-    def location_list(self):
-        return ", ".join(["%s" % (l.location_name) for l in self.location.all()])
-
-    def __str__(self):              # __unicode__ on Python 2
-        return self.team_name
-
-    class Meta:
-        db_table = 'regalix_teams'
-        ordering = ['team_name']
-        verbose_name_plural = "Regalix Teams"
-
-
 class Team(models.Model):
     """ Team/Program information """
     team_name = models.CharField(max_length=100, unique=True)
@@ -252,6 +248,50 @@ class CodeType(models.Model):
         db_table = 'code_types'
         ordering = ['name']
         verbose_name_plural = "Code Types"
+
+
+class RegalixTeams(models.Model):
+
+    def default_team_lead():
+        try:
+            lead_owner = User.objects.get(email=settings.DEFAULT_LEAD_OWNER_EMAIL)
+        except ObjectDoesNotExist:
+            lead_owner = User.objects.create(
+                email=settings.DEFAULT_LEAD_OWNER_EMAIL,
+                username=settings.DEFAULT_LEAD_OWNER_EMAIL,
+                first_name=settings.DEFAULT_LEAD_OWNER_FNAME,
+                last_name=settings.DEFAULT_LEAD_OWNER_LNAME
+            )
+        return lead_owner
+
+    team_name = models.CharField(max_length=100, unique=True)
+    location = models.ManyToManyField(Location, limit_choices_to={'is_active': True})
+    program = models.ManyToManyField(Team, blank=True, null=True, limit_choices_to={'is_active': True})
+    ldap = models.ManyToManyField(User, blank=True, null=True, related_name="ldap",)
+    process_type = models.CharField(max_length=50, choices=(
+        ('TAG', 'TAG'),
+        ('SHOPPING', 'SHOPPING'),
+        ('WPP', 'WPP'),
+        ('MIGRATION', 'MIGRATION'),
+    ), default='TAG')
+
+    team_lead = models.ManyToManyField(User, default=default_team_lead, related_name="team_lead",)
+    team_manager = models.ManyToManyField(User, default=default_team_lead, related_name="team_manager",)
+    is_active = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def location_list(self):
+        return ", ".join(["%s" % (l.location_name) for l in self.location.all()])
+
+    def __str__(self):              # __unicode__ on Python 2
+        return self.team_name
+
+    class Meta:
+        db_table = 'regalix_teams'
+        ordering = ['team_name']
+        verbose_name_plural = "Regalix Teams"
 
 
 class ChatMessage(models.Model):

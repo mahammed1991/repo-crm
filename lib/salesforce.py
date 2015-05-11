@@ -34,32 +34,17 @@ class SalesforceApi(object):
             try:
                 date_format = datetime.strptime(_date[:-7], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(hours=int(_date[-5:-3]), minutes=int(_date[-2:])) * int(_date[-6:-5] + '1')
                 tz = Timezone.objects.get(zone_name='PST')
-                date_format = SalesforceApi.convert_pst_to_ist(date_format, tz.time_value)
+                utc_format = SalesforceApi.get_utc_date(date_format, tz.time_value)
+
+                tz = Timezone.objects.get(zone_name='IST')
+                date_format = SalesforceApi.convert_utc_to_timezone(utc_format, tz.time_value)
+
             except Exception:
                 date_format = None
         else:
             date_format = None
 
         return date_format
-
-    @staticmethod
-    def convert_pst_to_ist(date, t_zone):
-        """ """
-        time_zone = t_zone.split(':')
-        hours = int(time_zone[0])
-        minutes = int(time_zone[1])
-
-        diff_in_min = (abs(hours) * 60) + minutes
-
-        print date, diff_in_min
-
-        if hours < 0:
-            utc_date = date - timedelta(minutes=diff_in_min)
-        else:
-            utc_date = date + timedelta(minutes=diff_in_min)
-
-        print utc_date, "final value"
-        return utc_date
 
     @staticmethod
     def get_utc_date(date, t_zone):
