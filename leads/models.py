@@ -285,6 +285,12 @@ class RegalixTeams(models.Model):
     def location_list(self):
         return ", ".join(["%s" % (l.location_name) for l in self.location.all()])
 
+    def team_lead_list(self):
+        return ", ".join(["%s %s" % (usr.first_name, usr.last_name) for usr in self.team_lead.all()])
+
+    def team_manager_list(self):
+        return ", ".join(["%s %s" % (usr.first_name, usr.last_name) for usr in self.team_manager.all()])
+
     def __str__(self):              # __unicode__ on Python 2
         return self.team_name
 

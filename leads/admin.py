@@ -24,8 +24,8 @@ admin.site.register(TimezoneMapping, TimezoneMappingAdmin)
 
 
 class RegalixTeamsAdmin(admin.ModelAdmin):
-    list_display = ('team_name', 'location_list', 'process_type')
-    filter_horizontal = ('location', 'program', 'ldap')
+    list_display = ('team_name', 'location_list', 'process_type', 'team_lead_list', 'team_manager_list')
+    filter_horizontal = ('location', 'program', 'ldap', 'team_lead', 'team_manager')
 
 admin.site.register(RegalixTeams, RegalixTeamsAdmin)
 

@@ -76,6 +76,7 @@ def add_edit_user(request, id=None):
 @login_required
 def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='TAG', team_id=0):
     """ Manage scheduling appointments"""
+
     time_zone = 'IST'
     if request.method == 'POST':
         selected_tzone = Timezone.objects.get(zone_name=time_zone)
@@ -132,17 +133,23 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         plan_day = slected_week_start_date.day
         plan_year = slected_week_start_date.year
 
-    if not team_id:
+    process_types = RegalixTeams.objects.exclude(
+        process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id])).values_list('process_type', flat=True).distinct().order_by()
+
+    if process_type == 'TAG' and process_type not in process_types:
+        if 'SHOPPING' in process_type:
+            process_type = 'SHOPPING'
+        else:
+            process_type = 'WPP'
+    teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type=process_type).exclude(team_name='default team')
+    if not team_id and not teams:
         # if team is not specified, select first team by default
-        first_team = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team').first()
-        team_id = first_team.id
-        return redirect(
-            'representatives.views.plan_schedule',
-            plan_month=plan_month,
-            plan_day=plan_day,
-            plan_year=plan_year,
-            process_type=process_type,
-            team_id=first_team.id
+        return render(
+            request,
+            'representatives/plan_schedule.html',
+            {'error': True,
+             'message': "No Teams"
+             }
         )
     else:
         # get first team for the selected process
@@ -286,8 +293,9 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     total_slots = list()
     for key, value in sorted(total_available.iteritems()):
         total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})
-    teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
-    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+
+    # teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
+    # process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
 
     return render(
         request,
@@ -299,7 +307,6 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
          'prev_week': prev_week,
          'next_week': next_week,
          'teams': teams,
-         'process_type': process_type,
          'plan_month': plan_month,
          'plan_day': plan_day,
          'plan_year': plan_year,
@@ -410,7 +417,6 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     diff = divmod((utc_date - avail_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
 
-    import ipdb; ipdb.set_trace()
     # New Feature for future appointment daylight savings
     try:
         # get location details
@@ -448,10 +454,11 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     for apptmnt in slots_data:
         # If Daylight saving changes in between the slots/appointments
         # get DS timezone and apply to appointments
-        if location and apptmnt.date_in_utc >= location.daylight_start and apptmnt.date_in_utc <= location.daylight_end:
-            apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
-        else:
-            apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+        if location and location.daylight_start and location.daylight_end:
+            if apptmnt.date_in_utc >= location.daylight_start and apptmnt.date_in_utc <= location.daylight_end:
+                apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
+            else:
+                apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
         slot_diff = apptmnt.date_in_utc.minute
         key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
