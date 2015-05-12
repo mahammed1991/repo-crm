@@ -142,8 +142,8 @@ def get_new_reports(request):
         else:
             email = request.user.email
 
-        if '' in teams:
-            teams.remove('')
+        # if '' in teams:
+        #     teams.remove('')
 
         if report_type == 'default_report':
             report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
