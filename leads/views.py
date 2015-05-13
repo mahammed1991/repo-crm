@@ -1774,7 +1774,7 @@ def get_wpp_lead_summary(request, lid=None):
             email_list = [email]
 
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-        query = {'lead_status__in': lead_status}
+        query = {'lead_status__in': lead_status, 'type_1': 'WPP'}
         # lead_status_dict['total_leads'] = Leads.objects.exclude(team='').filter(reduce(operator.or_, mylist), **query).count()
         leads = Leads.objects.filter(reduce(operator.or_, mylist), **query)
 

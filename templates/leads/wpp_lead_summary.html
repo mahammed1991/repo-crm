@@ -30,6 +30,18 @@
           <div class="circle_red" id='open'>{{lead_status_dict.open }}</div>
           <div class="sum-lbl">Open</div>
         </div>
+
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle" id='in_ui_ux_review'>{{lead_status_dict.in_ui_ux_review}}</div>
+          <div class="sum-lbl">In UI/UX Review</div>
+        </div>
+
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_orange" id='in_file_transfer'>{{lead_status_dict.in_file_transfer}}</div>
+          <div class="sum-lbl">In File Transfer</div>
+        </div>
+
+
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_pur" id='on_hold'>{{lead_status_dict.on_hold}}</div>
           <div class="sum-lbl">On Hold</div>
@@ -47,10 +59,6 @@
           <div class="sum-lbl">Deferred</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle" id="mockup_delivered">{{lead_status_dict.mockup_delivered}}</div>
-          <div class="sum-lbl">Mockup Delivered</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_lgreen" id="in_development">{{lead_status_dict.in_development}}</div>
           <div class="sum-lbl">In Development</div>
         </div>
@@ -59,12 +67,8 @@
           <div class="sum-lbl">In Stage</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_orange" id="in_ab_test">{{lead_status_dict.in_ab_test}}</div>
-          <div class="sum-lbl">In A/B Test</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_purple" id="launched">{{lead_status_dict.launched}}</div>
-          <div class="sum-lbl">Launched</div>
+          <div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
+          <div class="sum-lbl">Implemented</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_black" id="total_leads">{{lead_status_dict.total_leads}}</div>
@@ -77,6 +81,8 @@
             <ul class="pagination pull-left">
               <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
               <li><a class="page" href="javascript:void(0);" id='Open'>Open</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InUIUXReview'>In UI/UX Review</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InFileTransfer'>In File Transfer</a></li>
               <li><a class="page" href="javascript:void(0);" id='OnHold'>On Hold</a></li>
               <li><a class="page" href="javascript:void(0);" id='InMockup'>In Mockup</a></li>
               <li><a class="page" href="javascript:void(0);" id='MockupReview' >Mockup Review</a></li>
@@ -84,8 +90,7 @@
               <li><a class="page" href="javascript:void(0);" id='MockupDelivered'>Mockup Delivered</a></li>
               <li><a class="page" href="javascript:void(0);" id='InDevelopment'>In Development</a></li>
               <li><a class="page" href="javascript:void(0);" id='InStage'>In Stage</a></li>
-              <li><a class="page" href="javascript:void(0);" id='InABTest'>In A/B Test</a></li>
-              <li><a class="page" href="javascript:void(0);" id='Launched'>Launched</a></li>
+              <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
             </ul>
             <div class="table-search">
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
@@ -128,6 +133,12 @@
                       {% if l.lead_status == 'Open' %}
                       <tr class='status-open open searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
+                        {% elif l.lead_status == 'In UI/UX Review' %}
+                      <tr class='status-inuiuxreview inuiuxreview searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
+                        {% elif l.lead_status == 'In File Transfer' %}
+                      <tr class='status-infiletransfer infiletransfer searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% elif l.lead_status == 'On Hold' %}
                       <tr class='status-onhold onhold searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
@@ -149,11 +160,8 @@
                         {% elif l.lead_status == 'In Stage' %}
                           <tr class='status-instage instage searchable'>
                             <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                        {% elif l.lead_status == 'In A/B Test' %}
-                      <tr class='status-inabtest inabtest searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% else %}
-                        <tr class='status-launched launched searchable'>
+                        <tr class='status-implemented implemented searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       <td class="hidden-xs hidden-sm">{{ l.url_1 }}</td>
@@ -206,15 +214,15 @@ $(document).ready(function(){
 
 function setWppLeadSummary(lead_status){
     $('#open').text(lead_status['open'])
+    $('#in_ui_ux_review').text(lead_status['in_ui_ux_review'])
+    $('#in_file_transfer').text(lead_status['in_file_transfer'])
     $('#on_hold').text(lead_status['on_hold'])
     $('#in_mockup').text(lead_status['in_mockup'])
     $('#mockup_review').text(lead_status['mockup_review'])
     $('#deferred').text(lead_status['deferred'])
-    $('#mockup_delivered').text(lead_status['mockup_delivered'])
     $('#in_development').text(lead_status['in_development'])
     $('#in_stage').text(lead_status['in_stage'])
-    $('#in_ab_test').text(lead_status['in_ab_test'])
-    $('#launched').text(lead_status['launched'])
+    $('#implemented').text(lead_status['implemented'])
     $('#total_leads').text(lead_status['total_leads'])
     
   }
@@ -225,7 +233,17 @@ function setWppLeadSummary(lead_status){
         c = i + 1
         if(leads[i].lead_status == 'Open' ){
           counter = '<tr class="status-open open searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-       }else if (leads[i].lead_status == 'On Hold'){
+       }
+
+       else if (leads[i].lead_status == 'In UI/UX Review'){
+         counter =  '<tr class="status-inuiuxreview inuiuxreview searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }
+
+        else if (leads[i].lead_status == 'In File Transfer'){
+         counter =  '<tr class="status-infiletransfer infiletransfer searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }
+
+       else if (leads[i].lead_status == 'On Hold'){
          counter =  '<tr class="status-onhold onhold searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }else if (leads[i].lead_status == 'In mockup'){
         counter = '<tr class="status-inmockup  inmockup searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
@@ -234,15 +252,10 @@ function setWppLeadSummary(lead_status){
         }else if (leads[i].lead_status == 'Deferred') {
         counter = '<tr class="status-deferred deferred searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
         }
-        else if (leads[i].lead_status == 'Mockup Delivered') {
-        counter = '<tr class="status-mockupdelivered mockupdelivered searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-        }
         else if (leads[i].lead_status == 'In Development') {
         counter = '<tr class="status-indevelopment indevelopment searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-        }else if{
+        }else if(leads[i].lead_status == 'In Stage'){
           counter = '<tr class="status-instage instage searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
-        }else if{
-          counter = '<tr class="status-inabtest inabtest searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }else{
           counter = '<tr class="status-launched launched searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }

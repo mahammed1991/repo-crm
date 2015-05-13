@@ -261,6 +261,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
 
         if start_date and end_date:
             mylist = [Q(lead_status__in=lead_status)]
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
             query = {'created_date__gte': start_date, 'created_date__lte': end_date}
         else:
             mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
@@ -279,49 +280,58 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         lead_status_dict['in_active'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
     elif lead_form == 'wpp':
-
         lead_status = settings.WPP_LEAD_STATUS
         if start_date and end_date:
             mylist = [Q(type_1='WPP')]
             query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
         else:
             mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-            query = {'lead_status__in': lead_status}
+            query = {'lead_status__in': lead_status, 'type_1': 'WPP'}
 
         lead_status_dict = {'total_leads': 0,
                             'open': 0,
+                            'in_ui_ux_review': 0,
+                            'in_file_transfer': 0,
                             'on_hold': 0,
                             'in_mockup': 0,
                             'mockup_review': 0,
                             'deferred': 0,
-                            'mockup_delivered': 0,
                             'in_development': 0,
                             'in_stage': 0,
-                            'in_ab_test': 0,
-                            'launched': 0
+                            'implemented': 0,
                             }
 
         lead_status_dict['total_leads'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['Open']
         lead_status_dict['open'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
+        query['lead_status__in'] = ['In UI/UX Review']
+        lead_status_dict['in_ui_ux_review'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
+        query['lead_status__in'] = ['In File Transfer']
+        lead_status_dict['in_file_transfer'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['On Hold']
         lead_status_dict['on_hold'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['In Mockup']
         lead_status_dict['in_mockup'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['Mockup Review']
         lead_status_dict['mockup_review'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['Deferred']
         lead_status_dict['deferred'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
-        query['lead_status__in'] = ['Mockup Delivered']
-        lead_status_dict['mockup_delivered'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['In Development']
         lead_status_dict['in_development'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
         query['lead_status__in'] = ['In Stage']
         lead_status_dict['in_stage'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
-        query['lead_status__in'] = ['In A/B Test']
-        lead_status_dict['in_ab_test'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
-        query['lead_status__in'] = ['Launched']
-        lead_status_dict['launched'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
+        query['lead_status__in'] = ['Implemented']
+        lead_status_dict['implemented'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
     return lead_status_dict
 
 

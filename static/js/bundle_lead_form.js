@@ -112,7 +112,7 @@
   })
 
   function submitbtn(ths){
-      $(ths).submit();
+      $(ths).submit().attr('disabled', true);
   }
 
   function setLocations(newLocations){
