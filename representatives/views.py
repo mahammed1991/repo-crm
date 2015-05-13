@@ -142,7 +142,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         else:
             process_type = 'WPP'
     teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type=process_type).exclude(team_name='default team')
-    if not team_id and not teams:
+    if not teams:
         # if team is not specified, select first team by default
         return render(
             request,
@@ -151,19 +151,18 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
              'message': "No Teams"
              }
         )
-    else:
+    elif not int(team_id):
         # get first team for the selected process
         try:
             RegalixTeams.objects.get(process_type=process_type, id=team_id)
         except ObjectDoesNotExist:
-            first_team_in_process = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team').first()
             return redirect(
                 'representatives.views.plan_schedule',
                 plan_month=plan_month,
                 plan_day=plan_day,
                 plan_year=plan_year,
                 process_type=process_type,
-                team_id=first_team_in_process.id
+                team_id=teams[0].id
             )
 
     if not int(plan_month):

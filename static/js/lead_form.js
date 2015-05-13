@@ -219,7 +219,7 @@
   })
 
   function submitbtn(ths){
-      $(ths).submit();
+      $(ths).submit().attr('disabled', true);
   }
 
   $("#tag_contact_person_name").change(function(){

@@ -9,9 +9,11 @@
       $('.inmockup').show()
       $('.mockupreview').show()
       $('.deferred').show()
-      $('.mockupdelivered').show()
+      $('.inuiuxreview').show()
+      $('.infiletransfer').show()
       $('.indevelopment').show()
       $('.instage').show()
+      $('.implemented').show()
     })
 
     $('#Open').click(function(){
@@ -20,9 +22,11 @@
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').hide()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
+      $('.implemented').hide()
     })
 
     $('#OnHold').click(function(){
@@ -31,9 +35,11 @@
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').hide()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
+      $('.implemented').hide()
     })
 
     $('#InMockup').click(function(){
@@ -42,9 +48,11 @@
       $('.inmockup').show()
       $('.mockupreview').hide()
       $('.deferred').hide()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
+      $('.implemented').hide()
     })
 
     $('#MockupReview').click(function(){
@@ -53,9 +61,11 @@
       $('.inmockup').hide()
       $('.mockupreview').show()
       $('.deferred').hide()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
+      $('.implemented').hide()
     })
 
     $('#Deferred').click(function(){
@@ -64,31 +74,48 @@
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').show()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
+      $('.implemented').hide()
     })
 
-    $('#MockupDelivered').click(function(){
+    $('#InUIUXReview').click(function(){
       $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').hide()
-      $('.mockupdelivered').show()
+      $('.inuiuxreview').show()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
+      $('.implemented').hide()
     })
-
+    $('#InFileTransfer').click(function(){
+      $('.open').hide()
+      $('.onhold').hide()
+      $('.inmockup').hide()
+      $('.mockupreview').hide()
+      $('.deferred').hide()
+      $('.inuiuxreview').hide()
+      $('.infiletransfer').show()
+      $('.indevelopment').hide()
+      $('.instage').hide()
+      $('.implemented').hide()
+    })
     $('#InDevelopment').click(function(){
       $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').hide()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
       $('.indevelopment').show()
       $('.instage').hide()
+      $('.implemented').hide()
+      $('.infiletransfer').hide()
     })
 
     $('#InStage').click(function(){
@@ -100,30 +127,20 @@
       $('.mockupdelivered').hide()
       $('.indevelopment').hide()
       $('.instage').show()
+      $('.infiletransfer').hide()
     })
 
-    $('#InABTest').click(function(){
+    $('#Implemented').click(function(){
       $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').hide()
-      $('.mockupdelivered').hide()
+      $('.inuiuxreview').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
-      $('.launched').hide()
-    })
-
-    $('#Launched').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.mockupdelivered').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.inabtest').hide()
+      $('.implemented').show()
+      $('.infiletransfer').hide()
     })
 
     $('#CID').click(function(){

@@ -446,18 +446,21 @@ Manage Appointments
 {% block main_js %}
 <script type="text/javascript">
     $(document).ready(function(){
-
+        window.old_team = '{{selected_team.id}}';
+        window.old_process = '{{process_type}}'
         $('select[name=team]').change(function(){
-            var old_team = '{{selected_team.id}}'
             var selected_team = $(this).val();
             loc = window.location.href;
             window.location.href = loc.substring(0, loc.lastIndexOf(old_team)) + selected_team;
         });
 
         $('select[name=process_type]').change(function(){
-            var old_process = '{{process_type}}'
             var selected_process = $(this).val();
-            window.location.href = decodeURI(window.location.href).replace(old_process, selected_process);
+            console.log(decodeURI(window.location.href).replace(old_process, selected_process));
+            loc = window.location.href;
+            var selected_team = 0;
+            loc = loc.substring(0, loc.lastIndexOf(old_team)) + selected_team;
+            window.location.href = decodeURI(loc).replace(old_process, selected_process);
         });
 
         // Click on Schedule button
