@@ -141,7 +141,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
             process_type = 'SHOPPING'
         else:
             process_type = 'WPP'
-    teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type=process_type).exclude(team_name='default team')
+    teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type=process_type).exclude(team_name='default team').distinct().order_by()
     if not teams:
         # if team is not specified, select first team by default
         return render(
@@ -408,7 +408,6 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     # get all appointments for future dates in the given week
     slots_data = Availability.objects.filter(
         date_in_utc__range=(utc_start_date, utc_end_date),
-        team__location__time_zone__zone_name=time_zone,
         team__location__id=location_id,
         team__process_type=process_type
     )
@@ -454,7 +453,9 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
         # If Daylight saving changes in between the slots/appointments
         # get DS timezone and apply to appointments
         if location and location.daylight_start and location.daylight_end:
-            if apptmnt.date_in_utc >= location.daylight_start and apptmnt.date_in_utc <= location.daylight_end:
+            daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
+            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 11, 59, 59)
+            if apptmnt.date_in_utc >= daylight_start and apptmnt.date_in_utc <= daylight_end:
                 apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
             else:
                 apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
@@ -649,6 +650,7 @@ def export_appointments(request):
 
                     result.append(mydict)
 
+            total_appointments = dict()
             for slot in slots_data:
                 # time zone conversion
                 requested_date = slot.date_in_utc
@@ -657,13 +659,32 @@ def export_appointments(request):
                 _time = datetime.strftime(requested_date, "%H:%M")
                 availability_count = slot.availability_count
                 booked_count = slot.booked_count
+                if _date in total_appointments:
+                    total_appointments[_date]['booked_count'] += booked_count
+                    total_appointments[_date]['availability_count'] += availability_count
+                else:
+                    total_appointments[_date] = {'booked_count': booked_count, 'availability_count': availability_count}
                 val = "%s|%s" % (booked_count, availability_count)
 
                 for rec in result:
                     if str(_time) in rec.values():
                         rec[_date] = val
 
+            total_dict = dict()
+            for ele in collumn_attr:
+                if ele == 'Team':
+                    total_dict[ele] = ''
+                elif ele == 'Hours':
+                    total_dict[ele] = 'Total'
+                else:
+                    total_dict[ele] = '0|0'
+
+            for _date_ele in total_appointments:
+                if _date_ele in total_dict:
+                    total_dict[_date_ele] = "%s|%s" % (str(total_appointments[_date_ele]['booked_count']), str(total_appointments[_date_ele]['availability_count']))
+
             total_result.extend(result)
+            total_result.append(total_dict)
 
         filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%b-%d-%Y"), datetime.strftime(to_date, "%b-%d-%Y"))
         path = write_appointments_to_csv(total_result, collumn_attr, filename)
