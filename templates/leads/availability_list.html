@@ -49,7 +49,7 @@
                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
                         {% with appointments|get_dict_val:key_subs as avail %}
                                 <td class='content_block'>
-                                <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>{{i|concatenate:"-"|concatenate:'00'}} AM
+                                <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>{{i|concatenate:"-"|concatenate:'00'}} AM
                                 </div>
                             </td>
                         {% endwith %}
@@ -58,7 +58,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} AM
                                         </div>
                                     </td>
@@ -69,7 +69,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} AM
                                         </div>
                                     </td>
@@ -80,7 +80,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} AM
                                         </div>
                                     </td>
@@ -91,7 +91,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} AM
                                         </div>
                                     </td>
@@ -105,7 +105,7 @@
                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
                         {% with appointments|get_dict_val:key_subs as avail %}
                                 <td class='content_block'>
-                                <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>{{i|concatenate:"-"|concatenate:'30'}} AM
+                                <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>{{i|concatenate:"-"|concatenate:'30'}} AM
                                 </div>
                             </td>
                         {% endwith %}
@@ -114,7 +114,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} AM
                                         </div>
                                     </td>
@@ -125,7 +125,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} AM
                                         </div>
                                     </td>
@@ -136,7 +136,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} AM
                                         </div>
                                     </td>
@@ -147,7 +147,7 @@
                         {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
                             {% with appointments|get_dict_val:key_subs as avail %}
                                     <td class='content_block'>
-                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                        <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} AM
                                         </div>
                                     </td>
@@ -165,13 +165,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
@@ -184,13 +184,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
@@ -203,13 +203,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
@@ -222,13 +222,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
@@ -241,13 +241,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'00'}} PM
                                     </div>
                                 </td>
@@ -264,13 +264,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
@@ -283,13 +283,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
@@ -302,13 +302,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
@@ -321,13 +321,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
@@ -340,13 +340,13 @@
                             {% with appointments|get_dict_val:key_subs as avail %}
                                 {% if forloop.first %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|add:12|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
                                 {% else %}
                                 <td class='content_block'>
-                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}'>
+                                    <div class="{% if avail %}time_slot_avi{% else %}time_slot{% endif %}" value='{{i|add:12|concatenate:"-"|concatenate:'30'}}' data-date='{{data_date}}' data-timezone='{{timezone_for_appointments|get_dict_val:key_subs}}'>
                                         {{i|concatenate:"-"|concatenate:'30'}} PM
                                     </div>
                                 </td>
@@ -367,6 +367,7 @@
     $(document).ready(function(){
         $('.time_slot_avi').click(function(){
             var selected_date = $(this).attr('data-date');
+            var selected_timezone = $(this).attr('data-timezone');
             var slot_data = $(this).attr('value');
             slot_data = slot_data.split('-')
             selected_slot = parseInt(slot_data[0]);
@@ -389,6 +390,7 @@
             window.parent.source_ele.val(selected_date);
             var napplicable = window.parent.source_ele.prop('id')
             window.parent.$('input[name='+napplicable+'_nApplicable]').prop('checked', false);
+            window.parent.tz_name = selected_timezone;
             window.parent.$.colorbox.close();
         });
         

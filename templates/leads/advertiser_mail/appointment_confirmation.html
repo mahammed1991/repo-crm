@@ -2,37 +2,18 @@
 <html>
 <body>
 
-<p>Hi {{first_name}} {{last_name}}</p>
+<p>Hi,</p>
 
-</p>
-We are from the Google’s Implementation Team. One of our specialists will be assisting you with your AdWords Customer ID:{{customer_id}}. To follow up on your conversation with your Google Account Manager, we will be working with you to guide you through the installation of {{code_type}} on your website on {{appointment_date}}.<p>
-<br />
-<p>To make sure we work as efficiently as possible please:</p>
-<br />
-<p>Respond to this e-mail to confirm you are still available at this time and providing authorization for us to work together.
-Make sure that you have administrative access (FTP and/or admin panel) to your site. If you do not have these credentials, feel free to invite your webmaster to the call with us. If you won’t have access before our call please let me know as we would need to reschedule.
-If possible, you may choose to backup your website (we strongly recommend this!)
-We will confirm all of this during the call but doing this quick prep work ahead of time will allow us to easily and quickly review your website configuration to identify the best place for you to add the necessary code and confirm that the code is working as intended. Please note that I can’t make changes directly on your site, but if you would like, we can do a guided screenshare session to make it as easy as possible.
-</p>
-<br />
-<br />
-<p>
-If you have questions about the code implementation after our call, please let your Google Account Manager know. We recommend that you review the outcome of the code implementation after a week's time. If needed we can always set up another conversation to work out any issues.
-</p>
+<p>WPP lead details:</p>
+<p><b>Full Name: </b> {{lead_details.first_name}}, {{lead_details.last_name}}</p>
+{% for key, value in lead_details.items %}
+	{% if key != 'cid_std' %}
+		<p><b>{{key}}</b>: {{value}}</p>
+	{% endif %}
+{% endfor %}
 
-<p>Thank you,</p>
-
-<p>Tag Implementation Team</p>
-<p>implementation-support@google.com</p>
 <br />
 <br />
-<p>
-<b>Terms:</b> By replying to this message you acknowledge that you hereby authorize Google’s Implementation Specialist to guide you through the installation of {Code Type} on your website and/or campaign and/or analytics account as needed. You hereby acknowledge and recognize that all changes suggested and/or implemented by Google shall be undertaken solely of your own accord and at your own risk. Google does not guarantee or promise any results whatsoever from implementation of such changes. Furthermore, Google shall not be responsible for any effects of such changes, including, but not limited to, any spending increase related to your AdWords campaign(s), for which you shall be solely responsible.
-</p>
-<p>
-<b>Note:</b> We recommend that you ensure your website is fully backed-up before making any changes. Also, you should NOT share your site credentials with me or anyone else from Google. Finally, making changes to your website / account while we are working on your request may cause you to lose some of your changes / settings. We advise you to refrain from making changes to your website / account until the changes recommended have been completed.
-</p>
-
 <p>Thanks,</p>
 <p>Google Regalix Team</p>
 </body>

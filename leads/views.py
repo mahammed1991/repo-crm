@@ -1665,11 +1665,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
     mail_body = get_template('leads/advertiser_mail/appointment_confirmation.html').render(
         Context({
             'text': "Google Tag Implementation Support Appointment Confirmation",
-            'first_name': advertiser_details.get('first_name'),
-            'last_name': advertiser_details.get('last_name'),
-            'customer_id': advertiser_details.get('customer_id'),
-            'code_type': advertiser_details.get('code_type'),
-            'appointment_date': advertiser_details.get('appointment_date')
+            'lead_details': advertiser_details,
         })
     )
 
@@ -1680,6 +1676,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         'skumar@regalix-inc.com',
         'sprasad@regalix-inc.com',
         'abraham@regalix-inc.com',
+        'svijaykumar@regalix-inc.com',
     ])
 
     mail_from = "implementation-support@google.com"
@@ -2155,6 +2152,19 @@ def get_advertiser_details(sf_api_url, lead_data):
         agency_details['first_name'] = first_name
         agency_details['last_name'] = last_name
         agency_details['email'] = lead_data.get(basic_leads.get('agency_email'))
+
+    if agency_details['code_type'] == 'WPP':
+        agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
+
+    agency_details['telephone'] = lead_data.get(basic_leads.get('phone'))
+    agency_details['google_rep_name'] = lead_data.get(basic_leads.get('gref'))
+    agency_details['google_rep_email'] = lead_data.get(basic_leads.get('emailref'))
+    agency_details['program'] = lead_data.get(basic_leads.get('team'))
+    agency_details['website'] = lead_data.get(tag_leads.get('url1'))
+    agency_details['invision_link'] = lead_data.get(basic_leads.get('invision_link'))
+    agency_details['conversion_goal'] = lead_data.get(basic_leads.get('conversion_goal'))
+    agency_details['timezone'] = lead_data.get(basic_leads.get('tzone'))
+    agency_details['comment'] = lead_data.get(tag_leads.get('comment1'))
 
     return agency_details
 
