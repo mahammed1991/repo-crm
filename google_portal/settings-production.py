@@ -203,10 +203,24 @@ LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'De
 WPP_LEAD_STATUS = ['Open', 'In UI/UX Review', 'In File Transfer', 'On Hold', 'In Mockup', 'Mockup Review', 'Deferred', 'In Development', 'In Stage', 'Implemented']
 
 LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
-                    'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required'],
-                    'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented'], 'ON CALL': ['ON CALL']}
+                    'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - In Active', 'Rework Required'],
+                    'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented', 'Pending QC - WIN'], 'ON CALL': ['ON CALL']}
 
 SERVICES = ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']
+
+CODE_TYPE_DICT = {'Adwords Conversion Code': ['Adwords Conversion Code', 'AdWords Conversion Tracking', 'Conversion Code'],
+                  'Adwords Remarketing Code': ['Adwords Remarketing', 'Remarketing'], 'Analytics': ['Analytics'],
+                  'Cross Domain Tracking': ['Analytics Cross Domain Tracking', 'Cross Domain Tracking'],
+                  'Analytics Destination Tracking': ['Analytics Destination Tracking', 'GA Destination Tracking'],
+                  'Analytics E-Commerce Tracking': ['Analytics E-Commerce Tracking', 'GA E-Commerce Tracking'],
+                  'Analytics Event Tracking': ['Analytics Event Tracking', 'GA Event Tracking'],
+                  'Dynamic Remarketing - Retail': ['Dynamic Remarketing - Retail', 'Dynamic Remarketing'],
+                  'Dynamic Remarketing - Extension (non retail)': ['Dynamic Remarketing - Extension (non retail)'],
+                  'Google Analytics Remarketing': ['GA Remarketing', 'Google Analytics Remarketing Tracking'],
+                  'Website Call Conversion': ['Website Call Conversion', 'Google Forwarding Numbers Conversion code'],
+                  'Google Shopping Setup': ['Google Shopping Setup'], 'Google Tag Manager': ['Google Tag Manager'],
+                  'SDK Conversion Tracking': ['Mobile Conversion Tracking', 'SDK Conversion Tracking'],
+                  'Google Shopping Migration': ['Google Shopping Migration'], 'GA Conversion Tracking': ['GA Conversion Tracking']}
 
 FILE_UPLOAD_TEMP_DIR = os.path.join(os.path.dirname(__file__), 'tmp').replace('\\', '/')
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.MemoryFileUploadHandler",
