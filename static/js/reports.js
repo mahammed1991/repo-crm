@@ -486,7 +486,9 @@ function drawLineChart(details){
       week_dict = details[key]
 
       for(key in week_dict){
-        record.push(week_dict[key])
+        if(key != 'date_range'){
+          record.push(week_dict[key])
+        }
       }
       lineChart_datatable.push(record)
   }
@@ -530,12 +532,11 @@ function displayLineChartTable(details){
 
   for(key in details){
 
-      row += '<tr><td class="lbl">Week '+ key +'</td>'
       var week_dict = details[key]
-
+      row += '<tr><td class="lbl" data-toggle="tooltip" data-placement="top" title="'+week_dict['date_range']+'">Week '+ key +'</td>'
       for (key in week_dict){
-
-      row += '<td class="value">' + week_dict[key] + '</td>'
+        if(key != 'date_range')
+      {row += '<td class="value">' + week_dict[key] + '</td>'}
    
       }
       row +='</tr>'
@@ -598,14 +599,14 @@ function draw_and_display_tables(reports){
     displayLeadStatusTable(reports['lead_status_summary']);
     drawPieChart(reports['piechart']);
     newTable(reports['table_header'], reports['lead_code_type_analysis']);
-    drawLineChart(reports['week_on_week_details_in_qtd']);
+    drawLineChart(reports['timeline_chart_details']);
     //displayLineChartTable(reports['week_on_week_details_in_qtd']);
     if (window.report_timeline[0] == "this_quarter"){
       customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Months');
       
     }
     else if(window.report_timeline.length > 1){
-      displayLineChartTable(reports['week_on_week_details_in_qtd']);
+      displayLineChartTable(reports['timeline_chart_details']);
     }
     else{
       customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Weeks');

@@ -644,7 +644,8 @@ def get_contacts(request):
     """ Get team contacts information """
     contact_list = ContectList.objects.filter()
     contacts = {'management': list(),
-                'representatives': list()
+                'representatives': list(),
+                'rep_team': list()
                 }
     groups = dict()
     for cnt in contact_list:
@@ -659,12 +660,14 @@ def get_contacts(request):
         if cnt.position_type == 'MANAGEMENT':
             contacts['management'].append(contact)
         else:
-            if cnt.position_type not in groups:
-                groups[cnt.position_type] = [contact]
+            if cnt.region_id == request.user.profile.location_id:
+                print contact['name']
+                contacts['rep_team'].append(contact)
             else:
-                groups[cnt.position_type].append(contact)
-
-    contacts['representatives'].append(groups)
+                if cnt.position_type not in groups:
+                    groups[cnt.position_type] = [contact]
+                else:
+                    groups[cnt.position_type].append(contact)
     return contacts
 
 
