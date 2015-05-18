@@ -261,6 +261,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
 
         if start_date and end_date:
             mylist = [Q(lead_status__in=lead_status)]
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
             query = {'created_date__gte': start_date, 'created_date__lte': end_date}
         else:
             mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
