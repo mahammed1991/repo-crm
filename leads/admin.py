@@ -2,6 +2,7 @@ from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping)
+from leads.forms import LocationForm
 
 
 class LeadsAdmin(admin.ModelAdmin):
@@ -31,6 +32,7 @@ admin.site.register(RegalixTeams, RegalixTeamsAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
+    form = LocationForm
     list_display = ('location_name', 'timezone_list', 'ds_timezone_list', 'daylight_start', 'daylight_end', 'primary_language',
                     'secondary_language_list', 'flag_image', 'phone', 'is_active')
     filter_horizontal = ('time_zone', 'ds_time_zone', 'language')

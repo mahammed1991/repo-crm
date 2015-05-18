@@ -110,13 +110,18 @@
 
     function check_and_create_appointment(slots){
         var status = true;
+        var tzone = $('#tzone').val();
+        if(window.tz_name){
+            tzone = window.tz_name.toString();
+        }
+
         $.ajax({
             'type': 'POST',
             'async': false,
             'dataType': 'json',
             'url': "{% url 'representatives.views.check_and_add_appointment' %}",
             'data':{
-                'time_zone': $('#tzone').val(),
+                'time_zone': tzone,
                 'slots': JSON.stringify(slots),
                 'location_id': $('#country option:selected').attr('location_id')
             },

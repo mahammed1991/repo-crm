@@ -177,9 +177,9 @@
   $('#team').change(function(){
     var selectedTeam = $(this).val();
     if (selectedTeam.indexOf('Services') != -1){
-      if(selectedTeam == 'Services/GCE'){
-        alert("Only Pinnacle and HiPo Newbie customers are eligible for Regalix support");
-      }
+      // if(selectedTeam == 'Services/GCE'){
+      //   alert("Only Pinnacle and HiPo Newbie customers are eligible for Regalix support");
+      // }
       $(".tr_service_segment").show();
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();

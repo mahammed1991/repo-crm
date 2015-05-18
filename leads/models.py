@@ -185,6 +185,12 @@ class Location(models.Model):
         if self.location_name == '':
             raise ValidationError('Please enter location name.')
 
+        if self.daylight_start:
+            if not self.daylight_end:
+                raise ValidationError('Please enter daylight end date.')
+            elif self.daylight_start >= self.daylight_end:
+                raise ValidationError('Daylight start date should be less than daylight end date.')
+
         image = self.flag_image
 
         if image:
