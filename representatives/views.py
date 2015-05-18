@@ -140,7 +140,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
         # trigger a mail with changes in slot
         if changed_reords_in_slot:
-            mail_slot_changes(selected_team, changed_reords_in_slot)
+            mail_slot_changes(request, selected_team, changed_reords_in_slot)
 
         plan_month = slected_week_start_date.month
         plan_day = slected_week_start_date.day
@@ -784,22 +784,26 @@ def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_boooke
     return slot
 
 
-def mail_slot_changes(selected_team, changed_records):
+def mail_slot_changes(request, selected_team, changed_records):
     mail_body = get_template('representatives/slot_changes_mail.html').render(
         Context({
             'records': changed_records,
-            'team_lead': 'basavaraju',
             'team': selected_team,
         })
     )
-    mail_subject = "Hey!!! Some One Booked Your Appointment Slot"
-    mail_to = set([
-        'rajuk@regalix-inc.com',
-    ])
+    mail_subject = "Hey!!! %s, %s Booked %s Appointment Slot" % (
+        request.user.first_name, request.user.last_name, selected_team.team_name)
+
+    team_lead = [str(leader.email) for leader in selected_team.team_lead.all()]
+    team_manager = [str(manager.email) for manager in selected_team.team_manager.all()]
+    email_list = team_lead + team_manager
+    mail_to = set(
+        email_list
+    )
 
     bcc = set([])
 
-    mail_from = 'basavaraju@regalix-inc.com'
+    mail_from = 'google@regalix-inc.com'
 
     attachments = list()
 
