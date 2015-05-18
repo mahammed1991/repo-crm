@@ -18,6 +18,9 @@ from representatives.models import (
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
 from django.db.models import Q
+from lib.helpers import send_mail
+from django.template.loader import get_template
+from django.template import Context
 
 
 # Create your views here.
@@ -79,6 +82,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
     time_zone = 'IST'
     if request.method == 'POST':
+        changed_reords_in_slot = list()
         selected_tzone = Timezone.objects.get(zone_name=time_zone)
         slected_week_start_date = request.POST.get('schedule_week_start_date')
         slected_week_start_date = datetime.strptime(slected_week_start_date, '%m-%d-%Y')
@@ -104,6 +108,9 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                 # if record already exist update availability count
                 try:
                     availability = Availability.objects.get(date_in_utc=utc_date, team=selected_team)
+                    if availability.availability_count != data_in_a_day:
+                        updated_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone, availability.availability_count, data_in_a_day)
+                        changed_reords_in_slot.append(updated_slot)
                     availability.availability_count = data_in_a_day
                     availability.save()
 
@@ -120,6 +127,8 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                         availability.availability_count = data_in_a_day
                         availability.date_in_utc = utc_date
                         availability.team = selected_team
+                        new_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone, 0, data_in_a_day)
+                        changed_reords_in_slot.append(new_slot)
                         availability.save()
 
                         log = ScheduleLog()
@@ -128,6 +137,10 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                         log.availability_count = availability.availability_count
                         log.booked_count = availability.booked_count
                         log.save()
+
+        # trigger a mail with changes in slot
+        if changed_reords_in_slot:
+            mail_slot_changes(selected_team, changed_reords_in_slot)
 
         plan_month = slected_week_start_date.month
         plan_day = slected_week_start_date.day
@@ -756,3 +769,38 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+
+def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_boooked_cnt, updated_cnt):
+    slot = {}
+    ist_date = SalesforceApi.convert_utc_to_timezone(_date, selected_tzone.time_value)
+    date_time = datetime.strftime(ist_date, '%b %d, %Y-%I:%M %p').split('-')
+    _date, _time = date_time[0], date_time[1]
+    slot['team'] = team
+    slot['date'] = _date
+    slot['time'] = _time
+    slot['prev_boooked_cnt'] = int(prev_boooked_cnt)
+    slot['updated_cnt'] = updated_cnt
+    return slot
+
+
+def mail_slot_changes(selected_team, changed_records):
+    mail_body = get_template('representatives/slot_changes_mail.html').render(
+        Context({
+            'records': changed_records,
+            'team_lead': 'basavaraju',
+            'team': selected_team,
+        })
+    )
+    mail_subject = "Hey!!! Some One Booked Your Appointment Slot"
+    mail_to = set([
+        'rajuk@regalix-inc.com',
+    ])
+
+    bcc = set([])
+
+    mail_from = 'basavaraju@regalix-inc.com'
+
+    attachments = list()
+
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
