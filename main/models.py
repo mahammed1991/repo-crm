@@ -187,6 +187,7 @@ class ContectList(models.Model):
     class Meta:
         db_table = 'contact_list'
         ordering = ['first_name']
+        verbose_name_plural = 'Contact List'
 
 
 class CustomerTestimonials(models.Model):
