@@ -33,11 +33,11 @@ class SalesforceApi(object):
         if _date:
             try:
                 date_format = datetime.strptime(_date[:-7], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(hours=int(_date[-5:-3]), minutes=int(_date[-2:])) * int(_date[-6:-5] + '1')
-                tz = Timezone.objects.get(zone_name='PST')
-                utc_format = SalesforceApi.get_utc_date(date_format, tz.time_value)
+                # tz = Timezone.objects.get(zone_name='PST')
+                # utc_format = SalesforceApi.get_utc_date(date_format, tz.time_value)
 
-                tz = Timezone.objects.get(zone_name='IST')
-                date_format = SalesforceApi.convert_utc_to_timezone(utc_format, tz.time_value)
+                # tz = Timezone.objects.get(zone_name='IST')
+                # date_format = SalesforceApi.convert_utc_to_timezone(utc_format, tz.time_value)
 
             except Exception:
                 date_format = None
