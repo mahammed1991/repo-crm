@@ -442,7 +442,9 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
         location = Location.objects.get(id=location_id)
         if location.daylight_start and location.daylight_end:
             daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
-            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 11, 59, 59)
+            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 23, 59, 59)
+            daylight_start = SalesforceApi.get_utc_date(daylight_start, tz.time_value)
+            daylight_end = SalesforceApi.get_utc_date(daylight_end, tz.time_value)
             # Check if appointment slot is between the daylight time
             if utc_start_date >= daylight_start and utc_start_date <= daylight_end:
                 is_daylight_now = True
@@ -467,30 +469,6 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
                     ds_diff_in_minutes = diff_in_minutes
     except ObjectDoesNotExist:
         location = None
-
-    # is_day_light_now = check_is_daylight_now(location, tz, utc_start_date, utc_end_date)
-    # std_diff_in_minutes, ds_diff_in_minutes = get_standard_and_daylight_timezone_difference(avail_date, tz, is_day_light_now=False)
-
-    # try:
-    #     # get location details
-    #     location = Location.objects.get(id=location_id)
-
-    #     # Get Daylight timezone by standerd timezone selected by user/google rep
-    #     ds_time_zone = TimezoneMapping.objects.filter(Q(standard_timezone_id=tz.id) | Q(daylight_timezone_id=tz.id))
-    #     if ds_time_zone:
-    #         ds_time_zone = ds_time_zone[0]
-    #         if ds_time_zone.standard_timezone_id == tz.id:
-    #             to_timezone = ds_time_zone.daylight_timezone
-    #         else:
-    #             to_timezone = ds_time_zone.standard_timezone
-    #         utc_ds_date = SalesforceApi.get_utc_date(avail_date, to_timezone.time_value)
-    #         ds_diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
-    #         ds_diff_in_minutes = ds_diff[0]
-    #     else:
-    #         ds_diff_in_minutes = diff_in_minutes
-    # except ObjectDoesNotExist:
-    #     location = None
-    #     ds_diff_in_minutes = diff_in_minutes
 
     appointments = dict()
     timezone_for_appointments = dict()
