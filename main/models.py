@@ -283,7 +283,8 @@ def send_testimonial_notification(lead, testimonial):
     mail_body = get_template('main/email/testimonial_feedback_mail.html').render(
         Context({
             'testimonial': testimonial,
-            'site_url': 'gtrack.regalix.com'
+            'site_url': 'gtrack.regalix.com',
+            'google_rep_name': lead.google_rep_name,
         })
     )
 
