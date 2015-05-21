@@ -72,17 +72,17 @@ def main_home(request):
                             'in_active': 0,
                             'in_progress': 0,
                             }
-        lead_status_dict['total_leads'] = Leads.objects.filter(
+        lead_status_dict['total_leads'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['implemented'] = Leads.objects.filter(
+        lead_status_dict['implemented'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_progress'] = Leads.objects.filter(
+        lead_status_dict['in_progress'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.filter(
+        lead_status_dict['attempting_contact'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_queue'] = Leads.objects.filter(
+        lead_status_dict['in_queue'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_active'] = Leads.objects.filter(
+        lead_status_dict['in_active'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count()
     else:
         # 1. Current User/Rep LEADS SUMMARY
@@ -118,27 +118,27 @@ def main_home(request):
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
     report_summary = dict()
 
-    total_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date))
-    implemented_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, lead_status='Implemented'))
+    total_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date).count()
+    implemented_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date, lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
     report_summary.update({'total_leads': total_leads,
                            'implemented_leads': implemented_leads,
                            'total_win': ReportService.get_conversion_ratio(implemented_leads, total_leads)})
 
-    total_tag_leads = len(Leads.objects.exclude(type_1__in=['Google Shopping Migration',
-                                                            'Google Shopping Setup']).filter(created_date__gte=start_date,
-                                                                                             created_date__lte=end_date))
-    implemented_tag_leads = len(Leads.objects.exclude(type_1__in=['Google Shopping Migration',
-                                                                  'Google Shopping Setup']).filter(created_date__gte=start_date,
-                                                                                                   created_date__lte=end_date,
-                                                                                                   lead_status='Implemented'))
+    total_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration',
+                                                        'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
+                                                                                                    created_date__lte=end_date).count()
+    implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration',
+                                                              'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
+                                                                                                          created_date__lte=end_date,
+                                                                                                          lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
     report_summary.update({'total_tag_leads': total_tag_leads,
                            'implemented_tag_leads': implemented_tag_leads,
                            'tag_win': ReportService.get_conversion_ratio(implemented_tag_leads, total_tag_leads)})
 
-    total_shopping_leads = len(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, type_1='Google Shopping Setup'))
-    implemented_shopping_leads = len(Leads.objects.filter(created_date__gte=start_date,
-                                                          created_date__lte=end_date, lead_status='Implemented',
-                                                          type_1='Google Shopping Setup'))
+    total_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date, type_1='Google Shopping Setup').count()
+    implemented_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date,
+                                                                                      lead_status__in=settings.LEAD_STATUS_DICT['Implemented'],
+                                                                                      type_1='Google Shopping Setup').count()
 
     report_summary.update({'total_shopping_leads': total_shopping_leads,
                            'implemented_shopping_leads': implemented_shopping_leads,
