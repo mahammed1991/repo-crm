@@ -182,7 +182,6 @@ class Location(models.Model):
         return os.path.basename(self.flag_image.name)
 
     def clean(self):
-        # import ipdb; ipdb.set_trace()
         # Either email or google_id. Both cannot be empty.
         if self.location_name == '':
             raise ValidationError('Please enter location name.')
@@ -193,30 +192,32 @@ class Location(models.Model):
             elif self.daylight_start >= self.daylight_end:
                 raise ValidationError('Daylight start date should be less than daylight end date.')
 
-        if self.flag_filename:
-            if not os.path.isfile(os.path.join('country_flag/', self.flag_filename)):
-                self.flag_image.delete()
-
         image = self.flag_image
-
         if image:
-            img = Image.open(image)
-            w, h = img.size
+            try:
+                img = Image.open(image)
 
-            # validate dimensions
-            max_width = 200
-            max_height = 200
-            if w > max_width or h > max_height:
-                raise ValidationError(
-                    _('Please use an image that is smaller or equal to '
-                      '%s x %s pixels.' % (max_width, max_height)))
+                w, h = img.size
 
-            # validate content type
-            img_ext = image.name.split('.')[1]
-            if img_ext not in ['png']:
-                raise ValidationError(_('Image is not in PNG format. Please use a PNG image.'))
+                # validate dimensions
+                max_width = 200
+                max_height = 200
+                if w > max_width or h > max_height:
+                    raise ValidationError(
+                        _('Please use an image that is smaller or equal to '
+                          '%s x %s pixels.' % (max_width, max_height)))
 
-        return image
+                # validate content type
+                img_ext = image.name.split('.')[1]
+                if img_ext not in ['png']:
+                    raise ValidationError(_('Image is not in PNG format. Please use a PNG image.'))
+
+                return image
+            except Exception:
+                if self.flag_filename:
+                    if not os.path.isfile(os.path.join('country_flag/', self.flag_filename)):
+                        self.flag_image.delete()
+                        return image
 
     def __str__(self):              # __unicode__ on Python 2
         return self.location_name
