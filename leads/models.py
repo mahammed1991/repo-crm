@@ -145,6 +145,7 @@ class Location(models.Model):
 
     def get_flag_image(instance, flag_filename):
         """ Dynamic location flag image path """
+
         ext = flag_filename.split('.')[-1]
 
         if instance.location_name:
@@ -181,6 +182,7 @@ class Location(models.Model):
         return os.path.basename(self.flag_image.name)
 
     def clean(self):
+        # import ipdb; ipdb.set_trace()
         # Either email or google_id. Both cannot be empty.
         if self.location_name == '':
             raise ValidationError('Please enter location name.')
@@ -190,6 +192,10 @@ class Location(models.Model):
                 raise ValidationError('Please enter daylight end date.')
             elif self.daylight_start >= self.daylight_end:
                 raise ValidationError('Daylight start date should be less than daylight end date.')
+
+        if self.flag_filename:
+            if not os.path.isfile(os.path.join('country_flag/', self.flag_filename)):
+                self.flag_image.delete()
 
         image = self.flag_image
 
