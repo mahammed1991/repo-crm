@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-<p>Hi,</p>
-<p>Testimomial Details are below:</p>
-<p>Testimonial By: {{ testimonial.first_name }} {{ testimonial.last_name }}</p>
+<p>Hi {{google_rep_name}}</p>
+<p>We have recieved a note of appreciation as follows</p>
+<p>{{ testimonial.statement_text }}</p>
 <p>CID: {{ testimonial.customer_id }}</p>
+<p>{{ testimonial.url }}</p>
 <p>Email of the Advertiser: {{ testimonial.email }}</p>
 <p>Company: {{ testimonial.company_name }}</p>
-<p>URL: {{ testimonial.url }}</p>
-<p>Description: {{ testimonial.statement_text }}</p>
+<br />
+<p>Appreciate the effort, keep it up.</p>
 
 <a href="{{ site_url }}">View Testimonial</a>
-<br /><br />
 <p>Thanks,</p>
-<p>Google Regalix Team</p>
+<p>Tag Implementation Team</p>
 </body>
 </html>

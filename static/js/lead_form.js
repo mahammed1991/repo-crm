@@ -820,6 +820,8 @@ function validatethis(frm) {
       }
       
       if (status) {
+        console.log(window.tz_name);
+        $("#tzone").val(tz_name);
         $('#preloaderOverlay').show();
         $('form input[type=submit]').attr('disabled', 'disabled');
       }
