@@ -9,72 +9,46 @@
 {% block content %}
 <section class="content-region team-page">
     <div class="container-fluid">
-     <h2>YOUR TEAM</h2>
-        <div class="team-slider">
-            {% for management in contacts_list.rep_team %}
-            <div class="team-slide">
-                {% if 'http' in management.photo_url %}
-                    <img src="{{management.photo_url}}">
-                {% else %}
-                    <img src="{% static management.photo_url %}">
+
+        {% for team, team_value in contacts_list.iteritems %}
+
+            {% if team != 'Your Team'%}
+                <h1>{{team}}</h1>
+            {% else %}
+                {% if cnt > 0 %}
+                <h1>{{team}}</h1>
                 {% endif %}
-                <div class="slide-copy">
-                    <span class="member-name">{{management.name}}</span>
-                    {{management.email}}<br>
-                    {{management.phone}}<br>
-                    {% if management.skype %}
-                        Skype: <span>{{management.skype}}</span>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-      <h2>THE MANAGEMENT TEAM</h2>
-        <div class="team-slider">
-            {% for management in contacts_list.management %}
-            <div class="team-slide">
-                {% if 'http' in management.photo_url %}
-                    <img src="{{management.photo_url}}">
-                {% else %}
-                    <img src="{% static management.photo_url %}">
-                {% endif %}
-                <div class="slide-copy">
-                    <span class="member-name">{{management.name}}</span>
-                    {{management.email}}<br>
-                    {{management.phone}}<br>
-                    {% if management.skype %}
-                        Skype: <span>{{management.skype}}</span>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <h2>THE IMPLEMENTATION TEAM</h2>
-        {% for group in contacts_list.representatives %}
-            {% for key, value in group.iteritems %}
-                <h2>{{key}}</h2>
-                <div class="team-slider">
-                    {% for rep in value %}
-                    <div class="team-slide">
-                        {% if 'http' in rep.photo_url %}
-                            <img src="{{rep.photo_url}}">
-                        {% else %}
-                            <img src="{% static rep.photo_url %}">
-                        {% endif %}
-                        <div class="slide-copy">
-                            <span class="member-name">{{rep.name}}</span>
-                            {{rep.email}}<br>
-                            {{rep.phone}}<br>
-                            {% if rep.skype %}
-                                Skype: <span>{{rep.skype}}</span>
+            {% endif %}
+
+            {% if team_value %}
+                {% for category, members in team_value.iteritems %}
+                    {% if members %}
+                    <h1>{{category}}</h1>
+                    <div class="team-slider">
+                        {% for member in members %}
+                        <div class="team-slide">
+                            {% if 'http' in member.photo_url %}
+                                <img src="{{member.photo_url}}">
+                            {% else %}
+                                <img src="{% static member.photo_url %}">
                             {% endif %}
+                            <div class="slide-copy">
+                                <span class="member-name">{{member.name}}</span>
+                                {{member.email}}<br>
+                                {{member.phone}}<br>
+                                {% if member.skype %}
+                                    Skype: <span>{{member.skype}}</span>
+                                {% endif %}
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}  
+            {% endif %}
         {% endfor %}  
-      
+
+
     </div>
   </section>
   <!-- content-region ends -->

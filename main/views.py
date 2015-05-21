@@ -1,5 +1,6 @@
-from json import dumps, loads
+from json import dumps
 from datetime import datetime, timedelta, date
+from collections import OrderedDict
 import time
 import os
 import operator
@@ -386,8 +387,8 @@ def get_started(request):
 @login_required
 @manager_info_required
 def team(request):
-    contacts_list = get_contacts(request)
-    return render(request, 'main/team.html', {'contacts_list': contacts_list})
+    contacts_list, cnt = get_contacts(request)
+    return render(request, 'main/team.html', {'contacts_list': contacts_list, 'cnt': cnt})
 
 
 @login_required
@@ -643,11 +644,11 @@ def comment_feedback(request, id):
 def get_contacts(request):
     """ Get team contacts information """
     contact_list = ContectList.objects.filter()
-    contacts = {'management': list(),
-                'representatives': list(),
-                'rep_team': list()
-                }
-    groups = dict()
+    keyorder = {k: v for v, k in enumerate(['IMPLEMENTATION', 'DEVELOPMENT', 'QUALITY', 'MIS', 'OPERATIONS', 'MANAGEMENT'])}
+    your_team = {'IMPLEMENTATION': list(), 'DEVELOPMENT': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS': list()}
+    other_team = {'IMPLEMENTATION': list(), 'DEVELOPMENT': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS': list()}
+    contacts = dict()
+    ur_team_cnt = 0
     for cnt in contact_list:
         contact = dict()
         contact['name'] = "%s %s" % (cnt.first_name, cnt.last_name)
@@ -657,18 +658,45 @@ def get_contacts(request):
         contact['picture'] = cnt.profile_photo.name.split('/')[-1]
         contact['photo_url'] = get_profile_avatar_by_email(cnt.email)
         contact['position_type'] = cnt.position_type
-        if cnt.position_type == 'MANAGEMENT':
-            contacts['management'].append(contact)
+
+        if cnt.region_id == request.user.profile.location_id:
+            if cnt.position_type in ['TAG', 'SHOPPING']:
+                ur_team_cnt += 1
+                your_team['IMPLEMENTATION'].append(contact)
+            elif cnt.position_type in ['TECH/SME', 'DESIGN/DEV']:
+                ur_team_cnt += 1
+                your_team['DEVELOPMENT'].append(contact)
+            elif cnt.position_type in ['MANAGEMENT']:
+                ur_team_cnt += 1
+                your_team['MANAGEMENT'].append(contact)
+            elif cnt.position_type in ['OPERATIONS']:
+                ur_team_cnt += 1
+                your_team['OPERATIONS'].append(contact)
+            elif cnt.position_type in ['QUALITY']:
+                ur_team_cnt += 1
+                your_team['QUALITY'].append(contact)
+            elif cnt.position_type in ['MIS', 'POD']:
+                ur_team_cnt += 1
+                your_team['MIS'].append(contact)
         else:
-            if cnt.region_id == request.user.profile.location_id:
-                print contact['name']
-                contacts['rep_team'].append(contact)
-            else:
-                if cnt.position_type not in groups:
-                    groups[cnt.position_type] = [contact]
-                else:
-                    groups[cnt.position_type].append(contact)
-    return contacts
+            if cnt.position_type in ['TAG', 'SHOPPING']:
+                other_team['IMPLEMENTATION'].append(contact)
+            elif cnt.position_type in ['TECH/SME', 'DESIGN/DEV']:
+                other_team['DEVELOPMENT'].append(contact)
+            elif cnt.position_type in ['MANAGEMENT']:
+                other_team['MANAGEMENT'].append(contact)
+            elif cnt.position_type in ['OPERATIONS']:
+                other_team['OPERATIONS'].append(contact)
+            elif cnt.position_type in ['QUALITY']:
+                other_team['QUALITY'].append(contact)
+            elif cnt.position_type in ['MIS', 'POD']:
+                other_team['MIS'].append(contact)
+
+    contacts['Your Team'] = OrderedDict(sorted(your_team.items(), key=lambda i: keyorder.get(i[0])))
+    contacts['Other Team'] = OrderedDict(sorted(other_team.items(), key=lambda i: keyorder.get(i[0])))
+    contact_keyorder = {k: v for v, k in enumerate(['Your Team', 'Other Team'])}
+    contacts = OrderedDict(sorted(contacts.items(), key=lambda i: contact_keyorder.get(i[0])))
+    return contacts, ur_team_cnt
 
 
 def get_profile_avatar_by_email(email):

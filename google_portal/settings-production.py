@@ -203,8 +203,8 @@ LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'De
 WPP_LEAD_STATUS = ['Open', 'In UI/UX Review', 'In File Transfer', 'On Hold', 'In Mockup', 'Mockup Review', 'Deferred', 'In Development', 'In Stage', 'Implemented']
 
 LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
-                    'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - In Active', 'Rework Required'],
-                    'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented', 'Pending QC - WIN'], 'ON CALL': ['ON CALL']}
+                    'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - In Active', 'Rework Required', 'ON CALL'],
+                    'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented', 'Pending QC - WIN']}
 
 SERVICES = ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']
 

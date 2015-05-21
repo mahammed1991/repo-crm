@@ -175,33 +175,33 @@ class ReportService(object):
             query['google_rep_email__in'] = emails
             query['country__in'] = countries
             query['team__in'] = teams
-            leads = Leads.objects.values_list('id', flat=True).filter(**query)
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
 
         elif not emails and teams and countries:
             query['country__in'] = countries
             query['team__in'] = teams
-            leads = Leads.objects.values_list('id', flat=True).filter(**query)
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
 
         elif emails and not teams and not countries:
             query['google_rep_email__in'] = emails
-            leads = Leads.objects.values_list('id', flat=True).filter(**query)
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
 
         elif not emails and not teams and countries:
             query['country__in'] = countries
-            leads = Leads.objects.values_list('id', flat=True).filter(**query)
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
 
         elif emails and not teams and countries:
             query['country__in'] = countries
             query['google_rep_email__in'] = emails
-            leads = Leads.objects.values_list('id', flat=True).filter(**query)
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
 
         lead_ids = leads
 
         leads_status_summary = ReportService.get_leads_status_summary(lead_ids)
 
-        lead_status_analysis_table = list()
+        #  lead_status_analysis_table = list()
 
-        # for code_type in code_types:
+        #  for code_type in code_types:
 
         #     lead_status_analysis = {code_type: ''}
 
@@ -349,7 +349,6 @@ class ReportService(object):
     def get_week_on_week_trends_details(lead_ids, countries, teams, code_types):
         ''' Week on week analysis of leads won over leads submitted '''
 
-        import ipdb; ipdb.set_trace()
         week_on_week_trends = dict()
         weeks_in_qtd = get_weeks_in_quarter_to_date()
         for index in range(1, len(weeks_in_qtd) + 1):
@@ -370,8 +369,6 @@ class ReportService(object):
                 start_date, end_date = weeks_in_qtd[index - 1]
                 start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
                 end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-
-            print start_date, end_date
 
             # query = {'id__in': lead_ids, 'country__in': countries, 'team__in': teams, 'type_1__in': code_types, 'created_date__gte': start_date, 'created_date__lte': end_date}
             query = {'country__in': countries, 'team__in': teams, 'type_1__in': code_types, 'created_date__gte': start_date, 'created_date__lte': end_date}
@@ -723,7 +720,7 @@ class ReportService(object):
         reports.append(total)
         return reports, total
 
-    ########################################## TAT Reports Starts Here ####################################
+    # ######################################### TAT Reports Starts Here ####################################
 
     @staticmethod
     def get_tat_implemented_report_by_code_type(implemented_leads, code_types):
@@ -827,7 +824,6 @@ class ReportService(object):
             else:
                 diff = max([fco, created_date]) - min([fco, created_date])
             days = diff.days
-
         return days
 
     @staticmethod
@@ -890,7 +886,7 @@ class ReportService(object):
 
         return ReportService.get_average_of_first_contacted(first_contacted_leads)
 
-    ########################################## TAT Reports Ends Here ####################################
+    # ######################################### TAT Reports Ends Here ####################################
 
     @staticmethod
     def get_summary_by_code_types_and_status(summary_type, code_types, lead_status, start_date, end_date, teams, locations):
@@ -988,7 +984,7 @@ class ReportService(object):
             total_summary['tat_implemented'] = ReportService.get_average_of_implemented(implemented_leads)
             total_summary['tat_first_contacted'] = ReportService.get_average_of_first_contacted(contacted_leads)
         elif locations:
-             # Get total summary report
+            # Get total summary report
             total_summary['total_leads'] = len(Leads.objects.filter(
                 type_1__in=code_types, lead_status__in=lead_status, country__in=locations,
                 created_date__gte=start_date, created_date__lte=end_date))
@@ -1151,7 +1147,7 @@ class ReportService(object):
                 dials_rec[code] = 0
 
         return dials_rec
-    ###################### Number of Dials report ends ###########################
+    # ##################### Number of Dials report ends ###########################
 
 
 class DownloadLeads(object):
@@ -1162,26 +1158,26 @@ class DownloadLeads(object):
     @staticmethod
     def get_leads_by_report_type(code_types, teams, countries, start_date, end_date, emails):
         if emails and teams and countries:
-            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
-                                         created_date__gte=start_date, created_date__lte=end_date,
-                                         google_rep_email__in=emails)
+            leads = Leads.objects.exclude(type_1='WPP').filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                                               created_date__gte=start_date, created_date__lte=end_date,
+                                                               google_rep_email__in=emails)
 
         elif not emails and teams and countries:
-            leads = Leads.objects.filter(country__in=countries, team__in=teams, type_1__in=code_types,
-                                         created_date__gte=start_date, created_date__lte=end_date)
+            leads = Leads.objects.exclude(type_1='WPP').filter(country__in=countries, team__in=teams, type_1__in=code_types,
+                                                               created_date__gte=start_date, created_date__lte=end_date)
 
         elif emails and not teams and not countries:
-            leads = Leads.objects.filter(type_1__in=code_types, google_rep_email__in=emails,
-                                         created_date__gte=start_date, created_date__lte=end_date)
+            leads = Leads.objects.exclude(type_1='WPP').filter(type_1__in=code_types, google_rep_email__in=emails,
+                                                               created_date__gte=start_date, created_date__lte=end_date)
 
         elif not emails and not teams and countries:
-            leads = Leads.objects.filter(country__in=countries, type_1__in=code_types,
-                                         created_date__gte=start_date, created_date__lte=end_date)
+            leads = Leads.objects.exclude(type_1='WPP').filter(country__in=countries, type_1__in=code_types,
+                                                               created_date__gte=start_date, created_date__lte=end_date)
 
         elif emails and not teams and countries:
-            leads = Leads.objects.filter(country__in=countries, type_1__in=code_types,
-                                         google_rep_email__in=emails, created_date__gte=start_date,
-                                         created_date__lte=end_date)
+            leads = Leads.objects.exclude(type_1='WPP').filter(country__in=countries, type_1__in=code_types,
+                                                               google_rep_email__in=emails, created_date__gte=start_date,
+                                                               created_date__lte=end_date)
 
         return leads
 

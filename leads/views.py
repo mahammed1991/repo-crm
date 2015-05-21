@@ -27,12 +27,12 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
-                         is_manager, get_user_list_by_manager, get_manager_by_user)
+                         is_manager, get_user_list_by_manager, get_manager_by_user, prev_quarter_date_range)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
-from lib.helpers import date_range_by_quarter, get_previous_month_start_end_days, first_day_of_month
+from lib.helpers import first_day_of_month
 from django.db.models import Q
 from random import randint
 from lib.sf_lead_ids import SalesforceLeads
@@ -1698,7 +1698,6 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 @login_required
 def get_lead_summary(request, lid=None, page=None):
     """ Lead Status page """
-
     lead_status = settings.LEAD_STATUS
     email = request.user.email
     if request.user.groups.filter(name='SUPERUSER'):
@@ -1708,7 +1707,7 @@ def get_lead_summary(request, lid=None, page=None):
         start_date = first_day_of_month(datetime.utcnow())
         end_date = datetime.utcnow()
         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.filter(**query)
+        leads = Leads.objects.exclude(type_1='WPP').filter(**query)
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
     else:
         if is_manager(email):
@@ -1717,7 +1716,9 @@ def get_lead_summary(request, lid=None, page=None):
         else:
             email_list = [email]
 
-        leads = Leads.objects.filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), lead_status__in=lead_status)
+        prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
+        leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
+                                                           lead_status__in=lead_status, created_date__gte=prev_quarter_start_date)
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
 
@@ -2195,7 +2196,7 @@ def get_lead_form_for_rep(user):
         emails = [usr.email for usr in control.google_rep.filter()]
 
         if user.profile.team and user.profile.location:
-            print user.profile.team.team_name, user.profile.location.location_name
+            # print user.profile.team.team_name, user.profile.location.location_name
             if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
                 return control.lead_form.name
             elif user.email in emails:

@@ -143,13 +143,13 @@
             <tbody id="tableBody">
                   {% for l in leads %}
 
-                      {% if l.lead_status == 'Implemented' %}
+                      {% if l.lead_status == 'Implemented' or l.lead_status == 'Pending QC - WIN'%} 
                       <tr class='status-implemented implemented searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'In Active' %}
+                      {% elif l.lead_status == 'In Active' or l.lead_status == 'Dead Lead' %}
                       <tr class='status-inactive inactive searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'In Progress' %}
+                      {% elif l.lead_status == 'In Progress'  or l.lead_status == 'Pending QC - In Active'  or l.lead_status == 'ON CALL' or l.lead_status == 'Rework Required' or l.lead_status == 'Pending QC - DEAD LEAD' %}
                       <tr class="status-inpro  inprogress searchable">
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% elif l.lead_status == 'Attempting Contact' %}
@@ -157,9 +157,6 @@
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% elif l.lead_status == 'In Queue' %}
                       <tr class='status-inq inqueue searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% else %}
-                        <tr class='status-inq inqueue searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
                       <td class="hidden-xs hidden-sm">{{ l.company }}</td>
@@ -518,18 +515,17 @@ function setLeadSummary(lead_status){
     $('#ldapTableBody').html('');
     for(i=0; i<leads.length; i += 1){
         c = i + 1
-        if(leads[i].lead_status == 'Implemented' ){
+        if(leads[i].lead_status == 'Implemented' || leads[i].lead_status == 'Pending QC - WIN'){
           counter = '<tr class="status-implemented implemented searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-       }else if (leads[i].lead_status == 'In Active'){
+       }
+       else if (leads[i].lead_status == 'In Active' || leads[i].lead_status == 'Dead Lead'){
          counter =  '<tr class="status-inactive inactive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'In Progress'){
+        }else if (leads[i].lead_status == 'In Progress' || leads[i].lead_status == 'Pending QC - DEAD LEAD' || leads[i].lead_status == 'Pending QC - In Active' || leads[i].lead_status == 'Rework Required' || leads[i].lead_status == 'ON CALL'){
         counter = '<tr class="status-inpro  inprogress searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }else if (leads[i].lead_status == 'Attempting Contact') {
         counter = '<tr class="status-attm-contact attemptingcontact searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'In Queue') {
-        counter = '<tr class="status-inq inqueue searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
         }else{
-          counter = '<tr class="status-inq inqueue searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        counter = '<tr class="status-inq inqueue searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
         }
 
 
