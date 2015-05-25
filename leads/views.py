@@ -27,7 +27,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
-                         is_manager, get_user_list_by_manager, get_manager_by_user, prev_quarter_date_range)
+                         is_manager, get_user_list_by_manager, get_manager_by_user)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -1716,9 +1716,10 @@ def get_lead_summary(request, lid=None, page=None):
         else:
             email_list = [email]
 
-        prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
+        # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
+        cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
         leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
-                                                           lead_status__in=lead_status, created_date__gte=prev_quarter_start_date)
+                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date)
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
 

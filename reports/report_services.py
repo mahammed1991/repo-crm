@@ -1,7 +1,7 @@
 import csv
 import os
 import mimetypes
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from leads.models import Leads, RegalixTeams, Team, Location
 from reports.models import QuarterTargetLeads
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
@@ -1090,7 +1090,7 @@ class ReportService(object):
 
         return flag
 
-    ###################### Missed Appointments starts ###########################
+    # ##################### Missed Appointments starts ###########################
     @staticmethod
     def get_advertiser_missed_appointment_by_code_type(advertiser_leads, code_types):
         ''' get Advertiser Missed leads by code types '''
@@ -1127,9 +1127,9 @@ class ReportService(object):
                 missed_rec[code] = 0
 
         return missed_rec
-    ###################### Missed Appointments ends #############################
+    # ##################### Missed Appointments ends #############################
 
-    ###################### Number of Dials report starts ########################
+    # ##################### Number of Dials report starts ########################
     @staticmethod
     def get_dial_by_code_type(dial_leads, code_types):
         ''' get Number of Dial leads by code types '''

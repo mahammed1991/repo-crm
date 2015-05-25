@@ -142,6 +142,7 @@ class ContectList(models.Model):
     skype_id = models.CharField(max_length=100, blank=True, null=True)
     region = models.ForeignKey(Location, null=True, blank=True, default=None)
     profile_photo = models.ImageField(upload_to=get_profile_photo, blank=True, max_length=100)
+    extn = models.CharField(max_length=100, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True, default=datetime.utcnow())
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.utcnow())

@@ -26,6 +26,7 @@ $(document).ready(function() {
       defaultDate : "+1w",
       changeMonth : true,
       numberOfMonths : 1,
+      minDate:  dateLimitToPrevQuarter(),
       dateFormat: "M dd, yy",
       onClose : function(selectedDate) {
         $("#from").datepicker("option", "maxDate", selectedDate);
@@ -1037,16 +1038,16 @@ function dateLimitToPrevQuarter(){
     month = new Date().getMonth()
     curMonth = month + 1
     if(curMonth < 3){
-       return (new Date(new Date().getFullYear()-1, 9, 1))
+       return (new Date(new Date().getFullYear(), 0, 1))
     }
     else if (curMonth > 3 && curMonth <= 6){
-        return (new Date(new Date().getFullYear(), 0, 1))
+        return (new Date(new Date().getFullYear(), 3, 1))
     }
 
     else if(curMonth > 6 && curMonth <= 9){
-        return (new Date(new Date().getFullYear(), 3, 1))
+        return (new Date(new Date().getFullYear(), 6, 1))
     }
     else {
-        return (new Date(new Date().getFullYear(), 6, 1))
+        return (new Date(new Date().getFullYear(), 9, 1))
     }
 }
