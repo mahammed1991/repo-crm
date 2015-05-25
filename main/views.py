@@ -644,9 +644,9 @@ def comment_feedback(request, id):
 def get_contacts(request):
     """ Get team contacts information """
     contact_list = ContectList.objects.filter()
-    keyorder = {k: v for v, k in enumerate(['IMPLEMENTATION', 'DEVELOPMENT', 'QUALITY', 'MIS', 'OPERATIONS', 'MANAGEMENT'])}
-    your_team = {'IMPLEMENTATION': list(), 'DEVELOPMENT': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS': list()}
-    other_team = {'IMPLEMENTATION': list(), 'DEVELOPMENT': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS': list()}
+    keyorder = {k: v for v, k in enumerate(['The implementation team', 'Training/ SME/ Tech', 'QUALITY', 'MIS / WFM', 'OPERATIONS', 'MANAGEMENT'])}
+    your_team = {'The implementation team': list(), 'Training/ SME/ Tech': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS / WFM': list()}
+    other_team = {'The implementation team': list(), 'Training/ SME/ Tech': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS / WFM': list()}
     contacts = dict()
     ur_team_cnt = 0
     for cnt in contact_list:
@@ -662,10 +662,10 @@ def get_contacts(request):
         if cnt.region_id == request.user.profile.location_id:
             if cnt.position_type in ['TAG', 'SHOPPING']:
                 ur_team_cnt += 1
-                your_team['IMPLEMENTATION'].append(contact)
+                your_team['The implementation team'].append(contact)
             elif cnt.position_type in ['TECH/SME', 'DESIGN/DEV']:
                 ur_team_cnt += 1
-                your_team['DEVELOPMENT'].append(contact)
+                your_team['Training/ SME/ Tech'].append(contact)
             elif cnt.position_type in ['MANAGEMENT']:
                 ur_team_cnt += 1
                 your_team['MANAGEMENT'].append(contact)
@@ -677,12 +677,12 @@ def get_contacts(request):
                 your_team['QUALITY'].append(contact)
             elif cnt.position_type in ['MIS', 'POD']:
                 ur_team_cnt += 1
-                your_team['MIS'].append(contact)
+                your_team['MIS / WFM'].append(contact)
         else:
             if cnt.position_type in ['TAG', 'SHOPPING']:
-                other_team['IMPLEMENTATION'].append(contact)
+                other_team['The implementation team'].append(contact)
             elif cnt.position_type in ['TECH/SME', 'DESIGN/DEV']:
-                other_team['DEVELOPMENT'].append(contact)
+                other_team['Training/ SME/ Tech'].append(contact)
             elif cnt.position_type in ['MANAGEMENT']:
                 other_team['MANAGEMENT'].append(contact)
             elif cnt.position_type in ['OPERATIONS']:
@@ -690,11 +690,11 @@ def get_contacts(request):
             elif cnt.position_type in ['QUALITY']:
                 other_team['QUALITY'].append(contact)
             elif cnt.position_type in ['MIS', 'POD']:
-                other_team['MIS'].append(contact)
+                other_team['MIS / WFM'].append(contact)
 
-    contacts['Your Team'] = OrderedDict(sorted(your_team.items(), key=lambda i: keyorder.get(i[0])))
-    contacts['Other Team'] = OrderedDict(sorted(other_team.items(), key=lambda i: keyorder.get(i[0])))
-    contact_keyorder = {k: v for v, k in enumerate(['Your Team', 'Other Team'])}
+    contacts['You Work With...'] = OrderedDict(sorted(your_team.items(), key=lambda i: keyorder.get(i[0])))
+    contacts['The Rest of Us!!!'] = OrderedDict(sorted(other_team.items(), key=lambda i: keyorder.get(i[0])))
+    contact_keyorder = {k: v for v, k in enumerate(['You Work With...', 'The Rest of Us!!!'])}
     contacts = OrderedDict(sorted(contacts.items(), key=lambda i: contact_keyorder.get(i[0])))
     return contacts, ur_team_cnt
 
