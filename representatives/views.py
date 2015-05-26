@@ -150,7 +150,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id])).values_list('process_type', flat=True).distinct().order_by()
 
     if process_type == 'TAG' and process_type not in process_types:
-        if 'SHOPPING' in process_type:
+        if 'SHOPPING' in process_types:
             process_type = 'SHOPPING'
         else:
             process_type = 'WPP'
