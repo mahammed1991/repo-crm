@@ -61,7 +61,7 @@
     function changetime(abt) {
         var locations = {{time_zone_for_region|safe}}
         
-        if(abt){
+        if(abt && abt.value != '0'){
             if (abt.value == 'UK'){
                 $('#campid').val("701d0000000EaB7");
             }else if(abt.value == 'Ireland'){

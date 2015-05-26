@@ -394,11 +394,16 @@
       getLocation('rep_location');
     }
 
-
     var userTeam = "{{user.profile.team.team_name|safe}}"
     if(userTeam){
       $('#team').val(userTeam);
     }
+
+    var userRegion = "{{user.profile.region.name|safe}}"
+   if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+     }
 
     var userLocation = "{{user.profile.location.location_name|safe}}"
     if(userLocation){
@@ -408,11 +413,6 @@
     }
   
     $('#team').trigger('change');
-    var userRegion = "{{user.profile.region.name|safe}}"
-   if(userRegion){
-      $('#region').val(userRegion);
-      $('#region').trigger('change');
-     }
 
 
   });

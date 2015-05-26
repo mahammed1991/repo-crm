@@ -308,18 +308,19 @@ $(document).ready(function(){
     if(userTeam){
       $('#team').val(userTeam);
     }
+
+    var userRegion = "{{user.profile.region.name|safe}}"
+    if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+     }
+     
     var userLocation = "{{user.profile.location.location_name|safe}}"
     if(userLocation){
       $('#country').val(userLocation);
       loc = document.getElementById('country');
       changetime(loc.options[loc.selectedIndex]);
     }
-
-     var userRegion = "{{user.profile.region.name|safe}}"
-    if(userRegion){
-      $('#region').val(userRegion);
-      $('#region').trigger('change');
-     }
 
      $('#team').trigger('change');
   
