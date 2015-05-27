@@ -63,7 +63,6 @@ def lead_form(request):
         ret_url = ''
         # error_url = ''
         if request.POST.get('is_tag_lead') == 'yes':
-
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
@@ -100,7 +99,6 @@ def lead_form(request):
 
         basic_data = dict()
         if request.POST.get('is_shopping_lead') == 'yes':
-
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
@@ -2074,42 +2072,51 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
         time_zone = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('tzone'))
         appointment_in_ist_key = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('appointment_in_ist')
         appointment_date = lead_data.get(SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.get('tag_datepick'))
+        code_type = lead_data.get(SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.get('ctype1'))
+        country = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('country'))
+        team = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('team'))
+        cid = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('cid'))
     else:
         time_zone = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('tzone'))
         appointment_in_ist_key = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('appointment_in_ist')
         appointment_date = lead_data.get(SalesforceLeads.SANDBOX_TAG_LEAD_ARGS.get('tag_datepick'))
+        code_type = lead_data.get(SalesforceLeads.SANDBOX_TAG_LEAD_ARGS.get('ctype1'))
+        country = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('country'))
+        team = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('team'))
+        cid = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('cid'))
 
-    appointment_in_ist = None
-    if appointment_date:
-        # Appointment date format Ex: 05/14/2015 10:30 AM
-        appointment_date = datetime.strptime(appointment_date, "%m/%d/%Y %I:%M %p")
-        if time_zone == 'IST':
-            appointment_in_ist = appointment_date
-        else:
-            tz = Timezone.objects.get(zone_name=time_zone)
-            utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
+    if code_type and country and team and cid:
+        appointment_in_ist = None
+        if appointment_date:
+            # Appointment date format Ex: 05/14/2015 10:30 AM
+            appointment_date = datetime.strptime(appointment_date, "%m/%d/%Y %I:%M %p")
+            if time_zone == 'IST':
+                appointment_in_ist = appointment_date
+            else:
+                tz = Timezone.objects.get(zone_name=time_zone)
+                utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
 
-            tz_ist = Timezone.objects.get(zone_name='IST')
-            appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
-        appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
-    lead_data[appointment_in_ist_key] = appointment_in_ist
+                tz_ist = Timezone.objects.get(zone_name='IST')
+                appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+            appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
+        lead_data[appointment_in_ist_key] = appointment_in_ist
 
-    try:
-        requests.post(url=sf_api_url, data=lead_data)
-        # Get Advertiser Details
-        advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
+        try:
+            requests.post(url=sf_api_url, data=lead_data)
+            # Get Advertiser Details
+            advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
-        # Create Icallender (*.ics) file for send mail
-        if advirtiser_details.get('appointment_date'):
-            # create_icalendar_file(advirtiser_details)
-            is_attachment = True
-            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
-        else:
-            # Send Welcome email
-            is_attachment = False
-            # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
-    except Exception as e:
-        print e
+            # Create Icallender (*.ics) file for send mail
+            if advirtiser_details.get('appointment_date'):
+                # create_icalendar_file(advirtiser_details)
+                is_attachment = True
+                # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+            else:
+                # Send Welcome email
+                is_attachment = False
+                # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
+        except Exception as e:
+            print e
 
 
 def get_codetype_abbreviation(code_type):

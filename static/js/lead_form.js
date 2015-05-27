@@ -84,7 +84,7 @@
       }, 200, function() {
         if($(".tag-policies").is(":visible")){
             $(".tag-policies").hide();
-            $("#is_tag_lead").val('yes');
+            $("#is_tag_lead").val('no');
           }else{
             $(".tag-policies").show();
             $("#heads_up").show();
@@ -117,7 +117,8 @@
       opacity: "toggle"
       }, 200, function() {
           if($(".shopping-policy").is(":visible")){
-            $(".shopping-policy").hide();  
+            $(".shopping-policy").hide();
+            $("#is_shopping_lead").val('no'); 
           }else{
             $(".shopping-policy").show();
             $("#heads_up").show();
@@ -500,8 +501,6 @@ function validatethis(frm) {
 
       // Hava an appointment 
     if (document.getElementById("appointmentCheck1").checked == true) {
-
-      $("#is_tag_lead").val('yes');
 
       // Contact Person Name Validation 
       if (frm.tag_contact_person_name.value == "") {
