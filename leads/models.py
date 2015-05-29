@@ -127,8 +127,15 @@ class Timezone(models.Model):
             if len(hh[1:]) == 0:
                 raise ValidationError('Please enter hours')
 
-            if len(mm) == 0:
-                raise ValidationError('Please enter minutes')
+            try:
+                hh = int(hh)
+            except Exception:
+                raise ValidationError('Hours should be in numeric')
+
+            try:
+                mm = int(mm)
+            except Exception:
+                raise ValidationError('Minutes should be in numeric')
 
     def __str__(self):              # __unicode__ on Python 2
         return self.zone_name
