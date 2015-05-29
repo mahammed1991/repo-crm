@@ -127,13 +127,20 @@ class Timezone(models.Model):
             if len(hh[1:]) == 0:
                 raise ValidationError('Please enter hours')
 
+            if len(mm) == 0:
+                raise ValidationError('Please enter minutes')
+
             try:
                 hh = int(hh)
+                if hh > 14:
+                    raise ValidationError('Hours should be less than 14')
             except Exception:
                 raise ValidationError('Hours should be in numeric')
 
             try:
                 mm = int(mm)
+                if mm > 59:
+                    raise ValidationError('Minutes should be 59')
             except Exception:
                 raise ValidationError('Minutes should be in numeric')
 
