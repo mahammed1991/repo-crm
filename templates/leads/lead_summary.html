@@ -52,7 +52,7 @@
         </div>
       </div>
       <h1 class="lead_status">Leads Status</h1>
-      {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)' %}
+      {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)'  or request.user.profile.team.team_name == 'Services/GCE'%}
               <!-- <div class="table-search" id='ldapSearch'>
                 <a href="{% url 'leads.views.get_lead_status_by_ldap' %}" >click here to search leads By Ldap </a>
                 </div> -->
@@ -143,19 +143,25 @@
             <tbody id="tableBody">
                   {% for l in leads %}
 
-                      {% if l.lead_status == 'Implemented' or l.lead_status == 'Pending QC - WIN'%} 
+                      {% if l.lead_status == 'Implemented' or l.lead_status == 'Pending QC - WIN' %} 
                       <tr class='status-implemented implemented searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'In Active' or l.lead_status == 'Dead Lead' %}
+                        {% elif l.lead_status == 'Rework Required' and l.lead_sub_status != 'RR - Inactive'%} 
+                      <tr class='status-implemented implemented searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
+                        {% elif l.lead_status == 'Rework Required' and l.lead_sub_status == 'RR - Inactive'%} 
+                     <tr class='status-inactive inactive searchable'>
+                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
+                      {% elif l.lead_status == 'In Active' or l.lead_status == 'Pending QC - In Active' %}
                       <tr class='status-inactive inactive searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'In Progress'  or l.lead_status == 'Pending QC - In Active'  or l.lead_status == 'ON CALL' or l.lead_status == 'Rework Required' or l.lead_status == 'Pending QC - DEAD LEAD' %}
+                      {% elif l.lead_status == 'In Progress' %}
                       <tr class="status-inpro  inprogress searchable">
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% elif l.lead_status == 'Attempting Contact' %}
                       <tr class='status-attm-contact attemptingcontact searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'In Queue' %}
+                      {% elif l.lead_status == 'In Queue' or l.lead_status == 'ON CALL'%}
                       <tr class='status-inq inqueue searchable'>
                         <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
                       {% endif %}
@@ -515,19 +521,24 @@ function setLeadSummary(lead_status){
     $('#ldapTableBody').html('');
     for(i=0; i<leads.length; i += 1){
         c = i + 1
-        if(leads[i].lead_status == 'Implemented' || leads[i].lead_status == 'Pending QC - WIN'){
+      if(leads[i].lead_status == 'Implemented' || leads[i].lead_status == 'Pending QC - WIN'){
           counter = '<tr class="status-implemented implemented searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
        }
-       else if (leads[i].lead_status == 'In Active' || leads[i].lead_status == 'Dead Lead'){
+       else if(leads[i].lead_status == 'Rework Required' && leads[i].lead_sub_status != 'RR - Inactive'){
+         counter = '<tr class="status-implemented implemented searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+       }
+       else if(leads[i].lead_status == 'Rework Required' && leads[i].lead_sub_status == 'RR - Inactive'){
          counter =  '<tr class="status-inactive inactive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'In Progress' || leads[i].lead_status == 'Pending QC - DEAD LEAD' || leads[i].lead_status == 'Pending QC - In Active' || leads[i].lead_status == 'Rework Required' || leads[i].lead_status == 'ON CALL'){
+       }
+       else if (leads[i].lead_status == 'In Active' || leads[i].lead_status == 'Pending QC - In Active'){
+         counter =  '<tr class="status-inactive inactive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if (leads[i].lead_status == 'In Progress'){
         counter = '<tr class="status-inpro  inprogress searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }else if (leads[i].lead_status == 'Attempting Contact') {
         counter = '<tr class="status-attm-contact attemptingcontact searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else{
+        }else if(leads[i].lead_status == 'In Queue' || leads[i].lead_status == 'ON CALL' ){
         counter = '<tr class="status-inq inqueue searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
         }
-
 
        other =  '<td class="hidden-xs hidden-sm">' + leads[i].Advertiser + '</td>' +
                 '<td>' + leads[i].cid + '</td>'+

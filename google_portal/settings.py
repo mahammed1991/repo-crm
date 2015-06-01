@@ -198,14 +198,17 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Use for generating reports
 # lead status should be this order
-LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active', 'Dead Lead',
-               'Implemented', 'ON CALL', 'Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
+LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active',
+               'Implemented', 'ON CALL', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
 
 WPP_LEAD_STATUS = ['Open', 'In UI/UX Review', 'In File Transfer', 'On Hold', 'In Mockup', 'Mockup Review', 'Deferred', 'In Development', 'In Stage', 'Implemented']
 
-LEAD_STATUS_DICT = {'In Queue': ['In Queue'], 'Attempting Contact': ['Attempting Contact'],
-                    'In Progress': ['In Progress', 'Pending QC - DEAD LEAD', 'Pending QC - In Active', 'Rework Required', 'ON CALL'],
-                    'In Active': ['In Active', 'Dead Lead'], 'Implemented': ['Implemented', 'Pending QC - WIN']}
+LEAD_STATUS_DICT = {'Attempting Contact': ['Attempting Contact'],
+                    'In Progress': ['In Progress'],
+                    'Implemented': ['Implemented', 'Pending QC - WIN'],
+                    'In Active': ['In Active', 'Pending QC - In Active'],
+                    'In Queue': ['In Queue', 'ON CALL'],
+                    }
 
 SERVICES = ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']
 

@@ -268,16 +268,31 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
             query = {'lead_status__in': lead_status}
 
         lead_status_dict['total_leads'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
-        query['lead_status__in'] = settings.LEAD_STATUS_DICT['Implemented']
-        lead_status_dict['implemented'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
+
+        query['lead_status__in'] = ['Rework Required']
+        rr_total_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
+        del query['lead_status__in']
+
         query['lead_status__in'] = settings.LEAD_STATUS_DICT['In Progress']
         lead_status_dict['in_progress'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = settings.LEAD_STATUS_DICT['Attempting Contact']
         lead_status_dict['attempting_contact'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
         query['lead_status__in'] = settings.LEAD_STATUS_DICT['In Queue']
         lead_status_dict['in_queue'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
+
+        query['lead_status__in'] = ['Rework Required']
+        query['lead_sub_status'] = 'RR - Inactive'
+        rr_inactive_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
+        del query['lead_status__in']
+        del query['lead_sub_status']
+
+        rr_implemented_leads = rr_total_leads - rr_inactive_leads
+
+        query['lead_status__in'] = settings.LEAD_STATUS_DICT['Implemented']
+        lead_status_dict['implemented'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count() + rr_implemented_leads
+
         query['lead_status__in'] = settings.LEAD_STATUS_DICT['In Active']
-        lead_status_dict['in_active'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count()
+        lead_status_dict['in_active'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(reduce(operator.or_, mylist), **query).count() + rr_inactive_leads
 
     elif lead_form == 'wpp':
         lead_status = settings.WPP_LEAD_STATUS
