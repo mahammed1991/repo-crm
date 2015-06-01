@@ -84,7 +84,7 @@
       }, 200, function() {
         if($(".tag-policies").is(":visible")){
             $(".tag-policies").hide();
-            $("#is_tag_lead").val('yes');
+            $("#is_tag_lead").val('no');
           }else{
             $(".tag-policies").show();
             $("#heads_up").show();
@@ -117,7 +117,8 @@
       opacity: "toggle"
       }, 200, function() {
           if($(".shopping-policy").is(":visible")){
-            $(".shopping-policy").hide();  
+            $(".shopping-policy").hide();
+            $("#is_shopping_lead").val('no'); 
           }else{
             $(".shopping-policy").show();
             $("#heads_up").show();
@@ -176,10 +177,11 @@
 
   $('#team').change(function(){
     var selectedTeam = $(this).val();
+    $("#team_service_gce").hide();
     if (selectedTeam.indexOf('Services') != -1){
-      // if(selectedTeam == 'Services/GCE'){
-      //   alert("Only Pinnacle and HiPo Newbie customers are eligible for Regalix support");
-      // }
+      if(selectedTeam == 'Services/GCE'){
+        $("#team_service_gce").show();
+      }
       $(".tr_service_segment").show();
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
@@ -500,8 +502,6 @@ function validatethis(frm) {
 
       // Hava an appointment 
     if (document.getElementById("appointmentCheck1").checked == true) {
-
-      $("#is_tag_lead").val('yes');
 
       // Contact Person Name Validation 
       if (frm.tag_contact_person_name.value == "") {

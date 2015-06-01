@@ -254,7 +254,9 @@ function setLocations(newLocations){
         }else if(document.getElementById('diff_task').checked){
             var diffTagTask = $(".tagFields:visible").length;
             $("#agency_diff_tag_count").val($(".tagFields:visible").length);
-
+            var diffShopTask = $(".shopFields:visible").length;
+            $("#agency_diff_shop_count").val($(".shopFields:visible").length);
+            var totalDiffTasks = diffTagTask + diffShopTask;
             if($(".tagFields:visible").length){
                 if($("#tag_datepick").val() != ''){
                     var slot = {
@@ -272,7 +274,7 @@ function setLocations(newLocations){
               $("#tag_datepick").val('')
             }
 
-            for (i=1; i<=diffTagTask; i++){
+            for (i=1; i<=totalDiffTasks; i++){
                 if($("#tagFields" + i).is(":visible")){
                     // CID Validation
                     cidElem = document.getElementById('cid' + i);
@@ -301,12 +303,7 @@ function setLocations(newLocations){
                     if($(budgetElem).is(":visible")){
                       validateFiled(budgetElem);  
                     }
-                }
-            }
-
-              var diffShopTask = $(".shopFields:visible").length;
-              $("#agency_diff_shop_count").val($(".shopFields:visible").length);
-                for (i=1; i<=diffShopTask; i++){
+                }else{
                     if($("#shopFields" + i).is(":visible")){
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
@@ -344,6 +341,8 @@ function setLocations(newLocations){
                         }
 
                     }
+
+                }
             }
         }
       }
@@ -477,6 +476,9 @@ function setLocations(newLocations){
         }else if(document.getElementById('diff_task').checked){
             var diffTagTask = $(".tagFields:visible").length;
             $("#customer_diff_tag_count").val($(".tagFields:visible").length);
+            var diffShopTask = $(".shopFields:visible").length;
+            $("#customer_diff_shop_count").val($(".shopFields:visible").length);
+            var totalCustDiffTasks = diffTagTask + diffShopTask;
 
             if($(".tagFields:visible").length){
                 if($("#tag_datepick").val() != ''){
@@ -495,7 +497,7 @@ function setLocations(newLocations){
               $("#tag_datepick").val('')
             }
 
-            for (i=1; i<=diffTagTask; i++){
+            for (i=1; i<=totalCustDiffTasks; i++){
                 if($("#tagFields" + i).is(":visible")){
                     // CID Validation
                     cidElem = document.getElementById('cid' + i);
@@ -538,12 +540,7 @@ function setLocations(newLocations){
                       // Customer Telephone Validation
                       cphoneElem = document.getElementById('phone' + i);
                       validateFiled(cphoneElem);
-                }
-            }
-
-              var diffShopTask = $(".shopFields:visible").length;
-              $("#customer_diff_shop_count").val($(".shopFields:visible").length);
-                for (i=1; i<=diffShopTask; i++){
+                }else{
                     if($("#shopFields" + i).is(":visible")){
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
@@ -580,6 +577,9 @@ function setLocations(newLocations){
                             validateFiled(shoppingMCElem);
                         }
                     }
+
+                }
+
             }
         }
       }
@@ -596,7 +596,7 @@ function setLocations(newLocations){
           console.log(window.tz_name);
           $("#tzone").val(tz_name);
           $('#preloaderOverlay').show();
-          $('form input[type=submit]').attr('disabled', 'disabled');
+          $('form input[type=submit]').attr('disabled', true);
         }
         return status;  
       }  

@@ -102,6 +102,48 @@ class Timezone(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
+    # Validate fields
+    def clean(self):
+        # Time zone value format should be Ex: +0:00 or -0:00.
+        if self.time_value == '':
+            raise ValidationError('Please enter Timezone value.')
+
+        if "+" not in self.time_value:
+            if "-" not in self.time_value:
+                raise ValidationError('Timezone value format shoud be starts with + or - symbol.')
+
+        if ":" not in self.time_value:
+            raise ValidationError('Timezone value format shoud be +hh:mm or -hh:mm')
+
+        if len(self.time_value.split(":")) > 2:
+            raise ValidationError('value should be hh:mm formate.')
+
+        if len(self.time_value.split(":")) == 2:
+            hh = self.time_value.split(":")[0]
+            mm = self.time_value.split(":")[1]
+            if hh[0] not in ['+', '-']:
+                raise ValidationError('In timezone value + or - symbol should be first character')
+
+            if len(hh[1:]) == 0:
+                raise ValidationError('Please enter hours')
+
+            if len(mm) == 0:
+                raise ValidationError('Please enter minutes')
+
+            try:
+                hh = int(hh)
+                if hh > 14:
+                    raise ValidationError('Hours should be less than 14')
+            except Exception:
+                raise ValidationError('Hours should be in numeric')
+
+            try:
+                mm = int(mm)
+                if mm > 59:
+                    raise ValidationError('Minutes should be 59')
+            except Exception:
+                raise ValidationError('Minutes should be in numeric')
+
     def __str__(self):              # __unicode__ on Python 2
         return self.zone_name
 
