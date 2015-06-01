@@ -131,8 +131,8 @@ class Timezone(models.Model):
                 raise ValidationError('Please enter minutes')
 
             try:
-                hh = int(hh)
-                if hh > 14:
+                hh = int(hh[1:])
+                if hh > 13:
                     raise ValidationError('Hours should be less than 14')
             except Exception:
                 raise ValidationError('Hours should be in numeric')
@@ -140,7 +140,7 @@ class Timezone(models.Model):
             try:
                 mm = int(mm)
                 if mm > 59:
-                    raise ValidationError('Minutes should be 59')
+                    raise ValidationError('Minutes should be less than 60')
             except Exception:
                 raise ValidationError('Minutes should be in numeric')
 
