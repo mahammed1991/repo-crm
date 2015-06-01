@@ -26,7 +26,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone
                           )
 from main.models import UserDetails
-from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
+from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, get_previous_month_start_end_days,
                          is_manager, get_user_list_by_manager, get_manager_by_user)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -1696,14 +1696,15 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 @login_required
 def get_lead_summary(request, lid=None, page=None):
     """ Lead Status page """
+
     lead_status = settings.LEAD_STATUS
     email = request.user.email
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
         # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
-        start_date = first_day_of_month(datetime.utcnow())
-        end_date = datetime.utcnow()
+        start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        # start_date = first_day_of_month(datetime.utcnow())
+        # end_date = datetime.utcnow()
         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
         leads = Leads.objects.exclude(type_1='WPP').filter(**query)
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
@@ -1722,6 +1723,7 @@ def get_lead_summary(request, lid=None, page=None):
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
 
     paginator = Paginator(leads, 150)
+
     page = request.GET.get('page')
     try:
         leads = paginator.page(page)

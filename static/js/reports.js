@@ -277,13 +277,13 @@ function callAjax(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data) {
-          if(dataString['program_split'] || dataString['location_split']){
+          /*if(dataString['program_split'] || dataString['location_split']){
             program_vs_location(dataString);
             $('#preloaderOverlay').show();
-          }
+          }*/
             console.log(data);
             report = data['reports'];
-            /*if (data['report_type'] == 'leadreport_programview'){
+            if (data['report_type'] == 'leadreport_programview'){
               $('#view_reports').empty();
               window.report_type = 'leadreport_programview';
               if(report['program_report']){
@@ -296,7 +296,7 @@ function callAjax(dataString){
               if(report['region_report']){
                 regionViewReport(report['region_report'])
               }
-            }*/
+            }
             window.code_type = data['code_types'];
             window.report_type = data['report_type'];
             window.report_timeline = data['report_timeline']
@@ -317,7 +317,7 @@ function callAjax(dataString){
 
 }
 
-function program_vs_location(dataString){
+/*function program_vs_location(dataString){
   $('#preloaderOverlay').show();
   $.ajax({
         url: "/reports/get-program-location",
@@ -348,7 +348,7 @@ function program_vs_location(dataString){
             $('#preloaderOverlay').hide()
         }
   });
-}
+}*/
 
 /*========== hide and show filter for changes in report type=========*/
 function hideFilters(){
