@@ -393,7 +393,7 @@ class ReportService(object):
     def get_program_report_by_locations(teams, countries, code_types):
         """ Get reports for each Programs by all locations """
 
-        teams.append('')
+        # teams.append('')
 
         week = int(time.strftime("%W")) + 1
         year = int(time.strftime("%Y"))
@@ -526,9 +526,6 @@ class ReportService(object):
                                                     created_date__gte=prev_qtr_start_dt, created_date__lte=prev_qtr_end_dt).values('country', 'team').annotate(count=Count('pk'))
 
         target_leads = QuarterTargetLeads.objects.filter(quarter=quarter, year=prev_qtr_year).values('location', 'program', 'target_leads').annotate(count=Count('pk'))
-
-        if '' in teams:
-            teams.remove('')
 
         detail = dict()
 
