@@ -135,14 +135,14 @@ class Timezone(models.Model):
                 if hh > 13:
                     raise ValidationError('Hours should be less than 14')
             except Exception:
-                raise ValidationError('Hours should be in numeric')
+                raise ValidationError('Hours should be in numeric and less than 14')
 
             try:
                 mm = int(mm)
                 if mm > 59:
                     raise ValidationError('Minutes should be less than 60')
             except Exception:
-                raise ValidationError('Minutes should be in numeric')
+                raise ValidationError('Minutes should be in numeric and less than 60')
 
     def __str__(self):              # __unicode__ on Python 2
         return self.zone_name

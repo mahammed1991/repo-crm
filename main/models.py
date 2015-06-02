@@ -230,7 +230,8 @@ class CustomerTestimonials(models.Model):
         # Send Mails to google rep and their manager
         if self.sf_lead_id:
             lead = Leads.objects.filter(sf_lead_id=self.sf_lead_id)
-            send_testimonial_notification(lead[0], self)
+            if lead:
+                send_testimonial_notification(lead[0], self)
         else:
             lead = Leads.objects.filter(customer_id=self.customer_id)
             if lead:
@@ -293,8 +294,8 @@ def send_testimonial_notification(lead, testimonial):
     bcc = set([])
 
     mail_to = set([
-        lead.google_rep_email,
-        lead.lead_owner_email,
+        lead.google_rep_email if lead.google_rep_email else '',
+        lead.lead_owner_email if lead.lead_owner_email else '',
         'g-crew@regalix-inc.com',
         'rwieker@google.com',
         'tkhan@regalix-inc.com',
