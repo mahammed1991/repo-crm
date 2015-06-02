@@ -674,12 +674,19 @@ function programViewReport(programs){
         colRow = '<td class="value"> N/A </td>'
           }
 
+  if (key === ''){
+    pgm  = '<td class="lbl relative" style="font-size:11px !important;"> Other <span class="row-expand"></span> <span class="row-collapse"></span></td>' 
+  }
+  else{
+    pgm = '<td class="lbl relative" style="font-size:11px !important;">'+ key + '<span class="row-expand"></span> <span class="row-collapse"></span></td>' 
+  }
 
+    
     i = i + 1;
     rows += '<tr><td colspan="8" class="no-pad no-bor">' +
                 '<table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">'+
                 '<tr class="clickable collapsed" data-toggle="collapse" data-target="'+ '#accordion'+ i +'">'+
-                        '<td class="lbl relative" style="font-size:11px !important;">'+ key + '<span class="row-expand"></span> <span class="row-collapse"></span></td>' +
+                        pgm +
                         '<td class="value">'+ programs[key]['week_total'] +'</td>'+
                         '<td class="value">' + programs[key]['week_win'] + '</td>'+
                         '<td class="value">' + programs[key]['qtd_total'] +'</td>'+
@@ -778,8 +785,16 @@ function regionViewReport(locations){
         colRow = '<td class="value"> N/A </td>'
           }
 
+    if (key === ''){
+    pgm  = '<td class="lbl"> Other </td>'
+  }
+  else{
+    pgm = '<td class="lbl">' + key +'</td>'
+  }
+
+
     inner_rows += '<tr>'+
-                        '<td class="lbl">' + key +'</td>'+
+                        pgm + 
                         '<td class="value">' + programs[key]['week_total'] +'</td>'+
                         '<td class="value">' + programs[key]['week_win'] +'</td>'+
                         '<td class="value">' + programs[key]['qtd_total'] +'</td>' +
