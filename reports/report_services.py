@@ -1209,6 +1209,7 @@ class DownloadLeads(object):
     @staticmethod
     def download_lead_report(leads, from_date, to_date, selected_fields):
         filename = "leads-%s-to-%s" % (datetime.strftime(from_date, "%d-%b-%Y"), datetime.strftime(to_date, "%d-%b-%Y"))
+        selected_fields.append('Lead Sub-Status')
         leads = DownloadLeads.get_leads_for_report(leads, from_date, to_date, selected_fields)
         path = "/tmp/%s.csv" % (filename)
         DownloadLeads.conver_to_csv(path, leads, selected_fields)

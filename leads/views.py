@@ -27,7 +27,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, get_previous_month_start_end_days,
-                         is_manager, get_user_list_by_manager, get_manager_by_user)
+                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -1701,12 +1701,14 @@ def get_lead_summary(request, lid=None, page=None):
     email = request.user.email
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
-        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
         # start_date = first_day_of_month(datetime.utcnow())
         # end_date = datetime.utcnow()
         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
         leads = Leads.objects.exclude(type_1='WPP').filter(**query)
+        # for lead in leads:
+        #     print '****************', lead.rescheduled_appointment
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
     else:
         if is_manager(email):
