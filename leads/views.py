@@ -1707,8 +1707,6 @@ def get_lead_summary(request, lid=None, page=None):
         # end_date = datetime.utcnow()
         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
         leads = Leads.objects.exclude(type_1='WPP').filter(**query)
-        # for lead in leads:
-        #     print '****************', lead.rescheduled_appointment
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
     else:
         if is_manager(email):
