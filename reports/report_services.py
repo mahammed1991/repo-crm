@@ -225,7 +225,7 @@ class ReportService(object):
         report_detail.update({'lead_status_summary': lead_status_summary,
                               'piechart': pie_chart_dict,
                               'table_header': settings.LEAD_STATUS_DICT,
-                              'lead_code_type_analysis': lead_status_analysis_table_grp,
+                              'lead_code_type_analysis': sorted(lead_status_analysis_table_grp),
                               # 'week_on_week_details_in_qtd': week_on_week_trends,
                               'timeline_chart_details': timeline_chart_details,
                               'sort_keys': sorted(timeline_chart_details)})
