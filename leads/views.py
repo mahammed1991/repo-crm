@@ -294,7 +294,7 @@ def submit_agency_same_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+    if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -2069,7 +2069,6 @@ def get_all_sfdc_lead_ids(sfdc_type):
 
 def submit_lead_to_sfdc(sf_api_url, lead_data):
     """ Submit lead to Salesforce """
-
     if "www" in sf_api_url:
         time_zone = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('tzone'))
         appointment_in_ist_key = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('appointment_in_ist')

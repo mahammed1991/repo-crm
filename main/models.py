@@ -291,7 +291,7 @@ def send_testimonial_notification(lead, testimonial):
     )
 
     # get feedback user manager and lead owner managers information
-    bcc = set([])
+    bcc = set([settings.BCC_EMAIL])
 
     mail_to = set([
         lead.google_rep_email if lead.google_rep_email else '',

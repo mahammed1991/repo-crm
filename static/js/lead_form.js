@@ -91,6 +91,11 @@
             $("#is_tag_lead").val('yes'); 
           }
 
+          // Hide Heads Up section
+          if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no'){
+            $("#heads_up").hide();
+          }
+
       });
     });
     
@@ -124,6 +129,12 @@
             $("#heads_up").show();
             $("#is_shopping_lead").val('yes'); 
           }
+
+        // Hide Heads Up section
+        if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no'){
+          $("#heads_up").hide();
+        }
+
       });
     });
 
@@ -155,6 +166,13 @@
       next_id = parseInt(indx) + 1
       prev_id = parseInt(indx) - 1
       $("#ctype" + indx).val('');
+      $("#url" + indx).val('');
+      $("#code" + indx).val('');
+      $("#comment" + indx).val('');
+      $("#rbid" + indx).val('');
+      $("#rbudget" + indx).val('');
+      $("#ga_setup" + indx).val('0');
+
       $( "#task_" + indx).animate({
       height: "toggle"
       }, 300, function() {
@@ -529,7 +547,6 @@ function validatethis(frm) {
         // frm.tag_datepick.focus();
         window.is_error = true;
       }
-    }
 
       if(frm.tag_datepick.value != ''){
           var slot = {
@@ -538,9 +555,11 @@ function validatethis(frm) {
           }
         fix_slots.push(slot)  
       }
-      
 
-      
+    }else{
+        frm.tag_datepick.value = '';  
+    }
+
       if($("#task_1").is(":visible")){
         ctypeElem = frm.ctype1;
         if(!validateCtype(ctypeElem)){
@@ -773,25 +792,27 @@ function validatethis(frm) {
           // frm.setup_datepick.focus();
           window.is_error = true;
         }
-    }
-      
-      // If Setup Date Slot Selected
-      if(frm.setup_datepick.value != ''){
-          var slot = {
-            'type' : 'SHOPPING',
-            'time' : frm.setup_datepick.value
-          }
-        fix_slots.push(slot)
-      }
 
-        if($("#is_shopping_policies").is(":checked")){
-            $("#is_shopping_policies").val(1);
-            $(".shopping-policy").removeClass('error-box');
-        }else{
-            $(".shopping-policy").addClass('error-box');
-            $("#is_shopping_policies").val(0);
-            return false;
+        // If Setup Date Slot Selected
+        if(frm.setup_datepick.value != ''){
+            var slot = {
+              'type' : 'SHOPPING',
+              'time' : frm.setup_datepick.value
+            }
+          fix_slots.push(slot)
         }
+    }else{
+      frm.setup_datepick.value = '';
+    }
+
+      if($("#is_shopping_policies").is(":checked")){
+          $("#is_shopping_policies").val(1);
+          $(".shopping-policy").removeClass('error-box');
+      }else{
+          $(".shopping-policy").addClass('error-box');
+          $("#is_shopping_policies").val(0);
+          return false;
+      }
 
       }else{
         // If Setup Date Slot Not Selected

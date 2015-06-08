@@ -91,6 +91,8 @@ DEFAULT_LEAD_OWNER_ROLE = 'RSM'
 DEFAULT_LEAD_OWNER_FNAME = 'Tabish'
 DEFAULT_LEAD_OWNER_LNAME = 'Khan'
 
+BCC_EMAIL = 'gtracktesting@gmail.com'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'

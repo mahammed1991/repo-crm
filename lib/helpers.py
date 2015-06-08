@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 
 
 def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=False):
+    bcc.append(settings.BCC_EMAIL)
     email = EmailMultiAlternatives(subject, body, mail_from, to, bcc)
     if template_added:
         email.attach_alternative(body, "text/html")
