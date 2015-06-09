@@ -78,6 +78,7 @@ class Leads(models.Model):
 
     # Rescheduled Appointments
     rescheduled_appointment = models.DateTimeField(blank=True, null=True)
+    rescheduled_appointment_in_ist = models.DateTimeField(blank=True, null=True)
 
     dials = models.IntegerField(default=0)
     lead_sub_status = models.CharField(max_length=100, null=True)

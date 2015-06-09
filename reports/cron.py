@@ -6,7 +6,7 @@ from lib.helpers import get_quarter_date_slots, first_day_of_month, last_day_of_
 from reports.models import LeadSummaryReports
 import logging
 from lib.salesforce import SalesforceApi
-from leads.models import Leads, SfdcUsers
+from leads.models import Leads, SfdcUsers, Timezone
 from django.core.exceptions import ObjectDoesNotExist
 from lib.helpers import get_week_start_end_days
 import time
@@ -152,6 +152,26 @@ def get_updated_leads():
         logging.info("%s" % (e))
 
 
+@kronos.register('55 0 * * *')
+def get_deleted_leads():
+    """ Get Current Quarter updated Leads from SFDC """
+    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    start_date = end_date - timedelta(days=29)
+    logging.info("Current Quarted Deleted Leads from %s to %s" % (start_date, end_date))
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
+    if sf:
+        logging.info("Connect Successfully")
+        logging.info("Get Deleted leads form %s to %s" % (start_date, end_date))
+        leads = sf.Lead.deleted(start_date, end_date)
+        if leads:
+            ids = [str(lid.get('id')) for lid in leads['deletedRecords']]
+            ids = tuple(ids)
+            logging.info("Deleted Lead Id's %s, Total = %s" % (ids, len(ids)))
+            Leads.objects.filter(sf_lead_id__in=ids).delete()
+            logging.info("Deleted Successfully")
+
+
 def get_leads_from_sfdc(start_date, end_date):
     """ Get Leads from SFDC """
     # get SFDC Connection
@@ -159,7 +179,6 @@ def get_leads_from_sfdc(start_date, end_date):
     sf = SalesforceApi.connect_salesforce()
 
     logging.info("Connect Successfully")
-    # import ipdb; ipdb.set_trace()
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     select_items = settings.SFDC_FIELDS
@@ -302,14 +321,20 @@ def create_or_update_leads(records, sf):
         rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
         lead.rescheduled_appointment = rescheduled_appointment
 
+        # Rescheduled Appointments
+        rescheduled_appointment_in_ist = rec.get('Reschedule_IST_Time__c')
+        rescheduled_appointment_in_ist = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment_in_ist)
+        lead.rescheduled_appointment_in_ist = rescheduled_appointment_in_ist
+
+        time_zone = rec.get('Time_Zone__c') if rec.get('Time_Zone__c') else ''
+        lead.time_zone = time_zone
+
         try:
             lead.dials = int(rec.get('qbdialer__Dials__c'))
         except Exception:
             lead.dials = 0
 
         lead.lead_sub_status = rec.get('Lead_Sub_Status__c')
-
-        lead.time_zone = rec.get('Time_Zone__c') if rec.get('Time_Zone__c') else ''
 
         lead.regalix_comment = unicode(rec.get('Regalix_Comment__c')).encode('unicode_escape')
         lead.google_comment = unicode(rec.get('Google_Comment__c')).encode('unicode_escape')
@@ -391,3 +416,59 @@ def create_sfdc_user(details):
     user.email = details.get('email')
     user.username = details.get('username')
     user.save()
+
+
+@kronos.register('0 9 * * *')
+def get_rescheduled_leads():
+    """ Get rescheduled leads from SFDC """
+    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    start_date = end_date - timedelta(days=29)
+    start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+    end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+    logging.info("Rescheduled Leads from %s to %s" % (start_date, end_date))
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
+    if sf:
+        logging.info("Connect Successfully")
+        logging.info("Get Rescheduled leads form %s to %s" % (start_date, end_date))
+        select_items = settings.SFDC_FIELDS
+        # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
+        where_clause = "WHERE CreatedDate >= %s AND CreatedDate <= %s AND Rescheduled_Appointments__c != null" % (start_date, end_date)
+        sql_query = "select %s from Lead %s" % (select_items, where_clause)
+        try:
+            all_leads = sf.query_all(sql_query)
+            logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+            update_sfdc_leads(all_leads['records'], sf)
+        except Exception as e:
+            print e
+            logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+            logging.info("%s" % (e))
+
+
+def update_sfdc_leads(records, sf):
+    """ Update Rescheduled Appointment IN IST Time """
+    lead = sf.Lead.get('00Qd000000eajA2')
+
+    # for lead in records:
+    location = lead.get('Location__c')
+    time_zone = lead.get('Time_Zone__c')
+    date_of_installation = lead.get('Date_of_installation__c')
+    rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
+    reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
+    sf_lead_id = lead.get('Id')
+
+    print rescheduled_appointment, time_zone, reschedule_in_ist
+    rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+    try:
+        print "=========================================="
+        tz = Timezone.objects.get(zone_name=time_zone)
+        utc_date = SalesforceApi.get_utc_date(rescheduled_appointment, tz.time_value)
+
+        tz_ist = Timezone.objects.get(zone_name='IST')
+        reschedule_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+        reschedule_in_ist = SalesforceApi.convert_date_to_salesforce_format(reschedule_in_ist)
+        # reschedule_in_ist = datetime.strftime(reschedule_in_ist, '%m/%d/%Y %I:%M %p')
+        sf.Lead.update(sf_lead_id, {'Reschedule_IST_Time__c': reschedule_in_ist})
+        print rescheduled_appointment, time_zone, reschedule_in_ist
+    except Exception as e:
+        print e
