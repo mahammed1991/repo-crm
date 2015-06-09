@@ -457,6 +457,8 @@ function validatethis(frm) {
           }
           fix_slots.push(slot)
         }
+      }else{
+        document.getElementById('tag_datepick').value = '';
       }
 
     if($("#is_shopping_policies").is(":visible")){

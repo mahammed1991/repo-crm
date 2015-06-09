@@ -123,6 +123,8 @@
       }, 200, function() {
           if($(".shopping-policy").is(":visible")){
             $(".shopping-policy").hide();
+            $("#shoppingTerms").hide();
+            $("#is_shopping_policies").attr('checked', false);
             $("#is_shopping_lead").val('no'); 
           }else{
             $(".shopping-policy").show();
@@ -357,6 +359,17 @@ function validatethis(frm) {
         // $(frm.service_segment).after('<span class="error-txt">Please Select the Service Segment</span>')
         frm.service_segment.focus();
         window.is_error = true;
+      }
+    }
+
+    // GcaseId validation
+    if ($(frm.g_cases_id).is(":visible")) {
+      gCasesIdElem = document.getElementById('g_cases_id');
+      if(gCasesIdElem.value == ''){
+       $(gCasesIdElem).addClass('error-box');
+        // $(frm.service_segment).after('<span class="error-txt">Please Select the Service Segment</span>')
+        frm.g_cases_id.focus();
+        window.is_error = true; 
       }
     }
 
