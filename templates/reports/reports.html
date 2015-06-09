@@ -170,78 +170,27 @@ Reports
             </div>
             <div class="report-data">
               <table class="report-table col-3" cellpadding="0" cellspacing="0" border="0" height='300px'id="line_chart_table">
-                </table>
+              </table>
             </div>
 
             <div class="report-data fixed-table">
             <table class="report-table full-width" cellpadding="0" cellspacing="0" border="0" id="view_reports">
 
-           <!--  <tr>
-              <td colspan="8" class="no-pad no-bor">
-                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
-                  <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
-                    <td class="lbl relative">Agency Gold<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
-                    <td class="value">0</td>
-                    <td class="value">0</td>
-                    <td class="value">0</td>
-                    <td class="value">0</td>
-                  </tr>
-
-                    <tr>
-                      <td colspan="8" class="no-pad no-bor">
-                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="main-row">
-                        <tr class="clickable" data-toggle="collapse" data-target="#accordion1">
-                          <td class="lbl relative">Agency Hi Touch<span class="row-expand">+</span> <span class="row-collapse">_</span></td>
-                          <td class="value">0</td>
-                          <td class="value">0</td>
-                          <td class="value">0</td>
-                          <td class="value">0</td>
-                        </tr>
-
-                        <tr id="accordion1" class="collapse">
-                          <td colspan="8" class="no-pad no-bor">
-                            <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
-                              <tr>
-                                <td class="lbl">AU/NZ</td>
-                                <td class="value">0</td>
-                                <td class="value">0</td>
-                                <td class="value">0</td>
-                                <td class="value">0</td>
-                              </tr>
-
-                              <tr id="accordion1" class="collapse">
-                              <td colspan="8" class="no-pad no-bor">
-                                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
-                                    <tr>
-                                      <td class="lbl">India</td>
-                                        <td class="value">0</td>
-                                        <td class="value">0</td>
-                                        <td class="value">0</td>
-                                        <td class="value">0</td>
-                                    </tr>
-
-                                    <tr id="accordion1" class="collapse">
-                                      <td colspan="8" class="no-pad no-bor">
-                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="sub-row">
-                                          <tr>
-                                            <td class="lbl">SEA</td>
-                                            <td class="value">0</td>
-                                            <td class="value">0</td>
-                                            <td class="value">0</td>
-                                            <td class="value">0</td>
-                                          </tr>
-                                        </table>
-                                      </td>
-                                    </tr>
-                          </table>
-                      </td>
-                  </tr>
- -->
             </table>
              </div>
         </div>
     </div>
-
+    <div class="row text-center report-category">
+      <div class="col-md-12 centered select-style" style="vertical-align: middle">
+        <div style="padding-top:3% !important;">
+         <span style="padding-right:1%;  vertical-align: middle;">Looking for historical data?</span><span style="margin-top:10px;  vertical-align: middle;"><input type="checkbox" id="download_checkbox"></span>
+            <div class="col-md-3 centered" style="float:left;vertical-align: middle">
+            <input id="historical_filter_timeline" style="display:none;" class="form-control bgicon">
+            <img src="{% static 'images/close.jpg' %}" style="width: 15px; height: 15px; display:none;   margin-top: 16px;" id="close_img">
+          </div> 
+       </div>
+    </div>
+    </div>
     <div class="report-download" id='download_fields'>
     <p>Please select the fields you want to download</p>
     <form method="POST" action="{% url 'reports.views.get_download_report' %}" name="download_reports" id="download_reports">
@@ -311,11 +260,18 @@ Reports
 {% endblock content %}
 
 {% block main_js %}
+<link href="{% static 'css/reports/jquery-ui.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/reports/moment.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery.comiseo.daterangepicker.js' %}"></script>
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="{% static 'js/reports.js' %}"></script>
 <script src="{% static 'js/chart.js' %}"></script>
 <script type="text/javascript">
+
 $(document).ready(function(){
   window.current_ldap = {{request.user.id|safe}};
   window.user_id = {{request.user.id|safe}};
@@ -335,8 +291,35 @@ $('#ldap').keypress(function (e) {
   {
     $( "#get_report" ).trigger( "click" );
   }
-}); 
+});
 
+// historical data download starts here
+
+$('#download_checkbox').click(function(){
+  if($(this).prop('checked') == true){
+    $('#download_checkbox').hide();
+    $('#close_img').show();
+    $('#drp_autogen0').show();
+  }
+
+$('#close_img').click(function () {
+  $('#close_img').hide();
+  $('#historical_filter_timeline').hide();
+  $('#drp_autogen0').hide();
+  $('#download_checkbox').show();
+  $('#download_checkbox').attr('checked', false);
+  $("#historical_filter_timeline").daterangepicker("clearRange");
+})
+
+$(function(){ 
+
+  $("#historical_filter_timeline").daterangepicker(); 
+});
+
+// historical data download ends here
+
+
+})
 
 </script>
 {% endblock main_js %}

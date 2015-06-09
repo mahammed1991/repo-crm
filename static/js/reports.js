@@ -839,6 +839,33 @@ function createTableHeader(param){
 
 $('#download').click(function(){
 
+  if($('#drp_autogen0').is(':visible')){
+
+      var isError = false;
+      if($("#historical_filter_timeline").daterangepicker("getRange") == null ){
+        alert('Please choose date range to download the historical data');
+        var isError = true;
+      }else{
+        alert("Selected range is: " + $("#historical_filter_timeline").val())
+       $("#download_report_type").val('historical_report');
+       $("#download_report_timeline").val($("#historical_filter_timeline").val());
+       $("#download_team").val(['all']);
+       $("#download_countries").val(['all']);
+
+       var selectedFields = [];
+        if ($("#download_fields:visible")){
+
+          $("#download_fields .checkbox input:checked").each(function(){
+              selectedFields.push($(this).val());
+          });
+
+        $("#download_selectedFields").val(selectedFields);
+        }
+          var isError = false;
+      }
+  }
+  else{
+
     var isError = false;
     var dataString = {}
     var selectedReportType = $("#filter_report_type").val();
@@ -854,17 +881,17 @@ $('#download').click(function(){
           $("#download_countries").val(['all']);
           var selectedFields = [];
           if ($("#download_fields:visible")){
-
             $("#download_fields .checkbox input:checked").each(function(){
                 selectedFields.push($(this).val());
             });  
-          }
-
           dataString['selectedFields'] = selectedFields;
           $("#download_selectedFields").val(selectedFields);
+          }
+
+          
         }
     else{
-                if(!selectedReportType){
+     if(!selectedReportType){
                 var errMsg = "Please select report type";
                   showErrorMessage(errMsg);
                   isError = true;
@@ -982,11 +1009,16 @@ $('#download').click(function(){
 
     //console.log(dataString, 'dataString');
 
-    if(isError){
+    
+  }
+
+  if(isError){
         return false;
     }else{
      $("#download_reports").submit();
     }
+
+    
 }); 
  
     

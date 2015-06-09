@@ -3432,3 +3432,11 @@ padding-bottom:1%;
 .ls{
 list-style: inherit;
 }
+.comiseo-daterangepicker-triggerbutton.ui-button {
+  text-align: left;
+  min-width: 13em !important;
+  max-width: 14em !important;
+  padding-top: 3%;
+  padding-bottom: 3%;
+  float: left;
+}

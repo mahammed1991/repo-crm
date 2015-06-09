@@ -13,6 +13,7 @@ from django.db.models import Q
 from reports.models import Region
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+import re
 
 
 @login_required
@@ -304,14 +305,26 @@ def get_download_report(request):
         code_types = ReportService.get_all_code_type()
         code_types = [str(codes.encode('utf-8')) for codes in code_types]
 
-        if report_timeline:
-            if report_timeline > 1:
-                report_timeline = [dt.replace('-', ',') for dt in report_timeline]
-                start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
-                end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-            else:
-                start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
-                end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        if report_type != 'historical_report':
+            if report_timeline:
+                if report_timeline > 1:
+                    report_timeline = [dt.replace('-', ',') for dt in report_timeline]
+                    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+                    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+                else:
+                    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+                    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        else:
+            start_date = re.search(r'\d{4}-\d{2}-\d{2}', report_timeline[0]).group()
+            end_date = re.search(r'\d{4}-\d{2}-\d{2}', report_timeline[1]).group()
+
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            # start_date = start_date + datetime.timedelta(days=1)
+
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            # end_date = end_date + datetime.timedelta(days=1)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+            print start_date, end_date
 
         if ldap_id:
             email = User.objects.select_related('email').get(pk=ldap_id)
@@ -329,6 +342,8 @@ def get_download_report(request):
         elif report_type == 'leadreport_programview':
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
         elif report_type == 'leadreport_regionview':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        elif report_type == 'historical_report':
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
         else:
             pass
