@@ -1,0 +1,72 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Meet The Team
+{% endblock title %}
+
+{% block content %}
+<section class="content-region team-page">
+    <div class="container-fluid">
+
+        {% for team, team_value in contacts_list.iteritems %}
+
+            {% if team != 'You Work With...'%}
+                <h1>{{team}}</h1>
+            {% else %}
+                {% if cnt > 0 %}
+                <h1>{{team}}</h1>
+                {% endif %}
+            {% endif %}
+
+            {% if team_value %}
+                {% for category, members in team_value.iteritems %}
+                    {% if members %}
+                    <h1>{{category}}</h1>
+                    <div class="team-slider">
+                        {% for member in members %}
+                        <div class="team-slide">
+                            {% if 'http' in member.photo_url %}
+                                <img src="{{member.photo_url}}">
+                            {% else %}
+                                <img src="{% static member.photo_url %}">
+                            {% endif %}
+                            <div class="slide-copy">
+                                <span class="member-name">{{member.name}}</span>
+                                {{member.email}}<br>
+                                {{member.phone}}<br>
+                                {% if member.skype %}
+                                    Skype: <span>{{member.skype}}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endfor %}  
+            {% endif %}
+        {% endfor %}  
+
+
+    </div>
+  </section>
+  <!-- content-region ends -->
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript">
+
+    $(document).ready(function(){
+  $('.slider1').bxSlider({
+    slideWidth: 240,
+    minSlides: 1,
+    maxSlides: 5,
+    slideMargin: 30,
+    infiniteLoop: false,
+    pager: false
+  });
+});
+
+</script>
+{% endblock main_js %}
