@@ -87,15 +87,15 @@ Reports
             <option value="this_month">This Month</option>
             <option value="last_month">Last Month</option>
             <option value="this_quarter">This Quarter</option>
-            <option value="dateRange">Date Range</option>
+            <!-- <option value="dateRange">Date Range</option> -->
         </select>
       </div>      
-      <div class="col-md-3 centered date-range" id="filter_dateRange" style="display:none;">
+      <!-- <div class="col-md-3 centered date-range" id="filter_dateRange" style="display:none;">
         <input id="datepickerFrom" type="text" class="form-control date-from" placeholder="From">
         <i class="fa fa-calendar"></i>
         <input id="datepickerTo" type="text" class="form-control date-to" placeholder="To">
         <i class="fa fa-calendar"></i>
-      </div>
+      </div> -->
       
     </div>
     <div class="btn-row">
@@ -260,13 +260,13 @@ Reports
 {% endblock content %}
 
 {% block main_js %}
-<link href="{% static 'css/reports/jquery-ui.min.css' %}" rel="stylesheet">
+<!-- <link href="{% static 'css/reports/jquery-ui.min.css' %}" rel="stylesheet"> -->
 <link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
 <script src="{% static 'js/reports/jquery.min.js' %}"></script>
 <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
 <script src="{% static 'js/reports/moment.min.js' %}"></script>
 <script src="{% static 'js/reports/jquery.comiseo.daterangepicker.js' %}"></script>
-<script src="{% static 'js/jquery-ui.js' %}"></script>
+<!-- <script src="{% static 'js/jquery-ui.js' %}"></script> -->
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="{% static 'js/reports.js' %}"></script>
 <script src="{% static 'js/chart.js' %}"></script>

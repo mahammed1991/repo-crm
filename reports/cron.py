@@ -425,7 +425,6 @@ def get_rescheduled_leads():
     start_date = end_date - timedelta(days=29)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-    logging.info("Rescheduled Leads from %s to %s" % (start_date, end_date))
     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
     sf = SalesforceApi.connect_salesforce()
     if sf:
@@ -433,7 +432,7 @@ def get_rescheduled_leads():
         logging.info("Get Rescheduled leads form %s to %s" % (start_date, end_date))
         select_items = settings.SFDC_FIELDS
         # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
-        where_clause = "WHERE CreatedDate >= %s AND CreatedDate <= %s AND Rescheduled_Appointments__c != null" % (start_date, end_date)
+        where_clause = "WHERE Rescheduled_Appointments__c != null AND (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
         sql_query = "select %s from Lead %s" % (select_items, where_clause)
         try:
             all_leads = sf.query_all(sql_query)
@@ -456,19 +455,17 @@ def update_sfdc_leads(records, sf):
     rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
     reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
     sf_lead_id = lead.get('Id')
-
-    print rescheduled_appointment, time_zone, reschedule_in_ist
     rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+
     try:
-        print "=========================================="
         tz = Timezone.objects.get(zone_name=time_zone)
         utc_date = SalesforceApi.get_utc_date(rescheduled_appointment, tz.time_value)
 
-        tz_ist = Timezone.objects.get(zone_name='IST')
-        reschedule_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
-        reschedule_in_ist = SalesforceApi.convert_date_to_salesforce_format(reschedule_in_ist)
-        # reschedule_in_ist = datetime.strftime(reschedule_in_ist, '%m/%d/%Y %I:%M %p')
-        sf.Lead.update(sf_lead_id, {'Reschedule_IST_Time__c': reschedule_in_ist})
-        print rescheduled_appointment, time_zone, reschedule_in_ist
+        if utc_date >= datetime.utcnow():
+            tz_ist = Timezone.objects.get(zone_name='IST')
+            reschedule_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+            reschedule_in_ist = SalesforceApi.convert_date_to_salesforce_format(reschedule_in_ist)
+            # reschedule_in_ist = datetime.strftime(reschedule_in_ist, '%m/%d/%Y %I:%M %p')
+            sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
     except Exception as e:
         print e
