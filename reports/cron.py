@@ -281,8 +281,9 @@ def create_or_update_leads(records, sf):
         except Exception:
             lead.ecommerce = 0
 
-        lead.lead_owner_name = lead_owner_name if lead_owner_name else 'Raju K R'
-        lead.lead_owner_email = lead_owner_email if lead_owner_email else 'rajuk@regalix-inc.com'
+        lead.lead_owner_name = lead_owner_name if lead_owner_name else "%s %s" % (settings.DEFAULT_LEAD_OWNER_FNAME,
+                                                                                  settings.DEFAULT_LEAD_OWNER_LNAME)
+        lead.lead_owner_email = lead_owner_email if lead_owner_email else settings.DEFAULT_LEAD_OWNER_EMAIL
         lead.company = unicode(rec.get('Company'))
         lead.lead_status = rec.get('Status')
         lead.country = rec.get('Location__c')
@@ -321,8 +322,8 @@ def create_or_update_leads(records, sf):
         rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
         lead.rescheduled_appointment = rescheduled_appointment
 
-        # Rescheduled Appointments
-        rescheduled_appointment_in_ist = rec.get('Reschedule_IST_Time__c')
+        # Rescheduled Appointments in IST
+        rescheduled_appointment_in_ist = rec.get('Reschedule_IST__c')
         rescheduled_appointment_in_ist = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment_in_ist)
         lead.rescheduled_appointment_in_ist = rescheduled_appointment_in_ist
 
@@ -418,54 +419,55 @@ def create_sfdc_user(details):
     user.save()
 
 
-@kronos.register('0 9 * * *')
-def get_rescheduled_leads():
-    """ Get rescheduled leads from SFDC """
-    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(days=29)
-    start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
-    end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
-    sf = SalesforceApi.connect_salesforce()
-    if sf:
-        logging.info("Connect Successfully")
-        logging.info("Get Rescheduled leads form %s to %s" % (start_date, end_date))
-        select_items = settings.SFDC_FIELDS
-        # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
-        where_clause = "WHERE Rescheduled_Appointments__c != null AND (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
-        sql_query = "select %s from Lead %s" % (select_items, where_clause)
-        try:
-            all_leads = sf.query_all(sql_query)
-            logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
-            update_sfdc_leads(all_leads['records'], sf)
-        except Exception as e:
-            print e
-            logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
-            logging.info("%s" % (e))
+# @kronos.register('0 9 * * *')
+# def get_rescheduled_leads():
+#     """ Get rescheduled leads from SFDC """
+#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+#     start_date = end_date - timedelta(days=29)
+#     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+#     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+#     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+#     sf = SalesforceApi.connect_salesforce()
+#     if sf:
+#         logging.info("Connect Successfully")
+#         logging.info("Get Rescheduled leads form %s to %s" % (start_date, end_date))
+#         select_items = settings.SFDC_FIELDS
+#         # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
+#         where_clause = "WHERE Rescheduled_Appointments__c != null AND (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
+#         sql_query = "select %s from Lead %s" % (select_items, where_clause)
+#         try:
+#             all_leads = sf.query_all(sql_query)
+#             logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+#             update_sfdc_leads(all_leads['records'], sf)
+#         except Exception as e:
+#             print e
+#             logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+#             logging.info("%s" % (e))
 
 
 def update_sfdc_leads(records, sf):
     """ Update Rescheduled Appointment IN IST Time """
-    lead = sf.Lead.get('00Qd000000eajA2')
+    # lead = sf.Lead.get('00Qd000000eajA2')
 
-    # for lead in records:
-    location = lead.get('Location__c')
-    time_zone = lead.get('Time_Zone__c')
-    date_of_installation = lead.get('Date_of_installation__c')
-    rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
-    reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
-    sf_lead_id = lead.get('Id')
-    rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+    for lead in records:
+        location = lead.get('Location__c')
+        time_zone = lead.get('Time_Zone__c')
+        date_of_installation = lead.get('Date_of_installation__c')
+        rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
+        reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
+        sf_lead_id = lead.get('Id')
+        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
 
-    try:
-        tz = Timezone.objects.get(zone_name=time_zone)
-        utc_date = SalesforceApi.get_utc_date(rescheduled_appointment, tz.time_value)
+        try:
+            tz = Timezone.objects.get(zone_name=time_zone)
+            utc_date = SalesforceApi.get_utc_date(rescheduled_appointment, tz.time_value)
 
-        if utc_date >= datetime.utcnow():
-            tz_ist = Timezone.objects.get(zone_name='IST')
-            reschedule_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
-            reschedule_in_ist = SalesforceApi.convert_date_to_salesforce_format(reschedule_in_ist)
-            # reschedule_in_ist = datetime.strftime(reschedule_in_ist, '%m/%d/%Y %I:%M %p')
-            sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
-    except Exception as e:
-        print e
+            if utc_date >= datetime.utcnow():
+                tz_ist = Timezone.objects.get(zone_name='IST')
+                reschedule_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+                reschedule_in_ist = SalesforceApi.convert_date_to_salesforce_format(reschedule_in_ist)
+                # reschedule_in_ist = datetime.strftime(reschedule_in_ist, '%m/%d/%Y %I:%M %p')
+                print sf_lead_id, rescheduled_appointment, time_zone, reschedule_in_ist
+                # sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
+        except Exception as e:
+            print e
