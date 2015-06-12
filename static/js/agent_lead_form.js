@@ -147,10 +147,12 @@ function setLocations(newLocations){
         agencyEmailElem.focus();
         window.is_error = true;
       }
+      $("#aemail").val(agencyEmailElem.value);
 
       // Advertiser Phone Validation
       phoneElem = document.getElementById('agency_phone');
       validateFiled(phoneElem);
+      $("#phone").val(phoneElem.value);
 
     }
 
