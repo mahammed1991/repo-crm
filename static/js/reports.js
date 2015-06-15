@@ -5,39 +5,40 @@ $(document).ready(function() {
   // Get default report while loading template
   callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'team': ['all'], 'countries': ['all']})
 /* ===================== Default Report Ends Here ============= */
+  // Remove Custome Date range choice option, As discussed with Darshan
 
- $(function() {
-    $("#datepickerFrom").datepicker({
-      defaultDate : "+1w",
-      changeMonth : true,
-      numberOfMonths : 1,
-      minDate:  dateLimitToPrevQuarter(), 
-      dateFormat: "M dd, yy",
-      onClose : function(selectedDate) {
-        $("#to").datepicker("option", "minDate", selectedDate);
-      },
-      onSelect: function (selected) {
-            var dt = new Date(selected);
-            dt.setDate(dt.getDate() + 1);
-            $("#datepickerTo").datepicker("option", "minDate", dt);
-        }
-    });
-    $("#datepickerTo").datepicker({
-      defaultDate : "+1w",
-      changeMonth : true,
-      numberOfMonths : 1,
-      minDate:  dateLimitToPrevQuarter(),
-      dateFormat: "M dd, yy",
-      onClose : function(selectedDate) {
-        $("#from").datepicker("option", "maxDate", selectedDate);
-      },
-      onSelect: function (selected) {
-            var dt = new Date(selected);
-            dt.setDate(dt.getDate() - 1);
-            $("#datepickerFrom").datepicker("option", "maxDate", dt);
-        }
-    });
-  });
+ // $(function() {
+ //    $("#datepickerFrom").datepicker({
+ //      defaultDate : "+1w",
+ //      changeMonth : true,
+ //      numberOfMonths : 1,
+ //      minDate:  dateLimitToPrevQuarter(), 
+ //      dateFormat: "M dd, yy",
+ //      onClose : function(selectedDate) {
+ //        $("#to").datepicker("option", "minDate", selectedDate);
+ //      },
+ //      onSelect: function (selected) {
+ //            var dt = new Date(selected);
+ //            dt.setDate(dt.getDate() + 1);
+ //            $("#datepickerTo").datepicker("option", "minDate", dt);
+ //        }
+ //    });
+ //    $("#datepickerTo").datepicker({
+ //      defaultDate : "+1w",
+ //      changeMonth : true,
+ //      numberOfMonths : 1,
+ //      minDate:  dateLimitToPrevQuarter(),
+ //      dateFormat: "M dd, yy",
+ //      onClose : function(selectedDate) {
+ //        $("#from").datepicker("option", "maxDate", selectedDate);
+ //      },
+ //      onSelect: function (selected) {
+ //            var dt = new Date(selected);
+ //            dt.setDate(dt.getDate() - 1);
+ //            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+ //        }
+ //    });
+ //  });
 
 
   $(document).on('click', '.checkbox_select_all', function(e) {
@@ -162,21 +163,7 @@ $("#get_report").click(function(){
         var errMsg = "Please select timeline from dropdown list";
         showErrorMessage(errMsg);
         isError = true;
-    }
-    else if (selectedTimeline == 'dateRange'){
-      var from_date = $("#datepickerFrom").val();
-      var to_date = $("#datepickerTo").val();
-
-      // Validate from and to date
-      if(from_date == "" || to_date == ""){
-        var errMsg = "Please select from and to date";
-        showErrorMessage(errMsg);
-        isError = true;
-      }
-
-      dataString['report_timeline'] = [from_date, to_date];
-    }
-    else{
+    }else{
       dataString['report_timeline'] = [selectedTimeline];
     }
 

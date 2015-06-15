@@ -147,13 +147,16 @@ function setLocations(newLocations){
         agencyEmailElem.focus();
         window.is_error = true;
       }
+      $("#aemail").val(agencyEmailElem.value);
 
       // Advertiser Phone Validation
       phoneElem = document.getElementById('agency_phone');
       validateFiled(phoneElem);
+      $("#phone").val(phoneElem.value);
 
     }
 
+    var isTagLeads = false;
     // Check Agency fields
     if(document.getElementById('agency').checked){
         if(document.getElementById('same_task').checked){
@@ -166,7 +169,8 @@ function setLocations(newLocations){
                       'type' : 'TAG',
                       'time' : $("#tag_datepick").val()
                     }
-                  fix_slots.push(slot)  
+                  fix_slots.push(slot);
+                  isTagLeads = true; 
                 }else{
                   tagAppointmentElem = document.getElementById('tag_datepick');
                     if($(tagAppointmentElem).is(":visible")){
@@ -174,7 +178,7 @@ function setLocations(newLocations){
                     }
                 }
             }else{
-              $("#tag_datepick").val('')
+              isTagLeads = false;
             }
 
             for (i=1; i<=sameTagTask; i++){
@@ -263,7 +267,8 @@ function setLocations(newLocations){
                       'type' : 'TAG',
                       'time' : $("#tag_datepick").val()
                     }
-                  fix_slots.push(slot)  
+                  fix_slots.push(slot);
+                  isTagLeads = true;
                 }else{
                   tagAppointmentElem = document.getElementById('tag_datepick');
                     if($(tagAppointmentElem).is(":visible")){
@@ -271,7 +276,7 @@ function setLocations(newLocations){
                     }
                 }
             }else{
-              $("#tag_datepick").val('')
+              isTagLeads = false;
             }
 
             for (i=1; i<=totalDiffTasks; i++){
@@ -358,7 +363,8 @@ function setLocations(newLocations){
                       'type' : 'TAG',
                       'time' : $("#tag_datepick").val()
                     }
-                  fix_slots.push(slot)  
+                  fix_slots.push(slot);
+                  isTagLeads = true;
                 }else{
                   tagAppointmentElem = document.getElementById('tag_datepick');
                     if($(tagAppointmentElem).is(":visible")){
@@ -366,7 +372,7 @@ function setLocations(newLocations){
                     }
                 }
             }else{
-              $("#tag_datepick").val('')
+              isTagLeads = false;
             }
 
             for (i=1; i<=sameTagTask; i++){
@@ -486,7 +492,8 @@ function setLocations(newLocations){
                       'type' : 'TAG',
                       'time' : $("#tag_datepick").val()
                     }
-                  fix_slots.push(slot)  
+                  fix_slots.push(slot);
+                  isTagLeads = true; 
                 }else{
                   tagAppointmentElem = document.getElementById('tag_datepick');
                     if($(tagAppointmentElem).is(":visible")){
@@ -494,7 +501,7 @@ function setLocations(newLocations){
                     }
                 }
             }else{
-              $("#tag_datepick").val('')
+              isTagLeads = false;
             }
 
             for (i=1; i<=totalCustDiffTasks; i++){
@@ -593,6 +600,9 @@ function setLocations(newLocations){
           status = check_and_create_appointment(fix_slots);
         }
         if (status) {
+          if(!isTagLeads){
+            $("#tag_datepick").val('');
+          }
           console.log(window.tz_name);
           $("#tzone").val(tz_name);
           $('#preloaderOverlay').show();

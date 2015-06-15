@@ -37,6 +37,9 @@
 
               <input type="hidden" name="customer_same_shop_count" id="customer_same_shop_count" value="0">
               <input type="hidden" name="customer_diff_shop_count" id="customer_diff_shop_count" value="0">
+
+              <input type="hidden" name="aemail" id="aemail" value="">
+              <input type="hidden" name="phone" id="phone" value="">             
              
               <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
                 <option value="Under 100">Under 100</option>
@@ -50,7 +53,7 @@
                   <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
                 </div>
                 <div class="col-md-4">
-                   <label for="manager_email">Manager Email</label>
+                   <label for="manager_email">Google Rep Email</label>
                   <input type="text" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
                 </div>
                 <div class="col-md-4">
