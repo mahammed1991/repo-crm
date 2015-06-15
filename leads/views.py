@@ -311,7 +311,7 @@ def submit_agency_same_tasks(request, agency_bundle):
         for indx in range(1, agency_same_tag_count + 1):
             # Get Basic/Common form field data
             indx = str(indx)
-            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+            if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
             else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -345,7 +345,7 @@ def submit_agency_same_tasks(request, agency_bundle):
         for indx in range(1, agency_same_shop_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+            if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
             else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -380,7 +380,7 @@ def submit_agency_different_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+    if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -396,7 +396,7 @@ def submit_agency_different_tasks(request, agency_bundle):
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+        if settings.SFDC == 'STAGE':
             basic_data = get_common_sandbox_lead_data(request.POST)
         else:
             basic_data = get_common_salesforce_lead_data(request.POST)
@@ -448,7 +448,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+    if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -465,7 +465,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         for indx in range(1, customer_same_tag_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+            if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
             else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -506,7 +506,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         for indx in range(1, customer_same_shop_count + 1):
             indx = str(indx)
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+            if settings.SFDC == 'STAGE':
                 basic_data = get_common_sandbox_lead_data(request.POST)
             else:
                 basic_data = get_common_salesforce_lead_data(request.POST)
@@ -547,7 +547,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
 
     ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-    if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+    if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00DZ000000MipUa'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -563,7 +563,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE' and not request.user.groups.filter(name='AGENCY'):
+        if settings.SFDC == 'STAGE':
             basic_data = get_common_sandbox_lead_data(request.POST)
         else:
             basic_data = get_common_salesforce_lead_data(request.POST)
@@ -1706,7 +1706,7 @@ def get_lead_summary(request, lid=None, page=None):
         # start_date = first_day_of_month(datetime.utcnow())
         # end_date = datetime.utcnow()
         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.exclude(type_1='WPP').filter(**query)
+        leads = Leads.objects.exclude(type_1='WPP').filter(**query).order_by('rescheduled_appointment_in_ist')
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
     else:
         if is_manager(email):
@@ -1718,7 +1718,7 @@ def get_lead_summary(request, lid=None, page=None):
         # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
         cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
         leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
-                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date)
+                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('rescheduled_appointment_in_ist')
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
 
@@ -2185,7 +2185,7 @@ def split_fullname(full_name):
     last_name = ''
     if full_name:
         first_name = full_name.rsplit(' ', 1)[0]
-        last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ' '
+        last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else '.'
 
     return first_name, last_name
 
