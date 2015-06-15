@@ -140,9 +140,10 @@ class ContectList(models.Model):
     google_id = models.EmailField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=100, blank=True, null=True)
     skype_id = models.CharField(max_length=100, blank=True, null=True)
-    region = models.ForeignKey(Location, null=True, blank=True, default=None)
+    target_location = models.ManyToManyField(Location, blank=True, null=True)
     profile_photo = models.ImageField(upload_to=get_profile_photo, blank=True, max_length=100)
     extn = models.CharField(max_length=100, blank=True, null=True)
+    supporting_hours = models.CharField(max_length=100, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True, default=datetime.utcnow())
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.utcnow())
@@ -327,3 +328,29 @@ def user_unicode_patch(self):
 
 User.__unicode__ = user_unicode_patch
 User._meta.get_field('email')._unique = True
+
+
+class OlarkChatGroup(models.Model):
+    """ Olark Chart Group """
+
+    operator_group = models.CharField(max_length=150, unique=True, blank=False)
+    programs = models.ManyToManyField(Team, blank=True, null=True)
+    target_location = models.ManyToManyField(Location, blank=True, null=True)
+    google_rep = models.ManyToManyField(User, blank=True, null=True)
+    olark_script = models.TextField(blank=False)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def program_list(self):
+        return ", ".join(["%s" % (p.team_name) for p in self.programs.all()])
+
+    def location_list(self):
+        return ", ".join(["%s" % (l.location_name) for l in self.target_location.all()])
+
+    def rep_list(self):
+        return ", ".join(["%s" % (r.get_full_name()) for r in self.google_rep.all()])
+
+    class Meta:
+        db_table = 'olark_chat_group'
+        verbose_name_plural = 'Olark Chat Group'

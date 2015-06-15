@@ -183,10 +183,11 @@ Reports
     <div class="row text-center report-category">
       <div class="col-md-12 centered select-style" style="vertical-align: middle">
         <div style="padding-top:3% !important;">
-         <span style="padding-right:1%;  vertical-align: middle;">Looking for historical data?</span><span style="margin-top:10px;  vertical-align: middle;"><input type="checkbox" id="download_checkbox"></span>
-            <div class="col-md-3 centered" style="float:left;vertical-align: middle">
+         <span style="padding-right:1%;  vertical-align: middle; font-weight: bold;">Looking for historical data?</span>
+         <span style="margin-top: 4px;  vertical-align: middle; display: inline-block"><input type="checkbox" id="download_checkbox"></span>
+            <div class="centered" style="float:left;vertical-align: middle">
             <input id="historical_filter_timeline" style="display:none;" class="form-control bgicon">
-            <img src="{% static 'images/close.jpg' %}" style="width: 15px; height: 15px; display:none;   margin-top: 16px;" id="close_img">
+            <img src="{% static 'images/close.jpg' %}" style="width: 15px; height: 15px; display:none;   margin-top: 16px; margin-left: 12px;" id="close_img">
           </div> 
        </div>
     </div>
@@ -313,7 +314,11 @@ $('#close_img').click(function () {
 
 $(function(){ 
 
-  $("#historical_filter_timeline").daterangepicker(); 
+  $("#historical_filter_timeline").daterangepicker({
+    datepickerOptions : {
+         numberOfMonths : 2
+     }
+  }); 
 });
 
 // historical data download ends here

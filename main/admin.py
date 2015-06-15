@@ -1,13 +1,14 @@
 from django.contrib import admin
-from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback
+from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
+from main.forms import OlarkChatGroupForm
 
 
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ('position_type', 'first_name', 'last_name', 'email', 'phone_number', 'skype_id', 'region', 'profile_photo')
-
+    list_display = ('position_type', 'first_name', 'last_name', 'email', 'phone_number', 'skype_id', 'profile_photo')
+    filter_horizontal = ('target_location',)
 admin.site.register(ContectList, ContactAdmin)
 
 
@@ -93,3 +94,11 @@ class LogEntryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(LogEntry, LogEntryAdmin)
+
+
+class OlarkChatGroupAdmin(admin.ModelAdmin):
+    form = OlarkChatGroupForm
+    list_display = ('operator_group', 'program_list', 'location_list', 'rep_list',)
+    filter_horizontal = ('programs', 'target_location', 'google_rep')
+
+admin.site.register(OlarkChatGroup, OlarkChatGroupAdmin)

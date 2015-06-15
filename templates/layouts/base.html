@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -38,7 +39,15 @@
         '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-NC7XCG');</script>
         <!-- End Google Tag Manager -->
-        
+
+
+            <!-- begin olark code -->
+            
+            {%  olark_group_script request.user %}
+
+            <!-- end olark code -->
+
+
         {% block body %}
         {% endblock body %}
         

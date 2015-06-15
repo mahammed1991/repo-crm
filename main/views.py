@@ -688,8 +688,12 @@ def get_contacts(request):
         contact['picture'] = cnt.profile_photo.name.split('/')[-1]
         contact['photo_url'] = get_profile_avatar_by_email(cnt.email)
         contact['position_type'] = cnt.position_type
+        contact['ldap'] = str(cnt.google_id.split('@')[0])
+        contact['support_hrs'] = cnt.supporting_hours
 
-        if cnt.region_id == request.user.profile.location_id:
+        # if cnt.region_id == request.user.profile.location_id:
+        locations = [l.id for l in cnt.target_location.filter()]
+        if request.user.profile.location_id in locations:
             if cnt.position_type in ['TAG', 'SHOPPING']:
                 ur_team_cnt += 1
                 your_team['The implementation team'].append(contact)
