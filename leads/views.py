@@ -835,6 +835,7 @@ def agent_bulk_upload(request):
                     'service_segment': None,  # Service Segment
                     'g_cases_id': None,  # G Cases Id
                     'country': location,  # Country
+                    'lead_type': 'Agency Bulk Lead',
 
                     'advertiser_name': '',  # Advertiser Email
                     'phone': '',  # Advertiser Phone
