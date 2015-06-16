@@ -21,6 +21,7 @@
                       <input type="hidden" value="{{google_rep.id}}" name="google_rep_id" id="google_rep_id">
                       <input type="hidden" value="{{poc_details.id}}" name="poc_id" id="poc_id">
                       <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=5" name="retURL">
+                      <input type="hidden" id="lead_type" name="lead_type" value="Agency Bulk Lead">
                       <table style="width:100%" class="csv-table" id="csv_table">
                       <tr>
                         <th width="100px">Google Rep Name</th>

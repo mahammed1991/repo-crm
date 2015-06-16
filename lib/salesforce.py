@@ -4,7 +4,7 @@ Connect to Salesforce API
 
 from simple_salesforce import Salesforce
 from datetime import datetime, timedelta
-from leads.models import Timezone
+from leads.models import Timezone, Location
 
 
 class SalesforceApi(object):
@@ -33,16 +33,29 @@ class SalesforceApi(object):
         if _date:
             try:
                 date_format = datetime.strptime(_date[:-7], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(hours=int(_date[-5:-3]), minutes=int(_date[-2:])) * int(_date[-6:-5] + '1')
-                # tz = Timezone.objects.get(zone_name='PST')
-                # utc_format = SalesforceApi.get_utc_date(date_format, tz.time_value)
-
-                # tz = Timezone.objects.get(zone_name='IST')
-                # date_format = SalesforceApi.convert_utc_to_timezone(utc_format, tz.time_value)
-
             except Exception:
-                date_format = None
+                try:
+                    date_format = datetime.strptime(_date, '%Y-%m-%d')
+                except Exception:
+                    date_format = None
         else:
             date_format = None
+
+        if date_format:
+            tz = Timezone.objects.get(zone_name='PST')
+            us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
+            if us_zone:
+                location = us_zone[0]
+                if location.daylight_start and location.daylight_end:
+                    daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
+                    daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 23, 59, 59)
+                    if datetime.utcnow() >= daylight_start and datetime.utcnow() <= daylight_end:
+                        tz = Timezone.objects.get(zone_name='PDT')
+                    else:
+                        tz = Timezone.objects.get(zone_name='PST')
+
+            # Convert Date to PST/PDT timezone
+            date_format = SalesforceApi.convert_utc_to_timezone(date_format, tz.time_value)
 
         return date_format
 
