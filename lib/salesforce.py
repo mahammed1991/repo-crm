@@ -5,6 +5,7 @@ Connect to Salesforce API
 from simple_salesforce import Salesforce
 from datetime import datetime, timedelta
 from leads.models import Timezone, Location
+from django.conf import settings
 
 
 class SalesforceApi(object):
@@ -13,13 +14,22 @@ class SalesforceApi(object):
     @staticmethod
     def connect_salesforce():
         """ Connect to Salesforce """
-        try:
-            # sf = Salesforce(username='rajuk@regalix-inc.com', password='raju@salesforce123', security_token='ZO34D4x7gHWFygngpCOu08gt', sandbox=True)
-            sf = Salesforce(username='google.tech@regalix-inc.com', password='1q2w3e4r', security_token='t5gGSv6yxcQm99gfso28RJV9I')
-            return sf
-        except Exception, e:
-            print Exception, e
-            return None
+        if settings.SFDC == 'STAGE':
+            try:
+                sf = Salesforce(username='google.tech@regalix-inc.com.regalixdev',
+                                password='1q2w3e4r',
+                                security_token='oJNwpDbgjDZTaaKefk9RCQuHe', sandbox=True)
+                return sf
+            except Exception, e:
+                print Exception, e
+                return None
+        else:
+            try:
+                sf = Salesforce(username='google.tech@regalix-inc.com', password='1q2w3e4r', security_token='t5gGSv6yxcQm99gfso28RJV9I')
+                return sf
+            except Exception, e:
+                print Exception, e
+                return None
 
     @staticmethod
     def convert_date_to_salesforce_format(_date):
@@ -36,23 +46,14 @@ class SalesforceApi(object):
             except Exception:
                 try:
                     date_format = datetime.strptime(_date, '%Y-%m-%d')
+                    return date_format
                 except Exception:
                     date_format = None
         else:
             date_format = None
 
         if date_format:
-            tz = Timezone.objects.get(zone_name='PST')
-            us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
-            if us_zone:
-                location = us_zone[0]
-                if location.daylight_start and location.daylight_end:
-                    daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
-                    daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 23, 59, 59)
-                    if datetime.utcnow() >= daylight_start and datetime.utcnow() <= daylight_end:
-                        tz = Timezone.objects.get(zone_name='PDT')
-                    else:
-                        tz = Timezone.objects.get(zone_name='PST')
+            tz = SalesforceApi.get_current_timezone_of_salesforce()
 
             # Convert Date to PST/PDT timezone
             date_format = SalesforceApi.convert_utc_to_timezone(date_format, tz.time_value)
@@ -87,3 +88,21 @@ class SalesforceApi(object):
             zone_date = date + timedelta(minutes=diff_in_min)
 
         return zone_date
+
+    @staticmethod
+    def get_current_timezone_of_salesforce():
+        """ Get Current salesfore timezone """
+
+        tz = Timezone.objects.get(zone_name='PST')
+        us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
+        if us_zone:
+            location = us_zone[0]
+            if location.daylight_start and location.daylight_end:
+                daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
+                daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 23, 59, 59)
+                if datetime.utcnow() >= daylight_start and datetime.utcnow() <= daylight_end:
+                    tz = Timezone.objects.get(zone_name='PDT')
+                else:
+                    tz = Timezone.objects.get(zone_name='PST')
+
+        return tz
