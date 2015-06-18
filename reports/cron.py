@@ -170,6 +170,29 @@ def get_deleted_leads():
             logging.info("Deleted Lead Id's %s, Total = %s" % (ids, len(ids)))
             Leads.objects.filter(sf_lead_id__in=ids).delete()
             logging.info("Deleted Successfully")
+        start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+        start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+        end_date = end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        portal_lead_ids = list(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date).values_list(
+            'sf_lead_id', flat=True).distinct())
+        logging.info("No of Portal Leads on Current Quarter %s" % (len(portal_lead_ids)))
+        start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+        end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+        where_clause = "WHERE CreatedDate >= %s AND CreatedDate <= %s" % (start_date, end_date)
+        sql_query = "select Id from Lead %s" % (where_clause)
+        try:
+            all_leads = sf.query_all(sql_query)
+            logging.info("No of Lead Ids from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+            sf_lead_ids = [sf_id.get('Id') for sf_id in all_leads['records']]
+            logging.info("No of Salesforce Leads on Current Quarter %s" % (len(sf_lead_ids)))
+            if len(portal_lead_ids) > len(sf_lead_ids):
+                extra_leads = set(portal_lead_ids) - set(sf_lead_ids)
+                logging.info("No of Current Quarter leads deleted on portal %s" % (len(extra_leads)))
+                Leads.objects.filter(sf_lead_id__in=list(extra_leads)).delete()
+        except Exception as e:
+            print e
+            logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+            logging.info("%s" % (e))
 
 
 def get_leads_from_sfdc(start_date, end_date):
@@ -241,7 +264,7 @@ def create_or_update_leads(records, sf):
 
         # Below information will be created if its a new lead or else the information will be updated
         lead.google_rep_name = rep_name
-        lead.google_rep_email = rep_email
+        lead.google_rep_email = rep_email if rep_email else settings.DEFAULT_LEAD_OWNER_EMAIL
 
         if rep_email and rep_name:
             # Save Google representatives information to Database
@@ -370,7 +393,7 @@ def create_or_update_leads(records, sf):
             else:
                 exist_lead_saved += 1
         except Exception as e:
-            print lead, e
+            print lead.sf_lead_id, e
             if is_new_lead:
                 new_lead_failed += 1
             else:
@@ -419,36 +442,34 @@ def create_sfdc_user(details):
     user.save()
 
 
-# @kronos.register('0 9 * * *')
-# def get_rescheduled_leads():
-#     """ Get rescheduled leads from SFDC """
-#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-#     start_date = end_date - timedelta(days=29)
-#     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
-#     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-#     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
-#     sf = SalesforceApi.connect_salesforce()
-#     if sf:
-#         logging.info("Connect Successfully")
-#         logging.info("Get Rescheduled leads form %s to %s" % (start_date, end_date))
-#         select_items = settings.SFDC_FIELDS
-#         # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
-#         where_clause = "WHERE Rescheduled_Appointments__c != null AND (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
-#         sql_query = "select %s from Lead %s" % (select_items, where_clause)
-#         try:
-#             all_leads = sf.query_all(sql_query)
-#             logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
-#             update_sfdc_leads(all_leads['records'], sf)
-#         except Exception as e:
-#             print e
-#             logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
-#             logging.info("%s" % (e))
+@kronos.register('0 9 * * *')
+def get_rescheduled_leads():
+    """ Get rescheduled leads from SFDC """
+    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    start_date = end_date - timedelta(days=29)
+    start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+    end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
+    if sf:
+        logging.info("Connect Successfully")
+        logging.info("Get Rescheduled leads form %s to %s" % (start_date, end_date))
+        select_items = settings.SFDC_FIELDS
+        # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
+        where_clause = "WHERE Rescheduled_Appointments__c != null AND (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
+        sql_query = "select %s from Lead %s" % (select_items, where_clause)
+        try:
+            all_leads = sf.query_all(sql_query)
+            logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+            update_sfdc_leads(all_leads['records'], sf)
+        except Exception as e:
+            print e
+            logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+            logging.info("%s" % (e))
 
 
 def update_sfdc_leads(records, sf):
     """ Update Rescheduled Appointment IN IST Time """
-    # lead = sf.Lead.get('00Qd000000eajA2')
-
     for lead in records:
         location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')
@@ -457,7 +478,6 @@ def update_sfdc_leads(records, sf):
         reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
         sf_lead_id = lead.get('Id')
         rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
-
         try:
             tz = Timezone.objects.get(zone_name=time_zone)
             utc_date = SalesforceApi.get_utc_date(rescheduled_appointment, tz.time_value)
@@ -465,8 +485,9 @@ def update_sfdc_leads(records, sf):
             if utc_date >= datetime.utcnow():
                 tz_ist = Timezone.objects.get(zone_name='IST')
                 reschedule_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+                tz = SalesforceApi.get_current_timezone_of_salesforce()
+                reschedule_in_ist = SalesforceApi.get_utc_date(reschedule_in_ist, tz.time_value)
                 reschedule_in_ist = SalesforceApi.convert_date_to_salesforce_format(reschedule_in_ist)
-                # reschedule_in_ist = datetime.strftime(reschedule_in_ist, '%m/%d/%Y %I:%M %p')
                 print sf_lead_id, rescheduled_appointment, time_zone, reschedule_in_ist
                 # sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
         except Exception as e:
