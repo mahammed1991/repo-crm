@@ -267,8 +267,8 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     # prepare appointments slot keys
     appointments = dict()
     for key, _date in plan_dates.items():
-        total_booked[datetime.strftime(_date, '%d_%m_%Y')] = []
-        total_available[datetime.strftime(_date, '%d_%m_%Y')] = []
+        total_booked[datetime.strftime(_date, '%Y_%m_%d')] = []
+        total_available[datetime.strftime(_date, '%Y_%m_%d')] = []
         for hour in range(24):
             # even hour slot
             minutes = 0
@@ -304,8 +304,8 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
             '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
         appointments[key]['value'] = int(apptmnt.availability_count)
         appointments[key]['booked'] = int(apptmnt.booked_count)
-        total_available[datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y')].append(int(apptmnt.availability_count))
-        total_booked[datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y')].append(int(apptmnt.booked_count))
+        total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
+        total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.booked_count))
     total_slots = list()
     for key, value in sorted(total_available.iteritems()):
         total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})

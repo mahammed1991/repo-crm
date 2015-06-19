@@ -444,12 +444,15 @@ def view_feedback(request, id):
 def list_feedback(request):
     """ List all feedbacks """
 
-    feedbacks = Feedback.objects.filter(
-        Q(user__email=request.user.email)
-        | Q(user__profile__user_manager_email=request.user.email)
-        | Q(lead_owner__email=request.user.email)
-        | Q(lead_owner__profile__user_manager_email=request.user.email)
-    )
+    if request.user.groups.filter(name='FEEDBACK'):
+        feedbacks = Feedback.objects.all().order_by('-created_date')
+    else:
+        feedbacks = Feedback.objects.filter(
+            Q(user__email=request.user.email)
+            | Q(user__profile__user_manager_email=request.user.email)
+            | Q(lead_owner__email=request.user.email)
+            | Q(lead_owner__profile__user_manager_email=request.user.email)
+        )
     feedback_list = dict()
     feedback_list['new'] = feedbacks.filter(status='NEW').count()
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
@@ -551,8 +554,9 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
     bcc = set()
 
     mail_to = set([
+        'g-crew@regalix-inc.com',
         feedback.lead_owner.email,
-        feedback.user.email
+        request.user.email
     ])
 
     try:
