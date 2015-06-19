@@ -2,10 +2,37 @@
 Connect to Salesforce API
 """
 
-from simple_salesforce import Salesforce
+from simple_salesforce import (Salesforce, SFType, SalesforceMoreThanOneRecord, SalesforceMalformedRequest,
+                               SalesforceExpiredSession, SalesforceRefusedRequest, SalesforceResourceNotFound,
+                               SalesforceGeneralError
+                               )
 from datetime import datetime, timedelta
 from leads.models import Timezone, Location
 from django.conf import settings
+import json
+
+
+class CustomeSalesforce(Salesforce):
+
+    def __init__(self, **kwargs):
+
+        return super(CustomeSalesforce, self).__init__(**kwargs)
+
+    def __getattr__(self, name):
+        """Returns an `SFType` instance for the given Salesforce object type
+        (given in `name`).
+        The magic part of the SalesforceAPI, this function translates
+        calls such as `salesforce_api_instance.Lead.metadata()` into fully
+        constituted `SFType` instances to make a nice Python API wrapper
+        for the REST API.
+        Arguments:
+        * name -- the name of a Salesforce object type, e.g. Lead or Contact
+        """
+        # fix to enable serialization (https://github.com/heroku/simple-salesforce/issues/60)
+        if name.startswith('__'):
+            return super(Salesforce, self).__getattr__(name)
+
+        return SalesforceType(name, self.session_id, self.sf_instance, self.sf_version, self.proxies)
 
 
 class SalesforceApi(object):
@@ -16,16 +43,16 @@ class SalesforceApi(object):
         """ Connect to Salesforce """
         if settings.SFDC == 'STAGE':
             try:
-                sf = Salesforce(username='google.tech@regalix-inc.com.regalixdev',
-                                password='1q2w3e4r',
-                                security_token='oJNwpDbgjDZTaaKefk9RCQuHe', sandbox=True)
+                sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
+                                       password='1q2w3e4r',
+                                       security_token='oJNwpDbgjDZTaaKefk9RCQuHe', sandbox=True)
                 return sf
             except Exception, e:
                 print Exception, e
                 return None
         else:
             try:
-                sf = Salesforce(username='google.tech@regalix-inc.com', password='1q2w3e4r', security_token='t5gGSv6yxcQm99gfso28RJV9I')
+                sf = CustomeSalesforce(username='google.tech@regalix-inc.com', password='1q2w3e4r', security_token='t5gGSv6yxcQm99gfso28RJV9I')
                 return sf
             except Exception, e:
                 print Exception, e
@@ -106,3 +133,71 @@ class SalesforceApi(object):
                     tz = Timezone.objects.get(zone_name='PST')
 
         return tz
+
+
+class SalesforceType(SFType):
+
+    def update(self, record_id, data, raw_response=False):
+        """Updates an SObject using a PATCH to
+        `.../{object_name}/{record_id}`.
+        If `raw_response` is false (the default), returns the status code
+        returned by Salesforce. Otherwise, return the `requests.Response`
+        object.
+        Arguments:
+        * record_id -- the Id of the SObject to update
+        * data -- a dict of the data to update the SObject from. It will be
+                  JSON-encoded before being transmitted.
+        * raw_response -- a boolean indicating whether to return the response
+                          directly, instead of the status code.
+        """
+
+        result = self._call_salesforce('PATCH', self.base_url + record_id,
+                                       data=json.dumps(data))
+        return self._raw_response(result, raw_response)
+
+    def _call_salesforce(self, method, url, **kwargs):
+        """Utility method for performing HTTP call to Salesforce.
+        Returns a `requests.result` object.
+        """
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + self.session_id,
+            'X-PrettyPrint': '1',
+            "Sforce-Auto-Assign": 'FALSE'
+        }
+        result = self.request.request(method, url, headers=headers, **kwargs)
+
+        if result.status_code >= 300:
+            self._exception_handler(result, self.name)
+
+        return result
+
+    def _raw_response(self, response, body_flag):
+        """Utility method for processing the response and returning either the
+        status code or the response object.
+        Returns either an `int` or a `requests.Response` object.
+        """
+        if not body_flag:
+            return response.status_code
+        else:
+            return response
+
+
+def _exception_handler(result, name=""):
+    """Exception router. Determines which error to raise for bad results"""
+    try:
+        response_content = result.json()
+    except Exception:
+        response_content = result.text
+
+    exc_map = {
+        300: SalesforceMoreThanOneRecord,
+        400: SalesforceMalformedRequest,
+        401: SalesforceExpiredSession,
+        403: SalesforceRefusedRequest,
+        404: SalesforceResourceNotFound,
+    }
+    exc_cls = exc_map.get(result.status_code, SalesforceGeneralError)
+
+    raise exc_cls(result.url, result.status_code, name, response_content)
