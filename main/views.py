@@ -178,18 +178,10 @@ def main_home(request):
     current_date = datetime.utcnow()
     top_performer = get_top_performer_list(current_date)
 
+    # Get Feedback Details
     # feedback summary
     feedback_list = dict()
-    feedbacks = Feedback.objects.filter(
-        Q(user__email=request.user.email)
-        | Q(user__profile__user_manager_email=request.user.email)
-        | Q(lead_owner__email=request.user.email)
-        | Q(lead_owner__profile__user_manager_email=request.user.email)
-    )
-    feedback_list['new'] = feedbacks.filter(status='NEW').count()
-    feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
-    feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
-    feedback_list['total'] = feedbacks.count()
+    feedbacks, feedback_list = get_feedbacks(request.user)
 
     # Notification Section
     notifications = Notification.objects.filter(is_visible=True)
@@ -199,6 +191,27 @@ def main_home(request):
                                                'user_profile': user_profile, 'question_list': question_list,
                                                'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
                                                'feedback_list': feedback_list, 'notifications': notifications})
+
+
+def get_feedbacks(user):
+    """ List Feedbacks by user """
+
+    if user.groups.filter(name='FEEDBACK'):
+        feedbacks = Feedback.objects.all().order_by('-created_date')
+    else:
+        feedbacks = Feedback.objects.filter(
+            Q(user__email=user.email)
+            | Q(user__profile__user_manager_email=user.email)
+            | Q(lead_owner__email=user.email)
+            | Q(lead_owner__profile__user_manager_email=user.email)
+        )
+    feedback_list = dict()
+    feedback_list['new'] = feedbacks.filter(status='NEW').count()
+    feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
+    feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
+    feedback_list['total'] = feedbacks.count()
+
+    return feedbacks, feedback_list
 
 
 def get_top_performer_list(current_date):
@@ -444,20 +457,7 @@ def view_feedback(request, id):
 def list_feedback(request):
     """ List all feedbacks """
 
-    if request.user.groups.filter(name='FEEDBACK'):
-        feedbacks = Feedback.objects.all().order_by('-created_date')
-    else:
-        feedbacks = Feedback.objects.filter(
-            Q(user__email=request.user.email)
-            | Q(user__profile__user_manager_email=request.user.email)
-            | Q(lead_owner__email=request.user.email)
-            | Q(lead_owner__profile__user_manager_email=request.user.email)
-        )
-    feedback_list = dict()
-    feedback_list['new'] = feedbacks.filter(status='NEW').count()
-    feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
-    feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
-    feedback_list['total'] = feedbacks.count()
+    feedbacks, feedback_list = get_feedbacks(request.user)
 
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
                                                        'media_url': settings.MEDIA_URL + 'feedback/',
@@ -558,12 +558,6 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
         feedback.lead_owner.email,
         request.user.email
     ])
-
-    try:
-        mail_to.add(feedback.user.profile.user_manager_email)
-        mail_to.add(feedback.lead_owner.profile.user_manager_email)
-    except:
-        pass
 
     mail_from = request.user.email
 
