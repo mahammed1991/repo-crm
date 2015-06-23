@@ -171,9 +171,9 @@
                       <td class="hidden-xs hidden-sm">{{ l.google_rep_name }}</td>
                       <td class="hidden-xs hidden-sm">{{ l.lead_owner_name }}</td>
                       <td class="hidden-xs hidden-sm">{{ l.created_date |date:"m/d/Y" }}</td>
-                      <td class="hidden-xs hidden-sm">{{ l.appointment_date |date:"m/d/Y [h:m] A" }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.appointment_date |date:"m/d/Y [h:i] A" }}</td>
                       <td class="hidden-xs hidden-sm">{{ l.date_of_installation |date:"m/d/Y" }}</td>
-                      <td class="hidden-xs hidden-sm">{{ l.rescheduled_appointment |date:"m/d/Y [h:m] A" }}</td>
+                      <td class="hidden-xs hidden-sm">{{ l.rescheduled_appointment |date:"m/d/Y [h:i] A" }}</td>
                       
                       {% if l.regalix_comment  %}
                           <td class="hidden-xs hidden-sm comments-container comments-container2"><p>{{ l.regalix_comment | truncatechars:100 }}</p>
