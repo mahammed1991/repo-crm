@@ -1719,7 +1719,7 @@ def get_lead_summary(request, lid=None, page=None):
         # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
         cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
         leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
-                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('rescheduled_appointment_in_ist')
+                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
 
@@ -1765,7 +1765,7 @@ def get_wpp_lead_summary(request, lid=None):
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=start_date, end_date=end_date)
         query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.filter(**query)
+        leads = Leads.objects.filter(**query).order_by('-rescheduled_appointment_in_ist')
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)
@@ -1776,7 +1776,7 @@ def get_wpp_lead_summary(request, lid=None):
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
         query = {'lead_status__in': lead_status, 'type_1': 'WPP'}
         # lead_status_dict['total_leads'] = Leads.objects.exclude(team='').filter(reduce(operator.or_, mylist), **query).count()
-        leads = Leads.objects.filter(reduce(operator.or_, mylist), **query)
+        leads = Leads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-rescheduled_appointment_in_ist')
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=None, end_date=None)
     return render(request, 'leads/wpp_lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
@@ -1793,6 +1793,7 @@ def get_lead_status_by_cid(request):
             lead = convert_lead_to_dict(l)
             lead_list.append(lead)
         mimetype = 'application/json'
+        lead_list.sort(key=lambda item: item['rescheduled_appointment_in_ist'], reverse=True)
         return HttpResponse(json.dumps({'lead_list': lead_list}), mimetype)
     return render(request, 'leads/lead_summary.html', {})
 
@@ -1940,7 +1941,7 @@ def get_lead_status_by_ldap(request):
         lead_status = settings.LEAD_STATUS
         leads_ids = Leads.objects.values_list(
             'id', flat=True).exclude(team='').filter(Q(google_rep_email=user.email) | Q(lead_owner_email=user.email), lead_status__in=lead_status)
-        leads = Leads.objects.filter(id__in=leads_ids)
+        leads = Leads.objects.filter(id__in=leads_ids).order_by('-rescheduled_appointment_in_ist')
         lead_list = list()
         for l in leads:
             lead = convert_lead_to_dict(l)
@@ -1951,6 +1952,7 @@ def get_lead_status_by_ldap(request):
         ldap_dict['manager'] = user.profile.user_manager_name
         ldap_dict['program'] = user.profile.team.team_name if user.profile.team else 'N/A'
         ldap_dict['region'] = user.profile.location.location_name if user.profile.location else 'N/A'
+        lead_list.sort(key=lambda item: item['rescheduled_appointment_in_ist'], reverse=True)
         return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict, 'ldap_dict': ldap_dict}), mimetype)
     # return render(request, 'leads/get_lead_summary_ldap.html', {})
     return render(request, 'leads/lead_summary.html', {})
@@ -1976,6 +1978,14 @@ def convert_lead_to_dict(model):
         lead['date_of_installation'] = datetime.strftime(model.date_of_installation, "%m/%d/%Y")
     else:
         lead['date_of_installation'] = ''
+    if model.rescheduled_appointment:
+        lead['rescheduled_appointment'] = datetime.strftime(model.rescheduled_appointment, "%m/%d/%Y %I:%M %p")
+    else:
+        lead['rescheduled_appointment'] = ''
+    if model.rescheduled_appointment_in_ist:
+        lead['rescheduled_appointment_in_ist'] = datetime.strftime(model.rescheduled_appointment_in_ist, "%m/%d/%Y %I:%M %p")
+    else:
+        lead['rescheduled_appointment_in_ist'] = ''
     lead['regalix_comment'] = model.regalix_comment
     lead['lead_status'] = model.lead_status
     return lead
@@ -2073,6 +2083,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     if "www" in sf_api_url:
         time_zone = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('tzone'))
         appointment_in_ist_key = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('appointment_in_ist')
+        appointment_in_pst_key = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('appointment_in_pst')
         appointment_date = lead_data.get(SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.get('tag_datepick'))
         code_type = lead_data.get(SalesforceLeads.PRODUCTION_TAG_LEADS_ARGS.get('ctype1'))
         country = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('country'))
@@ -2081,6 +2092,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
     else:
         time_zone = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('tzone'))
         appointment_in_ist_key = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('appointment_in_ist')
+        appointment_in_pst_key = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('appointment_in_pst')
         appointment_date = lead_data.get(SalesforceLeads.SANDBOX_TAG_LEAD_ARGS.get('tag_datepick'))
         code_type = lead_data.get(SalesforceLeads.SANDBOX_TAG_LEAD_ARGS.get('ctype1'))
         country = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('country'))
@@ -2089,9 +2101,12 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
 
     if code_type and country and team and cid:
         appointment_in_ist = None
+        appointment_in_pst = None
         if appointment_date:
             # Appointment date format Ex: 05/14/2015 10:30 AM
             appointment_date = datetime.strptime(appointment_date, "%m/%d/%Y %I:%M %p")
+
+            # Convert Appointment to IST
             if time_zone == 'IST':
                 appointment_in_ist = appointment_date
             else:
@@ -2100,8 +2115,22 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
 
                 tz_ist = Timezone.objects.get(zone_name='IST')
                 appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+
             appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
+
+            # Convert Appointment to PST/PDT
+            sf_timezone = SalesforceApi.get_current_timezone_of_salesforce()
+            if time_zone == sf_timezone.zone_name:
+                appointment_in_pst = appointment_date
+            else:
+                tz = Timezone.objects.get(zone_name=time_zone)
+                utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
+
+                tz_ist = Timezone.objects.get(zone_name=sf_timezone.zone_name)
+                appointment_in_pst = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+            appointment_in_pst = datetime.strftime(appointment_in_pst, '%m/%d/%Y %I:%M %p')
         lead_data[appointment_in_ist_key] = appointment_in_ist
+        lead_data[appointment_in_pst_key] = appointment_in_pst
 
         try:
             requests.post(url=sf_api_url, data=lead_data)
