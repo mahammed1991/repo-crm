@@ -34,7 +34,7 @@ admin.site.register(Notification, NotificationAdmin)
 
 
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'cid', 'advertiser_name', 'location', 'language', 'feedback_type', 'description')
+    list_display = ('user', 'title', 'cid', 'advertiser_name', 'location', 'language', 'feedback_type', 'description', 'created_date')
 
 admin.site.register(Feedback, FeedbackAdmin)
 
