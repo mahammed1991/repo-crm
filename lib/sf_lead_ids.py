@@ -111,6 +111,10 @@ class SalesforceLeads(object):
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
 
+                                # Appointment PST time
+                                'appointment_in_pst': '00NZ0000001eXjN',
+
+
                                 # Lead Type
                                 'lead_type': '00Nd0000007fftD',
 
@@ -169,6 +173,9 @@ class SalesforceLeads(object):
 
                                    # Appointment IST time
                                    'appointment_in_ist': '00Nd0000007fnbe',
+
+                                   # Appointment PST time
+                                   'appointment_in_pst': '00Nd0000008M53B',
 
                                    # Lead Type
                                    'lead_type': '00Nd0000007fftD',
