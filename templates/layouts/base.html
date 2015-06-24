@@ -1,0 +1,71 @@
+{% load staticfiles %}
+{% load static %}
+{% load custom_tags %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv='cache-control' content='no-cache'>
+        <meta http-equiv='expires' content='0'>
+        <meta http-equiv='pragma' content='no-cache'>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+        {% block head %}
+        {% endblock head %}
+        <title>
+            {% block title %}
+                Base Title
+            {% endblock title %}
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="{% static 'images/favicon.ico' %}" type="image/png" rel="icon">
+        {% block base_css %}
+                
+        {% endblock base_css %}
+    </head>
+    <body class="home">
+
+        <!-- Google Tag Manager -->
+        <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NC7XCG"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-NC7XCG');</script>
+        <!-- End Google Tag Manager -->
+
+
+            <!-- begin olark code -->
+            
+            {%  olark_group_script request.user %}
+
+            <!-- end olark code -->
+
+            <!--begin prepolute of fields -->
+
+            <script type="text/javascript">
+                olark('api.visitor.updateEmailAddress', {
+                        emailAddress: '{{request.user}}'
+                });
+                olark('api.visitor.updateFullName', {
+                    fullName: '{{request.user.first_name}}'
+                });
+
+            </script>
+
+            <!-- end prepolute of fields -->
+
+        {% block body %}
+        {% endblock body %}
+        
+        {% block base_js %}
+            
+        {% endblock base_js %}
+    </body>
+</html>
