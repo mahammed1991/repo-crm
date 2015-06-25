@@ -134,6 +134,25 @@ class SalesforceApi(object):
 
         return tz
 
+    @staticmethod
+    def convert_appointment_to_timezone(appointment_date, from_time_zone, to_time_zone):
+        """ Convert Appointment to IST  """
+
+        if not appointment_date:
+            return None
+        try:
+            tz = Timezone.objects.get(zone_name=from_time_zone)
+            utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
+            tz_ist = Timezone.objects.get(zone_name=to_time_zone)
+            appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+            tz = SalesforceApi.get_current_timezone_of_salesforce()
+            appointment_in_ist = SalesforceApi.get_utc_date(appointment_in_ist, tz.time_value)
+            appointment_in_ist = SalesforceApi.convert_date_to_salesforce_format(appointment_in_ist)
+            return appointment_in_ist
+        except Exception as e:
+            print e
+            return None
+
 
 class SalesforceType(SFType):
 
@@ -169,7 +188,7 @@ class SalesforceType(SFType):
         result = self.request.request(method, url, headers=headers, **kwargs)
 
         if result.status_code >= 300:
-            self._exception_handler(result, self.name)
+            _exception_handler(result, self.name)
 
         return result
 
