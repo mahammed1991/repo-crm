@@ -56,6 +56,7 @@ class ScheduleLog(models.Model):
     availability = models.ForeignKey(Availability)
     availability_count = models.IntegerField()
     booked_count = models.IntegerField()
+    description = models.TextField()
 
     created_date = models.DateTimeField(auto_now_add=True)
 
