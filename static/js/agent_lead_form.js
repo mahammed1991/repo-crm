@@ -604,7 +604,7 @@ function setLocations(newLocations){
             $("#tag_datepick").val('');
           }
           console.log(window.tz_name);
-          $("#tzone").val(tz_name);
+          $("#tzone").val(window.tz_name);
           $('#preloaderOverlay').show();
           $('form input[type=submit]').attr('disabled', true);
         }
