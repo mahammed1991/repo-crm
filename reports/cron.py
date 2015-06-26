@@ -19,7 +19,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
                     level=logging.DEBUG)
 
 
-@kronos.register('*/5 * * * *')
+@kronos.register('*/10 * * * *')
 def current_day_leads():
     """ Get Leads from SFDC """
     current_day = datetime.utcnow()
@@ -52,13 +52,15 @@ def current_month_leads():
 @kronos.register('0 7 * * *')
 def current_quarter_leads():
     """ Get Leads from SFDC """
-
-    start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    start_date = end_date - timedelta(days=75)
+    end_date = end_date + timedelta(days=15)
+    # start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     logging.info("Current Quarted Leads from %s to %s" % (start_date, end_date))
     get_leads_from_sfdc(start_date, end_date)
 
 
-@kronos.register('*/20 * * * *')
+@kronos.register('*/45 * * * *')
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
@@ -373,7 +375,7 @@ def create_sfdc_user(details):
     user.save()
 
 
-@kronos.register('*/10 * * * *')
+@kronos.register('*/30 * * * *')
 def get_appointment_and_rescheduled_leads():
     """ Get appointment and rescheduled leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this

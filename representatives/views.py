@@ -750,7 +750,7 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     return path
 
 
-def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_boooked_cnt, updated_cnt):
+def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_available_cnt, updated_cnt):
     slot = {}
     ist_date = SalesforceApi.convert_utc_to_timezone(_date, selected_tzone.time_value)
     date_time = datetime.strftime(ist_date, '%b %d, %Y-%I:%M %p').split('-')
@@ -758,7 +758,7 @@ def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_boooke
     slot['team'] = team
     slot['date'] = _date
     slot['time'] = _time
-    slot['prev_boooked_cnt'] = int(prev_boooked_cnt)
+    slot['prev_available_cnt'] = int(prev_available_cnt)
     slot['updated_cnt'] = updated_cnt
     return slot
 
