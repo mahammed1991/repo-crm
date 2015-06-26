@@ -33,9 +33,9 @@ window.cancel_clicked = false;
             frm.description.focus();
             return false;
         }
-         if (frm.type.value == "Feedback Type") {
-             $('#feedbackType').addClass('error-box');
-            frm.description.focus();
+         if (frm.feedbackType.value == "Feedback Type") {
+            $('#feedbackType').addClass('error-box');
+            frm.feedbackType.focus();
             return false;
         }
 
