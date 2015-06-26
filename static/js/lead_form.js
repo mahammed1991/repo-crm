@@ -855,7 +855,7 @@ function validatethis(frm) {
       
       if (status) {
         console.log(window.tz_name);
-        $("#tzone").val(window.tz_name);
+        $("#tzone").append("<option value=" + window.tz_name + "></option>").val(window.tz_name)
         $('#preloaderOverlay').show();
         $('form input[type=submit]').attr('disabled', 'disabled');
       }
