@@ -204,7 +204,7 @@ def get_feedbacks(user):
             | Q(user__profile__user_manager_email=user.email)
             | Q(lead_owner__email=user.email)
             | Q(lead_owner__profile__user_manager_email=user.email)
-        )
+        ).order_by('-created_date')
     feedback_list = dict()
     feedback_list['new'] = feedbacks.filter(status='NEW').count()
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
@@ -469,7 +469,8 @@ def list_feedback(request):
 @manager_info_required
 def create_feedback(request, lead_id=None):
     """ Create feed back """
-    locations = Location.objects.filter(is_active=True)
+    # locations = Location.objects.filter(is_active=True)
+    locations = Location.objects.all()
     programs = Team.objects.filter(is_active=True)
     languages = Language.objects.all()
     lead = None
@@ -490,7 +491,7 @@ def create_feedback(request, lead_id=None):
         feedback_location = Location.objects.get(location_name=request.POST['location'])
         feedback_details.location = feedback_location
 
-        feedback_details.feedback_type = request.POST['type']
+        feedback_details.feedback_type = request.POST['feedbackType']
         feedback_details.description = request.POST['description']
         feedback_details.program_id = request.POST['program']
 
@@ -581,7 +582,7 @@ def create_feedback_from_lead_status(request):
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.GET.get('title')
-        feedback_details.feedback_type = request.GET.get('type')
+        feedback_details.feedback_type = request.GET.get('feedbackType')
         feedback_details.description = request.GET.get('comment')
 
         feedback_details.cid = lead.customer_id
@@ -827,7 +828,7 @@ def create_portal_feedback(request):
     if request.method == 'POST':
         feedback_details = PortalFeedback()
         feedback_details.user = request.user
-        feedback_details.feedback_type = str(request.POST['type'])
+        feedback_details.feedback_type = str(request.POST['feedbackType'])
         feedback_details.description = str(request.POST['comment'])
         if request.FILES:
             feedback_details.attachment = request.FILES['attachmentfile']
