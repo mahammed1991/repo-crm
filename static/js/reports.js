@@ -1,6 +1,7 @@
 $(document).ready(function() {
   $("#split_program").hide();
   $("#split_location").hide();
+  $("#download").prop('disabled', false)
 /* ===================== Default Report Starts Here ============= */
   // Get default report while loading template
   callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'team': ['all'], 'countries': ['all']})
@@ -57,7 +58,7 @@ $(document).ready(function() {
 
 /*=========== Changes in report type ===============*/
 $("#filter_report_type").change(function() {
-
+  $("#download").prop('disabled', false);
   var report_type = $(this).val();
   $("#filter_team input[type=checkbox]").attr('checked', false)
   setDefaultDropdown();
@@ -109,6 +110,7 @@ $("#filter_report_type").change(function() {
 
 /*=========== Changes in report timeline ===============*/
 $('#filter_timeline').change(function(){
+  $("#download").prop('disabled', false);
     var value = $(this).val();
     $('#filter_dateRange').hide();
     var from_date = $("#datepickerFrom").val('');
@@ -123,6 +125,7 @@ $('#filter_timeline').change(function(){
 
 /*=========== Gettin Countries for selected Region ===============*/
 $('#filter_region select').change(function(){
+  $("#download").prop('disabled', false);
     $("#filter_country input[type=checkbox]").attr('checked', false)
     $("#filter_country").hide();
     $("#split_location").hide();
@@ -143,6 +146,7 @@ $('#filter_region select').change(function(){
 
 /*=================Get Reports by clicking view Reports Button=====================*/
 $("#get_report").click(function(){
+  $("#download").prop('disabled', false);
     $('#form_ldap_id').prop("value",window.current_ldap);
     var isError = false;
     var dataString = {}
@@ -825,7 +829,7 @@ function createTableHeader(param){
 }
 
 $('#download').click(function(){
-
+  $("#download").prop('disabled', true)
   if($('#drp_autogen0').is(':visible')){
 
       var isError = false;
@@ -1001,6 +1005,7 @@ $('#download').click(function(){
 
   if(isError){
         return false;
+        $("#download").prop('disabled', false);
     }else{
      $("#download_reports").submit();
     }

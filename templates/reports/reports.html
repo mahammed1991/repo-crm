@@ -297,6 +297,7 @@ $('#ldap').keypress(function (e) {
 // historical data download starts here
 
 $('#download_checkbox').click(function(){
+  $("#download").prop('disabled', false);
   if($(this).prop('checked') == true){
     $('#download_checkbox').hide();
     $('#close_img').show();
