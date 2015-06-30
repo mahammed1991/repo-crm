@@ -305,6 +305,7 @@ $('#download_checkbox').click(function(){
   }
 
 $('#close_img').click(function () {
+  $("#download").prop('disabled', false);
   $('#close_img').hide();
   $('#historical_filter_timeline').hide();
   $('#drp_autogen0').hide();
@@ -312,6 +313,10 @@ $('#close_img').click(function () {
   $('#download_checkbox').attr('checked', false);
   $("#historical_filter_timeline").daterangepicker("clearRange");
 })
+
+$('#drp_autogen0').click(function(){
+  $("#download").prop('disabled', false);
+});
 
 $(function(){ 
 

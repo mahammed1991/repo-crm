@@ -582,7 +582,7 @@ def create_feedback_from_lead_status(request):
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.GET.get('title')
-        feedback_details.feedback_type = request.GET.get('feedbackType')
+        feedback_details.feedback_type = request.GET.get('type')
         feedback_details.description = request.GET.get('comment')
 
         feedback_details.cid = lead.customer_id
