@@ -75,11 +75,11 @@ class UserDetailsAdmin(admin.ModelAdmin):
                     'user_manager_email', 'phone', 'team', 'location', 'profile_photo_url')
 
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'user__username']
-    readonly_fields = ['user', 'role', 'user_supporting_region', 'user_manager_name', 'user_manager_email', 'phone', 'team', 'location',
-                       'profile_photo_url']
+    # readonly_fields = ['user', 'role', 'user_supporting_region', 'user_manager_name', 'user_manager_email', 'phone', 'team', 'location',
+    #                    'profile_photo_url']
 
-    def get_readonly_fields(self, request, obj=None):
-        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
+    # def get_readonly_fields(self, request, obj=None):
+    #     return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
 
     def has_add_permission(self, request):
         return CustomAdmin.get_permission_status(request)
