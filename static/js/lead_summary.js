@@ -82,8 +82,7 @@
       })
 
       /* sorting function start here*/
-        $("#Leads, #ldapLeads").tablesorter({ 
-          // pass the headers argument and assing a object 
+        $("#Leads").tablesorter({ 
           headers: { 
               // assign the secound column (we start counting zero) 
               0: { 
@@ -119,10 +118,6 @@
                   // disable it by setting the property sorter to false 
                   sorter: false 
               },
-              11: { 
-                  // disable it by setting the property sorter to false 
-                  sorter: false 
-              }
               
           } 
       });
@@ -152,29 +147,27 @@ $('#habla_panel_div').click(function(){
 // sorting function statrt here
 
 
- $("#statusHeader, .statusHeader").click(function(){
-
+ $("#statusHeader").click(function(){
       var txt = $(this).text()
-      $('#sortBy, .sortBy').text(txt);
-      $("#StatusRow, .StatusRow").trigger("click");
+      $('#sortBy').text(txt);
+      $("#StatusRow").trigger("click");
       
    })
 
-   $("#CodeTypeHeader, .CodeTypeHeader").click(function(){
+   $("#CodeTypeHeader").click(function(){
       var txt = $(this).text()
-      $('#sortBy, .sortBy').text(txt);
-      $("#CodeTypeRow, .CodeTypeRow").trigger("click");
+      $('#sortBy').text(txt);
+      $("#CodeTypeRow").trigger("click");
 
    })
 
-   $("#RecentHeader, .RecentHeader").click(function(){
+   $("#RecentHeader").click(function(){
       var txt = $(this).text()
-      $('#sortBy, .sortBy').text(txt);
-      $("#RecentRow, .RecentRow").trigger("click");
+      $('#sortBy').text(txt);
+      $("#RecentRow").trigger("click");
    })
 
    $('#Leads thead>tr>th').unbind('click');
-   $('#ldapLeads thead>tr>th').unbind('click');
 
 /* sorting function end here*/
 
