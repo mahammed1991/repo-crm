@@ -111,15 +111,17 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                     if availability.availability_count != data_in_a_day:
                         updated_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone, availability.availability_count, data_in_a_day)
                         changed_reords_in_slot.append(updated_slot)
-                    availability.availability_count = data_in_a_day
-                    availability.save()
+                        desc = availability.availability_count
+                        availability.availability_count = data_in_a_day
+                        availability.save()
 
-                    log = ScheduleLog()
-                    log.user = request.user
-                    log.availability = availability
-                    log.availability_count = availability.availability_count
-                    log.booked_count = availability.booked_count
-                    log.save()
+                        log = ScheduleLog()
+                        log.user = request.user
+                        log.availability = availability
+                        log.availability_count = availability.availability_count
+                        log.booked_count = availability.booked_count
+                        log.description = str(desc) + " is Updated to " + str(availability.availability_count)
+                        log.save()
                 except ObjectDoesNotExist:
                     # create record if it doesn't exist and only if user added some slot information
                     if data_in_a_day:
@@ -136,6 +138,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                         log.availability = availability
                         log.availability_count = availability.availability_count
                         log.booked_count = availability.booked_count
+                        log.description = str(0) + " is Updated to " + str(data_in_a_day)
                         log.save()
 
         # trigger a mail with changes in slot
