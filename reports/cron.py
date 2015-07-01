@@ -2,10 +2,10 @@ import kronos
 from reports.report_services import ReportService
 from django.conf import settings
 from datetime import datetime, timedelta
-from lib.helpers import get_quarter_date_slots, first_day_of_month, last_day_of_month
+from lib.helpers import first_day_of_month, last_day_of_month
 import logging
 from lib.salesforce import SalesforceApi
-from leads.models import Leads, SfdcUsers, Timezone
+from leads.models import Leads, SfdcUsers
 from django.core.exceptions import ObjectDoesNotExist
 from lib.helpers import get_week_start_end_days
 import time
@@ -390,7 +390,8 @@ def get_appointment_and_rescheduled_leads():
         logging.info("Get Appointment and Rescheduled leads form %s to %s" % (start_date, end_date))
         select_items = settings.SFDC_FIELDS
         # select_items = "Id, Location__c, Time_Zone__c, Rescheduled_Appointments__c, Date_of_installation__c, Status"
-        where_clause = "WHERE (Rescheduled_Appointments__c != null OR Appointment_Date__c != null) AND (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
+        where_clause = "WHERE (Rescheduled_Appointments__c != null OR Appointment_Date__c != null) AND (CreatedDate >= %s AND CreatedDate <= %s)"\
+            % (start_date, end_date)
         sql_query = "select %s from Lead %s" % (select_items, where_clause)
         try:
             all_leads = sf.query_all(sql_query)
@@ -406,7 +407,7 @@ def update_sfdc_leads(records, sf):
     """ Update Appointment and Rescheduled Appointment IN IST Time """
     sf.headers.update({"Sforce-Auto-Assign": 'FALSE'})
     for lead in records:
-        # location = lead.get('Location__c')
+        location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')
         appointment_date = lead.get('Appointment_Date__c')
         appointment_in_ist = lead.get('IST_TIME_N__c')
@@ -414,24 +415,16 @@ def update_sfdc_leads(records, sf):
         rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
         reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
         sf_lead_id = lead.get('Id')
-        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+
         appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
-
-        appointment_in_ist = SalesforceApi.convert_appointment_to_timezone(appointment_date, time_zone, 'IST')
+        timezone = SalesforceApi.get_current_timezone_by_location(appointment_date, location, time_zone)
+        appointment_in_ist = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, 'IST')
         tz = SalesforceApi.get_current_timezone_of_salesforce()
-        appointment_in_pst = SalesforceApi.convert_appointment_to_timezone(appointment_date, time_zone, tz.zone_name)
-        reschedule_in_ist = SalesforceApi.convert_appointment_to_timezone(rescheduled_appointment, time_zone, 'IST')
+        appointment_in_pst = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, tz.zone_name)
 
-        logging.info("Updated Appointment Time for Lead %s from Appointment Date %s, rescheduled Date %s with timezone %s" % (
-            sf_lead_id,
-            appointment_date,
-            rescheduled_appointment,
-            time_zone))
-
-        logging.info("Appointment In IST: %s, Appointment In PST: %s and Rescheduled Appointment_in_IST: %s" % (
-            appointment_in_ist,
-            appointment_in_pst,
-            reschedule_in_ist))
+        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+        timezone = SalesforceApi.get_current_timezone_by_location(rescheduled_appointment, location, time_zone)
+        reschedule_in_ist = SalesforceApi.convert_appointment_to_timezone(rescheduled_appointment, timezone, 'IST')
 
         try:
             sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist,

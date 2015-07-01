@@ -541,10 +541,18 @@
       getLocation('rep_location');
     }
 
-
     var userTeam = "{{user.profile.team.team_name|safe}}"
+    var teams = [];
+    $('#team option').each(function() { 
+        teams.push( $(this).attr('value') );
+    });
+
     if(userTeam){
-      $('#team').val(userTeam);
+      if(teams.indexOf(userTeam) != -1){
+        $('#team').val(userTeam);
+      }else{
+        $('#team').val("");
+      }
     }
 
     var userRegion = "{{user.profile.region.name|safe}}"
