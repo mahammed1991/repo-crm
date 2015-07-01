@@ -137,7 +137,7 @@ def lead_form(request):
         return redirect('leads.views.agency_lead_form')
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
     return render(
         request,
@@ -187,7 +187,7 @@ def wpp_lead_form(request):
         return redirect(ret_url)
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     wpp_loc = list()
     regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
     for tm in regalix_team:
@@ -238,7 +238,7 @@ def agency_lead_form(request):
     template_args = dict()
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     template_args.update(lead_args)
 
     template_args.update({'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
@@ -634,7 +634,7 @@ def agency_introduction_form(request):
     template_args = dict()
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     template_args.update(lead_args)
 
     agencies = AgencyDetails.objects.filter(google_rep_id=request.user.id)
@@ -758,7 +758,7 @@ def download_agency_csv(request):
 def agent_bulk_upload(request):
     """ Agency Bulk Upload """
     template_args = dict()
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     template_args = lead_args
     code_types = CodeType.objects.filter(is_active=True)
     template_args.update({'google_rep': request.user})
@@ -940,7 +940,7 @@ def bundle_lead_form(request):
     elif 'Agency' in form_name:
         return redirect('leads.views.agency_lead_form')
 
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
     return render(
         request,
@@ -1984,7 +1984,7 @@ def convert_lead_to_dict(model):
     return lead
 
 
-def get_basic_lead_data():
+def get_basic_lead_data(request):
     """ Get Basic Lead data for submit Leads """
 
     lead_args = dict()
@@ -2019,7 +2019,11 @@ def get_basic_lead_data():
         else:
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
-    teams = Team.objects.filter(is_active=True)
+    if 'google.com' in request.user.email:
+        teams = Team.objects.exclude(team_name='Help Center Task').filter(is_active=True)
+    else:
+        teams = Team.objects.filter(is_active=True)
+
     code_types = CodeType.objects.filter(is_active=True)
     programs = ReportService.get_all_teams()
     programs = [str(pgm) for pgm in programs]
