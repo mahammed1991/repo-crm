@@ -314,17 +314,19 @@ $('#close_img').click(function () {
   $("#historical_filter_timeline").daterangepicker("clearRange");
 })
 
-$('#drp_autogen0').click(function(){
-  $("#download").prop('disabled', false);
-});
+
+
 
 $(function(){ 
 
   $("#historical_filter_timeline").daterangepicker({
     datepickerOptions : {
-         numberOfMonths : 2
+         numberOfMonths : 2,
      }
-  }); 
+  });
+  $('#historical_filter_timeline').on('change', function(){
+      $("#download").prop('disabled', false);
+  })
 });
 
 // historical data download ends here

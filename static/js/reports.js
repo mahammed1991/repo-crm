@@ -205,7 +205,6 @@ $("#get_report").click(function(){
       $("#filter_country .checkbox input:checked").each(function(){
           selectedCountries.push($(this).val());
       }); 
-      console.log(dataString['region'])
       if (dataString['region'] != 'all' && selectedCountries.length < 1){
         var errMsg = "Please select Countries from Countries list";
         showErrorMessage(errMsg);
@@ -260,7 +259,6 @@ $("#get_report").click(function(){
 
 
 function callAjax(dataString){
-  console.log(dataString);
   $('#preloaderOverlay').show();
   $.ajax({
         url: "/reports/get_new_reports",
@@ -268,11 +266,6 @@ function callAjax(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data) {
-          /*if(dataString['program_split'] || dataString['location_split']){
-            program_vs_location(dataString);
-            $('#preloaderOverlay').show();
-          }*/
-            console.log(data);
             report = data['reports'];
             if (data['report_type'] == 'leadreport_programview'){
               $('#view_reports').empty();
@@ -301,7 +294,6 @@ function callAjax(dataString){
         $('#preloaderOverlay').hide()
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.log('failure');
             $('#preloaderOverlay').hide()
         }
       }); 
@@ -370,7 +362,6 @@ function setDefaultDropdown(){
 
 function get_countries(id){
   if(id=='all'){
-    console.log(id);
   }else{
      $.ajax({
           url: "/reports/get-countries",
@@ -378,7 +369,6 @@ function get_countries(id){
           type: 'GET',
           data: {'team_id': id},
           success: function(data) {
-              console.log(data);
               displayCountry(data);
           },
           error: function(errorThrown) {
@@ -828,6 +818,8 @@ function createTableHeader(param){
 
 }
 
+
+
 $('#download').click(function(){
   $("#download").prop('disabled', true)
   if($('#drp_autogen0').is(':visible')){
@@ -1004,33 +996,13 @@ $('#download').click(function(){
   }
 
   if(isError){
-        return false;
-        $("#download").prop('disabled', false);
+    return false;
+    $("#download").prop('disabled', false);
     }else{
      $("#download_reports").submit();
-    }
-
-    
+    }  
 }); 
- 
-    
-function downloadReport(dataString){
-   //$('#preloaderOverlay').show();
-  $.ajax({
-        url: "/reports/get-download-report",
-        data: dataString,
-        type: 'GET',
-        dataType: "json",
-        success: function(data) {
-            console.log(data);
-            },
-        error: function(data) {
-            console.log('failure');
-        },
-      }); 
-
-}
-
+     
 $('.ldap').on("keyup", function() {
   // $("#profile_div").hide();
   return $(this).autocomplete({
