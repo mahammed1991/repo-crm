@@ -4,7 +4,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  Manage Help
+  Resources
 {% endblock title %}
 
 
@@ -129,8 +129,8 @@
 
       <div class="std-sub-title">Video</div>
       <div class="row padd" style="margin-left: 2%;" id="videos">
-        <div class="col-md-12 space1" style="text-align: center; color:#2763c9"> Sales Implementation Explained </div>
-        <div class="col-md-12">
+        <ul style="margin-bottom : 2%;"><li class="ls"><a href="javascript:void(0);" class="nostyle1"><span class="space2 videos">Sales Implementation Explained</span></a></li></ul>
+        <div class="col-md-12" id="tag_videos" style="display:none">
           <video width="100%" controls>
             <source src="{{video_url}}" type="video/mp4">
           </video>
@@ -142,4 +142,13 @@
   <!-- content-region ends --> 
  {% endblock content %}
 {% block main_js %}
+<script type="text/javascript">
+  $(".videos").click(function(){
+    $( "#tag_videos" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+  })
+
+</script>
 {% endblock main_js%}
