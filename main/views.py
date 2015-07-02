@@ -765,7 +765,8 @@ def get_profile_avatar_by_email(email):
 
 @login_required
 def resources(request):
-    return render(request, 'main/resources.html')
+    video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
+    return render(request, 'main/resources.html', {'video_url': video_url})
 
 
 @login_required

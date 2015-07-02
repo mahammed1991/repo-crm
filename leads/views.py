@@ -26,7 +26,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone
                           )
 from main.models import UserDetails
-from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, get_previous_month_start_end_days,
+from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -39,7 +39,6 @@ from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
 from reports.cron import create_or_update_leads
 import operator
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -382,7 +381,7 @@ def submit_agency_different_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MipUa'
+        oid = '00DZ000000MjF0W'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -450,7 +449,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MipUa'
+        oid = '00DZ000000MjF0W'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -549,7 +548,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MipUa'
+        oid = '00DZ000000MjF0W'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
