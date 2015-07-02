@@ -131,7 +131,7 @@
       <div class="row padd" style="margin-left: 2%;" id="videos">
         <ul style="margin-bottom : 2%;"><li class="ls"><a href="javascript:void(0);" class="nostyle1"><span class="space2 videos">Sales Implementation Explained</span></a></li></ul>
         <div class="col-md-12" id="tag_videos" style="display:none">
-          <video width="100%" controls>
+          <video width="100%" controls id="tag">
             <source src="{{video_url}}" type="video/mp4">
           </video>
         </div>
@@ -144,11 +144,22 @@
 {% block main_js %}
 <script type="text/javascript">
   $(".videos").click(function(){
+    var vid = document.getElementById("tag"); 
+    pauseVid(vid);
+      
     $( "#tag_videos" ).animate({
       height: "toggle"
       }, 300, function() {
       });
   })
+
+    function playVid(vid) { 
+          vid.play(); 
+      } 
+
+      function pauseVid(vid) { 
+          vid.pause(); 
+      }
 
 </script>
 {% endblock main_js%}
