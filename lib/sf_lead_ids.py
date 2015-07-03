@@ -18,7 +18,7 @@ class SalesforceLeads(object):
     #                             'last_name': 'last_name',  # Last Name
     #                             'advertiser_location': '00Nd0000007es7U',  # Advertiser Location
     #                             'aemail': '00Nd0000005WcNw',  # Advertiser Email
-    #                             'phone': '00Nd0000005WYgz',  # Advertiser phone
+    #                             'phone': 'phone',  # Advertiser phone
     #                             'company': 'company',  # Advertiser Company
 
     #                             # Webmaster Details
@@ -76,7 +76,7 @@ class SalesforceLeads(object):
                                 'advertiser_name': '00Nd0000007esJ1',  # Advertiser Name
                                 'advertiser_location': '00Nd0000007es7U',  # Advertiser Location
                                 'aemail': '00Nd0000005WcNw',  # Advertiser Email
-                                'phone': '00Nd0000005WYgz',  # Advertiser phone
+                                'phone': 'phone',  # Advertiser phone
                                 'company': 'company',  # Advertiser Company
 
                                 # Webmaster Details
@@ -139,7 +139,7 @@ class SalesforceLeads(object):
                                    'advertiser_name': '00Nd0000007esJ1',  # Advertiser Name
                                    'advertiser_location': '00Nd0000007es7U',  # Advertiser Location
                                    'aemail': '00Nd0000005WcNw',  # Advertiser Email
-                                   'phone': '00Nd0000005WYgz',  # Advertiser phone
+                                   'phone': 'phone',  # Advertiser phone
                                    'company': 'company',  # Advertiser Company
 
                                    # Webmaster Details
