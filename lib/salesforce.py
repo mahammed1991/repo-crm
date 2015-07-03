@@ -153,6 +153,8 @@ class SalesforceApi(object):
                         return timezone.standard_timezone.zone_name
                     except ObjectDoesNotExist:
                         return timezone
+            else:
+                return timezone
         except Exception:
             return timezone
 
