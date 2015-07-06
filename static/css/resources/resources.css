@@ -1,0 +1,141 @@
+
+
+/* Added by SK **********************************************************************************************************************************  */
+.left-list li {background: url(../../images/google-doc-icon.png) 0px 4px no-repeat;
+  padding: 5px 27px; font-family:robotobold; font-size: 14px; color: #5282d4; }
+#accordion .left-list li a:select{ color: red !important;}
+.left-list li a{
+	text-decoration:none;
+	color: #5282d4;
+	}
+.ui-accordion .ui-accordion-header {
+  display: block;
+  cursor: pointer;
+  position: relative;
+  margin: 2px 0 0 0;
+  padding: .5em .5em .5em .7em;
+  /* min-height: 0; */
+  /* support: IE7; */
+  font-size: 100%;
+}
+#accordion > .ui-accordion .ui-accordion-header .ui-accordion-header-icon{  position: absolute;
+  right: .5em;
+  top: 50%;
+  margin-top: -8px;}
+#accordion > .ui-state-default .ui-icon {
+  background: url(../../images/event-arrow-down.png) 250px 4px no-repeat !important;
+  width: 90%;
+}
+#accordion > .ui-state-active .ui-icon {
+ background: url(../../images/event-arrow-up.png) 250px 4px no-repeat !important;
+  width: 90%;
+}
+
+#accordion > h3 { font-family:robotobold; text-align:left; font-size: 14px; font-weight:normal; text-transform:capitalize; padding:20px 15px; border: none; border-radius: 0px;   margin: 0px 0px 20px 0px;}
+.ui-accordion .ui-accordion-content {
+	padding:15px 7px; 
+  margin-bottom: 25px;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active{ background:#e6e6e6;}
+/*.cont-box{ border: 1px solid #dcdcdc; padding: 10px;}*/
+.faq-list{ height:auto;}
+.faq-list li{ background: url(../../images/list-arrow.jpg) no-repeat 0px 17px; float: left;   width: 45%; padding:0px 5px;}
+.ui-accordion .ui-accordion-content{ border:none;   height: auto;}
+.faqsub{ display:none; border:1px solid #e6e6e6; padding: 15px;}
+.faqsub li{ padding:10px; margin-left: 10px;}
+.left-list li.c-red a, .faq-list li.c-red a{ color: red;}
+.form-group {
+  margin-bottom: 0px;
+  width: 100%;
+  height: 90px;
+  margin-bottom: 0;
+}
+.faq-btn {
+  background-color: #4385f5;
+  margin-top: 45px !important;
+  float: right !important;
+  position:relative;
+}
+.form-head{ background: #109d59; padding:10px; margin-top:0px; color: #ffffff;}
+.sel-opt{ width:40%;}
+.faq-ques{ border: 1px solid #dadada; padding-top: 10px; padding-bottom:50px;}
+.carousel-control.right{ background:none;}
+.carousel-control.left{ background:none;}
+.xcm{padding:9% 1% 5% 5%;}
+.xcm2{
+  margin-top: 40px;
+}
+.xcm3{
+padding:2%;
+}
+.xcm4{
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.xcm5{
+  padding-bottom: 8%;
+}
+.xcm6 .carousel-indicators .active {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  background-color: #767474;
+}
+.xcm6 .carousel-indicators li {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 1px;
+  text-indent: -999px;
+  cursor: pointer;
+  background-color: #000 \9;
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid #797676;
+  border-radius: 10px;
+}
+.xcm6 .carousel-control {
+  
+  color: #000000;
+    width: 91%;
+	top: 105%;
+  }
+  
+
+.carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-prev, .carousel-control .icon-next {
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  font-size: 20px;
+}
+.tag-imp, .workf, .shop, .callf{ height:585px; border: 1px solid #dcdcdc; padding: 10px;}
+
+@media (max-width: 480px) {
+	.faq-ques{ height:350px;}
+	#accordion > .ui-state-active .ui-icon {
+    background: rgba(0, 0, 0, 0) url(../../images/event-arrow-up.png) no-repeat scroll 240px 4px !important;
+	}
+	#accordion > .ui-state-default .ui-icon {
+    background: rgba(0, 0, 0, 0) url(../../images/event-arrow-down.png) no-repeat scroll 240px 4px !important;
+	}
+	.tag-imp, .workf, .shop, .callf{ height:330px;}
+	}
+	
+@media (max-width: 480px) and (orientation:landscape) {
+	.faq-ques{ height:350px;}
+	#accordion > .ui-state-active .ui-icon {
+    background: rgba(0, 0, 0, 0) url(../../images/event-arrow-up.png) no-repeat scroll 385px 4px !important;
+	}
+	#accordion > .ui-state-default .ui-icon {
+    background: rgba(0, 0, 0, 0) url(../../images/event-arrow-down.png) no-repeat scroll 385px 4px !important;
+	}
+	.tag-imp, .workf, .shop, .callf{ height:430px;}
+	}
+	
+@media (max-width: 640px) {
+	
+	}
+
+.rw1{
+	display:none;
+	}

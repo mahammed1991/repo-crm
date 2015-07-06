@@ -770,6 +770,14 @@ def resources(request):
 
 
 @login_required
+def new_resources(request):
+    # Customer Testimonials
+    customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
+    video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
+    return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials, 'video_url': video_url})
+
+
+@login_required
 def get_inbound_locations(request):
     """ Get all In-Bound Locations """
     locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter()

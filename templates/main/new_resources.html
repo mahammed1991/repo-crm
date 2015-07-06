@@ -1,0 +1,530 @@
+
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Manage Help
+{% endblock title %}
+{% block content %}
+
+{% block main_css %}
+	<link rel="stylesheet" href="{% static 'css/resources/resources.css' %}">
+{% endblock main_css %}
+
+<section class="content-region inner-page xcm6">
+    <div class="container-fluid">
+      <h1>RESOURCES</h1>
+      <!-- google rep info -->
+      <div class="row">
+	  <!-- lefft coloum start************************************************************ -->
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <div id="accordion">
+            <h3>Capabilities</h3>
+            <div>
+              <ul class="left-list">
+                <li class="showxl" id="tag-imp"><a href="#cdn1">Tag Implementation</a></li>
+                <li class="showxl" id="shop"><a href="#">Shopping</a></li>
+              </ul>
+            </div>
+            <h3>Best Practices</h3>
+            <div>
+              <ul class="left-list">
+                <li class="showxl" id="workf"><a href="#">Workflow</a></li>
+                <li class="showxl" id="callf"><a href="#">Callflow</a></li>
+                <li class="showxl"><a href="#">Support Boundaries</a></li>
+              </ul>
+            </div>
+            <h3>FAQs</h3>
+            <div>
+              <ul class="left-list">
+                <li class="showxl" id="cwp"><a href="#" onClick="changeContent( '../../static/css/resources/30cms pdfs/Compatibility with CMS Platforms .pdf')">Compatibility with CMS/Platforms</a></li>
+                <li class="showxl"><a href="#" onClick="changeContent('')">Task Specific Questions</a></li>
+                <li class="showxl" id="faq-ques"><a href="#">Submit a question</a></li>
+                <li class=""><a id="toggleLink" href="#">Top 30 CMS</a></li>
+              </ul>
+              <div class="faqsub">
+                <ul class="faq-list">
+                  <li class="showxl" id="aaz"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/3dcart.pdf')">3DCart</a></li>
+                  <li class="showxl" id="aaz1"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Prestashop.pdf')">prestashop</a></li>
+                  <li class="showxl" id="aaz1"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Prestashop.pdf')">prestashop</a></li>
+                  <li class="showxl" id="aaz2"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Amazon.pdf')">Amazon</a></li>
+                  <li class="showxl" id="aaz3"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/EKMPowershop.pdf')">EKM Powershop</a></li>
+                  <li class="showxl" id="aaz4"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Opencart.pdf')">Opencart</a></li>
+                  <li class="showxl" id="aaz5"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Weebly.pdf')">Weebly</a></li>
+                  <li class="showxl" id="aaz6"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Bigcommerce.pdf')">bigcommerce</a></li>
+                  <li class="showxl" id="aaz7"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Shopify.pdf')">Shopify</a></li>
+                  <li class="showxl" id="aaz8"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/CityMax.pdf')">CityMax</a></li>
+                  <li class="showxl" id="aaz9"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/GambioShop.pdf')">Gambio shop</a></li>
+                  <li class="showxl" id="aaz10"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Prostores.pdf')">prostores</a></li>
+                  <li class="showxl" id="aaz11"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Wix.pdf')">Wix</a></li>
+                  <li class="showxl" id="aaz12"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Godaddy.pdf')">godaddy</a></li>
+                  <li class="showxl" id="aaz13"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Volusion.pdf')">Volusion</a></li>
+                  <li class="showxl" id="aaz14"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Concrete5.pdf')">Concrete5</a></li>
+                  <li class="showxl" id="aaz15"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Joomla.pdf')">Joomla</a></li>
+                  <li class="showxl" id="aaz16"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Square_space1.pdf')">Square space 1</a></li>
+                  <li class="showxl" id="aaz17"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Xcart.pdf')">Xcart</a></li>
+                  <li class="showxl" id="aaz18 "><a href="#" onClick="changeContent('../../static/css/../../static/css/resources/30cms pdfs/Magento.pdf')">magento</a></li>
+                  <li class="showxl" id="aaz19"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Wordpress.pdf')">wordpress</a></li>
+                  <li class="showxl" id="aaz20"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/DotNetNuke.pdf')">DotNetNuke</a></li>
+                  <li class="showxl" id="aaz21"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Mivamerchant.pdf')">Miva merchants</a></li>
+                  <li class="showxl" id="aaz22"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Squarespace2.pdf')">Square space 2</a></li>
+                  <li class="showxl" id="aaz23"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Zeald.pdf')">Zeald</a></li>
+                  <li class="showxl" id="aaz24"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Netsuite.pdf')">netsuite</a></li>
+                  <li class="showxl" id="aaz25"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Yahoostore.pdf')">yahoostore</a></li>
+                  <li class="showxl" id="aaz26"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Drupal.pdf')">Drupal</a></li>
+                  <li class="showxl" id="aaz27"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Networksolutions.pdf')">Network solutions</a></li>
+                  <li class="showxl" id="aaz28"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/Strato.pdf')">Strato</a></li>
+                  <li class="showxl" id="aaz29"><a href="#" onClick="changeContent('../../static/css/resources/30cms pdfs/ZenCart.pdf')">ZenCart</a></li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+            <h3>Success Stories</h3>
+            <div>
+              <ul class="left-list">
+                <li class="showxl"><a href="">Case Studies</a></li>
+                <li class="showxl" id="testimon"><a href="">Testimonials</a></li>
+              </ul>
+            </div>
+            <h3>Videos</h3>
+            <div class="left-list"> 
+            	<div class="showxl" style="margin-left: 2%;" id="videos">
+	        		<ul style="margin-bottom : 2%;">
+	        			<li class="ls">
+	        				<a href="javascript:void(0);" class="nostyle1"><span data-toggle="modal" data-target="#myModal" id="video_btn">Sales Implementation Explained</span></a>
+	        			</li>
+	        		</ul>
+      			</div>
+
+        	<!-- Modal -->
+		        <div id="myModal" class="modal fade" role="dialog">
+		          <div class="modal-dialog" style="width:80%">
+
+		            <!-- Modal content-->
+		            <div class="modal-content">
+		              <div class="modal-header">
+		                <button type="button" class="close" data-dismiss="modal" id="video_close">&times;</button>
+		                <h4 class="modal-title">Sales Implementation Explained</h4>
+		              </div>
+		              
+		                 <video width="100%" controls id="tag">
+		                    <source src="{{video_url}}" type="video/mp4">
+		                  </video>
+		            </div>
+		        </div>
+        	</div>
+            </div>
+            <h3>Newsletter</h3>
+            <div>
+              <ul class="left-list">
+                <li class="showxl" id="aaz30"><a href="" onClick="changeContent('{% url 'newsletter.views.get_newsletter' '2014' 'september' '1' %}')" >September, 2014 vol - 1</a></li>
+                <li class="showxl" id="aaz31"><a href="" onClick="changeContent('{% url 'newsletter.views.get_newsletter' '2014' 'november' '2' %}') ">November, 2014 vol - 2</a></li>
+                <li class="showxl" id="aaz32"><a href="" onClick="changeContent('{% url 'newsletter.views.get_newsletter' '2014' 'december' '3' %}')">December, 2014 vol - 3</a></li>
+                <li class="showxl" id="aaz33"><a href="" onClick="changeContent('{% url 'newsletter.views.get_newsletter' '2015' 'may' '1' %}')">May, 2015 vol - 1</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+		<!-- lefft coloum end************************************************************ -->
+		<!-- right coloum start************************************************************ -->
+        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 cont-box">
+          <div class="col-sm-12 col-md-12 col-lg-12 rw1 tag-imp" id="cdn1">
+			<!-- Tag Implementation slider********************* -->
+            <h1 class="form-head">TAG IMPLEMENTATION</h1>
+			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+					  <!-- Indicators -->
+					 <!-- Wrapper for slides -->
+					  <div class="carousel-inner" role="listbox">
+						<div class="item active">
+						  <img src="{% static 'images/resources/Product Listing Ads/Slide1.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Product Listing Ads/Slide2.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Product Listing Ads/Slide3.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Product Listing Ads/Slide4.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Product Listing Ads/Slide5.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Product Listing Ads/Slide6.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+					  </div>
+
+					  <!-- Controls -->
+					  <div class="xcm7">
+					  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					  </a>
+					  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					  </a>
+					  </div>
+					</div>
+                    <!-- Tag Implementation slider ends **********************************************  -->
+          </div>
+		  <!-- first row closed -->
+		  <!-- second row starts -->
+		  <div class="col-sm-12 col-md-12 col-lg-12 rw1 workf" >
+			<!-- Workflow slider********************* -->
+            <h1 class="form-head">WORK FLOW</h1>
+			<div id="carousel-example-generic1" class="carousel slide" data-ride="carousel">
+					  <!-- Indicators -->
+					 <!-- Wrapper for slides -->
+					  <div class="carousel-inner" role="listbox">
+						<div class="item active">
+						  <img src="{% static 'images/resources/Workflow/Slide1.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Workflow/Slide2.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Workflow/Slide3.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Workflow/Slide4.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+					  </div>
+
+					  <!-- Controls -->
+					  <a class="left carousel-control" href="#carousel-example-generic1" role="button" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					  </a>
+					  <a class="right carousel-control" href="#carousel-example-generic1" role="button" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					  </a>
+					</div>
+			
+			<!-- Workflow slider ends --**********************************************  -->
+          </div>
+		  <!-- Second row closed -->
+		  
+		   <!-- Third row starts -->
+		  <div class="col-sm-12 col-md-12 col-lg-12 rw1 shop" >
+			<!-- Shopping slider********************* -->
+            <h1 class="form-head">SHOPPING</h1>
+			<div id="carousel-example-generic2" class="carousel slide" data-ride="carousel">
+					  <!-- Indicators -->
+					 <!-- Wrapper for slides -->
+					  <div class="carousel-inner" role="listbox">
+						<div class="item active">
+						  <img src="{% static 'images/resources/shopping/Slide1.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/shopping/Slide2.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/shopping/Slide3.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/shopping/Slide4.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/shopping/Slide5.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/shopping/Slide6.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+					  </div>
+
+					  <!-- Controls -->
+					  <a class="left carousel-control" href="#carousel-example-generic2" role="button" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					  </a>
+					  <a class="right carousel-control" href="#carousel-example-generic2" role="button" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					  </a>
+					</div>
+			
+			<!-- Shopping slider ends --**********************************************  -->
+          </div>
+		  <!-- third row closed -->
+		  
+		  <!-- Forth row starts -->
+		  <div class="col-sm-12 col-md-12 col-lg-12 rw1 callf" >
+			<!-- callflow slider********************* -->
+            <h1 class="form-head">CALL FLOW</h1>
+			<div id="carousel-example-generic3" class="carousel slide" data-ride="carousel">
+					  <!-- Indicators -->
+					 <!-- Wrapper for slides -->
+					  <div class="carousel-inner" role="listbox">
+						<div class="item active">
+						  <img src="{% static 'images/resources/Callflow/Slide1.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide2.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide3.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide4.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide5.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide6.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide7.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide8.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+						<div class="item">
+						  <img src="{% static 'images/resources/Callflow/Slide9.JPG' %}" alt="...">
+						  <div class="carousel-caption">
+						  </div>
+						</div>
+					  </div>
+
+					  <!-- Controls -->
+					  <a class="left carousel-control" href="#carousel-example-generic3" role="button" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					  </a>
+					  <a class="right carousel-control" href="#carousel-example-generic3" role="button" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					  </a>
+					</div>
+			
+			<!-- Callflow slider ends --**********************************************  -->
+          </div>
+		  <!-- Forth row closed -->
+		  
+		  <!-- FAQs Submit a question form -->
+		  <div class="col-sm-12 col-md-12 col-lg-12 rw1 faq-ques" >
+			<h1 class="form-head">FAQs</h1>
+			<div class="faq-form">
+			<form id="form-faq" role="form" style="width:100%;">
+				  <div class="form-group sel-opt">
+					  <select class="form-control bgicon" id="sel1">
+                        <option value="0" selected="selected">Task Type</option>
+						<option>Remarketing / RLSA</option>
+						<option>GA Remarketing</option>
+						<option>Dynamic Remarketing</option>
+                        <option>GA Code</option>
+                        <option>GA Event Tracking</option>
+                        <option>eCommerce Tracking Code</option>
+                        <option>Cross-domain tracking code</option>
+                        <option>Tag Manager</option>
+                        <option>Dynamic X Remarketing</option>
+                        <option>Shopping</option>
+					  </select>
+					</div>
+				  <div class="form-group">
+				  <textarea class="form-control" rows="5" id="comment" placeholder="Please enter your question here. A member of team will respond to you within 3 business days."></textarea>
+				</div>
+				  <button type="submit" class="btn btn-default faq-btn">Submit</button>
+			</form>
+			</div>
+          </div>
+		  <!-- FAQs Submit a question form ends -->
+          
+           <!-- Testimonials -->
+		  <div class="col-sm-12 col-md-12 col-lg-12 rw1 testimon" >
+			<h1 class="form-head">Testimonials</h1>
+            <div class="row">
+            <div class="col-md-3 col-sm-3 xcm">
+            <img class="img-responsive" src="{% static 'images/good-job.png'%}" alt="">
+            </div>
+            <div class="col-md-9 col-sm-9 xcm2" >
+			<div class="container-fluid">
+		          <div id="owl-demo" class="owl-carousel">
+		            {% for testimonials in customer_testimonials %}
+		              <div class="testimonial">               
+		                <div class="testi-content">
+		                  <p> {{ testimonials.statement_text }} </p>
+		                    <span class="name">{{ testimonials.first_name }} {{ testimonials.last_name }}</span>
+		                    {% if testimonials.company_name and testimonials.url %}
+		                      <span>{{ testimonials.company_name }} | <a href="http://{{testimonials.url}}" target="_blank">{{ testimonials.url }}</a></span>
+		                    {% elif testimonials.company_name %}
+		                      <span>{{ testimonials.company_name }} </span>
+		                    {% elif testimonials.url %}
+		                        <span> <a href="{{testimonials.url}}" target="_blank">{{ testimonials.url }}</a></span>
+		                    {% endif %}
+		                </div>
+		              </div>
+		              {% endfor %}
+		            </div>
+        	</div>
+
+					  <!-- Controls -->
+					</div>
+                    </div>
+          </div>
+		  <!-- Testimonials ends -->
+		  
+		   <div class="col-sm-12 col-md-12 col-lg-12 rw1 aaz aaz1 aaz2 aaz3 aaz4 aaz5 aaz6 aaz7 aaz8 aaz9 aaz10 aaz11 aaz12 aaz13 aaz14 aaz15 aaz16 aaz17 aaz18 aaz19 aaz20 aaz21 aaz22 aaz23 aaz24 aaz25 aaz26 aaz27 aaz28 aaz29 aaz30 aaz31 aaz32 aaz33 cwp" >
+        <iframe class="embed-responsive-item" id="cont-iframe" src="" width="100%" height="400px" ></iframe>
+          </div>
+        </div>
+		<!-- right coloum END************************************************************ -->
+      </div>
+    </div>
+  </section>
+
+
+{% endblock content %}
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/resources/resources.js' %}"></script>
+<script type="text/javascript">
+$("#owl-demo").owlCarousel({
+    autoPlay : true,
+    stopOnHover : true,
+    navigation:true,
+    paginationSpeed : 500,
+    goToFirstSpeed : 1000,
+    singleItem : true,
+    autoHeight : true,
+    transitionStyle:"fade"
+  });
+</script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+    var url = window.location.href;
+    if (url.indexOf('#videos') != -1){
+      $("#video_btn").trigger('click');
+    }
+  });
+
+  $("video_btn").click(function(){
+    var vid = document.getElementById("tag"); 
+      pauseVid(vid);
+
+      $( "#tag_videos" ).animate({
+        height: "toggle"
+        }, 300, function() {
+        });
+      })
+
+      function playVid(vid) { 
+          vid.play(); 
+      } 
+
+      function pauseVid(vid) { 
+          vid.pause(); 
+      }
+
+  $('#video_close').click(function(){
+    var vid = document.getElementById("tag"); 
+    vid.pause();
+  })
+
+ </script>
+<script>
+$(document).ready(function () {
+    $('.left-list li a, .faq-list li a').click(function(e) {
+        $('.left-list li, .faq-list li').removeClass('c-red');
+
+        var $parent = $(this).parent();
+        if (!$parent.hasClass('c-red')) {
+            $parent.addClass('c-red');
+        }
+        e.preventDefault();
+    });
+	
+	
+	$('.showxl').click(function (event) {
+	event.preventDefault();
+	var id = $(this).attr('id');
+	$( ".rw1" ).hide();
+	$("." + id).show();
+	
+});
+});
+</script>
+
+<script>
+  $(function() {
+    $( "#accordion" ).accordion();
+	
+  });
+</script>
+<script> 
+  $( document ).ready(function() {
+	  $("#toggleLink").click(function () {
+      $(".faqsub").slideToggle();
+	  return false;
+    });
+	});
+</script>
+<script>
+	function changeContent(url)
+	{
+		document.getElementById("cont-iframe").src = url;
+	}
+</script>
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. --> 
+<!--<script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>--> 
+
+{% endblock main_js%}
