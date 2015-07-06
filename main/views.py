@@ -769,6 +769,13 @@ def resources(request):
 
 
 @login_required
+def new_resources(request):
+    # Customer Testimonials
+    customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
+    return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials})
+
+
+@login_required
 def get_inbound_locations(request):
     """ Get all In-Bound Locations """
     locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter()

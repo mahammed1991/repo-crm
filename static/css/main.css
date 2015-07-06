@@ -3279,13 +3279,6 @@ text-align:center;
 cursor:pointer;
 }
 
-.bgicon{
-background-image: url(../img/event-arrow-down.png), -webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef)) !important;
-background-repeat: no-repeat;
-background-position: 95% center;
--moz-appearance: none;
--webkit-appearance: none;
-}
 .plusicon{
 float:right;
 width:20px;
