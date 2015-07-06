@@ -324,7 +324,6 @@ def get_download_report(request):
             end_date = datetime.strptime(end_date, '%Y-%m-%d')
             # end_date = end_date + datetime.timedelta(days=1)
             end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-            print start_date, end_date
 
         if ldap_id:
             email = User.objects.select_related('email').get(pk=ldap_id)

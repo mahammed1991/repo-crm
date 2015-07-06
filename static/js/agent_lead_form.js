@@ -603,8 +603,10 @@ function setLocations(newLocations){
           if(!isTagLeads){
             $("#tag_datepick").val('');
           }
-          console.log(window.tz_name);
-          $("#tzone").append("<option value=" + window.tz_name + "></option>").val(window.tz_name)
+          if(window.tz_name){
+            console.log(window.tz_name);
+            $("#tzone").append("<option value=" + window.tz_name + "></option>").val(window.tz_name)
+          }
           $('#preloaderOverlay').show();
           $('form input[type=submit]').attr('disabled', true);
         }

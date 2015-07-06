@@ -26,7 +26,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone
                           )
 from main.models import UserDetails
-from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, get_previous_month_start_end_days,
+from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -39,7 +39,6 @@ from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
 from reports.cron import create_or_update_leads
 import operator
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -137,7 +136,7 @@ def lead_form(request):
         return redirect('leads.views.agency_lead_form')
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
     return render(
         request,
@@ -187,7 +186,7 @@ def wpp_lead_form(request):
         return redirect(ret_url)
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     wpp_loc = list()
     regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
     for tm in regalix_team:
@@ -238,7 +237,7 @@ def agency_lead_form(request):
     template_args = dict()
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     template_args.update(lead_args)
 
     template_args.update({'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
@@ -382,7 +381,7 @@ def submit_agency_different_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MipUa'
+        oid = '00DZ000000MjF0W'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -450,7 +449,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MipUa'
+        oid = '00DZ000000MjF0W'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -549,7 +548,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MipUa'
+        oid = '00DZ000000MjF0W'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -634,7 +633,7 @@ def agency_introduction_form(request):
     template_args = dict()
 
     # Get all location, teams codetypes
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     template_args.update(lead_args)
 
     agencies = AgencyDetails.objects.filter(google_rep_id=request.user.id)
@@ -758,7 +757,7 @@ def download_agency_csv(request):
 def agent_bulk_upload(request):
     """ Agency Bulk Upload """
     template_args = dict()
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     template_args = lead_args
     code_types = CodeType.objects.filter(is_active=True)
     template_args.update({'google_rep': request.user})
@@ -940,7 +939,7 @@ def bundle_lead_form(request):
     elif 'Agency' in form_name:
         return redirect('leads.views.agency_lead_form')
 
-    lead_args = get_basic_lead_data()
+    lead_args = get_basic_lead_data(request)
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
     return render(
         request,
@@ -1524,7 +1523,7 @@ def get_lead(request, cid):
             'name': leads.first_name + ' ' + leads.last_name,
             'email': leads.lead_owner_email,
             'google_rep_email': leads.google_rep_email,
-            'loc': location if location else 0,
+            'loc': location.location_name if location else 0,
             'team': team.team_name if team else '',
             'team_id': team.id if team else 0,
             'languages_list': languages_list
@@ -1707,8 +1706,11 @@ def get_lead_summary(request, lid=None, page=None):
         # start_date = first_day_of_month(datetime.utcnow())
         # end_date = datetime.utcnow()
         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.exclude(type_1='WPP').filter(**query).order_by('-rescheduled_appointment_in_ist')
-        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
+        leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
+        lead_ids = Leads.objects.values_list('id', flat=True).exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')
+        # lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
+        lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
+        del lead_status_dict['TAT']
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)
@@ -1722,18 +1724,6 @@ def get_lead_summary(request, lid=None, page=None):
                                                            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
-
-    paginator = Paginator(leads, 150)
-
-    page = request.GET.get('page')
-    try:
-        leads = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        leads = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        leads = paginator.page(paginator.num_pages)
 
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
@@ -1787,14 +1777,16 @@ def get_lead_status_by_cid(request):
     """ Lead summary for given CID """
     if request.is_ajax:
         cid = request.GET.get('cid')
-        leads = Leads.objects.filter(customer_id=cid)
+        leads = Leads.objects.exclude(type_1__in=['', 'WPP']).filter(customer_id=cid)
+        lead_ids = [lead.id for lead in leads]
         lead_list = list()
+        lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
         for l in leads:
             lead = convert_lead_to_dict(l)
             lead_list.append(lead)
         mimetype = 'application/json'
         lead_list.sort(key=lambda item: item['rescheduled_appointment_in_ist'], reverse=True)
-        return HttpResponse(json.dumps({'lead_list': lead_list}), mimetype)
+        return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
     return render(request, 'leads/lead_summary.html', {})
 
 
@@ -1937,16 +1929,16 @@ def get_lead_status_by_ldap(request):
     if request.is_ajax():
         user_id = request.GET['user_id']
         user = User.objects.get(id=user_id)
-
         lead_status = settings.LEAD_STATUS
         leads_ids = Leads.objects.values_list(
-            'id', flat=True).exclude(team='').filter(Q(google_rep_email=user.email) | Q(lead_owner_email=user.email), lead_status__in=lead_status)
+            'id', flat=True).exclude(team__in=['', 'WPP']).filter(Q(google_rep_email=user.email) | Q(lead_owner_email=user.email), lead_status__in=lead_status)
         leads = Leads.objects.filter(id__in=leads_ids).order_by('-rescheduled_appointment_in_ist')
+        lead_status_dict = ReportService.get_leads_status_summary(leads_ids)
         lead_list = list()
         for l in leads:
             lead = convert_lead_to_dict(l)
             lead_list.append(lead)
-        lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, 'normal', start_date=None, end_date=None)
+        # lead_status_dict = get_count_of_each_lead_status_by_rep(user.email, 'normal', start_date=None, end_date=None)
         mimetype = 'application/json'
         ldap_dict = dict()
         ldap_dict['manager'] = user.profile.user_manager_name
@@ -1991,7 +1983,7 @@ def convert_lead_to_dict(model):
     return lead
 
 
-def get_basic_lead_data():
+def get_basic_lead_data(request):
     """ Get Basic Lead data for submit Leads """
 
     lead_args = dict()
@@ -2026,7 +2018,11 @@ def get_basic_lead_data():
         else:
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
-    teams = Team.objects.filter(is_active=True)
+    if 'google.com' in request.user.email:
+        teams = Team.objects.exclude(team_name='Help Center Task').filter(is_active=True)
+    else:
+        teams = Team.objects.filter(is_active=True)
+
     code_types = CodeType.objects.filter(is_active=True)
     programs = ReportService.get_all_teams()
     programs = [str(pgm) for pgm in programs]
@@ -2246,3 +2242,22 @@ def get_lead_form_for_rep(user):
             continue
 
     return l_form
+
+
+def get_pagination_lead_summary(request):
+    ''' Gives paginated data for lead summary page'''
+    if request.is_ajax:
+        if request.user.groups.filter(name='SUPERUSER'):
+            from_leads = request.GET.get('from')
+            upto_leads = request.GET.get('to')
+            print from_leads, upto_leads
+            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+            query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
+            lead_list = list()
+            for l in leads:
+                lead = convert_lead_to_dict(l)
+                lead_list.append(lead)
+            return HttpResponse(json.dumps(lead_list))
+        else:
+            return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))

@@ -7,9 +7,10 @@ from simple_salesforce import (Salesforce, SFType, SalesforceMoreThanOneRecord, 
                                SalesforceGeneralError
                                )
 from datetime import datetime, timedelta
-from leads.models import Timezone, Location
+from leads.models import Timezone, Location, TimezoneMapping
 from django.conf import settings
 import json
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CustomeSalesforce(Salesforce):
@@ -133,6 +134,29 @@ class SalesforceApi(object):
                     tz = Timezone.objects.get(zone_name='PST')
 
         return tz
+
+    @staticmethod
+    def get_current_timezone_by_location(_date, location_name, timezone):
+        try:
+            location = Location.objects.get(location_name=location_name)
+            tz = Timezone.objects.get(zone_name=timezone)
+            if location.daylight_start and location.daylight_end:
+                if _date >= location.daylight_start and _date <= location.daylight_end:
+                    try:
+                        timezone = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
+                        return timezone.daylight_timezone.zone_name
+                    except ObjectDoesNotExist:
+                        return timezone
+                else:
+                    try:
+                        timezone = TimezoneMapping.objects.get(daylight_timezone_id=tz.id)
+                        return timezone.standard_timezone.zone_name
+                    except ObjectDoesNotExist:
+                        return timezone
+            else:
+                return timezone
+        except Exception:
+            return timezone
 
     @staticmethod
     def convert_appointment_to_timezone(appointment_date, from_time_zone, to_time_zone):

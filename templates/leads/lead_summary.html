@@ -53,9 +53,6 @@
       </div>
       <h1 class="lead_status">Leads Status</h1>
       {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)'  or request.user.profile.team.team_name == 'Services/GCE'%}
-              <!-- <div class="table-search" id='ldapSearch'>
-                <a href="{% url 'leads.views.get_lead_status_by_ldap' %}" >click here to search leads By Ldap </a>
-                </div> -->
         <div class="row" style="margin-top: -55px !important;margin-bottom: 20px; !important">
         <div class="auth-user-info" id="ldap_user_info" style="display:block; margin: 50px 15px 0px 15px">
                 <div style="text-align:center;">
@@ -70,25 +67,6 @@
                         <input type="text" class="form-control ldap" id="ldap" value="{{request.user.get_full_name}}">
                         <a class="ldap-update"><i id="getLead" class="fa fa-refresh"></i>
                     </div>
-                    <!-- <label class="manager" style="width: 56px !important;">Manager:</label>
-                    {% if request.user.profile.user_manager_name %}
-                        <div class="value" id="ldap_manager">{{request.user.profile.user_manager_name}}</div>
-                    {% else %}
-                        <div class="value" id="ldap_manager">N/A</div>
-                    {% endif %}
-                    <label>Program:</label>
-                    {% if request.user.profile.team.team_name %}
-                      <div class="value" id="ldap_program">{{request.user.profile.team.team_name}}</div>
-                    {% else %}
-                      <div class="value" id="ldap_program">N/A</div>
-                    {% endif %}
-                    <label>Region:</label>
-                    {% if request.user.profile.location.location_name %}
-                      <div class="value" id="ldap_region">{{request.user.profile.location.location_name}}</div>
-                    {% else %}
-                      <div class="value" id="ldap_region">N/A</div>
-                    {% endif %} -->
-                    <!-- <button id='getLead' class="btn std-btn" style="margin-left: 120px;"> Get Lead</button> -->
                 </div>
               </div>
         </div>
@@ -137,11 +115,11 @@
                   <th class="hidden-xs hidden-sm nthchild8">Reschedule Appointment</th>
                   <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
                   <th class="nthchild3" id='StatusRow'>Status </th>
-                  <th width="6%" class="nthchild11">Action</th>
+                  <th width="6%" class="nthchild11 services_action">Action</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                  {% for l in leads %}
+                  {% for l in leads|slice:":500" %}
 
                       {% if l.lead_status == 'Implemented' or l.lead_status == 'Pending QC - WIN' %} 
                       <tr class='status-implemented implemented searchable'>
@@ -202,76 +180,10 @@
                     
                 {% endfor %}
           </tbody>
-
         </table>
-        <!-- <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/> -->
-        <center style="padding-bottom: 15px;"> 
-             <span class="step-links">
-              {% if leads.has_previous %}
-                  <a href="?page={{ leads.previous_page_number }}">Previous</a>
-              {% endif %}
-
-              <span class="current">
-                  Page {{ leads.number }} of {{ leads.paginator.num_pages }}.
-              </span>
-
-              {% if leads.has_next %}
-                  <a href="?page={{ leads.next_page_number }}">Next</a>
-              {% endif %}
-              </span>
-            </center>
+        <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/>
+        
         </div>
-        <div class="row pagination2" style="display:none;">
-          <div class="col-xs-10 col-sm-12 col-md-10">
-            <ul class="pagination pull-left">
-             <li><a class="tag all" href="javascript:void(0);" >All</a></li>
-              <li><a class="page Inactive" href="javascript:void(0);" >Inactive</a></li>
-              <li><a class="page InQueue" href="javascript:void(0);" >In Queue</a></li>
-              <li><a class="page AttemptingContact" href="javascript:void(0);" >Attempting Contact</a></li>
-              <li><a class="page InProgress" href="javascript:void(0);" >In Progress </a></li>
-              <li><a class="page Implemented" href="javascript:void(0);" >Implemented</a></li>
-            </ul>
-            <div class="table-search">
-              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'ldapLeads')"/>
-              <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
-            </div>
-          </div>
-          <div class="col-xs-2 col-md-2">            
-              <ul class="filter-area navbar-right">
-                <li class="lbl">Sort by: </li>
-                <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class='sortBy'>Recent</span> <i class="fa fa-angle-down"></i></a>
-                  <ul class="dropdown-menu light" role="menu">
-                    <li><a href="javascript:void(0);" class="RecentHeader">Recent</a></li>
-                    <li><a href="javascript:void(0);" class='CodeTypeHeader'>Code Type</a></li>
-                    <li><a href="javascript:void(0);" class="statusHeader">Status</a></li>
-                  </ul>
-                  </li>
-              </ul>
-            </div>
-          </div>
-          <div class="table-container pagination2" style="display:none;">
-          <table class="table status-table tablesorter" id='ldapLeads'>
-            <thead>
-                <tr class="table_bg">
-                  <th class="hidden-xs hidden-sm nthchild">No.</th>
-                  <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
-                  <th width="20%" class="nthchild2">CID </th>
-                  <th class="hidden-xs hidden-sm nthchild3 CodeTypeRow">Code Type </th>
-                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
-                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
-                  <th class="hidden-xs hidden-sm nthchild3 RecentRow" >Date Created</th>
-                  <th class="hidden-xs hidden-sm nthchild3">Appointment Time</th>
-                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
-                  <th class="hidden-xs hidden-sm nthchild8">Reschedule Appointment</th>
-                  <!-- <th class="hidden-xs hidden-sm nthchild8">Google Comments</th> -->
-                  <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
-                  <th class="nthchild3 StatusRow">Status </th>
-                </tr>
-            </thead>
-            <tbody id="ldapTableBody">
-            </tbody>
-          </table>
-          </div>
     </div>
   </section>
   <!-- content-region ends --> 
@@ -344,6 +256,7 @@ $(document).ready(function(){
       $("#lead_id-"+ window.lead_id).trigger("click");
       chat(window.lead_id);
     }
+   setLeadSummary({{lead_status_dict|safe}});
 });
 window.lead_id = '';
 
@@ -472,14 +385,10 @@ $(".search_type").click(function(){
         type: 'GET',
         dataType: 'json',
         success: function(data){
-              $(".pagination1").hide();
-              $(".pagination2").show();
           if(data){
+            $('.services_action').hide();
             setLeadSummary(data['lead_status_dict'])
             setLeadSummaryTable(data['lead_list'])
-            //$("#ldap_manager").text(data['ldap_dict'].manager)
-            //$("#ldap_program").text(data['ldap_dict'].program)
-           //$("#ldap_region").text(data['ldap_dict'].region)
             $('#leadstatus').show();
           }else{
             alert('No leads Found')
@@ -498,6 +407,8 @@ $(".search_type").click(function(){
             success: function(data){
               if(data){
                 console.log(data);
+                $('.services_action').hide();
+                setLeadSummary(data['lead_status_dict'])
                 setLeadSummaryTable(data['lead_list'])
               }else{
                 alert('No leads Found')
@@ -509,18 +420,18 @@ $(".search_type").click(function(){
   });
 
 function setLeadSummary(lead_status){
-    $('#implemented').text(lead_status['implemented'])
-    $('#in_queue').text(lead_status['in_queue'])
-    $('#attemptingcontact').text(lead_status['attempting_contact'])
-    $('#in_progress').text(lead_status['in_progress'])
-    $('#in_active').text(lead_status['in_active'])
+    $('#implemented').text(lead_status['Implemented'])
+    $('#in_queue').text(lead_status['In Queue'])
+    $('#attemptingcontact').text(lead_status['Attempting Contact'])
+    $('#in_progress').text(lead_status['In Progress'])
+    $('#in_active').text(lead_status['In Active'])
     $('#total_leads').text(lead_status['total_leads'])
     
   }
   function setLeadSummaryTable(leads){
 
-    //$('#tableBody').html('')
-    $('#ldapTableBody').html('');
+    $('#tableBody').html('')
+    // $('#ldapTableBody').html('');
     for(i=0; i<leads.length; i += 1){
         c = i + 1
       if(leads[i].lead_status == 'Implemented' || leads[i].lead_status == 'Pending QC - WIN'){
@@ -552,13 +463,58 @@ function setLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_of_installation +'</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
     
-      commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
+      comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
         
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
-      $('#ldapTableBody').append(counter+other+commnet+status)
+      $('#tableBody').append(counter+other+comment+status)
       
     }
+    $("#Leads").trigger("update"); 
+  }
+
+
+function setLeadSummaryTableExtend(leads, start_row, end_row){
+
+    for(i=0; i<leads.length; i += 1){
+        c = start_row + i + 1
+      if(leads[i].lead_status == 'Implemented' || leads[i].lead_status == 'Pending QC - WIN'){
+          counter = '<tr class="status-implemented implemented searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+       }
+       else if(leads[i].lead_status == 'Rework Required' && leads[i].lead_sub_status != 'RR - Inactive'){
+         counter = '<tr class="status-implemented implemented searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+       }
+       else if(leads[i].lead_status == 'Rework Required' && leads[i].lead_sub_status == 'RR - Inactive'){
+         counter =  '<tr class="status-inactive inactive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+       }
+       else if (leads[i].lead_status == 'In Active' || leads[i].lead_status == 'Pending QC - In Active'){
+         counter =  '<tr class="status-inactive inactive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if (leads[i].lead_status == 'In Progress'){
+        counter = '<tr class="status-inpro  inprogress searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if (leads[i].lead_status == 'Attempting Contact') {
+        counter = '<tr class="status-attm-contact attemptingcontact searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if(leads[i].lead_status == 'In Queue' || leads[i].lead_status == 'ON CALL' ){
+        counter = '<tr class="status-inq inqueue searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+        }
+
+       other =  '<td class="hidden-xs hidden-sm">' + leads[i].Advertiser + '</td>' +
+                '<td>' + leads[i].cid + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].code_type + '</td>' +
+                '<td class="hidden-xs hidden-sm">' + leads[i].google_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].regalix_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].appointment_time + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].date_of_installation +'</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
+    
+      comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
+                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+        
+      status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
+      action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat({{l.id}}) id="lead_id-{{l.id}}"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid({{l.id}})></i></a></td>'
+      $('#tableBody').append(counter+other+comment+status+action)
+    }
+    $("#Leads").trigger("update"); 
   }
 
 
@@ -568,6 +524,25 @@ $('#ldap').keypress(function (e) {
   {
     $( "#getLead" ).trigger( "click" );
   }
+});
+
+$(window).scroll(function() {
+   if($(window).scrollTop() + $(window).height() == $(document).height()) {
+      if($('.services_action').is(':visible')){
+        var numOfLeads = $('#tableBody tr').length;
+      uptoLeads = numOfLeads + 500
+      $.ajax({
+            url: "/leads/pagination-leads-summary",
+            data: {'from': numOfLeads, 'to': uptoLeads},
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+              setLeadSummaryTableExtend(data, numOfLeads, uptoLeads);
+                console.log(data);
+              }
+        });
+      }
+   }
 });
 
 </script>

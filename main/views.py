@@ -582,7 +582,7 @@ def create_feedback_from_lead_status(request):
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.GET.get('title')
-        feedback_details.feedback_type = request.GET.get('feedbackType')
+        feedback_details.feedback_type = request.GET.get('type')
         feedback_details.description = request.GET.get('comment')
 
         feedback_details.cid = lead.customer_id
@@ -765,14 +765,16 @@ def get_profile_avatar_by_email(email):
 
 @login_required
 def resources(request):
-    return render(request, 'main/resources.html')
+    video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
+    return render(request, 'main/resources.html', {'video_url': video_url})
 
 
 @login_required
 def new_resources(request):
     # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
-    return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials})
+    video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
+    return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials, 'video_url': video_url})
 
 
 @login_required

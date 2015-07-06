@@ -10,6 +10,7 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarte
 from django.conf import settings
 from django.http import HttpResponse
 import time
+from collections import OrderedDict
 from django.db.models import Count, Avg
 
 
@@ -609,6 +610,8 @@ class ReportService(object):
         lead_status_analysis['Implemented'] += rework_required_implemented_leads
 
         lead_status_analysis['Total'] = len(leads)
+        keyorder = {k: v for v, k in enumerate(['In Queue', 'In Progress', 'Attempting Contact', 'In Active', 'Implemented', 'Total'])}
+        lead_status_analysis = OrderedDict(sorted(lead_status_analysis.items(), key=lambda i: keyorder.get(i[0])))
         return lead_status_analysis
 
     @staticmethod

@@ -399,6 +399,19 @@
       $('#team').val(userTeam);
     }
 
+    var teams = [];
+    $('#team option').each(function() { 
+        teams.push( $(this).attr('value') );
+    });
+
+    if(userTeam){
+      if(teams.indexOf(userTeam) != -1){
+        $('#team').val(userTeam);
+      }else{
+        $('#team').val("");
+      }
+    }
+
     var userRegion = "{{user.profile.region.name|safe}}"
    if(userRegion){
       $('#region').val(userRegion);

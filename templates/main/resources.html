@@ -4,7 +4,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  Manage Help
+  Resources
 {% endblock title %}
 
 
@@ -126,9 +126,65 @@
         <ul><li class="ls"><a href="{% url 'newsletter.views.get_newsletter' '2015' 'may' '1' %}" target="_blank" class="nostyle1"><span class="space2">May 2015</span></a></li></ul>
       </div>
       </div>
-    </div>
-  </section>
+
+      <div class="std-sub-title">Video</div>
+      <div class="row padd" style="margin-left: 2%;" id="videos">
+        <ul style="margin-bottom : 2%;"><li class="ls"><a href="javascript:void(0);" class="nostyle1"><span data-toggle="modal" data-target="#myModal" id="video_btn">Sales Implementation Explained</span></a></li></ul>
+      </div>
+
+        <!-- Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog" style="width:80%">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" id="video_close">&times;</button>
+                <h4 class="modal-title">Sales Implementation Explained</h4>
+              </div>
+              
+                 <video width="100%" controls id="tag">
+                    <source src="{{video_url}}" type="video/mp4">
+                  </video>
+            </div>
+          </div>
+        </div>
+  </div>
+</section>
   <!-- content-region ends --> 
  {% endblock content %}
 {% block main_js %}
+<script type="text/javascript">
+
+$(document).ready(function(){
+    var url = window.location.href;
+    if (url.indexOf('#videos') != -1){
+      $("#video_btn").trigger('click');
+    }
+  });
+
+  $("video_btn").click(function(){
+    var vid = document.getElementById("tag"); 
+      pauseVid(vid);
+
+      $( "#tag_videos" ).animate({
+        height: "toggle"
+        }, 300, function() {
+        });
+      })
+
+      function playVid(vid) { 
+          vid.play(); 
+      } 
+
+      function pauseVid(vid) { 
+          vid.pause(); 
+      }
+
+  $('#video_close').click(function(){
+    var vid = document.getElementById("tag"); 
+    vid.pause();
+  })
+
+ </script>
 {% endblock main_js%}
