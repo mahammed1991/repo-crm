@@ -89,6 +89,7 @@ class Leads(models.Model):
     updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
 
     sf_lead_id = models.CharField(max_length=50, unique=True)
+    wpp_treatment_type = models.CharField(max_length=100, blank=True)
 
     class Meta:
         verbose_name_plural = "Leads"
@@ -465,3 +466,21 @@ class SfdcUsers(models.Model):
     class Meta:
         db_table = 'sfdc_users'
         verbose_name_plural = 'SFDC Users'
+
+
+class TreatmentType(models.Model):
+    """ Treatment Type List """
+
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'treatment_type'
+        ordering = ['name']
+        verbose_name_plural = "Treatment Types"

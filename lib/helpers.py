@@ -11,7 +11,7 @@ from django.conf import settings
 from collections import defaultdict
 from main.models import UserDetails
 from leads.models import Leads
-from django.db.models import Q
+from django.db.models import Q, Count
 import operator
 
 from django.contrib.auth.models import User
@@ -240,6 +240,64 @@ def get_previous_month_start_end_days(d):
     return start_date, end_day
 
 
+def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None):
+    if is_manager(email):
+        email_list = get_user_list_by_manager(email)
+        email_list.append(email)
+    else:
+        email_list = [email]
+    if start_date and end_date:
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list}
+        wpp_lead_status_analysis = Leads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        total_count = Leads.objects.filter(**query).count()
+    else:
+        mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+        query = {'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list}
+        wpp_lead_status_analysis = Leads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
+        total_count = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
+    wpp_lead_status_dict = {'total_leads': 0,
+                            'open': 0,
+                            'in_ui_ux_review': 0,
+                            'in_file_transfer': 0,
+                            'on_hold': 0,
+                            'in_mockup': 0,
+                            'mockup_review': 0,
+                            'deferred': 0,
+                            'in_development': 0,
+                            'in_stage': 0,
+                            'implemented': 0,
+                            'ab_testing': 0,
+                            }
+    for status_dict in wpp_lead_status_analysis:
+        if status_dict['lead_status'] == 'Open':
+            wpp_lead_status_dict['open'] += status_dict['count']
+        elif status_dict['lead_status'] == 'In UI/UX Review':
+            wpp_lead_status_dict['in_ui_ux_review'] += status_dict['count']
+        elif status_dict['lead_status'] == 'In File Transfer':
+            wpp_lead_status_dict['in_file_transfer'] += status_dict['count']
+        elif status_dict['lead_status'] == 'On Hold':
+            wpp_lead_status_dict['on_hold'] += status_dict['count']
+        elif status_dict['lead_status'] == 'In Mockup':
+            wpp_lead_status_dict['in_mockup'] += status_dict['count']
+        elif status_dict['lead_status'] == 'Mockup Review':
+            wpp_lead_status_dict['mockup_review'] += status_dict['count']
+        elif status_dict['lead_status'] == 'Deferred':
+            wpp_lead_status_dict['deferred'] += status_dict['count']
+        elif status_dict['lead_status'] == 'In Development':
+            wpp_lead_status_dict['in_development'] += status_dict['count']
+        elif status_dict['lead_status'] == 'In Stage':
+            wpp_lead_status_dict['in_stage'] += status_dict['count']
+        elif status_dict['lead_status'] == 'Implemented':
+            wpp_lead_status_dict['implemented'] += status_dict['count']
+        elif status_dict['lead_status'] == 'AB Testing':
+            wpp_lead_status_dict['ab_testing'] += status_dict['count']
+
+    wpp_lead_status_dict['total_leads'] = total_count
+    return wpp_lead_status_dict
+
+
 def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_date=None):
     """ get Count of Each Lead Status by rep/manager/email """
     if is_manager(email):
@@ -315,6 +373,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
                             'in_development': 0,
                             'in_stage': 0,
                             'implemented': 0,
+                            'ab_testing': 0,
                             }
 
         lead_status_dict['total_leads'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
@@ -348,6 +407,9 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
 
         query['lead_status__in'] = ['Implemented']
         lead_status_dict['implemented'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+
+        query['lead_status__in'] = ['AB Testing']
+        lead_status_dict['ab_testing'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
     return lead_status_dict
 
 
