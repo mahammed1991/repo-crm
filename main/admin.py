@@ -97,20 +97,6 @@ admin.site.register(UserDetails, UserDetailsAdmin)
 
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('text', 'is_visible', )
-    readonly_fields = ['text', 'is_visible']
-
-    def get_readonly_fields(self, request, obj=None):
-        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
-
-    def has_add_permission(self, request):
-        return CustomAdmin.get_permission_status(request)
-
-    def has_delete_permission(self, request, obj=None):
-        return CustomAdmin.get_permission_status(request)
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        extra_context = CustomAdmin.get_view_status(request, extra_context)
-        return super(NotificationAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(Notification, NotificationAdmin)
 

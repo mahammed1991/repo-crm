@@ -11,7 +11,7 @@ class LeadsAdmin(admin.ModelAdmin):
     list_display = ('google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
                     'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'first_contacted_on', 'tat')
 
-    search_fields = ['customer_id']
+    search_fields = ['customer_id', ]
     readonly_fields = ['google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
                        'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'first_contacted_on', 'tat']
 
