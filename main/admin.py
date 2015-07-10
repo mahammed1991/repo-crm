@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup
+from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup, ResourceFAQ
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
@@ -212,3 +212,24 @@ class OlarkChatGroupAdmin(admin.ModelAdmin):
         return super(OlarkChatGroupAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(OlarkChatGroup, OlarkChatGroupAdmin)
+
+
+class ResourceFAQAdmin(admin.ModelAdmin):
+
+    list_display = ('submited_by', 'task_type', 'task_question')
+    readonly_fields = ['submited_by', 'task_type', 'task_question']
+
+    def get_readonly_fields(self, request, obj=None):
+        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
+
+    def has_add_permission(self, request):
+        return CustomAdmin.get_permission_status(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return CustomAdmin.get_permission_status(request)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = CustomAdmin.get_view_status(request, extra_context)
+        return super(ResourceFAQAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+
+admin.site.register(ResourceFAQ, ResourceFAQAdmin)

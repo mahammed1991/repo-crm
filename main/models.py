@@ -354,3 +354,20 @@ class OlarkChatGroup(models.Model):
     class Meta:
         db_table = 'olark_chat_group'
         verbose_name_plural = 'Olark Chat Group'
+
+
+class ResourceFAQ(models.Model):
+
+    task_type = models.CharField(max_length=150, blank=False)
+    task_question = models.TextField(blank=False)
+    submited_by = models.ForeignKey(User)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def __str__(self):
+        return self.task_type
+
+    class Meta:
+        db_table = 'resource_faq'
+        verbose_name_plural = 'ResourceFAQ'
