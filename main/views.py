@@ -22,7 +22,7 @@ from django.conf import settings
 from lib.helpers import send_mail, manager_info_required
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList,
-                         Notification, PortalFeedback)
+                         Notification, PortalFeedback, ResourceFAQ)
 from leads.models import Location, Leads, Team, Language
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
@@ -771,10 +771,20 @@ def resources(request):
 
 @login_required
 def new_resources(request):
-    # Customer Testimonials
+    if request.is_ajax():
+        resfaq = ResourceFAQ()
+        resfaq.task_type = request.GET.get('tasktype')
+        resfaq.task_question = request.GET.get('task_question')
+        resfaq.submited_by = request.user
+        try:
+            resfaq.save()
+            return HttpResponse(json.dumps('SUCCESS'))
+        except Exception:
+            return HttpResponse(json.dumps('FAILURE'))
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
-    video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
-    return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials, 'video_url': video_url})
+    mp4_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
+    ogg_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.ogg'
+    return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials, 'mp4_url': mp4_url, 'ogg_url': ogg_url})
 
 
 @login_required
