@@ -49,6 +49,8 @@ function validatethis(frm) {
     aemailElem = document.getElementById('wpp_aemail');
     validateFiled(aemailElem);
 
+    validateEmailField(aemailElem)
+
     phoneElem = document.getElementById('phone');
     validateFiled(phoneElem);
 
@@ -102,6 +104,17 @@ function validatethis(frm) {
   function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
+function validateEmailField(elem) {
+  var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // Validate Email Field
+  if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
       $(elem).focus();
       window.is_error = true;

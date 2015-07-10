@@ -161,6 +161,8 @@ function validatethis(frm) {
     emailrefElem = document.getElementById('emailref');
     validateFiled(emailrefElem);
 
+    validateEmailField(emailrefElem)
+
     // Programs Validation
     teamElem = document.getElementById('team');
     validateFiled(teamElem);
@@ -192,6 +194,9 @@ function validatethis(frm) {
       emailElem = document.getElementById("manager_email");
       validateFiled(emailElem);
     }
+    // Email Validation
+    emailElem = document.getElementById("manager_email");
+    validateEmailField(emailElem);
 
     // Location/Country Validation
     countryElem = document.getElementById('country');
@@ -208,12 +213,7 @@ function validatethis(frm) {
     validateFiled(aemailElem);
 
     // Email Validation
-    frm.aemail.value = frm.aemail.value.trim();
-    if (!frm.aemail.value.trim().match(check)) {
-      $(frm.aemail).addClass('error-box');
-      frm.aemail.focus();
-      window.is_error = true;
-    }
+    validateEmailField(aemailElem);
 
     // Advertiser Phone Validation
     phoneElem = document.getElementById('phone');
@@ -509,6 +509,17 @@ function validatethis(frm) {
 function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
+function validateEmailField(elem) {
+  var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // Validate Email Field
+  if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
       $(elem).focus();
       window.is_error = true;
