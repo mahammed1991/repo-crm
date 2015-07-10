@@ -34,9 +34,6 @@ function validatethis(frm) {
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
-    ilinksElem = document.getElementById('invision_link');
-    validateFiled(ilinksElem);
-
     cgoalElem = document.getElementById('conversion_goal');
     validateFiled(cgoalElem);
 
