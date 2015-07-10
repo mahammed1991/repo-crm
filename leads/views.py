@@ -1748,10 +1748,9 @@ def get_wpp_lead_summary_by_treatment(request):
         treatment_type_list = [treatment_type]
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
-        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
         # start_date = first_day_of_month(datetime.utcnow())
-        start_date = datetime(2015, 01, 01)
         end_date = datetime.utcnow()
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date, end_date)
@@ -1772,7 +1771,6 @@ def get_wpp_lead_summary_by_treatment(request):
         leads = Leads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
         leads_list = [convert_lead_to_dict(lead) for lead in leads]
 
-        # lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=None, end_date=None)
     return HttpResponse(json.dumps({'leads_list': leads_list, 'status_count': status_count}))
 
 

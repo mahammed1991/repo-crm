@@ -113,9 +113,9 @@ class SalesforceLeads(object):
                                    'conversion_goal': '00Nd0000007fa8P',
                                    'wpp_lead_status': '00Nd0000007faZ6',
                                    'wpp_aemail': '00Nd0000007fk3S',
-                                   'treatment_type': '',
-                                   'ab_testing': '',
-                                   'tracking_code': '',
+                                   'treatment_type': '00Nd0000008MFng',
+                                   'ab_testing': '00Nd0000008MFnl',
+                                   'tracking_code': '00Nd0000008MFnq',
 
                                    # Appointment IST time
                                    'appointment_in_ist': '00Nd0000007fnbe',
