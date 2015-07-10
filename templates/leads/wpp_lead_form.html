@@ -25,7 +25,18 @@
     <input type="hidden" id="ctype1" name="ctype1" value="WPP">
     <input type="hidden" id="code1" name="code1" value="">
     <input type="hidden" id="company" name="company" value="">
-
+    <div class="row">
+      
+      <div class="col-md-6">
+        <label for="treatment_type">Treatment Type</label>
+        <select class="form-control bgicon" id="treatment_type" title="Treatment Type" name="treatment_type">
+          <option value=""> Please Select Treatment Type</option>
+            {% for type in treatment_type %}
+                <option value="{{type}}"> {{type}}</option>
+            {% endfor %}
+        </select>
+      </div>
+    </div>
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <div class="std-sub-title">Google Rep Information</div>
     <div class="row">
@@ -52,17 +63,25 @@
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
       <div class="col-md-6">
-         <label for="url">Website URL</label>
+         <label for="url" id="url_label_id">Website URL</label>
           <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
         </div>
-      <div class="col-md-6">
-        <label for="invision_link">Invision Link(s)</label>
-          <input type="text" class="form-control" id="invision_link" name="invision_link" placeholder="Invision Link(s)">
-        </div>
+     
       
        <div class="col-md-6">
           <label for="conversion_goal">Conversion Goal</label>
           <input type="text" class="form-control" id="conversion_goal" name="conversion_goal" placeholder="Conversion Goal">
+        </div>
+         <div class="col-md-6">
+        <label for="ab_testing">AB Testing</label>
+          <select class="form-control bgicon" id="ab_testing" title="AB Testing" name="ab_testing">
+            <option value='yes'>Yes</option>
+            <option value='no'>No</option>
+        </select>
+        </div>
+        <div class="col-md-12">
+          <label for="tracking_code">Tracking Codes(if any)</label>
+          <textarea class="form-control" placeholder="Tracking Codes" name="tracking_code" id="tracking_code"></textarea>
         </div>
       </div>
     <div class="std-sub-title">Advertiser's Contact Details</div>
@@ -94,14 +113,14 @@
       </div>
     <div class="std-sub-title">Appointment Details</div>
       <div class="row">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <label for="country"> Market Served</label>
               <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
                 {% for loc in wpp_loc %}
                     <option value="{{loc.location_name}}" location_id="{{loc.id}}">{{loc.location_name}}</option>
                 {% endfor %}
               </select>
-        </div>
+        </div> -->
         <div class="col-md-6">
             <label for="tzone">Time zone</label>
               <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
@@ -141,6 +160,16 @@
 <script type="text/javascript">
   $(document).ready(function(){
     $("#country").trigger('change');
+  })
+
+  $('#treatment_type').on('change', function(){
+    treatment_type = $(this).val();
+    if (treatment_type.indexOf("Regalix LP") != -1){
+      $('#url_label_id').text('Website URL ( Page that needs to be converted to LP )');
+    }
+    else{
+       $('#url_label_id').text('Website URL');
+    }
   })
 </script>
 {% endblock main_js %}
