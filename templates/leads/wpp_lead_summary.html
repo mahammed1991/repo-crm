@@ -229,11 +229,12 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-  get_wpp_lead_summary('all')
-  // window.lead_status = {{lead_status_dict|safe}}
-  // window.leads = {{leads|safe}}
-  // setWppLeadSummary(window.lead_status)
-  // setWppLeadSummaryTable(window.leads)
+  get_wpp_lead_summary('all');
+  window.lead_id = '{{lead_id|safe}}';
+    if(window.lead_id != 'None'){
+      $("#lead_id-"+ window.lead_id).trigger("click");
+      chat(window.lead_id);
+    }
 });
 
 function setWppLeadSummary(lead_status){
@@ -304,6 +305,7 @@ function setWppLeadSummary(lead_status){
       $('#tableBody').append(counter+other+commnet+treatmentType+status+action)
       
     }
+    $("#Leads").trigger("update"); 
   }
 
 
@@ -339,35 +341,12 @@ function get_wpp_lead_summary(input_args){
         }); 
 }
 
-
-$(document).ready(function(){
-    window.lead_id = '{{lead_id|safe}}';
-    if(window.lead_id != 'None'){
-      $("#lead_id-"+ window.lead_id).trigger("click");
-      chat(window.lead_id);
-    }
-});
 window.lead_id = '';
 
 function feedbackBycid(lead_id){
   window.lead_id = lead_id
 }
 /* pin chat */
-var lead_owner_email = ''
-var lead_owner_name = ''
-var weekday = new Array("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
-var currentTime = new Date();
-var day = currentTime.getDay()
-var hour = currentTime.getHours()
-var min = currentTime.getMinutes()
-currentDayTime=''
-if (hour >= 12){
-  hour = hour - 12
-  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' PM'
-}else{
-  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' AM'
-}
-
 var myVar=setInterval(function(){chat(window.lead_id)},5000);
 
 function chat(lead_id){
