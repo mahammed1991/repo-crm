@@ -1,65 +1,6 @@
 
 class SalesforceLeads(object):
-    # SANDBOX_BASIC_LEADS_ARGS = {'gref': '00Nd0000005WYgk',  # Full Name
-    #                             'emailref': 'email',  # Rep Email
-    #                             'manager_name': '00Nd00000075Crj',  # Manager Name
-    #                             'manager_email': '00Nd00000077r3s',  # Manager Email
-    #                             'team': '00Nd0000005XIWB',  # Team
-    #                             'service_segment': '00Nd0000007e2AF',  # Service Segment
-    #                             'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
-    #                             'country': '00Nd0000005WYga',  # Country
-    #                             'cid': '00Nd0000005WYgV',  # Customer ID
-    #                             'language': '00Nd0000007clUn',  # Language
-    #                             'tzone': '00Nd0000005WYhT',  # Time Zone
 
-    #                             # Advertiser Details
-    #                             'advertiser_name': '00NZ0000001X6y7',  # Advertiser Name
-    #                             'first_name': 'first_name',  # First Name
-    #                             'last_name': 'last_name',  # Last Name
-    #                             'advertiser_location': '00Nd0000007es7U',  # Advertiser Location
-    #                             'aemail': '00Nd0000005WcNw',  # Advertiser Email
-    #                             'phone': 'phone',  # Advertiser phone
-    #                             'company': 'company',  # Advertiser Company
-
-    #                             # Webmaster Details
-    #                             'fopt': '00Nd0000005WYgp',  # Webmaster First Name
-    #                             'lopt': '00Nd0000005WYgu',  # Webmaster Last Name
-    #                             'webmaster_name': '00NZ0000001XfFl',    # Webmaster Name
-    #                             'web_access': '00Nd0000007esIm',  # Web Access
-    #                             'web_master_email': '00NZ0000001X6yC',  # Webmaster Email
-    #                             'popt': '00Nd0000007esIc',  # Webmaster Phone
-    #                             'change_lead_owner': '00Nd0000007elYB',    # Default value for Change Lead Owner
-
-    #                             # Agency Details
-    #                             'agency_name': '00NZ0000001XR8H',
-    #                             'agency_email': '00NZ0000001XR8M',
-    #                             'agency_phone': '00NZ0000001XR8R',
-    #                             'agency_poc': '00NZ0000001Xdfh',
-
-    #                             'rep_location': '00NZ0000001XfFg',
-
-    #                             # Agency Unique Field
-    #                             'agency_bundle': '00NZ0000001XIJB',
-
-    #                             # Bundle Unique Field
-    #                             'bundle_bundle': '00Nd0000007f4St',
-
-    #                             # WPP Related Fields
-    #                             'invision_link': '00NZ0000001XznO',
-    #                             'conversion_goal': '00NZ0000001XznT',
-    #                             'wpp_lead_status': '00Nd0000007faZ6',
-    #                             'wpp_aemail': '00Nd0000007fk3S',
-
-    #                             # Appointment IST time
-    #                             'appointment_in_ist': '00NZ0000001YOzF',
-
-    #                             # Lead Type
-    #                             'lead_type': '00NZ0000001Y8hF',
-
-    #                             'Campaign_ID': 'Campaign_ID',
-    #                             'oid': 'oid',
-    #                             '__VIEWSTATE': '__VIEWSTATE',
-    #                             }
     SANDBOX_BASIC_LEADS_ARGS = {'gref': '00Nd0000005WYgk',  # Full Name
                                 'emailref': 'email',  # Rep Email
                                 'manager_name': '00Nd00000075Crj',  # Manager Name
@@ -107,13 +48,15 @@ class SalesforceLeads(object):
                                 'conversion_goal': '00Nd0000007fa8P',
                                 'wpp_lead_status': '00Nd0000007faZ6',
                                 'wpp_aemail': '00Nd0000007fk3S',
+                                'treatment_type': '',
+                                'ab_testing': '',
+                                'tracking_code': '',
 
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
 
                                 # Appointment PST time
                                 'appointment_in_pst': '00NZ0000001eXjN',
-
 
                                 # Lead Type
                                 'lead_type': '00Nd0000007fftD',
@@ -170,6 +113,9 @@ class SalesforceLeads(object):
                                    'conversion_goal': '00Nd0000007fa8P',
                                    'wpp_lead_status': '00Nd0000007faZ6',
                                    'wpp_aemail': '00Nd0000007fk3S',
+                                   'treatment_type': '',
+                                   'ab_testing': '',
+                                   'tracking_code': '',
 
                                    # Appointment IST time
                                    'appointment_in_ist': '00Nd0000007fnbe',
