@@ -24,7 +24,27 @@
    <!-- content-region -->
   <section class="content-region">
     <div class="container-fluid">
-      <h1>WPP Leads Summary</h1>
+     <div class="row" style="border-bottom: 1px solid #ccc;  padding-top: 25px; padding-bottom: 19px;"> 
+        <div class="col-xs-12 col-sm-5 col-md-7" style="padding-top: 10px;">
+          <div style="font-size: 24px;  font-family: 'robotoblack';  text-transform: uppercase;  text-align: center;">WPP Leads Summary</div>
+          </div>
+
+          <div class="col-xs-12 col-sm-7 col-md-5" style="padding-top: 10px;">
+          <div style="max-width:334px; margin:auto;">
+            <div class="col-xs-6 col-sm-7 col-md-5" style="padding-right: 0px;  padding-top: 10px;">
+              <div style="font-size:15px;  font-weight:normal; ">Treatment Type:</div>
+            </div>
+             <div class="col-xs-6 col-sm-5 col-md-7" style="padding-right: 0px; padding-left: 0px;">
+              <select id="treatment_type" class="lead_summary bgicon" style="height: 38px;">
+                <option value="all">All</option>
+                {% for type in treatment_types %}
+                  <option value="{{type}}"> {{type}}</option>
+                {% endfor %}
+              </select>
+              </div>
+               </div>
+            </div>
+      </div>   
       <div class="row summary-container">
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_red" id='open'>{{lead_status_dict.open }}</div>
@@ -66,6 +86,10 @@
           <div class="circle_green" id="in_stage">{{lead_status_dict.in_stage}}</div>
           <div class="sum-lbl">In Stage</div>
         </div>
+         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_light_grn" id="ab_testing">{{lead_status_dict.ab_testing}}</div>
+          <div class="sum-lbl">AB Testing</div>
+        </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
           <div class="sum-lbl">Implemented</div>
@@ -87,9 +111,9 @@
               <li><a class="page" href="javascript:void(0);" id='InMockup'>In Mockup</a></li>
               <li><a class="page" href="javascript:void(0);" id='MockupReview' >Mockup Review</a></li>
               <li><a class="page" href="javascript:void(0);" id='Deferred'>Deferred</a></li>
-              <li><a class="page" href="javascript:void(0);" id='MockupDelivered'>Mockup Delivered</a></li>
               <li><a class="page" href="javascript:void(0);" id='InDevelopment'>In Development</a></li>
               <li><a class="page" href="javascript:void(0);" id='InStage'>In Stage</a></li>
+              <li><a class="page" href="javascript:void(0);" id='ABTesting'>AB Testing</a></li>
               <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
             </ul>
             <div class="table-search">
@@ -124,71 +148,13 @@
                   <!-- <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th> -->
                   <!-- <th class="hidden-xs hidden-sm nthchild8">Google Comments</th> -->
                   <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Treatment Type</th>
                   <th class="nthchild3" id='StatusRow'>Status </th>
+                  <th width="6%" class="nthchild11 services_action">Action</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                  {% for l in leads %}
-
-                      {% if l.lead_status == 'Open' %}
-                      <tr class='status-open open searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                        {% elif l.lead_status == 'In UI/UX Review' %}
-                      <tr class='status-inuiuxreview inuiuxreview searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                        {% elif l.lead_status == 'In File Transfer' %}
-                      <tr class='status-infiletransfer infiletransfer searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'On Hold' %}
-                      <tr class='status-onhold onhold searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'In Mockup' %}
-                      <tr class="status-inmockup  inmockup searchable">
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'Mockup Review' %}
-                      <tr class='status-mockupreview mockupreview searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% elif l.lead_status == 'Deferred' %}
-                      <tr class='status-deferred deferred searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                        {% elif l.lead_status == 'Mockup Delivered' %}
-                      <tr class='status-mockupdelivered mockupdelivered searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                        {% elif l.lead_status == 'In Development' %}
-                      <tr class='status-indevelopment indevelopment searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                        {% elif l.lead_status == 'In Stage' %}
-                          <tr class='status-instage instage searchable'>
-                            <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% else %}
-                        <tr class='status-implemented implemented searchable'>
-                        <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{forloop.counter}}</span></td>
-                      {% endif %}
-                      <td class="hidden-xs hidden-sm">{{ l.url_1 }}</td>
-                      <td>{{ l.customer_id }}</td>
-                      <td class="hidden-xs hidden-sm">{{ l.google_rep_name }}</td>
-                      <td class="hidden-xs hidden-sm">{{ l.lead_owner_name }}</td>
-                      <td class="hidden-xs hidden-sm">{{ l.created_date |date:"m/d/Y" }}</td>
-                      <td class="hidden-xs hidden-sm">{{ l.appointment_date |date:"m/d/Y [h:i] A" }}</td>
-                      <!-- <td class="hidden-xs hidden-sm">{{ l.date_of_installation |date:"m/d/Y" }}</td> -->
-                      
-                      {% if l.regalix_comment  %}
-                          <td class="hidden-xs hidden-sm comments-container comments-container2">
-                          <p>
-                          {% if l.regalix_comment != 'None' %}
-                            {{ l.regalix_comment | truncatechars:100 }}
-                          {% endif %}
-                          </p>
-                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {% if l.regalix_comment != 'None' %} {{ l.regalix_comment}} {% endif %}</p> </td>
-                      {% else %}
-                          <td class="hidden-xs hidden-sm comments-container"><p></p>
-                            </td>
-                      {% endif %}
-                     
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
-                    </tr>
-                    
-                {% endfor %}
+                  
           </tbody>
         </table>
         <!-- <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/> -->
@@ -198,18 +164,76 @@
   <!-- content-region ends --> 
 
 {% endblock content %}
+ {% block model_popup %}
+  <!-- feedback modal -->
+        <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Feedback</h4>
+              </div>
+              <div class="modal-body" id="feedback-body">
+                 <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title">
+                   <select class="form-control" id="feedbackType">
+                      <option value="Feedback Type">Feedback Type</option>
+                      <option value="Incorrect Code Installed / Code Installed Incorrectly">Incorrect Code Installed / Code Installed Incorrectly</option>
+                      <option value="Rude / Unprofessional">Rude / Unprofessional</option>
+                      <option value="Bad Communication">Bad Communication</option>
+                      <option value="Missed Appointment(S) / No Follow Up">Missed Appointment(S) / No Follow Up</option>
+                      <option value="Incorrect Information Provided">Incorrect Information Provided</option>
+                      <option value="Good / Perfect Implementation">Good / Perfect Implementation</option>
+                      <option value="Excellent Follow Up">Excellent Follow Up</option>
+                      <option value="100%+">100%+</option>
+                  </select>
+                  <textarea class="form-control" placeholder="Comments" id='comments'></textarea>
+               
+              </div>
+              <div class="modal-footer">
+
+                <div class="btn-group">
+                    <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
+                    <button class="btn std-btn grayed" data-dismiss="modal" id='closeFeedbcak'>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <!-- feedback modal ends -->
+      
+      <!-- modal -->
+      <div class="modal" id="pingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog ping-snippet">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+              <h4 class="modal-title" id="myModalLabel">History</h4>
+            </div>
+            <div class="modal-body" id="chat-body">
+              
+            </div>
+            <div class="modal-footer">
+                <input  type="textarea" class="form-control send-txt" placeholder="Send a messege" id='message'>
+                <button type="button" class="btn send-btn" id='submitmsg'><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+      </div>
+      <!-- modal ends -->
+  {% endblock model_popup %}
+
+
 {% block main_js %}
 
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script src="{% static 'js/wpp_lead_summary.js' %}"></script>
-
 <script type="text/javascript">
 
 $(document).ready(function(){
-  window.lead_status = {{lead_status_dict|safe}}
-  window.leads = {{leads|safe}}
-  setWppLeadSummary(window.lead_status)
-  setWppLeadSummaryTable(window.leads)
+  get_wpp_lead_summary('all')
+  // window.lead_status = {{lead_status_dict|safe}}
+  // window.leads = {{leads|safe}}
+  // setWppLeadSummary(window.lead_status)
+  // setWppLeadSummaryTable(window.leads)
 });
 
 function setWppLeadSummary(lead_status){
@@ -222,6 +246,7 @@ function setWppLeadSummary(lead_status){
     $('#deferred').text(lead_status['deferred'])
     $('#in_development').text(lead_status['in_development'])
     $('#in_stage').text(lead_status['in_stage'])
+    $('#ab_testing').text(lead_status['ab_testing'])
     $('#implemented').text(lead_status['implemented'])
     $('#total_leads').text(lead_status['total_leads'])
     
@@ -245,7 +270,7 @@ function setWppLeadSummary(lead_status){
 
        else if (leads[i].lead_status == 'On Hold'){
          counter =  '<tr class="status-onhold onhold searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'In mockup'){
+        }else if (leads[i].lead_status == 'In Mockup'){
         counter = '<tr class="status-inmockup  inmockup searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }else if (leads[i].lead_status == 'Mockup Review') {
         counter = '<tr class="status-mockupreview mockupreview searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
@@ -256,8 +281,11 @@ function setWppLeadSummary(lead_status){
         counter = '<tr class="status-indevelopment indevelopment searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
         }else if(leads[i].lead_status == 'In Stage'){
           counter = '<tr class="status-instage instage searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        }
+        else if(leads[i].lead_status == 'AB Testing'){
+          counter = '<tr class="status-ab-testing ab-testing searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }else{
-          counter = '<tr class="status-launched launched searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+          counter = '<tr class="status-impl impl searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
 
        other =  '<td class="hidden-xs hidden-sm">' + leads[i].url + '</td>' +
@@ -266,13 +294,14 @@ function setWppLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].regalix_rep + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].appointment_time + '</td>'
-                
+
     
       commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
-        
+      treatmentType = '<td class="hidden-xs hidden-sm">' + leads[i].treatment_type + '</td>'
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
-      $('#tableBody').append(counter+other+commnet+status)
+      action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat({{l.id}}) id="lead_id-{{l.id}}"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid({{l.id}})></i></a></td>'
+      $('#tableBody').append(counter+other+commnet+treatmentType+status+action)
       
     }
   }
@@ -284,6 +313,128 @@ $('#ldap').keypress(function (e) {
   {
     $( "#getLead" ).trigger( "click" );
   }
+});
+
+$('#treatment_type').on('change', function(){
+  treatmentType = $(this).val();
+  get_wpp_lead_summary(treatmentType);
+
+})
+
+
+function get_wpp_lead_summary(input_args){
+  $.ajax({
+          url: "/leads/get-wpp-lead-summary-by-treatment",
+          dataType: "json",
+          type: 'GET',
+          data: {'treatment_type': input_args},
+          success: function(data) {
+              setWppLeadSummary(data['status_count'])
+              setWppLeadSummaryTable(data['leads_list'])
+
+          },
+          error: function(errorThrown) {
+              console.log('failure');
+          }
+        }); 
+}
+
+
+$(document).ready(function(){
+    window.lead_id = '{{lead_id|safe}}';
+    if(window.lead_id != 'None'){
+      $("#lead_id-"+ window.lead_id).trigger("click");
+      chat(window.lead_id);
+    }
+});
+window.lead_id = '';
+
+function feedbackBycid(lead_id){
+  window.lead_id = lead_id
+}
+/* pin chat */
+var lead_owner_email = ''
+var lead_owner_name = ''
+var weekday = new Array("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
+var currentTime = new Date();
+var day = currentTime.getDay()
+var hour = currentTime.getHours()
+var min = currentTime.getMinutes()
+currentDayTime=''
+if (hour >= 12){
+  hour = hour - 12
+  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' PM'
+}else{
+  currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' AM'
+}
+
+var myVar=setInterval(function(){chat(window.lead_id)},5000);
+
+function chat(lead_id){
+    if(lead_id != 'None'){
+        window.lead_id = lead_id
+        dataString = {'lead_id': lead_id}
+        $.ajax({
+              url: "/leads/get-chat",
+              data: dataString,
+              type: 'GET',
+              dataType: "json",
+              success: function(data) {
+                     setChat(data)       
+              }
+              
+            }); 
+    }
+}
+
+function setChat(chatmessages){
+    $('#chat-body').html('')
+    for(i=0; i < chatmessages.length; i +=1){
+      if (chatmessages[i].user_id === '{{user.email}}'){
+            $('#chat-body').append(  '<div class=" ping-copy out-msg">' +
+                                      '<img src="{{request.session.profile_image}}" class="chatter-img">'+
+                                      '<div class="chat-msg">'+
+                                      '<img src="{%static 'images/chat-out-img.png' %}">'+
+                                      '<p>'+ chatmessages[i].message +' </p><div class="chat-date">'+ chatmessages[i].created_date +'</div></div></div>');
+                 
+            }else{
+
+              $('#chat-body').append(  '<div class=" ping-copy in-msg">' +
+                                      '<img src="'+chatmessages[i].image_url+'?sz=32" class="chatter-img">'+
+                                      '<div class="chat-msg">'+
+                                      '<img src="{%static 'images/chat-in-img.png' %}">'+
+                                      '<p>'+ chatmessages[i].message +' </p><div class="chat-date">'+ chatmessages[i].created_date +'</div></div></div>')
+            }
+    }
+}
+
+$('#submitmsg').click(function(){
+  msg = $('#message').val()
+  $('#message').val('')
+   dataString = {'msg': msg, 'lead_id': window.lead_id};
+   if (msg != ''){
+     $.ajax({
+          url: "/leads/create-chat",
+          data: dataString,
+          type: 'GET',
+          dataType: "json",
+          success: function(data) {
+            setChat(data);
+          }
+        }); 
+   
+   }else{
+    alert('please Enter some text msg')
+   }
+  
+})
+
+$("#message").keypress(function(event) {
+    if (event.which == 13) {
+        event.preventDefault();
+
+        $("#submitmsg").trigger("click");
+    }
 });
 
 </script>

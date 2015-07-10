@@ -17,6 +17,9 @@ function validatethis(frm) {
       window.is_reset = false;
       return false;
     }
+
+    t_typeElem = document.getElementById('treatment_type')
+    validateFiled(t_typeElem)
     
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
