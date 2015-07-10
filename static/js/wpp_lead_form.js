@@ -45,6 +45,7 @@ function validatethis(frm) {
 
     aemailElem = document.getElementById('wpp_aemail');
     validateFiled(aemailElem);
+    $("#aemail").val(aemailElem.value);
 
     validateEmailField(aemailElem)
 
