@@ -1,0 +1,554 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+Regalix Google Portal
+{% endblock title %}
+
+{% block main_css %}
+  <style>
+    #owl-demo .owl-item div{
+      padding:5px;
+    }
+    #owl-demo .owl-item img{
+      display: block;
+      width: 100%;
+      height: auto;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+    }
+  </style>
+  {% load static %}
+  
+{% endblock main_css %}
+
+{% block content %}
+
+
+<!-- content-region -->
+  <section class="content-region">
+    <section class="home-banner">
+      <div class="banner-content">
+          <div class="wrap">
+                <ul class="bxslider">
+                  <li class="leads">
+                    <div class="slide-wrap">
+                    {% if "WPP" in request.session.groups %}
+                        <h1 style="margin: 5px !important;"> &nbsp    </h1>
+                    {% else %}
+                    <h1> &nbsp    </h1>
+                    {% endif %}
+                        <div class="btn-group">
+                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit A Lead</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Check the Status of Your Leads</button>
+                        </div>
+                        <div>&nbsp</div>
+                        {% if "WPP" in request.session.groups %}
+                        <div class="btn-group">
+                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit A WPP Lead</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
+                        </div>
+                        {% endif %}
+                        <div class="leads-summary">
+                            <h2 class="sub-title">Your Leads Summary</h2>
+                            <div class="row">
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.implemented}}</span> Wins
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.in_queue}}</span> In Queue
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.attempting_contact}}</span> Attempting<br>Contact
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.in_progress}}</span> In Progress
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{lead_status_dict.in_active}}</span> Inactive
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                  </li>
+                  <li class="reports">
+                    <div class="slide-wrap">
+                        <h1>{{title}}</h1>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="chart">
+                                  <canvas id="totalLeads" class="reports-canvas">
+                                  </canvas>
+                                  <div class="report-chart-lbl">Win<span id="totalWin"></span></div>
+                                </div>
+                                <span>Total Leads</span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="chart">
+                                  <canvas id="tagLeads" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="tagWin">45%</span></div>
+                                </div>
+                                <span>Tag Leads</span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="chart">
+                                  <canvas id="shopSetup" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="shopWin">65%</span></div>
+                                </div>
+                                <span>G-Shopping<br>Setup</span>
+                            </div>
+                        </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'reports.views.reports' %}"'>View all reports</button>   
+                    </div>             
+                  </li>
+                  <li class="feedback">
+                    <div class="slide-wrap">
+                        <h1>Feedback Summary</h1>             
+                           <div class="row">
+                                <div class="col-md-3">
+                                    <div class="fdk-status resolved">{{feedback_list.resolved}}</div>
+                                    <span>Resolved</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status inpro">{{feedback_list.in_progress}}</div>
+                                    <span>In Progress</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status new">{{feedback_list.new}}</div>
+                                    <span>New</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status total">{{feedback_list.total}}</div>
+                                    <span>Total</span>
+                                </div>
+                            </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback' %}"'>Feedback Status</button>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}"'>Add a Feedback</button>   
+                    </div>             
+                  </li>
+                  <!-- <li class="qa">
+                    <div class="slide-wrap">
+                      <h1>Q&A Forum</h1>
+                        {% load i18n humanize extra_filters extra_tags user_tags %}
+                        <div id="listA">
+                          {% for q in question_list%}
+                            <div class="short-summary">
+                              <div class="counts">
+                                  <div class="votes">
+                                      <div class="item-count">{{ q.votes }}</div>
+                                      <div>votes</div>
+                                  </div>
+                                  <div class="status  answered">
+                                      <div class="item-count">{{q.answer}}</div>
+                                      <div>answers</div>
+                                  </div>
+                                  <div class="views">
+                                       <div class="item-count">{{q.views}}</div>
+                                       <div>views</div>
+                                  </div>
+                              </div>
+                              <div class="status  answered">
+                                  <div class="item-count">{{q.answer}}</div>
+                                  <div>answers</div>
+                              </div>
+                              <div class="views">
+                                   <div class="item-count">{{q.views}}</div>
+                                   <div>views</div>
+                              </div>
+                          </div>
+
+                              <div class="question-summary-wrapper">
+                                  <h2><a {% autoescape on %} title="{{ q.body }}" {% endautoescape %} href="/forums/questions/1/tests-questiuons1">{{ q.title }}</a></h2>
+                                  
+                                  <div class="userinfo">
+                                      <span class="relativetime" title="{{q.last_activity_at}}">{% diff_date q.last_activity_at %}</span>
+                                      <a href="/forums/users/{{q.author_id}}/{{q.author_name}}">{{q.author_name}}</a><span class="score" title="1 reputation"></span>
+
+                                  </div>
+                                  <div class="tags">
+                                      <a class="tag-link-test" href="/forums/tags/test/" title="see questions tagged 'test'" rel="tag">test</a>
+                                  </div>
+                              </div>
+
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </li> -->
+                  <li class="resources">
+                    <div class="slide-wrap">
+                        <h1>Resources</h1>
+                        <div class="row">
+                            <div class="col-md-4 capabilities">
+                                <div class="sub-title">Capabilities</div>
+                                <ul>
+                                    <li><a href="https://docs.google.com/a/regalix-inc.com/presentation/d/1TCHuRmOxRxCk6vOPWVcqQwqnH7xLm_UriF0BkwZWYMQ/edit#slide=id.p14" target="_blank">Tag Implementation</a></li>
+                                    <li><a href="https://docs.google.com/a/regalix-inc.com/presentation/d/1bkXQ6WaH2KT6K9d78mRfHVo2QuX2N_DCuxDgV20Xuzg/edit#slide=id.p14" target="_blank">Product Listing Ads</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 best-practices">
+                                <div class="sub-title">Best Practices</div>
+                                <ul>
+                                    <li><a href="https://docs.google.com/a/regalix-inc.com/presentation/d/1vNpO8nI4w7hPCyl-SpMCB4EqVwy4Fqob16Qh-pzmBT4/edit#slide=id.p14" target="_blank">Workflow</a></li>
+                                    <li><a href="https://docs.google.com/a/regalix-inc.com/presentation/d/1gtqLwh6gZVhr1DKykJtrY85XwzV8UgqHwgX-jtsRgvY/edit#slide=id.p13" target="_blank">Callflow</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 faq">
+                                <div class="sub-title">FAQs</div>
+                                <ul>
+                                    <li><a href="https://docs.google.com/a/regalix-inc.com/spreadsheets/d/1yfdjC7u9LakFzH91bhp6s7EfNxZa6aYV2AVi3a7Dc0I/edit" target="_blank">Compatibility with CMS/Platforms</a></li>
+                                    <li><a href="{% url 'main.views.resources' %}#top30cms">Top 30 CMS</a></li>
+                                    <li><a href="{% url 'main.views.resources' %}#newsletter">Newsletter</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                  </li>
+                </ul>
+            </div>
+            <div id="bx-pager">
+              <a data-slide-index="0" href=""><span></span><i class="fa fa-code"></i>Leads</a>
+              <a data-slide-index="1" href=""><span></span><i class="fa fa-file-text"></i>Reports</a>
+              <a data-slide-index="2" href=""><span></span><i class="fa fa-quote-left"></i>Feedback</a>
+              <!--<a data-slide-index="3" href=""><span></span><i class="fa fa-comments"></i>Q & A Forum</a>-->
+              <a data-slide-index="3" href=""><span></span><i class="fa fa-wrench"></i>Resources</a>
+            </div>
+        </div>
+    </section>
+    <section class="notifications">
+      <div class="slick-slider container-fluid trans" id="marquee_notofication">
+        {% for notification in notifications %}
+          <div>{{notification.text}} </div>
+        {% endfor %}
+      </div>
+      <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal" style=" <i>!important; padding-right:2%; text-align:center;margin-top:4%;"><i>Report a bug</i></a>
+    </section>
+
+
+    <section class="performers testimonials">
+      <div class="container-fluid">
+          <h2>TOP LEAD SUBMITTERS</h2>
+            <div class="row">
+              {% if top_performer.quarterly %}
+                <div class="slick-slider col-md-4">
+                   {% for quarter_topper in top_performer.quarterly %}
+                      <div class="performer">
+                            <h3>Last Quarter</h3>
+                            <img src="{% static quarter_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{quarter_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{quarter_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if top_performer.monthly %}
+                <div class="slick-slider col-md-4">
+                   {% for month_topper in top_performer.monthly %}
+                      <div class="performer">
+                            <h3>Last Month</h3>
+                            <img src="{% static month_topper.image_url %}" />
+                            <div class="performer-info">
+                              <span>{{month_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{month_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if top_performer.weekly %}
+                <div class="slick-slider col-md-4">
+                   {% for week_topper in top_performer.weekly %}
+                      <div class="performer">
+                            <h3>Last Week</h3>
+                            <img src="{% static week_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{week_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{week_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+            </div>
+        </div>
+    </section>
+     <section class="testimonials">
+      <div class="container-fluid">
+          <h2>Testimonials</h2>
+          <div id="owl-demo" class="owl-carousel">
+            {% for testimonials in customer_testimonials %}
+              <div class="testimonial">               
+                <div class="testi-content">
+                  <p> {{ testimonials.statement_text }} </p>
+                    <span class="name">{{ testimonials.first_name }} {{ testimonials.last_name }}</span>
+                    {% if testimonials.company_name and testimonials.url %}
+                      <span>{{ testimonials.company_name }} | <a href="http://{{testimonials.url}}" target="_blank">{{ testimonials.url }}</a></span>
+                    {% elif testimonials.company_name %}
+                      <span>{{ testimonials.company_name }} </span>
+                    {% elif testimonials.url %}
+                        <span> <a href="{{testimonials.url}}" target="_blank">{{ testimonials.url }}</a></span>
+                    {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+        </div>
+    </section>
+  </section>
+  <!-- content-region ends --> 
+{% endblock content %}
+{% block model_popup %}
+  <!-- feedback modal -->
+        <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Portal Feedback</h4>
+              </div>
+              <div class="modal-body" id="feedback-body">
+                <form onsubmit='return portalFeedbackValidation(this);' action="{% url 'main.views.create_portal_feedback' %}" method='POST' enctype="multipart/form-data" id="portalFeedback">
+                    {% csrf_token %}
+                   <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                     <select class="form-control" id="feedbackType" name="type">
+                        <option value="Feedback Type">Feedback Type</option>
+                        <option value="UI / Design Related"> UI / Design Related</option>
+                        <option value="UX / Experience Related">UX / Experience Related</option>
+                        <option value="Incorrect Data / Information">Incorrect Data / Information</option>
+                    </select>
+                    <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
+                    
+                      <!--<input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" /> 
+                      <div style="padding-left: 21%;">
+                        <input type="file" id="attachmentfile" style="display:none" name="attachmentfile">
+                        <a href="#"><img src="{% static 'images/browse.png' %}" w id="img1" style="padding-left: 9%;width: 65%;margin: auto;" /></a>
+                      </div>
+                      -->
+                      <div style="width:100%;">  
+                      <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%;"/> 
+                      <input type="file" id="attachmentfile" name="attachmentfile" style="display: none" onChange="Handlechange();" />
+                      <input type="text" id="filename" readonly="true" style="width:58%;" />
+                      
+
+                      </div>                     
+                                          
+                    <!-- <i class="fa fa-paperclip" name="attachmentfile"></i> -->
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+
+                  <div class="btn-group">
+                      <button class="btn std-btn" id='SubmitFeedback' style="border-radius:2px;">Submit</button>
+                  </div>
+                </div>
+               </form>
+            </div>
+          </div>
+        </div>
+        <!-- feedback modal ends -->
+      
+  {% endblock model_popup %}
+{% block main_js %}
+<script src="{% static 'js/jquery.classyloader.js' %}"></script>
+<script>
+$(document).ready(function() {
+
+  reports = {{report_summary|safe}};
+  console.log(reports);
+
+  $("#totalWin").text(parseInt(reports['total_win']) + "%");
+  $("#tagWin").text(parseInt(reports['tag_win']) + "%");
+  $("#shopWin").text(parseInt(reports['shopping_win']) + "%");
+
+  $("#owl-demo").owlCarousel({
+    autoPlay : true,
+    stopOnHover : true,
+    navigation:true,
+    paginationSpeed : 500,
+    goToFirstSpeed : 1000,
+    singleItem : true,
+    autoHeight : true,
+    transitionStyle:"fade"
+  });
+      
+  // banner slider
+  $('.bxslider').bxSlider({
+    pagerCustom: '#bx-pager'
+  });
+
+  $('.slick-slider').slick({
+      dots: false,
+      infinite: true,
+      speed: 500,
+      fade: true,
+      slide: 'div',
+      cssEase: 'linear',
+      autoplay:true,
+      autoplaySpeed:5000,
+      adaptiveHeight:true
+    });
+  $(window).trigger('resize');
+});
+
+
+$(window).on('resize',function() {
+   // do whatever
+    if ($(window).width() < 768 ) {
+      // alert(screen.width)
+      $('#totalLeads').ClassyLoader({
+        width: 90,
+        height: 90 ,
+         diameter : 40,
+         lineColor : 'rgb(70,138,255)',
+         percentage : parseInt(reports['total_win']),
+         lineWidth : 5,
+         animate: false,
+         remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+
+       $('#tagLeads').ClassyLoader({
+          width: 90,
+          height: 90 ,
+          diameter : 40,
+          lineColor : 'rgb(20,195,111)',
+          percentage : parseInt(reports['tag_win']),
+          lineWidth : 5,
+          animate: false,
+          remainingLineColor : 'rgba(0,0,0,0.15)'
+          });
+
+
+          $('#shopSetup').ClassyLoader({
+           width: 90,
+           height: 90 ,
+           diameter : 40,
+           lineColor : 'rgb(255,187,0)',
+           percentage : parseInt(reports['shopping_win']),
+           lineWidth : 5,
+           animate: false,
+           remainingLineColor : 'rgba(0,0,0,0.15)'
+          });
+
+    }else{
+      $('#totalLeads').ClassyLoader({
+       diameter : 49,     
+       fontFamily: 'robotothin',
+       fontSize: '21px',
+       lineColor : 'rgb(70,138,255)',
+       percentage : parseInt(reports['total_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+
+
+      $('#tagLeads').ClassyLoader({
+       diameter : 49,
+       lineColor : 'rgb(20,195,111)',
+       percentage : parseInt(reports['tag_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+
+
+      $('#shopSetup').ClassyLoader({
+       diameter : 49,
+       lineColor : 'rgb(255,187,0)',
+       percentage : parseInt(reports['shopping_win']),
+       lineWidth : 6,
+       animate: false,
+       remainingLineColor : 'rgba(0,0,0,0.15)'
+      });
+    }
+
+});
+
+ 
+</script>
+
+<script type="text/javascript">
+  
+  /* feed back submit through leads status page start here */
+
+
+function portalFeedbackValidation(frm){
+    $(".error-box").removeClass('error-box');
+    var feedbackType = $('#feedbackType').val();
+    var comments = $('#comments').val();
+   if(feedbackType === 'Feedback Type'){
+      $('#feedbackType').addClass('error-box');
+      return false;
+    }else if(comments === ''){
+      $('#comments').addClass('error-box');
+      return false;
+    }else{
+      alert('Portal feedback created')
+      return true;
+      
+      // attachmentfile = $('#attachmentfile').val()
+      // dataString = {'type': feedbackType, 'comment': comments, 'attachmentfile': attachmentfile}
+      // $.ajax({
+      //     url: "/main/portal/feedback",
+      //     data: dataString,
+      //     type: 'GET',
+      //     dataType: "json",
+      //     success: function(data) {
+      //       console.log(data)
+      //       if(data === 'SUCCESS'){
+      //         alert('feedback succesfully created ')
+      //         $('.close').trigger('click');
+      //         $('#feedbackTitle').val('');
+      //         $('#feedbackType').prop('selectedIndex', 0);
+      //         $('#comments').val('');
+      //         $('#attachmentfile').val('')
+      //       }
+      //     }
+      //   }); 
+    }
+    
+    }
+
+$(".fa-times-circle").click(function(){
+    $('#feedbackTitle').val('');
+    $('#feedbackType').prop('selectedIndex', 0);
+    $('#comments').val('');
+    $('#filename').val('');
+    $('.close').trigger('click');
+});
+
+
+$('.close').click(function(){
+  $('#feedbackModal').hide()
+  $('#feedbackTitle').val('');
+  $('#feedbackType').prop('selectedIndex', 0);
+  $('#comments').val('');
+  input = $('#attachmentfile');
+  input.replaceWith(input.val('').clone(true))
+})
+
+/* feed back submit through leads status page end  here */
+</script>
+<script>
+function HandleBrowseClick()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    fileinput.click();
+}
+
+function Handlechange()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+}
+
+</script>
+{% endblock main_js %}
