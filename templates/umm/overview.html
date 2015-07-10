@@ -1,0 +1,1462 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+ 
+  <title>Google Portal</title>
+
+  <link href="{% static 'css/umm/css/custom.css' %}"  rel="stylesheet">
+  <link href="{% static 'css/umm/css/style.default.css' %}" rel="stylesheet">
+  <link href="{% static 'css/umm/css/jquery.datatables.css' %}" rel="stylesheet">
+   <link href="{% static 'css/umm/css/overview.css' %}" rel="stylesheet">
+
+  <link href="{% static 'css/umm/css/morris.css' %}" rel="stylesheet">
+  <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['gauge']}]}"></script>
+  
+  <script type="text/javascript">
+
+  google.setOnLoadCallback(drawChart1);
+      function drawChart1() {
+        var options = {
+          width: 400, height: 170,
+           redFrom:0, redTo:2,
+          yellowFrom:2, yellowTo: 3,
+           greenFrom:3, greenTo:5,
+          minorTicks: 3,
+		  max : 5
+        };
+		var len = document.getElementsByClassName('speed').length;
+		for(i=1;i<=len;i++)
+		{
+			 var classSelecter = document.getElementById('chart_div'+i);
+			  var ma = classSelecter.getAttribute('rel');
+			   var data = google.visualization.arrayToDataTable([
+					  ['Label', 'Value'],
+					  ['INDIA', 3]              
+			]);
+		
+        var chart = new google.visualization.Gauge(classSelecter);
+
+        chart.draw(data, options);
+	  }
+	  }
+	   </script>
+  
+   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+	
+	
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChartAll);
+
+function drawChartAll()
+{jQuery('body').width(jQuery(window).width());
+for(var count=0; document.getElementsByClassName('chart_class').length;count++)
+{
+	console.log('test'+count);
+	var selecterVal=document.getElementsByClassName('chart_class')[count];
+	if(count == 0)
+	{
+	var color = "#ff8b2d";	
+	}
+	else
+	{
+		var color = "#15b0e3";
+	}
+	
+	drawChart(selecterVal,color);
+}	
+}
+
+function drawChart(selecterVal,color) {
+	//console.log(selecterVal.innerHTML);
+  var data = google.visualization.arrayToDataTable([
+    ['Year', 'Points', { role: 'style' }],
+    ['week1',  1000 , 'color: ' + color],
+    ['week2',  1170 , 'color: ' +color ],
+    ['week3',  660  , 'color:' +color],
+    ['week4',  1030 , 'color:' +color],
+	['week4',  1030 , 'color: '+ color],
+	['week4',  1030 , 'color: '+ color],
+  ]);
+
+  var options = {
+    title: '',
+    hAxis: {title: '', titleTextStyle: {color: 'red'}}
+  };
+
+  var chart = new google.visualization.ColumnChart(selecterVal);
+
+  chart.draw(data, options);
+
+}
+    </script>
+    
+  <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(lineChart);
+      function lineChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'India RR', 'SEA RR' ,    'UKI RR'],
+          ['week 1',  1000,      400,        460],
+          ['week 2',  1170,      460,        400],
+          ['week 3',  660,       1120,       540],
+          ['week 4',  1030,      540,       1120],
+		  ['week 5',  1030,      540,       1120],
+        ]);
+
+        var options = {
+          title: ''
+        };
+jQuery('body').width(jQuery(window).width());
+        var chart = new google.visualization.LineChart(document.getElementById('sridhar'));
+		
+        chart.draw(data, options);
+      }
+    </script>  
+    
+    
+ 
+
+<script src="{% static 'js/umm/js/analytics.js' %}" async></script><script type="text/javascript" src="{% static 'js/umm/js/less.js' %}"></script>
+<style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style><style class="firebugResetStyles" type="text/css" charset="utf-8">/* See license.txt for terms of usage */
+
+</style>
+
+
+</style>
+</head>
+
+<body>
+    
+<!-- Preloader -->
+<div id="preloader">
+    <div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+</div>
+
+<section>
+  
+ {% include "umm/left_nav.html" %}
+  
+  <div class="mainpanel">
+    
+    <div class="headerbar">
+      
+      <a class="menutoggle"><i class="fa fa-bars"></i></a>
+      
+      
+      
+      
+      
+    </div><!-- headerbar -->
+    
+    <div class="pageheader">
+     
+      <h2><i class="fa fa-home"></i> OVERVIEW </h2>
+      
+    </div>
+    
+    <div class="contentpanel">
+      
+      
+      <div class="row" >
+            
+       <div class="col-sm-6 col-md-3">
+         <div class="foo-box">
+         <div style="font-size:19px; float:right; color:#636e7b; margin-left:40%; margin-top:3%; width:auto; height:10px;  position:absolute;">INDIA</div>
+   <span style="float:left; margin-top:11%; margin-left:10%;">UAA Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar green" progress-percent="100"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+    <span style="float:left; margin-top:3%; margin-left:10%;">Points Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar red" progress-percent="80"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+    <span style="float:left; margin-top:3%; margin-left:10%;">Quality Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar yellow numm" progress-percent="50"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+</div>
+        </div><!-- col-sm-6 -->
+        
+        <div class="col-sm-6 col-md-3">
+         <div class="foo-box">
+         <div style="font-size:19px; float:right; color:#636e7b; margin-left:40%; margin-top:3%; width:auto; height:10px;  position:absolute;">SEA</div>
+   <span style="float:left; margin-top:11%; margin-left:10%;">UAA Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar green" progress-percent="100"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+    <span style="float:left; margin-top:3%; margin-left:10%;">Points Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar red" progress-percent="80"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+    <span style="float:left; margin-top:3%; margin-left:10%;">Quality Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar yellow numm" progress-percent="50"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+</div>
+        </div>
+        
+        
+        <div class="col-sm-6 col-md-3">
+         <div class="foo-box">
+         <div style="font-size:19px; float:right; color:#636e7b; margin-left:40%; margin-top:3%; width:auto; height:10px;  position:absolute;">UKI</div>
+   <span style="float:left; margin-top:11%; margin-left:10%;">UAA Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar green" progress-percent="100"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+    <span style="float:left; margin-top:3%; margin-left:10%;">Points Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar red" progress-percent="80"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+    <span style="float:left; margin-top:3%; margin-left:10%;">Quality Run Rate</span>
+	<div class="loader">
+       
+		<div class="progress-bar yellow numm" progress-percent="50"><div class="progress-stripes"></div></div><div class="percentage">0%</div>
+               
+	</div>
+</div>
+        </div>
+        
+             
+      </div>
+      
+      <div class="row" >
+            
+        <div class="col-sm-6 col-md-3">
+        <div class="foo-box">
+          <div style="width:186px; height:20px; margin:0px auto; font-size:17px; margin-top:10px; "> INDIA - PRODUCTIVITY</div>
+          <div id="chart_div1" class="speed" style="float:left; margin-left:23%;" region-data="INDIA" rel="4"></div>
+        </div>
+      </div><!-- col-sm-6 -->
+        
+        <div class="col-sm-6 col-md-3">
+         <div class="foo-box">
+         <div style="width:186px; height:20px; margin:0px auto; font-size:17px; margin-top:10px; ">SEA - PRODUCTIVITY</div>
+<div id="chart_div2"  class="speed"  style="float:left; margin-left:23%;" rel="3"></div>
+
+</div>
+        </div>
+        
+        
+        <div class="col-sm-6 col-md-3">
+         <div class="foo-box">
+         <div style="width:186px; height:20px; margin:0px auto; font-size:17px; margin-top:10px; ">UKI - PRODUCTIVITY</div>
+<div id="chart_div3"  class="speed"  style="float:left; margin-left:23%;" rel="2"></div>
+
+</div>
+        </div>
+        
+             
+      </div>
+      
+      <div class="row" style="margin-top:3%;">
+                <div class="col-md-6">
+                    <div class="panel panel-grape">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 clearfix">
+                                    <h4 class="pull-left" style="margin:0 0 10px">CXS</h4>
+                                    
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-4" style="padding-top:10px;padding-bottom:10px;">
+                                    <div class="easypiechart" id="returningvisits" data-percent="65">
+                                        <span class="percent">28</span>
+                                    <canvas class="canvas" width="90" height="90"></canvas></div>
+                                    <label for="newvisits">INDIA</label>
+                                    <hr class="hidden-md hidden-lg">
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-4" style="padding-top:10px;padding-bottom:10px;">
+                                    <span class="easypiechart" id="newvisitor" data-percent="81">
+                                        <span class="percent">33</span>
+                                    <canvas class="canvas" width="90" height="90"></canvas></span>
+                                    <label for="bouncerate">SEA</label>
+                                    <hr class="hidden-md hidden-lg">
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-4" style="padding-top:10px;padding-bottom:10px;">
+                                    <span class="easypiechart" id="clickrate" data-percent="42">
+                                        <span class="percent">79</span>
+                                    <canvas class="canvas" width="90" height="90"></canvas></span>
+                                    <label for="clickrate">UKI</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             <div class="col-md-6">
+                    <div class="panel panel-grape">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 clearfix">
+                                    <h4 class="pull-left" style="margin:0 0 10px">Percentage to Target </h4>
+                                    
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-4" style="padding-top:10px;padding-bottom:10px;">
+                                    <div class="easypiechart" id="returningvisits" data-percent="65">
+                                        <span class="percent">28</span>
+                                    <canvas class="canvas" width="90" height="90"></canvas></div>
+                                    <label for="newvisits">INDIA</label>
+                                    <hr class="hidden-md hidden-lg">
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-4" style="padding-top:10px;padding-bottom:10px;">
+                                    <span class="easypiechart" id="newvisitor" data-percent="81">
+                                        <span class="percent">33</span>
+                                    <canvas class="canvas" width="90" height="90"></canvas></span>
+                                    <label for="bouncerate">SEA</label>
+                                    <hr class="hidden-md hidden-lg">
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-4" style="padding-top:10px;padding-bottom:10px;">
+                                    <span class="easypiechart" id="clickrate" data-percent="42">
+                                        <span class="percent">79</span>
+                                    <canvas class="canvas" width="90" height="90"></canvas></span>
+                                    <label for="clickrate">UKI</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                
+                
+                
+    </div>
+    <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 clearfix">
+                                    <h4 style="margin: 0 0 20px;" class="pull-left">User Report <small>(weekly)</small></h4>
+                                    <div class="btn-group pull-right">
+  <a class="btn btn-default btn-sm active" href="javascript:;">UAA RR</a>
+   <a class="btn btn-default btn-sm " href="javascript:;">points RR</a>
+    
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                   <div id="sridhar" style="width: 100%; height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-grape">
+                        <div class="panel-heading">
+                              <h4><i class="icon-highlight fa fa-check"></i> Action Item List</h4>
+                              <!-- <div class="options">
+                                <a href="javascript:;"><i class="fa fa-cog"></i></a>
+                                <a href="javascript:;"><i class="fa fa-wrench"></i></a> 
+                                <a href="javascript:;" class="panel-collapse"><i class="fa fa-chevron-down"></i></a>
+                              </div> -->
+                        </div>
+                        <div class="panel-body">
+                            <ul class="panel-tasks ui-sortable">
+                                <li class="item-danger">
+                                    <label>
+                                        <i class="fa fa-ellipsis-v icon-dragtask"></i>
+                                        <input type="checkbox"> 
+                                        <span class="task-description">Write documentation for theme</span>
+                                        <span class="label label-info">6 Days</span>
+                                    </label>
+                                    
+                                </li>
+                                <li class="item-primary">
+                                    <label>
+                                        <i class="fa fa-ellipsis-v icon-dragtask"></i>
+                                        <input type="checkbox"> 
+                                        <span class="task-description">Compile code</span>
+                                        <span class="label label-primary">3 Days</span>
+                                    </label>
+                                    
+                                </li>
+                                <li class="item-info">
+                                    <label>
+                                        <i class="fa fa-ellipsis-v icon-dragtask"></i>
+                                        <input type="checkbox"> 
+                                        <span class="task-description">Upload files to server</span>
+                                        <span class="label label-orange">Tomorrow</span>
+                                    </label>
+                                    
+                                </li>
+                                
+                                
+                                <li>
+                                    <label>
+                                        <i class="fa fa-ellipsis-v icon-dragtask"></i>
+                                        <input type="checkbox"> 
+                                        <span class="task-description">Setup meeting with client</span>
+                                        <span class="label label-sky">2 Weeks</span>
+                                    </label>
+                                    
+                                </li>
+                                <li>
+                                    <label>
+                                        <i class="fa fa-ellipsis-v icon-dragtask"></i>
+                                        <input type="checkbox"> 
+                                        <span class="task-description">Setup meeting with client</span>
+                                        <span class="label label-sky">2 Weeks</span>
+                                    </label>
+                                    <div class="options todooptions">
+                                        <div class="btn-group">
+                                            <button class="btn btn-default btn-xs"><i class="fa fa-check"></i></button>
+                                            <button class="btn btn-default btn-xs"><i class="fa fa-cog"></i></button>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                            <a class="btn btn-success btn-sm pull-left" href="#">Add Tasks</a>
+                            <a class="btn btn-default-alt btn-sm pull-right" href="#">See All Tasks</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      <div class="row">
+      
+      <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 clearfix">
+                                    <h4 style="margin: 0 0 20px;" class="pull-left">Week on Week Analysis<small>.</small></h4>
+                                    <div class="btn-group pull-right">
+   <a class="btn btn-default btn-sm active" href="javascript:;">India</a>
+   <a class="btn btn-default btn-sm " href="javascript:;">SEA</a>
+   <a class="btn btn-default btn-sm " href="javascript:;">UKI</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div id="chart_div" class="chart_class" style="width:100%; height:310px;"> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				
+				<div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12 clearfix">
+                                    <h4 style="margin: 0 0 20px;" class="pull-left">Week on Week Analysis<small>.</small></h4>
+                                    <div class="btn-group pull-right">
+          <a class="btn btn-default btn-sm active" href="javascript:;">India</a>
+          <a class="btn btn-default btn-sm " href="javascript:;">SEA</a>
+            <a class="btn btn-default btn-sm " href="javascript:;">UKI</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div id="chart_div" class="chart_class" style="width:100%; height:310px;"> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+      
+      </div>
+    
+      
+      <div class="row">
+	  <div class="col-sm-9">
+          
+          <div class="profile-header">
+            <h2 class="profile-name">PERFORMANCE SEGMENTATION</h2>
+            <div class="profile-location">Individual segmentation of reps into four levels based on Parameters such as Quality, UAAs, Points and CXS</div>
+            
+            
+            <div class="mb20"></div>
+            
+            </div><!-- profile-header -->
+          
+          <!-- Nav tabs -->
+        <ul class="nav nav-tabs nav-justified nav-profile">
+          <li class=""><a data-toggle="tab" href="#activities"><strong>LEVEL 1</strong></a></li>
+          <li class="active"><a data-toggle="tab" href="#followers"><strong>LEVEL 2</strong></a></li>
+          <li class=""><a data-toggle="tab" href="#following"><strong>LEVEL 3</strong></a></li>
+          <li class=""><a data-toggle="tab" href="#events"><strong>My LEVEL 4</strong></a></li>
+        </ul>
+        
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div id="activities" class="tab-pane">
+            <div class="follower-list">
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic3.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Rupa</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> San Francisco, California, USA</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic4.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Weno Carasbong</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Cebu City, Philippines</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic1.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Nusja Nawancali</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Madrid, Spain</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> CEO at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic8.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Zaham Sindilmaca</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Bangkok, Thailand</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Java Developer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic7.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Christopher Atam</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Tokyo, Japan</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> QA Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic2.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Venro Leonga</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Paris, France</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> UX Designer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+            </div><!--follower-list -->
+            
+            <button class="btn btn-white btn-block">Show More</button>
+
+          </div>
+          <div id="followers" class="tab-pane active">
+            
+            <div class="follower-list">
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img src="{% static 'images/umm/images/photos/pic1.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">raj</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> San Francisco, California, USA</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic2.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Weno Carasbong</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Cebu City, Philippines</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic3.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Nusja Nawancali</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Madrid, Spain</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> CEO at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic4.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Zaham Sindilmaca</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Bangkok, Thailand</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Java Developer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic5.jpg' %}" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Christopher Atam</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Tokyo, Japan</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> QA Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic6.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Venro Leonga</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Paris, France</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> UX Designer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+            </div><!--follower-list -->
+            
+          </div>
+          <div id="following" class="tab-pane">
+            
+            <div class="follower-list">
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic7.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">SRI</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> San Francisco, California, USA</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic8.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Weno Carasbong</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Cebu City, Philippines</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic9.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Nusja Nawancali</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Madrid, Spain</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> CEO at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic10.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Zaham Sindilmaca</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Bangkok, Thailand</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Java Developer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic11.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Christopher Atam</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Tokyo, Japan</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> QA Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic12.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Venro Leonga</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Paris, France</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> UX Designer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+            </div><!--follower-list -->
+            
+            <button class="btn btn-white btn-block">Show More</button>
+            
+          </div>
+          <div id="events" class="tab-pane">
+            <div class="follower-list">
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic1.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Ray Sin</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> San Francisco, California, USA</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic2.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Weno Carasbong</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Cebu City, Philippines</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Software Engineer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src="{% static 'images/umm/images/photos/pic3.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Nusja Nawancali</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Madrid, Spain</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> CEO at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src = "{% static 'images/umm/images/photos/pic4.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Zaham Sindilmaca</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Bangkok, Thailand</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> Java Developer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                     
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src = "{% static 'images/umm/images/photos/pic6.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Christopher Atam</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Tokyo, Japan</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> QA Engineer at <a href="">SomeCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+              <div class="media">
+                <a href="#" class="pull-left">
+                  <img alt="100x125" src = "{% static 'images/umm/images/photos/pic2.jpg' %}" class="media-object" data-src="holder.js/100x125" style="width: 100px; height: 125px;">
+                </a>
+                <div class="media-body">
+                  <h3 class="follower-name">Venro Leonga</h3>
+                  <div class="profile-location"><i class="fa fa-map-marker"></i> Paris, France</div>
+                  <div class="profile-position"><i class="fa fa-briefcase"></i> UX Designer at <a href="">ITCompany, Inc.</a></div>
+                  
+                  <div class="mb20"></div>
+                  
+                  
+                  <button class="btn btn-sm btn-white"><i class="fa fa-envelope-o"></i> Mail</button>
+                </div>
+              </div><!-- media -->
+              
+            </div><!--follower-list -->
+          </div>
+        </div><!-- tab-content -->
+          
+        </div>
+        
+        
+        <!-- col-md-6 -->
+        
+      </div>
+     
+      
+    </div><!-- contentpanel -->
+    
+  </div><!-- mainpanel -->
+  
+  <div class="rightpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a href="#rp-alluser" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+        <li><a href="#rp-favorites" data-toggle="tab"><i class="fa fa-heart"></i></a></li>
+        <li><a href="#rp-history" data-toggle="tab"><i class="fa fa-clock-o"></i></a></li>
+        <li><a href="#rp-settings" data-toggle="tab"><i class="fa fa-gear"></i></a></li>
+    </ul>
+        
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="rp-alluser">
+            <h5 class="sidebartitle">Online Users</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/userprofile.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <span class="pull-right badge badge-danger">2</span>
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+            
+            <div class="mb30"></div>
+            
+            <h5 class="sidebartitle">Offline Users</h5>
+            <ul class="chatuserlist">
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-favorites">
+            <h5 class="sidebartitle">Favorites</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-history">
+            <h5 class="sidebartitle">History</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Hi hello, ctc?... would you mind if I go to your...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>This is to inform you that your product that we...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src = "{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Are you willing to have a long term relat...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane pane-settings" id="rp-settings">
+            
+            <h5 class="sidebartitle mb20">Settings</h5>
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Offline Users</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Enable History</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Full Name</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle-chat1 toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Location</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+        </div><!-- tab-pane -->
+        
+    </div><!-- tab-content -->
+  </div><!-- rightpanel -->
+  
+  
+</section>
+
+
+<script src="{% static 'js/umm/js/jquery-1.10.2.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery-migrate-1.2.1.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery-ui-1.10.3.min.js' %}"></script>
+<script src="{% static 'js/umm/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/umm/js/modernizr.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.sparkline.min.js' %}"></script>
+<script src="{% static 'js/umm/js/toggles.min.js' %}"></script>
+<script src="{% static 'js/umm/js/retina.min.js' %}"></script>
+<script src="{% static 'js/umm/js/bootstrap-wizard.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.cookies.js' %}"></script>
+<script src="{% static 'js/umm/js/flot/flot.min.js' %}"></script>
+<script src="{% static 'js/umm/js/flot/flot.resize.min.js' %}"></script>
+<script src="{% static 'js/umm/js/morris.min.js' %}"></script>
+<script src="{% static 'js/umm/js/raphael-2.1.0.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.datatables.min.js' %}"></script>
+<script src="{% static 'js/umm/js/chosen.jquery.min.js' %}"></script>
+<script src="{% static 'js/umm/js/gauge.min.js' %}"></script>
+<script src="{% static 'js/umm/js/custom.js' %}"></script>
+<script src="{% static 'js/umm/js/dashboard.js' %}"></script>
+<script src="{% static 'js/umm/js/charts.js' %}"></script>
+
+
+<script>
+$(window).load(function(){
+  jQuery('.nav li:first').addClass('active');
+//sidebar menu
+if($(window).width() >=1024)
+{
+$('.menutoggle').click(function(){
+if($(this).hasClass('menu-collapsed'))
+{
+$(this).removeClass('menu-collapsed');
+$('body').removeClass('leftpanel-collapsed');
+}
+else{
+$(this).addClass('menu-collapsed');
+$('body').addClass('leftpanel-collapsed');
+}
+});
+}
+else if($(window).width() <1024){
+$('.menutoggle').click(function(){
+if($('body').hasClass('leftpanel-show'))
+{
+$('body').removeClass('leftpanel-show');
+}
+else{
+$('body').addClass('leftpanel-show');
+}
+});
+}
+
+//drop down
+
+    $('.nav-parent').click(function() {
+	if(!$('body').hasClass('leftpanel-collapsed'))
+{
+		var isCurrent = $(this).hasClass('nav-active');
+    $('.nav li:first').removeClass('active');
+		$('.nav-parent').removeClass('nav-active'); 
+		$('.nav-parent ul').hide();
+		if(!isCurrent){
+			$(this).addClass('nav-active');
+			$(this).children('ul').toggle();
+		}
+		
+}		
+	});
+
+	
+	
+//drop down
+
+    $('.nav-pills li').mouseover(function(e) {
+    $(this).addClass('nav-hover');
+    });	
+	
+	$('.nav-pills li').mouseout(function() {
+	  $(this).removeClass('nav-hover');
+	});
+
+	
+});
+</script>
+
+<script type="text/javascript" src="{% static 'js/umm/js/jqueryui-1.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/enquire.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/jquery_004.js' %}"></script> 
+ <script type="text/javascript" src="{% static 'js/umm/js/jQuery.js' %}"></script> 
+<script src="{% static 'js/umm/js/jquery-1.10.2.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/umm/js/jquery_003.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/jquery_006.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/daterangepicker.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/moment.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/jquery_005.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/jquery_007.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/umm/js/jQuery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/umm/js/fullcalendar.js' %}"></script> 
+<script type="text/javascript" src="{% static 'js/umm/js/demo-index.js' %}"></script> 
+</body>
+<script>
+for(var i=0;i < document.getElementsByClassName('foo').length;i++)
+{
+	var color_val=document.getElementsByClassName('foo')[i].getAttribute('color-attr');
+		var opts = {
+	  lines: 12,
+	  angle: 0,
+	  lineWidth: 0.36,
+	  pointer: {
+		length: 0.7,
+		strokeWidth: 0.025,
+		color: '#000000'
+	  },
+	  limitMax: 'false', 
+	  percentColors: [[0.0, color_val ], [0.50, color_val], [1.0, color_val]], // !!!!
+	  strokeColor: '#E0E0E0',
+	  generateGradient: true
+	};
+	var target = document.getElementsByClassName('foo')[i];
+	
+	var gauge = new Gauge(target).setOptions(opts);
+	gauge.maxValue = 3000;
+	gauge.animationSpeed = 100;
+	//gauge.set(2250);
+	gauge.set(1500);
+}
+
+
+
+
+	</script>
+<script>
+
+
+
+	// Stripes interval
+	var stripesAnim;
+	var calcPercent;
+	
+	$progress = $('.progress-bar');
+	$percent = $('.percentage');
+	$stripes = $('.progress-stripes');
+	$stripes.text('////////////////////////');
+	
+	/* CHANGE LOADER SKIN */
+	stripesAnimate(); 
+	
+	/* WHEN LOADED */
+	$(window).load(function() {
+		loaded = true;
+		$progress.each(function(){
+			var currenttag=$(this);
+		var percent_val=currenttag.attr('progress-percent');
+		var precent_str=percent_val+"%";
+		//console.log(percent_val+"  "+precent_str);
+		currenttag.animate({
+			width: precent_str
+		}, 1000, function() {
+			$('span').addClass('loaded');
+			//console.log(currenttag.next('.percentage').text());
+			if(currenttag.hasClass('numm'))
+			{
+				currenttag.next('.percentage').text(percent_val);
+			}else
+			{
+				currenttag.next('.percentage').text(precent_str);
+			}
+			clearInterval(calcPercent);
+			clearInterval(stripesAnim);
+		});
+		});
+	});
+	
+	/*** FUNCTIONS ***/
+	
+	
+	
+	/* STRIPES ANIMATION */
+	function stripesAnimate() {
+		animating();
+		stripesAnim = setInterval(animating, 2500);
+	}
+
+	function animating() {
+		$stripes.animate({
+			marginLeft: "-=30px"
+		}, 500, "linear").append('/');
+	} 
+	
+	function setSkin(skin){
+		$('.loader').attr('class', 'loader '+skin);
+		$('span').hasClass('loaded') ? $('span').attr('class', 'loaded '+skin) : $('span').attr('class', skin);
+	}// JavaScript Document
+
+
+</script>
+<script>
+  jQuery(document).ready(function() {
+
+    jQuery('#table1').dataTable();
+    
+    jQuery('#table2').dataTable({
+      "sPaginationType": "full_numbers"
+    });
+    
+    // Chosen Select
+    jQuery("select").chosen({
+      'min-width': '100px',
+      'white-space': 'nowrap',
+      disable_search_threshold: 10
+    });
+    
+    // Delete row in a table
+    jQuery('.delete-row').click(function(){
+      var c = confirm("Continue delete?");
+      if(c)
+        jQuery(this).closest('tr').fadeOut(function(){
+          jQuery(this).remove();
+        });
+        
+        return false;
+    });
+    
+    // Show aciton upon row hover
+    jQuery('.table-hidaction tbody tr').hover(function(){
+      jQuery(this).find('.table-action-hide a').animate({opacity: 1});
+    },function(){
+      jQuery(this).find('.table-action-hide a').animate({opacity: 0});
+    });
+  
+  
+  });
+</script>
+<style>
+
+
+</style>
+</html>
