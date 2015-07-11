@@ -19,12 +19,11 @@ logging.basicConfig(filename='/tmp/cronjob.log',
                     level=logging.DEBUG)
 
 
-# @kronos.register('*/30 * * * *')
+# @kronos.register('*/25 * * * *')
 # def current_day_leads():
 #     """ Get Leads from SFDC """
-#     current_day = datetime.utcnow()
-#     start_date = datetime(current_day.year, current_day.month, current_day.day, 0, 0, 0)
-#     end_date = datetime(current_day.year, current_day.month, current_day.day, 23, 59, 59)
+#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+#     start_date = end_date - timedelta(minutes=30)
 #     logging.info("Current Day Leads %s to %s " % (start_date, end_date))
 #     get_leads_from_sfdc(start_date, end_date)
 
@@ -60,31 +59,56 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 #     get_leads_from_sfdc(start_date, end_date)
 
 
-@kronos.register('*/30 * * * *')
+@kronos.register('*/10 * * * *')
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(days=20)
-    end_date = end_date + timedelta(days=9)
+    start_date = end_date - timedelta(minutes=10)
+    start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+    end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
     sf = SalesforceApi.connect_salesforce()
     logging.info("Connect Successfully")
-    leads = sf.Lead.updated(start_date, end_date)
-    ids = [str(lid) for lid in leads['ids']]
-    ids = tuple(ids)
-    logging.info("Updating Leads count: %s " % (len(ids)))
     select_items = settings.SFDC_FIELDS
-    where_clause = "WHERE Id IN %s" % (str(ids))
+    tech_team_id = settings.TECH_TEAM_ID
+    where_clause = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s'" % (start_date, end_date, tech_team_id)
     sql_query = "select %s from Lead %s" % (select_items, where_clause)
     try:
         all_leads = sf.query_all(sql_query)
+        logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         update_sfdc_leads(all_leads['records'], sf)
     except Exception as e:
         print e
-        logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+        logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
         logging.info("%s" % (e))
+
+
+# @kronos.register('*/45 * * * *')
+# def get_appointment_leads():
+#     """ Get Current day Leads from SFDC """
+#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+#     start_date = end_date - timedelta(minutes=50)
+#     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+#     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+#     logging.info("Current day Leads from %s to %s" % (start_date, end_date))
+#     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+#     sf = SalesforceApi.connect_salesforce()
+#     logging.info("Connect Successfully")
+#     select_items = settings.SFDC_FIELDS
+#     tech_team_id = settings.TECH_TEAM_ID
+#     where_clause = "WHERE (Rescheduled_Appointments__c != null OR Appointment_Date__c != null) AND (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND Status != 'Implemented' AND LastModifiedById != '%s'" % (start_date, end_date, tech_team_id)
+#     sql_query = "select %s from Lead %s" % (select_items, where_clause)
+#     try:
+#         all_leads = sf.query_all(sql_query)
+#         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
+#         create_or_update_leads(all_leads['records'], sf)
+#         update_sfdc_leads(all_leads['records'], sf)
+#     except Exception as e:
+#         print e
+#         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
+#         logging.info("%s" % (e))
 
 
 @kronos.register('55 0 * * *')
@@ -307,6 +331,7 @@ def create_or_update_leads(records, sf):
         lead.sf_lead_id = sf_lead_id
         if lead.type_1 == 'WPP':
             lead.lead_status = rec.get('WPP_Lead_Status__c')
+            lead.wpp_treatment_type = rec.get('Treatment_Type__c')
 
         # Calculate TAT for each lead
         tat = 0
@@ -408,6 +433,7 @@ def create_sfdc_user(details):
 def update_sfdc_leads(records, sf):
     """ Update Appointment and Rescheduled Appointment IN IST Time """
     sf.headers.update({"Sforce-Auto-Assign": 'FALSE'})
+    logging.info("Updating Leads count on SFDC: %s" % (len(records)))
     for lead in records:
         location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')

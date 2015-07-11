@@ -74,6 +74,8 @@ function setLocations(newLocations){
     emailrefElem = document.getElementById('emailref');
     validateFiled(emailrefElem);
 
+    validateEmailField(emailrefElem)
+
     // Programs Validation
     teamElem = document.getElementById('team');
     validateFiled(teamElem);
@@ -105,6 +107,8 @@ function setLocations(newLocations){
       emailElem = document.getElementById("manager_email");
       validateFiled(emailElem);
     }
+    emailElem = document.getElementById("manager_email");
+    validateEmailField(emailElem)
 
     // Location/Country Validation
     countryElem = document.getElementById('country');
@@ -141,12 +145,7 @@ function setLocations(newLocations){
       validateFiled(agencyEmailElem);
 
       // Email Validation
-      agencyEmailElem.value = agencyEmailElem.value.trim();
-      if (!agencyEmailElem.value.trim().match(check)) {
-        $(agencyEmailElem).addClass('error-box');
-        agencyEmailElem.focus();
-        window.is_error = true;
-      }
+      validateEmailField(agencyEmailElem)
       $("#aemail").val(agencyEmailElem.value);
 
       // Advertiser Phone Validation
@@ -618,6 +617,17 @@ function setLocations(newLocations){
 function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
+function validateEmailField(elem) {
+  var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // Validate Email Field
+  if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
       $(elem).focus();
       window.is_error = true;

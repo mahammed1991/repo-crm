@@ -17,6 +17,9 @@ function validatethis(frm) {
       window.is_reset = false;
       return false;
     }
+
+    t_typeElem = document.getElementById('treatment_type')
+    validateFiled(t_typeElem)
     
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
@@ -31,9 +34,6 @@ function validatethis(frm) {
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
-    ilinksElem = document.getElementById('invision_link');
-    validateFiled(ilinksElem);
-
     cgoalElem = document.getElementById('conversion_goal');
     validateFiled(cgoalElem);
 
@@ -45,6 +45,9 @@ function validatethis(frm) {
 
     aemailElem = document.getElementById('wpp_aemail');
     validateFiled(aemailElem);
+    $("#aemail").val(aemailElem.value);
+
+    validateEmailField(aemailElem)
 
     phoneElem = document.getElementById('phone');
     validateFiled(phoneElem);
@@ -84,6 +87,10 @@ function validatethis(frm) {
         status = check_and_create_appointment(fix_slots);
       }
       if (status) {
+        if(window.tz_name){
+            console.log(window.tz_name);
+            $("#tzone").append("<option value=" + window.tz_name + "></option>").val(window.tz_name)
+        }
         $('#preloaderOverlay').show();
         $('form input[type=submit]').attr('disabled', 'disabled');
       }
@@ -95,6 +102,17 @@ function validatethis(frm) {
   function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
+function validateEmailField(elem) {
+  var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // Validate Email Field
+  if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
       $(elem).focus();
       window.is_error = true;

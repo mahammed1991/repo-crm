@@ -510,5 +510,12 @@ Manage Appointments
             });
         })
     });
+
+    $("input[type=text]").bind("keypress", function(e) {
+        // body...
+        var key = e.keyCode ? e.keyCode : e.which;
+        if ( isNaN( String.fromCharCode(key) ) ) return false;
+    })
+    
 </script>
 {% endblock main_js %}

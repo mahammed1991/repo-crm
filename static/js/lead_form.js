@@ -341,6 +341,9 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
+    emailRef = document.getElementById('emailref');
+    validateEmailField(emailRef)
+
 
     // Programs Validation
     if (frm.team.value == "0" || frm.team.value == "") {
@@ -382,6 +385,7 @@ function validatethis(frm) {
       $(elem).focus();
       window.is_error = true;
     }
+
     if (document.getElementById("manager_email").value == "") {
       //alert("Please Update Google Manager details");
       elem = document.getElementById("manager_email");
@@ -391,6 +395,9 @@ function validatethis(frm) {
       //document.getElementById("addPm").focus();
       window.is_error = true;
     }
+
+    managerEmail = document.getElementById('manager_email');
+    validateEmailField(managerEmail)
 
     // Location/Country Validation
     if (frm.country.value == "0" || frm.country.value == "") {
@@ -420,14 +427,8 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-    frm.aemail.value = frm.aemail.value.trim();
-    if (!frm.aemail.value.trim().match(check)) {
-      // alert("Invalid E-mail ID !");
-      $(frm.aemail).addClass('error-box');
-      //$(frm.aemail).after('<span class="error-txt">Invalid E-mail ID !</span>')
-      frm.aemail.focus();
-      window.is_error = true;
-    }
+    aemail = document.getElementById('aemail');
+    validateEmailField(aemail)
 
     // Advertiser Phone Validation
     if (frm.phone.value == "") {
@@ -907,6 +908,17 @@ function validatethis(frm) {
     }
   }
     
+function validateEmailField(elem) {
+  var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // Validate Email Field
+  if (!$(elem).val().trim().match(check)) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
 function resetBtn(elem){
   elemId = $(elem).attr('id');
   if(elemId == 'formReset'){
