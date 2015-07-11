@@ -16,7 +16,7 @@ urlpatterns = patterns(
     # url(r'^feedback/(?P<id>\d+)/resolve/$', views.resolve_feedback),
     url(r'^feedback/(?P<id>\d+)/reopen/$', views.reopen_feedback),
     url(r'^resources/$', views.resources),
-    url(r'^new_resources/$', views.new_resources),
+    # url(r'^new_resources/$', views.new_resources),
     url(r'^get-inbound-locations$', views.get_inbound_locations),
     url(r'^get-notifications$', views.get_notifications),
     url(r'^get-started/$', views.get_started),
