@@ -763,14 +763,14 @@ def get_profile_avatar_by_email(email):
     return avatar_url
 
 
+# @login_required
+# def resources(request):
+#     video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
+#     return render(request, 'main/resources.html', {'video_url': video_url})
+
+
 @login_required
 def resources(request):
-    video_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
-    return render(request, 'main/resources.html', {'video_url': video_url})
-
-
-@login_required
-def new_resources(request):
     if request.is_ajax():
         resfaq = ResourceFAQ()
         resfaq.task_type = request.GET.get('tasktype')
