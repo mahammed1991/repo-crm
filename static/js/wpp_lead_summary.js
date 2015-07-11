@@ -4,144 +4,90 @@
     })
 
     $('#all').click(function(){
-      $('.open').show()
-      $('.onhold').show()
-      $('.inmockup').show()
-      $('.mockupreview').show()
-      $('.deferred').show()
-      $('.inuiuxreview').show()
-      $('.infiletransfer').show()
-      $('.indevelopment').show()
-      $('.instage').show()
-      $('.implemented').show()
+      showAll();
     })
 
     $('#Open').click(function(){
-      $('.open').show()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
-      $('.infiletransfer').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
+      hideAll();
+      $('.open').show(); 
     })
 
     $('#OnHold').click(function(){
-      $('.open').hide()
-      $('.onhold').show()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
-      $('.infiletransfer').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
+      hideAll();
+      $('.onhold').show();
     })
 
     $('#InMockup').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').show()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
-      $('.infiletransfer').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
+      hideAll();
+      $('.inmockup').show();
     })
 
     $('#MockupReview').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').show()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
-      $('.infiletransfer').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
+      hideAll();
+      $('.mockupreview').show();
     })
 
     $('#Deferred').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').show()
-      $('.inuiuxreview').hide()
-      $('.infiletransfer').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
+      hideAll();
+      $('.deferred').show();
     })
 
     $('#InUIUXReview').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
+      hideAll();
       $('.inuiuxreview').show()
-      $('.infiletransfer').hide()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
     })
+
     $('#InFileTransfer').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
+      hideAll();
       $('.infiletransfer').show()
-      $('.indevelopment').hide()
-      $('.instage').hide()
-      $('.implemented').hide()
     })
     $('#InDevelopment').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
+      hideAll();
       $('.indevelopment').show()
-      $('.instage').hide()
-      $('.implemented').hide()
-      $('.infiletransfer').hide()
     })
 
     $('#InStage').click(function(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.mockupdelivered').hide()
-      $('.indevelopment').hide()
+      hideAll();
       $('.instage').show()
-      $('.infiletransfer').hide()
+    })
+    $('#ABTesting').click(function(){
+      hideAll();
+      $('.ab-testing').show()
+    })
+    $('#Implemented').click(function(){
+      hideAll();
+      $('.impl').show()
     })
 
-    $('#Implemented').click(function(){
+    function showAll(){
+      $('.open').show()
+      $('.onhold').show()
+      $('.inmockup').show()
+      $('.mockupreview').show()
+      $('.deferred').show()
+      $('.inuiuxreview').show()
+      $('.infiletransfer').show()
+      $('.indevelopment').show()
+      $('.instage').show()
+      $('.ab-testing').show()
+      $('.impl').show()
+    }
+
+    function hideAll(){
       $('.open').hide()
       $('.onhold').hide()
       $('.inmockup').hide()
       $('.mockupreview').hide()
       $('.deferred').hide()
       $('.inuiuxreview').hide()
+      $('.infiletransfer').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
-      $('.implemented').show()
-      $('.infiletransfer').hide()
-    })
+      $('.ab-testing').hide()
+      $('.impl').hide()
+    }
+
+
 
     $('#CID').click(function(){
       $('#CIDText').toggle()
@@ -192,7 +138,11 @@
                   // disable it by setting the property sorter to false 
                   sorter: false 
               },
-               4: { 
+              3: { 
+                  // disable it by setting the property sorter to false 
+                  sorter: false 
+              }, 
+              4: { 
                   // disable it by setting the property sorter to false 
                   sorter: false 
               }, 
@@ -204,6 +154,14 @@
                   // disable it by setting the property sorter to false 
                   sorter: false 
               },
+              8: { 
+                  // disable it by setting the property sorter to false 
+                  sorter: false 
+              },
+              10: { 
+                  // disable it by setting the property sorter to false 
+                  sorter: false 
+              }
           } 
       });
     /*end sorting function*/

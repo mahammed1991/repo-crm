@@ -22,11 +22,11 @@ from representatives.models import (
     RegalixRepresentatives
 )
 from lib.salesforce import SalesforceApi
-from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson,
+from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone
                           )
 from main.models import UserDetails
-from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep,
+from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -187,6 +187,7 @@ def wpp_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
+    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all()]
     wpp_loc = list()
     regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
     for tm in regalix_team:
@@ -1731,31 +1732,32 @@ def get_lead_summary(request, lid=None, page=None):
 @login_required
 def get_wpp_lead_summary(request, lid=None):
     """Lead status and summary of wpp leads"""
+    treatment_types = [str(t_type.name) for t_type in TreatmentType.objects.all()]
+    return render(request, 'leads/wpp_lead_summary.html', {'treatment_types': treatment_types, 'lead_id': lid})
 
+
+@login_required
+def get_wpp_lead_summary_by_treatment(request):
+    """Lead status and summary of wpp leads"""
     lead_status = settings.WPP_LEAD_STATUS
     email = request.user.email
-
-    # get SFDC Connection
-    sf = SalesforceApi.connect_salesforce()
-
-    select_items = settings.SFDC_FIELDS
-    where_clause = "WHERE Email = '%s'" % (email)
-    sql_query = "select %s from Lead %s" % (select_items, where_clause)
-    try:
-        all_leads = sf.query_all(sql_query)
-        create_or_update_leads(all_leads['records'], sf)
-    except Exception as e:
-        print e
+    treatment_type = request.GET.get('treatment_type')
+    if treatment_type == 'all':
+        treatment_type_list = [str(t_type.name) for t_type in TreatmentType.objects.all()]
+    else:
+        treatment_type_list = [treatment_type]
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
-        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
-        start_date = first_day_of_month(datetime.utcnow())
+        # start_date = first_day_of_month(datetime.utcnow())
         end_date = datetime.utcnow()
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=start_date, end_date=end_date)
-        query = {'type_1': 'WPP', 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.filter(**query).order_by('-rescheduled_appointment_in_ist')
+        status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date, end_date)
+        query = {'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list,
+                 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        leads = Leads.objects.filter(**query).order_by('-created_date')
+        leads_list = [convert_lead_to_dict(lead) for lead in leads]
     else:
         if is_manager(email):
             email_list = get_user_list_by_manager(email)
@@ -1764,12 +1766,12 @@ def get_wpp_lead_summary(request, lid=None):
             email_list = [email]
 
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-        query = {'lead_status__in': lead_status, 'type_1': 'WPP'}
-        # lead_status_dict['total_leads'] = Leads.objects.exclude(team='').filter(reduce(operator.or_, mylist), **query).count()
-        leads = Leads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-rescheduled_appointment_in_ist')
+        query = {'lead_status__in': lead_status, 'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list}
+        status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None)
+        leads = Leads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
+        leads_list = [convert_lead_to_dict(lead) for lead in leads]
 
-        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'wpp', start_date=None, end_date=None)
-    return render(request, 'leads/wpp_lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
+    return HttpResponse(json.dumps({'leads_list': leads_list, 'status_count': status_count}))
 
 
 @login_required
@@ -1980,6 +1982,8 @@ def convert_lead_to_dict(model):
         lead['rescheduled_appointment_in_ist'] = ''
     lead['regalix_comment'] = model.regalix_comment
     lead['lead_status'] = model.lead_status
+    if model.type_1 == 'WPP':
+        lead['treatment_type'] = model.wpp_treatment_type
     return lead
 
 

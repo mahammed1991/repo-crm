@@ -201,7 +201,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active',
                'Implemented', 'ON CALL', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
 
-WPP_LEAD_STATUS = ['Open', 'In UI/UX Review', 'In File Transfer', 'On Hold', 'In Mockup', 'Mockup Review', 'Deferred', 'In Development', 'In Stage', 'Implemented']
+WPP_LEAD_STATUS = ['Open', 'In UI/UX Review', 'In File Transfer', 'On Hold', 'In Mockup', 'Mockup Review',
+                   'Deferred', 'In Development', 'In Stage', 'AB Testing', 'Implemented']
 
 LEAD_STATUS_DICT = {'Attempting Contact': ['Attempting Contact'],
                     'In Progress': ['In Progress'],
@@ -294,6 +295,7 @@ MODULE_LIST = filter(lambda m: getattr(m, 'CAN_USE', True), [
 [TEMPLATE_LOADERS.extend(["%s.%s" % (m.__name__, tl) for tl in getattr(m, 'TEMPLATE_LOADERS', [])]) for m in MODULE_LIST]
 
 SFDC = 'STAGE'
+TECH_TEAM_ID = '005d00000049PanAAE'
 
 API_KEY = 'AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30'
 
