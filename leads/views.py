@@ -2181,17 +2181,22 @@ def get_advertiser_details(sf_api_url, lead_data):
     agency_details['code_type'] = lead_data.get(tag_leads.get('ctype1'))
     agency_details['cid_std'] = agency_details.get('customer_id').rsplit("-", 1)[0] + '-xxxx'
 
-    full_name = lead_data.get(basic_leads.get('advertiser_name'))
-    if full_name:
-        first_name, last_name = split_fullname(full_name)
-        agency_details['first_name'] = first_name
-        agency_details['last_name'] = last_name
-    else:
-        full_name = lead_data.get(basic_leads.get('agency_name'))
-        first_name, last_name = split_fullname(full_name)
-        agency_details['first_name'] = first_name
-        agency_details['last_name'] = last_name
-        agency_details['email'] = lead_data.get(basic_leads.get('agency_email'))
+    first_name = lead_data.get(basic_leads.get('first_name'))
+    last_name = lead_data.get(basic_leads.get('last_name'))
+
+    if not first_name and not last_name:
+        full_name = lead_data.get(basic_leads.get('advertiser_name'))
+
+        if full_name:
+            first_name, last_name = split_fullname(full_name)
+            agency_details['first_name'] = first_name
+            agency_details['last_name'] = last_name
+        else:
+            full_name = lead_data.get(basic_leads.get('agency_name'))
+            first_name, last_name = split_fullname(full_name)
+            agency_details['first_name'] = first_name
+            agency_details['last_name'] = last_name
+            agency_details['email'] = lead_data.get(basic_leads.get('agency_email'))
 
     if agency_details['code_type'] == 'WPP':
         agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
@@ -2201,7 +2206,7 @@ def get_advertiser_details(sf_api_url, lead_data):
     agency_details['google_rep_email'] = lead_data.get(basic_leads.get('emailref'))
     agency_details['program'] = lead_data.get(basic_leads.get('team'))
     agency_details['website'] = lead_data.get(tag_leads.get('url1'))
-    agency_details['invision_link'] = lead_data.get(basic_leads.get('invision_link'))
+    agency_details['ab_testing'] = lead_data.get(basic_leads.get('ab_testing'))
     agency_details['conversion_goal'] = lead_data.get(basic_leads.get('conversion_goal'))
     agency_details['timezone'] = lead_data.get(basic_leads.get('tzone'))
     agency_details['comment'] = lead_data.get(tag_leads.get('comment1'))
