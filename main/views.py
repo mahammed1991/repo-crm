@@ -1007,17 +1007,17 @@ def migrate_user_data(request):
     failed_rows = list()
     for r_i in range(1, sheet.nrows):
 
-        rep_email = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager ldap (Google Rep)')).value
+        rep_email = sheet.cell(r_i, get_col_index(sheet, 'username')).value
         google_rep_email = rep_email + '@google.com'
-        google_manager = sheet.cell(r_i, get_col_index(sheet, 'Google Manager')).value
-        program = sheet.cell(r_i, get_col_index(sheet, 'Program')).value
+        google_manager = sheet.cell(r_i, get_col_index(sheet, 'manager')).value
+        program = sheet.cell(r_i, get_col_index(sheet, 'program')).value
         # rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
         # r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
         # market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
         # rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
         google_manager_email = str(google_manager) + '@google.com'
-        region = sheet.cell(r_i, get_col_index(sheet, 'Region')).value
-        country = sheet.cell(r_i, get_col_index(sheet, 'Country')).value
+        region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
+        country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
         if valid_string(program) and valid_string(country):
             try:
                 user = User.objects.get(email=google_rep_email)
