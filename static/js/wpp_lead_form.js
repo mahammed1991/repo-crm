@@ -58,6 +58,9 @@ function validatethis(frm) {
     tzoneElem = document.getElementById('tzone');
     validateFiled(tzoneElem);
 
+    ab_testing = document.getElementById('ab_testing');
+    validateFiled(ab_testing);
+
     // Appointments Date and Time Validation
     tagDateElem = document.getElementById('tag_datepick');
     if ($(tagDateElem).val() == "" || $(tagDateElem).val() == "0" || !$(tagDateElem).val()) {
