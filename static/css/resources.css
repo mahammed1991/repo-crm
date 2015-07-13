@@ -53,6 +53,140 @@
 
 
 
+
+
+
+
+
+
+
+
+/* added on 13 -07 ****************************  */
+
+#cboxOverlay {
+  z-index: 99999 !important;
+}
+#colorbox {
+  z-index: 999999 !important;
+}
+.faqsubb {
+  margin: 0 auto;
+  width: 100%;
+  margin-left: 10px;
+}
+
+.faqsubb ul li{   background: #eeeeee none repeat scroll 0 0;
+    color: #333333 !important;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    min-width: 167px;
+    padding: 8px 0;
+    text-align: center;
+    font-family: 'robotoregular';
+    width: auto;
+  font-size: 14px !important;}
+  
+
+.top-cms .faq-list li.c-red{ background-color:#3399fe;}
+.top-cms .faq-list li.c-red a{ color:#FFF;}
+.faqsubb ul li:nth-child(4n){ margin-right:0px;}
+.faqsubb ul li a{ cursor:pointer; color:#333;}
+.targetDiv{ display:none;}
+.closeid{ cursor:pointer; float:right; display:block; padding:0 0 10px;display: inline-block;text-align: right;}
+.rightlogo{ background-color:#323433; padding:5px 0px;}
+.currentlogo{  margin-top: 20px;}
+/* ==========================================================================
+   Leads Status
+   ========================================================================== */
+.placeholder {
+  text-align: center;
+}
+.rightlogo p{ color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+    margin: 0;
+    padding-right: 15px;
+    text-align: right;}
+.current-version{ width:100%; margin:15px 0px; }
+.version{background-color:#323433;padding:15px;}
+.current-version p{color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+    margin: 0; text-transform:uppercase; padding-bottom:5px;}
+.targetDiv .accordion2 .ui-accordion-header-active, .targetDiv .accordion2 .ui-accordion-header-active, .targetDiv .accordion2 .ui-state-active .ui-corner-top {
+  color:#333333; background-color:#f6f6f6;
+  border:none;
+  }
+  .targetDiv .accordion2 > .ui-state-active .ui-icon {
+    background: rgba(0, 0, 0, 0) url("../img/plus4.png") no-repeat scroll 0 0 !important;
+   height: 9px;
+    margin-top: -5px;
+    width: 15px;
+}
+.targetDiv .xcm23 {
+    background-color: #f6f6f6;
+}
+.top-cms{height: 441px;
+    overflow-y: scroll;}
+.xcm23 pre {
+    border: medium none;
+    font-size: 13px;
+    margin-top: 0;
+    padding: 0;
+    vertical-align: top;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.targetDiv .accordion2 .xcm23 p{ padding-bottom:10px; line-height:20px;color:#333333; margin:0px; font-size:13px;}
+.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black {
+  width: 120px;
+  height: 120px;
+  border-radius: 120px;
+  font-size: 42px;
+  color: #fff;
+  line-height: 120px;
+  text-align: center;
+  background: #acacac;
+  margin: 0px auto;
+  font-family: robotothin;
+  margin-top: 20px;
+}
+.circle_red, .new {
+  background: #e57368;
+}
+
+/* added on 13 -07 ****************************  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .newsletter_style11{
   text-align: center;
   margin-top: 2px;
@@ -485,5 +619,182 @@ display:block;
   padding: 0px;
   text-align: left;
 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ************************************************************************************ added by manoj ***********************************************  */
+/* ************************************************************************************ added by ravindra 30th June ***********************************************  */
+.faq-list .showSingle li:hover, .faq-list .showSingle li:active, .faq-list .showSingle li:focus, .faq-list .showSingle li:visited{
+color: #fff !important;
+background-color: #3399fe  !important;
+}
+.mag1{background:#e83f00;}
+.shopfy1{background:#4b8725;}
+.wordpress1{background:#194f5b;}
+.big1{background:#53c2d3;}
+.drupal1{background:#0073ba; color:#ffffff;}
+.wix1{background:#4f8fcc; color:#ffffff;}
+.volusion1{background:#2f54ad;}
+.ekm1{background:#0262c6;}
+.joomla1{background:#fc8f30; color:#ffffff;}
+.presto1{background:#59b816;}
+.xcart1{background:#faad56;}
+.square1{background:#000000; color:#ffffff;}
+.opencart1{background:#14bbf0; color:#ffffff;}
+.netsuite1{background:#175d7e; color:#ffffff;}
+.weebly1{background:#fd9526; color:#ffffff;}
+.network1{background:#648c1c; color:#ffffff;}
+.yahoo1{background:#de0012; color:#ffffff;}
+.zeald1{background:#005880; color:#ffffff;}
+.dotnet1{background:#c8b8c5;}
+.miva1{background:#c9a207; color:#ffffff;}
+.zencart1{background:#f55100; color:#ffffff;}
+.prostores1{background:#af67af; color:#ffffff;}
+.Concrete51{background:#000000; color:#ffffff;}
+.citymax1{background:#1d4ba1; color:#ffffff;}
+.amazon1{background:#fd9100; color:#ffffff;}
+.gambio1{background:#005da5; color:#ffffff;}
+.strato1{background:#005396; color:#ffffff;}
+.over-flw{height: 470px;  border: 1px solid #dcdcdc;  padding: 10px;  overflow-y: auto; }
+.col_color{color:#fff !important;}
+.task-spec .ui-accordion .ui-accordion-content { padding: 0.5em 2.2em; border-top: 0; overflow: auto;}
+.cont-box{padding:0px;}
+.xcm6 h1 {
+  font-size: 24px;
+  font-family: 'robotoblack';
+  text-transform: none;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+  
+  margin-bottom: 20px;
+}
+
+
+.xcm7{
+  top: 96%;
+  position: absolute;
+  width: 100%;
+  background-color: #EEEEEE;
+  text-align: center;
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+.xcm7 .carousel-control {
+  color: #000000;
+ 
+  top: 8px;
+}
+.xcm7 .left, .xcm7 .right{
+
+  font-size: 18px;
+  color: #919191 !important;
+  } 
+
+  .xcm7 .right .glyphicon,  .xcm7 .right .glyphicon{
+color: #919191 !important;
+
+  }
+
+
+
+.modal-body {
+  height: auto;
+  overflow: auto;
+  width: auto;
+  padding-bottom: 0;
+}
+ .mano-modo  .modal-dialog {
+  width:450px;
+  /*border:1px solid #109d59; 
+  overflow:hidden;
+  height:420px; */
+}
+
+.mano-modo .modal-content {
+  /* border-radius:0; */
+  box-shadow:0 0 10px rgba(0,0,0,1);
+  -webkit-box-shadow:0 0 10px rgba(0,0,0,1);
+  border:0; 
+}
+.mano-modo .modal-header {
+/*  background:#109d59;
+  color:#fff;
+*/  
+}
+.mano-modo .modal-title {
+  font-family:'robotoblack';
+  font-size:14px;
+}
+.mano-modo .modal-header .close {
+  color:#fff;
+  opacity:1;
+  width:19px;
+}
+
+.faqsubb ul li {
+  background: #eeeeee none repeat scroll 0 0;
+  color: #333333 !important;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  min-width: 167px;
+  padding: 8px 0;
+  text-align: center;
+  width: auto;
+  font-family: 'robotoregular';
+  font-size: 14px !important;
+}
+
+
+
+#myModal3 .modal-header {
+  min-height: 20px;
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+  position: fixed;
+  background-color: #1B70EF;
+  width: 100%;
+  z-index: 99999999999;
+}
+
+
+#cont-iframe table{
+border-left: 0px solid #c2cad4;
+  border-right: 0px solid #c2cad4;
 }
 
