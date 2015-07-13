@@ -75,10 +75,15 @@ Upload Leads
              Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
         </div>
     </div>
+
+    <div> New Programs : {% for pr in new_programs %} {{pr}}, {% endfor %}</div>
+    <div> New Locations : {% for lc in new_locations %} {{lc}}, {% endfor %} </div>
+    <div> New Region : {% for rg in new_region %} {{rg}}, {% endfor %}</div>
     {% endif %}
 </div>
 </div>
 </div>
+
 {% endblock content %}
 
 {% block main_js %}

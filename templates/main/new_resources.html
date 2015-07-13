@@ -1584,7 +1584,8 @@ Shopify - Bulk Edits for certain attributes  </div></li>
           <div class="form-group" >
           <textarea class="form-control" name="description" rows="5" id="comment" placeholder="Please enter your question here. A member of team will respond to you within 3 business days."></textarea>
         </div>
-           <button id="faq_submit" type="button" class="btn faq-btn " data-toggle="modal" data-target="#myModalx">Submit</button>
+           <button id="faq_submit" type="button" class="btn faq-btn">Submit</button>
+           <button id="faq_final" type="button" class="btn faq-btn" data-toggle="modal" data-target="#myModalx" style="display:none">Final</button>
               </form>
     </div>
           </div>
@@ -7203,15 +7204,14 @@ $('#faq_submit').click(function(){
         dataType: "json",
         success: function(data) {
         	if(data == "SUCCESS"){
-        		alert("Successfully submitted question")
         		$('#sel1').val('0')
         		$('#comment').val("")
             $("#preloaderOverlay").hide();
+            $("#faq_final").trigger('click');
         	}
             },
         error: function() {
           $("#preloaderOverlay").hide();
-        	alert('Opps something went wrong!');
         }
       }); 
 	}

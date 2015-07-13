@@ -503,7 +503,7 @@ border: 1px solid #d3d3d3;
   margin: 2px 0 0 0;
   font-family: robotobold;
   text-align: left;
-    font-size: 16px;
+  font-size: 100%;
 
 }
 .slide-in-2 {
