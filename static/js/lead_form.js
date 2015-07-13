@@ -51,6 +51,10 @@
           $("#web_access").val(1);
           var advertiser_name = $("#advertiser_name").val();
           $("#tag_contact_person_name, #shop_contact_person_name").val(advertiser_name);
+          // clear webmaster fields
+          $('#webmaster_name').val('');
+          $('#web_master_email').val('');
+          $('#popt').val('');
       }else{
         $("#web_access").val(0);
         $("#tag_contact_person_name, #shop_contact_person_name").val('');
@@ -198,6 +202,7 @@
   $('#team').change(function(){
     var selectedTeam = $(this).val();
     $("#team_service_gce").hide();
+    $('#g_cases_id').val('')
     if (selectedTeam.indexOf('Services') != -1){
       if(selectedTeam == 'Services/GCE'){
         $("#team_service_gce").show();
@@ -332,6 +337,7 @@ function validatethis(frm) {
       //return false;
     }
 
+
     // Google Rep Email Validation
     if (frm.emailref.value == "0" || frm.emailref.value == "") {
       //alert("Please Select the Team");
@@ -343,7 +349,6 @@ function validatethis(frm) {
 
     emailRef = document.getElementById('emailref');
     validateEmailField(emailRef)
-
 
     // Programs Validation
     if (frm.team.value == "0" || frm.team.value == "") {
@@ -909,7 +914,8 @@ function validatethis(frm) {
   }
     
 function validateEmailField(elem) {
-  var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  //var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  var check = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
   // Validate Email Field
   if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');

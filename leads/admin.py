@@ -2,7 +2,7 @@ from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping)
-from leads.forms import LocationForm
+from leads.forms import LocationForm, LeadFormAccessControlAdminForm
 from django.db.models import Q
 from lib.admin_helpers import CustomAdmin
 
@@ -191,6 +191,7 @@ admin.site.register(LeadForm, LeadFormAdmin)
 
 
 class LeadFormAccessControlAdmin(admin.ModelAdmin):
+    form = LeadFormAccessControlAdminForm
     list_display = ('lead_form', 'program_list', 'location_list', 'rep_list',)
     filter_horizontal = ('programs', 'target_location', 'google_rep')
 
@@ -224,6 +225,6 @@ class TreatmentTypeAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = CustomAdmin.get_view_status(request, extra_context)
-        return super(CodeTypeAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+        return super(TreatmentTypeAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(TreatmentType, TreatmentTypeAdmin)
