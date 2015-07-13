@@ -196,7 +196,10 @@
   min-width: 167px;
   padding: 8px 0;
 }
-.fck-work .newsletter_style11:hover, .fck-work .newsletter_style11:visited, .fck-work .newsletter_style11:active,  .fck-work .newsletter_style11:focus {
+.newsletter_style19{
+  background-color: rgb(208, 208, 208);
+}
+.fck-work .newsletter_style11:hover, .fck-work .newsletter_style11:visited, .fck-work .newsletter_style11:active,  .fck-work .newsletter_style11:focus, .fck-work .newsletter_style19:focus {
   color: #fff !important;
   text-decoration: none;
   cursor: pointer !important;
