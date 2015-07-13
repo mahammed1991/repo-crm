@@ -1,0 +1,98 @@
+{% load static %}
+<header class="header">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid"> 
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header"> <a class="navbar-brand" href="{% url 'main.views.home' %}"><img src="{% static 'images/GTrack-logo.png' %}" alt="GTrack Branding"/></a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span> <i class="fa fa-bars"></i> </button>
+        </div>
+        
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav main-nav">
+            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'leads.views.lead_form' %}">Submit Leads</a></li>
+                {% if "WPP" in request.session.groups %}
+                  <li><a href="{% url 'leads.views.wpp_lead_form' %}">Submit WPP Lead</a></li>
+                  <li><a href="{% url 'leads.views.get_wpp_lead_summary' %}">WPP Lead Status</a></li>
+                {% endif %}
+                <!-- <li><a href="{% url 'leads.views.agency_lead_form' %}">Agency Lead Form </a></li> -->
+                <li><a href="{% url 'leads.views.get_lead_summary' %}">Lead Status</a></li>
+              </ul>
+            </li>
+            <li><a href="{% url 'reports.views.reports' %}">Reports</a></li>
+            <!-- <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Resources <i class="fa fa-angle-down"></i></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Capabilities</a></li>
+                <li><a href="#">Best Practices</a></li>
+                <li><a href="#">FAQs</a></li>
+              </ul>
+            </li> -->
+            <li><a href="{% url 'main.views.resources' %}"> Resources</a></li>
+            <!-- <li><a href="{% url 'main.views.sales_tasks' %}"> Sales Tasks</a></li>               -->
+            <!-- <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Sales Tasks <i class="fa fa-angle-down"></i></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Tag</a></li>
+                <li class="sub-menu"><a href="#">Adwords</a></li>
+                <li class="sub-menu"><a href="#">Analytics</a></li>
+                <li class="sub-menu"><a href="#">GTM</a></li>
+                <li><a href="#">Shopping</a></li>
+              </ul>
+            </li> -->
+            <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Team Regalix <i class="fa fa-angle-down"></i></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'main.views.team' %}">Meet the Team</a></li>
+                <li><a href="{% url 'main.views.list_feedback' %}">Feedback</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+        <ul class="nav navbar-nav live-transfer">
+          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <img src="{% static 'images/US-flag.png' %}" id="loc_img"/>
+            <i class="fa fa-angle-down"></i></a>
+            <ul class="dropdown-menu" role="menu" id="loc_list">
+            </ul>
+          </li>
+          <li class="live-transfer-number"><i class="fa fa-phone"></i><span class="location_number">8669997725</span></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="submit-lead-btn"><button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button></li>
+          <li class="dropdown notification"> <a href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bell"></i><span id="notifications_count"></span></a>
+            <ul class="dropdown-menu" role="menu" id="notifications">
+            </ul>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="dropdown user-area"> 
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              {% if request.session.profile_image %}
+                <img src="{{request.session.profile_image}}?sz=32"/>
+              {% else %}
+                <img src="{% static 'images/profile-avtar.png' %}"/>
+              {% endif %}
+              <span class="user-name">{{user.first_name}} {{user.last_name}}</span> 
+              <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="{% url 'main.views.edit_profile_info' %}">My Account</a></li>
+              {% if 'regalix-inc.com' in request.user.email %}
+                <li><a href="{% url 'representatives.views.plan_schedule' %}" >Manage Appointment</a></li>
+              {% endif %}
+              {% if request.user.is_superuser %}
+                <li><a href="{% url 'main.views.master_data_upload' %}" >Master Data Upload</a></li>
+              {% endif %}
+              <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <!-- /.container-fluid --> 
+    </nav>
+  </header>
+  <script type="text/javascript">
+    window.user_location = "{{request.session.profile.location.id}}";
+  </script>
+
