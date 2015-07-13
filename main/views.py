@@ -1001,6 +1001,9 @@ def migrate_user_data(request):
     number_of_records = sheet.nrows - 1
     number_of_saved_records = 0
     number_of_unsaved_records = 0
+    new_programs = list()
+    new_locations = list()
+    new_region = list()
     failed_rows = list()
     for r_i in range(1, sheet.nrows):
 
@@ -1037,6 +1040,7 @@ def migrate_user_data(request):
             except ObjectDoesNotExist:
                 program = Team(team_name=program, is_active=False)
                 program.save()
+                new_programs.append(program)
                 user_details.team_id = program.id
 
             if region:
@@ -1046,6 +1050,7 @@ def migrate_user_data(request):
                 except ObjectDoesNotExist:
                     region = Region(name=region)
                     region.save()
+                    new_region.append(region)
                     user_details.region_id = region.id
 
             try:
@@ -1054,6 +1059,7 @@ def migrate_user_data(request):
             except ObjectDoesNotExist:
                 location = Location(location_name=country, is_active=False)
                 location.save()
+                new_locations.append(country)
                 user_details.location_id = location.id
 
             user_details.save()
@@ -1080,7 +1086,8 @@ def migrate_user_data(request):
         DownloadLeads.conver_to_csv(path, failed_rows, failed_rows[0].keys())
     template_args = {'number_of_saved_records': number_of_saved_records if number_of_saved_records else 0,
                      'number_of_unsaved_records': number_of_unsaved_records if number_of_unsaved_records else 0,
-                     'total_record': number_of_records}
+                     'total_record': number_of_records, 'new_region': new_region, 'new_locations': new_locations,
+                     'new_programs': new_programs}
 
     return render(request, 'main/master_upload.html', {'template_args': template_args,
                                                        'result': True})
