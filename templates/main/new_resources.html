@@ -6927,6 +6927,14 @@ var google_remarketing_only = true;<br />
 </div>
 <div >
 
+<!-- Page Loader -->
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+
+
 {% endblock content %}
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
@@ -7193,6 +7201,7 @@ $('#faq_submit').click(function(){
 	if(is_error){
 		return false;
 	}else{
+    $("#preloaderOverlay").show();
 		$.ajax({
         url: "/main/resources",
         data: {'tasktype': $('#sel1').val(), 'task_question': $('#comment').val()},
@@ -7203,15 +7212,17 @@ $('#faq_submit').click(function(){
         		alert("Successfully submitted question")
         		$('#sel1').val('0')
         		$('#comment').val("")
+            $("#preloaderOverlay").hide();
         	}
             },
         error: function() {
-        	alert();
+          $("#preloaderOverlay").hide();
+        	alert('Opps something went wrong!');
         }
       }); 
 	}
 })
-</script>
+</script> 
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. --> 
 <!--<script>

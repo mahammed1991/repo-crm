@@ -778,6 +778,7 @@ def resources(request):
         resfaq.submited_by = request.user
         try:
             resfaq.save()
+            resfaq = notify_faq(request, resfaq)
             return HttpResponse(json.dumps('SUCCESS'))
         except Exception:
             return HttpResponse(json.dumps('FAILURE'))
@@ -785,6 +786,35 @@ def resources(request):
     mp4_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
     ogg_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.ogg'
     return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials, 'mp4_url': mp4_url, 'ogg_url': ogg_url})
+
+
+@login_required
+def notify_faq(request, resfaq):
+    # import ipdb;ipdb.set_trace()
+    mail_subject = resfaq.task_type + "Portal FAQs"
+    mail_body = get_template('main/portal_faqs/faq.html').render(
+        Context({
+            'resfaq': resfaq,
+            'user_info': request.user,
+            'type': resfaq.task_type,
+            'faq_question': resfaq.task_question
+        })
+    )
+
+    bcc = set([])
+
+    mail_to = set([
+        'dkarthik@regalix-inc.com',
+        'abraham@regalix-inc.com',
+        'asarkar@regalix-inc.com'
+    ])
+
+    mail_from = request.user.email
+    attachments = list()
+
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    return resfaq
 
 
 @login_required
@@ -888,7 +918,6 @@ def notify_portal_feedback_activity(request, feedback):
         attachments.append(feedback.attachment)
 
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
-
     return feedback
 
 
