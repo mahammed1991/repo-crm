@@ -17,6 +17,11 @@ class LocationForm(forms.ModelForm):
         if daylight_start and daylight_end:
             if not ds_time_zones:
                 raise ValidationError("Please provide daylight timezones, because you given daylight start and end date")
+
+        location_name = self.cleaned_data.get('location_name')
+        loc_name = Location.objects.filter(location_name=location_name)
+        if len(loc_name) > 0:
+            raise ValidationError('This location is already in use')
         return self.cleaned_data
 
 

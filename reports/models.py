@@ -1,6 +1,7 @@
 from django.db import models
 from leads.models import Location, Team
 from datetime import datetime
+from django.core.exceptions import ValidationError
 
 
 class LeadSummaryReports(models.Model):
