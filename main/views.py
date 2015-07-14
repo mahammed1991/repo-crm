@@ -924,9 +924,8 @@ def notify_portal_feedback_activity(request, feedback):
 @login_required
 def master_data_upload(request):
     """ upload and load leads to view """
-    template_args = dict({'migrate_type': None})
+    template_args = dict()
     if request.method == 'POST':
-        migrate_type = request.POST.get('migrate_type')
         if request.FILES:
             excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
             if not os.path.exists(excel_file_save_path):
@@ -937,18 +936,22 @@ def master_data_upload(request):
 
             # Check file extension type
             # require only .xlsx file
-            if excel_file.name.split('.')[1] != 'xlsx':
+            if excel_file.name.split('.')[1] != 'xls':
                 template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file'})
                 return render(request, 'main/master_upload.html', template_args)
 
-            file_name = 'master_data.xls'
+            file_name = 'master_data.xlsx'
             excel_file_path = excel_file_save_path + file_name
             with open(excel_file_path, 'wb+') as destination:
                 for chunk in excel_file.chunks():
                     destination.write(chunk)
                 destination.close()
 
-            workbook = open_workbook(excel_file_path)
+            try:
+                workbook = open_workbook(excel_file_path)
+            except Exception as e:
+                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': e})
+                return render(request, 'main/master_upload.html', template_args)
 
             sheet = workbook.sheet_by_index(0)
 
@@ -973,7 +976,7 @@ def master_data_upload(request):
                 # append row data to excel sheet data
                 excel_data.append(excel_row_data)
 
-            template_args.update({'excel_data': excel_data, 'excel_file': file_name, 'migrate_type': migrate_type})
+            template_args.update({'excel_data': excel_data, 'excel_file': file_name})
     return render(request, 'main/master_upload.html', template_args)
 
 
@@ -1011,10 +1014,6 @@ def migrate_user_data(request):
         google_rep_email = rep_email + '@google.com'
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'program')).value
-        # rep_name = sheet.cell(r_i, get_col_index(sheet, 'Google Account Manager Name (Google Rep)')).value
-        # r_quarter = sheet.cell(r_i, get_col_index(sheet, 'r.quarter')).value
-        # market = sheet.cell(r_i, get_col_index(sheet, 'Market')).value
-        # rep_location = sheet.cell(r_i, get_col_index(sheet, 'Rep Location')).value
         google_manager_email = str(google_manager) + '@google.com'
         region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
@@ -1040,7 +1039,7 @@ def migrate_user_data(request):
             except ObjectDoesNotExist:
                 program = Team(team_name=program, is_active=False)
                 program.save()
-                new_programs.append(program)
+                new_programs.append(program.team_name)
                 user_details.team_id = program.id
 
             if region:
@@ -1050,7 +1049,7 @@ def migrate_user_data(request):
                 except ObjectDoesNotExist:
                     region = Region(name=region)
                     region.save()
-                    new_region.append(region)
+                    new_region.append(region.name)
                     user_details.region_id = region.id
 
             try:
@@ -1079,7 +1078,6 @@ def migrate_user_data(request):
     path = "/tmp/Unsaved_Records.csv"
     if os.path.exists(path):
         os.remove(path)
-
     if len(failed_rows) > 0:
         filename = "Unsaved_Records"
         path = "/tmp/%s.csv" % (filename)
@@ -1087,10 +1085,9 @@ def migrate_user_data(request):
     template_args = {'number_of_saved_records': number_of_saved_records if number_of_saved_records else 0,
                      'number_of_unsaved_records': number_of_unsaved_records if number_of_unsaved_records else 0,
                      'total_record': number_of_records, 'new_region': new_region, 'new_locations': new_locations,
-                     'new_programs': new_programs}
+                     'new_programs': new_programs, 'result': True}
 
-    return render(request, 'main/master_upload.html', {'template_args': template_args,
-                                                       'result': True})
+    return render(request, 'main/master_upload.html', template_args)
 
 
 def download_failed_records(request):

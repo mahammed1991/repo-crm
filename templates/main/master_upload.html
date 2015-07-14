@@ -68,17 +68,17 @@ Upload Leads
     {% else  %}
     <div id="content" class="clearfix">
         <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
-            Totally you are trying to upload {{template_args.total_record}} records...<br /><br />
+            Totally you are trying to upload {{total_record}} records...<br /><br />
             {{template_args.number_of_saved_records}} records successfully saved.<br /><br />
             Please click here to upload the data again <a href="{% url 'main.views.master_data_upload' %}"><b>Upload Here</b></a><br /><br />
             {{template_args.number_of_unsaved_records}} records not saved.<br /><br />
              Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
+
+             New Programs : {% for pr in new_programs %} {{pr}}, {% endfor %} <br />
+             New Locations : {% for lc in new_locations %} {{lc}}, {% endfor %} <br />
+             New Region : {% for rg in new_region %} {{rg}}, {% endfor %} <br />
         </div>
     </div>
-
-    <div> New Programs : {% for pr in new_programs %} {{pr}}, {% endfor %}</div>
-    <div> New Locations : {% for lc in new_locations %} {{lc}}, {% endfor %} </div>
-    <div> New Region : {% for rg in new_region %} {{rg}}, {% endfor %}</div>
     {% endif %}
 </div>
 </div>

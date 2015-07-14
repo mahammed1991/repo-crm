@@ -86,10 +86,6 @@ class RegalixTeamsAdmin(admin.ModelAdmin):
         extra_context = CustomAdmin.get_view_status(request, extra_context)
         return super(RegalixTeamsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
-    def queryset(self, request):
-        qs = super(RegalixTeamsAdmin, self).queryset(request)
-        return qs.filter(Q(team_lead__id=request.user.id) | Q(team_manager__id=request.user.id))
-
 admin.site.register(RegalixTeams, RegalixTeamsAdmin)
 
 

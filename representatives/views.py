@@ -143,6 +143,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
         # trigger a mail with changes in slot
         if changed_reords_in_slot:
+            changed_reords_in_slot = sorted(changed_reords_in_slot, key=lambda k: k['date_time'], reverse=True)
             mail_slot_changes(request, selected_team, changed_reords_in_slot)
 
         plan_month = slected_week_start_date.month
@@ -761,6 +762,7 @@ def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_availa
     slot['team'] = team
     slot['date'] = _date
     slot['time'] = _time
+    slot['date_time'] = datetime.strftime(ist_date, '%Y-%m-%d %I:%M %p')
     slot['prev_available_cnt'] = int(prev_available_cnt)
     slot['updated_cnt'] = updated_cnt
     return slot
