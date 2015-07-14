@@ -16,7 +16,7 @@
   <!-- content-region -->
   <section class="content-region inner-page xcm6">
     <div class="container-fluid">
-      <h1>RESOURCES</h1>
+      <h1 style="margin-top: 17px;">RESOURCES</h1>
       <!-- google rep info -->
       <div class="row"> 
         <!-- lefft coloum start************************************************************ -->
@@ -372,7 +372,7 @@
                     </div>
                     
                     
-                    <h3 class="expand-sm12 slide-in-4">Basic Requirements</h3>
+                    <h3 class="expand-sm12 slide-in-4 mmttl">Basic Requirements</h3>
                     <div class="col-xs-12 col-sm-12 expand-sml2 exp-cont">
                     <ul class="mmcc mmcc1 hide-b-1">
                     <li><div class="col-xs-1 col-sm-1 mbcr-1"><i class="fa fa-angle-right pd-rl"></i> </div><div  class="col-xs-11 col-sm-11 mbcr-2">Admin Panel Access / FTP</div></li>
@@ -6754,7 +6754,7 @@ var google_remarketing_only = true;<br />
                   </ol>
                 -->
                   <!-- Wrapper for slides -->
-                  <div class="carousel-inner xcm3" role="listbox" style="height: 290px;">
+                  <div class="carousel-inner" role="listbox" style="height: 290px;">
                     <div class="item active">
                       <p> Hello,<br>
                         Good morning<br>
@@ -6780,12 +6780,14 @@ var google_remarketing_only = true;<br />
                       <p style="line-height: 20px;"> For the past few quarters, I have leveraged Regalix extensively in my role. Every advertiser should be tracking their return on investment in some way. Unfortunately, I have many clients whose websites have been updated and no longer track conversions, or have lead forms that need to be tracked by event tracking that nobody has bothered to set up, and many who rely on phone calls are not aware of our website call conversion tracking or remarketing. Regalix helps me with all of these problems. They’ve delivered an excellent customer experience for my clients, rescheduling missed appointments and diligently following up and successfully implementing even very difficult changes like cross domain tracking and shopping opt in. Regalix helps me get the attribution data I need to improve my clients return on investment.</p><span class="xcm4">Isaac Hasson</span>
                        </div>
                   </div>
-                  <div class="xcm7"> <a class="left" href="#carousel-example-generic4" role="button" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true" style="color: #919191 !important;"></span> <span class="sr-only">Previous</span> </a> <a class="right" href="#carousel-example-generic4" role="button" data-slide="next"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" style="color: #919191 !important;"></span> <span class="sr-only">Next</span> </a> </div>
+
                 </div>
                 
                 <!-- Controls --> 
               </div>
             </div>
+            <div class="xcm7" style="top: 92%; width:97%; margin:auto;"> <a class="left" href="#carousel-example-generic4" role="button" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true" style="color: #919191 !important;"></span> <span class="sr-only">Previous</span> </a> <a class="right" href="#carousel-example-generic4" role="button" data-slide="next"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" style="color: #919191 !important;"></span> <span class="sr-only">Next</span> </a> 
+                  </div>
           </div>
           <!-- Testimonials ends -->
 
@@ -6833,9 +6835,9 @@ var google_remarketing_only = true;<br />
              </div>
           </div>  
            
-          <div class="col-sm-12 col-md-12 col-lg-12 rw1 aaz aaz1 aaz2 aaz3 aaz4 aaz5 aaz6 aaz7 aaz8 aaz9 aaz10 aaz11 aaz12 aaz13 aaz14 aaz15 aaz16 aaz17 aaz18 aaz19 aaz20 aaz21 aaz22 aaz23 aaz24 aaz25 aaz26 aaz27 aaz28 aaz29 aaz30 aaz31 aaz32 aaz33 cwp" >
-            <h1 style="margin-top:9.5%; border-bottom: 0px solid #ccc;">
-                <iframe class="embed-responsive-item" id="cont-iframe" src="" width="100%" height="400px" ></iframe>
+          <div class="col-sm-12 col-md-12 col-lg-12 rw1 aaz aaz1 aaz2 aaz3 aaz4 aaz5 aaz6 aaz7 aaz8 aaz9 aaz10 aaz11 aaz12 aaz13 aaz14 aaz15 aaz16 aaz17 aaz18 aaz19 aaz20 aaz21 aaz22 aaz23 aaz24 aaz25 aaz26 aaz27 aaz28 aaz29 aaz30 aaz31 aaz32 aaz33 cwp over-flw" >
+            <h1 style="border-bottom: 0px solid #ccc;  margin-top: 2.6%; border-bottom: 0px solid #ccc;  margin-bottom: 0px;  padding-bottom: 0px;">
+                <iframe class="embed-responsive-item" id="cont-iframe" src="" width="100%" height="410px" ></iframe>
           </div>
           
         </div>
@@ -7132,8 +7134,18 @@ $(document).ready(function () {
   $(this).toggleClass('.slide-in-4').toggleClass("slide-in-5");
 });
 
+ $('#nestedAccordion .mmttl').click(function() {
+ //debugger;
+ jQuery(this).parent().find('.ccheck').css("visibility", "visible");
+
+  //$(this).children('.expand-sml').find('.ccheck').
+  //$('.ccheck').css("visibility", "visible");
+ 
+  
+});
+
 $('#nestedAccordion .cl-dis').click(function(event) {
-  debugger;
+   
   event.target
 
   $(event.target).parents('.expand-sml').find('.mmcc').toggleClass('.hide-b-1').toggleClass("hide-b-2");
