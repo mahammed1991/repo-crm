@@ -1,8 +1,10 @@
 from django.contrib import admin
 from reports.models import Region, QuarterTargetLeads
+from reports.forms import RegionForm
 
 
 class RegionAdmin(admin.ModelAdmin):
+    form = RegionForm
     list_display = ('name', 'location_list')
     filter_horizontal = ('location',)
 
