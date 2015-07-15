@@ -364,15 +364,15 @@ margin-bottom:3px;
 
 
 #accordion > h3 { 
-font-family:robotomedium; 
-text-align:left; 
-font-size: 14px; 
-font-weight:normal; 
-text-transform:capitalize; 
-padding:16px 15px; 
-border: none; 
-border-radius: 0px;   
-margin: 0px 0px 9px 0px;}
+font-family: robotomedium;
+  text-align: left;
+  font-size: 14px;
+  font-weight: normal;
+  text-transform: capitalize;
+  padding: 15px 15px;
+  border: none;
+  border-radius: 0px;
+  margin: 0px 0px 6px 0px;}
 #accordion.ui-accordion .ui-accordion-content {
   padding:0px 0px; 
   margin-bottom: 0px;
@@ -465,7 +465,7 @@ padding:2%;
   margin-top: -15px;
   font-size: 20px;
   }
-.tag-imp, .workf, .shop, .callf{ height:460px; border: 1px solid #dcdcdc; padding: 10px;}
+.tag-imp, .workf, .shop, .callf{ height:453px; border: 1px solid #dcdcdc; padding: 10px;}
 .carousel-inner > .item > img, .carousel-inner > .item > a > img {margin: auto;  width: 100%; height:430px;padding-bottom:20px;}
 
 @media (max-width: 480px) {
@@ -513,6 +513,7 @@ border: 1px solid #d3d3d3;
   background: url(../images/plus2.png) no-repeat !important;
     background-position: 5px !important;
     cursor: pointer;
+    text-transform: none;
 }
 
 .slide-in-3 {
@@ -521,6 +522,7 @@ border: 1px solid #d3d3d3;
     background-color: #616161 !important;
   color: #fff;
     cursor: pointer;
+    text-transform: none;
 }
 .expand-sml{
 padding-left:30px !important; text-align:left;
@@ -544,6 +546,7 @@ padding-left:30px !important; text-align:left;
     background-position: 5px !important;
     padding-left: 5%;
       cursor: pointer;
+      text-transform: none;
 }
 #nestedAccordion .slide-in-5{
  background: url(../images/plus4.png) no-repeat !important;
@@ -694,19 +697,18 @@ background-color: #3399fe  !important;
 .amazon1{background:#fd9100; color:#ffffff;}
 .gambio1{background:#005da5; color:#ffffff;}
 .strato1{background:#005396; color:#ffffff;}
-.over-flw{height: 470px;  border: 1px solid #dcdcdc;  padding: 10px;  overflow-y: auto; }
+.over-flw{height: 453px;  border: 1px solid #dcdcdc;  padding: 10px;  overflow-y: auto; }
 .col_color{color:#fff !important;}
 .task-spec .ui-accordion .ui-accordion-content { padding: 0.5em 2.2em; border-top: 0; overflow: auto;}
-.cont-box{padding:0px;}
+.cont-box{padding:0px; }
 .xcm6 h1 {
   font-size: 24px;
   font-family: 'robotoblack';
   text-transform: none;
   text-align: center;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 12px;
-  
-  margin-bottom: 20px;
+  padding-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 
