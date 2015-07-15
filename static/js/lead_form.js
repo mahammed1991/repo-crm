@@ -203,6 +203,7 @@
     var selectedTeam = $(this).val();
     $("#team_service_gce").hide();
     $('#g_cases_id').val('')
+    $("#service_segment").val('');
     if (selectedTeam.indexOf('Services') != -1){
       if(selectedTeam == 'Services/GCE'){
         $("#team_service_gce").show();

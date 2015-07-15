@@ -1,7 +1,9 @@
 
 class SalesforceLeads(object):
 
-    SANDBOX_BASIC_LEADS_ARGS = {'gref': '00Nd0000005WYgk',  # Full Name
+    SANDBOX_BASIC_LEADS_ARGS = {'first_name': 'first_name',
+                                'last_name': 'last_name',
+                                'gref': '00Nd0000005WYgk',  # Full Name
                                 'emailref': 'email',  # Rep Email
                                 'manager_name': '00Nd00000075Crj',  # Manager Name
                                 'manager_email': '00Nd00000077r3s',  # Manager Email
@@ -66,7 +68,9 @@ class SalesforceLeads(object):
                                 '__VIEWSTATE': '__VIEWSTATE',
                                 }
 
-    PRODUCTION_BASIC_LEADS_ARGS = {'gref': '00Nd0000005WYgk',  # Full Name
+    PRODUCTION_BASIC_LEADS_ARGS = {'first_name': 'first_name',
+                                   'last_name': 'last_name',
+                                   'gref': '00Nd0000005WYgk',  # Full Name
                                    'emailref': 'email',  # Rep Email
                                    'manager_name': '00Nd00000075Crj',  # Manager Name
                                    'manager_email': '00Nd00000077r3s',  # Manager Email
