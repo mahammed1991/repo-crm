@@ -331,7 +331,7 @@ def create_or_update_leads(records, sf):
         lead.sf_lead_id = sf_lead_id
         if lead.type_1 == 'WPP':
             lead.lead_status = rec.get('WPP_Lead_Status__c')
-            lead.wpp_treatment_type = rec.get('Treatment_Type__c')
+            lead.wpp_treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Regalix Website Build Treatment'
 
         # Calculate TAT for each lead
         tat = 0

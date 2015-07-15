@@ -89,7 +89,7 @@ class Leads(models.Model):
     updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
 
     sf_lead_id = models.CharField(max_length=50, unique=True)
-    wpp_treatment_type = models.CharField(max_length=100, blank=True)
+    wpp_treatment_type = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Leads"
