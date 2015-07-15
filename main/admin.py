@@ -32,10 +32,6 @@ admin.site.register(User, MyUserAdmin)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('position_type', 'first_name', 'last_name', 'email', 'phone_number', 'skype_id', 'profile_photo')
     filter_horizontal = ('target_location',)
-    readonly_fields = ['position_type', 'first_name', 'last_name', 'email', 'phone_number', 'skype_id', 'profile_photo', 'target_location']
-
-    def get_readonly_fields(self, request, obj=None):
-        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
 
     def has_add_permission(self, request):
         return CustomAdmin.get_permission_status(request)

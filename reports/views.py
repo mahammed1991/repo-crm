@@ -182,81 +182,6 @@ def get_new_reports(request):
         return HttpResponse(json.dumps(report_details))
 
 
-# def get_program_by_location(request):
-#     """Ajax call to get program by location"""
-#     if request.is_ajax():
-#         report_type = request.GET.get('report_type', None)
-#         report_timeline = request.GET.getlist('report_timeline[]')
-#         region = request.GET.get('region')
-#         countries = request.GET.getlist('countries[]')
-#         teams = request.GET.getlist('team[]')
-#         team_members = request.GET.getlist('team_members[]')
-#         program_split = request.GET.get('program_split', None)
-#         location_split = request.GET.get('location_split', None)
-
-#         # Get teams
-#         if 'all' in teams:
-#             if len(teams) > 1:
-#                 teams.remove('all')
-#             else:
-#                 teams = ReportService.get_all_teams()
-#         else:
-#             teams = teams
-
-#         # Get teams
-#         if 'all' in team_members:
-#             if len(team_members) > 1:
-#                 team_members.remove('all')
-#             else:
-#                 team_members = team_members
-
-#         final_countries = list()
-
-#         if region:
-#             if region == 'all':
-#                 final_countries = ReportService.get_all_locations()
-#             else:
-#                 if 'all' in countries:
-#                     if len(countries) > 1:
-#                         countries.remove('all')
-#                         final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
-#                     else:
-#                         final_countries = ReportService.get_all_locations()
-#                 else:
-#                     final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
-#         else:
-#             final_countries = ReportService.get_all_locations()
-
-#         countries = final_countries
-#         code_types = ReportService.get_all_code_type()
-#         code_types = [str(codes.encode('utf-8')) for codes in code_types]
-
-#         if report_timeline:
-#             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
-#             end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-
-#         if '' in teams:
-#             teams.remove('')
-
-#         report_detail = dict()
-#         if report_type == 'leadreport_programview':
-#             if program_split:
-#                 program_report = ReportService.get_program_report_by_locations(teams, countries, code_types)
-#                 report_detail['program_report'] = program_report
-#         elif report_type == 'leadreport_regionview':
-#             if location_split:
-#                 region_report = ReportService.get_region_report_by_program(countries, teams, code_types)
-#                 report_detail['region_report'] = region_report
-
-#         else:
-#             report_detail = None
-
-#         report_details = {'reports': report_detail, 'code_types': code_types,
-#                           'report_type': report_type, 'report_timeline': report_timeline,
-#                           'region': region, 'team': teams, }
-#         return HttpResponse(json.dumps(report_details))
-
-
 @csrf_exempt
 @login_required
 def get_download_report(request):
@@ -713,7 +638,7 @@ def get_trends_reports(request):
         team = request.GET.getlist('teams[]')
         code_types = request.GET.getlist('code_types[]')
         timeline = str(request.GET.get('timeLine'))
-        reportType = str(request.GET.get('report_type'))
+        report_type = str(request.GET.get('report_type'))
         reports = list()
         if 'all' in code_types:
             if len(code_types) > 1:
@@ -729,9 +654,9 @@ def get_trends_reports(request):
             else:
                 team = ReportService.get_all_teams()
         teams = [str(t) for t in team]
-        if (reportType == 'trend_report_program_wise'):
+        if (report_type == 'trend_report_program_wise'):
             reports = TrendsReportServices.get_trends_report_program_wise(teams, code_types, timeline)
-        elif(reportType == 'trends_report_for_win_and_total'):
+        elif(report_type == 'trends_report_for_win_and_total'):
             reports = TrendsReportServices.get_for_win_total_and_conversionratio(teams, code_types, timeline)
     # creating this tableReports for draw table
 
@@ -740,7 +665,7 @@ def get_trends_reports(request):
         table_reports.append([row[i] for row in reports])
     mimetype = 'application/json'
     return HttpResponse(json.dumps({'reports': reports, 'tableReports': table_reports,
-                                    'timeline': timeline, 'teams': teams, 'code_types': code_types, 'report_type': reportType}), mimetype)
+                                    'timeline': timeline, 'teams': teams, 'code_types': code_types, 'report_type': report_type}), mimetype)
 
 
 @login_required
