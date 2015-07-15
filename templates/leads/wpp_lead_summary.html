@@ -25,16 +25,9 @@
   <section class="content-region">
     <div class="container-fluid">
      <div class="row" style="border-bottom: 1px solid #ccc;  padding-top: 25px; padding-bottom: 19px;"> 
-        <div class="col-xs-12 col-sm-5 col-md-7" style="padding-top: 10px;">
+        <div class="col-xs-12 col-sm-12 col-md-12" style="padding-top: 10px;">
           <div style="font-size: 24px;  font-family: 'robotoblack';  text-transform: uppercase;  text-align: center;">WPP Leads Summary</div>
-          </div>
-
-          <div class="col-xs-12 col-sm-7 col-md-5" style="padding-top: 10px;">
-          <div style="max-width:334px; margin:auto;">
-            <div class="col-xs-6 col-sm-7 col-md-5" style="padding-right: 0px;  padding-top: 10px;">
-              <div style="font-size:15px;  font-weight:normal; ">Treatment Type:</div>
-            </div>
-             <div class="col-xs-6 col-sm-5 col-md-7" style="padding-right: 0px; padding-left: 0px;">
+          <div class="wpp-type">Treatment Type:
               <select id="treatment_type" class="lead_summary bgicon" style="height: 38px;">
                 <option value="all">All</option>
                 {% for type in treatment_types %}
@@ -42,8 +35,8 @@
                 {% endfor %}
               </select>
               </div>
-               </div>
-            </div>
+        </div>
+          
       </div>   
       <div class="row summary-container">
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
