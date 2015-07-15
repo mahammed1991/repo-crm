@@ -2328,7 +2328,13 @@ margin-bottom:2px;
 	margin-bottom: 8px;
 }
 
-
+.wpp-type {
+	font-size:15px; 
+	font-weight:normal;
+	position:absolute;
+	top:7px; 
+	right:30px;
+}
 
 /* ==========================================================================
    End of Leads Status
@@ -2499,6 +2505,10 @@ margin-bottom:2px;
 	}	
 	.table-container {
 		overflow:auto;
+	}
+	.wpp-type {
+		position: relative;
+		text-align: center;
 	}
 }
 
