@@ -1676,6 +1676,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         'sprasad@regalix-inc.com',
         'abraham@regalix-inc.com',
         'svijaykumar@regalix-inc.com',
+
     ])
 
     mail_from = "implementation-support@google.com"
@@ -2197,6 +2198,9 @@ def get_advertiser_details(sf_api_url, lead_data):
             agency_details['first_name'] = first_name
             agency_details['last_name'] = last_name
             agency_details['email'] = lead_data.get(basic_leads.get('agency_email'))
+    else:
+        agency_details['first_name'] = first_name
+        agency_details['last_name'] = last_name
 
     if agency_details['code_type'] == 'WPP':
         agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
