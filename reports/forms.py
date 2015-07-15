@@ -12,9 +12,9 @@ class RegionForm(forms.ModelForm):
         name = self.cleaned_data.get('name')
         grp_name = Region.objects.filter(name=name)
         loc = Region.objects.filter(location=location)
-        if len(loc) > 0:
+        if loc:
             raise ValidationError('This location is already in use')
 
-        if len(grp_name) > 0:
+        if grp_name:
             raise ValidationError('This name is already in use')
         return self.cleaned_data
