@@ -22,14 +22,14 @@
         <!-- lefft coloum start************************************************************ -->
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
           <div id="accordion">
-            <h3>Capabilities</h3>
+            <h3 class="h3-tag-imp h3-shop">Capabilities</h3>
             <div>
               <ul class="left-list">
                 <li class="showxl " id="tag-imp"><a href="#cdn1">Tag Implementation</a></li>
                 <li class="showxl" id="shop"><a href="#">Shopping</a></li>
               </ul>
             </div>
-            <h3>Best Practices</h3>
+            <h3 class="h3-callf h3-workf">Best Practices</h3>
             <div>
               <ul class="left-list">
                 <li class="showxl" id="workf"><a href="#">Workflow</a></li>
@@ -37,11 +37,11 @@
                
               </ul>
             </div>
-            <h3>Support Boundaries/FAQ</h3>
+            <h3 class="h3-cwp h3-top-cms">Support Boundaries/FAQ</h3>
             <div>
               <ul class="left-list">
                  <li class="showxl c-red" id="sup-boun"><a href="#">Support Boundaries</a></li>
-                <li class="showxl" id="cwp"><a href="#" onClick="changeContent( '../../static/css/resources/30cms pdfs/Compatibility with CMS Platforms .pdf')">Compatibility with CMS/Platforms</a></li>
+                <li class="showxl" id="cwp"><a id="onclick-cwp" href="#" onClick="changeContent( '../../static/css/resources/30cms pdfs/Compatibility with CMS Platforms .pdf')">Compatibility with CMS/Platforms</a></li>
                 <li class="showxl" id="task-spec"><a href="#" onClick="changeContent('')">Task Specific Questions</a></li>
                 
                 <li class="showxl" id="top-cms"><a href="#">Top 30 CMS</a></li>
@@ -55,14 +55,14 @@
                 <li class="showxl" id="testimon"><a href="">Testimonials</a></li>
               </ul>
             </div>
-           <h3>Videos</h3>
+           <h3 class="h3-sales-video">Videos</h3>
             <div> 
 
                 <ul class="left-list">
-                 <li class="showxl" id="slaes-video1" ><a href="">Sales Implementation Explained</a></li>
+                 <li class="showxl" id="sales-video" ><a href="">Sales Implementation Explained</a></li>
                  </ul>
             </div>
-            <h3 class="newsletters_cust showxl">Newsletter</h3>
+            <h3 class="newsletters_cust h3-newsletters showxl">Newsletter</h3>
           </div>
         </div>
         <!-- lefft coloum end************************************************************ --> 
@@ -6793,7 +6793,7 @@ var google_remarketing_only = true;<br />
 
           <!-- video section    -->      
           
-             <div class="col-sm-12 col-md-12 col-lg-12 rw1 slaes-video1 over-flw"  style="  overflow-x: hidden;">
+             <div class="col-sm-12 col-md-12 col-lg-12 rw1 sales-video over-flw"  style="  overflow-x: hidden;">
             <h1 class="form-head">Sales Implementation Explained</h1>
             <div class="row">
              
@@ -6958,12 +6958,6 @@ var google_remarketing_only = true;<br />
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function(){
-    var url = window.location.href;
-    if (url.indexOf('#videos') != -1){
-      $("#myModal").trigger('click');
-    }
-  });
 
   $("#video_btn").click(function(){
     var vid = document.getElementById("tag"); 
@@ -7051,12 +7045,8 @@ $(document).ready(function () {
 </script> 
 <script>
 $(document).ready(function () {
- $(function() {
-    $( ".accordion2" ).accordion({ header: "h4", active: true, collapsible: true, heightStyle: "content"  });
-  
-  });
     var parentDivs = $('.accordion2 .xcm23'),
-        childDivs = $('.accordion2 h5').siblings('div');
+    childDivs = $('.accordion2 h5').siblings('div');
 
 });
 $(function(){          
@@ -7084,10 +7074,6 @@ $(function(){
 
 
 $(document).ready(function () {
- $( "#accordion" ).accordion({ active: 2 });
-    var parentDivs = $('#nestedAccordion .expand-sml'),
-        childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
-
     $('#nestedAccordion h2').click(function () {
   
         parentDivs.slideUp();
@@ -7143,6 +7129,23 @@ $('#nestedAccordion .cl-dis').click(function(event) {
   $(event.target).parents('.expand-sml').find('.mmcc').toggleClass('.hide-b-1').toggleClass("hide-b-2");
   $(event.target).parents('.expand-sml').find('.mmcc2').toggleClass('.hide-b-3').toggleClass("hide-b-4");
 });
+
+  var url = window.location.href;
+    if(url.indexOf('#') != -1){
+      lookFor = url.split("#")[1];
+      $(".h3-" + lookFor).trigger('click');
+      $("#" +lookFor).trigger("click");
+      $(".showxl").removeClass('c-red');
+      $("#" + lookFor).addClass('c-red');
+      if(lookFor == 'cwp'){
+        $("#onclick-" + lookFor).trigger('click')
+      }
+    }else{
+      $( ".accordion2" ).accordion({ header: "h4", active: true, collapsible: true, heightStyle: "content"  });
+      $( "#accordion" ).accordion({ active: 2 });
+      var parentDivs = $('#nestedAccordion .expand-sml'),
+      childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
+    }
 
 });
 
