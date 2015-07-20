@@ -427,7 +427,7 @@ class LeadForm(models.Model):
 class LeadFormAccessControl(models.Model):
     """ Lead Form Access Control """
 
-    lead_form = models.ForeignKey(LeadForm)
+    lead_form = models.ForeignKey(LeadForm, unique=True)
     programs = models.ManyToManyField(Team, blank=True, null=True)
     target_location = models.ManyToManyField(Location, blank=True, null=True)
     google_rep = models.ManyToManyField(User, blank=True, null=True)
