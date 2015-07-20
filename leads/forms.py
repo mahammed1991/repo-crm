@@ -11,6 +11,7 @@ class LocationForm(forms.ModelForm):
         """
         Checks that all data is valid.
         """
+        super(LocationForm, self).clean()
         ds_time_zones = self.cleaned_data.get('ds_time_zone')
         daylight_start = self.cleaned_data.get('daylight_start')
         daylight_end = self.cleaned_data.get('daylight_end')
@@ -29,6 +30,7 @@ class LeadFormAccessControlAdminForm(forms.ModelForm):
         """
         validates the fields
         """
+        super(LeadFormAccessControlAdminForm, self).clean()
         lead_form = self.cleaned_data.get('lead_form')
         programs = self.cleaned_data.get('programs')
         target_location = self.cleaned_data.get('target_location')

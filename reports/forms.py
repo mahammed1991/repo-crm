@@ -8,6 +8,7 @@ class RegionForm(forms.ModelForm):
         model = Region
 
     def clean(self):
+        super(RegionForm, self).clean()
         location = self.cleaned_data.get('location')
         name = self.cleaned_data.get('name')
         grp_name = Region.objects.filter(name=name)
