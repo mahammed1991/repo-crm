@@ -28,7 +28,7 @@ from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
                          is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter,
-                         get_previous_month_start_end_days)
+                         get_previous_month_start_end_days, create_new_user)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
@@ -499,10 +499,21 @@ def create_feedback(request, lead_id=None):
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=request.POST['lead_owner'])
             feedback_details.lead_owner = lead_owner
+        except ObjectDoesNotExist:
+            email = request.POST['lead_owner']
+            if email:
+                lead_owner = create_new_user(email)
+                feedback_details.lead_owner = lead_owner
+
+        try:
             google_account_manager = User.objects.get(email=request.POST['google_acManager_name'])
             feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
-            pass
+            email = request.POST['google_acManager_name']
+            if email:
+                google_account_manager = create_new_user(email)
+                feedback_details.google_account_manager = google_account_manager
+
         if request.FILES:
             feedback_details.attachment = request.FILES['attachment_name']
 
