@@ -410,7 +410,7 @@ class ContactPerson(models.Model):
 
 class LeadForm(models.Model):
     """ Lead Form Names """
-    name = models.CharField(max_length=255, null=False)
+    name = models.CharField(max_length=255, null=False, unique=True)
     is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)

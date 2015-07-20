@@ -18,10 +18,6 @@ class LocationForm(forms.ModelForm):
             if not ds_time_zones:
                 raise ValidationError("Please provide daylight timezones, because you given daylight start and end date")
 
-        location_name = self.cleaned_data.get('location_name')
-        loc_name = Location.objects.filter(location_name=location_name)
-        if loc_name:
-            raise ValidationError('This location is already in use')
         return self.cleaned_data
 
 
@@ -50,10 +46,6 @@ class LeadFormAccessControlAdminForm(forms.ModelForm):
                 pass
             else:
                 raise ValidationError('Select Programs and Target Location or Google rep to save the Lead Form Access Control')
-
-        existing_lfac_with_formname = LeadFormAccessControl.objects.filter(lead_form=lead_form)
-        if len(existing_lfac_with_formname) > 0:
-            raise ValidationError('Selected Lead Form is already Exist!. Duplicates not allowed!')
 
         existing_lead_form_access_controls = LeadFormAccessControl.objects.exclude(lead_form=lead_form).filter(programs__in=programs, target_location__in=target_location)
         if len(existing_lead_form_access_controls) > 0:

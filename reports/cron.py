@@ -2,13 +2,10 @@ import kronos
 from reports.report_services import ReportService
 from django.conf import settings
 from datetime import datetime, timedelta
-from lib.helpers import first_day_of_month, last_day_of_month
 import logging
 from lib.salesforce import SalesforceApi
 from leads.models import Leads, SfdcUsers
 from django.core.exceptions import ObjectDoesNotExist
-from lib.helpers import get_week_start_end_days
-import time
 import pytz
 from representatives.models import GoogeRepresentatives, RegalixRepresentatives
 
@@ -17,46 +14,6 @@ logging.basicConfig(filename='/tmp/cronjob.log',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%d/%b/%Y %H:%M:%S',
                     level=logging.DEBUG)
-
-
-# @kronos.register('*/25 * * * *')
-# def current_day_leads():
-#     """ Get Leads from SFDC """
-#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-#     start_date = end_date - timedelta(minutes=30)
-#     logging.info("Current Day Leads %s to %s " % (start_date, end_date))
-#     get_leads_from_sfdc(start_date, end_date)
-
-
-# @kronos.register('0 * * * *')
-# def current_week_leads():
-#     """ Get Leads from SFDC """
-#     week = int(time.strftime("%W")) + 1
-#     year = int(time.strftime("%Y"))
-#     start_date, end_date = get_week_start_end_days(year, week)
-#     logging.info("Get Week leads by %s to %s " % (start_date, end_date))
-#     get_leads_from_sfdc(start_date, end_date)
-
-
-# @kronos.register('0 6 * * *')
-# def current_month_leads():
-#     """ Get Leads from SFDC """
-
-#     start_date = first_day_of_month(datetime.utcnow())
-#     end_date = last_day_of_month(datetime.utcnow())
-#     logging.info("Current Month Leads by from %s to %s" % (start_date, end_date))
-#     get_leads_from_sfdc(start_date, end_date)
-
-
-# @kronos.register('0 7 * * *')
-# def current_quarter_leads():
-#     """ Get Leads from SFDC """
-#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-#     start_date = end_date - timedelta(days=75)
-#     end_date = end_date + timedelta(days=15)
-#     # start_date, end_date = get_quarter_date_slots(datetime.utcnow())
-#     logging.info("Current Quarted Leads from %s to %s" % (start_date, end_date))
-#     get_leads_from_sfdc(start_date, end_date)
 
 
 @kronos.register('*/10 * * * *')
@@ -83,32 +40,6 @@ def get_updated_leads():
         print e
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
         logging.info("%s" % (e))
-
-
-# @kronos.register('*/45 * * * *')
-# def get_appointment_leads():
-#     """ Get Current day Leads from SFDC """
-#     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-#     start_date = end_date - timedelta(minutes=50)
-#     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
-#     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-#     logging.info("Current day Leads from %s to %s" % (start_date, end_date))
-#     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
-#     sf = SalesforceApi.connect_salesforce()
-#     logging.info("Connect Successfully")
-#     select_items = settings.SFDC_FIELDS
-#     tech_team_id = settings.TECH_TEAM_ID
-#     where_clause = "WHERE (Rescheduled_Appointments__c != null OR Appointment_Date__c != null) AND (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND Status != 'Implemented' AND LastModifiedById != '%s'" % (start_date, end_date, tech_team_id)
-#     sql_query = "select %s from Lead %s" % (select_items, where_clause)
-#     try:
-#         all_leads = sf.query_all(sql_query)
-#         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
-#         create_or_update_leads(all_leads['records'], sf)
-#         update_sfdc_leads(all_leads['records'], sf)
-#     except Exception as e:
-#         print e
-#         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
-#         logging.info("%s" % (e))
 
 
 @kronos.register('55 0 * * *')
