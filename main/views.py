@@ -567,6 +567,9 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
 
     mail_to = set([
         'g-crew@regalix-inc.com',
+        'rwieker@google.com',
+        'sabinaa@google.com',
+        'anak@google.com',
         feedback.lead_owner.email,
         request.user.email
     ])
