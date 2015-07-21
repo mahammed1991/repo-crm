@@ -7045,9 +7045,11 @@ $(document).ready(function () {
 </script> 
 <script>
 $(document).ready(function () {
+    $(function() {
+    $( ".accordion2" ).accordion({ header: "h4", active: true, collapsible: true, heightStyle: "   content"  });
+    });
     var parentDivs = $('.accordion2 .xcm23'),
     childDivs = $('.accordion2 h5').siblings('div');
-
 });
 $(function(){          
          $('.showSingle').click(function(){
@@ -7074,9 +7076,12 @@ $(function(){
 
 
 $(document).ready(function () {
+
+    $( "#accordion" ).accordion({ active: 2 });
+    var parentDivs = $('#nestedAccordion .expand-sml'),
+    childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
+
     $('#nestedAccordion h2').click(function () {
-        var parentDivs = $('#nestedAccordion .expand-sml')
-        childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
         parentDivs.slideUp();
         if ($(this).next().is(':hidden')) {
             $(this).next().slideDown();
@@ -7141,11 +7146,6 @@ $('#nestedAccordion .cl-dis').click(function(event) {
       if(lookFor == 'cwp'){
         $("#onclick-" + lookFor).trigger('click')
       }
-    }else{
-      $( ".accordion2" ).accordion({ header: "h4", active: true, collapsible: true, heightStyle: "content"  });
-      $( "#accordion" ).accordion({ active: 2 });
-      var parentDivs = $('#nestedAccordion .expand-sml')
-      childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
     }
 
 });
