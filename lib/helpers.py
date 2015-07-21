@@ -476,12 +476,3 @@ def get_months_from_date(dt):
     else:
         months = [10, 11, 12]
     return months
-
-
-def create_new_user(email):
-    """ Create New User """
-    username = email.split('@')[0]
-    user = User.objects.create_user(email, email)
-    user.first_name = username
-    user.save()
-    return user

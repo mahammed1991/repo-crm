@@ -14,5 +14,7 @@ urlpatterns = patterns(
     url(r'^get-download-report$', views.get_download_report),
     url(r'^get-user-name$', views.get_user_name),
     # url(r'^get-program-location$', views.get_program_by_location),
+    url(r'^wpp/$', views.wpp_reports),
+    url(r'^wpp/get-wpp-reports/$', views.get_wpp_reports),
 
 )
