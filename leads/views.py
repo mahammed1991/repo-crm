@@ -754,7 +754,6 @@ def download_agency_csv(request):
 
 @csrf_exempt
 @login_required
-# def agent_bulk_upload(request, agency_name, pid):
 def agent_bulk_upload(request):
     """ Agency Bulk Upload """
     template_args = dict()
@@ -811,7 +810,6 @@ def agent_bulk_upload(request):
             #     poc = ContactPerson.objects.get(id=poc_id)
             # except ObjectDoesNotExist:
             #     pass
-
             for i in range(1, int(params_count) + 1):
                 customer_id = request.POST.get('customer_id_' + str(i))
                 location = request.POST.get('location_' + str(i))
@@ -869,8 +867,6 @@ def agent_bulk_upload(request):
                     'agency_email': agency_email,
                     'agency_phone': agency_phone,
                     'agency_poc': '',
-
-                    'lead_type': 'Agency Bulk Lead',
 
                     'rep_location': '',
                     'Campaign_ID': None,
@@ -2100,7 +2096,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
         team = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('team'))
         cid = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('cid'))
 
-    if code_type and country and team and cid:
+    if code_type and country and cid:
         appointment_in_ist = None
         appointment_in_pst = None
         if appointment_date:

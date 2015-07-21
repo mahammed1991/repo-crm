@@ -178,7 +178,6 @@ class OlarkChatGroupAdmin(admin.ModelAdmin):
     form = OlarkChatGroupForm
     list_display = ('operator_group', 'program_list', 'location_list', 'rep_list',)
     filter_horizontal = ('programs', 'target_location', 'google_rep')
-    readonly_fields = ['operator_group', 'program_list', 'location_list', 'rep_list', 'programs', 'target_location', 'google_rep']
 
     def get_readonly_fields(self, request, obj=None):
         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
@@ -188,10 +187,6 @@ class OlarkChatGroupAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return CustomAdmin.get_permission_status(request)
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        extra_context = CustomAdmin.get_view_status(request, extra_context)
-        return super(OlarkChatGroupAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(OlarkChatGroup, OlarkChatGroupAdmin)
 

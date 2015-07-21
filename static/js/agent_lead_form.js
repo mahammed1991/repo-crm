@@ -590,6 +590,13 @@ function setLocations(newLocations){
         }
       }
 
+      // Analytics setup check box
+      $('.is_ga_setup').each(function(){
+        if(!$(this).is(":visible")){
+          $(this).val(0);
+        }
+      });
+
       // Check If Error in Form
       if(window.is_error){
         return false;
@@ -687,3 +694,11 @@ $('#region').change(function(){
     
    $("#country").val('0');
   }
+
+$(document).on('click', '.is_ga_setup', function() {
+    if($(this).is(":checked")){
+      $(this).val(1);
+    }else{
+      $(this).val(0);
+    }
+});

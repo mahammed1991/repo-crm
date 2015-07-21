@@ -8,7 +8,7 @@ class OlarkChatGroupForm(forms.ModelForm):
         model = OlarkChatGroup
 
     def clean(self):
-
+        super(OlarkChatGroupForm, self).clean()
         operator_group = self.cleaned_data.get('operator_group')
         programs = self.cleaned_data.get('programs')
         target_location = self.cleaned_data.get('target_location')
