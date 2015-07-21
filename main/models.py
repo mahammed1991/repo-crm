@@ -62,7 +62,7 @@ class Feedback(models.Model):
 
     third_resolved_by = models.ForeignKey(User, related_name='third_resolved_by', null=True)
     third_resolved_date = models.DateTimeField(blank=True, null=True)
-    # resolved_count = models.IntegerField(blank=True, default=0)
+    sf_lead_id = models.CharField(max_length=50, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
 
