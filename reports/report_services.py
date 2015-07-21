@@ -2,7 +2,7 @@ import csv
 import os
 import mimetypes
 from datetime import datetime, date, timedelta
-from leads.models import Leads, RegalixTeams, Team, Location
+from leads.models import Leads, RegalixTeams, Team, Location, TreatmentType
 from reports.models import QuarterTargetLeads
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
                          last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range, get_months_from_date,
@@ -256,7 +256,7 @@ class ReportService(object):
 
         leads_status_summary['total_leads'] = len(lead_ids)
 
-        leads_status_summary['TAT'] = Leads.objects.filter(id__in=lead_ids, lead_status='Implemented').aggregate(Avg('tat'))['tat__avg']
+        leads_status_summary['TAT'] = Leads.objects.filter(id__in=lead_ids).aggregate(Avg('tat'))['tat__avg']
         return leads_status_summary
 
     @staticmethod
@@ -569,6 +569,60 @@ class ReportService(object):
                     detail[res['country']][param] += res['count']
 
         return detail
+
+    @staticmethod
+    def get_wpp_report_details_for_filters(report_timeline, start_date, end_date, emails):
+        wpp_report_detail = dict()
+        if emails:
+            query = {'created_date__gte': start_date, 'created_date__lte': end_date,
+                     'type_1': 'WPP', 'google_rep_email__in': emails}
+        else:
+            query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'type_1': 'WPP'}
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'type_1': 'WPP'}
+
+        wpp_lead_status_counts = Leads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        wpp_lead_status_count_dict = {str(rec['lead_status']): rec['count'] for rec in wpp_lead_status_counts}
+        wpp_lead_status_count_dict['TOTAL'] = Leads.objects.filter(**query).count()
+        wpp_lead_status_count_dict['TAT'] = Leads.objects.filter(**query).aggregate(Avg('tat'))['tat__avg']
+
+        key_order = [sts for sts in settings.WPP_LEAD_STATUS]
+        key_order.insert(0, 'TOTAL')
+        key_order.append('TAT')
+
+        for lead_status in settings.WPP_LEAD_STATUS:
+                if lead_status not in wpp_lead_status_count_dict:
+                    wpp_lead_status_count_dict[lead_status] = 0
+
+        if wpp_lead_status_count_dict['TAT'] is None or '':
+            wpp_lead_status_count_dict['TAT'] = 0
+
+        wpp_keyorder = {k: v for v, k in enumerate(key_order)}
+        wpp_report_detail['wpp_lead_status_analysis'] = OrderedDict(sorted(wpp_lead_status_count_dict.items(), key=lambda i: wpp_keyorder.get(i[0])))
+        wpp_report_detail['wpp_treatment_type_analysis'], wpp_report_detail['pie_chart_dict'] = ReportService.get_wpp_treatment_type_lead_status_analysis(query)
+
+        return wpp_report_detail
+
+    @staticmethod
+    def get_wpp_treatment_type_lead_status_analysis(query):
+        wpp_treatment_type_lead_status_analysis = dict()
+        lead_status_per_treatment_type = Leads.objects.filter(**query).values('wpp_treatment_type').annotate(count=Count('pk'))
+        pie_chart_dict = {str(rec['wpp_treatment_type']): rec['count'] for rec in lead_status_per_treatment_type}
+
+        key_order = [sts for sts in settings.WPP_LEAD_STATUS]
+        key_order.append('TOTAL')
+        wpp_keyorder = {k: v for v, k in enumerate(key_order)}
+
+        for treatement_type in TreatmentType.objects.all():
+            query['wpp_treatment_type'] = treatement_type
+            lead_status_per_treatment_type = Leads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+            lead_status_per_treatment_type_dict = {str(rec['lead_status']): rec['count'] for rec in lead_status_per_treatment_type}
+            for lead_status in settings.WPP_LEAD_STATUS:
+                if lead_status not in lead_status_per_treatment_type_dict:
+                    lead_status_per_treatment_type_dict[lead_status] = 0
+            lead_status_per_treatment_type_dict['TOTAL'] = Leads.objects.filter(**query).count()
+            wpp_treatment_type_lead_status_analysis[str(treatement_type.name)] = OrderedDict(sorted(lead_status_per_treatment_type_dict.items(), key=lambda i: wpp_keyorder.get(i[0])))
+
+        return wpp_treatment_type_lead_status_analysis, pie_chart_dict
 
     # ======================================================end of optimization==============
 
@@ -1373,12 +1427,13 @@ class DownloadLeads(object):
 
     @staticmethod
     def conver_to_csv(path, rows, fields):
-        Writer = csv.DictWriter(open(path, 'w'), fields, delimiter=',')
-        Writer.writeheader()
+        writer = csv.DictWriter(open(path, 'w'), fields, delimiter=',')
+        writer.writeheader()
         for row in rows:
             try:
-                Writer.writerow(row)
+                writer.writerow(row)
             except Exception as e:
+                # print row
                 print e
 
     @staticmethod

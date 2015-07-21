@@ -473,3 +473,79 @@ def get_months_from_date(dt):
     else:
         months = [10, 11, 12]
     return months
+
+
+def get_rep_details_from_leads(reps, start_date, end_date):
+
+    user_monthly_lead_status_dict = month_on_month_leads_details(reps, start_date, end_date)
+
+    # for ele in user_monthly_lead_status_dict.keys():
+    #     if ele not in reps:
+    #         print ele
+
+    total_leads_dict = Leads.objects.exclude(type_1='WPP').values('google_rep_email').filter(created_date__gt=start_date, created_date__lt=end_date).annotate(count=Count('lead_status'))
+    implemented_leads_dict = Leads.objects.exclude(type_1='WPP', lead_sub_status='RR - Inactive').values('google_rep_email').filter(created_date__gt=start_date, created_date__lt=end_date,
+                                                                                                                                    lead_status__in=['Implemented', 'Rework Required', 'Pending QC - WIN']).annotate(count=Count('lead_status'))
+    users_total_leads = {str(rec['google_rep_email']): rec['count'] for rec in total_leads_dict}
+    users_implemented_leads = {str(rec['google_rep_email']): rec['count'] for rec in implemented_leads_dict}
+    print len(users_implemented_leads)
+
+    user_dict = UserDetails.objects.filter(user__email__in=reps).values('location__location_name', 'user__email', 'user__first_name', 'user__last_name', 'profile_photo_url', 'team__team_name')
+    for user in user_dict:
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'google_rep_email': user['user__email']}
+        user['code_types'] = get_rep_code_type_details(query)
+
+    for record in user_dict:
+        if record['user__email'] in user_monthly_lead_status_dict.keys():
+            record['monthly_lead_status'] = user_monthly_lead_status_dict[record['user__email']]
+        if record['user__email'] in users_total_leads.keys():
+            record['total_leads'] = users_total_leads[record['user__email']]
+        if record['user__email'] in users_implemented_leads.keys():
+            record['implemented_leads'] = users_implemented_leads[record['user__email']]
+
+    return user_dict
+
+
+def get_rep_code_type_details(query):
+    code_types = dict()
+    code_types_count = Leads.objects.filter(**query).values('type_1').annotate(count=Count('pk'))
+    for each_type in code_types_count:
+            if each_type:
+                code_types[str(each_type['type_1'])] = each_type['count']
+    return code_types
+
+
+def get_lead_status_details(lead_sub_status_count):
+    top_3_sub_status = dict()
+    for each_sub_status in lead_sub_status_count:
+        if each_sub_status:
+            top_3_sub_status[str(each_sub_status['lead_sub_status'])] = each_sub_status['count']
+    return top_3_sub_status
+
+
+def month_on_month_leads_details(reps, start_date, end_date):
+    # total leads with each rep
+    total_leads = Leads.objects.exclude(type_1='WPP').extra({'created_month': 'month(created_date)'}).values('google_rep_email', 'created_month').order_by().annotate(total_leads=Count('lead_status')).filter(google_rep_email__in=reps, created_date__gt=start_date, created_date__lt=end_date)
+    month_details = dict()
+    # import ipdb; ipdb.set_trace()
+    for record in total_leads:
+        if str(record['google_rep_email']) not in month_details.keys():
+            month_details[str(record['google_rep_email'])] = {record['created_month']: {'total_leads': record['total_leads']}}
+        else:
+            month_details[str(record['google_rep_email'])].update({record['created_month']: {'total_leads': record['total_leads']}})
+
+    # Implemted leads count with each rep
+    impl_leads = Leads.objects.exclude(type_1='WPP', lead_sub_status='RR - Inactive').extra({'created_month': 'month(created_date)'}).values('google_rep_email', 'created_month').order_by().annotate(imple_leads=Count('lead_status')).filter(created_date__gt=start_date,
+                                                                                                                                                                                                                                               created_date__lt=end_date,
+                                                                                                                                                                                                                                               lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'])
+    for record in impl_leads:
+        if str(record['google_rep_email']) not in month_details.keys():
+            month_details[str(record['google_rep_email'])] = {record['created_month']: {'imple_leads': record['imple_leads']}}
+        else:
+            if record['created_month'] in month_details[str(record['google_rep_email'])].keys():
+                if month_details[str(record['google_rep_email'])][record['created_month']]:
+                    month_details[str(record['google_rep_email'])][record['created_month']].update({'imple_leads': record['imple_leads']})
+            else:
+                print record['google_rep_email'], '=='
+
+    return month_details
