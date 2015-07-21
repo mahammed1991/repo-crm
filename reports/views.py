@@ -277,6 +277,57 @@ def get_download_report(request):
         return response
 
 
+def wpp_reports(request):
+    """ WPP Reports """
+
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        team_members = get_user_under_manager(request.user.email)
+    return render(request, 'reports/wpp_reports.html', {'manager': manager, 'team_members': team_members})
+
+
+def get_wpp_reports(request):
+    """ New Report Details
+    """
+    wpp_report_detail = dict()
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        team_members = request.GET.getlist('team_members[]')
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        wpp_report_details = dict()
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+        if report_type == 'default_report':
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, list())
+        elif report_type == 'leadreport_individualRep':
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, [request.user.email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            team_emails.append(request.user.email)
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, team_emails)
+        else:
+            pass
+
+        wpp_report_detail['treatment_type_header'] = [sts for sts in settings.WPP_LEAD_STATUS]
+        wpp_report_detail['treatment_type_header'].append('TOTAL')
+
+        wpp_report_details = {'reports': wpp_report_detail,
+                              'report_type': report_type, 'report_timeline': report_timeline}
+
+        return HttpResponse(json.dumps(wpp_report_details))
+
+
 @login_required
 def get_user_name(request):
     if request.is_ajax():
