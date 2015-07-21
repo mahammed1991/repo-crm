@@ -19,6 +19,9 @@ from django.contrib.auth.models import User
 
 def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=False):
     bcc.append(settings.BCC_EMAIL)
+    if settings.SFDC == 'STAGE':
+        subject = 'STAGE - ' + subject
+        to = set()
     email = EmailMultiAlternatives(subject, body, mail_from, to, bcc)
     if template_added:
         email.attach_alternative(body, "text/html")
@@ -549,3 +552,12 @@ def month_on_month_leads_details(reps, start_date, end_date):
                 print record['google_rep_email'], '=='
 
     return month_details
+
+
+def create_new_user(email):
+    """ Create New User """
+    username = email.split('@')[0]
+    user = User.objects.create_user(email, email)
+    user.first_name = username
+    user.save()
+    return user

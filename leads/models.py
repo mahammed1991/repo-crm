@@ -89,7 +89,7 @@ class Leads(models.Model):
     updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
 
     sf_lead_id = models.CharField(max_length=50, unique=True)
-    wpp_treatment_type = models.CharField(max_length=100, blank=True)
+    wpp_treatment_type = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Leads"
@@ -230,7 +230,9 @@ class Location(models.Model):
         if self.location_name == '':
             raise ValidationError('Please enter location name.')
 
-        if self.daylight_start:
+        if self.daylight_start or self.daylight_end:
+            if not self.daylight_start:
+                raise ValidationError('Please enter daylight start date.')
             if not self.daylight_end:
                 raise ValidationError('Please enter daylight end date.')
             elif self.daylight_start >= self.daylight_end:
@@ -410,7 +412,7 @@ class ContactPerson(models.Model):
 
 class LeadForm(models.Model):
     """ Lead Form Names """
-    name = models.CharField(max_length=255, null=False)
+    name = models.CharField(max_length=255, null=False, unique=True)
     is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
@@ -427,7 +429,7 @@ class LeadForm(models.Model):
 class LeadFormAccessControl(models.Model):
     """ Lead Form Access Control """
 
-    lead_form = models.ForeignKey(LeadForm)
+    lead_form = models.ForeignKey(LeadForm, unique=True)
     programs = models.ManyToManyField(Team, blank=True, null=True)
     target_location = models.ManyToManyField(Location, blank=True, null=True)
     google_rep = models.ManyToManyField(User, blank=True, null=True)

@@ -29,7 +29,7 @@ Feedback Form
                     <tr>
                         <td>Google Account Manager</td>
                         <td>
-                            <select name="representative_name">
+                            <select name="representative_name" class="bgicon">
                                 <option title='{{ user.email }}' value='{{ user.email }}'>{{ user.get_full_name }}</option>";
                             </select>
                         </td>
@@ -65,7 +65,7 @@ Feedback Form
                             Language
                         </td>
                         <td>
-                            <select name="language">
+                            <select name="language" class="form-control bgicon">
                                 <option value="English">English</option>
                                 <option value="French">French</option>
                                 <option value="German">German</option>
@@ -82,7 +82,7 @@ Feedback Form
                             Location<span class="red">*</span>
                         </td>
                         <td>
-                            <select name="location">
+                            <select name="location" class="form-control bgicon">
                                 <option value="0">--Select--</option>
                                 {% for loc in locations %}
                                     <option value="{{loc}}">{{loc}}</option>
@@ -93,7 +93,7 @@ Feedback Form
                     <tr>
                         <td>Feedback Type <span class="red">*</span></td>
                         <td>
-                            <select name="type" style="width:200px;">
+                            <select name="type" style="width:200px;" class="form-control bgicon">
                                 <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
                                 <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
                                 <option value="Communication - Rude rep">Communication - Rude rep</option>
