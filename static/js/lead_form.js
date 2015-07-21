@@ -607,6 +607,9 @@ function validatethis(frm) {
               window.is_error = true;
             }
 
+        }else{
+          $("#rbid1").val('');
+          $("#rbudget1").val('');
         }
         
       }
@@ -638,6 +641,9 @@ function validatethis(frm) {
               window.is_error = true;
             }
 
+        }else{
+          $("#rbid2").val('');
+          $("#rbudget2").val('');
         }
 
       }
@@ -669,6 +675,9 @@ function validatethis(frm) {
               window.is_error = true;
             }
 
+        }else{
+          $("#rbid3").val('');
+          $("#rbudget3").val('');
         }
 
       }
@@ -700,6 +709,9 @@ function validatethis(frm) {
               window.is_error = true;
             }
 
+        }else{
+          $("#rbid4").val('');
+          $("#rbudget4").val('');
         }
 
       }
@@ -731,6 +743,9 @@ function validatethis(frm) {
               window.is_error = true;
             }
 
+        }else{
+          $("#rbid5").val('');
+          $("#rbudget5").val('');
         }
 
       }

@@ -332,6 +332,9 @@ function validatethis(frm) {
                 rbudgetElem = document.getElementById('rbudget_campaign1');
                 validateFiled(rbudgetElem);
             }
+          }else{
+            $("#rbid_campaign1").val('');
+            $("#rbudget_campaign1").val('');
           }
 
           // Validate Tag related fields
@@ -378,6 +381,9 @@ function validatethis(frm) {
                 rbudgetElem = document.getElementById('rbudget_campaign2');
                 validateFiled(rbudgetElem);
             }
+          }else{
+            $("#rbid_campaign2").val('');
+            $("#rbudget_campaign2").val('');
           }
 
           tagUrlElem = document.getElementById('url2');
@@ -422,6 +428,9 @@ function validatethis(frm) {
                 rbudgetElem = document.getElementById('rbudget_campaign3');
                 validateFiled(rbudgetElem);
             }
+          }else{
+            $("#rbid_campaign3").val('');
+            $("#rbudget_campaign3").val('');
           }
 
           tagUrlElem = document.getElementById('url3');
