@@ -472,6 +472,13 @@ function validatethis(frm) {
         }
     }
 
+      // Analytics setup check box
+      $('.is_ga_setup').each(function(){
+        if(!$(this).is(":visible")){
+          $(this).val(0);
+        }
+      });
+
       // Check If Error in Form
       if(window.is_error){
         return false;

@@ -852,6 +852,13 @@ function validatethis(frm) {
         $("#web_access").val(0);
       }
 
+      // Analytics setup check box
+      $('.is_ga_setup').each(function(){
+        if(!$(this).is(":visible")){
+          $(this).val(0);
+        }
+      });
+
     if(window.is_error){
       return false;
     }else{

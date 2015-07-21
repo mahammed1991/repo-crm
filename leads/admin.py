@@ -2,8 +2,7 @@ from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping)
-from leads.forms import LocationForm, LeadFormAccessControlAdminForm
-from django.db.models import Q
+from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
 from lib.admin_helpers import CustomAdmin
 
 
@@ -51,6 +50,7 @@ admin.site.register(Timezone, TimezoneAdmin)
 
 
 class TimezoneMappingAdmin(admin.ModelAdmin):
+    form = TimezoneMappingForm
     list_display = ('standard_timezone', 'daylight_timezone')
 
     def get_readonly_fields(self, request, obj=None):

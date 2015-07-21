@@ -7075,7 +7075,8 @@ $(function(){
 
 $(document).ready(function () {
     $('#nestedAccordion h2').click(function () {
-  
+        var parentDivs = $('#nestedAccordion .expand-sml')
+        childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
         parentDivs.slideUp();
         if ($(this).next().is(':hidden')) {
             $(this).next().slideDown();
@@ -7143,7 +7144,7 @@ $('#nestedAccordion .cl-dis').click(function(event) {
     }else{
       $( ".accordion2" ).accordion({ header: "h4", active: true, collapsible: true, heightStyle: "content"  });
       $( "#accordion" ).accordion({ active: 2 });
-      var parentDivs = $('#nestedAccordion .expand-sml'),
+      var parentDivs = $('#nestedAccordion .expand-sml')
       childDivs = $('#nestedAccordion h3').siblings('.expand-sml');
     }
 

@@ -230,7 +230,9 @@ class Location(models.Model):
         if self.location_name == '':
             raise ValidationError('Please enter location name.')
 
-        if self.daylight_start:
+        if self.daylight_start or self.daylight_end:
+            if not self.daylight_start:
+                raise ValidationError('Please enter daylight start date.')
             if not self.daylight_end:
                 raise ValidationError('Please enter daylight end date.')
             elif self.daylight_start >= self.daylight_end:
