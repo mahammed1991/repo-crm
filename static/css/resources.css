@@ -118,7 +118,7 @@
   border:none;
   }
   .targetDiv .accordion2 > .ui-state-active .ui-icon {
-    background: rgba(0, 0, 0, 0) url("../img/plus4.png") no-repeat scroll 0 0 !important;
+    background: rgba(0, 0, 0, 0) url("../images/plus4.png") no-repeat scroll 0 0 !important;
    height: 9px;
     margin-top: -5px;
     width: 15px;

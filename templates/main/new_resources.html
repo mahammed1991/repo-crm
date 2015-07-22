@@ -7023,10 +7023,10 @@ function changeContent(url)
 </style>
 <script>
 $(document).ready(function () {
-    $('.left-list li a, .faq-list li a').click(function(e) {
+    $('.left-list li, .faq-list li').click(function(e) {
         $('.left-list li, .faq-list li').removeClass('c-red');
 
-        var $parent = $(this).parent();
+        var $parent = $(this);
         if (!$parent.hasClass('c-red')) {
             $parent.addClass('c-red');
         }
