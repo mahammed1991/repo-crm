@@ -1523,7 +1523,8 @@ def get_lead(request, cid):
             'loc': location.location_name if location else 0,
             'team': team.team_name if team else '',
             'team_id': team.id if team else 0,
-            'languages_list': languages_list
+            'languages_list': languages_list,
+            'code_type': leads.type_1
 
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')
@@ -1561,7 +1562,8 @@ def get_lead_by_lid(request, lid):
             'loc': location.location_name if location else 0,
             'team': team.team_name if team else '',
             'team_id': team.id if team else 0,
-            'languages_list': languages_list
+            'languages_list': languages_list,
+            'code_type': leads.type_1
 
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')
