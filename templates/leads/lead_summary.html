@@ -154,8 +154,16 @@
                       <td class="hidden-xs hidden-sm">{{ l.rescheduled_appointment |date:"m/d/Y [h:i] A" }}</td>
                       
                       {% if l.regalix_comment  %}
-                          <td class="hidden-xs hidden-sm comments-container comments-container2"><p>{{ l.regalix_comment | truncatechars:100 }}</p>
+                          <td class="hidden-xs hidden-sm comments-container comments-container2"><p>
+                          {% if l.regalix_comment and l.regalix_comment|length > 100 %}
+                            {{ l.regalix_comment | truncatechars:100 }}</p>
                             <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment}}</p> </td>
+                          {% elif l.regalix_comment %}
+                            {{ l.regalix_comment }}</p>
+                          {% else %}
+                            ''
+                          {% endif %}
+
                       {% else %}
                           <td class="hidden-xs hidden-sm comments-container"><p></p>
                             </td>
@@ -463,9 +471,15 @@ function setLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_of_installation +'</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
     
-      comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
+      if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
-        
+      }else if (leads[i].regalix_comment != 'None'){
+          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment + '</p>'
+      }else{
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
+      }
+
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
       $('#tableBody').append(counter+other+comment+status)
       
@@ -507,8 +521,14 @@ function setLeadSummaryTableExtend(leads, start_row, end_row){
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_of_installation +'</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
     
-      comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
+      if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+      }else if (leads[i].regalix_comment != 'None'){
+          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment + '</p>'
+      }else{
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
+      }
         
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
       action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat({{l.id}}) id="lead_id-{{l.id}}"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid({{l.id}})></i></a></td>'
