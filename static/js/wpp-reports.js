@@ -80,23 +80,25 @@ $("#get_wpp_report").click(function(){
 });
 
 function getWppReport(dataString){
+    $('#preloaderOverlay').show();
     $.ajax({
         url: "get-wpp-reports",
         data: dataString,
         type: 'GET',
         dataType: "json",
         success: function(data){
-        console.log(data)
-        $('#wpp_lead_status_table').empty();
-        $('#treatment_type_table').empty();
-        reports = data['reports'];
-        lead_analysis_table(reports['wpp_lead_status_analysis']);
-        drawColumnChart(reports['wpp_lead_status_analysis']);
-        treatment_type_analysis_table(reports['treatment_type_header'], reports['wpp_treatment_type_analysis']);
-        drawPieChart(reports['pie_chart_dict']);
+          $('#preloaderOverlay').hide();
+          console.log(data)
+          $('#wpp_lead_status_table').empty();
+          $('#treatment_type_table').empty();
+          reports = data['reports'];
+          lead_analysis_table(reports['wpp_lead_status_analysis']);
+          drawColumnChart(reports['wpp_lead_status_analysis']);
+          treatment_type_analysis_table(reports['treatment_type_header'], reports['wpp_treatment_type_analysis']);
+          drawPieChart(reports['pie_chart_dict']);
         },
         error: function(jqXHR, textStatus, errorThrown){
-
+            $('#preloaderOverlay').hide();
         }
     })
 }
