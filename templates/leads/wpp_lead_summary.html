@@ -289,9 +289,14 @@ function setWppLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].appointment_time + '</td>'
 
-    
-      commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
+      if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
+        commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
                 '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+      }else if (leads[i].regalix_comment != 'None'){
+          commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment + '</p>'
+      }else{
+        commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
+      }
       treatmentType = '<td class="hidden-xs hidden-sm">' + leads[i].treatment_type + '</td>'
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
       action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat({{l.id}}) id="lead_id-{{l.id}}"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid({{l.id}})></i></a></td>'
