@@ -81,7 +81,7 @@
         </div>
          <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_light_grn" id="ab_testing">{{lead_status_dict.ab_testing}}</div>
-          <div class="sum-lbl">In AB Testing</div>
+          <div class="sum-lbl">In A/B Test</div>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
           <div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
@@ -106,7 +106,7 @@
               <li><a class="page" href="javascript:void(0);" id='Deferred'>Deferred</a></li>
               <li><a class="page" href="javascript:void(0);" id='InDevelopment'>In Development</a></li>
               <li><a class="page" href="javascript:void(0);" id='InStage'>In Stage</a></li>
-              <li><a class="page" href="javascript:void(0);" id='ABTesting'>AB Testing</a></li>
+              <li><a class="page" href="javascript:void(0);" id='ABTesting'>In A/B Test</a></li>
               <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
             </ul>
             <div class="table-search">
@@ -276,7 +276,7 @@ function setWppLeadSummary(lead_status){
         }else if(leads[i].lead_status == 'In Stage'){
           counter = '<tr class="status-instage instage searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
-        else if(leads[i].lead_status == 'AB Testing'){
+        else if(leads[i].lead_status == 'In A/B Test'){
           counter = '<tr class="status-ab-testing ab-testing searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }else{
           counter = '<tr class="status-impl impl searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
