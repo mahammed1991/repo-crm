@@ -36,7 +36,6 @@ from django.utils.html import strip_tags
 from reports.report_services import ReportService, DownloadLeads
 from reports.models import Region
 import re
-from selenium import webdriver
 
 
 def home(request):
