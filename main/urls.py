@@ -27,4 +27,5 @@ urlpatterns = patterns(
     url(r'^user/master-data$', views.master_data_upload),
     url(r'^user/migrate-user-data$', views.migrate_user_data),
     url(r'^user/failed-records$', views.download_failed_records),
+    url(r'^feedback/list/wpp$', views.list_feedback_wpp),
 )

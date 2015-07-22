@@ -181,7 +181,7 @@ def main_home(request):
     # Get Feedback Details
     # feedback summary
     feedback_list = dict()
-    feedbacks, feedback_list = get_feedbacks(request.user)
+    feedbacks, feedback_list = get_feedbacks(request.user, 'NORMAL')
 
     # Notification Section
     notifications = Notification.objects.filter(is_visible=True)
@@ -193,24 +193,35 @@ def main_home(request):
                                                'feedback_list': feedback_list, 'notifications': notifications})
 
 
-def get_feedbacks(user):
+def get_feedbacks(user, feedback_type):
     """ List Feedbacks by user """
 
     if user.groups.filter(name='FEEDBACK'):
-        feedbacks = Feedback.objects.all().order_by('-created_date')
+        if feedback_type == 'WPP':
+            feedbacks = Feedback.objects.filter(code_type='WPP').order_by('-created_date')
+        else:
+            feedbacks = Feedback.objects.exclude(code_type='WPP').filter().order_by('-created_date')
     else:
-        feedbacks = Feedback.objects.filter(
-            Q(user__email=user.email)
-            | Q(user__profile__user_manager_email=user.email)
-            | Q(lead_owner__email=user.email)
-            | Q(lead_owner__profile__user_manager_email=user.email)
-        ).order_by('-created_date')
+        if feedback_type == 'WPP':
+            feedbacks = Feedback.objects.filter(code_type='WPP')
+            feedbacks = feedbacks.filter(
+                Q(user__email=user.email)
+                | Q(user__profile__user_manager_email=user.email)
+                | Q(lead_owner__email=user.email)
+                | Q(lead_owner__profile__user_manager_email=user.email)
+            ).order_by('-created_date')
+        else:
+            feedbacks = Feedback.objects.exclude(code_type='WPP').filter(
+                Q(user__email=user.email)
+                | Q(user__profile__user_manager_email=user.email)
+                | Q(lead_owner__email=user.email)
+                | Q(lead_owner__profile__user_manager_email=user.email)
+            ).order_by('-created_date')
     feedback_list = dict()
     feedback_list['new'] = feedbacks.filter(status='NEW').count()
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
     feedback_list['total'] = feedbacks.count()
-
     return feedbacks, feedback_list
 
 
@@ -457,7 +468,20 @@ def view_feedback(request, id):
 def list_feedback(request):
     """ List all feedbacks """
 
-    feedbacks, feedback_list = get_feedbacks(request.user)
+    feedbacks, feedback_list = get_feedbacks(request.user, 'NORMAL')
+
+    return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'feedback_list': feedback_list,
+                                                       })
+
+
+@login_required
+@manager_info_required
+def list_feedback_wpp(request):
+    """ List all WPP feedbacks """
+
+    feedbacks, feedback_list = get_feedbacks(request.user, 'WPP')
 
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
                                                        'media_url': settings.MEDIA_URL + 'feedback/',
@@ -494,7 +518,8 @@ def create_feedback(request, lead_id=None):
         feedback_details.feedback_type = request.POST['feedbackType']
         feedback_details.description = request.POST['description']
         feedback_details.program_id = request.POST['program']
-
+        feedback_details.sf_lead_id = request.POST['type']
+        feedback_details.code_type = request.POST['code_type']
         try:
             # if lead owner not exist, assign lead to default user
             lead_owner = User.objects.get(email=request.POST['lead_owner'])
