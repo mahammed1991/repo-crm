@@ -92,8 +92,9 @@ def lead_form(request):
                 full_name = request.POST.get('tag_contact_person_name')
             else:
                 full_name = request.POST.get('advertiser_name')
-            tag_data['first_name'] = full_name.rsplit(' ', 1)[0]  # Primary Contact Name
-            tag_data['last_name'] = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+            first_name, last_name = split_fullname(full_name)
+            tag_data['first_name'] = first_name
+            tag_data['last_name'] = last_name
             submit_lead_to_sfdc(sf_api_url, tag_data)
 
         basic_data = dict()
@@ -116,8 +117,7 @@ def lead_form(request):
             # Split Shopping Contact Person Name to First and Last Name
             if request.POST.get('shop_contact_person_name'):
                 full_name = request.POST.get('shop_contact_person_name')
-                first_name = full_name.rsplit(' ', 1)[0]
-                last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+                first_name, last_name = split_fullname(full_name)
                 setup_data['first_name'] = first_name  # Primary Contact First Name
                 setup_data['last_name'] = last_name  # Primary Contact Last Name
             setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
@@ -1134,8 +1134,7 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
         full_name = post_data.get('shop_contact_person_name1')
     else:
         full_name = post_data.get('advertiser_name')
-    first_name = full_name.rsplit(' ', 1)[0]
-    last_name = full_name.rsplit(' ', 1)[1] if len(full_name.rsplit(' ', 1)) > 1 else ''
+    first_name, last_name = split_fullname(full_name)
     setup_data['first_name'] = first_name  # Primary Contact First Name
     setup_data['last_name'] = last_name  # Primary Contact Last Name
 

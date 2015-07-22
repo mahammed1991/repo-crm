@@ -20,7 +20,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(minutes=10)
+    start_date = end_date - timedelta(days=10)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
@@ -368,25 +368,23 @@ def update_sfdc_leads(records, sf):
     for lead in records:
         location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')
-        appointment_date = lead.get('Appointment_Date__c')
-        appointment_in_ist = lead.get('IST_TIME_N__c')
-        appointment_in_pst = lead.get('Appointment_Time_in_PST__c')
+        # appointment_date = lead.get('Appointment_Date__c')
+        # appointment_in_ist = lead.get('IST_TIME_N__c')
+        # appointment_in_pst = lead.get('Appointment_Time_in_PST__c')
         rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
-        reschedule_in_ist = lead.get('Reschedule_IST_Time__c')
-        sf_lead_id = lead.get('Id')
-        appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
-        timezone = SalesforceApi.get_current_timezone_by_location(appointment_date, location, time_zone)
-        appointment_in_ist = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, 'IST')
-        tz = SalesforceApi.get_current_timezone_of_salesforce()
-        appointment_in_pst = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, tz.zone_name)
+        if rescheduled_appointment:
+            sf_lead_id = lead.get('Id')
+            # appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
+            # timezone = SalesforceApi.get_current_timezone_by_location(appointment_date, location, time_zone)
+            # appointment_in_ist = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, 'IST')
+            # tz = SalesforceApi.get_current_timezone_of_salesforce()
+            # appointment_in_pst = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, tz.zone_name)
 
-        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
-        timezone = SalesforceApi.get_current_timezone_by_location(rescheduled_appointment, location, time_zone)
-        reschedule_in_ist = SalesforceApi.convert_appointment_to_timezone(rescheduled_appointment, timezone, 'IST')
+            rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+            timezone = SalesforceApi.get_current_timezone_by_location(rescheduled_appointment, location, time_zone)
+            reschedule_in_ist = SalesforceApi.convert_appointment_to_timezone(rescheduled_appointment, timezone, 'IST')
 
-        try:
-            sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist,
-                                        'IST_TIME_N__c': appointment_in_ist,
-                                        'Appointment_Time_in_PST__c': appointment_in_pst})
-        except Exception as e:
-            print e
+            try:
+                sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
+            except Exception as e:
+                print e
