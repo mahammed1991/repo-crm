@@ -2,6 +2,8 @@
 
 {% load staticfiles %}
 
+{% load custom_tags %}
+
 {% block title %}
 WPP Reports
 {% endblock title %}
@@ -17,13 +19,14 @@ WPP Reports
                 <div class="col-md-3 centered select-style">
                     <select class="form-control bgicon" id="filter_wpp_report_type">
                         <option value="">Choose Report Type</option>
+                        {% if request.user|has_group:"SUPERUSER" %}
+                        <option value="leadreport_superUser">All</option>
+                        {% endif %}
                         <option value="leadreport_individualRep">Individual Rep</option>
                         {% if manager %}
                         <option value="leadreport_teamLead">Team Lead </option>
                         {% endif %}
-                        {% if request.user.is_superuser %}
-                        <option value="leadreport_superUser">All</option>
-                        {% endif %}
+                        
                     </select>
                 </div>
                 {% if manager %}
