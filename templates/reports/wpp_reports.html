@@ -21,6 +21,9 @@ WPP Reports
                         {% if manager %}
                         <option value="leadreport_teamLead">Team Lead </option>
                         {% endif %}
+                        {% if request.user.is_superuser %}
+                        <option value="leadreport_superUser">All</option>
+                        {% endif %}
                     </select>
                 </div>
                 {% if manager %}

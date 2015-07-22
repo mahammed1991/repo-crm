@@ -69,6 +69,7 @@
     });
     
   $('#team').change(function(){
+    $('#g_cases_id').val('')
     var selectedTeam = $(this).val();
     if (selectedTeam.indexOf('Services') != -1){
       // if(selectedTeam == 'Services/GCE'){

@@ -316,6 +316,8 @@ def get_wpp_reports(request):
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
             team_emails.append(request.user.email)
             wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, team_emails)
+        elif report_type == 'leadreport_superUser':
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, list())
         else:
             pass
 
