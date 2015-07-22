@@ -26,7 +26,7 @@ from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimo
 from leads.models import Location, Leads, Team, Language
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
-                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep,
+                         last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
                          is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter,
                          get_previous_month_start_end_days, create_new_user)
 from django.http import Http404
@@ -35,6 +35,8 @@ from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.utils.html import strip_tags
 from reports.report_services import ReportService, DownloadLeads
 from reports.models import Region
+import re
+from selenium import webdriver
 
 
 def home(request):
@@ -804,7 +806,6 @@ def resources(request):
 
 @login_required
 def notify_faq(request, resfaq):
-    # import ipdb;ipdb.set_trace()
     mail_subject = resfaq.task_type + "Portal FAQs"
     mail_body = get_template('main/portal_faqs/faq.html').render(
         Context({
@@ -866,6 +867,38 @@ def sales_tasks(request):
     """ Sales Tasks Page """
 
     return render(request, 'main/sales_tasks.html')
+
+
+@login_required
+def rep_details_download(request):
+    ''' Google Rep Detials for Mailing '''
+    if request.method == 'POST':
+        # time_line = request.POST['rep_date'].split(',')
+        # start_date = re.search(r'\d{4}-\d{2}-\d{2}', time_line[0]).group()
+        # end_date = re.search(r'\d{4}-\d{2}-\d{2}', time_line[1]).group()
+        # start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        # end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        # end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        start_date = datetime(2015, 01, 01)
+        end_date = datetime(2015, 04, 01)
+
+        reps = list(Leads.objects.filter(created_date__gte=start_date,
+                                         created_date__lte=end_date,
+                                         google_rep_email__contains='@google.com').values_list('google_rep_email', flat=True).distinct().order_by('google_rep_email'))
+
+        rep_details = get_rep_details_from_leads(reps, start_date, end_date)
+        filename = 'basava'
+        path = "/tmp/%s.csv" % (filename)
+        # code_types = list(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date).values_list('type_1', flat=True).distinct())
+        selected_fields = ['profile_photo_url', 'location__location_name', 'code_types', 'implemented_leads', 'monthly_lead_status',
+                           'user__first_name', 'user__last_name', 'total_leads', 'user__email', 'team__team_name']
+        # selected_fields.extend(code_types)
+        DownloadLeads.conver_to_csv(path, rep_details, selected_fields)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+    return render(request, 'main/rep_details_download.html')
 
 
 @login_required
@@ -1102,6 +1135,24 @@ def migrate_user_data(request):
                      'new_programs': new_programs, 'result': True}
 
     return render(request, 'main/master_upload.html', template_args)
+
+
+def rep_details_upload(request):
+    if request.method == 'POST':
+        if request.FILES:
+            excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+            if not os.path.exists(excel_file_save_path):
+                os.makedirs(excel_file_save_path)
+            excel_file = request.FILES['file']
+            # excel sheet data
+            file_name = 'rep_data.xlsx'
+            excel_file_path = excel_file_save_path + file_name
+            with open(excel_file_path, 'wb+') as destination:
+                for chunk in excel_file.chunks():
+                    destination.write(chunk)
+                destination.close()
+
+    return render(request, 'main/rep_details_upload.html')
 
 
 def download_failed_records(request):
