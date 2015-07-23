@@ -20,7 +20,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(days=10)
+    start_date = end_date - timedelta(minutes=10)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))

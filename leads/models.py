@@ -326,16 +326,15 @@ class RegalixTeams(models.Model):
     team_name = models.CharField(max_length=100, unique=True)
     location = models.ManyToManyField(Location, limit_choices_to={'is_active': True})
     program = models.ManyToManyField(Team, blank=True, null=True, limit_choices_to={'is_active': True})
-    ldap = models.ManyToManyField(User, blank=True, null=True, related_name="ldap",)
-    process_type = models.CharField(max_length=50, choices=(
+    ldap = models.ManyToManyField(User, blank=True, null=True, related_name="ldap")
+    process_type = models.CharField(max_length=50, blank=False, choices=(
         ('TAG', 'TAG'),
         ('SHOPPING', 'SHOPPING'),
         ('WPP', 'WPP'),
-        ('MIGRATION', 'MIGRATION'),
-    ), default='TAG')
-
-    team_lead = models.ManyToManyField(User, default=default_team_lead, related_name="team_lead",)
-    team_manager = models.ManyToManyField(User, default=default_team_lead, related_name="team_manager",)
+        ('MIGRATION', 'MIGRATION'),)
+    )
+    team_lead = models.ManyToManyField(User, related_name="team_lead")
+    team_manager = models.ManyToManyField(User, related_name="team_manager")
     is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
