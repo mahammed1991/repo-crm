@@ -53,6 +53,7 @@ class SalesforceLeads(object):
                                 'treatment_type': '00NZ0000001DkLo',
                                 'ab_testing': '00NZ0000001DkLy',
                                 'tracking_code': '00NZ0000001DkLe',
+                                'advertiser_contact': '',
 
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
@@ -120,6 +121,7 @@ class SalesforceLeads(object):
                                    'treatment_type': '00Nd0000008MFng',
                                    'ab_testing': '00Nd0000008MFnl',
                                    'tracking_code': '00Nd0000008MFnq',
+                                   'advertiser_contact': '',
 
                                    # Appointment IST time
                                    'appointment_in_ist': '00Nd0000007fnbe',

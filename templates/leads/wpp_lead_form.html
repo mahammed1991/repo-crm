@@ -13,7 +13,7 @@
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
-  <h1>Submit WPP Lead</h1>
+  <h1>Submit Website Optimization Request</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=4" name="retURL">
@@ -53,8 +53,8 @@
       <div class="col-md-6">
         <label for="team">Program name</label>
         <select class="form-control bgicon" id="team" title="Program Name" name="team">
-            <option value='Team Green'>Team Green</option>
-            <option value='Wave'>Wave</option>
+            <option value='MMS One'>MMS One</option>
+            <option value='MMS Two'>MMS Two</option>
         </select>
       </div>
     </div>
@@ -75,8 +75,8 @@
           <input type="text" class="form-control" id="conversion_goal" name="conversion_goal" placeholder="Conversion Goal">
         </div>
          <div class="col-md-6">
-        <label for="ab_testing">AB Testing</label>
-          <select class="form-control bgicon" id="ab_testing" title="AB Testing" name="ab_testing">
+        <label for="ab_testing">Do you want us to AB test the new website?</label>
+          <select class="form-control bgicon" id="ab_testing" title="Do you want us to AB test the new website?" name="ab_testing">
             <option value=''>Please select...</option>
             <option value='yes'>Yes</option>
             <option value='no'>No</option>
@@ -106,15 +106,21 @@
           <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
         </div>
         <div class="col-md-6">
+        <label for="tag_primary_role">Role</label>
           <select title="Role" class="form-control bgicon" name="tag_primary_role" id="tag_primary_role">
             <option value="">Role</option>
             <option value="Owner">Owner</option>
             <option value="Marketing">Marketing</option>
             <option value="Webmaster">Webmaster</option>
+            <option value="Other">Other (please specify)</option>
           </select>
         </div>
+        <div class="col-md-6 advertiser_contact" style="display:none;">
+          <label for="advertiser_contact">Advertiser Contact</label>
+          <input type="tel" class="form-control" id="advertiser_contact" name="advertiser_contact" placeholder="Advertiser Contact">
+        </div>
       </div>
-    <div class="std-sub-title">Appointment Details</div>
+    <div class="std-sub-title">Initial Appointment Details</div>
       <div class="row">
         <div class="col-md-6" style="display:none;">
             <label for="country"> Market Served</label>
@@ -141,7 +147,7 @@
       </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
-            <button class="btn std-btn">Submit WPP Lead</button>
+            <button class="btn std-btn redd">Submit Request</button>
             <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
         </div>
     </div>
@@ -174,5 +180,15 @@
        $('#url_label_id').text('Website URL');
     }
   })
+
+  $("#tag_primary_role").change(function(){
+    var selectedRole = $(this).val();
+    if (selectedRole == 'Other'){
+      $(".advertiser_contact").show();
+    }else{
+      $(".advertiser_contact").hide();
+      $("#advertiser_contact").val('');
+    }
+  });
 </script>
 {% endblock main_js %}
