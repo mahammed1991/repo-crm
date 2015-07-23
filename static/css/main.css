@@ -758,6 +758,12 @@ textarea.form-control {
 .grayed:hover, .grayed:visited, .grayed:active, .grayed:focus {
 	background: #929191;
 }
+.redd {
+	background: red;
+}
+.redd:hover, .redd:visited, .redd:active, .redd:focus {
+	background: rgb(173, 4, 4);
+}
 .shopping-policies {
 	margin: 10px 0 40px;
 	overflow:hidden;
