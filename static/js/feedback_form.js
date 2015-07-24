@@ -84,6 +84,7 @@ window.cancel_clicked = false;
                     else{
                         $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
                         $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                        $('input[name=code_type], input[id=code_type]').val(response.details.code_type);
                         $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
                         setSelectValue('advProgram', response.details.team_id);
                         setSelectValue('feedbackLocation', response.details.loc);
@@ -122,17 +123,18 @@ $('#advertiserNames').change(function(){
           success: function(response) {
              if(response['status'] == 'FAILED'){
                 alert('Lead for Selected CID not available.');
-                $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
+                $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner], input[name=code_type]').val('')
                 }
             else{
                 $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
                 $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                $('input[name=code_type], input[id=code_type]').val(response.details.code_type);
                 $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
                 setSelectValue('advProgram', response.details.team_id);
                 setSelectValue('feedbackLocation', response.details.loc);
                 setSelectValue('googleAcManager', response.details.google_rep_email);
                 setLanguages(response.details.languages_list);
-                
+
             }
           },
           error: function(errorThrown) {
