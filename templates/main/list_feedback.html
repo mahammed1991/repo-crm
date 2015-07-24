@@ -54,6 +54,11 @@ Manage Help
         
       </div>
       <h1 class="lead_status">Feedback Status</h1>
+      {% if "WPP" in request.session.groups %}
+      <button class="btn std-btn pull-right fdk-btn" style="margin-right:20%;" onclick="window.location.href='{% url 'main.views.list_feedback_wpp' %}'">WPP Feedback</button>
+      {% endif %}
+      <!-- <button class="btn std-btn pull-right fdk-btn" style="margin-right:20%;" onclick="window.location.href='{% url 'main.views.list_feedback' %}'">Normal Feedback</button> -->
+      
       <button class="btn std-btn pull-right fdk-btn" onclick="window.location.href='{% url 'main.views.create_feedback' %}'">Add a Feedback</button>
       <div class="row">
           <div class="col-xs-9 col-sm-12 col-md-10">
