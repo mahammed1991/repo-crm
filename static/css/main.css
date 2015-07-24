@@ -3478,3 +3478,13 @@ list-style: inherit;
   padding-bottom: 3%;
   float: left;
 }
+
+/*-----------feedback type --------------*/
+
+.feedback-type{
+  font-size: 15px;
+  font-weight: normal;
+  position: absolute;
+  /*top: 99px;
+  right: 93px;*/
+}
