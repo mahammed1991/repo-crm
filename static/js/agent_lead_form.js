@@ -124,10 +124,10 @@ function setLocations(newLocations){
     advertiserNameElem = document.getElementById('contact_person_name');
     validateFiled(advertiserNameElem);
 
-    // shopAppointmentElem = document.getElementById('setup_datepick');
-    // if($(shopAppointmentElem).is(":visible")){
-    //   validateFiled(shopAppointmentElem);
-    // }
+    shopAppointmentElem = document.getElementById('setup_datepick');
+    if($(shopAppointmentElem).is(":visible")){
+      validateFiled(shopAppointmentElem);
+    }
 
     agencyInfoElem = document.getElementById('agency_info')
     if($(agencyInfoElem).is(":visible")){
@@ -153,15 +153,21 @@ function setLocations(newLocations){
       validateFiled(phoneElem);
       $("#phone").val(phoneElem.value);
 
+      companyElem = document.getElementById('company');
+      validateFiled(companyElem);
+
     }
 
     var isTagLeads = false;
+    var isShopLeads = false;
     // Check Agency fields
     if(document.getElementById('agency').checked){
         if(document.getElementById('same_task').checked){
             var sameTagTask = $(".tag:visible").length;
             $("#agency_same_tag_count").val(sameTagTask);
-
+            // Code Type Validation
+            codeTypeElem = document.getElementById('same_task_ctype');
+            validateFiled(codeTypeElem)
             if(sameTagTask){
                 if($("#tag_datepick").val() != ''){
                     var slot = {
@@ -214,6 +220,18 @@ function setLocations(newLocations){
             }
               var sameShopTask = $(".shop:visible").length;
               $("#agency_same_shop_count").val(sameShopTask);
+              if(sameShopTask){
+                if($("#setup_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'SHOPPING',
+                      'time' : $("#setup_datepick").val()
+                    }
+                  fix_slots.push(slot);
+                  isShopLeads = true;
+                }else{
+                  isShopLeads = false;
+                }
+              }
                 for (i=1; i<=sameShopTask; i++){
                     if($("#same_shop_" + i).is(":visible")){
                         // CID Validation
@@ -252,8 +270,7 @@ function setLocations(newLocations){
                         }
 
                     }
-
-            }
+              }
         }else if(document.getElementById('diff_task').checked){
             var diffTagTask = $(".tagFields:visible").length;
             $("#agency_diff_tag_count").val($(".tagFields:visible").length);
@@ -278,8 +295,29 @@ function setLocations(newLocations){
               isTagLeads = false;
             }
 
+            if(diffShopTask){
+                if($("#setup_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'SHOPPING',
+                      'time' : $("#setup_datepick").val()
+                    }
+                  fix_slots.push(slot);
+                  isShopLeads = true;
+                }else{
+                  isShopLeads = false;
+                }
+            }
+            // CodeType Validation
+            ctypeElem = document.getElementById('diff_ctype-1');
+            validateFiled(ctypeElem);
+
             for (i=1; i<=totalDiffTasks; i++){
+              // CodeType Validation
+              ctypeElem = document.getElementById('diff_ctype-' + i);
+              validateFiled(ctypeElem);
+
                 if($("#tagFields" + i).is(":visible")){
+
                     // CID Validation
                     cidElem = document.getElementById('cid' + i);
                     validateFiled(cidElem);
@@ -356,6 +394,10 @@ function setLocations(newLocations){
         if(document.getElementById('same_task').checked){
             var sameTagTask = $(".tag:visible").length;
             $("#customer_same_tag_count").val(sameTagTask);
+
+            codeTypeElem = document.getElementById('same_task_ctype');
+            validateFiled(codeTypeElem)
+
             if(sameTagTask){
                 if($("#tag_datepick").val() != ''){
                     var slot = {
@@ -425,6 +467,19 @@ function setLocations(newLocations){
 
               var sameShopTask = $(".shop:visible").length;
               $("#customer_same_shop_count").val(sameShopTask);
+
+              if(sameShopTask){
+                if($("#setup_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'SHOPPING',
+                      'time' : $("#setup_datepick").val()
+                    }
+                  fix_slots.push(slot);
+                  isShopLeads = true;
+                }else{
+                  isShopLeads = false;
+                }
+              }
                 for (i=1; i<=sameShopTask; i++){
                     if($("#same_cust_shop_" + i).is(":visible")){
 
@@ -503,8 +558,29 @@ function setLocations(newLocations){
               isTagLeads = false;
             }
 
+            if(diffShopTask){
+                if($("#setup_datepick").val() != ''){
+                    var slot = {
+                      'type' : 'SHOPPING',
+                      'time' : $("#setup_datepick").val()
+                    }
+                  fix_slots.push(slot);
+                  isShopLeads = true;
+                }else{
+                  isShopLeads = false;
+                }
+            }
+            // CodeType Validation
+            ctypeElem = document.getElementById('diff_cust_type-1');
+            validateFiled(ctypeElem);
+
             for (i=1; i<=totalCustDiffTasks; i++){
+                // CodeType Validation
+                ctypeElem = document.getElementById('diff_cust_type-' + i);
+                validateFiled(ctypeElem);
+
                 if($("#tagFields" + i).is(":visible")){
+
                     // CID Validation
                     cidElem = document.getElementById('cid' + i);
                     validateFiled(cidElem);
@@ -548,6 +624,7 @@ function setLocations(newLocations){
                       validateFiled(cphoneElem);
                 }else{
                     if($("#shopFields" + i).is(":visible")){
+
                         // CID Validation
                         cidElem = document.getElementById('cid' + i);
                         validateFiled(cidElem);
@@ -608,6 +685,9 @@ function setLocations(newLocations){
         if (status) {
           if(!isTagLeads){
             $("#tag_datepick").val('');
+          }
+          if(!isShopLeads){
+            $("#setup_datepick").val('');
           }
           if(window.tz_name){
             console.log(window.tz_name);
@@ -700,5 +780,18 @@ $(document).on('click', '.is_ga_setup', function() {
       $(this).val(1);
     }else{
       $(this).val(0);
+    }
+});
+
+$(document).on('change', '.end-customer-same, .agency-same', function() {
+    var codeType = $(this).val();
+    if (codeType != ''){
+      if(codeType == 'Google Shopping Setup'){
+        $(".setup_datepick").show();
+        $(".tag_datepick").hide();
+      }else{
+        $(".tag_datepick").show();
+        $(".setup_datepick").hide();
+      }
     }
 });
