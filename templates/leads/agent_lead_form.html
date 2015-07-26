@@ -53,7 +53,7 @@
                   <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
                 </div>
                 <div class="col-md-4">
-                   <label for="manager_email">Google Rep Email</label>
+                  <label for="manager_email">Google Rep Email</label>
                   <input type="text" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
                 </div>
                 <div class="col-md-4">
@@ -138,38 +138,23 @@
               </div>
           </div>
           <br />
-          <!-- ################ Set Aoopintment Starts ######################### -->
-          <div class="form-heading">Set Appointment</div>
-           <div class="row">
-           <div class="col-md-4">
-              <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
-                <option value="">Select Time Zone</option>
-              </select>
-            </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
-            </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
-               <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off' style="display:none;">             
-              </div>
-          </div>
-          <!-- ################ Set Aoopintment Ends ######################### -->
-         
          <!-- ################ Agency Conatct Info Starts ######################### -->
            <div class="std-sub-title agency_info">Agency Contact Info</div>
               <div class="row agency_info" id="agency_info">
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <input type="text" class="form-control" id="agency_poc" name="agency_poc" placeholder="Point of Contact">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <input type="text" class="form-control" id="agency_email" name="agency_email" placeholder="Email">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <input type="text" class="form-control" id="agency_phone" name="agency_phone" placeholder="Telephone">
+                </div>
+                <div class="col-md-4">
+                  <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
                 </div>
               </div>
         <!-- ################ Agency Conatct Info Ends ######################### -->
@@ -179,7 +164,7 @@
             <div class="std-sub-title">Same Task</div>
               <div class="row">
                 <div class="col-md-4">
-                  <select title="Code Type" class="form-control bgicon" name="same_task_ctype" id="same_task_ctype">
+                  <select title="Code Type" class="form-control bgicon agency-same" name="same_task_ctype" id="same_task_ctype">
                     <option value="">Select Code Type</option>
                     {% for c_type in code_types %}
                       <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -226,7 +211,7 @@
             <div class="std-sub-title">Same Task</div>
               <div class="row">
                 <div class="col-md-4">
-                  <select title="Code Type" class="form-control bgicon" name="same_task_cust_type" id="same_task_cust_type">
+                  <select title="Code Type" class="form-control bgicon end-customer-same" name="same_task_cust_type" id="same_task_cust_type">
                     <option value="">Select Code Type</option>
                     {% for c_type in code_types %}
                       <option value="{{c_type.name}}">{{c_type.name}}</option>
@@ -265,6 +250,29 @@
 
           </div>
           <!-- ##################### Customer Different Task Functionality Ends #################### --> 
+          <!-- ################ Set Aoopintment Starts ######################### -->
+          <div class="form-heading">Set Appointment</div>
+           <div class="row">
+           <div class="col-md-4">
+              <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
+                <option value="">Select Time Zone</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
+            </div>
+          </div>
+          <div class="row">
+           <div class="col-md-4 tag_datepick" style="display:none;">
+            <label for="tag_datepick">TAG Appointment</label>
+            <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>
+           </div>
+           <div class="col-md-4 setup_datepick" style="display:none;">
+           <label for="setup_datepick">SHOPPING Appointment</label>
+            <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>
+           </div>
+          </div>
+        <!-- ################ Set Aoopintment Ends ######################### -->
 
           <div class="btns text-center" id="submit_buttons">
               <div class="btn-group">
@@ -273,7 +281,8 @@
               </div>
           </div>
         </form>
-        <div style="text-align: center;font-weight: bold;">Please click here to <a href="{% url 'leads.views.agent_bulk_upload' %}" class="btn std-btn" style="margin-left:5px">Bulk Upload</a></div>
+        <div style="text-align: center;font-weight: bold;">Please click here to <a href="{% url 'leads.views.agent_bulk_upload' %}" class="btn std-btn" style="margin-left:5px">Bulk Upload</a>
+        </div>
       </div>
   </div>
 </section>
@@ -529,9 +538,35 @@ $(document).on('change', '.agency_diff', function() {
       createTagFields(parseInt(selectedindex));
 
     }
+    showAppointments('agency_diff');
  });
 
 
+function showAppointments(elem){
+  is_shopping = false;
+  is_tag = false;
+  $("." + elem).each(function() {
+    if($(this).val() == 'Google Shopping Setup'){
+      is_shopping = true;
+    }
+    if($(this).val() != 'Google Shopping Setup'){
+      is_tag = true;
+    }
+
+    if(is_shopping){
+      $(".setup_datepick").show();  
+    }else{
+      $(".setup_datepick").hide();
+    }
+    if(is_tag){
+      $(".tag_datepick").show();  
+    }else{
+      $(".tag_datepick").hide();
+    }
+
+    });
+
+}
 // addMoreRows Click functionality
 function addMoreTagRows(indx){
   createCodeTypeForTag(indx);
@@ -545,7 +580,7 @@ function deleteDiffTagRows(indx){
    prevIndx = parseInt(indx) - 1;
   $(".add_tag_" + prevIndx).show();
   $(".delete_tag_" + prevIndx).show();
-
+  showAppointments('customer_diff');
 }
 
 function createAgencySameTag(indx){
@@ -788,6 +823,7 @@ $(document).on('change', '.customer_diff', function() {
         $("#tagFields" + selectedindex).remove();
         createCustomerTagFields(parseInt(selectedindex));
     }
+    showAppointments('customer_diff');
  });
 
 
@@ -804,7 +840,7 @@ function deleteCustomerDiffTagRows(indx){
    prevIndx = parseInt(indx) - 1;
   $(".add_tag_" + prevIndx).show();
   $(".delete_tag_" + prevIndx).show();
-
+  showAppointments('customer_diff');
 }
 
 function createCustomerSameTag(indx){
@@ -897,7 +933,7 @@ function createCustomerTagFields(indx){
               ' <div class="col-md-2">'+
                  '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
-              '<div class="col-md-4">'+
+              '<div class="col-md-3">'+
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+

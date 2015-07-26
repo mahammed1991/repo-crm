@@ -360,8 +360,8 @@ def submit_agency_same_tasks(request, agency_bundle):
                 basic_data['first_name'] = first_name
                 basic_data['last_name'] = last_name
             shop_data = basic_data
-            # if int(indx) == 1:
-            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            if int(indx) == 1:
+                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
             # Shop fields
             shop_data[shop_leads['ctype1']] = same_task_ctype
             shop_data[basic_leads['cid']] = request.POST.get('cid' + indx)
@@ -392,7 +392,8 @@ def submit_agency_different_tasks(request, agency_bundle):
     agency_diff_tag_count = request.POST.get('agency_diff_tag_count')
     agency_diff_shop_count = request.POST.get('agency_diff_shop_count')
     total_leads = int(agency_diff_tag_count) + int(agency_diff_shop_count)
-    is_appointment_used = False
+    is_tag_appointment_used = False
+    is_shop_appointment_used = False
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
@@ -412,8 +413,8 @@ def submit_agency_different_tasks(request, agency_bundle):
         tag_data = basic_data
         ctype = request.POST.get('diff_ctype' + indx)
         if ctype != 'Google Shopping Setup':
-            if not is_appointment_used:
-                is_appointment_used = True
+            if not is_tag_appointment_used:
+                is_tag_appointment_used = True
                 tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
             # tag fields
             tag_data[tag_leads['ctype1']] = ctype
@@ -429,8 +430,10 @@ def submit_agency_different_tasks(request, agency_bundle):
         elif ctype == 'Google Shopping Setup':
             # Get Shop lead fields
             shop_data = basic_data
-            # if int(indx) == 1:
-            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            if not is_shop_appointment_used:
+                is_shop_appointment_used = True
+                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+
             shop_data[shop_leads['ctype1']] = ctype
             shop_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             shop_data[shop_leads['shopping_url']] = request.POST.get('url' + indx)
@@ -521,8 +524,8 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
                 basic_data['last_name'] = last_name
             shop_data = basic_data
             shop_data[basic_leads['agency_poc']] = ''
-            # if int(indx) == 1:
-            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+            if int(indx) == 1:
+                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
 
             # Get End Customer Name details
             shop_data[basic_leads['advertiser_name']] = request.POST.get('advertiser_name' + indx)
@@ -559,7 +562,8 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     customer_diff_tag_count = request.POST.get('customer_diff_tag_count')
     customer_diff_shop_count = request.POST.get('customer_diff_shop_count')
     total_leads = int(customer_diff_tag_count) + int(customer_diff_shop_count)
-    is_appointment_used = False
+    is_tag_appointment_used = False
+    is_shop_appointment_used = False
     for indx in range(1, total_leads + 1):
         indx = str(indx)
         # Get Basic/Common form field data
@@ -581,8 +585,8 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
         ctype = request.POST.get('diff_cust_type' + indx)
 
         if ctype != 'Google Shopping Setup':
-            if not is_appointment_used:
-                is_appointment_used = True
+            if not is_tag_appointment_used:
+                is_tag_appointment_used = True
                 tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
             # Get End Customer Name details
             tag_data[basic_leads['advertiser_name']] = request.POST.get('advertiser_name' + indx)
@@ -603,8 +607,10 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
         elif ctype == 'Google Shopping Setup':
             shop_data = basic_data
             shop_data[basic_leads['agency_poc']] = ''
-            # if int(indx) == 1:
-            #     shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+
+            if not is_shop_appointment_used:
+                is_shop_appointment_used = True
+                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
 
             # Get End Customer Name details
             shop_data[basic_leads['advertiser_name']] = request.POST.get('advertiser_name' + indx)
@@ -2097,6 +2103,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
         team = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('team'))
         cid = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('cid'))
 
+    print lead_data
     if code_type and country and cid:
         appointment_in_ist = None
         appointment_in_pst = None

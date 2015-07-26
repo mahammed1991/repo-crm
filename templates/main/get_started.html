@@ -134,7 +134,14 @@
 
       $('#region').change(function(){
         var regionId = $(this).val();
-        countryList = regionWiseLocations[regionId];
+        countryList = [];
+        if (regionId){
+          countryList = regionWiseLocations[regionId];  
+        }else{
+          for(i=0; i<window.all_locations.length; i++){
+            countryList.push(window.all_locations[i]['id']);
+          }
+        }
         setLocationsForRegion(window.all_locations, countryList);
       });
 

@@ -388,3 +388,4 @@ def update_sfdc_leads(records, sf):
                 sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
             except Exception as e:
                 print e
+                logging.info("Failed to update the Reschedule Appointment because of this reason: %s" % (e))
