@@ -23,7 +23,7 @@ from representatives.models import (
 )
 from lib.salesforce import SalesforceApi
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
-                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone
+                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
@@ -1755,12 +1755,12 @@ def get_wpp_lead_summary_by_treatment(request):
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
         # start_date = first_day_of_month(datetime.utcnow())
-        end_date = datetime.utcnow()
+        # end_date = datetime.utcnow()
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date, end_date)
-        query = {'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list,
+        query = {'treatment_type__in': treatment_type_list,
                  'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.filter(**query).order_by('-created_date')
+        leads = WPPLeads.objects.filter(**query).order_by('-created_date')
         leads_list = [convert_lead_to_dict(lead) for lead in leads]
     else:
         if is_manager(email):
@@ -1770,9 +1770,9 @@ def get_wpp_lead_summary_by_treatment(request):
             email_list = [email]
 
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-        query = {'lead_status__in': lead_status, 'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list}
+        query = {'lead_status__in': lead_status, 'treatment_type__in': treatment_type_list}
         status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None)
-        leads = Leads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
+        leads = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
         leads_list = [convert_lead_to_dict(lead) for lead in leads]
 
     return HttpResponse(json.dumps({'leads_list': leads_list, 'status_count': status_count}))
@@ -1987,7 +1987,7 @@ def convert_lead_to_dict(model):
     lead['regalix_comment'] = model.regalix_comment
     lead['lead_status'] = model.lead_status
     if model.type_1 == 'WPP':
-        lead['treatment_type'] = model.wpp_treatment_type
+        lead['treatment_type'] = model.treatment_type
     return lead
 
 
