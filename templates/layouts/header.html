@@ -43,6 +43,9 @@
               <ul class="dropdown-menu" role="menu">
                 <li><a href="{% url 'main.views.team' %}">Meet the Team</a></li>
                 <li><a href="{% url 'main.views.list_feedback' %}">Feedback</a></li>
+                {% if "WPP" in request.session.groups %}
+                <li><a href="{% url 'main.views.list_feedback_wpp' %}">WPP Feedback</a></li>
+                {% endif %}
               </ul>
             </li>
           </ul>
