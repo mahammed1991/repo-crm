@@ -153,10 +153,10 @@ function setLocations(newLocations){
       validateFiled(phoneElem);
       $("#phone").val(phoneElem.value);
 
-      companyElem = document.getElementById('company');
-      validateFiled(companyElem);
-
     }
+
+    companyElem = document.getElementById('company');
+    validateFiled(companyElem);
 
     var isTagLeads = false;
     var isShopLeads = false;
