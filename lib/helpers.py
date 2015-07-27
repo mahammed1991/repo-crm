@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from collections import defaultdict
 from main.models import UserDetails
-from leads.models import Leads
+from leads.models import Leads, WPPLeads
 from django.db.models import Q, Count
 import operator
 
@@ -251,14 +251,14 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         email_list = [email]
     if start_date and end_date:
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list}
-        wpp_lead_status_analysis = Leads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
-        total_count = Leads.objects.filter(**query).count()
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list}
+        wpp_lead_status_analysis = WPPLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        total_count = WPPLeads.objects.filter(**query).count()
     else:
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-        query = {'type_1': 'WPP', 'wpp_treatment_type__in': treatment_type_list}
-        wpp_lead_status_analysis = Leads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
-        total_count = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+        query = {'treatment_type__in': treatment_type_list}
+        wpp_lead_status_analysis = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
+        total_count = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
     wpp_lead_status_dict = {'total_leads': 0,
                             'open': 0,
