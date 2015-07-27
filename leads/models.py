@@ -95,6 +95,92 @@ class Leads(models.Model):
         verbose_name_plural = "Leads"
 
 
+# Create your models here.
+class WPPLeads(models.Model):
+    # ref_google_rep_user = models.ForeignKey(User)
+    google_rep_name = models.CharField(max_length=255)
+    google_rep_email = models.CharField(max_length=255)
+
+    ecommerce = models.IntegerField(default=0)
+    lead_owner_name = models.CharField(max_length=255, null=False)
+    lead_owner_email = models.CharField(max_length=255, null=False)
+    company = models.CharField(max_length=255)
+    lead_status = models.CharField(max_length=50)
+    country = models.CharField(max_length=255)
+
+    customer_id = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=100)
+
+    first_name_optional = models.CharField(max_length=50)
+    last_name_optional = models.CharField(max_length=100)
+    phone_optional = models.CharField(max_length=100)
+    email_optional = models.CharField(max_length=100)
+
+    date_of_installation = models.DateTimeField(blank=True, null=True)
+
+    time_zone = models.CharField(max_length=75)
+
+    regalix_comment = models.TextField()
+    google_comment = models.TextField()
+
+    code_1 = models.TextField()
+    url_1 = models.CharField(max_length=255)
+    type_1 = models.CharField(max_length=150)
+    comment_1 = models.TextField()
+
+    code_2 = models.TextField()
+    url_2 = models.CharField(max_length=255)
+    type_2 = models.CharField(max_length=150)
+    comment_2 = models.TextField()
+
+    code_3 = models.TextField()
+    url_3 = models.CharField(max_length=255)
+    type_3 = models.CharField(max_length=150)
+    comment_3 = models.TextField()
+
+    code_4 = models.TextField()
+    url_4 = models.CharField(max_length=255)
+    type_4 = models.CharField(max_length=150)
+    comment_4 = models.TextField()
+
+    code_5 = models.TextField()
+    url_5 = models.CharField(max_length=255)
+    type_5 = models.CharField(max_length=150)
+    comment_5 = models.TextField()
+
+    no_of_calls_inbound = models.CharField(max_length=150)
+    no_of_calls_outbound = models.CharField(max_length=150)
+    emails_sent = models.CharField(max_length=150)
+    emails_received = models.CharField(max_length=150)
+    call_recordings = models.CharField(max_length=150)
+    email_logs = models.CharField(max_length=150)
+    team = models.CharField(max_length=100)
+    is_active = models.IntegerField(default=1)
+
+    appointment_date = models.DateTimeField(blank=True, null=True)
+    first_contacted_on = models.DateTimeField(blank=True, null=True)
+
+    # Rescheduled Appointments
+    rescheduled_appointment = models.DateTimeField(blank=True, null=True)
+    rescheduled_appointment_in_ist = models.DateTimeField(blank=True, null=True)
+
+    dials = models.IntegerField(default=0)
+    lead_sub_status = models.CharField(max_length=100, null=True)
+
+    tat = models.IntegerField(default=0)
+
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+    sf_lead_id = models.CharField(max_length=50, unique=True)
+    treatment_type = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "WPP Leads"
+
+
 class Timezone(models.Model):
     zone_name = models.CharField(max_length=20, unique=True)
     time_value = models.CharField(max_length=6)
