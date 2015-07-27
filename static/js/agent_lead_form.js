@@ -395,7 +395,7 @@ function setLocations(newLocations){
             var sameTagTask = $(".tag:visible").length;
             $("#customer_same_tag_count").val(sameTagTask);
 
-            codeTypeElem = document.getElementById('same_task_ctype');
+            codeTypeElem = document.getElementById('same_task_cust_type');
             validateFiled(codeTypeElem)
 
             if(sameTagTask){
@@ -652,6 +652,17 @@ function setLocations(newLocations){
                         // URL Validation
                         modifierElem = document.getElementById('rbidmodifier' + i);
                         validateFiled(modifierElem);
+
+                        cnameElem = document.getElementById('advertiser_name' + i);
+                        validateFiled(cnameElem);
+
+                        // Customer Email Validation
+                        cemailElem = document.getElementById('aemail' + i);
+                        validateFiled(cemailElem);
+
+                        // Customer Telephone Validation
+                        cphoneElem = document.getElementById('phone' + i);
+                        validateFiled(cphoneElem);
 
                          // MCID Validation
                         shoppingMCIDElem = document.getElementById('is-mc_id' + i);
