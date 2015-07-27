@@ -38,4 +38,4 @@ for lead in wpp_leads:
     Leads.objects.filter(sf_lead_id=lead['sf_lead_id']).delete()
 
 total_leads_after_delete = Leads.objects.all().count()
-print 'Total Number of Leads in Leads is before WPP Leads Delete is', total_leads_after_delete
+print 'Total Number of Leads in Leads is After WPP Leads Delete is', total_leads_after_delete
