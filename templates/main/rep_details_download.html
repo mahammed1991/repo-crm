@@ -1,0 +1,43 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Rep Details
+{% endblock title %}
+
+{% block content %}
+<form method="POST" action="{% url 'main.views.rep_details_download' %}" name="download_details" id="download_details">
+    {% csrf_token %}
+    <input id="rep_date" name="rep_date">
+     <input type="hidden" name="rep_detail_timeline" id="rep_detail_timeline" value="" />
+    <div class="btn-row">
+        <button class="btn std-btn" id="download">Download Rep Details</button>
+    </div>
+</form>
+
+{% endblock content %}
+
+{% block main_js %}
+<link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/reports/moment.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery.comiseo.daterangepicker.js' %}"></script>
+<script>
+        $(function(){ 
+
+              $("#rep_date").daterangepicker({
+                datepickerOptions : {
+                     numberOfMonths : 2,
+                 }
+              });
+        });
+
+        $('#download').on('click', function(){
+            $('#rep_detail_timeline').val($('rep_date').val())
+            $('#download_details').submit()
+            
+        });
+</script>
+{% endblock main_js %}
