@@ -1018,7 +1018,7 @@ def bundle_lead_to_salesforce(request):
     elif code_type2:
         code_types.append(2)
 
-    if code_tdictype3 in complex_code_type:
+    if code_type3 in complex_code_type:
         basic_data = dict()
         # Get Basic/Common form field data
         if settings.SFDC == 'STAGE':
