@@ -4,7 +4,7 @@ from django.conf import settings
 from datetime import datetime, timedelta
 import logging
 from lib.salesforce import SalesforceApi
-from leads.models import Leads, SfdcUsers
+from leads.models import Leads, SfdcUsers, WPPLeads
 from django.core.exceptions import ObjectDoesNotExist
 import pytz
 from representatives.models import GoogeRepresentatives, RegalixRepresentatives
@@ -20,7 +20,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(minutes=10)
+    start_date = end_date - timedelta(days=2)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
@@ -142,20 +142,37 @@ def create_or_update_leads(records, sf):
     new_lead_failed = 0
     exist_lead_saved = 0
     exist_lead_failed = 0
+    total_wpp_leads = 0
+    existing_wpp_leads = 0
+    new_wpp_leads = 0
     is_new_lead = True
     owners_list = {u.user_id: {'name': u.full_name, 'email': u.email} for u in SfdcUsers.objects.all()}
     for rec in records:
         total_leads += 1
         sf_lead_id = rec.get('Id')
 
-        try:
-            # check for existing lead
-            lead = Leads.objects.get(sf_lead_id=sf_lead_id)
-            is_new_lead = False
-        except ObjectDoesNotExist:
-            # create new lead
-            is_new_lead = True
-            lead = Leads()
+        sf_lead_id = rec.get('Id')
+        type_1 = rec.get('Code_Type__c')
+        if type_1 == 'WPP':
+            total_wpp_leads += 1
+            try:
+                lead = WPPLeads.objects.get(sf_lead_id=sf_lead_id)
+                existing_wpp_leads += 1
+            except ObjectDoesNotExist:
+                lead = WPPLeads()
+                new_wpp_leads += 1
+            lead.lead_status = rec.get('WPP_Lead_Status__c')
+            lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+        else:
+            try:
+                # check for existing lead
+                lead = Leads.objects.get(sf_lead_id=sf_lead_id)
+                is_new_lead = False
+            except ObjectDoesNotExist:
+                # create new lead
+                is_new_lead = True
+                lead = Leads()
+            lead.lead_status = rec.get('Status')
 
         # Google Representative email and name
         rep_email = rec.get('Email')
@@ -225,7 +242,6 @@ def create_or_update_leads(records, sf):
                                                                                   settings.DEFAULT_LEAD_OWNER_LNAME)
         lead.lead_owner_email = lead_owner_email if lead_owner_email else settings.DEFAULT_LEAD_OWNER_EMAIL
         lead.company = unicode(rec.get('Company'))
-        lead.lead_status = rec.get('Status')
         lead.country = rec.get('Location__c')
 
         cid = rec.get('Customer_ID__c')
@@ -287,9 +303,6 @@ def create_or_update_leads(records, sf):
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
-        if lead.type_1 == 'WPP':
-            lead.lead_status = rec.get('WPP_Lead_Status__c')
-            lead.wpp_treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Regalix Website Build Treatment'
 
         # Calculate TAT for each lead
         tat = 0
@@ -323,6 +336,11 @@ def create_or_update_leads(records, sf):
     logging.info("New Leads Failed Count: %s" % (new_lead_failed))
     logging.info("Exist leads updated Count: %s" % (exist_lead_saved))
     logging.info("Exist lead failed to update: %s" % (exist_lead_failed))
+
+    logging.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logging.info("Total WPP leads saved to our DB: %s" % (total_wpp_leads))
+    logging.info("New WPP leads saved to our DB: %s" % (new_wpp_leads))
+    logging.info("Exist WPP leads updated Count: %s" % (existing_wpp_leads))
     logging.info("**********************************************************")
 
 
@@ -391,7 +409,7 @@ def create_sfdc_user(details):
 def update_sfdc_leads(records, sf):
     """ Update Appointment and Rescheduled Appointment IN IST Time """
     sf.headers.update({"Sforce-Auto-Assign": 'FALSE'})
-    logging.info("Updating Leads count on SFDC: %s" % (len(records)))
+    logging.info("Updating Leads count on SFDC - %s: %s" % (datetime.strftime(datetime.now(), '%d/%b/%Y'), len(records)))
     for lead in records:
         location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')
