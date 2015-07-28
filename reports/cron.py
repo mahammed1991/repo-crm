@@ -42,6 +42,33 @@ def get_updated_leads():
         logging.info("%s" % (e))
 
 
+@kronos.register('1 * * * *')
+def get_reschedule_leads():
+    """ Get Current Quarter updated Leads from SFDC """
+    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    start_date = end_date - timedelta(minutes=419)
+    end_date = end_date + timedelta(days=1)
+    start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+    end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+    logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
+    logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
+    sf = SalesforceApi.connect_salesforce()
+    logging.info("Connect Successfully")
+    select_items = settings.SFDC_FIELDS
+    tech_team_id = settings.TECH_TEAM_ID
+    where_clause = "WHERE (Rescheduled_Appointments__c >= %s AND Rescheduled_Appointments__c <= %s) AND Rescheduled_Appointments__c != null AND LastModifiedById != '%s'" % (start_date, end_date, tech_team_id)
+    sql_query = "select %s from Lead %s" % (select_items, where_clause)
+    try:
+        all_leads = sf.query_all(sql_query)
+        logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
+        create_or_update_leads(all_leads['records'], sf)
+        update_sfdc_leads(all_leads['records'], sf)
+    except Exception as e:
+        print e
+        logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
+        logging.info("%s" % (e))
+
+
 @kronos.register('55 0 * * *')
 def get_deleted_leads():
     """ Get Current Quarter updated Leads from SFDC """

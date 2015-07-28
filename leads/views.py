@@ -1958,6 +1958,7 @@ def get_lead_status_by_ldap(request):
 
 def convert_lead_to_dict(model):
     lead = {}
+    lead['lead_id'] = model.id
     lead['Advertiser'] = model.company
     lead['url'] = model.url_1
     lead['cid'] = model.customer_id
@@ -2267,7 +2268,6 @@ def get_pagination_lead_summary(request):
         if request.user.groups.filter(name='SUPERUSER'):
             from_leads = request.GET.get('from')
             upto_leads = request.GET.get('to')
-            print from_leads, upto_leads
             start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
             query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
             leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
