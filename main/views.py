@@ -504,7 +504,6 @@ def create_feedback(request, lead_id=None):
             lead = Leads.objects.get(id=lead_id)
         except Leads.ObjectDoesNotExist:
             lead = None
-
     if request.method == 'POST':
         feedback_details = Feedback()
         feedback_details.user = request.user
@@ -521,23 +520,23 @@ def create_feedback(request, lead_id=None):
         feedback_details.program_id = request.POST['program']
         feedback_details.sf_lead_id = request.POST['type']
         feedback_details.code_type = request.POST['code_type']
+        owner_email = request.POST['lead_owner']
         try:
             # if lead owner not exist, assign lead to default user
-            lead_owner = User.objects.get(email=request.POST['lead_owner'])
+            lead_owner = User.objects.get(email=owner_email)
             feedback_details.lead_owner = lead_owner
         except ObjectDoesNotExist:
-            email = request.POST['lead_owner']
-            if email:
-                lead_owner = create_new_user(email)
+            if owner_email:
+                lead_owner = create_new_user(owner_email)
                 feedback_details.lead_owner = lead_owner
 
+        manager_email = request.POST['google_acManager_name']
         try:
-            google_account_manager = User.objects.get(email=request.POST['google_acManager_name'])
+            google_account_manager = User.objects.get(email=manager_email)
             feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
-            email = request.POST['google_acManager_name']
-            if email:
-                google_account_manager = create_new_user(email)
+            if manager_email:
+                google_account_manager = create_new_user(manager_email)
                 feedback_details.google_account_manager = google_account_manager
 
         if request.FILES:
@@ -615,10 +614,8 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
 def create_feedback_from_lead_status(request):
     """ Create feed back """
     if request.is_ajax():
-
         lead_id = request.GET.get('lead_id')
         lead = Leads.objects.get(id=lead_id)
-
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.GET.get('title')
@@ -630,25 +627,36 @@ def create_feedback_from_lead_status(request):
         feedback_details.language = 'English'
         feedback_location = Location.objects.get(location_name=lead.country)
         feedback_details.location = feedback_location
+
         try:
             team = Team.objects.get(team_name=lead.team)
             feedback_details.program_id = team.id
         except ObjectDoesNotExist:
             feedback_details.program = None
         feedback_details.created_date = datetime.utcnow()
+
+        owner_email = lead.lead_owner_email
         try:
             # if lead owner not exist, assign lead to default user
-            lead_owner = User.objects.get(email=lead.lead_owner_email)
+            lead_owner = User.objects.get(email=owner_email)
             feedback_details.lead_owner = lead_owner
-            google_account_manager = User.objects.get(email=lead.google_rep_email)
+        except ObjectDoesNotExist:
+            if owner_email:
+                lead_owner = create_new_user(owner_email)
+                feedback_details.lead_owner = lead_owner
+
+        manager_email = lead.google_rep_email
+        try:
+            google_account_manager = User.objects.get(email=manager_email)
             feedback_details.google_account_manager = google_account_manager
         except ObjectDoesNotExist:
-            pass
+            if manager_email:
+                google_account_manager = create_new_user(manager_email)
+                feedback_details.google_account_manager = google_account_manager
 
         feedback_details.save()
         feedback_details = notify_feedback_activity(request, feedback_details)
 
-        # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))
 
 

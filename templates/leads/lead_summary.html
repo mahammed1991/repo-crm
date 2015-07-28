@@ -529,9 +529,9 @@ function setLeadSummaryTableExtend(leads, start_row, end_row){
       }else{
         comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
-        
+      
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
-      action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat({{l.id}}) id="lead_id-{{l.id}}"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid({{l.id}})></i></a></td>'
+      action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat(' + leads[i].lead_id +') id="lead_id-'+ leads[i].lead_id + '"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid(' + leads[i].lead_id + ')></i></a></td>'
       $('#tableBody').append(counter+other+comment+status+action)
     }
     $("#Leads").trigger("update"); 
