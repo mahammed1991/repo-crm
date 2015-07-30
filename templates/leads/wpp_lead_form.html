@@ -115,9 +115,9 @@
             <option value="Other">Other (please specify)</option>
           </select>
         </div>
-        <div class="col-md-6 advertiser_contact" style="display:none;">
-          <label for="advertiser_contact">Advertiser Contact</label>
-          <input type="tel" class="form-control" id="advertiser_contact" name="advertiser_contact" placeholder="Advertiser Contact">
+        <div class="col-md-6 role_other" style="display:none;">
+          <label for="role_other">Role Other</label>
+          <input type="tel" class="form-control" id="role_other" name="role_other" placeholder="Role Other">
         </div>
       </div>
     <div class="std-sub-title">Initial Appointment Details</div>
@@ -184,10 +184,10 @@
   $("#tag_primary_role").change(function(){
     var selectedRole = $(this).val();
     if (selectedRole == 'Other'){
-      $(".advertiser_contact").show();
+      $(".role_other").show();
     }else{
-      $(".advertiser_contact").hide();
-      $("#advertiser_contact").val('');
+      $(".role_other").hide();
+      $("#role_other").val('');
     }
   });
 </script>
