@@ -36,7 +36,8 @@ Regalix Google Portal
       </div>
       <div class="col-md-4">
         <input type="text" class="form-control" id="feedbackCID" placeholder="Customer ID (xxx-xxx-xxxx)" name="cid">
-        <select class="form-control" id="advertiserNames" name="type" style="display:none;">
+        <input type="hidden" name="feedback_type" value="{{ feedback_type }}">
+        <select class="form-control" id="advertiserNames" name="sf_type" style="display:none;">
         </select>
         <select class="form-control bgicon" id="feedbackType" name="feedbackType">
          <option value="Feedback Type">Feedback Type</option>

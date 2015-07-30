@@ -1481,10 +1481,13 @@ def upload_leads(request):
     return redirect('leads.views.manage_leads')
 
 
-def get_lead(request, cid):
+def get_lead(request, cid, feedback_type):
     """ Get lead information """
     lead = {'status': 'FAILED', 'details': None}
-    leads = Leads.objects.filter(customer_id=cid)
+    if feedback_type == 'NORMAL':
+        leads = Leads.objects.filter(customer_id=cid)
+    else:
+        leads = WPPLeads.objects.filter(customer_id=cid)
     if not leads:
         return HttpResponse(json.dumps(lead), content_type='application/json')
 
@@ -1529,17 +1532,20 @@ def get_lead(request, cid):
             'team': team.team_name if team else '',
             'team_id': team.id if team else 0,
             'languages_list': languages_list,
-            'code_type': leads.type_1
+            'code_type': leads.type_1,
+            'l_id': leads.sf_lead_id,
 
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')
 
 
-def get_lead_by_lid(request, lid):
+def get_lead_by_lid(request, lid, feedback_type):
     """ Get lead information """
     lead = {'status': 'FAILED', 'details': None}
-    leads = Leads.objects.get(sf_lead_id=lid)
-
+    if feedback_type == 'NORMAL':
+        leads = Leads.objects.get(sf_lead_id=lid)
+    else:
+        leads = WPPLeads.objects.get(sf_lead_id=lid)
     try:
         team = Team.objects.get(team_name=leads.team)
     except ObjectDoesNotExist:
@@ -1568,7 +1574,8 @@ def get_lead_by_lid(request, lid):
             'team': team.team_name if team else '',
             'team_id': team.id if team else 0,
             'languages_list': languages_list,
-            'code_type': leads.type_1
+            'code_type': leads.type_1,
+            'l_id': leads.sf_lead_id,
 
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')

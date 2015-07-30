@@ -13,7 +13,7 @@ urlpatterns = patterns(
     url(r'^manage-leads/$', views.manage_leads),
     url(r'^upload-leads/$', views.upload_leads),
     url(r'^migrate-leads/$', views.migrate_leads),
-    url(r'^get-lead/(?P<cid>[\w -]+)$', views.get_lead),
+    url(r'^get-lead/(?P<cid>[\w -]+)/(?P<feedback_type>[A-Za-z]+)$', views.get_lead),
     url(r'^lead-summary/$', views.get_lead_summary),
     # url(r'^lead-summary/(?P<lid>[0-9]+)$', views.get_lead_summary),
     url(r'^lead-summary/(?P<lid>[0-9]+)/(?P<page>[0-9]+)$', views.get_lead_summary),
@@ -32,7 +32,7 @@ urlpatterns = patterns(
     url(r'^leads-summary-by-cid/$', views.get_lead_status_by_cid),
     url(r'^wpp-lead-form/$', views.wpp_lead_form),
     url(r'^wpp-lead-summary/$', views.get_wpp_lead_summary),
-    url(r'^get-lead-by-lid/(?P<lid>[\w]+)$', views.get_lead_by_lid),
+    url(r'^get-lead-by-lid/(?P<lid>[\w]+)/(?P<feedback_type>[A-Za-z]+)$', views.get_lead_by_lid),
     url(r'^pagination-leads-summary/$', views.get_pagination_lead_summary),
     url(r'^get-wpp-lead-summary-by-treatment/$', views.get_wpp_lead_summary_by_treatment)
 )

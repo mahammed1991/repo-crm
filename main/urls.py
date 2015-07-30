@@ -30,5 +30,6 @@ urlpatterns = patterns(
     url(r'^feedback/list/wpp$', views.list_feedback_wpp),
     url(r'^reps/details-download$', views.rep_details_download),
     url(r'^reps/details-upload$', views.rep_details_upload),
+    # url(r'^feedback/create(?P<type>\d+)/$', views.create_feedback_wpp),
 
 )
