@@ -24,11 +24,13 @@ urlpatterns = patterns(
     url(r'^sales-tasks/$', views.sales_tasks),
     # url(r'^contacts/$', views.get_contacts),
     url(r'^top-30-cms/$', views.top_30_cms),
-    url(r'^user/master-data$', views.master_data_upload),
+    # url(r'^user/master-data$', views.master_data_upload),
     url(r'^user/migrate-user-data$', views.migrate_user_data),
     url(r'^user/failed-records$', views.download_failed_records),
     url(r'^feedback/list/wpp$', views.list_feedback_wpp),
     url(r'^reps/details-download$', views.rep_details_download),
     url(r'^reps/details-upload$', views.rep_details_upload),
+    url(r'^upload/file-handling$', views.upload_file_handling),
+    url(r'^upload/migrate-data$', views.migrate_table_data),
 
 )

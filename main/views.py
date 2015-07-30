@@ -21,14 +21,14 @@ from django.conf import settings
 
 from lib.helpers import send_mail, manager_info_required
 
-from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList,
+from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ)
-from leads.models import Location, Leads, Team, Language
+from leads.models import Location, Leads, Team, Language, TreatmentType
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
                          is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter,
-                         get_previous_month_start_end_days, create_new_user)
+                         get_previous_month_start_end_days, create_new_user, convert_excel_data_into_list)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
@@ -1000,63 +1000,63 @@ def notify_portal_feedback_activity(request, feedback):
     return feedback
 
 
-@login_required
-def master_data_upload(request):
-    """ upload and load leads to view """
-    template_args = dict()
-    if request.method == 'POST':
-        if request.FILES:
-            excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
-            if not os.path.exists(excel_file_save_path):
-                os.makedirs(excel_file_save_path)
-            excel_file = request.FILES['file']
-            # excel sheet data
-            excel_data = list()
+# @login_required
+# def master_data_upload(request):
+#     """ upload and load leads to view """
+#     template_args = dict()
+#     if request.method == 'POST':
+#         if request.FILES:
+#             excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+#             if not os.path.exists(excel_file_save_path):
+#                 os.makedirs(excel_file_save_path)
+#             excel_file = request.FILES['file']
+#             # excel sheet data
+#             excel_data = list()
 
-            # Check file extension type
-            # require only .xlsx file
-            if excel_file.name.split('.')[1] != 'xls':
-                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file'})
-                return render(request, 'main/master_upload.html', template_args)
+#             # Check file extension type
+#             # require only .xlsx file
+#             if excel_file.name.split('.')[1] != 'xls':
+#                 template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file'})
+#                 return render(request, 'main/master_upload.html', template_args)
 
-            file_name = 'master_data.xlsx'
-            excel_file_path = excel_file_save_path + file_name
-            with open(excel_file_path, 'wb+') as destination:
-                for chunk in excel_file.chunks():
-                    destination.write(chunk)
-                destination.close()
+#             file_name = 'master_data.xlsx'
+#             excel_file_path = excel_file_save_path + file_name
+#             with open(excel_file_path, 'wb+') as destination:
+#                 for chunk in excel_file.chunks():
+#                     destination.write(chunk)
+#                 destination.close()
 
-            try:
-                workbook = open_workbook(excel_file_path)
-            except Exception as e:
-                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': e})
-                return render(request, 'main/master_upload.html', template_args)
+#             try:
+#                 workbook = open_workbook(excel_file_path)
+#             except Exception as e:
+#                 template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': e})
+#                 return render(request, 'main/master_upload.html', template_args)
 
-            sheet = workbook.sheet_by_index(0)
+#             sheet = workbook.sheet_by_index(0)
 
-            for row_index in range(sheet.nrows):
-                # read each row
-                excel_row_data = list()
-                for col_index in range(sheet.ncols):
-                    # check each column for date type
-                    cell_type = sheet.cell_type(row_index, col_index)
-                    cell_value = sheet.cell_value(row_index, col_index)
+#             for row_index in range(sheet.nrows):
+#                 # read each row
+#                 excel_row_data = list()
+#                 for col_index in range(sheet.ncols):
+#                     # check each column for date type
+#                     cell_type = sheet.cell_type(row_index, col_index)
+#                     cell_value = sheet.cell_value(row_index, col_index)
 
-                    # if column is formatted as datetype, convert to datetime object
-                    # otherwise show column as is
-                    if cell_type == XL_CELL_DATE:
-                        dt_tuple = xldate_as_tuple(cell_value, workbook.datemode)
-                        cell_dt = datetime(dt_tuple[0], dt_tuple[1], dt_tuple[2], dt_tuple[3], dt_tuple[4], dt_tuple[5])
-                        cell_dt = datetime.strftime(cell_dt, '%m/%d/%Y')
-                        excel_row_data.append(cell_dt)
-                    else:
-                        excel_row_data.append(cell_value)
+#                     # if column is formatted as datetype, convert to datetime object
+#                     # otherwise show column as is
+#                     if cell_type == XL_CELL_DATE:
+#                         dt_tuple = xldate_as_tuple(cell_value, workbook.datemode)
+#                         cell_dt = datetime(dt_tuple[0], dt_tuple[1], dt_tuple[2], dt_tuple[3], dt_tuple[4], dt_tuple[5])
+#                         cell_dt = datetime.strftime(cell_dt, '%m/%d/%Y')
+#                         excel_row_data.append(cell_dt)
+#                     else:
+#                         excel_row_data.append(cell_value)
 
-                # append row data to excel sheet data
-                excel_data.append(excel_row_data)
+#                 # append row data to excel sheet data
+#                 excel_data.append(excel_row_data)
 
-            template_args.update({'excel_data': excel_data, 'excel_file': file_name})
-    return render(request, 'main/master_upload.html', template_args)
+#             template_args.update({'excel_data': excel_data, 'excel_file': file_name})
+#     return render(request, 'main/master_upload.html', template_args)
 
 
 @csrf_exempt
@@ -1157,6 +1157,8 @@ def migrate_user_data(request):
     path = "/tmp/Unsaved_Records.csv"
     if os.path.exists(path):
         os.remove(path)
+    if os.path.exists(excel_file_path):
+        os.remove(excel_file_path)
     if len(failed_rows) > 0:
         filename = "Unsaved_Records"
         path = "/tmp/%s.csv" % (filename)
@@ -1164,9 +1166,9 @@ def migrate_user_data(request):
     template_args = {'number_of_saved_records': number_of_saved_records if number_of_saved_records else 0,
                      'number_of_unsaved_records': number_of_unsaved_records if number_of_unsaved_records else 0,
                      'total_record': number_of_records, 'new_region': new_region, 'new_locations': new_locations,
-                     'new_programs': new_programs, 'result': True}
+                     'new_programs': new_programs, 'upload_target': 'normal_master_list', 'result': True}
 
-    return render(request, 'main/master_upload.html', template_args)
+    return render(request, 'main/upload_file.html', template_args)
 
 
 def rep_details_upload(request):
@@ -1207,3 +1209,120 @@ def valid_string(col_val):
         return False
     else:
         return True
+
+
+@csrf_exempt
+@login_required
+def upload_file_handling(request):
+    template_args = dict()
+    if request.method == 'POST':
+        if request.FILES:
+            excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+            if not os.path.exists(excel_file_save_path):
+                os.makedirs(excel_file_save_path)
+            excel_file = request.FILES['attachment_name']
+            upload_target = request.POST['uploadTarget']
+
+            if excel_file.name.split('.')[1] not in ['xls', 'xlsx']:
+                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file', 'upload_target': upload_target})
+                return render(request, 'main/upload_file.html', template_args)
+
+            file_name = excel_file.name
+            excel_file_path = excel_file_save_path + file_name
+            with open(excel_file_path, 'wb+') as destination:
+                for chunk in excel_file.chunks():
+                    destination.write(chunk)
+                destination.close()
+
+            try:
+                workbook = open_workbook(excel_file_path)
+            except Exception as e:
+                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': e, 'upload_target': upload_target})
+                return render(request, 'main/upload_file.html', template_args)
+
+            sheet = workbook.sheet_by_index(0)
+            uploaded_headers = [str(cell.value) for cell in sheet.row(0)]
+
+            if upload_target == 'wpp_master_list':
+                default_headers = ['CID', 'Provisional Assignee', 'URL', 'Server', 'Framework', 'CMS', 'Ecommerce', 'Priority', 'Treatment Type', 'Notes']
+                if len(default_headers) == len(uploaded_headers):
+                    if cmp(default_headers, uploaded_headers) != 0:
+                        template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
+                        return render(request, 'main/upload_file.html', template_args)
+                    else:
+                        # print default_headers, uploaded_headers
+                        excel_data = convert_excel_data_into_list(workbook)
+                        template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
+                        return render(request, 'main/upload_file.html', template_args)
+
+            elif upload_target == 'normal_master_list':
+                default_headers = ['manager', 'username', 'market served', 'program', 'region']
+                for element in default_headers:
+                    if element not in uploaded_headers:
+                        template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
+                        return render(request, 'main/upload_file.html', template_args)
+                    else:
+                        excel_data = convert_excel_data_into_list(workbook)
+                        template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
+                        return render(request, 'main/upload_file.html', template_args)
+
+    return render(request, 'main/upload_file.html')
+
+
+@csrf_exempt
+def migrate_table_data(request):
+    template_args = dict()
+    excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+    excel_file = request.POST['file']
+    excel_file_path = excel_file_save_path + excel_file
+    workbook = open_workbook(excel_file_path)
+    sheet = workbook.sheet_by_index(0)
+    upload_target = request.POST['target_upload']
+    treatment_type_dict = {t_type.name: t_type.id for t_type in TreatmentType.objects.all()}
+    number_of_records = 0
+    number_of_saved_records = 0
+    number_of_updated_records = 0
+    if upload_target == 'wpp_master_list':
+        number_of_records = sheet.nrows - 1
+        for r_i in range(1, sheet.nrows):
+            data = dict()
+            data['customer_id'] = sheet.cell(r_i, get_col_index(sheet, 'CID')).value
+            data['provisional_assignee'] = sheet.cell(r_i, get_col_index(sheet, 'Provisional Assignee')).value
+            data['url'] = sheet.cell(r_i, get_col_index(sheet, 'URL')).value
+            data['server'] = sheet.cell(r_i, get_col_index(sheet, 'Server')).value
+            data['framework'] = sheet.cell(r_i, get_col_index(sheet, 'Framework')).value
+            data['cms'] = sheet.cell(r_i, get_col_index(sheet, 'CMS')).value
+            data['ecommerce'] = sheet.cell(r_i, get_col_index(sheet, 'Ecommerce')).value
+            try:
+                priority = int(sheet.cell(r_i, get_col_index(sheet, 'Priority')).value)
+                data['priority'] = priority
+            except Exception:
+                data['priority'] = 1
+            treatment_type = sheet.cell(r_i, get_col_index(sheet, 'Treatment Type')).value
+            data['treatment_type_id'] = treatment_type_dict[treatment_type] if treatment_type_dict[treatment_type] else None
+            data['notes'] = sheet.cell(r_i, get_col_index(sheet, 'Notes')).value
+            data['year'] = datetime.now().year
+            month = datetime.now().month
+            if month <= 3:
+                data['quarter'] = 'Q1'
+            elif month > 3 and month <= 6:
+                data['quarter'] = 'Q2'
+            elif month > 6 and month <= 9:
+                data['quarter'] = 'Q3'
+            elif month > 9 and month <= 12:
+                data['quarter'] = 'Q4'
+            try:
+                wpp_record = WPPMasterList.objects.get(customer_id=data['customer_id'], quarter=data['quarter'], year=data['year'])
+                number_of_updated_records += 1
+                wpp_rec = WPPMasterList(id=wpp_record.id, **data)
+                wpp_rec.created_date = wpp_record.created_date
+            except ObjectDoesNotExist:
+                wpp_rec = WPPMasterList(**data)
+                number_of_saved_records += 1
+            wpp_rec.save()
+
+        if os.path.isfile(excel_file_path):
+            os.remove(excel_file_path)
+        template_args.update({'result': 'WPP Master List', 'number_of_saved_records': number_of_saved_records, 'number_of_records': number_of_records,
+                              'number_of_records': number_of_records, 'number_of_updated_records': number_of_updated_records})
+        return render(request, 'main/upload_file.html', template_args)
