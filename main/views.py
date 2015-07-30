@@ -504,6 +504,7 @@ def create_feedback(request, lead_id=None):
             lead = Leads.objects.get(id=lead_id)
         except Leads.ObjectDoesNotExist:
             lead = None
+
     if request.method == 'POST':
         feedback_details = Feedback()
         feedback_details.user = request.user
@@ -614,8 +615,10 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
 def create_feedback_from_lead_status(request):
     """ Create feed back """
     if request.is_ajax():
+
         lead_id = request.GET.get('lead_id')
         lead = Leads.objects.get(id=lead_id)
+
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.GET.get('title')
@@ -657,6 +660,7 @@ def create_feedback_from_lead_status(request):
         feedback_details.save()
         feedback_details = notify_feedback_activity(request, feedback_details)
 
+        # return 'SUCCESS'
         return HttpResponse(json.dumps('SUCCESS'))
 
 
