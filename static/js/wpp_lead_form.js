@@ -31,6 +31,12 @@ function validatethis(frm) {
     cidElem = document.getElementById('cid');
     validateFiled(cidElem);
 
+    if(!$(cidElem).val().match(cidFormat)){
+      $(cidElem).addClass('error-box');
+      frm.cid.focus();
+      window.is_error = true;
+    }
+
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
@@ -54,6 +60,11 @@ function validatethis(frm) {
 
     roleElem = document.getElementById('tag_primary_role');
     validateFiled(roleElem);
+
+    roleOther = document.getElementById('role_other');
+    if($(roleOther).is(":visible")){
+      validateFiled(roleOther);
+    }
 
     tzoneElem = document.getElementById('tzone');
     validateFiled(tzoneElem);
