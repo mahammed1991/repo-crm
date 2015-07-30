@@ -13,6 +13,7 @@ from main.models import UserDetails
 from leads.models import Leads, WPPLeads
 from django.db.models import Q, Count
 import operator
+from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 
 from django.contrib.auth.models import User
 
@@ -558,3 +559,30 @@ def create_new_user(email):
     user.first_name = username
     user.save()
     return user
+
+
+def convert_excel_data_into_list(workbook):
+    # excel sheet data
+    sheet = workbook.sheet_by_index(0)
+    excel_data = list()
+    for row_index in range(sheet.nrows):
+        # read each row
+        excel_row_data = list()
+        for col_index in range(sheet.ncols):
+            # check each column for date type
+            cell_type = sheet.cell_type(row_index, col_index)
+            cell_value = sheet.cell_value(row_index, col_index)
+
+            # if column is formatted as datetype, convert to datetime object
+            # otherwise show column as is
+            if cell_type == XL_CELL_DATE:
+                dt_tuple = xldate_as_tuple(cell_value, workbook.datemode)
+                cell_dt = datetime(dt_tuple[0], dt_tuple[1], dt_tuple[2], dt_tuple[3], dt_tuple[4], dt_tuple[5])
+                cell_dt = datetime.strftime(cell_dt, '%m/%d/%Y')
+                excel_row_data.append(cell_dt)
+            else:
+                excel_row_data.append(cell_value)
+
+        # append row data to excel sheet data
+        excel_data.append(excel_row_data)
+    return excel_data
