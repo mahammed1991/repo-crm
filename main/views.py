@@ -473,7 +473,7 @@ def list_feedback(request):
 
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
                                                        'media_url': settings.MEDIA_URL + 'feedback/',
-                                                       'feedback_list': feedback_list,
+                                                       'feedback_list': feedback_list, 'type': 'NORMAL'
                                                        })
 
 
@@ -486,7 +486,7 @@ def list_feedback_wpp(request):
 
     return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
                                                        'media_url': settings.MEDIA_URL + 'feedback/',
-                                                       'feedback_list': feedback_list,
+                                                       'feedback_list': feedback_list, 'type': 'WPP'
                                                        })
 
 
@@ -494,17 +494,6 @@ def list_feedback_wpp(request):
 @manager_info_required
 def create_feedback(request, lead_id=None):
     """ Create feed back """
-    # locations = Location.objects.filter(is_active=True)
-    locations = Location.objects.all()
-    programs = Team.objects.filter(is_active=True)
-    languages = Language.objects.all()
-    lead = None
-    if lead_id:
-        try:
-            lead = Leads.objects.get(id=lead_id)
-        except Leads.ObjectDoesNotExist:
-            lead = None
-
     if request.method == 'POST':
         feedback_details = Feedback()
         feedback_details.user = request.user
@@ -519,7 +508,7 @@ def create_feedback(request, lead_id=None):
         feedback_details.feedback_type = request.POST['feedbackType']
         feedback_details.description = request.POST['description']
         feedback_details.program_id = request.POST['program']
-        feedback_details.sf_lead_id = request.POST['type']
+        feedback_details.sf_lead_id = request.POST['sf_type']
         feedback_details.code_type = request.POST['code_type']
         owner_email = request.POST['lead_owner']
         try:
@@ -546,9 +535,28 @@ def create_feedback(request, lead_id=None):
         feedback_details.save()
         feedback_details = notify_feedback_activity(request, feedback_details, comment=None)
 
+        if request.POST['code_type'] == 'WPP':
+            return redirect('main.views.list_feedback_wpp')
         return redirect('main.views.list_feedback')
+
+    # Feedback Form
+    locations = Location.objects.all()
+    programs = Team.objects.filter(is_active=True)
+    languages = Language.objects.all()
+    feedback_type = request.GET.get('type')
+    lead = None
+    if lead_id:
+        try:
+            if feedback_type and feedback_type == 'WPP':
+                lead = WPPLeads.objects.get(id=lead_id)
+            else:
+                lead = Leads.objects.get(id=lead_id)
+                feedback_type = 'NORMAL'
+        except Leads.ObjectDoesNotExist:
+            lead = None
     return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
-                                                                     'programs': programs, 'lead': lead, 'languages': languages})
+                                                                     'programs': programs, 'lead': lead, 'languages': languages,
+                                                                     'feedback_type': feedback_type})
 
 
 def notify_feedback_activity(request, feedback, comment=None, is_resolved=False):
