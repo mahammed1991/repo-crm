@@ -39,6 +39,7 @@ from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
 from reports.cron import create_or_update_leads
 import operator
+import collections
 
 
 # Create your views here.
@@ -1956,9 +1957,75 @@ def get_lead_status_by_ldap(request):
     return render(request, 'leads/lead_summary.html', {})
 
 
+@login_required
+def lead_history(request, lid):
+    template_args = dict()
+    lead_status = collections.OrderedDict()
+    lead_status['Open'] = {'title': 'Just received, studying requirements'}
+    lead_status['In UI/UX Review'] = {'title': 'Awaiting response from advertiser on files/instructions'}
+    lead_status['In File Transfer'] = {'title': 'In File Transfer'}
+    lead_status['On Hold'] = {'title': 'On Hold'}
+    lead_status['In Mockup'] = {'title': 'Regalix team designing the Mock Up'}
+    lead_status['Mockup Review'] = {'title': 'Google CSRs &amp; Advertisers reviewing mock up'}
+    lead_status['In Development'] = {'title': 'Regalix team coding the website'}
+    lead_status['In Stage'] = {'title': 'On a staging server for feedback from the advertiser'}
+    lead_status['In AB Testing'] = {'title': 'A/B Test launched on Analytics/Adwords'}
+    lead_status['Implemented'] = {'title': 'New website launched post successful A/B Test'}
+    lead = None
+    try:
+        lead = WPPLeads.objects.get(sf_lead_id=lid)
+        lead_status[lead.lead_status].update({'status': 'PROGRESS'})
+        template_args['lead'] = lead
+    except ObjectDoesNotExist:
+        template_args['error'] = 'Lead does not exist'
+
+    is_current = False
+    tat_by_status = collections.OrderedDict()
+    for key, value in lead_status.iteritems():
+        tat_by_status[key] = {'tat': '-'}
+        if 'status' in value:
+            is_current = True
+            continue
+        if is_current:
+            lead_status[key].update({'status': 'FUTURE'})
+        else:
+            lead_status[key].update({'status': 'DONE'})
+
+    # Get Lead History by WPP Lead Status
+    field = 'WPP_Lead_Status__c'
+    try:
+        sf = SalesforceApi.connect_salesforce()
+    except Exception:
+        template_args['error'] = 'History Not exist'
+    history = sf.query("SELECT Id, LeadID, Field, OldValue, NewValue, CreatedDate from LeadHistory WHERE LeadID = '%s' AND Field = '%s'" % (lid, field))
+    if lead:
+        last_modified_date = lead.created_date
+        for his in history['records']:
+            old_val = his.get('OldValue')
+            new_val = his.get('NewValue')
+            modified_date = his.get('CreatedDate')
+            modified_date = SalesforceApi.salesforce_date_to_datetime_format(modified_date)
+
+            tat = tat_by_dates(last_modified_date, modified_date)
+            tat_by_status[old_val].update({'tat': tat})
+            last_modified_date = modified_date
+
+    template_args['tat_by_status'] = tat_by_status.iteritems()
+    template_args['lead_status'] = lead_status.iteritems()
+    return render(request, 'leads/lead_history.html', template_args)
+
+
+def tat_by_dates(start_date, end_date):
+    """ Difference b/w 2 dates in days"""
+
+    diff = max([start_date, end_date]) - min([start_date, end_date])
+    return diff.days
+
+
 def convert_lead_to_dict(model):
     lead = {}
     lead['lead_id'] = model.id
+    lead['sf_lead_id'] = model.sf_lead_id
     lead['Advertiser'] = model.company
     lead['url'] = model.url_1
     lead['cid'] = model.customer_id

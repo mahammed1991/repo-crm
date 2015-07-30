@@ -34,5 +34,6 @@ urlpatterns = patterns(
     url(r'^wpp-lead-summary/$', views.get_wpp_lead_summary),
     url(r'^get-lead-by-lid/(?P<lid>[\w]+)$', views.get_lead_by_lid),
     url(r'^pagination-leads-summary/$', views.get_pagination_lead_summary),
-    url(r'^get-wpp-lead-summary-by-treatment/$', views.get_wpp_lead_summary_by_treatment)
+    url(r'^get-wpp-lead-summary-by-treatment/$', views.get_wpp_lead_summary_by_treatment),
+    url(r'^lead-history/(?P<lid>[\w]+)$', views.lead_history)
 )
