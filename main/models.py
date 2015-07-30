@@ -10,7 +10,7 @@ from PIL import Image
 from django.utils.translation import ugettext as _
 
 
-from leads.models import Location, Team, Leads
+from leads.models import Location, Team, Leads, TreatmentType
 from reports.models import Region
 from django.template.loader import get_template
 from django.template import Context
@@ -372,3 +372,36 @@ class ResourceFAQ(models.Model):
     class Meta:
         db_table = 'resource_faq'
         verbose_name_plural = 'ResourceFAQ'
+
+
+class WPPMasterList(models.Model):
+
+    customer_id = models.CharField(max_length=50, blank=True, null=True)
+    provisional_assignee = models.CharField(max_length=50, blank=True, null=True)
+    url = models.CharField(max_length=100, blank=True, null=True)
+    server = models.CharField(max_length=100, blank=True, null=True)
+    framework = models.CharField(max_length=100, blank=True, null=True)
+    cms = models.CharField(max_length=100, blank=True, null=True)
+    ecommerce = models.CharField(max_length=100, blank=True, null=True)
+    priority = models.IntegerField(max_length=4, default=1)
+    treatment_type = models.ForeignKey(TreatmentType, blank=True, default=None, null=True)
+    notes = models.TextField(blank=True)
+
+    YEAR_CHOICES = []
+    for r in range(2000, (datetime.utcnow().year + 2)):
+        YEAR_CHOICES.append((r, r))
+
+    quarter = models.CharField(max_length=10, blank=False, choices=(
+        ('Q1', 'Q1'),
+        ('Q2', 'Q2'),
+        ('Q3', 'Q3'),
+        ('Q4', 'Q4'),)
+    )
+    year = models.IntegerField(max_length=4, choices=YEAR_CHOICES, default=datetime.utcnow().year)
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        unique_together = ('customer_id', 'quarter', 'year')
+        db_table = 'wpp_master_list'
+        verbose_name_plural = "WPP Master List"

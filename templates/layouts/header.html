@@ -83,7 +83,7 @@
                 <li><a href="{% url 'representatives.views.plan_schedule' %}" >Manage Appointment</a></li>
               {% endif %}
               {% if request.user.is_superuser %}
-                <li><a href="{% url 'main.views.master_data_upload' %}" >Master Data Upload</a></li>
+                <li><a href="{% url 'main.views.upload_file_handling' %}" >Master Data Upload</a></li>
               {% endif %}
               <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
             </ul>
