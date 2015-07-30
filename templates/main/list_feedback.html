@@ -56,7 +56,6 @@ Manage Help
       <h1 class="lead_status">Feedback Status</h1>
       
       <button class="btn std-btn pull-right fdk-btn" onclick="window.location.href='{% url 'main.views.create_feedback' %}?type={{ type }}'">Add a Feedback</button>
-      <input type="hidden" name="feedback_type" value="{{ type }}">
       <div class="row">
           <div class="col-xs-9 col-sm-12 col-md-10">
             <ul class="pagination pull-left">
