@@ -1,0 +1,133 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Help
+{% endblock title %}
+
+
+{% block content %}
+<!-- content-region -->
+  <section class="content-region feedback-page">
+    <div class="container-fluid">
+      <!--<div id="teamLeadView">
+          <h1>Feedback</h1>
+          <div class="row text-center report-category">
+          <div class="col-md-3 centered">
+            <select class="form-control" id="reportCat">
+              <option>Team Feedback</option>
+              <option>Individual Feedback</option>
+            </select>
+          </div>     
+          <div class="col-md-3 centered">
+            <select class="form-control" id="reportPeriod">
+              <option>George Stephen</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+            </select>
+          </div>   
+        </div>
+        <div class="btn-row">
+            <button class="btn std-btn">View Feedback</button>
+        </div>
+    </div>-->
+    <h1>Feedback Summary</h1>
+      <div class="row feedback-summary text-center">
+        <div class="col-xs-6 col-md-3">
+          <div class="circle_red">{{feedback_list.new}}</div>
+          <div class="sum-lbl">New</div>
+        </div>               
+        <div class="col-xs-6 col-md-3">
+          <div class="circle_yellow">{{feedback_list.in_progress}}</div>
+          <div class="sum-lbl">In Progress </div>
+        </div>
+        <div class="col-xs-6 col-md-3">
+          <div class="circle_green">{{feedback_list.resolved}}</div>
+          <div class="sum-lbl">Resolved</div>
+        </div>         
+        <div class="col-xs-6 col-md-3">
+          <div class="circle_black">{{feedback_list.total}}</div>
+          <div class="sum-lbl">Total</div>
+        </div>
+        
+      </div>
+      <h1 class="lead_status">Feedback Status</h1>
+      
+      <button class="btn std-btn pull-right fdk-btn" onclick="window.location.href='{% url 'main.views.create_feedback' %}?type={{ type }}'">Add a Feedback</button>
+      <input type="hidden" name="feedback_type" value="{{ type }}">
+      <div class="row">
+          <div class="col-xs-9 col-sm-12 col-md-10">
+            <ul class="pagination pull-left">
+              <li> <a class="tag" href="javascript:void(0);" id='All'>All</a> </li>
+              <li> <a class="page" href="javascript:void(0);" id='Resolved'>Resolved</a> </li>
+              <li> <a class="page" href="javascript:void(0);" id='InProgress'>In Progress</a> </li>
+              <li> <a class="page" href="javascript:void(0);" id='New'>New</a> </li>
+            </ul>
+            <div class="table-search">
+              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'feedback_table')"/>
+              <span class="search-icon"><i class="fa fa-search" style="margin-top: 12px;"/></i></span>
+            </div>
+          </div>
+          <div class="col-xs-3 col-md-2">            
+              <ul class="filter-area navbar-right">
+                <li class="lbl">Sort by: </li>
+                <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span id='SortBy'>Recent</span><i class="fa fa-angle-down"></i></a>
+                  <ul class="dropdown-menu light" role="menu">
+                    <li><a href="javascript:void(0);" id="recent_sort">Recent</a></li>
+                    <li><a href="javascript:void(0);" id="lead_owner_sort">Lead Owner</a></li>
+                    <li><a href="javascript:void(0);" id="status_sort">Status</a></li>
+                  </ul>
+                  </li>
+              </ul>
+            </div>
+          </div>
+      <div class="table-container">
+        <table class="table status-table feedback-status-table tablesorter" id='feedback_table'>
+          <thead>
+            <tr  class="table_bg">
+              <th class="hidden-xs hidden-sm">No.</th>
+              <th class="hidden-xs hidden-sm">Feedback ID</th>
+              <th >Title </th>
+              <th class="hidden-xs hidden-sm">Feedback Type </th>
+              <th class="hidden-xs hidden-sm">Google Account Manager </th>
+              <th class="hidden-xs hidden-sm" id="lead_owner_header">Lead Owner</th>
+              <th class="hidden-xs hidden-sm" >CID</th>
+              <th id='recent_header' >Date Created</th>
+              <th id="status_header" >Status </th>
+              <th class="hidden-xs hidden-sm">Attachment</th>
+            </tr>  
+            </thead>
+            <tbody>
+              {% for feedback in feedbacks %}
+                  {% if feedback.status == 'NEW' %}
+                    <tr class="status-inq">
+                  {% elif feedback.status == 'IN PROGRESS' %}
+                    <tr class="status-inpro">
+                  {% elif feedback.status == 'RESOLVED' %}
+                    <tr class="status-implemented">
+                  {% endif %}
+
+                  <td class="hidden-xs hidden-sm"><span class="status-bor-color">{{ forloop.counter }} </span></td>
+                  <td class="hidden-xs hidden-sm"><a href="{% url 'main.views.view_feedback' feedback.id %}">Goog-{{ feedback.id }}</a></td>
+                  <td><a href="{% url 'main.views.view_feedback' feedback.id %}">{{ feedback.title }}</a></td>
+                  <td class="hidden-xs hidden-sm">{{feedback.feedback_type}}</td>
+                  <td class="hidden-xs hidden-sm">{{ feedback.google_account_manager.first_name }} {{ feedback.google_account_manager.last_name }} </td>
+                  <td class="hidden-xs hidden-sm">{{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}</td>
+                  <td class="hidden-xs hidden-sm">{{ feedback.cid }}</td>
+                  <td>{{ feedback.created_date|date:'m/d/Y' }}</td>
+                  <td><span class="status-txt-color">{{ feedback.status }} </span></td>
+                  <td> {% if feedback.attachment %} <a href="{{ media_url }}{{ feedback.filename }}" target="_blank" class="action-item fb"><i class="fa fa-paperclip"></i></a> {% endif %} </td>
+                </tr>
+              {% endfor %} 
+          </tbody>          
+        </table> 
+    </div>
+    </div>
+  </section>
+  <!-- content-region ends --> 
+{% endblock content %}
+{% block main_js %}
+  <script src="{% static 'js/feedback.js' %}"></script>
+{% endblock main_js %}
