@@ -71,7 +71,7 @@ window.cancel_clicked = false;
             $.ajax({
                 'method': 'GET',
                 'dataType': 'json',
-                'url': "/leads/get-lead/" + $('input[name=cid]').val(),
+                'url': "/leads/get-lead/" + $('input[name=cid]').val() +'/'+ $('input[name=feedback_type]').val(),
                 success: function(response){
                     if(response['status'] == 'FAILED'){
                         alert('Lead for Selected CID not available.');
@@ -90,6 +90,7 @@ window.cancel_clicked = false;
                         setSelectValue('feedbackLocation', response.details.loc);
                         setSelectValue('googleAcManager', response.details.google_rep_email);
                         setLanguages(response.details.languages_list);
+                        $("#advertiserNames").append("<option value=" + response.details.l_id + ">"+ response.details.l_id +"</option>")
                         
                     }
                 },
@@ -117,7 +118,7 @@ $('#advertiserNames').change(function(){
     var lid = $(this).val();
     if(lid){
         $.ajax({
-          url: "/leads/get-lead-by-lid/"+ lid,
+          url: "/leads/get-lead-by-lid/"+ lid + '/' + $('input[name=feedback_type]').val(),
           dataType: "json",
           type: 'GET',
           success: function(response) {
@@ -134,6 +135,7 @@ $('#advertiserNames').change(function(){
                 setSelectValue('feedbackLocation', response.details.loc);
                 setSelectValue('googleAcManager', response.details.google_rep_email);
                 setLanguages(response.details.languages_list);
+                $("#advertiserNames").append("<option value=" + response.details.l_id + ">"+ response.details.l_id +"</option>")
 
             }
           },
