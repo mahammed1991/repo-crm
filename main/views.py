@@ -19,7 +19,7 @@ from django.contrib.auth.models import User
 
 from django.conf import settings
 
-from lib.helpers import send_mail, manager_info_required
+from lib.helpers import send_mail, manager_info_required, wpp_user_required
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ)
@@ -479,6 +479,7 @@ def list_feedback(request):
 
 @login_required
 @manager_info_required
+@wpp_user_required
 def list_feedback_wpp(request):
     """ List all WPP feedbacks """
 
