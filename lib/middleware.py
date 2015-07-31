@@ -14,8 +14,8 @@ class SetProfilePicture(object):
         # get profile picture from google
         if request.user.is_authenticated():
             request.session['groups'] = list()
-            if request.user.groups.filter(name='WPP'):
-                request.session['groups'].append('WPP')
+            for group in request.user.groups.all():
+                request.session['groups'].append(group.name)
 
             if 'profile_image' not in request.session:
                 try:

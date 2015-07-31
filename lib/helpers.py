@@ -118,6 +118,20 @@ def google_user(func):
     return wraps(func)(_decorator)
 
 
+def wpp_user_required(func):
+    def _decorator(request, *args, **kwargs):
+        # provide wpp access to only google wpp users
+        user_groups = [str(grp['name']) for grp in request.user.groups.values('name')]
+        if 'WPP' in user_groups or 'TAG-AND-WPP' in user_groups:
+            response = func(request, *args, **kwargs)
+            # maybe do something after the view_func call
+            return response
+        else:
+            redirect_url = 'main.views.home'
+            return redirect(redirect_url)
+    return wraps(func)(_decorator)
+
+
 def manager_info_required(func):
     def _decorator(request, *args, **kwargs):
         try:

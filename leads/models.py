@@ -176,6 +176,11 @@ class WPPLeads(models.Model):
 
     sf_lead_id = models.CharField(max_length=50, unique=True)
     treatment_type = models.CharField(max_length=100, blank=True, null=True)
+    additional_notes = models.TextField(default='')
+    mockup_url = models.CharField(max_length=255, null=True)
+    mockup_password = models.CharField(max_length=255, null=True)
+    stage_url = models.CharField(max_length=255, null=True)
+    stage_password = models.CharField(max_length=255, null=True)
 
     class Meta:
         verbose_name_plural = "WPP Leads"

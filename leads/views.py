@@ -27,7 +27,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
-                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter)
+                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, wpp_user_required)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -147,6 +147,7 @@ def lead_form(request):
 
 
 @login_required
+@wpp_user_required
 @csrf_exempt
 def wpp_lead_form(request):
 
@@ -1742,6 +1743,7 @@ def get_lead_summary(request, lid=None, page=None):
 
 
 @login_required
+@wpp_user_required
 def get_wpp_lead_summary(request, lid=None):
     """Lead status and summary of wpp leads"""
     treatment_types = [str(t_type.name) for t_type in TreatmentType.objects.all()]
