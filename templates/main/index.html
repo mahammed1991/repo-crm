@@ -10,6 +10,8 @@ Regalix Google Portal
 
 {% block main_css %}
   <style>
+
+  canvas#totalWPPLeads{display: block;}
     #owl-demo .owl-item div{
       padding:5px;
     }
@@ -21,6 +23,27 @@ Regalix Google Portal
       -moz-border-radius: 3px;
       border-radius: 3px;
     }
+    .choicetabs{width: 100%; background:rgba(30, 56, 75, 0.8);position:relative;}
+    ul.choicemenu{}
+    ul.choicemenu li { width:100%;}
+    ul.choicemenu li a {color: #fff;text-decoration: none; font-size: 16px; float: left;padding:18px 10px;width: 50%; text-align:center; background:rgba(30, 56, 75, 0.6);}
+    ul.choicemenu li a.active{border-bottom:5px solid #35b9f6; background: #225f7b; opacity: 0.8;}
+    ul.choicemenu li a.active span{background: url(../images/activedown-arrow.png) no-repeat center bottom; height:10px; width:13px; display:block; position:absolute; top:60px; left:24%;}
+    ul.choicemenu li a span{display:none;}
+
+    .leads-summary h2.sub-title::before, .leads-summary h2.sub-title::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #cccccc;
+    }
+    .leads-summary h2 span {
+        padding-right: .5em;
+    }
+    .leads-summary h2.sub-title::before , .leads-summary h2.sub-title::after{
+        margin-right: .5em;
+    }
+    .banner-content .wrap{padding: 0 10px}
+    .testi-pic{float:left; margin-right:50px;}
   </style>
   {% load static %}
   
@@ -33,26 +56,27 @@ Regalix Google Portal
   <section class="content-region">
     <section class="home-banner">
       <div class="banner-content">
+
+        <div class="banner-tabs">
+              <div class="choicetabs">
+                  <ul class="choicemenu">
+                    <li><a href="#tab1" class="active" id="tag_tab">Tag/Shopping<span></span></a></li>
+                    <li class="last"><a href="#tab2" class="" id="wpp_tab">WPP<span></span></a></li>
+                    <div class="clearfix"></div>
+                  </ul>
+                  <div class="clear"></div>
+              </div>
+        </div>
+        <!-- <div id="tab1" style="display: block;"></div> -->
           <div class="wrap">
                 <ul class="bxslider">
-                  <li class="leads">
-                    <div class="slide-wrap">
-                    {% if "WPP" in request.session.groups %}
-                        <h1 style="margin: 5px !important;"> &nbsp    </h1>
-                    {% else %}
+                  <li class="leads" id="tag_leads">
+                    <div class="slide-wrap" id="tag_status">
                     <h1> &nbsp    </h1>
-                    {% endif %}
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit A Lead</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Check the Status of Your Leads</button>
                         </div>
-                        <div>&nbsp</div>
-                        {% if "WPP" in request.session.groups %}
-                        <div class="btn-group">
-                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>SUBMIT WEBSITE OPTIMIZATION REQUEST</button>
-                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
-                        </div>
-                        {% endif %}
                         <div class="leads-summary">
                             <h2 class="sub-title">Your Leads Summary</h2>
                             <div class="row">
@@ -74,9 +98,64 @@ Regalix Google Portal
                             </div>
                         </div>
                     </div>
+                    <!-- Starts WPP leads section  -->
+                    <div class="slide-wrap" id="wpp_status">
+                    <div style="padding-top: 20px;"> &nbsp</div>
+                        {% if "WPP" in request.session.groups %}
+                        <div class="btn-group">
+                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>SUBMIT WEBSITE OPTIMIZATION REQUEST</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
+                        </div>
+                        {% endif %}
+
+                        <div class="wpp_leads-summary" style=" margin-top: 45px;">
+                            <h2 class="sub-title">Your Leads Summary</h2>
+                            <div class="row" style="max-width: 670px;">
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.open}}</span> Open
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.on_hold}}</span> On Hold
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_ui_ux_review}}</span> In UI/UX Review
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_file_transfer}}</span> In File Transfer
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_mockup}}</span> In Mockup
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.mockup_review}}</span> Mockup Review
+                                </div>                        
+                            </div>
+                            <div class="row" style=" margin-top: 15px;">
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_development}}</span> In Development
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_statge}}</span> In Stage
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_ab_test}}</span> In A/B Test
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.implemented}}</span> Implemented
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.deferred}}</span> Deferred
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.total}}</span> Total
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End WPP leads section  -->
                   </li>
                   <li class="reports">
-                    <div class="slide-wrap">
+                    <div class="slide-wrap" id="tag_reports">
                         <h1>{{title}}</h1>
                         <div class="row">
                             <div class="col-md-4">
@@ -104,9 +183,46 @@ Regalix Google Portal
                         </div>
                         <button class="btn std-btn sm-btn" onclick='location.href="{% url 'reports.views.reports' %}"'>View all reports</button>   
                     </div>             
+                  <!--  Starts WPP Reports section -->
+
+                    <div class="slide-wrap" id="wpp_reports">
+                        <h1>{{title}}</h1>
+                        <div class="row">
+                            <div class="col-md-3">
+                          <div class="chart">
+                            <canvas id="totalWPPLeads" class="reports-canvas" width="90" height="90"></canvas>
+                            <div class="report-chart-lbl">Win<span id="totalWPPWin"></span></div>
+                          </div>
+                          <span>Total WPP Leads</span>
+                      </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="FullDesktopMobile" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="FullDesktopMobileWin">45%</span></div>
+                                </div>
+                                <span>Full Desktop/Mobile</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="LandingPage" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="LandingPageWin">65%</span></div>
+                                </div>
+                                <span>Landing Page</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="Mobile-only" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Mobile-onlyWin">65%</span></div>
+                                </div>
+                                <span>Mobile-only</span>
+                            </div>
+                        </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'reports.views.wpp_reports' %}"'>View all reports</button>   
+                    </div>             
+                    <!-- End WPP Reports section -->
                   </li>
                   <li class="feedback">
-                    <div class="slide-wrap">
+                    <div class="slide-wrap" id="tag_feedback">
                         <h1>Feedback Summary</h1>             
                            <div class="row">
                                 <div class="col-md-3">
@@ -127,7 +243,30 @@ Regalix Google Portal
                                 </div>
                             </div>
                         <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback' %}"'>Feedback Status</button>
-                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}"'>Add a Feedback</button>   
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}?type=NORMAL"'>Add a Feedback</button>   
+                    </div>
+                    <div class="slide-wrap" id="wpp_feedback">
+                        <h1>WPP Feedback Summary</h1>             
+                           <div class="row">
+                                <div class="col-md-3">
+                                    <div class="fdk-status resolved">{{wpp_feedback_list.resolved}}</div>
+                                    <span>Resolved</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status inpro">{{wpp_feedback_list.in_progress}}</div>
+                                    <span>In Progress</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status new">{{wpp_feedback_list.new}}</div>
+                                    <span>New</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status total">{{wpp_feedback_list.total}}</div>
+                                    <span>Total</span>
+                                </div>
+                            </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback' %}"'>Feedback Status</button>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}?type=WPP"'>Add a Feedback</button>   
                     </div>             
                   </li>
                   <!-- <li class="qa">
@@ -232,7 +371,7 @@ Regalix Google Portal
     <section class="performers testimonials">
       <div class="container-fluid">
           <h2>TOP LEAD SUBMITTERS</h2>
-            <div class="row">
+            <div class="row" style="display:none;">
               {% if top_performer.quarterly %}
                 <div class="slick-slider col-md-4">
                    {% for quarter_topper in top_performer.quarterly %}
@@ -266,6 +405,52 @@ Regalix Google Portal
               {% if top_performer.weekly %}
                 <div class="slick-slider col-md-4">
                    {% for week_topper in top_performer.weekly %}
+                      <div class="performer">
+                            <h3>Last Week</h3>
+                            <img src="{% static week_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{week_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{week_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+            </div>
+            <div class="row" id="wpp_toppers">
+              {% if wpp_top_performer.quarterly %}
+                <div class="slick-slider col-md-4">
+                   {% for quarter_topper in wpp_top_performer.quarterly %}
+                      <div class="performer">
+                            <h3>Last Quarter</h3>
+                            <img src="{% static quarter_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{quarter_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{quarter_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if wpp_top_performer.monthly %}
+                <div class="slick-slider col-md-4">
+                   {% for month_topper in wpp_top_performer.monthly %}
+                      <div class="performer">
+                            <h3>Last Month</h3>
+                            <img src="{% static month_topper.image_url %}" />
+                            <div class="performer-info">
+                              <span>{{month_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{month_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if wpp_top_performer.weekly %}
+                <div class="slick-slider col-md-4">
+                   {% for week_topper in wpp_top_performer.weekly %}
                       <div class="performer">
                             <h3>Last Week</h3>
                             <img src="{% static week_topper.image_url %}"/>
@@ -361,11 +546,18 @@ Regalix Google Portal
 $(document).ready(function() {
 
   reports = {{report_summary|safe}};
+  wpp_treatment_type_report = {{wpp_treatment_type_report|safe}}
   console.log(reports);
 
   $("#totalWin").text(parseInt(reports['total_win']) + "%");
   $("#tagWin").text(parseInt(reports['tag_win']) + "%");
   $("#shopWin").text(parseInt(reports['shopping_win']) + "%");
+
+  $("#totalWPPWin").text(parseInt(wpp_treatment_type_report['TOTAL']) + "%");
+  $("#FullDesktopMobileWin").text(parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']) + "%");
+  $("#LandingPageWin").text(parseInt(wpp_treatment_type_report['LandingPageOptimization']) + "%");
+  $("#Mobile-onlyWin").text(parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']) + "%");
+
 
   $("#owl-demo").owlCarousel({
     autoPlay : true,
@@ -436,6 +628,47 @@ $(window).on('resize',function() {
            remainingLineColor : 'rgba(0,0,0,0.15)'
           });
 
+          $('#totalWPPLeads').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['TOTAL']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#FullDesktopMobile').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(20,195,111)',
+            percentage : parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#LandingPage').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(255,187,0)',
+            percentage : parseInt(wpp_treatment_type_report['LandingPageOptimization']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#Mobile-only').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+
     }else{
       $('#totalLeads').ClassyLoader({
        diameter : 49,     
@@ -467,11 +700,75 @@ $(window).on('resize',function() {
        animate: false,
        remainingLineColor : 'rgba(0,0,0,0.15)'
       });
+
+      $('#totalWPPLeads').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['TOTAL']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#FullDesktopMobile').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(20,195,111)',
+            percentage : parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#LandingPage').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(255,187,0)',
+            percentage : parseInt(wpp_treatment_type_report['LandingPageOptimization']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#Mobile-only').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+
     }
+
+ $('#tag_status').show();
+  $('#tag_reports').show();
+  $('#tag_feedback').show();
+  $('#wpp_status').hide();
+  $('#wpp_reports').hide();
+  $('#wpp_feedback').hide();
 
 });
 
- 
+
+$('#tag_tab').on('click', function(){
+  
+   $('#tag_tab').addClass('active');
+   $('#wpp_tab').removeClass('active');
+  $('#tag_status').show();
+  $('#tag_reports').show();
+  $('#tag_feedback').show();
+   $('#wpp_status').hide();
+  $('#wpp_reports').hide();
+  $('#wpp_feedback').hide();
+})
+$('#wpp_tab').on('click', function(){
+  $('#tag_tab').removeClass('active');
+   $('#wpp_tab').addClass('active');
+  $('#wpp_status').show();
+  $('#wpp_reports').show();
+  $('#wpp_feedback').show();
+  $('#tag_status').hide();
+  $('#tag_reports').hide();
+  $('#tag_feedback').hide();
+})
+
+
 </script>
 
 <script type="text/javascript">

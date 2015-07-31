@@ -571,7 +571,7 @@ class ReportService(object):
         return detail
 
     @staticmethod
-    def get_wpp_report_details_for_filters(report_timeline, start_date, end_date, emails):
+    def get_wpp_report_details_for_filters(start_date, end_date, emails):
         wpp_report_detail = dict()
         if emails:
             query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'google_rep_email__in': emails}

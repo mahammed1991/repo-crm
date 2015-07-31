@@ -309,15 +309,15 @@ def get_wpp_reports(request):
             else:
                 team_members = team_members
         if report_type == 'default_report':
-            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, list())
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
         elif report_type == 'leadreport_individualRep':
-            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, [request.user.email])
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
             team_emails.append(request.user.email)
-            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, team_emails)
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, team_emails)
         elif report_type == 'leadreport_superUser':
-            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(report_timeline, start_date, end_date, list())
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
         else:
             pass
 
