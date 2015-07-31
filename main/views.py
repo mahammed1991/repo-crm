@@ -23,7 +23,7 @@ from lib.helpers import send_mail, manager_info_required
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ)
-from leads.models import Location, Leads, Team, Language, TreatmentType
+from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
@@ -97,11 +97,15 @@ def main_home(request):
 
         lead_status_dict['in_active'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
             lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count() + rr_inactive_leads
+
+        # Wpp Section data
+        wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
+
     else:
         # 1. Current User/Rep LEADS SUMMARY
         # Get Lead status count by current user
         lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
-
+        wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
     # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
 
@@ -177,21 +181,41 @@ def main_home(request):
 
     # Top Lead Submitter by LAST QUARTER, LAST MONTH and LAST WEEK
     current_date = datetime.utcnow()
-    top_performer = get_top_performer_list(current_date)
+    top_performer = get_top_performer_list(current_date, 'NORMAL')
+
+    wpp_top_performer = get_top_performer_list(current_date, 'WPP')
 
     # Get Feedback Details
     # feedback summary
     feedback_list = dict()
     feedbacks, feedback_list = get_feedbacks(request.user, 'NORMAL')
+    # print feedbacks, feedback_list
+
+    wpp_feedback_list = dict()
+    wpp_feedbacks, wpp_feedback_list = get_feedbacks(request.user, 'WPP')
 
     # Notification Section
     notifications = Notification.objects.filter(is_visible=True)
 
+    wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['Implemented'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
+    wpp_report['TOTAL'] = (wpp_details['wpp_lead_status_analysis']['Implemented'] / wpp_details['wpp_lead_status_analysis']['TOTAL']) * 100 if wpp_details['wpp_lead_status_analysis']['TOTAL'] else 0
+
+    # print wpp_details['wpp_lead_status_analysis']
+
+    key_dict = {'Open': 'open', 'On Hold': 'on_hold', 'In UI/UX Review': 'in_ui_ux_review', 'In File Transfer': 'in_file_transfer', 'In Mockup': 'in_mockup', 'TOTAL': 'total',
+                'Mockup Review': 'mockup_review', 'In Development': 'in_development', 'In Stage': 'in_statge', 'In A/B Test': 'in_ab_test', 'Implemented': 'implemented', 'Deferred': 'deferred'}
+
+    wpp_lead_dict = dict()
+    for key, value in key_dict.items():
+        wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
+
+    wpp_treatment_type_report = {key.replace(' ', ''): value for key, value in wpp_report.items()}
+
     # feedback summary end here
-    return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                               'user_profile': user_profile, 'question_list': question_list,
-                                               'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
-                                               'feedback_list': feedback_list, 'notifications': notifications})
+    return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict, 'wpp_lead_dict': wpp_lead_dict,
+                                               'user_profile': user_profile, 'question_list': question_list, 'wpp_feedback_list': wpp_feedback_list,
+                                               'top_performer': top_performer, 'wpp_top_performer': wpp_top_performer, 'report_summary': report_summary, 'title': title,
+                                               'feedback_list': feedback_list, 'notifications': notifications, 'wpp_treatment_type_report': wpp_treatment_type_report, 'wpp_report': wpp_report})
 
 
 def get_feedbacks(user, feedback_type):
@@ -226,25 +250,25 @@ def get_feedbacks(user, feedback_type):
     return feedbacks, feedback_list
 
 
-def get_top_performer_list(current_date):
+def get_top_performer_list(current_date, lead_type):
     top_performer_list = {'weekly': [], 'monthly': [], 'quarterly': []}
 
     # Get Top 3 performers by previous week of current week
     prev_week = int(time.strftime("%W"))
     start_date, end_date = get_week_start_end_days(current_date.year, prev_week)
-    top_performer_list['weekly'] = get_top_performer_by_date_range(start_date, end_date)
+    top_performer_list['weekly'] = get_top_performer_by_date_range(start_date, end_date, lead_type)
 
     # Get Top 3 performers by previous month of current month
     prev_month = date.today().replace(day=1) - timedelta(days=1)
     start_date = first_day_of_month(prev_month)
     end_date = last_day_of_month(prev_month)
-    top_performer_list['monthly'] = get_top_performer_by_date_range(start_date, end_date)
+    top_performer_list['monthly'] = get_top_performer_by_date_range(start_date, end_date, lead_type)
 
     # Get Top 3 performers by previous quarter of current quarter
     prev_quarter = previous_quarter(current_date)
     start_date = datetime(prev_quarter.year, prev_quarter.month - 2, 1)
     end_date = prev_quarter
-    top_performer_list['quarterly'] = get_top_performer_by_date_range(start_date, end_date)
+    top_performer_list['quarterly'] = get_top_performer_by_date_range(start_date, end_date, lead_type)
     return top_performer_list
 
 
@@ -253,11 +277,15 @@ def top_30_cms(request):
     return render(request, 'main/top_30_cms.html')
 
 
-def get_top_performer_by_date_range(start_date, end_date):
-    topper_list = Leads.objects.exclude(google_rep_email='').filter(
-        created_date__gte=start_date,
-        created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
-
+def get_top_performer_by_date_range(start_date, end_date, lead_type):
+    if lead_type == 'NORMAL':
+        topper_list = Leads.objects.exclude(google_rep_email='').filter(
+            created_date__gte=start_date,
+            created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
+    else:
+        topper_list = WPPLeads.objects.exclude(google_rep_email='').filter(
+            created_date__gte=start_date,
+            created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
     toppers = dict()
     indx = 0
     topper_limit = 3
@@ -284,9 +312,14 @@ def get_top_performer_by_date_range(start_date, end_date):
             top_list = list()
             for email in toppers[k]:
                 latest_lead = dict()
-                last_lead_submitted = Leads.objects.filter(google_rep_email=email,
-                                                           created_date__gte=start_date,
-                                                           created_date__lte=end_date).order_by('-created_date')[:1]
+                if lead_type == 'NORMAL':
+                    last_lead_submitted = Leads.objects.filter(google_rep_email=email,
+                                                               created_date__gte=start_date,
+                                                               created_date__lte=end_date).order_by('-created_date')[:1]
+                else:
+                    last_lead_submitted = WPPLeads.objects.filter(google_rep_email=email,
+                                                                  created_date__gte=start_date,
+                                                                  created_date__lte=end_date).order_by('-created_date')[:1]
                 latest_lead.update({'email': email, 'created_date': last_lead_submitted[0].created_date})
                 top_list.append(latest_lead)
             top_list.sort(key=operator.itemgetter('created_date'))
