@@ -1619,6 +1619,9 @@ ul li, ol li {
 	height: 111px;
 	position:relative;
 }
+.first-chart{
+	float: left;
+}
 .report-chart-lbl {
     position: absolute;
     top: 35px;

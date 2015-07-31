@@ -15,7 +15,7 @@ class SetProfilePicture(object):
         if request.user.is_authenticated():
             request.session['groups'] = list()
             for group in request.user.groups.all():
-                request.session['groups'].append(group.name)
+                request.session['groups'].append(str(group.name))
 
             if 'profile_image' not in request.session:
                 try:

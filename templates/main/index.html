@@ -57,6 +57,7 @@ Regalix Google Portal
     <section class="home-banner">
       <div class="banner-content">
 
+      {% if "TAG-AND-WPP" in request.session.groups %}
         <div class="banner-tabs">
               <div class="choicetabs">
                   <ul class="choicemenu">
@@ -67,12 +68,13 @@ Regalix Google Portal
                   <div class="clear"></div>
               </div>
         </div>
+      {% endif %}
         <!-- <div id="tab1" style="display: block;"></div> -->
           <div class="wrap">
                 <ul class="bxslider">
                   <li class="leads" id="tag_leads">
                     <div class="slide-wrap" id="tag_status">
-                    <h1> &nbsp    </h1>
+                    <h1> &nbsp </h1>
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit A Lead</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"' >Check the Status of Your Leads</button>
@@ -101,12 +103,10 @@ Regalix Google Portal
                     <!-- Starts WPP leads section  -->
                     <div class="slide-wrap" id="wpp_status">
                     <div style="padding-top: 20px;"> &nbsp</div>
-                        {% if "WPP" in request.session.groups %}
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>SUBMIT WEBSITE OPTIMIZATION REQUEST</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
                         </div>
-                        {% endif %}
 
                         <div class="wpp_leads-summary" style=" margin-top: 45px;">
                             <h2 class="sub-title">Your Leads Summary</h2>
@@ -189,12 +189,12 @@ Regalix Google Portal
                         <h1>{{title}}</h1>
                         <div class="row">
                             <div class="col-md-3">
-                          <div class="chart">
-                            <canvas id="totalWPPLeads" class="reports-canvas" width="90" height="90"></canvas>
-                            <div class="report-chart-lbl">Win<span id="totalWPPWin"></span></div>
-                          </div>
-                          <span>Total WPP Leads</span>
-                      </div>
+                                <div class="chart first-chart">
+                                  <canvas id="totalWPPLeads" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="totalWPPWin">45%</span></div>
+                                </div>
+                                <span>Total WPP Leads</span>
+                            </div>
                             <div class="col-md-3">
                                 <div class="chart">
                                   <canvas id="FullDesktopMobile" class="reports-canvas" width="90" height="90"></canvas>
@@ -587,8 +587,25 @@ $(document).ready(function() {
       adaptiveHeight:true
     });
   $(window).trigger('resize');
+
+  // Show and Hide for TAG and WPP related information
+  var userGroups = "{{request.session.groups|safe}}";
+  $('#tag_status, #tag_reports, #tag_feedback, #wpp_status, #wpp_reports, #wpp_feedback').hide();
+  if (!include(userGroups, 'WPP') && !include(userGroups, 'TAG-AND-WPP')){
+      $('#tag_status, #tag_reports, #tag_feedback').show();
+  }
+  if (include(userGroups, 'TAG-AND-WPP')){
+      $('#tag_status, #tag_reports, #tag_feedback').show();
+  }
+  if (include(userGroups, 'WPP') || include(userGroups, 'TAG-AND-WPP')){
+      $('#wpp_status, #wpp_reports, #wpp_feedback').show();
+  }
+
 });
 
+function include(arr,obj) {
+  return (arr.indexOf(obj) != -1);
+}
 
 $(window).on('resize',function() {
    // do whatever
