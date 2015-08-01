@@ -105,6 +105,8 @@ def main_home(request):
         # 1. Current User/Rep LEADS SUMMARY
         # Get Lead status count by current user
         lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
+        start_date = datetime(2014, 01, 01)
+        end_date = datetime.now()
         wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
     # Customer Testimonials
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')

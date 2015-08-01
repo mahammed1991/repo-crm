@@ -165,10 +165,10 @@ def create_or_update_leads(records, sf):
 
             # New Additional fields for lead History
             lead.additional_notes = rec.get('Additional_Notes_if_any__c')
-            # lead.mockup_url = rec.get('Mockup_url__c')
-            # lead.mockup_password = rec.get('Mockup_password__c')
-            # lead.stage_url = rec.get('Stage_url__c')
-            # lead.stage_password = rec.get('Stage_password__c')
+            lead.mockup_url = rec.get('Mockup_URL__c')
+            lead.mockup_password = rec.get('Mockup_URL_Password__c')
+            lead.stage_url = rec.get('Stage_URL__c')
+            lead.stage_password = rec.get('Stage_URL_Credentials__c')
             lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
         else:
             try:
