@@ -41,11 +41,11 @@
 			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ar">
 				<div class=""><h2 class="dtl-head">Additional Recommendations</h2>
 				<div class="scroll-pane">
-				<p>will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).will uncover many web sites still in their infancy. Various versions have evolved over the years.</p>
-				<p>will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes </p>
-				<p>will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes </p>
-				<p>will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes </p>
-				<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+				{% if lead.additional_notes %}
+					<p>{{lead.additional_notes}}</p>
+				{% else %}
+					<p>-</p>
+				{% endif %}
 			</div>
 			</div></div>
 			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 nxt">
@@ -216,7 +216,13 @@
 					  <td>Stage URL</td>
 					</tr>
 					<tr class="even">
-					   <td><a href="http://avf.wppperformance.com/">http://avf.wppperformance.com/</a></td>
+					   <td>
+					   	{% if lead.stage_url %} 
+					   		<a href="{{lead.stage_url}}">{{lead.stage_url}}</a>
+					   	{% else %}
+					   		<a href="#">-</a>
+					   	{% endif %}
+					   </td>
 					</tr> 
 					</tbody>
 					</table></div>
@@ -226,7 +232,11 @@
 					  <td>Credentials</td>
 					</tr>
 					<tr class="even">
-					   <td>wpp/wpp123</td>
+						{% if lead.stage_password %} 
+					   		<td>{{lead.stage_password}}</td>
+					   	{% else %}
+					   		<td>-</td>
+					   	{% endif %}
 					</tr> 
 					</tbody>
 					</table></div>

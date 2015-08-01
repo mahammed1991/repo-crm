@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from leads.models import Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails
@@ -277,6 +277,8 @@ def get_download_report(request):
         return response
 
 
+@login_required
+@wpp_user_required
 def wpp_reports(request):
     """ WPP Reports """
 

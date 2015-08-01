@@ -255,10 +255,11 @@ html, body {
 #bx-pager {
 	display:table;
 	width:100%;
+	padding-bottom:10px;
 }
 #bx-pager a {
 	width: 100px;
-	height: 95px;
+	height: 80px;
 	background: #333;
 	color: #d6d6d6;
 	text-align: center;
@@ -286,7 +287,7 @@ html, body {
 #bx-pager a i {
 	display: block;
 	font-size: 21px;
-	margin: 25px 0 5px;
+	margin: 18px 0 5px;
 }
 #bx-pager a span {
 	display: block;
@@ -367,17 +368,18 @@ html, body {
 	font-size: 15px;
 	font-family: 'robotobold';
 	text-transform: uppercase;
-	border-bottom: 1px solid #ccc;
-	padding-bottom: 15px;
-	margin-bottom: 10px;
+	border-bottom: none !important;
+	padding-bottom: 10px;
+	margin-bottom: 5px;
+	align-items: center;
 }
 .leads-summary {
-	margin-top: 60px;
+	margin-top: 30px;
 }
 .summary-breakup {
 	font-size: 13px;
 	display: inline-block;
-	margin: 0 20px;
+	width:93px;
 	vertical-align: top;
 }
 .summary-breakup span {
@@ -484,7 +486,7 @@ h3 {
 	background: #f1f1f1;
 	box-shadow: none;
 }
-.performers img {
+.performers img, .testi-pic img {
 	border-radius: 50%;
 	width: 150px;
 	height: 150px;
@@ -1645,8 +1647,9 @@ ul li, ol li {
 	min-height:160px;
 }
 .owl-theme .owl-controls {
-	text-align:left;
-	padding-left:5px;
+	text-align:center;
+	padding-left:0px;
+	margin-top:20px;
 }
 .web-access label {
 	margin-right:30px;
@@ -2586,6 +2589,10 @@ margin-bottom:2px;
 }
 
 @media (max-width: 767px) {
+#bx-pager {
+   padding-bottom: 110px;
+   margin-top:20px;
+}
 	.feedback-status-table th:nth-child(3) {
 		width:40%;
 	}
@@ -2600,9 +2607,9 @@ margin-bottom:2px;
 		display: block;
 	}
 	.testimonials .owl-carousel {
-		padding-left:200px;
+		/*padding-left:200px;
 		padding-right:30px;
-		background:url(../images/good-job.jpg) no-repeat 30px 10px;
+		background:url(../images/good-job.jpg) no-repeat 30px 10px;*/
 	}	
 	.navbar-nav .notification.open .dropdown-menu, .navbar-nav .user-area.open .dropdown-menu, .navbar-nav.live-transfer .open .dropdown-menu {
 		position: absolute;
@@ -2642,15 +2649,15 @@ margin-bottom:2px;
 	}
 	#bx-pager a {
 		position: absolute;
-		width: 100%;
+		width: 98%;
 	}
 	.bx-wrapper .bx-controls-direction .bx-prev {
-		bottom: -65px;
+		bottom: -75px;
 		top: inherit;
 		left: 20px;
 	}
 	.bx-wrapper .bx-controls-direction .bx-next {
-		bottom: -65px;
+		bottom: -75px;
 		top: inherit;
 		right: 20px;
 	}
@@ -2679,7 +2686,7 @@ margin-bottom:2px;
 		line-height: 36px;
 	}
 	.summary-breakup {
-		margin: 0 15px;
+		/*margin: 0 15px;*/
 		font-size: 12px;
 	}
 	.bx-wrapper img {
@@ -2717,10 +2724,11 @@ margin-bottom:2px;
 		width: 33.33333333%;
 	}
 	.home-banner {
-		height: 395px;
+		height: 500px;
 	}
 	.banner-content {
 		padding: 0;
+		padding-top:20px;
 	}
 	.leads-summary {
 		margin-top: 45px;
@@ -2790,6 +2798,9 @@ margin-bottom:2px;
 		float: left;
 		width: 33.33333333%;
 	}
+		.bx-wrapper {
+    margin-bottom: 10px;
+}
 }
 
 @media screen and (max-width: 600px) {	
@@ -2799,6 +2810,9 @@ margin-bottom:2px;
 		min-height:inherit;	
 		margin-top:-20px;
 	}
+.bx-wrapper {
+    margin-bottom: 10px;
+}
 	.capabilities, .best-practices, .faq {
 		padding-left:10px;
 		padding-right:10px;
@@ -2843,6 +2857,7 @@ margin-bottom:2px;
 	
 }
 @media (max-width: 599px) {
+#bx-pager a{width:95%;}
 	.performer-info {
 		margin-bottom: 30px;
 	}
@@ -2903,6 +2918,7 @@ margin-bottom:2px;
 }
 
 @media (max-width: 480px) {
+.std-btn + .std-btn{ margin-left:0px !important;}
 	.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen, .circle_orange, .circle_purple, .circle_light_grn{
 		width: 100px;
 		height: 100px;
@@ -3068,6 +3084,11 @@ margin-bottom:2px;
 	}
 }
 @media (max-width: 400px) {
+.home-banner{height: 795px;}
+.wrap{height:655px;}
+.bx-wrapper .bx-viewport{height:600px !important;}
+.bx-wrapper .bx-controls-direction .bx-next, .bx-wrapper .bx-controls-direction .bx-prev{bottom: -87px;}
+#bx-pager{    margin-top: 30px;}
 	.col-xs-4 {
 		min-height:195px;
 		margin-top:-10px;
@@ -3491,3 +3512,28 @@ list-style: inherit;
   /*top: 99px;
   right: 93px;*/
 }
+
+/* New Home page design css sarts	 */
+.choicetabs{width: 100%; background:rgba(30, 56, 75, 0.8);position:relative;}
+ul.choicemenu{}
+ul.choicemenu li { width:100%;}
+ul.choicemenu li a {color: #fff;text-decoration: none; font-size: 16px; float: left;padding:18px 10px;width: 50%; text-align:center; background:rgba(30, 56, 75, 0.6); position:relative;}
+ul.choicemenu li a.active{border-bottom:5px solid #35b9f6; background: #225f7b; opacity: 0.8;}
+ul.choicemenu li a.active span{background: url(../images/activedown-arrow.png) no-repeat center bottom; height:10px; width:13px; display:block; position:absolute; top:60px; left:50%;}
+ul.choicemenu li a span{display:none;}
+
+.leads-summary h2.sub-title::before, .leads-summary h2.sub-title::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #cccccc;
+}
+.leads-summary h2 span {
+    padding-right: .5em;
+}
+.leads-summary h2.sub-title::before , .leads-summary h2.sub-title::after{
+    margin-right: .5em;
+}
+.banner-content .wrap{padding: 0 10px}
+.testi-pic{ float:left}
+.testi-text{float:left}
+/* New Home page design css ends */
