@@ -27,7 +27,7 @@ from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLead
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
-                         is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter,
+                         is_manager, get_user_list_by_manager, get_user_under_manager, date_range_by_quarter, tag_user_required,
                          get_previous_month_start_end_days, create_new_user, convert_excel_data_into_list)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -501,6 +501,7 @@ def view_feedback(request, id):
 
 @login_required
 @manager_info_required
+@tag_user_required
 def list_feedback(request):
     """ List all feedbacks """
 

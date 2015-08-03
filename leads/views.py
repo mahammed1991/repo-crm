@@ -27,7 +27,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
-                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, wpp_user_required)
+                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -45,6 +45,7 @@ import collections
 # Create your views here.
 @login_required
 @csrf_exempt
+@tag_user_required
 def lead_form(request):
 
     """
@@ -924,6 +925,7 @@ def agent_bulk_upload(request):
 # Create your views here.
 @login_required
 @csrf_exempt
+@tag_user_required
 def bundle_lead_form(request):
 
     """
@@ -1708,6 +1710,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 
 
 @login_required
+@tag_user_required
 def get_lead_summary(request, lid=None, page=None):
     """ Lead Status page """
 

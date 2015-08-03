@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from leads.models import Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails
@@ -17,6 +17,7 @@ import re
 
 
 @login_required
+@tag_user_required
 def reports(request):
     """ New Report """
 

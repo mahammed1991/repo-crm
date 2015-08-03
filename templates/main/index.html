@@ -61,8 +61,8 @@ Regalix Google Portal
         <div class="banner-tabs">
               <div class="choicetabs">
                   <ul class="choicemenu">
-                    <li><a href="#tab1" class="active" id="tag_tab">Tag/Shopping<span></span></a></li>
-                    <li class="last"><a href="#tab2" class="" id="wpp_tab">WPP<span></span></a></li>
+                    <li><a href="#tag" class="active" id="tag_tab">Tag/Shopping<span></span></a></li>
+                    <li class="last"><a href="#wpp" class="" id="wpp_tab">WPP<span></span></a></li>
                     <div class="clearfix"></div>
                   </ul>
                   <div class="clear"></div>
@@ -371,7 +371,7 @@ Regalix Google Portal
     <section class="performers testimonials">
       <div class="container-fluid">
           <h2>TOP LEAD SUBMITTERS</h2>
-            <div class="row" style="display:none;">
+            <div class="row" id="tag_toppers">
               {% if top_performer.quarterly %}
                 <div class="slick-slider col-md-4">
                    {% for quarter_topper in top_performer.quarterly %}
@@ -593,12 +593,16 @@ $(document).ready(function() {
   $('#tag_status, #tag_reports, #tag_feedback, #wpp_status, #wpp_reports, #wpp_feedback').hide();
   if (!include(userGroups, 'WPP') && !include(userGroups, 'TAG-AND-WPP')){
       $('#tag_status, #tag_reports, #tag_feedback').show();
+      $('#wpp_toppers').hide();
   }
   if (include(userGroups, 'TAG-AND-WPP')){
       $('#tag_status, #tag_reports, #tag_feedback').show();
   }
   if (include(userGroups, 'WPP') || include(userGroups, 'TAG-AND-WPP')){
       $('#wpp_status, #wpp_reports, #wpp_feedback').show();
+      if(!include(userGroups, 'TAG-AND-WPP')){
+        $('#tag_toppers').hide();
+      }
   }
 
 });
