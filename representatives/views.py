@@ -150,9 +150,12 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         plan_day = slected_week_start_date.day
         plan_year = slected_week_start_date.year
 
+    exclude_types = ['MIGRATION']
     if request.user.groups.filter(name='OPERATIONS'):
+        if not request.user.groups.filter(Q(name='WPP') | Q(name='TAG-AND-WPP')):
+            exclude_types.append('WPP')
         teams = RegalixTeams.objects.filter(process_type=process_type, is_active=True).exclude(team_name='default team')
-        process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+        process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
     else:
         process_types = RegalixTeams.objects.exclude(
             process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), is_active=True).values_list('process_type', flat=True).distinct().order_by()

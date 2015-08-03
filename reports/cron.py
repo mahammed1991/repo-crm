@@ -164,7 +164,8 @@ def create_or_update_leads(records, sf):
             lead.lead_status = rec.get('WPP_Lead_Status__c')
 
             # New Additional fields for lead History
-            lead.additional_notes = rec.get('Additional_Notes_if_any__c')
+            additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
+            lead.additional_notes = additional_notes
             lead.mockup_url = rec.get('Mockup_URL__c')
             lead.mockup_password = rec.get('Mockup_URL_Password__c')
             lead.stage_url = rec.get('Stage_URL__c')
