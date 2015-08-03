@@ -199,7 +199,7 @@ class CustomerTestimonials(models.Model):
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
     statement_text = models.TextField(blank=False)
-    email = models.EmailField(max_length=100, blank=True)
+    email = models.EmailField(max_length=100)
     company_name = models.CharField(max_length=100, blank=True, null=True)
     url = models.CharField(max_length=200, blank=True, null=True)
     customer_id = models.CharField(max_length=50, blank=True, null=True)
