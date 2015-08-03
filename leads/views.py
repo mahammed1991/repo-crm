@@ -2327,14 +2327,14 @@ def get_lead_form_for_rep(user):
         locations = [l.location_name for l in control.target_location.filter()]
         emails = [usr.email for usr in control.google_rep.filter()]
 
-        if user.profile.team and user.profile.location:
+        if user.email in emails:
+            return control.lead_form.name
+        elif user.profile.team and user.profile.location:
             # print user.profile.team.team_name, user.profile.location.location_name
             if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
                 return control.lead_form.name
             elif user.email in emails:
                 return control.lead_form.name
-        elif user.email in emails:
-            return control.lead_form.name
         else:
             continue
 
