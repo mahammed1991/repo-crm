@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 
 class MyUserAdmin(UserAdmin):
     UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
-    readonly_fields = ['email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff']
+    readonly_fields = ['email', 'is_active', 'date_joined']
 
     def get_readonly_fields(self, request, obj=None):
         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
