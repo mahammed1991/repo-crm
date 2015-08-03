@@ -2035,7 +2035,7 @@ def convert_lead_to_dict(model):
     lead = {}
     lead['lead_id'] = model.id
     lead['sf_lead_id'] = model.sf_lead_id
-    lead['Advertiser'] = model.company
+    lead['company'] = model.company
     lead['url'] = model.url_1
     lead['cid'] = model.customer_id
     lead['code_type'] = model.type_1
