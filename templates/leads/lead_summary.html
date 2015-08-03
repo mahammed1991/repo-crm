@@ -203,7 +203,7 @@
           <div class="modal-dialog ping-snippet">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="olarkShow()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
                 <h4 class="modal-title" id="myModalLabel">Feedback</h4>
               </div>
               <div class="modal-body" id="feedback-body">
@@ -239,14 +239,14 @@
         <div class="modal-dialog ping-snippet">
           <div class="modal-content">
             <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="olarkShow()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
               <h4 class="modal-title" id="myModalLabel">History</h4>
             </div>
             <div class="modal-body" id="chat-body">
               
             </div>
             <div class="modal-footer">
-                <input  type="textarea" class="form-control send-txt" placeholder="Send a messege" id='message'>
+                <input  type="textarea" class="form-control send-txt" placeholder="Send a messege" id='message' style="margin-bottom:22px;">
                 <button type="button" class="btn send-btn" id='submitmsg'><i class="fa fa-plus"></i></button>
             </div>
         </div>
@@ -269,6 +269,7 @@ $(document).ready(function(){
 window.lead_id = '';
 
 function feedbackBycid(lead_id){
+  olark('api.box.hide');
   window.lead_id = lead_id
 }
 /* pin chat */
@@ -306,6 +307,9 @@ function chat(lead_id){
     }
 }
 
+function olarkShow(){
+  olark('api.box.show');
+}
 function setChat(chatmessages){
     $('#chat-body').html('')
     for(i=0; i < chatmessages.length; i +=1){
