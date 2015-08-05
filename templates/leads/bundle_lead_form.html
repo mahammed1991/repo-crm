@@ -150,8 +150,8 @@
 
               <!--  Bundle Codetype 1 -->
               <div class="col-md-4">
-                <select title="Code Type" class="form-control ctype bgicon" name="ctype1" id="ctype1">
-                  <option value="">Select Code Type</option>
+                <select title="Task Type" class="form-control ctype bgicon" name="ctype1" id="ctype1">
+                  <option value="">Select Task Type</option>
                   {% for c_type in code_types %}
                     <option value="{{c_type.name}}" id="ctype1_{{c_type.id}}">{{c_type.name}}</option>
                   {% endfor %}
@@ -199,14 +199,14 @@
                 <div class="checkbox">
                   <label>
                     <input id="keep_url" type="checkbox" value="">
-                    Check this box if the URL is the same for all code types. </label>
+                    Check this box if the URL is the same for all task types. </label>
                 </div>
               </div>
 
               <!--  Bundle Codetype 2 -->
               <div class="col-md-4">
-                  <select title="Code Type" class="form-control ctype bgicon" name="ctype2" id="ctype2">
-                    <option value="">Select Code Type</option>
+                  <select title="Task Type" class="form-control ctype bgicon" name="ctype2" id="ctype2">
+                    <option value="">Select Task Type</option>
                     {% for c_type in code_types %}
                       <option value="{{c_type.name}}" id="ctype2_{{c_type.id}}">{{c_type.name}}</option>
                     {% endfor %}
@@ -255,8 +255,8 @@
 
             <!--  Bundle Codetype 3 -->
             <div class="col-md-4">
-              <select title="Code Type" class="form-control ctype bgicon" name="ctype3" id="ctype3">
-                <option value="">Select Code Type</option>
+              <select title="Task Type" class="form-control ctype bgicon" name="ctype3" id="ctype3">
+                <option value="">Select Task Type</option>
                 {% for c_type in code_types %}
                   <option value="{{c_type.name}}" id="ctype3_{{c_type.id}}">{{c_type.name}}</option>
                 {% endfor %}
@@ -314,14 +314,10 @@
                 <!-- Appointment 1 -->
                 <div class="tag_appointment-1">
                     <div class="col-md-4">
-                      <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name1" placeholder="Contact Person Name">
+                      <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name1" placeholder="Contact Person Name" disabled>
                     </div>
                     <div class="col-md-4">
                       <select title="Primary Contact Role" class="form-control bgicon" name="tag_primary_role" id="tag_primary_role">
-                      <option value="">Primary Contact Role</option>
-                      <option value="Owner">Owner</option>
-                      <option value="Marketing">Marketing</option>
-                      <option value="Webmaster">Webmaster</option>
                     </select>
                     </div>
                     <div class="col-md-4">
@@ -429,6 +425,20 @@
 
 
   });
+
+$("input:checkbox[name=web_access]").click(function() {
+    /*var value = $(this).val();*/
+    $('#tag_primary_role').empty()
+    $('#tag_primary_role').append(' <option value="">Primary Contact Role</option><option value="Owner">Owner</option><option value="Marketing">Marketing</option>');
+
+});
+
+$("input:checkbox[name=webmasterCheck]").click(function() {
+    /*var value = $(this).val();*/
+    $('#tag_primary_role').empty()
+    $('#tag_primary_role').append(' <option value="">Primary Contact Role</option><option value="Webmaster">Webmaster</option>');
+
+});
   
 </script>
 {% endblock main_js %}
