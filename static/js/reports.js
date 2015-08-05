@@ -600,7 +600,7 @@ function draw_and_display_tables(reports){
 function newTable(firstrow, details){
   $("#code_type_table").empty();
 
-  header = '<tr><td>Code Types/Lead Status</td>'
+  header = '<tr><td>Task Types/Lead Status</td>'
   for(key in firstrow){
     header += '<td>'+ key + '</td>'
   }

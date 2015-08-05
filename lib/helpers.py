@@ -136,7 +136,7 @@ def tag_user_required(func):
     def _decorator(request, *args, **kwargs):
         # provide wpp access to only google wpp users
         user_groups = [str(grp['name']) for grp in request.user.groups.values('name')]
-        if 'WPP' in user_groups:
+        if 'TAG-AND-WPP' not in user_groups and 'WPP' in user_groups:
             redirect_url = 'main.views.home'
             return redirect(redirect_url)
         else:
