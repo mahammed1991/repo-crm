@@ -167,8 +167,8 @@
             <div class="std-sub-title">Same Task</div>
               <div class="row">
                 <div class="col-md-4">
-                  <select title="Code Type" class="form-control bgicon agency-same" name="same_task_ctype" id="same_task_ctype">
-                    <option value="">Select Code Type</option>
+                  <select title="Task Type" class="form-control bgicon agency-same" name="same_task_ctype" id="same_task_ctype">
+                    <option value="">Select Task Type</option>
                     {% for c_type in code_types %}
                       <option value="{{c_type.name}}">{{c_type.name}}</option>
                     {% endfor %}
@@ -195,8 +195,8 @@
             <!--  Different TAG Lead 1 -->
               <div class="row" id="diff_tag_1">
                         <div class="col-md-4  customwidth custom2">
-                           <select title="Code Type" class="form-control bgicon agency_diff" name="diff_ctype1" id="diff_ctype-1">
-                              <option value="">Select Code Type</option>
+                           <select title="Task Type" class="form-control bgicon agency_diff" name="diff_ctype1" id="diff_ctype-1">
+                              <option value="">Select Task Type</option>
                               {% for c_type in code_types %}
                                 <option value="{{c_type.name}}">{{c_type.name}}</option>
                               {% endfor %}
@@ -214,8 +214,8 @@
             <div class="std-sub-title">Same Task</div>
               <div class="row">
                 <div class="col-md-4">
-                  <select title="Code Type" class="form-control bgicon end-customer-same" name="same_task_cust_type" id="same_task_cust_type">
-                    <option value="">Select Code Type</option>
+                  <select title="Task Type" class="form-control bgicon end-customer-same" name="same_task_cust_type" id="same_task_cust_type">
+                    <option value="">Select Task Type</option>
                     {% for c_type in code_types %}
                       <option value="{{c_type.name}}">{{c_type.name}}</option>
                     {% endfor %}
@@ -241,8 +241,8 @@
             <!--  Different TAG Lead 1 -->
               <div class="row" id="diff_cust_tag_1">
                         <div class="col-md-4  customwidth custom2">
-                           <select title="Code Type" class="form-control bgicon customer_diff" name="diff_cust_type1" id="diff_cust_type-1">
-                              <option value="">Select Code Type</option>
+                           <select title="Task Type" class="form-control bgicon customer_diff" name="diff_cust_type1" id="diff_cust_type-1">
+                              <option value="">Select Task Type</option>
                               {% for c_type in code_types %}
                                 <option value="{{c_type.name}}">{{c_type.name}}</option>
                               {% endfor %}
@@ -693,8 +693,8 @@ function createAnalyticsTagFields(indx){
 function createCodeTypeForTag(indx){
   ele  = '<div class="row" id="diff_tag_' + indx + '">'+
                       '<div class="col-md-4  customwidth custom2">'+
-                         '<select title="Code Type" class="form-control bgicon agency_diff" name="diff_ctype' + indx + '" id="diff_ctype-' + indx + '">'+
-                            '<option value="">Select Code Type</option>'+
+                         '<select title="Task Type" class="form-control bgicon agency_diff" name="diff_ctype' + indx + '" id="diff_ctype-' + indx + '">'+
+                            '<option value="">Select Task Type</option>'+
                             '{% for c_type in code_types %}'+
                               '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
                             '{% endfor %}'+
@@ -1002,8 +1002,8 @@ function createCustomerAnalyticsTagFields(indx){
 function createCustomerCodeTypeForTag(indx){
   ele  = '<div class="row" id="diff_cust_tag_' + indx + '">'+
                       '<div class="col-md-4  customwidth custom2">'+
-                         '<select title="Code Type" class="form-control bgicon customer_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'+
-                            '<option value="">Select Code Type</option>'+
+                         '<select title="Task Type" class="form-control bgicon customer_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'+
+                            '<option value="">Select Task Type</option>'+
                             '{% for c_type in code_types %}'+
                               '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
                             '{% endfor %}'+
