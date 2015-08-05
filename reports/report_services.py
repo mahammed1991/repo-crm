@@ -574,11 +574,12 @@ class ReportService(object):
     def get_wpp_report_details_for_filters(start_date, end_date, emails):
         wpp_report_detail = dict()
         if emails:
-            query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'google_rep_email__in': emails}
+            query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'google_rep_email__in': emails, 'lead_status__in': settings.WPP_LEAD_STATUS}
         else:
-            query = {'created_date__gte': start_date, 'created_date__lte': end_date}
+            query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'lead_status__in': settings.WPP_LEAD_STATUS}
 
         wpp_lead_status_counts = WPPLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        print wpp_lead_status_counts
         wpp_lead_status_count_dict = {str(rec['lead_status']): rec['count'] for rec in wpp_lead_status_counts}
         wpp_lead_status_count_dict['TOTAL'] = WPPLeads.objects.filter(**query).count()
         wpp_lead_status_count_dict['TAT'] = WPPLeads.objects.filter(**query).aggregate(Avg('tat'))['tat__avg']

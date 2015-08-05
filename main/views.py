@@ -1348,7 +1348,7 @@ def migrate_table_data(request):
             except Exception:
                 data['priority'] = 1
             treatment_type = sheet.cell(r_i, get_col_index(sheet, 'Treatment Type')).value
-            data['treatment_type_id'] = treatment_type_dict[treatment_type] if treatment_type_dict[treatment_type] else None
+            data['treatment_type_id'] = treatment_type_dict.get(treatment_type, None)
             data['notes'] = sheet.cell(r_i, get_col_index(sheet, 'Notes')).value
             data['year'] = datetime.now().year
             month = datetime.now().month
