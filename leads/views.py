@@ -220,7 +220,6 @@ def get_common_sandbox_lead_data(post_data):
 
 def get_common_salesforce_lead_data(post_data):
     """ Get basic data from both lead forms """
-
     basic_data = dict()
     for key, value in SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.items():
         basic_data[value] = post_data.get(key)
@@ -2183,7 +2182,6 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
         team = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('team'))
         cid = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('cid'))
 
-    print lead_data
     if code_type and country and cid:
         appointment_in_ist = None
         appointment_in_pst = None
@@ -2248,7 +2246,6 @@ def get_codetype_abbreviation(code_type):
 
 def get_advertiser_details(sf_api_url, lead_data):
     """ Get Agency Details with appointment date """
-
     agency_details = dict()
     if 'www' in sf_api_url:
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
@@ -2288,6 +2285,8 @@ def get_advertiser_details(sf_api_url, lead_data):
 
     if agency_details['code_type'] == 'WPP':
         agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
+        if agency_details['role'] == 'Other':
+            agency_details['role_other'] = lead_data.get(basic_leads.get('role_other'))
 
     agency_details['telephone'] = lead_data.get(basic_leads.get('phone'))
     agency_details['google_rep_name'] = lead_data.get(basic_leads.get('gref'))
@@ -2327,14 +2326,14 @@ def get_lead_form_for_rep(user):
         locations = [l.location_name for l in control.target_location.filter()]
         emails = [usr.email for usr in control.google_rep.filter()]
 
-        if user.profile.team and user.profile.location:
+        if user.email in emails:
+            return control.lead_form.name
+        elif user.profile.team and user.profile.location:
             # print user.profile.team.team_name, user.profile.location.location_name
             if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
                 return control.lead_form.name
             elif user.email in emails:
                 return control.lead_form.name
-        elif user.email in emails:
-            return control.lead_form.name
         else:
             continue
 

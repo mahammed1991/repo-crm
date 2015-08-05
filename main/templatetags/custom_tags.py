@@ -24,7 +24,14 @@ def olark_group_script(user):
         # elif user.email in emails:
         #     return operator_group.olark_script
 
-    if user.profile.team and user.profile.location:
+    if user.email:
+        chat_group = OlarkChatGroup.objects.filter(google_rep__in=[user])
+        if len(chat_group) > 0:
+            return chat_group[0].olark_script
+        else:
+            return ''
+
+    elif user.profile.team and user.profile.location:
 
         chat_group = OlarkChatGroup.objects.filter(programs__in=[user.profile.team], target_location__in=[user.profile.location])
         if len(chat_group) > 0:
@@ -36,13 +43,6 @@ def olark_group_script(user):
                 return chat_group[0].olark_script
             else:
                 return ''
-
-    elif user.email:
-        chat_group = OlarkChatGroup.objects.filter(google_rep__in=[user])
-        if len(chat_group) > 0:
-            return chat_group[0].olark_script
-        else:
-            return ''
 
 
 @register.filter(name='has_group')
