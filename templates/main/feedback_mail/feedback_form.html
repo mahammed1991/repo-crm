@@ -95,20 +95,27 @@ Regalix Google Portal
     </div>    
     <div class="btns text-center">
         <div class="btn-group">
-            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn" id="feedback_submit">Submit</button>
             <button class="btn std-btn grayed cancel" onclick='window.history.back()'>Cancel</button>
         </div>
     </div>
   </form>
   </div>
 </section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
 <!-- content-region ends --> 
 {% endblock content %}
 
 {% block main_js %}
 <script src="{% static 'js/feedback_form.js' %}"></script>
 <script type="text/javascript">
-    
+    var res = $('#feedback_submit').click(function(){
+      $("#preloaderOverlay").show();
+    });
 </script>
 <script>
 function HandleBrowseClick()
