@@ -37,6 +37,7 @@
                 {% endif %}
                 {% if "WPP" in request.session.groups or "TAG-AND-WPP" in request.session.groups %}
                   <li><a href="{% url 'reports.views.wpp_reports' %}">WPP Reports</a></li>
+                  <li><a href="{% url 'reports.views.wpp_master_list' %}">WPP MaterList</a></li>
                 {% endif %}
               </ul>
             </li>

@@ -8,7 +8,7 @@ from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required
 from django.conf import settings
 from reports.models import LeadSummaryReports
-from main.models import UserDetails
+from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
 from reports.models import Region
 from django.contrib.auth.models import User
@@ -276,6 +276,13 @@ def get_download_report(request):
         path = DownloadLeads.download_lead_report(leads, start_date, end_date, selected_fields)
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
+
+
+@login_required
+@wpp_user_required
+def wpp_master_list(request):
+    wpp_master_list = WPPMasterList.objects.all()
+    return render(request, 'reports/wpp_master_list.html', {'wpp_master_list': wpp_master_list})
 
 
 @login_required
