@@ -16,5 +16,6 @@ urlpatterns = patterns(
     # url(r'^get-program-location$', views.get_program_by_location),
     url(r'^wpp/$', views.wpp_reports),
     url(r'^wpp/get-wpp-reports/$', views.get_wpp_reports),
+    url(r'^wpp/master-list/$', views.wpp_master_list),
 
 )
