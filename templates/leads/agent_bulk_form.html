@@ -26,7 +26,7 @@
                       <tr>
                         <th width="100px">Google Rep Name</th>
                         <th width="80px">Customer ID</th>
-                        <th>Code Type</th>
+                        <th>Task Type</th>
                         <th>URL</th>
                         <th>Location</th>
                         <th>Timezone</th>
@@ -42,7 +42,7 @@
 
                         <td>
                           <select name="code_type_{{forloop.counter}}" id="code_type_{{forloop.counter}}">
-                              <option value="">Choose an Code type</option>
+                              <option value="">Choose an Task type</option>
                             {% for type in code_types %}
                               {% if rec.code_type == type %}
                                 <option value="{{rec.code_type}}" selected>{{type}}</option>
@@ -140,7 +140,7 @@
         '<td><input type="text" value="" name="rep_name_' + indx + '" id="rep_name_' + indx + '" disabled=""></td>'+
         '<td><input type="text" value="" name="customer_id_' + indx + '" id="customer_id_' + indx + '" ></td>'+
          '<td><select name="code_type_' + indx + '" id="code_type_' + indx + '">'+
-              '<option value="">Choose an Code type</option>{% for type in code_types %}<option value="{{type}}">{{type}}</option>{% endfor %}</select></td>'+
+              '<option value="">Choose an Task type</option>{% for type in code_types %}<option value="{{type}}">{{type}}</option>{% endfor %}</select></td>'+
         '<td><input type="text" value="" name="url_' + indx + '" id="url_' + indx + '"></td>'+
         '<td><select name="location_' + indx + '" id="location_' + indx + '" class="location">'+
               '<option value="">Market Served</option>{% for loc in locations %}<option value="{{loc.name}}">{{loc.name}}</option>{% endfor %}</select></td>'+
