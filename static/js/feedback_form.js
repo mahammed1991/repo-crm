@@ -5,52 +5,45 @@ window.cancel_clicked = false;
     });
 
     function validate(frm) {
+        var res = validateFields(frm)
+        if(!res){
+           $("#preloaderOverlay").hide();
+        }
+        return res;  
+    }
+
+    function validateFields(frm){
+        window.is_error = false;
         $(".error-box").removeClass('error-box');
         if (window.cancel_clicked){
           return false;
         }
+        validateField(frm.cid);
+        validateField(frm.title);
+        validateField(frm.location);
+        validateField(frm.location);
+        validateField(frm.description);
+        validateField(frm.feedbackType);
+        validateField(frm.language);
+        validateField(frm.program);
+        validateField(frm.description);
         
-        if (frm.cid.value == "") {
-             $('#feedbackCID').addClass('error-box');
-            frm.cid.focus();
+        if(window.is_error){
             return false;
+        }else{
+            return true;    
         }
         
-        if (frm.title.value == "") {
-             $('#feedbackTitle').addClass('error-box');
-            frm.title.focus();
-            return false;
-        }
+    }
 
-        if (frm.location.value == "Location" || frm.location.value == 0) {
-             $('#feedbackLocation').addClass('error-box');
-            frm.location.focus();
-            return false;
+    function validateField(elem){
+        // Validate Form Field
+        if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+          $(elem).addClass('error-box');
+          $(elem).focus();
+          window.is_error = true;
+          return false;
         }
-
-        if (frm.description.value == "") {
-             $('#description').addClass('error-box');
-            frm.description.focus();
-            return false;
-        }
-         if (frm.feedbackType.value == "Feedback Type") {
-            $('#feedbackType').addClass('error-box');
-            frm.feedbackType.focus();
-            return false;
-        }
-
-        if (frm.language.value == "Language") {
-             $('#feedbackType').addClass('error-box');
-            frm.description.focus();
-            return false;
-        }
-
-        if (frm.program.value == "0") {
-             $('#advProgram').addClass('error-box');
-            frm.description.focus();
-            return false;
-        }
-
     }
 
     function setSelectValue (id, val) {
