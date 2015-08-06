@@ -162,6 +162,7 @@ def create_or_update_leads(records, sf):
                 lead = WPPLeads()
                 new_wpp_leads += 1
             lead.lead_status = rec.get('WPP_Lead_Status__c')
+            lead.is_ab_test = rec.get('AB_Testing__c')
 
             # New Additional fields for lead History
             additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
