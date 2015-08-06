@@ -310,6 +310,10 @@ def send_testimonial_notification(lead, testimonial):
 
     attachments = list()
 
+    if settings.SFDC == 'STAGE':
+        mail_subject = 'STAGE - ' + mail_subject
+        mail_to = set()
+
     email = EmailMultiAlternatives(mail_subject, mail_body, mail_from, mail_to, list(bcc))
     email.attach_alternative(mail_body, "text/html")
 

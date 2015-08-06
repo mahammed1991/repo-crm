@@ -1985,22 +1985,15 @@ def lead_history(request, lid):
     lead = None
     try:
         lead = WPPLeads.objects.get(sf_lead_id=lid)
+        is_ab_test = lead.is_ab_test
         lead_status[lead.lead_status].update({'status': 'PROGRESS'})
         template_args['lead'] = lead
     except ObjectDoesNotExist:
         template_args['error'] = 'Lead does not exist'
 
-    is_current = False
     tat_by_status = collections.OrderedDict()
     for key, value in lead_status.iteritems():
         tat_by_status[key] = {'tat': '-'}
-        if 'status' in value:
-            is_current = True
-            continue
-        if is_current:
-            lead_status[key].update({'status': 'FUTURE'})
-        else:
-            lead_status[key].update({'status': 'DONE'})
 
     # Get Lead History by WPP Lead Status
     field = 'WPP_Lead_Status__c'
@@ -2008,18 +2001,44 @@ def lead_history(request, lid):
         sf = SalesforceApi.connect_salesforce()
     except Exception:
         template_args['error'] = 'History Not exist'
-    history = sf.query("SELECT Id, LeadID, Field, OldValue, NewValue, CreatedDate from LeadHistory WHERE LeadID = '%s' AND Field = '%s'" % (lid, field))
+    history = sf.query("SELECT Id, LeadID, Field, OldValue, NewValue, CreatedDate from LeadHistory WHERE LeadID = '%s' AND Field = '%s' ORDER BY CreatedDate ASC" % (lid, field))
     if lead:
         last_modified_date = lead.created_date
-        for his in history['records']:
-            old_val = his.get('OldValue')
-            new_val = his.get('NewValue')
-            modified_date = his.get('CreatedDate')
-            modified_date = SalesforceApi.salesforce_date_to_datetime_format(modified_date)
+        tat_my_dict = collections.defaultdict(int)
 
-            tat = tat_by_dates(last_modified_date, modified_date)
-            tat_by_status[old_val].update({'tat': tat})
-            last_modified_date = modified_date
+        for i in range(0, len(history['records'])):
+            old_status = history['records'][i]['OldValue']
+            new_status = history['records'][i]['NewValue']
+            status_modified_date = history['records'][i]['CreatedDate']
+            status_modified_date = SalesforceApi.salesforce_date_to_datetime_format(status_modified_date)
+            status_tat = tat_by_dates(last_modified_date, status_modified_date)
+            print old_status, new_status, status_tat
+            tat_my_dict[old_status] += status_tat
+            last_modified_date = status_modified_date
+
+    final_new_status = history['records'][-1]['NewValue']
+    final_prev_status = history['records'][-1]['OldValue']
+
+    if final_new_status == 'On Hold':
+        lead_status[final_prev_status].update({'status': 'PAUSE'})
+        indx = lead_status.keys().index(final_prev_status)
+    else:
+        indx = lead_status.keys().index(final_new_status)
+        lead_status[lead_status.keys()[indx]].update({'status': 'PROGRESS'})
+
+    for i in range(0, indx):
+        lead_status[lead_status.keys()[i]].update({'status': 'DONE'})
+    for i in range(indx + 1, len(lead_status.keys())):
+        lead_status[lead_status.keys()[i]].update({'status': 'FUTURE'})
+
+    for key, value in tat_my_dict.iteritems():
+        tat_by_status[key]['tat'] = value
+
+    del lead_status['On Hold']
+
+    if is_ab_test != 'YES':
+        del lead_status['In A/B Test']
+        del tat_by_status['In A/B Test']
 
     template_args['tat_by_status'] = tat_by_status.iteritems()
     template_args['lead_status'] = lead_status.iteritems()

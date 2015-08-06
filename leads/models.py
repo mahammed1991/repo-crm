@@ -181,6 +181,7 @@ class WPPLeads(models.Model):
     mockup_password = models.CharField(max_length=255, null=True)
     stage_url = models.CharField(max_length=255, null=True)
     stage_password = models.CharField(max_length=255, null=True)
+    is_ab_test = models.CharField(max_length=255, null=True, default='YES')
 
     class Meta:
         verbose_name_plural = "WPP Leads"

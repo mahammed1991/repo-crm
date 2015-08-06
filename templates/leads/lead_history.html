@@ -76,6 +76,18 @@
 								<div class="prcs-title">{{key}}</div>
 								<div class="clearfix"></div>
 							</div>
+						{% elif value.status == 'PAUSE'%}
+				 			<div class="tooleft tlast drw pause">
+								<li>
+									<div class="double-border">
+										<span>
+											<a href="#" data-toggle="tooltip" data-placement="top" title="{{value.title}}" class="mockup-rvw">&nbsp;</a>
+										<span>
+									</div>
+								</li>
+								<div class="prcs-title">{{key}}</div>
+								<div class="clearfix"></div>
+							</div>
 				 		{% elif value.status == 'FUTURE' %}
 				 			<div class="tooright gray-inline">
 								<li>
