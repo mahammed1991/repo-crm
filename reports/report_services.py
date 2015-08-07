@@ -572,7 +572,6 @@ class ReportService(object):
 
     @staticmethod
     def get_wpp_report_details_for_filters(start_date, end_date, emails):
-        start_date, end_date = datetime(2014, 01, 01), datetime.utcnow()
         treatment_types = [treatment_type.name for treatment_type in TreatmentType.objects.all()]
         wpp_report_detail = dict()
         if emails:
@@ -600,7 +599,6 @@ class ReportService(object):
         wpp_keyorder = {k: v for v, k in enumerate(key_order)}
         wpp_report_detail['wpp_lead_status_analysis'] = OrderedDict(sorted(wpp_lead_status_count_dict.items(), key=lambda i: wpp_keyorder.get(i[0])))
         wpp_report_detail['wpp_treatment_type_analysis'], wpp_report_detail['pie_chart_dict'] = ReportService.get_wpp_treatment_type_lead_status_analysis(query)
-        # import ipdb; ipdb.set_trace()
         return wpp_report_detail
 
     @staticmethod
@@ -623,7 +621,11 @@ class ReportService(object):
                 if lead_status not in lead_status_per_treatment_type_dict:
                     lead_status_per_treatment_type_dict[lead_status] = 0
             lead_status_per_treatment_type_dict['TOTAL'] = WPPLeads.objects.filter(**query).count()
-            lead_status_per_treatment_type_dict['TAT'] = WPPLeads.objects.filter(**query).aggregate(Avg('tat'))['tat__avg']
+            treatement_type_tat = WPPLeads.objects.filter(**query).aggregate(Avg('tat'))['tat__avg']
+            if treatement_type_tat:
+                lead_status_per_treatment_type_dict['TAT'] = treatement_type_tat
+            else:
+                lead_status_per_treatment_type_dict['TAT'] = 0
             wpp_treatment_type_lead_status_analysis[str(treatement_type.name)] = OrderedDict(sorted(lead_status_per_treatment_type_dict.items(), key=lambda i: wpp_keyorder.get(i[0])))
 
         return wpp_treatment_type_lead_status_analysis, pie_chart_dict
