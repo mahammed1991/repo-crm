@@ -280,12 +280,12 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         email_list = [email]
     if start_date and end_date:
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list}
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list, 'lead_status__in': settings.WPP_LEAD_STATUS}
         wpp_lead_status_analysis = WPPLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
         total_count = WPPLeads.objects.filter(**query).count()
     else:
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-        query = {'treatment_type__in': treatment_type_list}
+        query = {'treatment_type__in': treatment_type_list, 'lead_status__in': settings.WPP_LEAD_STATUS}
         wpp_lead_status_analysis = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
         total_count = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
