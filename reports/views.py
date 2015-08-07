@@ -332,7 +332,20 @@ def get_wpp_reports(request):
             pass
 
         wpp_report_detail['treatment_type_header'] = [sts for sts in settings.WPP_LEAD_STATUS]
+        wpp_report_detail['treatment_type_header'].append('TAT')
         wpp_report_detail['treatment_type_header'].append('TOTAL')
+
+        status_list = [status for status in settings.WPP_LEAD_STATUS]
+        status_list.append('TOTAL')
+        bar_chart_data = [['Lead Status']]
+        for status in status_list:
+            status_row = [status]
+            for treatment_type in wpp_report_detail['wpp_treatment_type_analysis']:
+                status_row.append(wpp_report_detail['wpp_treatment_type_analysis'][treatment_type][status])
+            bar_chart_data.append(status_row)
+        bar_chart_data[0].extend(wpp_report_detail['wpp_treatment_type_analysis'].keys())
+
+        wpp_report_detail['bar_chart_data'] = bar_chart_data
 
         wpp_report_details = {'reports': wpp_report_detail,
                               'report_type': report_type, 'report_timeline': report_timeline}
