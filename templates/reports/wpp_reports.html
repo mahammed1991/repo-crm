@@ -61,23 +61,11 @@ WPP Reports
             <h2>Lead Status Summary</h2>
             <div class="report-section c">      
                 <div class="report-section-content">
+                    <div class="report-img" id="barchart" style="width: 900px; height: 500px;"></div>
                     <div class="report-data">
-                        <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="wpp_lead_status_table">
+                        <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="wpp_treatment_lead_status_table">
                         </table>
                     </div>
-                    <div class="report-img" id="columnchart" style="width: 900px; height: 500px;">
-                    </div>
-                </div>
-            </div>
-            <h2>Treatment Type Analysis</h2>
-            <div class="report-section">      
-                <div class="report-section-content">
-                  <div class="report-img" id="piechart" style="width: 720px; height: 400px;">
-                    </div>
-                      <div class="report-data" style="margin-left:20px !important;">
-                        <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="treatment_type_table">
-                        </table>
-                      </div>
                 </div>
             </div>
 
@@ -96,8 +84,9 @@ WPP Reports
 {% endblock content %}
 
 {% block main_js %}
-<script src="{% static 'js/wpp-reports.js' %}"></script>
+
 <script src="{% static 'js/chart.js' %}"></script>
+<script src="{% static 'js/wpp-reports.js' %}"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});

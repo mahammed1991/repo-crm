@@ -39,3 +39,19 @@ function lineChartDraw(linechart_datatable, title, divselect){
 
 	chart.draw(data, options);
 }
+
+
+function barChartDraw(barChart_datatable, title, divselect){
+
+      var data = google.visualization.arrayToDataTable(barChart_datatable);
+      var options = {
+                      title: title,
+                      hAxis: {title: 'Lead status'},
+                      vAxis: {title: 'No. of Leads'}
+                    };
+
+      var chart = new google.visualization.ColumnChart(document.getElementById(divselect));
+
+      chart.draw(data, options);
+ 
+ }
