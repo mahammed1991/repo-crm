@@ -21,8 +21,8 @@
                     <li><a href="{% url 'leads.views.get_lead_summary' %}">Lead Status</a></li>
                 {% endif %}
                 {% if "WPP" in request.session.groups or "TAG-AND-WPP" in request.session.groups %}
-                    <li><a href="{% url 'leads.views.wpp_lead_form' %}">Submit WPP Lead</a></li>
-                    <li><a href="{% url 'leads.views.get_wpp_lead_summary' %}">WPP Lead Status</a></li>
+                    <li><a href="{% url 'leads.views.wpp_lead_form' %}">Submit Website Optimization Lead</a></li>
+                    <li><a href="{% url 'leads.views.get_wpp_lead_summary' %}">Website Optimization Lead Status</a></li>
                 {% endif %}
               </ul> 
             </li>
@@ -36,7 +36,7 @@
                   <li><a href="{% url 'reports.views.reports' %}">Reports</a></li>
                 {% endif %}
                 {% if "WPP" in request.session.groups or "TAG-AND-WPP" in request.session.groups %}
-                  <li><a href="{% url 'reports.views.wpp_reports' %}">WPP Reports</a></li>
+                  <li><a href="{% url 'reports.views.wpp_reports' %}">Website Optimization Reports</a></li>
                 {% endif %}
               </ul>
             </li>
@@ -61,7 +61,7 @@
                   <li><a href="{% url 'main.views.list_feedback' %}">Feedback</a></li>
                 {% endif %}
                 {% if "WPP" in request.session.groups or "TAG-AND-WPP" in request.session.groups %}
-                <li><a href="{% url 'main.views.list_feedback_wpp' %}">WPP Feedback</a></li>
+                <li><a href="{% url 'main.views.list_feedback_wpp' %}">Website Optimization Feedback</a></li>
                 {% endif %}
               </ul>
             </li>
