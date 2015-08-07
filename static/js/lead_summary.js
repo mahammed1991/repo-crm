@@ -180,10 +180,13 @@ $('#SubmitFeedback').click(function(){
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
     if (feedbackTitle === '' ){
+      $("#preloaderOverlay").hide();
       $('#feedbackTitle').addClass('error-box');
     }else if(feedbackType === 'Feedback Type'){
+      $("#preloaderOverlay").hide();
       $('#feedbackType').addClass('error-box');
     }else if(comments === ''){
+      $("#preloaderOverlay").hide();
       $('#comments').addClass('error-box');
     }else{
       dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
@@ -195,6 +198,7 @@ $('#SubmitFeedback').click(function(){
           success: function(data) {
             if(data === 'SUCCESS'){
               alert('feedback succesfully created ')
+              $("#preloaderOverlay").hide();
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);
@@ -203,6 +207,7 @@ $('#SubmitFeedback').click(function(){
           },
           error: function(jqXHR, textStatus, errorThrown) {
               alert('failure');
+              $("#preloaderOverlay").hide();
           }
         }); 
     }
