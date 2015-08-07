@@ -2012,7 +2012,6 @@ def lead_history(request, lid):
             status_modified_date = history['records'][i]['CreatedDate']
             status_modified_date = SalesforceApi.salesforce_date_to_datetime_format(status_modified_date)
             status_tat = tat_by_dates(last_modified_date, status_modified_date)
-            print old_status, new_status, status_tat
             tat_my_dict[old_status] += status_tat
             last_modified_date = status_modified_date
 
@@ -2125,7 +2124,7 @@ def get_basic_lead_data(request):
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
     if 'google.com' in request.user.email:
-        teams = Team.objects.exclude(team_name='Help Center Task').filter(is_active=True)
+        teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups']).filter(is_active=True)
     else:
         teams = Team.objects.filter(is_active=True)
 
@@ -2348,7 +2347,6 @@ def get_lead_form_for_rep(user):
         if user.email in emails:
             return control.lead_form.name
         elif user.profile.team and user.profile.location:
-            # print user.profile.team.team_name, user.profile.location.location_name
             if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
                 return control.lead_form.name
             elif user.email in emails:

@@ -49,6 +49,10 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
+ADMINS = (
+    ('Raju K R', 'rajuk@regalix-inc.com'),
+)
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -124,8 +128,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 # list of domains allowed
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['google.com', 'regalix-inc.com', 'gmail.com']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['dmtest.as2@gmail.com', 'dmtest.as3@gmail.com', 'rwieker@google.com', 'winstonsingh@google.com', 'meenakshid@google.com', 'sabinaa@google.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['regalix-inc.com', 'gmail.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = []
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
@@ -226,7 +230,8 @@ CODE_TYPE_DICT = {'Adwords Conversion Code': ['Adwords Conversion Code', 'AdWord
                   'Website Call Conversion': ['Website Call Conversion', 'Google Forwarding Numbers Conversion code'],
                   'Google Shopping Setup': ['Google Shopping Setup'], 'Google Tag Manager': ['Google Tag Manager'],
                   'SDK Conversion Tracking': ['Mobile Conversion Tracking', 'SDK Conversion Tracking'],
-                  'Google Shopping Migration': ['Google Shopping Migration'], 'GA Conversion Tracking': ['GA Conversion Tracking']}
+                  'Google Shopping Migration': ['Google Shopping Migration'], 'GA Conversion Tracking': ['GA Conversion Tracking'],
+                  'Google Analytics Dynamic Remarketing  (Retail)': ['Google Analytics Dynamic Remarketing  (Retail)']}
 
 FILE_UPLOAD_TEMP_DIR = os.path.join(os.path.dirname(__file__), 'tmp').replace('\\', '/')
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.MemoryFileUploadHandler",
@@ -307,3 +312,39 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     Primary_Contact_Email__c, Google_Rep__c, Date_of_installation__c, Team__c, Type_Of_Installation__c, Lead_Implemented_Date_Time__c,\
     Rescheduled_Appointments__c, Time_Zone__c, Lead_Sub_Status__c, Q2_Manager__c, WPP_Lead_Status__c, OwnerId, Reschedule_IST_Time__c,\
     Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c, Stage_URL_Credentials__c, AB_Testing__c"
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
