@@ -192,7 +192,7 @@
         var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
         var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
         var numericExpression = /^[0-9]+$/;
-
+        window.failedFields = new Array();
         window.is_error = false;
         var row_len = $(".csv-table .leads:visible").length;
 
@@ -206,10 +206,14 @@
             //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
             $(cid).addClass('error-box');
             //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-            $(cid).focus();
+            /*$(cid).focus();*/
             window.is_error = true;
           }
 
+          ctype = document.getElementById('code_type_' + i);
+          validateFiled(ctype);
+          url = document.getElementById('url_' + i);
+          validateFiled(url);
           loc = document.getElementById('location_' + i);
           validateFiled(loc)
           timezone = document.getElementById('timezone_' + i);
@@ -227,14 +231,12 @@
             window.is_error = true;
           }
 
-          ctype = document.getElementById('code_type_' + i);
-          validateFiled(ctype);
-          url = document.getElementById('url_' + i);
-          validateFiled(url);
         }
         
         if(window.is_error){
           event.preventDefault();
+          focusElem = failedFields[0];
+          $(focusElem).focus();
           return false;
         }else{
           $('#preloaderOverlay').show();
@@ -248,7 +250,7 @@
       // Google Manager details validation
         if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
           $(elem).addClass('error-box');
-          $(elem).focus();
+          window.failedFields.push(elem);
           window.is_error = true;
           return false;
         }

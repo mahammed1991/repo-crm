@@ -8,15 +8,17 @@ function validatethis(frm) {
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
-    
+    window.failedFields = new Array();
     var fix_slots = new Array();
-
+    
     window.is_error = false;
 
     if(window.is_reset == true){
       window.is_reset = false;
       return false;
     }
+
+
 
     t_typeElem = document.getElementById('treatment_type')
     validateFiled(t_typeElem)
@@ -33,7 +35,7 @@ function validatethis(frm) {
 
     if(!$(cidElem).val().match(cidFormat)){
       $(cidElem).addClass('error-box');
-      frm.cid.focus();
+      /*frm.cid.focus();*/
       window.is_error = true;
     }
 
@@ -43,6 +45,9 @@ function validatethis(frm) {
     cgoalElem = document.getElementById('conversion_goal');
     validateFiled(cgoalElem);
 
+    ab_testing = document.getElementById('ab_testing');
+    validateFiled(ab_testing);
+    
     fnameElem = document.getElementById('first_name');
     validateFiled(fnameElem);
 
@@ -69,8 +74,6 @@ function validatethis(frm) {
     tzoneElem = document.getElementById('tzone');
     validateFiled(tzoneElem);
 
-    ab_testing = document.getElementById('ab_testing');
-    validateFiled(ab_testing);
 
     // Appointments Date and Time Validation
     tagDateElem = document.getElementById('tag_datepick');
@@ -89,11 +92,13 @@ function validatethis(frm) {
         fix_slots.push(slot)
       }
 
-
     // Check If Error in Form
     if(window.is_error){
+      focusElem = failedFields[0];
+      $(focusElem).focus();
       return false;
     }else{
+
       var url = $(urlElem).val();
       $("#company").val(url);
       var status = true;
@@ -116,10 +121,10 @@ function validatethis(frm) {
   function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
-      $(elem).addClass('error-box');
-      $(elem).focus();
-      window.is_error = true;
-      return false;
+    $(elem).addClass('error-box');
+    window.failedFields.push(elem);
+    window.is_error = true;
+    return false;
     }
 }
 
@@ -128,7 +133,7 @@ function validateEmailField(elem) {
   // Validate Email Field
   if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
-      $(elem).focus();
+      /*$(elem).focus();*/
       window.is_error = true;
       return false;
     }
