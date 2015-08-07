@@ -128,8 +128,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 # list of domains allowed
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['google.com', 'regalix-inc.com', 'gmail.com']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['dmtest.as2@gmail.com', 'dmtest.as3@gmail.com', 'rwieker@google.com', 'winstonsingh@google.com', 'meenakshid@google.com', 'sabinaa@google.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['regalix-inc.com', 'gmail.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = []
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
@@ -230,7 +230,8 @@ CODE_TYPE_DICT = {'Adwords Conversion Code': ['Adwords Conversion Code', 'AdWord
                   'Website Call Conversion': ['Website Call Conversion', 'Google Forwarding Numbers Conversion code'],
                   'Google Shopping Setup': ['Google Shopping Setup'], 'Google Tag Manager': ['Google Tag Manager'],
                   'SDK Conversion Tracking': ['Mobile Conversion Tracking', 'SDK Conversion Tracking'],
-                  'Google Shopping Migration': ['Google Shopping Migration'], 'GA Conversion Tracking': ['GA Conversion Tracking']}
+                  'Google Shopping Migration': ['Google Shopping Migration'], 'GA Conversion Tracking': ['GA Conversion Tracking'],
+                  'Google Analytics Dynamic Remarketing  (Retail)': ['Google Analytics Dynamic Remarketing  (Retail)']}
 
 FILE_UPLOAD_TEMP_DIR = os.path.join(os.path.dirname(__file__), 'tmp').replace('\\', '/')
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.MemoryFileUploadHandler",
