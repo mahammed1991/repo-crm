@@ -213,3 +213,39 @@ $('#habla_panel_div').click(function(){
 /* sorting function end here*/
 
 /* */
+
+$('#SubmitFeedback').click(function(){
+    $(".error-box").removeClass('error-box');
+    var feedbackTitle = $('#feedbackTitle').val();
+    var feedbackType = $('#feedbackType').val();
+    var comments = $('#comments').val();
+    var lead_type = 'wpp'
+    if (feedbackTitle === '' ){
+      $('#feedbackTitle').addClass('error-box');
+    }else if(feedbackType === 'Feedback Type'){
+      $('#feedbackType').addClass('error-box');
+    }else if(comments === ''){
+      $('#comments').addClass('error-box');
+    }else{
+      dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id, 'lead_type': lead_type}
+      $.ajax({
+          url: "/main/create-feedback-from-lead-status",
+          data: dataString,
+          type: 'GET',
+          dataType: "json",
+          success: function(data) {
+            if(data === 'SUCCESS'){
+              alert('feedback succesfully created ')
+              $('#closeFeedbcak').trigger('click');
+              $('#feedbackTitle').val('');
+              $('#feedbackType').prop('selectedIndex', 0);
+              $('#comments').val('');
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              alert('failure');
+          }
+        }); 
+    }
+    
+    })

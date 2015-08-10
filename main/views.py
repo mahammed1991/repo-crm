@@ -662,9 +662,15 @@ def create_feedback_from_lead_status(request):
     if request.is_ajax():
 
         lead_id = request.GET.get('lead_id')
-        lead = Leads.objects.get(id=lead_id)
-
+        lead_type = request.GET.get('lead_type')
         feedback_details = Feedback()
+
+        if lead_type == 'wpp':
+            lead = WPPLeads.objects.get(id=lead_id)
+            feedback_details.code_type = 'WPP'
+        else:
+            lead = Leads.objects.get(id=lead_id)
+
         feedback_details.user = request.user
         feedback_details.title = request.GET.get('title')
         feedback_details.feedback_type = request.GET.get('type')
