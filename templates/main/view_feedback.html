@@ -168,6 +168,12 @@ Manage Help
   
   </div>
   </div>
+        <div id="preloaderOverlay" style='display:none;'>
+            <div class="preloader">
+            <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+            
+            </div>
+        </div>
 </section>
 <!-- content-region ends --> 
 {% endblock content %}
@@ -177,8 +183,10 @@ Manage Help
     function validate(elem){
         id = $(elem).attr("id");
         if(id == 'AddComments'){
+            $('#preloaderOverlay').show();
             $("#feedback_action").val('AddComments');
         }else{
+            $('#preloaderOverlay').show();
             $("#feedback_action").val('Resolved');
         }
         
@@ -194,6 +202,7 @@ Manage Help
             $('#reopencomment').addClass('error-box')
             return false
         }
+        $('#preloaderOverlay').show();
     }
     $('#finalreopenalert').click(function(){
         alert('This feedback has been re-opened thrice. If the issue is still not resolved, please reach out to implementation-support@google.com OR google@regalix-inc.com');

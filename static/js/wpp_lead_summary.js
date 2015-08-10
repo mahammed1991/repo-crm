@@ -227,6 +227,8 @@ $('#SubmitFeedback').click(function(){
     }else if(comments === ''){
       $('#comments').addClass('error-box');
     }else{
+      $('#closeFeedbcak').trigger('click');
+      $('#preloaderOverlay').show();
       dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id, 'lead_type': lead_type}
       $.ajax({
           url: "/main/create-feedback-from-lead-status",
@@ -236,6 +238,7 @@ $('#SubmitFeedback').click(function(){
           success: function(data) {
             if(data === 'SUCCESS'){
               alert('feedback succesfully created ')
+              $('#preloaderOverlay').hide();
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);

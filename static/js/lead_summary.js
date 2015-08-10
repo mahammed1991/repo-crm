@@ -186,7 +186,9 @@ $('#SubmitFeedback').click(function(){
     }else if(comments === ''){
       $('#comments').addClass('error-box');
     }else{
+      $('#closeFeedbcak').trigger('click');
       dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
+      $('#preloaderOverlay').show();
       $.ajax({
           url: "/main/create-feedback-from-lead-status",
           data: dataString,
@@ -194,6 +196,7 @@ $('#SubmitFeedback').click(function(){
           dataType: "json",
           success: function(data) {
             if(data === 'SUCCESS'){
+              $('#preloaderOverlay').hide();
               alert('feedback succesfully created ')
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
