@@ -2015,15 +2015,18 @@ def lead_history(request, lid):
             tat_my_dict[old_status] += status_tat
             last_modified_date = status_modified_date
 
-    final_new_status = history['records'][-1]['NewValue']
-    final_prev_status = history['records'][-1]['OldValue']
+    if history['records']:
+        final_new_status = history['records'][-1]['NewValue']
+        final_prev_status = history['records'][-1]['OldValue']
 
-    if final_new_status == 'On Hold':
-        lead_status[final_prev_status].update({'status': 'PAUSE'})
-        indx = lead_status.keys().index(final_prev_status)
+        if final_new_status == 'On Hold':
+            lead_status[final_prev_status].update({'status': 'PAUSE'})
+            indx = lead_status.keys().index(final_prev_status)
+        else:
+            indx = lead_status.keys().index(final_new_status)
+            lead_status[lead_status.keys()[indx]].update({'status': 'PROGRESS'})
     else:
-        indx = lead_status.keys().index(final_new_status)
-        lead_status[lead_status.keys()[indx]].update({'status': 'PROGRESS'})
+        indx = lead_status.keys().index('Open')
 
     for i in range(0, indx):
         lead_status[lead_status.keys()[i]].update({'status': 'DONE'})

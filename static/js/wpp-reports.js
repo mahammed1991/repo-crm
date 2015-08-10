@@ -89,8 +89,7 @@ function getWppReport(dataString){
         success: function(data){
           $('#preloaderOverlay').hide();
           console.log(data)
-          $('#wpp_lead_status_table').empty();
-          $('#treatment_type_table').empty();
+          $('#wpp_treatment_lead_status_table').empty()
           reports = data['reports'];
           treatment_type_and_lead_status_analysis_table(reports['treatment_type_header'], reports['wpp_treatment_type_analysis'], reports['wpp_lead_status_analysis'])
           barChartDraw(reports['bar_chart_data'], '', 'barchart');

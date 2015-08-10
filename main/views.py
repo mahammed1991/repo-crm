@@ -935,10 +935,11 @@ def get_inbound_locations(request):
                     'loc_flag': settings.MEDIA_URL + '' + request.user.profile.location.flag_image.name if request.user.profile.location.flag_image else "",
                     }
     else:
-        user_loc = {'loc_name': '',
-                    'loc_id': '',
-                    'loc_phone': '',
-                    'loc_flag': ''}
+        us_locations = Location.objects.filter(Q(location_name__iexact='United States') | Q(location_name__iexact='US'))
+        user_loc = {'loc_name': us_locations[0].location_name,
+                    'loc_id': us_locations[0].id,
+                    'loc_phone': us_locations[0].phone,
+                    'loc_flag': settings.MEDIA_URL + '' + us_locations[0].flag_image.name if us_locations[0].flag_image else ''}
 
     return HttpResponse(dumps({'location': location, 'user_loc': user_loc}), content_type='application/json')
 
