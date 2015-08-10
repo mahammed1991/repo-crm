@@ -1,0 +1,70 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Lead Activity Summary
+{% endblock title %}
+
+{% block content %}
+<div id='content' class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9; padding-bottom:80px;">
+            <legend class="legend"><p style="font-family:Times New Roman;font-size:30px;font-weight:bold;text-align:center; color:#3c3c3c; padding-left:10px; padding-right:10px;">Lead Activity Summary</p></legend>
+            <div style="min-height:400px;">
+                <span id="ctl00_ContentPlaceHolder2_lblMsg"></span><br>
+                <div style="width:100%;">
+                    <div>
+                        <h2>Summary</h2>
+                        <table cellspacing="0" cellpadding="4" rules="all" border="1" id="ctl00_ContentPlaceHolder2_gvListByGoogleRep" style="background-color:White;border-color:#4C4C4C;border-width:1px;border-style:None;font-size:9pt;width:100%;border-collapse:collapse;">
+                            <tbody>
+                                <tr style="color:#4C4C4C;background-color:#E6E6E6;font-weight:normal;">
+                                    <th scope="col">Total</th>
+                                    {% for l_count_data in leads_count %}
+                                        <th scope="col">{{l_count_data.lead_status}}</th>
+                                    {% endfor %}
+                                </tr>
+                                <tr style="color:#4C4C4C;background-color:#FBFBFB;">
+                                    <td align="center"><b>{{leads|length}}</b></td>
+                                    {% for l_count_data in leads_count %}
+                                        <td align="center"><b>{{l_count_data.lcount}}</b></td>
+                                    {% endfor %}
+                                </tr>
+                            </tbody></table>
+                        <br />
+                        <h2>Lead Status</h2>
+                        <table cellspacing="0" cellpadding="4" rules="all" border="1" id="ctl00_ContentPlaceHolder2_gvListByGoogleRep" style="background-color:White;border-color:#4C4C4C;border-width:1px;border-style:None;font-size:9pt;width:100%;border-collapse:collapse;">
+                            <tbody>
+                                <tr style="color:#4C4C4C;background-color:#E6E6E6;font-weight:normal;" align="center">
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Advertiser</th>
+                                    <th scope="col">Google Rep</th>
+                                    <th scope="col">Regalix Rep</th>
+                                    <th scope="col">CustomerID</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date Of Installations</th>
+                                    <th scope="col">Regalix Comments</th>
+                                    <th scope="col">Google comments</th>
+                                </tr>
+                                {% for lead in leads %}
+                                <tr style="color:#4C4C4C;background-color:#FBFBFB;" align="center">
+                                    <td>  {{ forloop.counter }}  </td>
+                                    <td><a style="color:#4c4c4c" href="javascript:;"><b>{{lead.company}}</b></a></td>
+                                    <td>{{ lead.google_rep_name}}</td>
+                                    <td>{{ lead.lead_owner}}</td>
+                                    <td>{{ lead.customer_id}}</td>
+                                    <td>{{ lead.lead_status}}</td>
+                                    <td>{{ lead.date_of_installation }}</td>
+                                    <td>{{ lead.regalix_comment}}</td>
+                                    <td>{{ lead.google_comment}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock content %}
