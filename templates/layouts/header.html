@@ -78,7 +78,13 @@
           <li class="live-transfer-number"><i class="fa fa-phone"></i><span class="location_number">8669997725</span></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li class="submit-lead-btn"><button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button></li>
+          <li class="submit-lead-btn">
+            {% if "WPP" in request.session.groups and "TAG-AND-WPP" not in request.session.groups %}
+              <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
+            {% else %}
+              <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
+            {% endif %}
+          </li>
           <li class="dropdown notification"> <a href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bell"></i><span id="notifications_count"></span></a>
             <ul class="dropdown-menu" role="menu" id="notifications">
             </ul>
