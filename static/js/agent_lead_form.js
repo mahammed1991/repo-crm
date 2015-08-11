@@ -56,16 +56,15 @@ function setLocations(newLocations){
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
-    
+    window.failedFields = new Array();
     var fix_slots = new Array();
-
     window.is_error = false;
 
     if(window.is_reset == true){
       window.is_reset = false;
       return false;
     }
-    
+
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
     validateFiled(grefElem);
@@ -115,15 +114,6 @@ function setLocations(newLocations){
     validateFiled(countryElem);
     
 
-    // Timezone Validation
-    tzoneElem = document.getElementById('tzone');
-    validateFiled(tzoneElem);
-
-    // Advertiser Info
-    // Advertiser Name Validation
-    advertiserNameElem = document.getElementById('contact_person_name');
-    validateFiled(advertiserNameElem);
-
     shopAppointmentElem = document.getElementById('setup_datepick');
     if($(shopAppointmentElem).is(":visible")){
       validateFiled(shopAppointmentElem);
@@ -133,6 +123,7 @@ function setLocations(newLocations){
     if($(agencyInfoElem).is(":visible")){
 
       // Advertiser Email Validation
+
       agencyNameElem = document.getElementById('agency_name');
       validateFiled(agencyNameElem);
 
@@ -157,6 +148,15 @@ function setLocations(newLocations){
 
     companyElem = document.getElementById('company');
     validateFiled(companyElem);
+
+    // Timezone Validation
+    tzoneElem = document.getElementById('tzone');
+    validateFiled(tzoneElem);
+
+    // Advertiser Info
+    // Advertiser Name Validation
+    advertiserNameElem = document.getElementById('contact_person_name');
+    validateFiled(advertiserNameElem);
 
     var isTagLeads = false;
     var isShopLeads = false;
@@ -687,6 +687,8 @@ function setLocations(newLocations){
 
       // Check If Error in Form
       if(window.is_error){
+        focusElem = failedFields[0];
+        $(focusElem).focus();
         return false;
       }else{
         var status = true;
@@ -711,12 +713,11 @@ function setLocations(newLocations){
       }  
    } 
 
-
 function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
       $(elem).addClass('error-box');
-      $(elem).focus();
+      window.failedFields.push(elem);
       window.is_error = true;
       return false;
     }

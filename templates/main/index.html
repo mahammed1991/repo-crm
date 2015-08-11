@@ -62,7 +62,7 @@ Regalix Google Portal
               <div class="choicetabs">
                   <ul class="choicemenu">
                     <li><a href="#tag" class="active" id="tag_tab">Tag/Shopping<span></span></a></li>
-                    <li class="last"><a href="#wpp" class="" id="wpp_tab">WPP<span></span></a></li>
+                    <li class="last"><a href="#wpp" class="" id="wpp_tab">Website Optimization<span></span></a></li>
                     <div class="clearfix"></div>
                   </ul>
                   <div class="clear"></div>
@@ -105,7 +105,7 @@ Regalix Google Portal
                     <div style="padding-top: 20px;"> &nbsp</div>
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>SUBMIT WEBSITE OPTIMIZATION REQUEST</button>
-                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your Website Optimization Leads</button>
                         </div>
 
                         <div class="wpp_leads-summary" style=" margin-top: 45px;">
@@ -193,7 +193,7 @@ Regalix Google Portal
                                   <canvas id="totalWPPLeads" class="reports-canvas" width="90" height="90"></canvas>
                                   <div class="report-chart-lbl">Win<span id="totalWPPWin">45%</span></div>
                                 </div>
-                                <span>Total WPP Leads</span>
+                                <span>Total Website Optimization Leads</span>
                             </div>
                             <div class="col-md-3">
                                 <div class="chart">
@@ -246,7 +246,7 @@ Regalix Google Portal
                         <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}?type=NORMAL"'>Add a Feedback</button>   
                     </div>
                     <div class="slide-wrap" id="wpp_feedback">
-                        <h1>WPP Feedback Summary</h1>             
+                        <h1>Website Optimization Feedback Summary</h1>             
                            <div class="row">
                                 <div class="col-md-3">
                                     <div class="fdk-status resolved">{{wpp_feedback_list.resolved}}</div>
