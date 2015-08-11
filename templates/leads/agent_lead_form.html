@@ -165,7 +165,7 @@
         <!-- ##################### Same Task Functionality Starts #################### --> 
           <div id="same_task_agency">
             <div class="std-sub-title">Same Task</div>
-              <div class="row">
+              <div class="row" id="same_task_agency_row">
                 <div class="col-md-4">
                   <select title="Task Type" class="form-control bgicon agency-same" name="same_task_ctype" id="same_task_ctype">
                     <option value="">Select Task Type</option>
@@ -175,13 +175,14 @@
                     <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
                 </div>
-                <div class="col-md-12" id="gasetupSameAgency" style="display:none;">
+                <div class="col-md-4" id="gasetupSameAgency" style="display:none;">
                   <div class="checkbox">
                   <label>
                     <input id="gasetup_sameAgency" type="checkbox" name="gasetup_sameAgency" value="0" class="is_ga_setup">
                     Is there an existing Analytics setup? </label>
                   </div>
                 </div>
+               
               </div>
           <!-- ################### Same Shop 1 ############################### -->
         </div>
@@ -222,7 +223,7 @@
                     <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
                 </div>
-                <div class="col-md-12" id="gasetupSameCustomer" style="display:none;">
+                <div class="col-md-4" id="gasetupSameCustomer" style="display:none;">
                   <div class="checkbox">
                   <label>
                     <input id="ga_setupSamecustomer" type="checkbox" name="ga_setupSamecustomer" value="0" class="is_ga_setup">
@@ -359,6 +360,7 @@ $(".task_type").click(function(){
     hideAllFields();
     $('.tagFields, .shopFields').remove();
      taskId = $(this).attr('id');
+     $('#analytics_code_row').remove();
 
     if($(".customer_type:checked").val() == 'agency'){
         $(".agency_info").show();
@@ -456,6 +458,8 @@ $("#same_task_ctype").change(function(){
     $(".shop").remove();
     $(".add_tag_1, .add_shop_1").show();
     $('#gasetupSameAgency').hide();
+    $('#analytics_code_row').remove();
+    $('#gasetup_sameAgency').prop('checked', false);
     selectedCtype = $(this).val();
     if(selectedCtype == 'Google Shopping Setup'){
         addMoreShopRows(1)
@@ -474,6 +478,51 @@ $("#same_task_ctype").change(function(){
 });
 
 
+analytics_html = '<div class="col-md-4" id="analytics_code_row"><input class="form-control" id="analytics_code1" name="analytics_code1" placeholder="Analytics Code"></input></div>'
+
+$(document).on('change', '#gasetup_sameAgency', function() {
+  if ($('#gasetup_sameAgency').is(':checked')){
+    $(analytics_html).insertAfter('#gasetupSameAgency');
+}else{
+    $('#analytics_code_row').remove();
+}
+});
+
+$(document).on('change', '#ga_setupSamecustomer', function() {
+  if ($('#ga_setupSamecustomer').is(':checked')){
+    $(analytics_html).insertAfter('#gasetupSameCustomer');
+}else{
+    $('#analytics_code_row').remove();
+}
+});
+
+$(document).on('change', '.is_ga_setup_agency_diff', function() {
+    thisId = $(this).attr('id');
+    selectedindex = thisId[thisId.length-1]
+    if($('#ga_setup'+selectedindex).is(":checked")){
+      $('#analyticscode'+selectedindex).show();
+      $(this).val(1);
+    }
+    else{
+      $('#analyticscode'+selectedindex).hide();
+      $('#analytics_code'+selectedindex).val('');
+      $(this).val(0);
+    }
+});
+
+$(document).on('change', '.is_ga_setup_cust_diff', function() {
+    thisId = $(this).attr('id');
+    selectedindex = thisId[thisId.length-1]
+    if($('#ga_setup'+selectedindex).is(":checked")){
+      $('#analyticscode'+selectedindex).show();
+      $(this).val(1);
+    }
+    else{
+      $('#analyticscode'+selectedindex).hide();
+      $('#analytics_code'+selectedindex).val('');
+      $(this).val(0);
+    }
+});
 //if code type is null then hide fields
 
 // addMoreRows Click functionality
@@ -668,12 +717,15 @@ function createAnalyticsTagFields(indx){
          '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
         '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+
-        '<div class="col-md-10" id="gasetup' + indx + '">'+
+        '<div class="col-md-4" id="gasetup' + indx + '">'+
                 '<div class="checkbox">'+
                   '<label>'+
-                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup">'+
+                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_agency_diff">'+
                     'Is there an existing Analytics setup? </label>'+
                 '</div>'+
+              '</div>'+
+              '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;">'+
+                '<input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics Code"></input>'+
               '</div>'
 
         if(indx == 1){
@@ -747,6 +799,8 @@ $("#same_task_cust_type").change(function(){
     $(".add_tag_1, .add_shop_1").show()
     selectedCtype = $(this).val();
     $('#gasetupSameCustomer').hide();
+    $('#analytics_code_row').remove();
+    $('#ga_setupSamecustomer').prop('checked', false);
     if(selectedCtype == 'Google Shopping Setup'){
         addMoreCustomerShopRows(1);
         
@@ -956,17 +1010,19 @@ function createCustomerTagFields(indx){
 }
 
 function createCustomerAnalyticsTagFields(indx){
-
   nextInd = indx + 1; 
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
-                '<div class="col-md-12" id="gasetup' + indx + '"">'+
+                '<div class="col-md-5" id="gasetup' + indx + '"">'+
                   '<div class="checkbox">'+
                     '<label>'+
-                      '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup">'+
+                      '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_cust_diff">'+
                       'Is there an existing Analytics setup? </label>'+
                   '</div>'+
                 '</div>'+
+
+                '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;"><input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics Code"></input></div>'+
+
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
                 '</div>'+

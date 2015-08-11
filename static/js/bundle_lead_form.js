@@ -156,44 +156,44 @@ function validatethis(frm) {
     
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
-    validateFiled(grefElem);
+    validateField(grefElem);
 
     // Google Rep Email Validation
     emailrefElem = document.getElementById('emailref');
-    validateFiled(emailrefElem);
+    validateField(emailrefElem);
 
     validateEmailField(emailrefElem)
 
     // Programs Validation
     teamElem = document.getElementById('team');
-    validateFiled(teamElem);
+    validateField(teamElem);
 
     // Service Segment Validation
     if ($(frm.service_segment).is(":visible")) {
       service_segmentElem = document.getElementById('service_segment');
-      validateFiled(service_segmentElem);
+      validateField(service_segmentElem);
     }
 
     // GcaseId validation
     if ($(frm.g_cases_id).is(":visible")) {
       gCasesIdElem = document.getElementById('g_cases_id');
-      validateFiled(gCasesIdElem);
+      validateField(gCasesIdElem);
     }
 
     // Google Manager details validation
     teamElem = document.getElementById('team');
-    validateFiled(teamElem);
+    validateField(teamElem);
 
     if (document.getElementById("manager_name").value == "") {
       //alert("Please Update Google Manager details");
       managerElem = document.getElementById("manager_name");
-      validateFiled(managerElem);
+      validateField(managerElem);
     }
 
     if (document.getElementById("manager_email").value == "") {
       //alert("Please Update Google Manager details");
       emailElem = document.getElementById("manager_email");
-      validateFiled(emailElem);
+      validateField(emailElem);
     }
     // Email Validation
     emailElem = document.getElementById("manager_email");
@@ -201,32 +201,32 @@ function validatethis(frm) {
 
     // Location/Country Validation
     countryElem = document.getElementById('country');
-    validateFiled(countryElem);
+    validateField(countryElem);
     
 
     // Advertiser Info
     // Advertiser Name Validation
     advertiserNameElem = document.getElementById('advertiser_name');
-    validateFiled(advertiserNameElem);
+    validateField(advertiserNameElem);
 
     // Advertiser Email Validation
     aemailElem = document.getElementById('aemail');
-    validateFiled(aemailElem);
+    validateField(aemailElem);
 
     // Email Validation
     validateEmailField(aemailElem);
 
     // Advertiser Phone Validation
     phoneElem = document.getElementById('phone');
-    validateFiled(phoneElem);
+    validateField(phoneElem);
 
     // Advertiser Company Validation
     companyElem = document.getElementById('company');
-    validateFiled(companyElem);
+    validateField(companyElem);
     
     // Customer Id validation
     cidElem = document.getElementById('cid');
-    validateFiled(cidElem);
+    validateField(cidElem);
 
     if(!frm.cid.value.match(cidFormat)){
       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
@@ -238,15 +238,15 @@ function validatethis(frm) {
 
     // Advertiser Location validation
     // advertiserLocationElem = document.getElementById('advertiser_location');
-    // validateFiled(advertiserLocationElem);
+    // validateField(advertiserLocationElem);
 
     // Language validation
     languageElem = document.getElementById('language');
-    validateFiled(languageElem);
+    validateField(languageElem);
 
     // Timezone Validation
     tzoneElem = document.getElementById('tzone');
-    validateFiled(tzoneElem);
+    validateField(tzoneElem);
 
     // Does the advertiser have edit access for the website or has a webmaster validation for selection
     if(document.getElementById("web_access").checked == false && document.getElementById("webmasterCheck").checked == false){
@@ -259,15 +259,15 @@ function validatethis(frm) {
 
       // Contact Person Name
       webMasterNameElem = document.getElementById('webmaster_name');
-      validateFiled(webMasterNameElem);
+      validateField(webMasterNameElem);
 
       // Contact Person Role
       webMasterEmailElem = document.getElementById('web_master_email');
-      validateFiled(webMasterEmailElem);
+      validateField(webMasterEmailElem);
 
       // Contact Person Name
       poptElem = document.getElementById('popt');
-      validateFiled(poptElem);
+      validateField(poptElem);
 
     }
 
@@ -275,7 +275,7 @@ function validatethis(frm) {
     // ####################### Bundle Code Types Validations #####################################
     // Code Type / Task 1
     ctype1Elem = document.getElementById('ctype1');
-    validateFiled(ctype1Elem);
+    validateField(ctype1Elem);
 
     // Check all related fields for Code Type 1
     task1 = ctype1Elem.value;
@@ -284,36 +284,37 @@ function validatethis(frm) {
           
           // Validate Shopping related fields
           rbidElem = document.getElementById('rbid1');
-          validateFiled(rbidElem);
+          validateField(rbidElem);
 
           rbidmodifierElem = document.getElementById('rbidmodifier1');
-          validateFiled(rbidmodifierElem);
+          validateField(rbidmodifierElem);
 
           rbudgetElem = document.getElementById('rbudget1');
-          validateFiled(rbudgetElem);
+          validateField(rbudgetElem);
 
           shoppingUrlElem = document.getElementById('url1');
-          validateFiled(shoppingUrlElem);
+          validateField(shoppingUrlElem);
+
 
           shoppingMCIDElem = document.getElementById('is-mc_id1');
           if(shoppingMCIDElem.checked == true){
               shoppingMCElem = document.getElementById('mc_id1');
-              validateFiled(shoppingMCElem);
+              validateField(shoppingMCElem);
           }
           
           // Hava an appointment for Google Shopping No Appointments
           // if (document.getElementById("appointmentCheck").checked == true) {
           //   // Contact Person Name Validation
           //   contactElem = document.getElementById('shop_contact_person_name1');
-          //   validateFiled(contactElem);
+          //   validateField(contactElem);
 
           //   // Contact Person Role Validation
           //   roleElem = document.getElementById('shop_primary_role');
-          //   validateFiled(roleElem);
+          //   validateField(roleElem);
 
           //   // Appointments Date and Time Validation
           //   setupDateElem = document.getElementById('setup_datepick1');
-          //   validateFiled(setupDateElem);
+          //   validateField(setupDateElem);
 
           //   if(setupDateElem.value){
           //       var slot = {
@@ -328,10 +329,10 @@ function validatethis(frm) {
           if (task1.indexOf('Dynamic') != -1){
             if(document.getElementById('is_campaign_created1').checked == false){
                 rbidElem = document.getElementById('rbid_campaign1');
-                validateFiled(rbidElem);
+                validateField(rbidElem);
 
                 rbudgetElem = document.getElementById('rbudget_campaign1');
-                validateFiled(rbudgetElem);
+                validateField(rbudgetElem);
             }
           }else{
             $("#rbid_campaign1").val('');
@@ -340,7 +341,11 @@ function validatethis(frm) {
 
           // Validate Tag related fields
           tagUrlElem = document.getElementById('url1');
-          validateFiled(tagUrlElem);
+          validateField(tagUrlElem);
+
+          if($('#analyticscode1').is(':visible')){
+            validateField($('#analytics_code1'));
+          }
 
           }
       }
@@ -354,21 +359,21 @@ function validatethis(frm) {
           
           // Validate Shopping related fields
           rbidElem = document.getElementById('rbid2');
-          validateFiled(rbidElem);
+          validateField(rbidElem);
 
           rbidmodifierElem = document.getElementById('rbidmodifier2');
-          validateFiled(rbidmodifierElem);
+          validateField(rbidmodifierElem);
 
           rbudgetElem = document.getElementById('rbudget2');
-          validateFiled(rbudgetElem);
+          validateField(rbudgetElem);
 
           shoppingUrlElem = document.getElementById('url2');
-          validateFiled(shoppingUrlElem);
+          validateField(shoppingUrlElem);
 
           shoppingMCIDElem = document.getElementById('is-mc_id2');
           if(shoppingMCIDElem.checked == true){
               shoppingMCElem = document.getElementById('mc_id2');
-              validateFiled(shoppingMCElem);
+              validateField(shoppingMCElem);
           } 
 
       }else{
@@ -377,10 +382,10 @@ function validatethis(frm) {
           if (task2.indexOf('Dynamic') != -1){
             if(document.getElementById('is_campaign_created2').checked == false){
                 rbidElem = document.getElementById('rbid_campaign2');
-                validateFiled(rbidElem);
+                validateField(rbidElem);
 
                 rbudgetElem = document.getElementById('rbudget_campaign2');
-                validateFiled(rbudgetElem);
+                validateField(rbudgetElem);
             }
           }else{
             $("#rbid_campaign2").val('');
@@ -388,7 +393,11 @@ function validatethis(frm) {
           }
 
           tagUrlElem = document.getElementById('url2');
-          validateFiled(tagUrlElem);
+          validateField(tagUrlElem);
+
+          if($('#analyticscode2').is(':visible')){
+            validateField($('#analytics_code2'));
+          }
       }
     }
 
@@ -401,21 +410,21 @@ function validatethis(frm) {
           
           // Validate Shopping related fields
           rbidElem = document.getElementById('rbid3');
-          validateFiled(rbidElem);
+          validateField(rbidElem);
 
           rbidmodifierElem = document.getElementById('rbidmodifier3');
-          validateFiled(rbidmodifierElem);
+          validateField(rbidmodifierElem);
 
           rbudgetElem = document.getElementById('rbudget3');
-          validateFiled(rbudgetElem);
+          validateField(rbudgetElem);
 
           shoppingUrlElem = document.getElementById('url3');
-          validateFiled(shoppingUrlElem);
+          validateField(shoppingUrlElem);
 
           shoppingMCIDElem = document.getElementById('is-mc_id3');
           if(shoppingMCIDElem.checked == true){
               shoppingMCElem = document.getElementById('mc_id3');
-              validateFiled(shoppingMCElem);
+              validateField(shoppingMCElem);
           }
           
       }else{
@@ -424,10 +433,10 @@ function validatethis(frm) {
           if (task3.indexOf('Dynamic') != -1){
             if(document.getElementById('is_campaign_created3').checked == false){
                 rbidElem = document.getElementById('rbid_campaign3');
-                validateFiled(rbidElem);
+                validateField(rbidElem);
 
                 rbudgetElem = document.getElementById('rbudget_campaign3');
-                validateFiled(rbudgetElem);
+                validateField(rbudgetElem);
             }
           }else{
             $("#rbid_campaign3").val('');
@@ -435,7 +444,11 @@ function validatethis(frm) {
           }
 
           tagUrlElem = document.getElementById('url3');
-          validateFiled(tagUrlElem);
+          validateField(tagUrlElem);
+
+          if($('#analyticscode3').is(':visible')){
+            validateField($('#analytics_code3'));
+          }
           
       }
 
@@ -445,11 +458,11 @@ function validatethis(frm) {
     if ($("#appointmentCheck").is(":visible") && document.getElementById("appointmentCheck").checked == true) {
       // Contact Person Name Validation
       contactElem = document.getElementById('tag_contact_person_name');
-      validateFiled(contactElem);
+      validateField(contactElem);
 
       // Contact Person Role Validation
       roleElem = document.getElementById('tag_primary_role');
-      validateFiled(roleElem);
+      validateField(roleElem);
 
       // Appointments Date and Time Validation
       tagDateElem = document.getElementById('tag_datepick');
@@ -458,7 +471,7 @@ function validatethis(frm) {
           window.is_error = true;
           return false;
         }
-      // validateFiled(tagDateElem);
+      // validateField(tagDateElem);
 
       if(tagDateElem.value){
           var slot = {
@@ -523,7 +536,7 @@ function validatethis(frm) {
     }
 
 
-function validateFiled(elem){
+function validateField(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
       $(elem).addClass('error-box');
@@ -559,6 +572,7 @@ $(".ctype").change(function(){
     $("#ctype3 option").show();
     var selectedId = $(this).attr('id');
     var indx = selectedId[selectedId.length - 1];
+    $('#analyticscode'+indx).hide();
     var selectedId1 = $("#ctype1 option:selected").attr('id');
     if(selectedId1){
         id1 = selectedId1.split('_')[1];
@@ -732,9 +746,14 @@ $('#region').change(function(){
   }
 
   $(".is_ga_setup").click(function(){
+    thisId = $(this).attr('id');
+    selectedindex = thisId[thisId.length-1]
+    $('#analyticscode'+selectedindex).hide();
     if($(this).is(":checked")){
+      $('#analyticscode'+selectedindex).show();
       $(this).val(1);
     }else{
+      $('#analyticscode'+selectedindex).hide();
       $(this).val(0);
     }
 });

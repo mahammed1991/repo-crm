@@ -216,6 +216,11 @@ function setLocations(newLocations){
                       validateFiled(budgetElem);  
                     }
 
+                    analyticsCodeElem = document.getElementById('analytics_code' + i);
+                    if($(analyticsCodeElem).is(":visible")){
+                      validateFiled(analyticsCodeElem);  
+                    }
+
                 }
             }
               var sameShopTask = $(".shop:visible").length;
@@ -345,6 +350,13 @@ function setLocations(newLocations){
                     if($(budgetElem).is(":visible")){
                       validateFiled(budgetElem);  
                     }
+
+                    // Analytics 
+                    analyticsCodeElem = document.getElementById('analytics_code' + i);
+                    if($(analyticsCodeElem).is(":visible")){
+                      validateFiled(analyticsCodeElem);  
+                    }
+
                 }else{
                     if($("#shopFields" + i).is(":visible")){
                         // CID Validation
@@ -461,6 +473,12 @@ function setLocations(newLocations){
                     budgetElem = document.getElementById('rbudget' + i);
                     if($(budgetElem).is(":visible")){
                       validateFiled(budgetElem);  
+                    }
+
+                    // Analytics 
+                    analyticsCodeElem = document.getElementById('analytics_code' + i);
+                    if($(analyticsCodeElem).is(":visible")){
+                      validateFiled(analyticsCodeElem);  
                     }
             }
             }
@@ -610,6 +628,12 @@ function setLocations(newLocations){
                     budgetElem = document.getElementById('rbudget' + i);
                     if($(budgetElem).is(":visible")){
                       validateFiled(budgetElem);  
+                    }
+
+                    // Analytics 
+                    analyticsCodeElem = document.getElementById('analytics_code' + i);
+                    if($(analyticsCodeElem).is(":visible")){
+                      validateFiled(analyticsCodeElem);  
                     }
 
                      cnameElem = document.getElementById('advertiser_name' + i);
