@@ -150,6 +150,7 @@ class SalesforceLeads(object):
                              'rbid1': '00Nd0000007fJ3V',  # Recommended Bid1
                              'rbudget1': '00Nd0000007fJ4E',  # Recommended Budget1
                              'ga_setup1': '00Nd0000007fIlH',  # Is GS Setup1
+                             'analytics_code1': '00Nd0000008MVDI',  # analytics_code1
                              # Code Type 2 Details
                              'ctype2': '00Nd0000005WYkS',  # Code Type2
                              'url2': '00Nd0000005WYi9',   # URL2
@@ -158,6 +159,7 @@ class SalesforceLeads(object):
                              'rbid2': '00Nd0000007fJ3a',  # Recommended Bid2
                              'rbudget2': '00Nd0000007fJ4J',  # Recommended Budget2
                              'ga_setup2': '00Nd0000007fJ1y',  # Is GS Setup2
+                             'analytics_code2': '00Nd0000008MVDN',  # analytics_code2
                              # Code Type 3 Details
                              'ctype3': '00Nd0000005WYkX',  # Code Type3
                              'url3': '00Nd0000005WYjU',   # URL3
@@ -166,6 +168,7 @@ class SalesforceLeads(object):
                              'rbid3': '00Nd0000007fJ3f',  # Recommended Bid3
                              'rbudget3': '00Nd0000007fJ4O',  # Recommended Budget3
                              'ga_setup3': '00Nd0000007fJ23',  # Is GS Setup3
+                             'analytics_code3': '00Nd0000008MVDS',  # analytics_code3
                              # Code Type 4 Details
                              'ctype4': '00Nd0000005WYkm',  # Code Type4
                              'url4': '00Nd0000005WYjZ',   # URL4
@@ -174,6 +177,7 @@ class SalesforceLeads(object):
                              'rbid4': '00Nd0000007fJ44',  # Recommended Bid4
                              'rbudget4': '00Nd0000007fJ4Y',  # Recommended Budget4
                              'ga_setup4': '00Nd0000007fJ28',  # Is GS Setup4
+                             'analytics_code4': '00Nd0000008MVDX',  # analytics_code1
                              # Code Type 4 Details
                              'ctype5': '00Nd0000005WYl6',  # Code Type5
                              'url5': '00Nd0000005WYjo',   # URL5
@@ -182,6 +186,7 @@ class SalesforceLeads(object):
                              'rbid5': '00Nd0000007fJ49',  # Recommended Bid5
                              'rbudget5': '00Nd0000007fJ4d',  # Recommended Budget5
                              'ga_setup5': '00Nd0000007fJ2D',  # Is GS Setup5
+                             'analytics_code5': '00Nd0000008MVDc',  # analytics_code1
 
                              'tag_via_gtm': '00Nd0000007esIr',
                              }
@@ -199,6 +204,7 @@ class SalesforceLeads(object):
                                  'rbid1': '00Nd0000007fJ3V',  # Recommended Bid1
                                  'rbudget1': '00Nd0000007fJ4E',  # Recommended Budget1
                                  'ga_setup1': '00Nd0000007fIlH',  # Is GS Setup1
+                                 'analytics_code1': '00Nd0000008MVDI',  # analytics_code1
                                  # Code Type 2 Details
                                  'ctype2': '00Nd0000005WYkS',  # Code Type2
                                  'url2': '00Nd0000005WYi9',   # URL2
@@ -207,6 +213,7 @@ class SalesforceLeads(object):
                                  'rbid2': '00Nd0000007fJ3a',  # Recommended Bid2
                                  'rbudget2': '00Nd0000007fJ4J',  # Recommended Budget2
                                  'ga_setup2': '00Nd0000007fJ1y',  # Is GS Setup2
+                                 'analytics_code2': '00Nd0000008MVDN',  # analytics_code2
                                  # Code Type 3 Details
                                  'ctype3': '00Nd0000005WYkX',  # Code Type3
                                  'url3': '00Nd0000005WYjU',   # URL3
@@ -215,6 +222,7 @@ class SalesforceLeads(object):
                                  'rbid3': '00Nd0000007fJ3f',  # Recommended Bid3
                                  'rbudget3': '00Nd0000007fJ4O',  # Recommended Budget3
                                  'ga_setup3': '00Nd0000007fJ23',  # Is GS Setup3
+                                 'analytics_code3': '00Nd0000008MVDS',  # analytics_code3
                                  # Code Type 4 Details
                                  'ctype4': '00Nd0000005WYkm',  # Code Type4
                                  'url4': '00Nd0000005WYjZ',   # URL4
@@ -223,6 +231,7 @@ class SalesforceLeads(object):
                                  'rbid4': '00Nd0000007fJ44',  # Recommended Bid4
                                  'rbudget4': '00Nd0000007fJ4Y',  # Recommended Budget4
                                  'ga_setup4': '00Nd0000007fJ28',  # Is GS Setup4
+                                 'analytics_code4': '00Nd0000008MVDX',  # analytics_code4
                                  # Code Type 4 Details
                                  'ctype5': '00Nd0000005WYl6',  # Code Type5
                                  'url5': '00Nd0000005WYjo',   # URL5
@@ -231,6 +240,7 @@ class SalesforceLeads(object):
                                  'rbid5': '00Nd0000007fJ49',  # Recommended Bid5
                                  'rbudget5': '00Nd0000007fJ4d',  # Recommended Budget5
                                  'ga_setup5': '00Nd0000007fJ2D',  # Is GS Setup5
+                                 'analytics_code5': '00Nd0000008MVDc',  # analytics_code5
 
                                  'tag_via_gtm': '00Nd0000007esIr',
                                  }

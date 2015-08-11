@@ -312,15 +312,15 @@ function validatethis(frm) {
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
     $('.web-access').removeClass('error-box');
-    // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
+    var emailFormat = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i; 
     var ct = 0;
     var rc = 0;
     var fix_slots = new Array();
-
+    window.failedFields = new Array();
     window.is_error = false;
 
     if(window.is_reset == true){
@@ -328,173 +328,71 @@ function validatethis(frm) {
       return false;
     }
     
-    // Google Rep Name Validation
-    if (frm.gref.value == "0" || frm.gref.value == "") {
-      //alert("Please Select the Team");
-      $(frm.gref).addClass('error-box');
-      // $(frm.gref).after('<span class="error-txt">Please Enter Google Rep Name</span>')
-      frm.gref.focus();
-      window.is_error = true;
-      //return false;
-    }
-
-
-    // Google Rep Email Validation
-    if (frm.emailref.value == "0" || frm.emailref.value == "") {
-      //alert("Please Select the Team");
-      $(frm.emailref).addClass('error-box');
-      // $(frm.emailref).after('<span class="error-txt">Please Enter Google Rep Email</span>')
-      frm.emailref.focus();
-      window.is_error = true;
-    }
-
-    emailRef = document.getElementById('emailref');
-    validateEmailField(emailRef)
-
-    // Programs Validation
-    if (frm.team.value == "0" || frm.team.value == "") {
-      //alert("Please Select the Team");
-      $(frm.team).addClass('error-box');
-      // $(frm.team).after('<span class="error-txt">Please Select the Team</span>')
-      frm.team.focus();
-      window.is_error = true;
-    }
-
+    grefElem = document.getElementById('gref');
+    validateFiled(grefElem);
+    
+    emailrefElem = document.getElementById('emailref');
+    validateFiled(emailrefElem);
+    validateFormatField(emailrefElem, emailFormat);
+    
+    teamElem = document.getElementById('team');
+    validateFiled(teamElem);
     // Service Segment Validation
     if ($(frm.service_segment).is(":visible")) {
-      if(frm.service_segment.value == "0" || frm.service_segment.value == ""){
-        //alert("Please Select the Service Segment");
-        $(frm.service_segment).addClass('error-box');
-        // $(frm.service_segment).after('<span class="error-txt">Please Select the Service Segment</span>')
-        frm.service_segment.focus();
-        window.is_error = true;
-      }
+      service_segmentElem = document.getElementById('service_segment');
+      validateFiled(service_segmentElem);
     }
-
     // GcaseId validation
     if ($(frm.g_cases_id).is(":visible")) {
       gCasesIdElem = document.getElementById('g_cases_id');
-      if(gCasesIdElem.value == ''){
-       $(gCasesIdElem).addClass('error-box');
-        // $(frm.service_segment).after('<span class="error-txt">Please Select the Service Segment</span>')
-        frm.g_cases_id.focus();
-        window.is_error = true; 
-      }
+      validateFiled(gCasesIdElem);
     }
-
     // Google Manager details validation
-    if (document.getElementById("manager_name").value == "") {
-      //alert("Please Update Google Manager details");
-      elem = document.getElementById("manager_name");
-      $(elem).addClass('error-box');
-      // $(elem).after('<span class="error-txt">Please Update Google Manager details</span>')
-      $(elem).focus();
-      window.is_error = true;
-    }
+    teamElem = document.getElementById('team');
+    validateFiled(teamElem);
+    
+    managerElem = document.getElementById("manager_name");
+    validateFiled(managerElem);
 
-    if (document.getElementById("manager_email").value == "") {
-      //alert("Please Update Google Manager details");
-      elem = document.getElementById("manager_email");
-      $(elem).addClass('error-box');
-      //$(elem).after('<span class="error-txt">Please Update Google Manager details</span>')
-      $(elem).focus();
-      //document.getElementById("addPm").focus();
-      window.is_error = true;
-    }
-
-    managerEmail = document.getElementById('manager_email');
-    validateEmailField(managerEmail)
-
-    // Location/Country Validation
-    if (frm.country.value == "0" || frm.country.value == "") {
-      // alert("Please Select Your Country");
-      $(frm.country).addClass('error-box');
-      //$(frm.country).after('<span class="error-txt">Please Select Your Country</span>')
-      frm.country.focus();
-      window.is_error = true;
-    }
+    emailElem = document.getElementById("manager_email");
+    validateFiled(emailElem);
+    validateFormatField(emailElem, emailFormat)
 
     // Advertiser Info
     // Advertiser Name Validation
-    if (frm.advertiser_name.value == "") {
-      // alert("Please Enter First Name");
-      $(frm.advertiser_name).addClass('error-box');
-      //$(frm.advertiser_name).after('<span class="error-txt">Please Enter Advertiser Name</span>')
-      frm.advertiser_name.focus();
-      window.is_error = true;
-    }
+    advertiserNameElem = document.getElementById('advertiser_name');
+    validateFiled(advertiserNameElem);
 
-    // Advertiser Email Validation
-    if (frm.aemail.value == "") {
-      // alert("Please Enter Email Address");
-      $(frm.aemail).addClass('error-box');
-      //$(frm.aemail).after('<span class="error-txt">Please Enter Email Address</span>')
-      frm.aemail.focus();
-      window.is_error = true;
-    }
-
-    aemail = document.getElementById('aemail');
-    validateEmailField(aemail)
+    aemailElem = document.getElementById('aemail');
+    validateFiled(aemailElem);
+    // Email Validation
+    validateFormatField(aemailElem, emailFormat);
 
     // Advertiser Phone Validation
-    if (frm.phone.value == "") {
-      //alert("Please Enter Phone Number");
-      $(frm.phone).addClass('error-box');
-      //$(frm.phone).after('<span class="error-txt">Please Enter Phone Number</span>');
-      frm.phone.focus();
-      window.is_error = true;
-    }
+    phoneElem = document.getElementById('phone');
+    validateFiled(phoneElem);
     
     // Advertiser Company Validation
-    if (frm.company.value == "") {
-      //alert("Please Enter Company Name");
-      $(frm.company).addClass('error-box');
-      //$(frm.company).after('<span class="error-txt">Please Enter Company Name</span>')
-      frm.company.focus();
-      window.is_error = true;
-    }
+    companyElem = document.getElementById('company');
+    validateFiled(companyElem);
 
     // Customer Id validation
-    if (frm.cid.value == "") {
-      //alert("Please Enter Customer ID");
-      $(frm.cid).addClass('error-box');
-      //$(frm.cid).after('<span class="error-txt">Please Enter Customer ID</span>')
-      frm.cid.focus();
-      window.is_error = true;
-    }else if(!frm.cid.value.match(cidFormat)){
-      //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
-      $(frm.cid).addClass('error-box');
-      //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-      frm.cid.focus();
-      window.is_error = true;
-    }
+    cidElem = document.getElementById('cid');
+    validateFiled(cidElem);
+    validateFormatField(cidElem, cidFormat);
 
-    // // Advertiser Location validation
-    // if (frm.advertiser_location.value == "") {
-    //   //alert("Please Enter Customer ID");
-    //   $(frm.advertiser_location).addClass('error-box');
-    //   //$(frm.advertiser_location).after('<span class="error-txt">Please Enter Advertiser location</span>')
-    //   frm.advertiser_location.focus();
-    //   window.is_error = true;
-    // }
-    
+    // Advertiser Email Validation
+    countryElem = document.getElementById('country');
+    validateFiled(countryElem);
+
     // Language validation
-    if (frm.language.value == "") {
-      //alert("Please Enter Customer ID");
-      $(frm.language).addClass('error-box');
-      //$(frm.language).after('<span class="error-txt">Please Choose Language</span>')
-      frm.language.focus();
-      window.is_error = true;
-    }
+    languageElem = document.getElementById('language');
+    validateFiled(languageElem);
 
     // Timezone Validation
-    if (frm.tzone.value == 0 || frm.tzone.value == "") {
-      // alert("Please Select Advertiser Time Zone.");
-      $(frm.tzone).addClass('error-box');
-      //$(frm.tzone).after('<span class="error-txt">Please Select Advertiser Time Zone.</span>')
-      frm.tzone.focus();
-      window.is_error = true;
-    }
+    tzoneElem = document.getElementById('tzone');
+    validateFiled(tzoneElem);
+
     // Does the advertiser have edit access for the website or has a webmaster validation for selection
     if(document.getElementById("web_access").checked == false && document.getElementById("webmasterCheck").checked == false){
       $('.web-access').addClass('error-box');
@@ -505,328 +403,96 @@ function validatethis(frm) {
     if(document.getElementById("webmasterCheck").checked == true){
 
       // Contact Person Name
-      if (frm.webmaster_name.value == "") {
-        $(frm.webmaster_name).addClass('error-box');
-        //$(frm.fopt).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
-        frm.webmaster_name.focus();
-        window.is_error = true;
-      }
+      webMasterNameElem = document.getElementById('webmaster_name');
+      validateFiled(webMasterNameElem);
 
       // Contact Person Role
-      if (frm.web_master_email.value == "") {
-        // var elem = document.getElementById("00Nd0000005WayW");
-        $(frm.web_master_email).addClass('error-box');
-        //$(elem).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        $(frm.web_master_email).focus();
-        window.is_error = true;
-        }
+      webMasterEmailElem = document.getElementById('web_master_email');
+      validateFiled(webMasterEmailElem);
 
       // Contact Person Name
-      if (frm.popt.value == "") {
-        $(frm.popt).addClass('error-box');
-        //$(frm.popt).after('<span class="error-txt">Please Enter Phone Number.</span>')
-        frm.popt.focus();
-       window.is_error = true;
-      }
-
+      poptElem = document.getElementById('popt');
+      validateFiled(poptElem);
 
     }
-
 
     // Tag Implementation lead form related Validation
     // validate Tag Implementation fields
     if($("#tagImplementationBtn").is(":visible")){
-
-
       // Hava an appointment 
-    if (document.getElementById("appointmentCheck1").checked == true) {
 
-      // Contact Person Name Validation 
-      if (frm.tag_contact_person_name.value == "") {
-        // alert("Please Select Advertiser Time Zone.");
-        $(frm.tag_contact_person_name).addClass('error-box');
-        //$(frm.contact_person_name).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
-        frm.tag_contact_person_name.focus();
-        window.is_error = true;
+      for( i=1; i <= $(".task").length; i++){
+        if($("#task_" + i).is(":visible")){
+          validateTaskFields(i);
+        }
       }
 
-      // Contact Person Role Validation 
-      if (frm.tag_primary_role.value == "") {
-        // alert("Please Select Advertiser Time Zone.");
-        $(frm.tag_primary_role).addClass('error-box');
-        //$(frm.contact_person_role).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        frm.tag_primary_role.focus();
-        window.is_error = true;
+      if (document.getElementById("appointmentCheck1").checked == true) {
+
+        // Contact Person Name Validation 
+        contactElem = document.getElementById('tag_contact_person_name');
+        validateFiled(contactElem);
+
+        // Contact Person Role Validation 
+        roleElem = document.getElementById('tag_primary_role');
+        validateFiled(roleElem);
+
+        // Appointments Date and Time Validation
+        setupDateElem = document.getElementById('tag_datepick');
+        validateFiled(setupDateElem);
+
+        if(frm.tag_datepick.value != ''){
+            var slot = {
+              'type' : 'TAG',
+              'time' : frm.tag_datepick.value
+            }
+          fix_slots.push(slot)  
+        }
+
+      }else{
+          frm.tag_datepick.value = '';  
       }
 
-      // Appointments Date and Time Validation
-      if (frm.tag_datepick.value == "") {
-        //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
-        $(frm.tag_datepick).addClass('error-box');
-        //$(frm.tag_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Don’t have an appointment check box to continue.</span>')
-        // frm.tag_datepick.focus();
-        window.is_error = true;
-      }
-
-      if(frm.tag_datepick.value != ''){
-          var slot = {
-            'type' : 'TAG',
-            'time' : frm.tag_datepick.value
-          }
-        fix_slots.push(slot)  
-      }
-
-    }else{
-        frm.tag_datepick.value = '';  
-    }
-
-      if($("#task_1").is(":visible")){
-        ctypeElem = frm.ctype1;
-        if(!validateCtype(ctypeElem)){
-          window.is_error = true;
-        }
-
-        urlElem = frm.url1;
-        if(!validateUrl(urlElem)){
-          window.is_error = true;
-        }
-
-        // New fields for Dynamic Remarketing Code Types
-        var isCampaign = document.getElementById('is_campaign_created1')
-        if($(isCampaign).is(":visible") && isCampaign.checked == false){
-
-            // rBid validation
-            var rbidElem = document.getElementById('rbid1')
-            if(!validateCtype(rbidElem)){
-              window.is_error = true;
-            }
-
-            // rBudget validation
-            var rbudgetElem = document.getElementById('rbudget1')
-            if(!validateCtype(rbudgetElem)){
-              window.is_error = true;
-            }
-
-        }else{
-          $("#rbid1").val('');
-          $("#rbudget1").val('');
-        }
-        
-      }
-      
-      if($("#task_2").is(":visible")){
-        ctypeElem2 = frm.ctype2;
-        if(!validateCtype(ctypeElem2)){
-          window.is_error = true;
-        }
-
-        urlElem2 = frm.url2;
-        if(!validateUrl(urlElem2)){
-          window.is_error = true;
-        }
-
-        // New fields for Dynamic Remarketing Code Types
-        var isCampaign = document.getElementById('is_campaign_created2')
-        if($(isCampaign).is(":visible") && isCampaign.checked == false){
-
-            // rBid validation
-            var rbidElem = document.getElementById('rbid2')
-            if(!validateCtype(rbidElem)){
-              window.is_error = true;
-            }
-
-            // rBudget validation
-            var rbudgetElem = document.getElementById('rbudget2')
-            if(!validateCtype(rbudgetElem)){
-              window.is_error = true;
-            }
-
-        }else{
-          $("#rbid2").val('');
-          $("#rbudget2").val('');
-        }
-
-      }
-
-      if($("#task_3").is(":visible")){
-        ctypeElem3 = frm.ctype3;
-        if(!validateCtype(ctypeElem3)){
-          window.is_error = true;
-        }
-
-        urlElem3 = frm.url3;
-        if(!validateUrl(urlElem3)){
-          window.is_error = true;
-        }
-
-        // New fields for Dynamic Remarketing Code Types
-        var isCampaign = document.getElementById('is_campaign_created3')
-        if($(isCampaign).is(":visible") && isCampaign.checked == false){
-
-            // rBid validation
-            var rbidElem = document.getElementById('rbid3')
-            if(!validateCtype(rbidElem)){
-              window.is_error = true;
-            }
-
-            // rBudget validation
-            var rbudgetElem = document.getElementById('rbudget3')
-            if(!validateCtype(rbudgetElem)){
-              window.is_error = true;
-            }
-
-        }else{
-          $("#rbid3").val('');
-          $("#rbudget3").val('');
-        }
-
-      }
-
-      if($("#task_4").is(":visible")){
-        ctypeElem4 = frm.ctype4;
-        if(!validateCtype(ctypeElem4)){
-          window.is_error = true;
-        }
-
-        urlElem4 = frm.url4;
-        if(!validateUrl(urlElem4)){
-          window.is_error = true;
-        }
-
-        // New fields for Dynamic Remarketing Code Types
-        var isCampaign = document.getElementById('is_campaign_created4')
-        if($(isCampaign).is(":visible") && isCampaign.checked == false){
-
-            // rBid validation
-            var rbidElem = document.getElementById('rbid4')
-            if(!validateCtype(rbidElem)){
-              window.is_error = true;
-            }
-
-            // rBudget validation
-            var rbudgetElem = document.getElementById('rbudget4')
-            if(!validateCtype(rbudgetElem)){
-              window.is_error = true;
-            }
-
-        }else{
-          $("#rbid4").val('');
-          $("#rbudget4").val('');
-        }
-
-      }
-
-      if($("#task_5").is(":visible")){
-        ctypeElem5 = frm.ctype5;
-        if(!validateCtype(ctypeElem5)){
-          window.is_error = true;
-        }
-
-        urlElem5 = frm.url5;
-        if(!validateUrl(urlElem5)){
-          window.is_error = true;
-        }
-
-        // New fields for Dynamic Remarketing Code Types
-        var isCampaign = document.getElementById('is_campaign_created5')
-        if($(isCampaign).is(":visible") && isCampaign.checked == false){
-
-            // rBid validation
-            var rbidElem = document.getElementById('rbid5')
-            if(!validateCtype(rbidElem)){
-              window.is_error = true;
-            }
-
-            // rBudget validation
-            var rbudgetElem = document.getElementById('rbudget5')
-            if(!validateCtype(rbudgetElem)){
-              window.is_error = true;
-            }
-
-        }else{
-          $("#rbid5").val('');
-          $("#rbudget5").val('');
-        }
-
-      }
     }else{
       frm.tag_datepick.value = '';
     }
     
     // Check If Shopping related lead fields
     if ($('#shoppingSetupBtn').is(':visible')) {
+        
+      rbidElem = document.getElementById('rbid');
+      validateFiled(rbidElem);
+
+      rbidmodifierElem = document.getElementById('rbidmodifier');
+      validateFiled(rbidmodifierElem);
+
+      rbudgetElem = document.getElementById('rbudget');
+      validateFiled(rbudgetElem);
+
+      shoppingElem = document.getElementById('shopping_url');
+      validateFiled(shoppingElem);
       
-      if (frm.rbid.value == "") {
-        // alert("Please Enter Recommended Bid Value");
-        $(frm.rbid).addClass('error-box');
-        //$(frm.rbid).after('<span class="error-txt">Please Enter Recommended Bid Value</span>')
-        frm.rbid.focus();
-        window.is_error = true;
-      }
-      if (frm.rbidmodifier.value == "") {
-        // alert("Please Enter Recommended Mobile Bid Modifier Value");
-        $(frm.rbidmodifier).addClass('error-box');
-        //$(frm.rbidmodifier).after('<span class="error-txt">Please Enter Recommended Mobile Bid Modifier Value</span>')
-        frm.rbidmodifier.focus();
-        window.is_error = true;
-      }
-
-      if (frm.rbudget.value == "") {
-        // alert("Please Enter Recommended Budget Value");
-        $(frm.rbudget).addClass('error-box');
-        //$(frm.rbudget).after('<span class="error-txt">Please Enter Recommended Budget Value</span>')
-        frm.rbudget.focus();
-        window.is_error = true;
-      }
-
-      if (frm.shopping_url.value == "") {
-        // alert("Please Enter Recommended Budget Value");
-        $(frm.shopping_url).addClass('error-box');
-        //$(frm.rbudget).after('<span class="error-txt">Please Enter Recommended Budget Value</span>')
-        frm.shopping_url.focus();
-        window.is_error = true;
-      }
-
       // MC-ID Validation
       MCIDElem = document.getElementById('mcIdCheck');
       if(MCIDElem.checked == true){
           MCElem = document.getElementById('mc_id');
-          if(MCElem.value == ''){
-              $(MCElem).addClass('error-box');
-              $(MCElem).focus();
-              window.is_error = true;     
-          }
+          validateFiled(MCElem);
       }
 
     // Hava an appointment 
     if (document.getElementById("appointmentCheck2").checked == true) {
 
       // Contact Person Name Validation 
-      if (frm.shop_contact_person_name.value == "") {
-        // alert("Please Select Advertiser Time Zone.");
-        $(frm.shop_contact_person_name).addClass('error-box');
-        //$(frm.contact_person_name).after('<span class="error-txt">Please Enter Contact Person Name.</span>')
-        frm.shop_contact_person_name.focus();
-        window.is_error = true;
-      }
+      shopcontactElem = document.getElementById('shop_contact_person_name');
+      validateFiled(shopcontactElem);
 
       // Contact Person Role Validation 
-      if (frm.shop_primary_role.value == "") {
-        // alert("Please Select Advertiser Time Zone.");
-        $(frm.shop_primary_role).addClass('error-box');
-        //$(frm.contact_person_role).after('<span class="error-txt">Please Enter Contact Person Role.</span>')
-        frm.shop_primary_role.focus();
-        window.is_error = true;
-      }
+      shoproleElem = document.getElementById('shop_primary_role');
+      validateFiled(shoproleElem);
 
       // Appointments Date and Time Validation
-      if (frm.setup_datepick.value == "") {
-          //alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
-          $(frm.setup_datepick).addClass('error-box');
-          //$(frm.setup_datepick).after('<span class="error-txt">Date and Time is Mandatory for Appointments, else select Not Applicable check box to continue.</span>')
-          // frm.setup_datepick.focus();
-          window.is_error = true;
-        }
+      setupdateElem = document.getElementById('setup_datepick');
+      validateFiled(setupdateElem);
 
         // If Setup Date Slot Selected
         if(frm.setup_datepick.value != ''){
@@ -846,7 +512,6 @@ function validatethis(frm) {
       }else{
           $(".shopping-policy").addClass('error-box');
           $("#is_shopping_policies").val(0);
-          return false;
       }
 
       }else{
@@ -875,6 +540,8 @@ function validatethis(frm) {
       });
 
     if(window.is_error){
+      focusElem = failedFields[0];
+      $(focusElem).focus();
       return false;
     }else{
       var status = true;
@@ -895,57 +562,55 @@ function validatethis(frm) {
     
   }
 
-
-  function validateCtype(ctypeElem){
-    // Code Type Validation
-    if (ctypeElem.value == "" || ctypeElem.value == "") {
-      // alert("Please Select Code Type");
-      $(ctypeElem).addClass('error-box');
-      //$(ctypeElem).after('<span class="error-txt">Please Select Code Type</span>')
-      ctypeElem.focus();
-      return false;
-    }else{
-      return true;
-    }
+function validateFiled(elem){
+      // Validate Form Field
+      if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+        $(elem).addClass('error-box');
+        window.failedFields.push(elem);
+        window.is_error = true;
+        return false;
+      }
   }
 
-  function validateCode(codeElem){
-    // Code Type Validation
-    if (codeElem.value == "0" || codeElem.value == "") {
-      // alert("Please Select Code Type");
-      $(codeElem).addClass('error-box');
-      //$(codeElem).after('<span class="error-txt">Please Select Code </span>')
-      codeElem.focus();
-      return false;
-    }else{
-      return true;
-    }
-  }
-
-
-  function validateUrl(urlElem){
-    // Code Type Validation
-    if (urlElem.value == "0" || urlElem.value == "") {
-      // alert("Please Select Code Type");
-      $(urlElem).addClass('error-box');
-      //$(urlElem).after('<span class="error-txt">Please Select URL</span>')
-      urlElem.focus();
-      return false;
-    }else{
-      return true;
-    }
-  }
-    
-function validateEmailField(elem) {
-  //var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  var check = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+function validateFormatField(elem, check) {
   // Validate Email Field
   if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
-      $(elem).focus();
+      window.failedFields.push(elem);
       window.is_error = true;
       return false;
     }
+}
+
+function validateTaskFields(indx){
+  ctypeElem = document.getElementById('ctype' + indx);
+  validateFiled(ctypeElem)
+
+  urlElem = document.getElementById('url' + indx);
+  validateFiled(urlElem)
+
+  if($('#analyticscode1').is(":visible")){
+      var analyticsCodeElem = document.getElementById('analytics_code' + indx)
+      validateFiled(analyticsCodeElem)
+  }
+
+  // New fields for Dynamic Remarketing Code Types
+  var isCampaign = document.getElementById('is_campaign_created' + indx)
+  if($(isCampaign).is(":visible") && isCampaign.checked == false){
+
+      // rBid validation
+      var rbidElem = document.getElementById('rbid' + indx)
+      validateFiled(rbidElem)
+
+      // rBudget validation
+      var rbudgetElem = document.getElementById('rbudget' + indx)
+      validateFiled(rbudgetElem)
+
+  }else{
+    $("#rbid" + indx).val('');
+    $("#rbudget" + indx).val('');
+  }
+
 }
 
 function resetBtn(elem){
@@ -969,8 +634,6 @@ $("#keep_url").click(function(){
       var tagUrl = $("#url1").val();
       if(!tagUrl){
         $("#url1").addClass('error-box');
-        $("#url1").focus();
-        return false;
       }
       $("#url2, #url3, #url4, #url5").val(tagUrl);
     }else{
@@ -983,13 +646,16 @@ $("#webmaster_name").change(function(){
     $("#tag_contact_person_name, #shop_contact_person_name").val(webmasterName);
 });
 
-
 $('.code_type').change(function(){
 
   var selectedCodeType = $(this).val();
   selectedId = $(this).attr('id')
   selectedindex = selectedId[selectedId.length-1]
 
+  $('#ga_setup'+selectedindex).prop('checked', false)
+  $('#analyticscode'+selectedindex).val('');
+  $('#analyticscode'+selectedindex).hide();
+  
   $('#ctype_campaign'+selectedindex).hide();
   $('#gasetup'+selectedindex).hide();
 
@@ -1021,9 +687,15 @@ $("#tagCheck").click(function(){
 });
 
 $(".is_ga_setup").click(function(){
+    thisId = $(this).attr('id');
+    selectedindex = thisId[thisId.length-1]
+    $('#analyticscode'+selectedindex).hide();
     if($(this).is(":checked")){
+      $('#analyticscode'+selectedindex).show();
       $(this).val(1);
     }else{
+      $('#analyticscode'+selectedindex).hide();
+      $('#analytics_code'+selectedindex).val('');
       $(this).val(0);
     }
 });
