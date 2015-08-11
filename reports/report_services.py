@@ -1309,7 +1309,7 @@ class DownloadLeads(object):
             row['Google Account Manager'] = str(lead.google_rep_name.encode('utf-8'))
             row['Lead Status'] = lead.lead_status
             row['Location'] = lead.country
-            row['Code Type'] = str(lead.type_1.encode('utf-8'))
+            row['Task Type'] = str(lead.type_1.encode('utf-8'))
             row['Team'] = lead.team
             row['Dials'] = lead.dials
             row['Rescheduled Appointments'] = lead.rescheduled_appointment
@@ -1355,13 +1355,13 @@ class DownloadLeads(object):
         path = "/tmp/%s.csv" % (filename)
         if fields_type == 'REPORT':
             fields = ['Create Date', 'Google Account Manager', 'Lead Status', 'Location', 'Date of installation',
-                      'Code Type', 'Team', 'Lead ID', '1st Contacted on', 'Appointment Date', 'Rescheduled Appointments',
+                      'Task Type', 'Team', 'Lead ID', '1st Contacted on', 'Appointment Date', 'Rescheduled Appointments',
                       'Lead Sub-Status', 'Dials']
         else:
             fields = ['Create Date', 'Google Account Manager', 'E-commerce', 'Lead Owner', 'Company / Account', 'Lead Status',
                       'Location', 'Customer ID', 'First Name', 'Last Name', 'Phone', 'Email', 'First Name - optional',
                       'Last Name - optional', 'Phone - optional', 'Email - optional', 'Date of installation', 'Time Zone',
-                      'Regalix Comment', 'Google Comment', 'Code', 'URL', 'Code Type', 'Comment 1', 'Team', 'Lead ID',
+                      'Regalix Comment', 'Google Comment', 'Code', 'URL', 'Task Type', 'Comment 1', 'Team', 'Lead ID',
                       '1st Contacted on', 'Appointment Date', 'Rescheduled Appointments', 'Dead Lead (Date)',
                       'Regalix E-mails', 'Lead Sub-Status', 'Dials']
 
@@ -1402,7 +1402,7 @@ class DownloadLeads(object):
             row['Google Account Manager'] = str(lead.google_rep_name.encode('utf-8'))
             row['Lead Status'] = lead.lead_status
             row['Location'] = lead.country
-            row['Code Type'] = str(lead.type_1.encode('utf-8'))
+            row['Task Type'] = str(lead.type_1.encode('utf-8'))
             row['Team'] = lead.team
             row['Dials'] = lead.dials
             row['Rescheduled Appointments'] = lead.rescheduled_appointment

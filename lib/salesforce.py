@@ -46,7 +46,7 @@ class SalesforceApi(object):
             try:
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
                                        password='1q2w3e4r5t',
-                                       security_token='oJNwpDbgjDZTaaKefk9RCQuHe', sandbox=True)
+                                       security_token='HC27hZgXQEfWrElZDfPtl20U2', sandbox=True)
                 return sf
             except Exception, e:
                 print Exception, e

@@ -1,4 +1,4 @@
-    // lead form controls
+ // lead form controls
     $("#appointmentCheck1" ).click(function() {
       $( "#tag_appointment" ).animate({
       height: "toggle"
@@ -589,7 +589,7 @@ function validateTaskFields(indx){
   urlElem = document.getElementById('url' + indx);
   validateFiled(urlElem)
 
-  if($('#analyticscode1').is(":visible")){
+  if($('#analyticscode' + indx).is(":visible")){
       var analyticsCodeElem = document.getElementById('analytics_code' + indx)
       validateFiled(analyticsCodeElem)
   }

@@ -180,10 +180,13 @@ $('#SubmitFeedback').click(function(){
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
     if (feedbackTitle === '' ){
+      $("#preloaderOverlay").hide();
       $('#feedbackTitle').addClass('error-box');
     }else if(feedbackType === 'Feedback Type'){
+      $("#preloaderOverlay").hide();
       $('#feedbackType').addClass('error-box');
     }else if(comments === ''){
+      $("#preloaderOverlay").hide();
       $('#comments').addClass('error-box');
     }else{
       $('#closeFeedbcak').trigger('click');
@@ -198,6 +201,7 @@ $('#SubmitFeedback').click(function(){
             if(data === 'SUCCESS'){
               $('#preloaderOverlay').hide();
               alert('feedback succesfully created ')
+              $("#preloaderOverlay").hide();
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);
@@ -206,6 +210,7 @@ $('#SubmitFeedback').click(function(){
           },
           error: function(jqXHR, textStatus, errorThrown) {
               alert('failure');
+              $("#preloaderOverlay").hide();
           }
         }); 
     }
