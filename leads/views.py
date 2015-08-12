@@ -85,9 +85,11 @@ def lead_form(request):
                 rbid_key = 'rbid' + i
                 rbudget_key = 'rbudget' + i
                 ga_setup_key = 'ga_setup' + i
+                analytics_code_key = 'analytics_code' + i
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
                 tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
+                tag_data[tag_leads[analytics_code_key]] = request.POST.get(analytics_code_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
@@ -1098,6 +1100,7 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('comment' + str(indx))] = post_data.get('comment' + str(cindx))  # Comments1
 
         tag_data[tag_leads.get('ga_setup' + str(indx))] = post_data.get('ga_setup' + str(cindx))  # Comments1
+        tag_data[tag_leads.get('analytics_code' + str(indx))] = post_data.get('analytics_code' + str(cindx))  # Recommended Budget
 
         tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(cindx))  # Recommended Bid
         tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(cindx))  # Recommended Budget

@@ -10,25 +10,53 @@
       });
     });
   
-    $("#webmasterCheck" ).click(function() {
-      /* this line for uncheck other check box*/ 
-      $("#web_access").prop("checked", false);
-
-      $( "#webmaster" ).animate({
-      height: "toggle"
-      }, 300, function() {
-      });
-      $( "#web-dum1, #web-dum2" ).toggle(500);
+  $("#webmasterCheck" ).click(function() {
+    /* this line for uncheck other check box*/ 
+    $("#web_access").prop("checked", false);
+    $('#tag_contact_person_name').val('');
+    $('#webmaster_name').val('')
+    $("#webmasterCheck").val(1);
+    $( "#webmaster" ).animate({
+    height: "toggle"
+    }, 300, function() {
     });
+    $( "#web-dum1, #web-dum2" ).toggle(500);
+  });
 
-    /* this line for uncheck webmasterCheck box*/ 
-    $("#web_access").on('click', function() {
-      
-      $("#webmasterCheck").prop("checked", false);
-      $( "#webmaster").hide();
+  /* this line for uncheck webmasterCheck box*/ 
+  $("#web_access").on('click', function() {
+    $("#webmasterCheck").prop("checked", false);
+    $("#web_access").prop("checked", true);
+    $('#tag_contact_person_name').val('');
+    advertiserName = $('#advertiser_name').val();
+    $('#tag_contact_person_name').val(advertiserName);
+    $( "#webmaster").hide();
 
-    });
-    
+  });
+
+  $("#webmaster_name").focusout(function(){
+  if($("#webmasterCheck").is(":checked")){
+    $("#webmasterCheck").val(1);
+    var webmaster_name = $("#webmaster_name").val();
+    $("#tag_contact_person_name").val(webmaster_name);
+  }else{
+    $("#webmasterCheck").val(0);
+    $("#tag_contact_person_name").val('');
+  }
+});
+
+   $("#advertiser_name").focusout(function(){
+    if($("#web_access").is(":checked")){
+      $("#web_access").val(1);
+      var advertiser_name = $("#advertiser_name").val();
+      $("#tag_contact_person_name").val(advertiser_name);
+    }else{
+      $("#web_access").val(0);
+      $("#tag_contact_person_name").val('');
+  }
+});
+
+
 
     $("#is_campaign_created1").click(function(){
       if(document.getElementById('is_campaign_created1').checked == false){
@@ -795,3 +823,4 @@ function tagCheck(indx){
     }
 
 }
+
