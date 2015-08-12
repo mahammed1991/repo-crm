@@ -55,7 +55,7 @@ def lead_form(request):
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
-            oid = '00DZ000000MjF0W'
+            oid = '00DZ000000MjkJO'
         elif settings.SFDC == 'PRODUCTION':
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
@@ -160,7 +160,7 @@ def wpp_lead_form(request):
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
-            oid = '00DZ000000MjF0W'
+            oid = '00DZ000000MjkJO'
         elif settings.SFDC == 'PRODUCTION':
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
@@ -298,7 +298,7 @@ def submit_agency_same_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MjF0W'
+        oid = '00DZ000000MjkJO'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -384,7 +384,7 @@ def submit_agency_different_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MjF0W'
+        oid = '00DZ000000MjkJO'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -455,7 +455,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MjF0W'
+        oid = '00DZ000000MjkJO'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -554,7 +554,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        oid = '00DZ000000MjF0W'
+        oid = '00DZ000000MjkJO'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -797,7 +797,7 @@ def agent_bulk_upload(request):
             if settings.SFDC == 'STAGE':
                 sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
                 basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
-                oid = '00DZ000000MjF0W'
+                oid = '00DZ000000MjkJO'
             elif settings.SFDC == 'PRODUCTION':
                 sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
                 basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
@@ -977,7 +977,7 @@ def bundle_lead_to_salesforce(request):
     lead_bundle = "%s-%s/%s/%s/%s" % (ctypes, randint(0, 99999), request.user.email.split('@')[0], datetime.utcnow().day, datetime.utcnow().month)
     if settings.SFDC == 'STAGE':
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
-        oid = '00DZ000000MjF0W'
+        oid = '00DZ000000MjkJO'
     elif settings.SFDC == 'PRODUCTION':
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
         oid = '00Dd0000000fk18'
@@ -2127,7 +2127,7 @@ def get_basic_lead_data(request):
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
     if 'google.com' in request.user.email:
-        teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups']).filter(is_active=True)
+        teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)']).filter(is_active=True)
     else:
         teams = Team.objects.filter(is_active=True)
 

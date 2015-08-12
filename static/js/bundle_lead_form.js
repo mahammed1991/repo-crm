@@ -144,15 +144,15 @@ function validatethis(frm) {
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
-    
+    window.failedFields = new Array();
     var fix_slots = new Array();
 
     window.is_error = false;
-
     if(window.is_reset == true){
       window.is_reset = false;
       return false;
     }
+
     
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
@@ -232,7 +232,7 @@ function validatethis(frm) {
       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
       $(frm.cid).addClass('error-box');
       //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-      frm.cid.focus();
+      /*frm.cid.focus();*/
       window.is_error = true;
     }
 
@@ -504,8 +504,10 @@ function validatethis(frm) {
 
       // Check If Error in Form
       if(window.is_error){
-        return false;
-      }else{
+        focusElem = failedFields[0];
+        $(focusElem).focus();
+        return false;     
+         }else{
         var status = true;
         if (fix_slots.length) {
           status = check_and_create_appointment(fix_slots);
@@ -540,7 +542,7 @@ function validateField(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
       $(elem).addClass('error-box');
-      $(elem).focus();
+      window.failedFields.push(elem);
       window.is_error = true;
       return false;
     }
@@ -551,7 +553,7 @@ function validateEmailField(elem) {
   // Validate Email Field
   if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
-      $(elem).focus();
+      /*$(elem).focus();*/
       window.is_error = true;
       return false;
     }
