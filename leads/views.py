@@ -335,6 +335,8 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
             tag_data[tag_leads['ga_setup1']] = request.POST.get('gasetup_sameAgency')
+            if str(request.POST.get('gasetup_sameAgency')) == '1':
+                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code1')
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -424,6 +426,8 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
+            if str(request.POST.get('ga_setup' + indx)) == '1':
+                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -499,6 +503,8 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setupSamecustomer')
+            if str(request.POST.get('ga_setupSamecustomer')) == '1':
+                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code1')
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -601,6 +607,8 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
+            if str(request.POST.get('ga_setup' + indx)) == '1':
+                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -2202,7 +2210,6 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
         country = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('country'))
         team = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('team'))
         cid = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('cid'))
-
     if code_type and country and cid:
         appointment_in_ist = None
         appointment_in_pst = None
