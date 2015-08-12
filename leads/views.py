@@ -192,7 +192,7 @@ def wpp_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all()]
+    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
     wpp_loc = list()
     regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
     for tm in regalix_team:
