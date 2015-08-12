@@ -438,6 +438,7 @@ function setLocations(newLocations){
                     // Customer Email Validation
                     cemailElem = document.getElementById('aemail' + i);
                     validateFiled(cemailElem);
+                    validateEmailField(cemailElem)
 
                     // Customer Telephone Validation
                     cphoneElem = document.getElementById('phone' + i);
@@ -508,6 +509,7 @@ function setLocations(newLocations){
                         // Customer Email Validation
                         cemailElem = document.getElementById('aemail' + i);
                         validateFiled(cemailElem);
+                        validateEmailField(cemailElem)
 
                         // Customer Telephone Validation
                         cphoneElem = document.getElementById('phone' + i);
@@ -642,6 +644,7 @@ function setLocations(newLocations){
                       // Customer Email Validation
                       cemailElem = document.getElementById('aemail' + i);
                       validateFiled(cemailElem);
+                      validateEmailField(cemailElem)
 
                       // Customer Telephone Validation
                       cphoneElem = document.getElementById('phone' + i);
@@ -683,6 +686,7 @@ function setLocations(newLocations){
                         // Customer Email Validation
                         cemailElem = document.getElementById('aemail' + i);
                         validateFiled(cemailElem);
+                        validateEmailField(cemailElem)
 
                         // Customer Telephone Validation
                         cphoneElem = document.getElementById('phone' + i);
