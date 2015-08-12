@@ -653,7 +653,7 @@ $('.code_type').change(function(){
   selectedindex = selectedId[selectedId.length-1]
 
   $('#ga_setup'+selectedindex).prop('checked', false)
-  $('#analyticscode'+selectedindex).val('');
+  $('#analytics_code'+selectedindex).val('');
   $('#analyticscode'+selectedindex).hide();
   
   $('#ctype_campaign'+selectedindex).hide();

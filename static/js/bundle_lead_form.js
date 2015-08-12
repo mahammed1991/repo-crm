@@ -572,6 +572,7 @@ $(".ctype").change(function(){
     $("#ctype3 option").show();
     var selectedId = $(this).attr('id');
     var indx = selectedId[selectedId.length - 1];
+    $('#analytics_code'+indx).val('');
     $('#analyticscode'+indx).hide();
     var selectedId1 = $("#ctype1 option:selected").attr('id');
     if(selectedId1){
@@ -749,6 +750,7 @@ $('#region').change(function(){
     thisId = $(this).attr('id');
     selectedindex = thisId[thisId.length-1]
     $('#analyticscode'+selectedindex).hide();
+    $('#analytics_code'+selectedindex).val('');
     if($(this).is(":checked")){
       $('#analyticscode'+selectedindex).show();
       $(this).val(1);

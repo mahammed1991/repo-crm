@@ -364,7 +364,7 @@ Regalix Google Portal
           <div>{{notification.text}} </div>
         {% endfor %}
       </div>
-      <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal" style=" <i>!important; padding-right:2%; text-align:center;margin-top:4%;"><i>Report a bug</i></a>
+      <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal" style=" <i>!important; padding-right:2%; text-align:center;margin-top:4%;" onclick='hideOlark();'><i>Report a bug</i></a>
     </section>
 
 
@@ -496,7 +496,7 @@ Regalix Google Portal
           <div class="modal-dialog ping-snippet">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showOlark()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
                 <h4 class="modal-title" id="myModalLabel">Portal Feedback</h4>
               </div>
               <div class="modal-body" id="feedback-body">
@@ -609,6 +609,14 @@ $(document).ready(function() {
 
 function include(arr,obj) {
   return (arr.indexOf(obj) != -1);
+}
+
+function showOlark(){
+  olark('api.box.show');
+}
+
+function hideOlark(){
+  olark('api.box.hide');
 }
 
 $(window).on('resize',function() {
