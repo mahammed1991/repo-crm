@@ -478,7 +478,7 @@ $("#same_task_ctype").change(function(){
 });
 
 
-analytics_html = '<div class="col-md-4" id="analytics_code_row"><input class="form-control" id="analytics_code1" name="analytics_code1" placeholder="Analytics Code"></input></div>'
+analytics_html = '<div class="col-md-4" id="analytics_code_row"><input class="form-control" id="analytics_code1" name="analytics_code1" placeholder="Analytics account ID"></input></div>'
 
 $(document).on('change', '#gasetup_sameAgency', function() {
   if ($('#gasetup_sameAgency').is(':checked')){
@@ -725,7 +725,7 @@ function createAnalyticsTagFields(indx){
                 '</div>'+
               '</div>'+
               '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;">'+
-                '<input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics Code"></input>'+
+                '<input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics account ID"></input>'+
               '</div>'
 
         if(indx == 1){
@@ -1021,7 +1021,7 @@ function createCustomerAnalyticsTagFields(indx){
                   '</div>'+
                 '</div>'+
 
-                '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;"><input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics Code"></input></div>'+
+                '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;"><input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics account ID"></input></div>'+
 
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
