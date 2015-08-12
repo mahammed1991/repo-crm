@@ -50,16 +50,16 @@ class SalesforceLeads(object):
                                 'conversion_goal': '00Nd0000007fa8P',
                                 'wpp_lead_status': '00Nd0000007faZ6',
                                 'wpp_aemail': '00Nd0000007fk3S',
-                                'treatment_type': '00NZ0000001DkLo',
-                                'ab_testing': '00NZ0000001DkLy',
-                                'tracking_code': '00NZ0000001DkLe',
-                                'role_other': '00NZ0000001fIoo',
+                                'treatment_type': '00Nd0000008MFng',
+                                'ab_testing': '00Nd0000008MFnl',
+                                'tracking_code': '00Nd0000008MFnq',
+                                'role_other': '00Nd0000008MP6r',
 
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
 
                                 # Appointment PST time
-                                'appointment_in_pst': '00NZ0000001eXjN',
+                                'appointment_in_pst': '00Nd0000008M53B',
 
                                 # Lead Type
                                 'lead_type': '00Nd0000007fftD',
