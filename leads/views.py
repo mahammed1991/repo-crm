@@ -336,9 +336,9 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
-            tag_data[tag_leads['ga_setup1']] = request.POST.get('gasetup_sameAgency')
-            if str(request.POST.get('gasetup_sameAgency')) == '1':
-                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code1')
+            tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
+            if str(request.POST.get('ga_setup' + indx)) == '1':
+                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -504,9 +504,9 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[basic_leads['cid']] = request.POST.get('cid' + indx)
             tag_data[tag_leads['url1']] = request.POST.get('url' + indx)
             tag_data[tag_leads['comment1']] = request.POST.get('comment' + indx)
-            tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setupSamecustomer')
-            if str(request.POST.get('ga_setupSamecustomer')) == '1':
-                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code1')
+            tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
+            if str(request.POST.get('ga_setup' + indx)) == '1':
+                tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)

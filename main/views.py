@@ -933,7 +933,6 @@ def get_inbound_locations(request):
             loc_dict['url'] = settings.MEDIA_URL + '' + loc.flag_image.name if loc.flag_image.name else ""
             location.append(loc_dict)
 
-    location.append({'id': '0', "name": 'US', 'phone': '8669997725', 'url': '/static/images/US-flag.png'})
     if request.user.profile.location:
         user_loc = {'loc_name': request.user.profile.location.location_name,
                     'loc_id': request.user.profile.location.id,

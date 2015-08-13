@@ -175,14 +175,6 @@
                     <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
                 </div>
-                <div class="col-md-4" id="gasetupSameAgency" style="display:none;">
-                  <div class="checkbox">
-                  <label>
-                    <input id="gasetup_sameAgency" type="checkbox" name="gasetup_sameAgency" value="0" class="is_ga_setup">
-                    Is there an existing Analytics account? </label>
-                  </div>
-                </div>
-               
               </div>
           <!-- ################### Same Shop 1 ############################### -->
         </div>
@@ -222,13 +214,6 @@
                     {% endfor %}
                     <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
-                </div>
-                <div class="col-md-4" id="gasetupSameCustomer" style="display:none;">
-                  <div class="checkbox">
-                  <label>
-                    <input id="ga_setupSamecustomer" type="checkbox" name="ga_setupSamecustomer" value="0" class="is_ga_setup">
-                    Is there an existing Analytics account? </label>
-                  </div>
                 </div>
               </div>
         </div>
@@ -472,31 +457,15 @@ $("#same_task_ctype").change(function(){
     }else{
       if(selectedCtype.indexOf('Analytics') != -1){
         $('#gasetupSameAgency').show();
-      }
+        addMoreAnalyticsRows(1);
+      }else{
         addMoreRows(1)
       }
+      }
 });
 
 
-analytics_html = '<div class="col-md-4" id="analytics_code_row"><input class="form-control" id="analytics_code1" name="analytics_code1" placeholder="Analytics account ID"></input></div>'
-
-$(document).on('change', '#gasetup_sameAgency', function() {
-  if ($('#gasetup_sameAgency').is(':checked')){
-    $(analytics_html).insertAfter('#gasetupSameAgency');
-}else{
-    $('#analytics_code_row').remove();
-}
-});
-
-$(document).on('change', '#ga_setupSamecustomer', function() {
-  if ($('#ga_setupSamecustomer').is(':checked')){
-    $(analytics_html).insertAfter('#gasetupSameCustomer');
-}else{
-    $('#analytics_code_row').remove();
-}
-});
-
-$(document).on('change', '.is_ga_setup_agency_diff', function() {
+$(document).on('change', '.is_ga_setup_analytics_account', function() {
     thisId = $(this).attr('id');
     selectedindex = thisId[thisId.length-1]
     if($('#ga_setup'+selectedindex).is(":checked")){
@@ -510,20 +479,17 @@ $(document).on('change', '.is_ga_setup_agency_diff', function() {
     }
 });
 
-$(document).on('change', '.is_ga_setup_cust_diff', function() {
-    thisId = $(this).attr('id');
-    selectedindex = thisId[thisId.length-1]
-    if($('#ga_setup'+selectedindex).is(":checked")){
-      $('#analyticscode'+selectedindex).show();
-      $(this).val(1);
-    }
-    else{
-      $('#analyticscode'+selectedindex).hide();
-      $('#analytics_code'+selectedindex).val('');
-      $(this).val(0);
-    }
-});
 //if code type is null then hide fields
+
+function addMoreAnalyticsRows(indx){
+
+    createAgencySameTagAnalytics(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+
+}
+
 
 // addMoreRows Click functionality
 function addMoreRows(indx){
@@ -656,6 +622,37 @@ var next_indx = indx + 1;
   $("#same_task_agency").append(ele + tail);
 }
 
+function createAgencySameTagAnalytics(indx){
+var next_indx = indx + 1;
+  ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
+          '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '"  name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>' +
+          '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '"  name="url' + indx + '" placeholder="URL"></div>' +
+          '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+
+          '<div class="col-md-4" id="gasetup' + indx + '">'+
+                '<div class="checkbox">'+
+                  '<label>'+
+                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_analytics_account">'+
+                    'Is there an existing Analytics account? </label>'+
+                '</div>'+
+              '</div>'+
+              '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;">'+
+                '<input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics account ID"></input>'+
+              '</div>'
+
+  if(indx == 1){
+      tail = '<div class="col-md-1"><span  onclick="addMoreAnalyticsRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+  }else if(indx == 10){
+      tail = '<div class="col-md-1"><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+  }else{
+      tail = '<div class="col-md-1"><span  onclick="addMoreAnalyticsRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+  }
+  
+
+  $("#same_task_agency").append(ele + tail);
+}
+
 function createAgencySameShop(indx){
 var next_indx = indx + 1;
 
@@ -720,7 +717,7 @@ function createAnalyticsTagFields(indx){
         '<div class="col-md-4" id="gasetup' + indx + '">'+
                 '<div class="checkbox">'+
                   '<label>'+
-                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_agency_diff">'+
+                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_analytics_account">'+
                     'Is there an existing Analytics account? </label>'+
                 '</div>'+
               '</div>'+
@@ -813,10 +810,20 @@ $("#same_task_cust_type").change(function(){
     }else{
       if(selectedCtype.indexOf('Analytics') != -1){
         $('#gasetupSameCustomer').show();
-      }
+        addMoreCustomerRowsAnalyticsRows(1)
+      }else{
         addMoreCustomerRows(1);
+      }
     }
 });
+
+
+function addMoreCustomerRowsAnalyticsRows(indx){
+    createCustomerSameTagAnalyticsRow(indx);
+    prevIndx = parseInt(indx) - 1;
+    $(".add_tag_" + prevIndx).hide();
+    $(".delete_tag_" + prevIndx).hide();
+}
 
 
 // addMoreCustomerRows Click functionality
@@ -941,6 +948,56 @@ var next_indx = indx + 1;
 }
 
 
+function createCustomerSameTagAnalyticsRow(indx){
+var next_indx = indx + 1;
+  ele =  '<div  style="margin:auto;" class="row tag" id="same_cust_tag_' + indx + '" > '+
+              '<div class="row">'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
+                '</div>'+
+                '<div class="col-md-4">'+
+                  '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
+                '</div>'+
+                '<div class="col-md-3">'+
+                  '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
+                '</div>'+
+         '<div class="col-md-1"></div>'+
+        '</div>'+
+        '<div class="row">'+
+       ' <div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
+              '</div>'+
+              '<div class="col-md-4">'+
+                 '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
+             '</div>'+
+             '<div class="col-md-3">'+
+                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+              '</div>'+
+              '<div class="col-md-4" id="gasetup' + indx + '">'+
+                '<div class="checkbox">'+
+                  '<label>'+
+                    '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_analytics_account">'+
+                    'Is there an existing Analytics account? </label>'+
+                '</div>'+
+              '</div>'+
+              '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;">'+
+                '<input class="form-control bggrey" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics account ID"></input>'+
+              '</div>'
+
+    if(indx == 1){
+        tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRowsAnalyticsRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
+    }else if(indx == 10){
+          tail = '<div class="col-md-1"><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+    }else{
+        tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRowsAnalyticsRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
+        '</div>'
+    }
+    
+
+  $("#same_task_customer").append(ele + tail);
+}
+
 function createCustomerSameShop(indx){
 var next_indx = indx + 1;
 
@@ -1016,12 +1073,12 @@ function createCustomerAnalyticsTagFields(indx){
                 '<div class="col-md-5" id="gasetup' + indx + '"">'+
                   '<div class="checkbox">'+
                     '<label>'+
-                      '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_cust_diff">'+
+                      '<input id="ga_setup' + indx + '" type="checkbox" name="ga_setup' + indx + '" value="0" class="is_ga_setup_analytics_account">'+
                       'Is there an existing Analytics account? </label>'+
                   '</div>'+
                 '</div>'+
 
-                '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;"><input class="form-control" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics account ID"></input></div>'+
+                '<div class="col-md-4" id="analyticscode' + indx + '" style="display:none;"><input class="form-control bggrey" id="analytics_code' + indx + '" name="analytics_code' + indx + '" placeholder="Analytics account ID"></input></div>'+
 
                 '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
