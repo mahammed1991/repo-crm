@@ -46,8 +46,12 @@ function barChartDraw(barChart_datatable, title, divselect){
       var data = google.visualization.arrayToDataTable(barChart_datatable);
       var options = {
                       title: title,
-                      hAxis: {title: 'Lead status'},
-                      vAxis: {title: 'No. of Leads'}
+                      hAxis: {title: 'Lead status', 
+                              titleTextStyle: {bold: true, fontSize: 20},
+                            },
+                      vAxis: {title: 'No. of Leads',
+                            titleTextStyle: {bold: true, fontSize: 20},
+                          }
                     };
 
       var chart = new google.visualization.ColumnChart(document.getElementById(divselect));
