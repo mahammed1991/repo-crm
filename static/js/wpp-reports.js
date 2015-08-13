@@ -12,6 +12,20 @@ function showErrorMessage(message){
   alert(message);
 }
 
+
+ $(document).on('click', '.checkbox_select_all', function(e) {
+      is_checked = $(this).is(":checked");
+      id = $(this).closest('.checkbox').attr('id');
+      $("#"+id+" label input").each(function(){
+        if(is_checked){
+          $(this).prop('checked', 'checked');  
+        }else{
+          $(this).prop('checked', false);
+        }
+      });
+    });
+
+
 /*=========== Changes in report type ===============*/
 $("#filter_wpp_report_type").change(function() {
   //$("#download").prop('disabled', false);
@@ -21,7 +35,7 @@ $("#filter_wpp_report_type").change(function() {
 
   if(report_type == 'leadreport_individualRep'){
     $("#wpp_filter_team_members").hide();
-    $(".checkbox_select_all").trigger("click");
+    //$(".checkbox_select_all").trigger("click");
   }else if(report_type == 'leadreport_teamLead'){
      $("#wpp_filter_team_members").show();
      //$(".checkbox_select_all").trigger("click");
