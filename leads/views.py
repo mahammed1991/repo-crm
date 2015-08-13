@@ -2351,21 +2351,25 @@ def get_lead_form_for_rep(user):
     if user.groups.filter(name='AGENCY'):
         return 'Agency Form'
 
-    access_controls = LeadFormAccessControl.objects.all()
-    for control in access_controls:
-        teams = [t.team_name for t in control.programs.filter()]
-        locations = [l.location_name for l in control.target_location.filter()]
-        emails = [usr.email for usr in control.google_rep.filter()]
+    try:
+        user_lead_form = LeadFormAccessControl.objects.get(google_rep=user.email)
+        return user_lead_form.lead_form.name
+    except ObjectDoesNotExist:
+        access_controls = LeadFormAccessControl.objects.all()
+        for control in access_controls:
+            teams = [t.team_name for t in control.programs.filter()]
+            locations = [l.location_name for l in control.target_location.filter()]
+            emails = [usr.email for usr in control.google_rep.filter()]
 
-        if user.email in emails:
-            return control.lead_form.name
-        elif user.profile.team and user.profile.location:
-            if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
+            if user.email in emails:
                 return control.lead_form.name
-            elif user.email in emails:
-                return control.lead_form.name
-        else:
-            continue
+            elif user.profile.team and user.profile.location:
+                if user.profile.team.team_name in teams and user.profile.location.location_name in locations:
+                    return control.lead_form.name
+                elif user.email in emails:
+                    return control.lead_form.name
+            else:
+                continue
 
     return l_form
 
