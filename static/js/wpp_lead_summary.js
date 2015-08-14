@@ -247,6 +247,7 @@ $('#SubmitFeedback').click(function(){
           },
           error: function(jqXHR, textStatus, errorThrown) {
               alert('failure');
+              $('#preloaderOverlay').hide();
           }
         }); 
     }
