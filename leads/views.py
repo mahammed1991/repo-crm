@@ -2352,7 +2352,7 @@ def get_lead_form_for_rep(user):
         return 'Agency Form'
 
     try:
-        user_lead_form = LeadFormAccessControl.objects.get(google_rep=user.email)
+        user_lead_form = LeadFormAccessControl.objects.get(google_rep__email=user.email)
         return user_lead_form.lead_form.name
     except ObjectDoesNotExist:
         access_controls = LeadFormAccessControl.objects.all()
