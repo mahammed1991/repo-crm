@@ -186,13 +186,13 @@ Manage Help
             $('#preloaderOverlay').show();
             $("#feedback_action").val('AddComments');
         }else{
-            $('#preloaderOverlay').show();
             $("#feedback_action").val('Resolved');
         }
         
         $(".error-box").removeClass('error-box');
         if($('#feedback_comment').val() == ''){
             $('#feedback_comment').addClass('error-box')
+            $('#preloaderOverlay').show();
             return false
         }
     }
