@@ -59,165 +59,181 @@ def main_home(request):
 
     """
     user_profile = get_user_profile(request.user)
-    lead_status = settings.LEAD_STATUS
-    if request.user.groups.filter(name='SUPERUSER'):
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
-        # start_date = first_day_of_month(datetime.utcnow())
-        # end_date = datetime.utcnow()
-        lead_status_dict = {'total_leads': 0,
-                            'implemented': 0,
-                            'in_progress': 0,
-                            'attempting_contact': 0,
-                            'in_queue': 0,
-                            'in_active': 0,
-                            'in_progress': 0,
-                            }
-        lead_status_dict['total_leads'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
+    redirect_domain = request.session['redirect_domain']
 
-        total_rr_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(lead_status='Rework Required',
-                                                                              created_date__gte=start_date,
-                                                                              created_date__lte=end_date).count()
-
-        lead_status_dict['in_progress'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['attempting_contact'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
-        lead_status_dict['in_queue'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
-
-        rr_inactive_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status='Rework Required', lead_sub_status='RR - Inactive', created_date__gte=start_date, created_date__lte=end_date).count()
-
-        rr_implemented_leads = total_rr_leads - rr_inactive_leads
-
-        lead_status_dict['implemented'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], created_date__gte=start_date, created_date__lte=end_date).count() + rr_implemented_leads
-
-        lead_status_dict['in_active'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
-            lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count() + rr_inactive_leads
-
-        # Wpp Section data
-        wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
-
-    else:
-        # 1. Current User/Rep LEADS SUMMARY
-        # Get Lead status count by current user
-        lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
-        start_date = datetime(2014, 01, 01)
-        end_date = datetime.now()
-        wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
-    # Customer Testimonials
-    customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
-
-    # Q&A Forum
-    # Get Top 3 Q&A by most voted
-    questions_by_voted = Node.objects.filter(node_type='question').order_by('-score')[:3]
-    question_list = list()
-    for q in questions_by_voted:
-        question = dict()
-        question['votes'] = q.score
-        question['views'] = q.extra_count
-        answer_count = Node.objects.filter(node_type='answer', parent_id=q.id, abs_parent_id=q.id).count()
-        question['answer'] = answer_count
-        question['author_id'] = q.last_activity_by_id
-        user = User.objects.get(id=q.last_activity_by_id)
-        question['author_name'] = user.username
-        question['title'] = q.title
-        question['body'] = strip_tags(q.body)
-        question['last_activity_at'] = q.last_activity_at
-        question_list.append(question)
-
-    # Leads Current Quarter Summary
-    # Get Leads report for Current Quarter Summary
-    # by default should be current Quarter
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
-    report_summary = dict()
 
-    total_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date).count()
-    rr_implemented_leads = Leads.objects.exclude(type_1__in=['WPP', ''], lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
-                                                                                                                 created_date__lte=end_date,
-                                                                                                                 lead_status__in=['Rework Required']).count()
-    implemented_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date,
-                                                                             created_date__lte=end_date,
-                                                                             lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
-    report_summary.update({'total_leads': total_leads,
-                           'implemented_leads': implemented_leads + rr_implemented_leads,
-                           'total_win': ReportService.get_conversion_ratio(implemented_leads, total_leads)})
+    if redirect_domain == 'WPP':
+        lead_status = settings.LEAD_STATUS
+        if request.user.groups.filter(name='SUPERUSER'):
+            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+            # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+            # start_date = first_day_of_month(datetime.utcnow())
+            # end_date = datetime.utcnow()
+            lead_status_dict = {'total_leads': 0,
+                                'implemented': 0,
+                                'in_progress': 0,
+                                'attempting_contact': 0,
+                                'in_queue': 0,
+                                'in_active': 0,
+                                'in_progress': 0,
+                                }
+            lead_status_dict['total_leads'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status__in=lead_status, created_date__gte=start_date, created_date__lte=end_date).count()
 
-    total_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration',
-                                                        'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
-                                                                                                    created_date__lte=end_date).count()
+            total_rr_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(lead_status='Rework Required',
+                                                                                  created_date__gte=start_date,
+                                                                                  created_date__lte=end_date).count()
 
-    rr_implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration', 'Google Shopping Setup', '', 'WPP'],
-                                                     lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
-                                                                                             created_date__lte=end_date,
-                                                                                             lead_status__in=['Rework Required']).count()
+            lead_status_dict['in_progress'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status__in=settings.LEAD_STATUS_DICT['In Progress'], created_date__gte=start_date, created_date__lte=end_date).count()
+            lead_status_dict['attempting_contact'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status__in=settings.LEAD_STATUS_DICT['Attempting Contact'], created_date__gte=start_date, created_date__lte=end_date).count()
+            lead_status_dict['in_queue'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status__in=settings.LEAD_STATUS_DICT['In Queue'], created_date__gte=start_date, created_date__lte=end_date).count()
 
-    implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration',
-                                                              'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
-                                                                                                          created_date__lte=end_date,
-                                                                                                          lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
-    report_summary.update({'total_tag_leads': total_tag_leads,
-                           'implemented_tag_leads': implemented_tag_leads + rr_implemented_tag_leads,
-                           'tag_win': ReportService.get_conversion_ratio(implemented_tag_leads, total_tag_leads)})
+            rr_inactive_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status='Rework Required', lead_sub_status='RR - Inactive', created_date__gte=start_date, created_date__lte=end_date).count()
 
-    total_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date,
-                                                                                created_date__lte=end_date,
-                                                                                type_1='Google Shopping Setup').count()
-    implemented_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date,
-                                                                                      lead_status__in=settings.LEAD_STATUS_DICT['Implemented'],
-                                                                                      type_1='Google Shopping Setup').count()
+            rr_implemented_leads = total_rr_leads - rr_inactive_leads
 
-    rr_implemented_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', ''],
-                                                          lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
-                                                                                                  created_date__lte=end_date,
-                                                                                                  lead_status__in=['Rework Required'],
-                                                                                                  type_1='Google Shopping Setup').count()
-    report_summary.update({'total_shopping_leads': total_shopping_leads,
-                           'implemented_shopping_leads': implemented_shopping_leads + rr_implemented_shopping_leads,
-                           'shopping_win': ReportService.get_conversion_ratio(implemented_shopping_leads, total_shopping_leads)})
+            lead_status_dict['implemented'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status__in=settings.LEAD_STATUS_DICT['Implemented'], created_date__gte=start_date, created_date__lte=end_date).count() + rr_implemented_leads
 
-    # Top Lead Submitter by LAST QUARTER, LAST MONTH and LAST WEEK
-    current_date = datetime.utcnow()
-    top_performer = get_top_performer_list(current_date, 'NORMAL')
+            lead_status_dict['in_active'] = Leads.objects.exclude(type_1__in=['WPP', '']).filter(
+                lead_status__in=settings.LEAD_STATUS_DICT['In Active'], created_date__gte=start_date, created_date__lte=end_date).count() + rr_inactive_leads
 
-    wpp_top_performer = get_top_performer_list(current_date, 'WPP')
+        else:
+            # 1. Current User/Rep LEADS SUMMARY
+            # Get Lead status count by current user
+            lead_status_dict = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
+        # Customer Testimonials
+        # customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
 
-    # Get Feedback Details
-    # feedback summary
-    feedback_list = dict()
-    feedbacks, feedback_list = get_feedbacks(request.user, 'NORMAL')
-    # print feedbacks, feedback_list
+        # Q&A Forum
+        # Get Top 3 Q&A by most voted
+        # questions_by_voted = Node.objects.filter(node_type='question').order_by('-score')[:3]
+        # question_list = list()
+        # for q in questions_by_voted:
+        #     question = dict()
+        #     question['votes'] = q.score
+        #     question['views'] = q.extra_count
+        #     answer_count = Node.objects.filter(node_type='answer', parent_id=q.id, abs_parent_id=q.id).count()
+        #     question['answer'] = answer_count
+        #     question['author_id'] = q.last_activity_by_id
+        #     user = User.objects.get(id=q.last_activity_by_id)
+        #     question['author_name'] = user.username
+        #     question['title'] = q.title
+        #     question['body'] = strip_tags(q.body)
+        #     question['last_activity_at'] = q.last_activity_at
+        #     question_list.append(question)
 
-    wpp_feedback_list = dict()
-    wpp_feedbacks, wpp_feedback_list = get_feedbacks(request.user, 'WPP')
+        # Leads Current Quarter Summary
+        # Get Leads report for Current Quarter Summary
+        # by default should be current Quarter
+        report_summary = dict()
 
-    # Notification Section
-    notifications = Notification.objects.filter(is_visible=True)
+        total_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date).count()
+        rr_implemented_leads = Leads.objects.exclude(type_1__in=['WPP', ''], lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
+                                                                                                                     created_date__lte=end_date,
+                                                                                                                     lead_status__in=['Rework Required']).count()
+        implemented_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date,
+                                                                                 created_date__lte=end_date,
+                                                                                 lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
+        report_summary.update({'total_leads': total_leads,
+                               'implemented_leads': implemented_leads + rr_implemented_leads,
+                               'total_win': ReportService.get_conversion_ratio(implemented_leads, total_leads)})
 
-    wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['Implemented'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
-    wpp_report['TOTAL'] = (wpp_details['wpp_lead_status_analysis']['Implemented'] / wpp_details['wpp_lead_status_analysis']['TOTAL']) * 100 if wpp_details['wpp_lead_status_analysis']['TOTAL'] else 0
+        total_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration',
+                                                            'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
+                                                                                                        created_date__lte=end_date).count()
 
-    # print wpp_details['wpp_lead_status_analysis']
+        rr_implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration', 'Google Shopping Setup', '', 'WPP'],
+                                                         lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
+                                                                                                 created_date__lte=end_date,
+                                                                                                 lead_status__in=['Rework Required']).count()
 
-    key_dict = {'Open': 'open', 'On Hold': 'on_hold', 'In UI/UX Review': 'in_ui_ux_review', 'In File Transfer': 'in_file_transfer', 'In Mockup': 'in_mockup', 'TOTAL': 'total',
-                'Mockup Review': 'mockup_review', 'In Development': 'in_development', 'In Stage': 'in_statge', 'In A/B Test': 'in_ab_test', 'Implemented': 'implemented', 'Deferred': 'deferred'}
+        implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Migration',
+                                                                  'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
+                                                                                                              created_date__lte=end_date,
+                                                                                                              lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
+        report_summary.update({'total_tag_leads': total_tag_leads,
+                               'implemented_tag_leads': implemented_tag_leads + rr_implemented_tag_leads,
+                               'tag_win': ReportService.get_conversion_ratio(implemented_tag_leads, total_tag_leads)})
 
-    wpp_lead_dict = dict()
-    for key, value in key_dict.items():
-        wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
+        total_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date,
+                                                                                    created_date__lte=end_date,
+                                                                                    type_1='Google Shopping Setup').count()
+        implemented_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(created_date__gte=start_date, created_date__lte=end_date,
+                                                                                          lead_status__in=settings.LEAD_STATUS_DICT['Implemented'],
+                                                                                          type_1='Google Shopping Setup').count()
 
-    wpp_treatment_type_report = {key.replace(' ', ''): value for key, value in wpp_report.items()}
+        rr_implemented_shopping_leads = Leads.objects.exclude(type_1__in=['WPP', ''],
+                                                              lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
+                                                                                                      created_date__lte=end_date,
+                                                                                                      lead_status__in=['Rework Required'],
+                                                                                                      type_1='Google Shopping Setup').count()
+        report_summary.update({'total_shopping_leads': total_shopping_leads,
+                               'implemented_shopping_leads': implemented_shopping_leads + rr_implemented_shopping_leads,
+                               'shopping_win': ReportService.get_conversion_ratio(implemented_shopping_leads, total_shopping_leads)})
 
-    # feedback summary end here
-    return render(request, 'main/index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict, 'wpp_lead_dict': wpp_lead_dict,
-                                               'user_profile': user_profile, 'question_list': question_list, 'wpp_feedback_list': wpp_feedback_list,
-                                               'top_performer': top_performer, 'wpp_top_performer': wpp_top_performer, 'report_summary': report_summary, 'title': title,
-                                               'feedback_list': feedback_list, 'notifications': notifications, 'wpp_treatment_type_report': wpp_treatment_type_report, 'wpp_report': wpp_report})
+        # Top Lead Submitter by LAST QUARTER, LAST MONTH and LAST WEEK
+        current_date = datetime.utcnow()
+        top_performer = get_top_performer_list(current_date, 'NORMAL')
+
+        # Get Feedback Details
+        # feedback summary
+        feedback_list = dict()
+        feedbacks, feedback_list = get_feedbacks(request.user, 'NORMAL')
+        # print feedbacks, feedback_list
+
+        # Notification Section
+        notifications = Notification.objects.filter(is_visible=True)
+
+        customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
+
+        # feedback summary end here
+        return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
+                                                       'user_profile': user_profile,  # 'question_list': question_list,
+                                                       'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
+                                                       'feedback_list': feedback_list, 'notifications': notifications})
+
+    else:
+        if request.user.groups.filter(name='SUPERUSER'):
+            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+
+            wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
+        else:
+            start_date = datetime(2014, 01, 01)
+            end_date = datetime.now()
+            wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
+
+        current_date = datetime.utcnow()
+        wpp_top_performer = get_top_performer_list(current_date, 'WPP')
+
+        wpp_feedback_list = dict()
+        wpp_feedbacks, wpp_feedback_list = get_feedbacks(request.user, 'WPP')
+
+        wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['Implemented'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
+        wpp_report['TOTAL'] = (wpp_details['wpp_lead_status_analysis']['Implemented'] / wpp_details['wpp_lead_status_analysis']['TOTAL']) * 100 if wpp_details['wpp_lead_status_analysis']['TOTAL'] else 0
+
+        # print wpp_details['wpp_lead_status_analysis']
+
+        key_dict = {'Open': 'open', 'On Hold': 'on_hold', 'In UI/UX Review': 'in_ui_ux_review', 'In File Transfer': 'in_file_transfer', 'In Mockup': 'in_mockup', 'TOTAL': 'total',
+                    'Mockup Review': 'mockup_review', 'In Development': 'in_development', 'In Stage': 'in_statge', 'In A/B Test': 'in_ab_test', 'Implemented': 'implemented', 'Deferred': 'deferred'}
+
+        wpp_lead_dict = dict()
+        for key, value in key_dict.items():
+            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
+
+        wpp_treatment_type_report = {key.replace(' ', ''): value for key, value in wpp_report.items()}
+
+        return render(request, 'main/wpp_index.html', {'wpp_lead_dict': wpp_lead_dict, 'user_profile': user_profile,
+                                                       'wpp_feedback_list': wpp_feedback_list, 'wpp_report': wpp_report,
+                                                       'wpp_top_performer': wpp_top_performer, 'title': title,
+                                                       'wpp_treatment_type_report': wpp_treatment_type_report})
 
 
 def get_feedbacks(user, feedback_type):
