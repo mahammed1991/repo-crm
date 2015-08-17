@@ -24,7 +24,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com']
+ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com', 'wpp.regalixdev.com']
 
 ROOT_URLCONF = 'google_portal.urls'
 
@@ -108,6 +108,9 @@ LOGIN_URL = '/auth/login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/post_login/'
 LOGIN_ERROR_URL = '/auth/error'
 
+TAG_URL = 'http://gtrack.regalixdev.com'
+WPP_URL = 'http://wpp.regalixdev.com'
+
 # Social auth settings
 # APP settings
 # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '124672404110-8i8oatin6gg2r2b8611o0qgmvmiuvlme.apps.googleusercontent.com'
@@ -126,6 +129,7 @@ SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
 
 SOCIAL_AUTH_SESSION_EXPIRATION = False
+SESSION_COOKIE_DOMAIN = ".regalixdev.com"
 
 # list of domains allowed
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['regalix-inc.com', 'gmail.com']

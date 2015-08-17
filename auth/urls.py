@@ -8,4 +8,5 @@ urlpatterns = patterns(
     url(r'^logout$', views.user_logout),
     url(r'^error$', views.auth_error),
     url(r'^post_login/$', 'auth.views.post_login'),
+    url(r'^redirect_domain/$', 'auth.views.redirect_domain'),
 )

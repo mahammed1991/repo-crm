@@ -28,7 +28,7 @@ ADMINS = (('Raju K R', 'rajuk@regalix-inc.com'))
 
 EMAIL_SUBJECT_PREFIX = '[Production]'
 
-ALLOWED_HOSTS = ['gtrack.regalix.com']
+ALLOWED_HOSTS = ['gtrack.regalix.com', 'wpp.regalix.com']
 
 ROOT_URLCONF = 'google_portal.urls'
 
@@ -111,6 +111,9 @@ LOGIN_URL = '/auth/login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/post_login/'
 LOGIN_ERROR_URL = '/auth/error'
 
+TAG_URL = 'https://gtrack.regalix.com'
+WPP_URL = 'https://wpp.regalix.com'
+
 # Social auth settings
 # APP settings
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '728749236818-8112m0a95f3h7ijmvtcvtfc2os91nr0s.apps.googleusercontent.com'
@@ -126,6 +129,7 @@ SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
 
 SOCIAL_AUTH_SESSION_EXPIRATION = False
+SESSION_COOKIE_DOMAIN = ".regalix.com"
 
 # list of domains allowed
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['google.com', 'regalix-inc.com']

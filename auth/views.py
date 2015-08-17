@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from main.models import UserDetails
 from lib.forum_helpers import update_forum_user
+import json
 
 
 # User login view
@@ -72,3 +73,24 @@ def handle_page_not_found(request):
     print "404 Page"
     return render_to_response('auth/404.html', locals(), context_instance=RequestContext(request))
     # return render(request, 'auth/404.html')
+
+
+@login_required
+def redirect_domain(request):
+    """ Redirect or Swap the domain TAG to WPP and vicevarsa
+        for Tag: gtrack.regalix.com
+        for WPP: wpp.regalix.com
+    """
+    redirect_domain = ''
+    try:
+        grp = Group.objects.get(name='WPP')
+    except ObjectDoesNotExist:
+        grp = None
+    if request.session['redirect_domain'] == 'TAG':
+        request.user.groups.remove(grp.id) if grp else request.user.groups
+        redirect_domain = settings.TAG_URL
+    if request.session['redirect_domain'] == 'WPP':
+        request.user.groups.add(grp.id) if grp else request.user.groups
+        redirect_domain = settings.WPP_URL
+
+    return HttpResponse(json.dumps(redirect_domain))

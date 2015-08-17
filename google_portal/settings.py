@@ -261,6 +261,8 @@ SITE_SRC_ROOT = BASE_DIR
 TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [('django.template.loaders.cached.Loader', template_loaders)]
 
 APP_URL = 'http://localhost:5000'
+TAG_URL = APP_URL
+WPP_URL = APP_URL
 
 try:
     if len(FORUM_SCRIPT_ALIAS) > 0:

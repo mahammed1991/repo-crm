@@ -57,7 +57,7 @@ Regalix Google Portal
     <section class="home-banner">
       <div class="banner-content">
 
-      {% if "TAG-AND-WPP" in request.session.groups %}
+      <!-- {% if "TAG-AND-WPP" in request.session.groups %}
         <div class="banner-tabs">
               <div class="choicetabs">
                   <ul class="choicemenu">
@@ -68,7 +68,7 @@ Regalix Google Portal
                   <div class="clear"></div>
               </div>
         </div>
-      {% endif %}
+      {% endif %} -->
         <!-- <div id="tab1" style="display: block;"></div> -->
           <div class="wrap">
                 <ul class="bxslider">
@@ -548,7 +548,7 @@ $(document).ready(function() {
   reports = {{report_summary|safe}};
   wpp_treatment_type_report = {{wpp_treatment_type_report|safe}}
   console.log(reports);
-
+  
   $("#totalWin").text(parseInt(reports['total_win']) + "%");
   $("#tagWin").text(parseInt(reports['tag_win']) + "%");
   $("#shopWin").text(parseInt(reports['shopping_win']) + "%");
@@ -557,7 +557,6 @@ $(document).ready(function() {
   $("#FullDesktopMobileWin").text(parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']) + "%");
   $("#LandingPageWin").text(parseInt(wpp_treatment_type_report['LandingPageOptimization']) + "%");
   $("#Mobile-onlyWin").text(parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']) + "%");
-
 
   $("#owl-demo").owlCarousel({
     autoPlay : true,
@@ -587,23 +586,6 @@ $(document).ready(function() {
       adaptiveHeight:true
     });
   $(window).trigger('resize');
-
-  // Show and Hide for TAG and WPP related information
-  var userGroups = "{{request.session.groups|safe}}";
-  $('#tag_status, #tag_reports, #tag_feedback, #wpp_status, #wpp_reports, #wpp_feedback').hide();
-  if (!include(userGroups, 'WPP') && !include(userGroups, 'TAG-AND-WPP')){
-      $('#tag_status, #tag_reports, #tag_feedback').show();
-      $('#wpp_toppers').hide();
-  }
-  if (include(userGroups, 'TAG-AND-WPP')){
-      $('#tag_status, #tag_reports, #tag_feedback').show();
-  }
-  if (include(userGroups, 'WPP') || include(userGroups, 'TAG-AND-WPP')){
-      $('#wpp_status, #wpp_reports, #wpp_feedback').show();
-      if(!include(userGroups, 'TAG-AND-WPP')){
-        $('#tag_toppers').hide();
-      }
-  }
 
 });
 
@@ -765,37 +747,37 @@ $(window).on('resize',function() {
 
     }
 
- $('#tag_status').show();
-  $('#tag_reports').show();
-  $('#tag_feedback').show();
-  $('#wpp_status').hide();
-  $('#wpp_reports').hide();
-  $('#wpp_feedback').hide();
+ // $('#tag_status').show();
+ //  $('#tag_reports').show();
+ //  $('#tag_feedback').show();
+ //  $('#wpp_status').hide();
+ //  $('#wpp_reports').hide();
+ //  $('#wpp_feedback').hide();
 
 });
 
 
-$('#tag_tab').on('click', function(){
+// $('#tag_tab').on('click', function(){
   
-   $('#tag_tab').addClass('active');
-   $('#wpp_tab').removeClass('active');
-  $('#tag_status').show();
-  $('#tag_reports').show();
-  $('#tag_feedback').show();
-   $('#wpp_status').hide();
-  $('#wpp_reports').hide();
-  $('#wpp_feedback').hide();
-})
-$('#wpp_tab').on('click', function(){
-  $('#tag_tab').removeClass('active');
-   $('#wpp_tab').addClass('active');
-  $('#wpp_status').show();
-  $('#wpp_reports').show();
-  $('#wpp_feedback').show();
-  $('#tag_status').hide();
-  $('#tag_reports').hide();
-  $('#tag_feedback').hide();
-})
+//    $('#tag_tab').addClass('active');
+//    $('#wpp_tab').removeClass('active');
+//   $('#tag_status').show();
+//   $('#tag_reports').show();
+//   $('#tag_feedback').show();
+//    $('#wpp_status').hide();
+//   $('#wpp_reports').hide();
+//   $('#wpp_feedback').hide();
+// })
+// $('#wpp_tab').on('click', function(){
+//   $('#tag_tab').removeClass('active');
+//    $('#wpp_tab').addClass('active');
+//   $('#wpp_status').show();
+//   $('#wpp_reports').show();
+//   $('#wpp_feedback').show();
+//   $('#tag_status').hide();
+//   $('#tag_reports').hide();
+//   $('#tag_feedback').hide();
+// })
 
 
 </script>
@@ -875,6 +857,15 @@ function Handlechange()
     var textinput = document.getElementById("filename");
     textinput.value = fileinput.value;
 }
+
+  // Show and Hide for TAG and WPP related information
+  var userGroups = {{request.session.groups|safe}};
+  $('#tag_status, #tag_reports, #tag_feedback, #wpp_status, #wpp_reports, #wpp_feedback, #tag_toppers, #wpp_toppers').hide();
+  if (include(userGroups, 'WPP')){
+    $('#wpp_status, #wpp_reports, #wpp_feedback, #wpp_toppers').show();
+  }else{
+    $('#tag_status, #tag_reports, #tag_feedback, #tag_toppers').show();
+  }
 
 </script>
 {% endblock main_js %}
