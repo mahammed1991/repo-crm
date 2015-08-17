@@ -183,7 +183,6 @@ Manage Help
     function validate(elem){
         id = $(elem).attr("id");
         if(id == 'AddComments'){
-            $('#preloaderOverlay').show();
             $("#feedback_action").val('AddComments');
         }else{
             $("#feedback_action").val('Resolved');
@@ -192,9 +191,9 @@ Manage Help
         $(".error-box").removeClass('error-box');
         if($('#feedback_comment').val() == ''){
             $('#feedback_comment').addClass('error-box')
-            $('#preloaderOverlay').show();
             return false
         }
+        $('#preloaderOverlay').show();
     }
     function validateropen(frm){
         $(".error-box").removeClass('error-box');

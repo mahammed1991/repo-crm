@@ -29,6 +29,9 @@ function showErrorMessage(message){
 /*=========== Changes in report type ===============*/
 $("#filter_wpp_report_type").change(function() {
   //$("#download").prop('disabled', false);
+  $(".checkbox_select_all").trigger("click");
+  $(".checkbox_select_all").trigger("click");
+  $('#wpp_filter_timeline').val('')
   $("#wpp_filter_team_members").hide();
   showFilters();
   var report_type = $(this).val();
