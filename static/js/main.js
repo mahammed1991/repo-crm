@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	getCurrentDomain();
 	// table accordian
     $(".clickable" ).click(function() {
       $(this).find( ".row-expand, .row-collapse" ).toggle();
@@ -76,6 +76,24 @@ $(document).ready(function(){
 		}
 		
 	}
+
+	function getCurrentDomain(){
+      // Swap Domain name
+      $.ajax({
+              url: "/auth/current_domain",
+              dataType: "json",
+              type: 'GET',
+              data: {},
+              success: function(data) {
+                  if(data['change_url']){
+                    location.replace(data['url_scheme'] + '://' + data['current_domain']);
+                  }
+              },
+              error: function(errorThrown) {
+                  console.log('failure');
+              }
+            });
+  	}
 
 });
 

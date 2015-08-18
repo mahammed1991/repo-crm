@@ -94,3 +94,18 @@ def redirect_domain(request):
         redirect_domain = settings.WPP_URL
 
     return HttpResponse(json.dumps(redirect_domain))
+
+
+@login_required
+def current_domain(request):
+    """ Redirect or Swap the domain TAG to WPP and vicevarsa
+        for Tag: gtrack.regalix.com
+        for WPP: wpp.regalix.com
+    """
+    change_url = False
+    current_domain = request.get_host()
+    if request.session['redirect_domain'] == 'TAG':
+        if settings.TAG_URL in request.get_host():
+            current_domain = request.get_host().replace('wpp.', 'gtrack.')
+            change_url = True
+    return HttpResponse(json.dumps({'current_domain': current_domain, 'change_url': change_url, 'url_scheme': request.META['wsgi.url_scheme']}))
