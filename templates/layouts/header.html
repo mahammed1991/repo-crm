@@ -113,7 +113,7 @@
                 <li><a href="{% url 'main.views.upload_file_handling' %}" >Master Data Upload</a></li>
               {% endif %}
               {% if "TAG-AND-WPP" in request.session.groups %}
-                <li><a href="#" onclick="getCurrentDomain();" >{{request.session.redirect_domain}} Form </a></li>
+                <li><a href="#" onclick="getRedirectDomain();" >{{request.session.redirect_domain}} Form </a></li>
               {% endif %}
               <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
             </ul>
@@ -126,7 +126,7 @@
   </header>
   <script type="text/javascript">
     window.user_location = "{{request.session.profile.location.id}}";
-    function getCurrentDomain(){
+    function getRedirectDomain(){
       // Swap Domain name
       $.ajax({
               url: "/auth/redirect_domain",
@@ -136,8 +136,6 @@
               success: function(redirect_domain) {
                   if(redirect_domain){
                     window.location.assign(redirect_domain);
-                  }else{
-                    window.location.reload();
                   }
               },
               error: function(errorThrown) {
