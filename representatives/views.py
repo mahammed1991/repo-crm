@@ -576,7 +576,9 @@ def check_and_add_appointment(request):
             )
 
             for slot in alotted_slots:
-                if slot.booked_count < slot.availability_count:
+                if datetime.utcnow() >= utc_date:
+                    response['status'] = 'FAILED'
+                elif slot.booked_count < slot.availability_count:
                     slot.booked_count += 1
                     slot.save()
                     response['status'] = 'SUCCESS'
