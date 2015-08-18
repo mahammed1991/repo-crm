@@ -18,11 +18,11 @@ class SetProfilePicture(object):
                 request.session['groups'].append(str(group.name))
 
             if 'WPP' in request.session['groups']:
-                request.session['redirect_domain'] = 'WPP'
+                # request.session['redirect_domain'] = 'WPP'
                 if 'TAG-AND-WPP' in request.session['groups']:
                     request.session['redirect_domain'] = 'TAG'
             else:
-                request.session['redirect_domain'] = 'TAG'
+                # request.session['redirect_domain'] = 'TAG'
                 if 'TAG-AND-WPP' in request.session['groups']:
                     request.session['redirect_domain'] = 'WPP'
 

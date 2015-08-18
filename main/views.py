@@ -59,13 +59,13 @@ def main_home(request):
 
     """
     user_profile = get_user_profile(request.user)
-    redirect_domain = request.session['redirect_domain']
 
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
 
-    if redirect_domain == 'WPP':
+    if 'WPP' not in request.session['groups']:
+
         lead_status = settings.LEAD_STATUS
         if request.user.groups.filter(name='SUPERUSER'):
             start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
