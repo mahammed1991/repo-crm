@@ -1,5 +1,6 @@
 $(document).ready(function(){
-	getCurrentDomain();
+	// getCurrentDomain();
+
 	// table accordian
     $(".clickable" ).click(function() {
       $(this).find( ".row-expand, .row-collapse" ).toggle();
@@ -77,6 +78,13 @@ $(document).ready(function(){
 		
 	}
 
+    var redirectDomain = $("#redirect_domain").val();
+    if (redirectDomain == ''){
+      getCurrentDomain();
+    }else if ((redirectDomain == 'TAG' && window.location.href.indexOf('gtrack') != -1) || redirectDomain == 'WPP' && window.location.href.indexOf('wpp') != -1){
+      $("#getRedirectDomain").trigger('click');
+    }
+
 	function getCurrentDomain(){
       // Swap Domain name
       $.ajax({
@@ -85,8 +93,8 @@ $(document).ready(function(){
               type: 'GET',
               data: {},
               success: function(data) {
-                  if(data['change_url'] == 1){
-                    location.replace(data['url_scheme'] + '://' + data['current_domain']);
+                if(data['change_url']){
+                    window.location.assign(data['current_domain']);
                   }
               },
               error: function(errorThrown) {
