@@ -117,4 +117,6 @@ def current_domain(request):
             current_domain = request.get_host().replace('wpp.', 'gtrack.')
             change_url = 1
 
-    return HttpResponse(json.dumps({'current_domain': current_domain, 'change_url': change_url}))
+    return HttpResponse(json.dumps({'current_domain': current_domain,
+                                    'change_url': change_url,
+                                    'url_scheme': request.META['wsgi.url_scheme']}))

@@ -94,7 +94,8 @@ $(document).ready(function(){
               data: {},
               success: function(data) {
                 if(data['change_url']){
-                    window.location.assign(data['current_domain']);
+                    // window.location.assign(data['current_domain']);
+                    location.replace(data['url_scheme'] + '://' + data['current_domain']);
                   }
               },
               error: function(errorThrown) {
