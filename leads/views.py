@@ -2138,7 +2138,7 @@ def get_basic_lead_data(request):
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
     if 'google.com' in request.user.email:
-        teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)']).filter(is_active=True)
+        teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound']).filter(is_active=True)
     else:
         teams = Team.objects.filter(is_active=True)
 

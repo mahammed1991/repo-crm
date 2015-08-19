@@ -112,4 +112,17 @@ def current_domain(request):
         if 'wpp' in request.get_host():
             current_domain = request.get_host().replace('wpp.', 'gtrack.')
             change_url = 1
-    return HttpResponse(json.dumps({'session': request.session['redirect_domain'], 'current_domain': current_domain, 'change_url': change_url, 'url_scheme': request.META['wsgi.url_scheme'], }))
+
+    elif request.session['redirect_domain'] == '':
+        if 'gtrack' in request.get_host() and 'WPP' not in request.session['groups']:
+            change_url = 0
+        elif 'gtrack' in request.get_host() and 'WPP' in request.session['groups']:
+            current_domain = request.get_host().replace('gtrack.', 'wpp.')
+            change_url = 1
+        elif 'wpp' in request.get_host() and 'WPP' in request.session['groups']:
+            change_url = 0
+        elif 'wpp' in request.get_host() and 'WPP' not in request.session['groups']:
+            current_domain = request.get_host().replace('wpp.', 'gtrack.')
+            change_url = 1
+
+    return HttpResponse(json.dumps({'session': request.session['redirect_domain'], 'current_domain': current_domain, 'change_url': change_url, 'url_scheme': request.META['wsgi.url_scheme']}))
