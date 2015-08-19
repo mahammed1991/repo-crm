@@ -20,8 +20,11 @@ File Upload
       <div class="col-md-4">
         <select class="form-control bgicon" id="uploadTarget" name='uploadTarget'>
           <option value=""> Select Upload Target</option>
-          <option value="normal_master_list">Master Data Upload</option>
+          {% if "WPP" in request.session.groups %}
           <option value="wpp_master_list">WPP Master List</option>
+          {% else %}
+          <option value="normal_master_list">Master Data Upload</option>
+          {% endif %}
         </select>
       </div>
       <div class="col-md-4" id="file_div">
