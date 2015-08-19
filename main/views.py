@@ -940,7 +940,11 @@ def notify_faq(request, resfaq):
 @login_required
 def get_inbound_locations(request):
     """ Get all In-Bound Locations """
-    locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter()
+    if request.user.groups.filter(name='WPP'):
+        locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter(location_name__in=['United States', 'AU/NZ'])
+    else:
+        locations = Location.objects.exclude(flag_image__isnull=True).exclude(phone__isnull=True).filter()
+
     location = list()
     for loc in locations:
         loc_dict = dict()
