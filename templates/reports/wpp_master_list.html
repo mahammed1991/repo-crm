@@ -1,0 +1,51 @@
+{% extends 'layouts/main_except_olark.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+File Upload
+{% endblock title %}
+
+{% block content %}
+<!-- content-region -->
+  <section class="content-region">
+    <div class="container-fluid">
+        <h1>WPP Master List Summary</h1>
+        <div class="table-container pagination1">
+          <table class="table status-table tablesorter" id='Leads'>
+            <thead>
+                <tr class="table_bg">
+                    <th>CID</th>
+                    <th>Provisional Assignee</th>
+                    <th>URL</th>
+                    <th>Server</th>
+                    <th>Framework</th>
+                    <th>cms</th>
+                    <th>Ecommerce</th>
+                    <th>Priority</th>
+                    <th>TreatmentType</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in wpp_master_list %}
+            <tr>
+                <td>{{row.customer_id}}</td>
+                <td>{{row.provisional_assignee}}</td>
+                <td>{{row.url}}</td>
+                <td>{{row.server}}</td>
+                <td>{{row.framework}}</td>
+                <td>{{row.cms}}</td>
+                <td>{{row.ecommerce}}</td>
+                <td>{{row.priority}}</td>
+                <td>{{row.treatment_type}}</td>
+                <td>{{row.notes}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+    </div>
+</section>
+ 
+{% endblock %}
