@@ -85,8 +85,7 @@ $(document).ready(function(){
               type: 'GET',
               data: {},
               success: function(data) {
-                  alert(data['url_scheme'] + '://' + data['current_domain'] + data['session'] + data['change_url']);
-                  if(data['change_url']){
+                  if(data['change_url'] == 1){
                     location.replace(data['url_scheme'] + '://' + data['current_domain']);
                   }
               },

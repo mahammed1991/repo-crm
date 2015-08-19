@@ -17,14 +17,13 @@ class SetProfilePicture(object):
             for group in request.user.groups.all():
                 request.session['groups'].append(str(group.name))
 
-            if 'WPP' in request.session['groups']:
-                # request.session['redirect_domain'] = 'WPP'
-                if 'TAG-AND-WPP' in request.session['groups']:
+            if 'TAG-AND-WPP' in request.session['groups']:
+                if 'WPP' in request.session['groups']:
                     request.session['redirect_domain'] = 'TAG'
-            else:
-                # request.session['redirect_domain'] = 'TAG'
-                if 'TAG-AND-WPP' in request.session['groups']:
+                else:
                     request.session['redirect_domain'] = 'WPP'
+            else:
+                request.session['redirect_domain'] = ''
 
             if 'profile_image' not in request.session:
                 try:
