@@ -492,6 +492,7 @@ def get_started(request):
 
 @login_required
 @manager_info_required
+@tag_user_required
 def team(request):
     contacts_list, cnt = get_contacts(request)
     return render(request, 'main/team.html', {'contacts_list': contacts_list, 'cnt': cnt})
@@ -889,6 +890,7 @@ def get_profile_avatar_by_email(email):
 
 
 @login_required
+@tag_user_required
 def resources(request):
     if request.is_ajax():
         resfaq = ResourceFAQ()
