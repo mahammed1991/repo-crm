@@ -129,4 +129,13 @@ Manage Help
 {% endblock content %}
 {% block main_js %}
   <script src="{% static 'js/feedback.js' %}"></script>
+  <script type="text/javascript">
+ $(document).ready(function(){
+  var type = "{{type}}";
+  if (type=="WPP"){
+    olark('api.box.hide');
+  }
+ });
+  
+  </script>
 {% endblock main_js %}
