@@ -112,8 +112,11 @@
               {% if "SUPERUSER" in  request.session.groups %}
                 <li><a href="{% url 'main.views.upload_file_handling' %}" >Master Data Upload</a></li>
               {% endif %}
+              <input type="hidden" value="{{request.session.redirect_domain}}" id="redirect_domain">
               {% if "TAG-AND-WPP" in request.session.groups %}
-                <li><a href="#" onclick="getRedirectDomain();" >{{request.session.redirect_domain}} Form </a></li>
+                <li><a href="#" id="getRedirectDomain" onclick="getRedirectDomain();">{{request.session.redirect_domain}} Portal </a></li>
+              {% else %}
+                <a href="#" id="getRedirectDomain" onclick="getRedirectDomain();" style="display:none;">{{request.session.redirect_domain}} Portal </a>
               {% endif %}
               <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
             </ul>
