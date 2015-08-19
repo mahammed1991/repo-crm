@@ -594,9 +594,6 @@ def create_feedback(request, lead_id=None):
         return redirect('main.views.list_feedback')
 
     # Feedback Form
-    locations = Location.objects.all()
-    programs = Team.objects.filter(is_active=True)
-    languages = Language.objects.all()
     feedback_type = request.GET.get('type')
     lead = None
     if lead_id:
@@ -608,9 +605,20 @@ def create_feedback(request, lead_id=None):
                 feedback_type = 'NORMAL'
         except Leads.ObjectDoesNotExist:
             lead = None
-    return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
-                                                                     'programs': programs, 'lead': lead, 'languages': languages,
-                                                                     'feedback_type': feedback_type})
+    if feedback_type == 'WPP':
+        programs = Team.objects.filter(team_name__in=['MMS One', 'MMS Two', 'SMB Upsell'])
+        locations = Location.objects.filter(location_name__in=['United States', 'AU/NZ'])
+        languages = Language.objects.filter(language_name='English')
+        return render(request, 'main/feedback_mail/wpp_feedback_form.html', {'locations': locations,
+                                                                             'programs': programs, 'lead': lead, 'languages': languages,
+                                                                             'feedback_type': feedback_type})
+    else:
+        programs = Team.objects.filter(is_active=True)
+        locations = Location.objects.all()
+        languages = Language.objects.all()
+        return render(request, 'main/feedback_mail/feedback_form.html', {'locations': locations,
+                                                                         'programs': programs, 'lead': lead, 'languages': languages,
+                                                                         'feedback_type': feedback_type})
 
 
 def notify_feedback_activity(request, feedback, comment=None, is_resolved=False):
