@@ -192,6 +192,7 @@ def wpp_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
+    lead_args['teams'] = Team.objects.exclude(belongs_to='TAG').filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
     wpp_loc = list()
     regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
@@ -2140,7 +2141,7 @@ def get_basic_lead_data(request):
     if 'google.com' in request.user.email:
         teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound']).filter(is_active=True)
     else:
-        teams = Team.objects.filter(is_active=True)
+        teams = Team.objects.exclude(belongs_to='WPP').filter(is_active=True)
 
     code_types = CodeType.objects.filter(is_active=True)
     programs = ReportService.get_all_teams()

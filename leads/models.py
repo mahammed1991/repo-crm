@@ -370,6 +370,11 @@ class Team(models.Model):
     """ Team/Program information """
     team_name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
+    belongs_to = models.CharField(max_length=10, blank=False, choices=(
+        ('TAG', 'TAG'),
+        ('WPP', 'WPP'),
+        ('BOTH', 'BOTH')), default='TAG'
+    )
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

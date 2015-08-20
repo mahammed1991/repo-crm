@@ -53,8 +53,10 @@
       <div class="col-md-6">
         <label for="team">Program name</label>
         <select class="form-control bgicon" id="team" title="Program Name" name="team">
-            <option value='MMS One'>MMS One</option>
-            <option value='MMS Two'>MMS Two</option>
+          <option value="">Select Program</option>
+          {% for program in teams %}
+            <option value="{{program.team_name}}">{{program.team_name}}</option>
+          {% endfor %}
         </select>
       </div>
     </div>
