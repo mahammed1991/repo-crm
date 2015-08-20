@@ -15,7 +15,7 @@ from django.template.loader import get_template
 from django.template import Context
 from django.core.urlresolvers import reverse
 from forum.models import *
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from django.conf import settings
 
@@ -606,7 +606,7 @@ def create_feedback(request, lead_id=None):
         except Leads.ObjectDoesNotExist:
             lead = None
     if feedback_type == 'WPP':
-        programs = Team.objects.filter(team_name__in=['MMS One', 'MMS Two', 'SMB Upsell'])
+        programs = Team.objects.exclude(belongs_to='TAG').filter()
         locations = Location.objects.filter(location_name__in=['United States', 'AU/NZ'])
         languages = Language.objects.filter(language_name='English')
         return render(request, 'main/feedback_mail/wpp_feedback_form.html', {'locations': locations,
@@ -1172,23 +1172,26 @@ def migrate_user_data(request):
     new_locations = list()
     new_region = list()
     failed_rows = list()
+    tag_wpp = Group.objects.get(name='TAG-AND-WPP')
     for r_i in range(1, sheet.nrows):
 
         rep_email = sheet.cell(r_i, get_col_index(sheet, 'username')).value
         google_rep_email = rep_email + '@google.com'
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'program')).value
-        google_manager_email = str(google_manager) + '@google.com'
+        google_manager_email = str(google_manager) + '@google.com' if google_manager else ''
         region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
         if valid_string(program) and valid_string(country):
             try:
                 user = User.objects.get(email=google_rep_email)
+                tag_wpp.user_set.add(user)
             except ObjectDoesNotExist:
                 user = User()
                 user.email = google_rep_email
                 user.username = rep_email
                 user.save()
+                tag_wpp.user_set.add(user)
             try:
                 user_details = UserDetails.objects.get(user_id=user.id)
             except ObjectDoesNotExist:
