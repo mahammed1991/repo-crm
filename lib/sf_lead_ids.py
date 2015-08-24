@@ -54,6 +54,8 @@ class SalesforceLeads(object):
                                 'ab_testing': '00Nd0000008MFnl',
                                 'tracking_code': '00Nd0000008MFnq',
                                 'role_other': '00Nd0000008MP6r',
+                                'additional_notes': '00Nd0000007eiKf',
+                                'advertiser_role': '00Nd0000008MVDh',
 
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
@@ -122,6 +124,8 @@ class SalesforceLeads(object):
                                    'ab_testing': '00Nd0000008MFnl',
                                    'tracking_code': '00Nd0000008MFnq',
                                    'role_other': '00Nd0000008MP6r',
+                                   'additional_notes': '00Nd0000007eiKf',
+                                   'advertiser_role': '00Nd0000008MVDh',
 
                                    # Appointment IST time
                                    'appointment_in_ist': '00Nd0000007fnbe',

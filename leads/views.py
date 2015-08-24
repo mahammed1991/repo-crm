@@ -180,7 +180,6 @@ def wpp_lead_form(request):
         basic_data['Campaign_ID'] = None
         ret_url = basic_data['retURL']
         wpp_data = basic_data
-
         for key, value in tag_leads.items():
             wpp_data[value] = request.POST.get(key)
 
@@ -197,15 +196,15 @@ def wpp_lead_form(request):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
-    # wpp_loc = list()
-    # regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
-    # for tm in regalix_team:
-    #     for loc in tm.location.all():
-    #         wpp_loc.append(loc)
-    # lead_args.update({'wpp_loc': wpp_loc})
+    wpp_loc = list()
+    regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
+    for tm in regalix_team:
+        for loc in tm.location.all():
+            wpp_loc.append(loc)
+    lead_args.update({'wpp_loc': wpp_loc})
     return render(
         request,
         'leads/wpp_lead_form.html',
@@ -1706,7 +1705,6 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         'skumar@regalix-inc.com',
         'sprasad@regalix-inc.com',
         'abraham@regalix-inc.com',
-        'svijaykumar@regalix-inc.com',
 
     ])
 
@@ -2322,7 +2320,9 @@ def get_advertiser_details(sf_api_url, lead_data):
         agency_details['last_name'] = last_name
 
     if agency_details['code_type'] == 'WPP':
+        agency_details['additional_notes'] = lead_data.get(tag_leads.get('additional_notes'))
         agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
+        agency_details['role'] = lead_data.get(tag_leads.get('advertiser_role'))
         if agency_details['role'] == 'Other':
             agency_details['role_other'] = lead_data.get(basic_leads.get('role_other'))
 

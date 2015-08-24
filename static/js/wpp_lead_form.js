@@ -64,7 +64,7 @@ function validatethis(frm) {
     phoneElem = document.getElementById('phone');
     validateFiled(phoneElem);
 
-    roleElem = document.getElementById('tag_primary_role');
+    roleElem = document.getElementById('advertiser_role');
     validateFiled(roleElem);
 
     roleOther = document.getElementById('role_other');
