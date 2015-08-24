@@ -1,4 +1,4 @@
-{% extends 'layouts/main_except_olark.html' %}
+{% extends 'layouts/main.html' %}
 
 {% load staticfiles %}
 {% load rep_filters %}
@@ -365,6 +365,7 @@
 {% block main_js %}
 <script type="text/javascript">
     $(document).ready(function(){
+        olark('api.box.hide');
         $('.time_slot_avi').click(function(){
             var selected_date = $(this).attr('data-date');
             var selected_timezone = $(this).attr('data-timezone');
