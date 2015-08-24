@@ -2320,9 +2320,9 @@ def get_advertiser_details(sf_api_url, lead_data):
         agency_details['last_name'] = last_name
 
     if agency_details['code_type'] == 'WPP':
-        agency_details['additional_notes'] = lead_data.get(tag_leads.get('additional_notes'))
+        agency_details['additional_notes'] = lead_data.get(basic_leads.get('additional_notes'))
         agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
-        agency_details['role'] = lead_data.get(tag_leads.get('advertiser_role'))
+        agency_details['role'] = lead_data.get(basic_leads.get('advertiser_role'))
         if agency_details['role'] == 'Other':
             agency_details['role_other'] = lead_data.get(basic_leads.get('role_other'))
 
@@ -2334,7 +2334,7 @@ def get_advertiser_details(sf_api_url, lead_data):
     agency_details['ab_testing'] = lead_data.get(basic_leads.get('ab_testing'))
     agency_details['conversion_goal'] = lead_data.get(basic_leads.get('conversion_goal'))
     agency_details['timezone'] = lead_data.get(basic_leads.get('tzone'))
-    agency_details['comment'] = lead_data.get(tag_leads.get('comment1'))
+    # agency_details['comment'] = lead_data.get(tag_leads.get('comment1'))
 
     return agency_details
 
