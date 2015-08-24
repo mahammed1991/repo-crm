@@ -194,12 +194,18 @@ def wpp_lead_form(request):
     lead_args = get_basic_lead_data(request)
     lead_args['teams'] = Team.objects.exclude(belongs_to='TAG').filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
-    wpp_loc = list()
-    regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
-    for tm in regalix_team:
-        for loc in tm.location.all():
-            wpp_loc.append(loc)
-    lead_args.update({'wpp_loc': wpp_loc})
+
+    wpp_locations = list()
+    for loc in lead_args['locations']:
+        if loc['name'] in ['AU/NZ', 'United States']:
+            wpp_locations.append(loc)
+    lead_args.update({'wpp_locations': wpp_locations})
+    # wpp_loc = list()
+    # regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
+    # for tm in regalix_team:
+    #     for loc in tm.location.all():
+    #         wpp_loc.append(loc)
+    # lead_args.update({'wpp_loc': wpp_loc})
     return render(
         request,
         'leads/wpp_lead_form.html',

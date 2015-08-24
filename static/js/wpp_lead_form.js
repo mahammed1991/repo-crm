@@ -18,8 +18,6 @@ function validatethis(frm) {
       return false;
     }
 
-
-
     t_typeElem = document.getElementById('treatment_type')
     validateFiled(t_typeElem)
     
@@ -41,6 +39,9 @@ function validatethis(frm) {
 
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
+
+    countryElem = document.getElementById('country');
+    validateFiled(countryElem);
 
     cgoalElem = document.getElementById('conversion_goal');
     validateFiled(cgoalElem);
