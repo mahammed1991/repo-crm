@@ -34,12 +34,7 @@ def olark_group_script(user):
             if len(chat_group) > 0:
                 return chat_group[0].olark_script
 
-            if user.email:
-                chat_group = OlarkChatGroup.objects.filter(google_rep__in=[user])
-                if len(chat_group) > 0:
-                    return chat_group[0].olark_script
-                else:
-                    return ''
+            return "<script>olark('api.box.hide');</script>"
 
 
 @register.filter(name='has_group')
