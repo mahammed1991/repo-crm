@@ -1048,7 +1048,7 @@ def create_portal_feedback(request):
     if request.method == 'POST':
         feedback_details = PortalFeedback()
         feedback_details.user = request.user
-        feedback_details.feedback_type = str(request.POST['feedbackType'])
+        feedback_details.feedback_type = str(request.POST['type'])
         feedback_details.description = str(request.POST['comment'])
         if request.FILES:
             feedback_details.attachment = request.FILES['attachmentfile']
