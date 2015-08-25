@@ -774,10 +774,15 @@ def get_created_or_updated_slot_details(team, _date, selected_tzone, prev_availa
 
 
 def mail_slot_changes(request, selected_team, changed_records):
+    if request.POST.get('process_type') != 'WPP':
+        signature = 'Tag Team'
+    else:
+        signature = 'WPP Team'
     mail_body = get_template('representatives/slot_changes_mail.html').render(
         Context({
             'records': changed_records,
             'team': selected_team,
+            'signature': signature
         })
     )
     mail_subject = "Hey!!! %s, %s Booked %s Appointment Slot" % (

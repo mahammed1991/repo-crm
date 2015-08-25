@@ -624,13 +624,18 @@ def create_feedback(request, lead_id=None):
 def notify_feedback_activity(request, feedback, comment=None, is_resolved=False):
     mail_subject = "Feedback - " + feedback.title
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
+    if feedback.code_type != 'WPP':
+        signature = 'Tag Team'
+    else:
+        signature = 'WPP Team'
     if comment:
         mail_body = get_template('main/feedback_mail/new_comment.html').render(
             Context({
                 'feedback': feedback,
                 'comment': comment,
                 'feedback_url': feedback_url,
-                'feedback_owner': request.user.first_name + request.user.last_name
+                'feedback_owner': request.user.first_name + request.user.last_name,
+                'signature': signature
             })
         )
     elif is_resolved:
@@ -642,7 +647,8 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
                 'cid': feedback.cid,
                 'type': feedback.feedback_type,
                 'feedback_title': feedback.title,
-                'feedback_body': feedback.description
+                'feedback_body': feedback.description,
+                'signature': signature
             })
         )
     else:
@@ -654,7 +660,8 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
                 'cid': feedback.cid,
                 'type': feedback.feedback_type,
                 'feedback_title': feedback.title,
-                'feedback_body': feedback.description
+                'feedback_body': feedback.description,
+                'signature': signature
             })
         )
 
