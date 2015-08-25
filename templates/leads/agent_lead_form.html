@@ -606,7 +606,7 @@ var next_indx = indx + 1;
   ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
           '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '"  name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>' +
           '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '"  name="url' + indx + '" placeholder="URL"></div>' +
-          '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
+          '<div class="col-md-3"><textarea type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span  onclick="addMoreRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
@@ -627,7 +627,7 @@ var next_indx = indx + 1;
   ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
           '<div class="col-md-4"><input type="text" class="form-control" id="cid' + indx + '"  name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>' +
           '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '"  name="url' + indx + '" placeholder="URL"></div>' +
-          '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+
+          '<div class="col-md-3"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'+
           '<div class="col-md-4" id="gasetup' + indx + '">'+
                 '<div class="checkbox">'+
                   '<label>'+
@@ -666,7 +666,7 @@ var next_indx = indx + 1;
            '<div class="col-md-4"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
-             '<div class="col-md-3"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+ mcElem
+             '<div class="col-md-3"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'+ mcElem
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span onclick="addMoreShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
@@ -690,7 +690,7 @@ function createTagFields(indx){
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
          '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
-        '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
+        '<div class="col-md-3 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
 
         if(indx == 1){
             tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
@@ -713,7 +713,7 @@ function createAnalyticsTagFields(indx){
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
          '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
-        '<div class="col-md-3 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'+
+        '<div class="col-md-3 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'+
         '<div class="col-md-4" id="gasetup' + indx + '">'+
                 '<div class="checkbox">'+
                   '<label>'+
@@ -769,7 +769,7 @@ function createShopFields(indx){
   shop =  '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
         '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'+
         '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
-        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>' + mcElem
+        '<div class="col-md-4 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>' + mcElem
 
         if(indx == 1){
               tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
@@ -930,7 +930,7 @@ var next_indx = indx + 1;
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
     if(indx == 1){
@@ -971,7 +971,7 @@ var next_indx = indx + 1;
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'+
               '<div class="col-md-4" id="gasetup' + indx + '">'+
                 '<div class="checkbox">'+
@@ -1014,7 +1014,7 @@ var next_indx = indx + 1;
             '<div class="col-md-4"><input type="text" class="form-control" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget"></div>'+
             '<div class="col-md-4"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
-            '<div class="col-md-4"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>' + mcElem
+            '<div class="col-md-4"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>' + mcElem
 
   if(indx == 1){
       tail = '<div class="col-md-1"><span onclick="addMoreCustomerShopRows(' + next_indx + ');" class="add_shop_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
@@ -1051,7 +1051,7 @@ function createCustomerTagFields(indx){
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
         if(indx == 1){
@@ -1096,7 +1096,7 @@ function createCustomerAnalyticsTagFields(indx){
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
         if(indx == 1){
@@ -1157,7 +1157,7 @@ function createCustomerShopFields(indx){
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'+
         '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="rbidmodifier' + indx + '" name="rbidmodifier' + indx + '" placeholder="Recommended Mobile Bid Modifier"></div>'+
         '<div class="col-md-4">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>' + mcElem
 
         if(indx == 1){
@@ -1196,7 +1196,7 @@ var next_indx = indx + 1;
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-4">'+
-                  '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"">'+
+                  '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)""></textarea>'+
                 '</div>'
              
 
@@ -1259,7 +1259,7 @@ var next_indx = indx + 1;
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
     if(indx == 1){
@@ -1303,7 +1303,7 @@ function createAgencyDiffDynamicFields(indx){
 
   shop =  '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
-        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></div>'
+        '<div class="col-md-4 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
 
         if(indx == 1){
               tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
@@ -1354,7 +1354,7 @@ function createCustomerDiffDynamicFields(indx){
                  '<input type="text" class="form-control bggrey" id="url' + indx + '" name="url' + indx + '" placeholder="URL">'+
              '</div>'+
              '<div class="col-md-3">'+
-                 '<input type="text" class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)">'+
+                 '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
         if(indx == 1){
