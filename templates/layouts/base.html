@@ -62,22 +62,7 @@
             /* custom configuration goes here (www.olark.com/documentation) */
             olark.identify('6014-687-10-6231');/*]]>*/</script>
             
-            {%  olark_group_script request.user %}
-
             <!-- end olark code -->
-
-            <!--begin prepolute of fields -->
-
-            <script type="text/javascript">
-                olark('api.visitor.updateEmailAddress', {
-                        emailAddress: '{{request.user}}'
-                });
-                olark('api.visitor.updateFullName', {
-                    fullName: '{{request.user.first_name}}'
-                });
-            </script>
-
-            <!-- end prepolute of fields -->
 
         {% block body %}
         {% endblock body %}

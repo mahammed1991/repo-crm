@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% load staticfiles %}
-
+{% load custom_tags %}
 {% block base_css %}
     <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet">
     <link href="{% static 'css/owl.theme.css' %} " rel="stylesheet">
@@ -49,5 +49,21 @@
 <script src="{% static 'js/jquery.tablesorter.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.colorbox-min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/slick.min.js' %}"></script>
+            
+            <!--begin prepolute of fields -->
+
+            <script type="text/javascript">
+                olark('api.visitor.updateEmailAddress', {
+                        emailAddress: '{{request.user}}'
+                });
+                olark('api.visitor.updateFullName', {
+                    fullName: '{{request.user.first_name}}'
+                });
+            </script>
+
+            {%  olark_group_script request.user %}
+
+            <!-- end prepolute of fields -->
+            
 {% block main_js %}{% endblock main_js %}
 {% endblock base_js %}
