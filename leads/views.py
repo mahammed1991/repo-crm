@@ -2060,6 +2060,15 @@ def lead_history(request, lid):
 
     template_args['tat_by_status'] = tat_by_status.iteritems()
     template_args['lead_status'] = lead_status.iteritems()
+
+    if template_args['lead'].company:
+        if 'http' in template_args['lead'].company:
+            template_args['company_url'] = template_args['lead'].company
+        else:
+            template_args['company_url'] = 'http://' + template_args['lead'].company
+    else:
+        template_args['company_url'] = 'N/A'
+
     return render(request, 'leads/lead_history.html', template_args)
 
 

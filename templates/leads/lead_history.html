@@ -25,11 +25,15 @@
 					</tr>
 					<tr>
 						<td>Technology</td>
-						<td>ASP .NET</td>
+						<td>N/A</td>
 					</tr>
 					<tr>
 						<td>Website URL</td>
-						<td><a href="http://www.allvinylfabrics.com/" class="readmore">http://www.allvinylfabrics.com/</a></td>
+						{% if lead.company %}
+						<td><a href="{{company_url}}" class="readmore">{{company_url}}</a></td>
+						{% else %}
+						<td>N/A</td>
+						{% endif %}
 					</tr>
 					<tr>
 						<td>Date Created</td>
@@ -52,7 +56,7 @@
 				<div class=""><h2 class="dtl-head">Next communication Date</h2>
 				<div class="date-time">
 					<p><span class="dtime">Date :</span> <span class="data">{{lead.appointment_date|date:"d/m/Y"}}</span> <img src="{% static 'images/calendar-ico.png' %}" alt="calendar" /></p>
-					<p><span class="dtime">Time :</span> <span class="data">{{lead.appointment_date|date:"h:i A"}} (PST)</span></p>
+					<p><span class="dtime">Time :</span> <span class="data">{{lead.appointment_date|date:"h:i A"}}</span></p>
 				</div>
 			</div></div>
 			<div class="clearfix"></div>
