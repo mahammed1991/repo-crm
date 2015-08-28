@@ -1,0 +1,663 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% load custom_tags %}
+
+{% block title %}
+    Website Optimization Reports
+{% endblock title %}
+
+{% block main_css %}
+    <link href="{% static 'css/call_audit_sheet.css' %} " rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="wrapper">
+    <!-- content-region -->
+    <section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>WPP CALL AUDIT SHEET</h1>
+  <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <form class=" ca_f1">
+                <div class="form-group">
+                 <label for="label1">Agent Name</label>
+                <input type="text" class="form-control" id="" value=""  placeholder="">
+                </div>
+                <div class="form-group">
+                 <label for="label1">Assessor</label>
+                <input type="text" class="form-control" id="" value="" placeholder="">
+                </div>
+                <div class="form-group">
+                 <label for="label1">Customer ID</label>
+                <input type="text" class="form-control" id="" value=""  placeholder="">
+                </div>
+                <div class="form-group">
+                 <label for="label1">SFID</label>
+                <input type="text" class="form-control" id="" value="" placeholder="">
+                </div>
+             </form>
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-xs-12 col-sm-12 col-md-12 ca_f2 ca_f">
+            <ul class="ca_f02">
+                <li class="ca_f2 ca_f02aa" id="ux1">UX/UI Review</li>
+                <li class="ca_f2" id="ux2">In File  Transfer</li>
+                <li class="ca_f2" id="ux3">Mock Review</li>
+                <li class="ca_f2" id="ux4">Stage Review</li>
+                <li class="ca_f2" id="ux5">A/B Testing</li>
+                
+            </ul>
+        </div>
+        
+        <div class="col-xs-12 ca_f3 uxx ux1" style="display:block;">
+            <div class="std-sub-title">UX/UI Review</div>
+            <div class="row">
+                  <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+                  </div>
+                 <!-- ************************** --> 
+                 <div class="ca_f4">Soft Skills</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Voice Clearity</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Vocabulary</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Sentence Construction</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Tone</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                 <div class="ca_f4">Call Managment</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Opening</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Recorded line script</option>
+                      <option value="" >OPtion1</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Hold Procedure</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Closing</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                 <div class="ca_f4">UX/UI Principles Mentioned</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Headlines & Subtitles</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Call To Action</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Fonts</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Colors</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Spacing</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Comelling Copy</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Modern Navigation Animation</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">MAstery of Above the Fold?</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Keep Forms Consistence and Usefull</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Attention Ratio</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">MOdern Navigation Animations</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Context of User Source</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <!-- ********************************************  -->
+                   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Keep Forms Consistence and Usefull</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Attention Ratio</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">MOdern Navigation Animations</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Context of User Source</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <!-- ********************************************  -->
+                   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Keep Forms Consistence and Usefull</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Attention Ratio</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">MOdern Navigation Animations</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Context of User Source</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <!-- ********************************************  -->
+                   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Keep Forms Consistence and Usefull</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Attention Ratio</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">MOdern Navigation Animations</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Context of User Source</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <!-- ********************************************  -->
+                   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Keep Forms Consistence and Usefull</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Attention Ratio</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">MOdern Navigation Animations</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Context of User Source</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                 <div class="ca_f4">Comment</div>  
+                 <div class="col-md-12">
+                    <textarea class="ca_t" placeholder=""></textarea>
+                  </div>
+                 <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>
+            </div>
+        </div>
+        <!-- ============================================================================ -->
+        <!-- ======================================================================================================= -->
+<div class="col-xs-12 ca_f3  uxx ux2">
+            <div class="std-sub-title">In File  Transfer</div>
+            <div class="row">
+                  <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+                  </div>
+                 <!-- ************************** --> 
+                 <div class="ca_f4">Soft Skills</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <div class="ca_f4">Comment</div>  
+                 <div class="col-md-12">
+                    <textarea class="ca_t" placeholder=""></textarea>
+                  </div>
+                   <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>
+            </div>
+        </div>
+<!-- ======================================================================================================= -->
+<!-- ======================================================================================================= -->
+<div class="col-xs-12 ca_f3  uxx ux3">
+            <div class="std-sub-title">Mock Review</div>
+            <div class="row">
+                  <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+                  </div>
+                 <!-- ************************** --> 
+                 <div class="ca_f4">Soft Skills</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <div class="ca_f4">Comment</div>  
+                 <div class="col-md-12">
+                    <textarea class="ca_t" placeholder=""></textarea>
+                  </div>
+                 <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>
+            </div>
+        </div>
+<!-- ======================================================================================================= -->    
+<!-- ======================================================================================================= -->
+<div class="col-xs-12 ca_f3  uxx ux4">
+            <div class="std-sub-title">Stage Review</div>
+            <div class="row">
+                  <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+                  </div>
+                 <!-- ************************** --> 
+                 <div class="ca_f4">Soft Skills</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <div class="ca_f4">Comment</div>  
+                 <div class="col-md-12">
+                    <textarea class="ca_t" placeholder=""></textarea>
+                  </div>
+                  <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul> 
+            </div>
+        </div>
+<!-- ======================================================================================================= -->        
+<!-- ======================================================================================================= -->
+<div class="col-xs-12 ca_f3  uxx ux5">
+            <div class="std-sub-title">A/B Testing</div>
+            <div class="row">
+                  <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+                  </div>
+                   <div class="col-md-3">
+                    <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+                  </div>
+                 <!-- ************************** --> 
+                 <div class="ca_f4">Soft Skills</div>   
+                  <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                      <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                   <div class="col-md-3">
+                    <select class="form-control bgicon" id="" title="" name="">
+                     <option value="">Option1</option>
+                      <option value="" >Option2</option>
+                      <option value="" >OPtion3</option>
+                      <option value="">OPtion4</option>
+                    </select>
+                  </div>
+                 <!-- ********************************************  -->
+                  <div class="ca_f4">Comment</div>  
+                 <div class="col-md-12">
+                    <textarea class="ca_t" placeholder=""></textarea>
+                  </div>
+                 <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>  
+            </div>
+        </div>
+<!-- ======================================================================================================= -->                    
+    </div>
+  </div>
+</section>
+
+</div>
+{% endblock content %}
+
+{% block main_js %}
+
+<script type="text/javascript">
+    $(document).on('click','.ca_f2',function(){
+        var idi = $(this).attr('id');
+        var idx = '#'+idi;
+        $('.ca_f2').removeClass('ca_f02aa');
+
+        idi ='.'+idi;
+        $('.uxx').hide();
+        $(idi).show(function (){
+            $(idx).addClass('ca_f02aa');
+            $(idi).css('display', 'block');
+        });
+
+    })
+</script>
+{% endblock main_js %}
