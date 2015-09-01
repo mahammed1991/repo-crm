@@ -31,15 +31,18 @@ h2.dtl-head{font-family: 'robotoregular'; font-size:16px; font-weight:normal; co
   .carousel-control{ position:static; clear:both; opacity:1;}
   .carousel-control.left{ margin-right:15px;}
   .carousel-inner .thumbnail{ border:none; padding:0px; margin:0px; }
-.tooleft{float:left;width:100px; font-size:14px; font-family: 'robotoregular'; background:url(../images/bg-line.png) repeat-x 0px 38px;     margin: 50px 0px;}
+.tooleft{float:left;width:107px; font-size:14px; font-family: 'robotoregular'; background:url(../images/bg-line.png) repeat-x 0px 38px;     margin: 50px 0px;}
 .tlast{ background:none;}
-.tooright{float:left;width:100px; font-size:14px; font-family: 'robotoregular'; background:url(../images/bg-line.png) repeat-x 0px 38px;     margin: 50px 0px;; text-align:center;}
+.tooright{float:left;width:107px; font-size:14px; font-family: 'robotoregular'; background:url(../images/bg-line.png) repeat-x 0px 38px;     margin: 50px 0px;; text-align:center;}
 .list-inline{padding-left:20px;}
 .list-inline li a.mockup-rvw {background: url(../images/mockup-rvw.png) no-repeat center center #8eaa35;}
 .pause li .double-border a.mockup-rvw  {background: url(../images/Pause-icon.png) no-repeat center center #D20111;}
 .double-border{border: solid 9px #fff; box-shadow: 0 0 3px #8eaa35;display:inline-block; border-radius:50%; margin-top: -8px;}
 .lead-lifecyle{padding: 20px;}
-.process{padding: 10px;}
+.process{padding: 10px;
+    width: 90%;
+    margin: 0 auto;
+}
 .prcs-title{ margin-top:40px;}
 .drw .prcs-title{margin-top:30px;}
 .recommendations, .tat{ margin-top:50px;border: 1px solid #cfcfcf; padding:25px 40px;}
