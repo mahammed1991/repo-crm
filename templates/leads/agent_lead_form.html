@@ -438,7 +438,7 @@ function hideAllFields(){
   $('#gasetupSameCustomer').hide();
 }
 // Same Task and select the Code type
-$("#same_task_ctype").change(function(){
+$("#same_task_ctype").change(function() {
     $(".tag").remove();
     $(".shop").remove();
     $(".add_tag_1, .add_shop_1").show();
@@ -446,24 +446,35 @@ $("#same_task_ctype").change(function(){
     $('#analytics_code_row').remove();
     $('#gasetup_sameAgency').prop('checked', false);
     selectedCtype = $(this).val();
-    if(selectedCtype == 'Google Shopping Setup'){
+    $('.website-call-conversion').remove();
+    window.same_agency_code_type = ''
+
+    if (selectedCtype == 'Google Shopping Setup') {
         addMoreShopRows(1)
-    }else if(selectedCtype == '0' || selectedCtype == ''){
+    } else if (selectedCtype == '0' || selectedCtype == '') {
         $("#same_tag_1").hide();
         $("#same_shop_1").hide();
-    }
-    else if(selectedCtype.indexOf('Dynamic') != -1){
+    } else if (selectedCtype.indexOf('Dynamic') != -1) {
         createAgencySameTagForDynamic(1);
-    }else{
-      if(selectedCtype.indexOf('Analytics') != -1){
-        $('#gasetupSameAgency').show();
-        addMoreAnalyticsRows(1);
-      }else{
-        addMoreRows(1)
-      }
-      }
+    } else {
+        if (selectedCtype.indexOf('Analytics') != -1) {
+          if(selectedCtype.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
+            window.same_agency_code_type = 'analytics_tracking';
+            addMoreRows(1);
+          }else{
+            $('#gasetupSameAgency').show();
+            addMoreAnalyticsRows(1);
+          }
+            
+        } else if (selectedCtype.indexOf('Website Call Conversion') != -1) {
+            window.same_agency_code_type = 'call_conversion'
+            addMoreRows(1);
+        } else {
+            window.same_agency_code_type = 'other'
+            addMoreRows(1);
+        }
+    }
 });
-
 
 $(document).on('change', '.is_ga_setup_analytics_account', function() {
     thisId = $(this).attr('id');
@@ -509,7 +520,7 @@ function deleteRows(indx){
 }
 
 
-// addMoreRows Click functionality
+// addMoreShopRows Click functionality
 function addMoreShopRows(indx){
     createAgencySameShop(indx);
     prevIndx = parseInt(indx) - 1;
@@ -529,35 +540,46 @@ function deleteShopRows(indx){
 
 $(document).on('change', '.agency_diff', function() {
     selectedCtype = $(this).val();
-
-    if(selectedCtype == '' || selectedCtype == '0'){
-      $('.fields').hide();
-    }else if(selectedCtype == 'Google Shopping Setup'){
-      selectedindex = $(this).attr('id').split('-')[1]
-      $("#shopFields" + selectedindex).remove();
-      $("#tagFields" + selectedindex).remove();
-      createShopFields(parseInt(selectedindex));
-    }else if(selectedCtype.indexOf('Dynamic') != -1){
-      selectedindex = $(this).attr('id').split('-')[1];
-      $("#shopFields" + selectedindex).remove();
-      $("#tagFields" + selectedindex).remove();
-      createAgencyDiffDynamicFields(parseInt(selectedindex));
-      }
-      else if(selectedCtype.indexOf('Analytics')!= -1){
+    window.agency_diff_code_type = '';
+    if (selectedCtype == '' || selectedCtype == '0') {
+        $('.fields').hide();
+    } else if (selectedCtype == 'Google Shopping Setup') {
+        selectedindex = $(this).attr('id').split('-')[1]
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        createShopFields(parseInt(selectedindex));
+    } else if (selectedCtype.indexOf('Dynamic') != -1) {
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        createAgencyDiffDynamicFields(parseInt(selectedindex));
+    } else if (selectedCtype.indexOf('Analytics') != -1) {
           selectedindex = $(this).attr('id').split('-')[1];
           $("#shopFields" + selectedindex).remove();
           $("#tagFields" + selectedindex).remove();
+        if(selectedCtype.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
+          window.agency_diff_code_type = 'analytics_tracking';
+          createTagFields(parseInt(selectedindex));
+        } else{
           createAnalyticsTagFields(parseInt(selectedindex));
-      }
-    else{
-      selectedindex = $(this).attr('id').split('-')[1];
-      $("#shopFields" + selectedindex).remove();
-      $("#tagFields" + selectedindex).remove();
-      createTagFields(parseInt(selectedindex));
+        }
+    } else if (selectedCtype.indexOf('Website Call Conversion') != -1) {
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        window.agency_diff_code_type = 'call_conversion';
+        createTagFields(parseInt(selectedindex));
+    } else {
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        window.agency_diff_code_type = 'other';
+        createTagFields(parseInt(selectedindex));
 
     }
     showAppointments('agency_diff');
- });
+});
+
 
 
 function showAppointments(elem){
@@ -585,7 +607,7 @@ function showAppointments(elem){
     });
 
 }
-// addMoreRows Click functionality
+// addMoreTagRows Click functionality
 function addMoreTagRows(indx){
   createCodeTypeForTag(indx);
   prevIndx = parseInt(indx) - 1;
@@ -608,6 +630,32 @@ var next_indx = indx + 1;
           '<div class="col-md-4"><input type="text" class="form-control" id="url' + indx + '"  name="url' + indx + '" placeholder="URL"></div>' +
           '<div class="col-md-3"><textarea type="text" class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
 
+  call_conversion = '<div class="col-md-10" id="callextension' + indx + '" >' +
+                '<div class="checkbox">' + 
+                  '<label>' + 
+                    '<input id="call_extension' + indx + '" type="checkbox" name="call_extension' + indx + '" value="0" class="call_extension"> Created Call Extension </label>' +
+                '</div>' +
+              '</div>'
+
+  analytics_tracking = '<div id="codebehaviour' + indx + '">'+
+                      '<div class="col-md-2"><div class="checkbox"><label><input id="product_behaviour' + indx + '" type="checkbox" name="product_behaviour' + indx + '" value="0" class="code_behaviour"> Product Behaviour </label></div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label><input id="cartpage_behaviour' + indx + '" type="checkbox" name="cartpage_behaviour' + indx + '" value="0" class="code_behaviour"> Cart Page Behaviour </label></div></div>'+
+                      '<div class="col-md-2"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="checkout_process' + indx + '" type="checkbox" name="checkout_process' + indx + '" value="0" class="code_behaviour"> Check Out Process </label>'+
+                      '</div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="transaction_behaviour' + indx + '" type="checkbox" name="transaction_behaviour' + indx + '" value="0" class="code_behaviour">Transaction Behaviour </label>'+
+                      '</div></div>' +
+                      '<div class="col-md-9"><div class="checkbox">'+
+                        '<label>' +
+                          'Implementation time to set up the code for each Behaviour will take apprx. 1  hour'+
+                        '</label>'+
+                     ' </div></div>'+
+                    '</div>'
+
   if(indx == 1){
       tail = '<div class="col-md-1"><span  onclick="addMoreRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
   }else if(indx == 10){
@@ -618,9 +666,16 @@ var next_indx = indx + 1;
         '</div>'
   }
   
-
-  $("#same_task_agency").append(ele + tail);
+  if(window.same_agency_code_type == 'call_conversion'){
+    $("#same_task_agency").append(ele + call_conversion + tail);
+  }else if(window.same_agency_code_type == 'other'){
+    $("#same_task_agency").append(ele + tail);
+  }else if(window.same_agency_code_type == 'analytics_tracking'){
+    $("#same_task_agency").append(ele + analytics_tracking + tail);
+  }
+  
 }
+
 
 function createAgencySameTagAnalytics(indx){
 var next_indx = indx + 1;
@@ -688,9 +743,35 @@ function createTagFields(indx){
   nextInd = indx + 1; 
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
-         '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
-        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
-        '<div class="col-md-3 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
+         '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-4 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+        '<div class="col-md-4 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
+
+  call_extension = '<div class="col-md-4" id="callextension' + indx + '" >' +
+                    '<div class="checkbox">' +
+                      '<label>'+
+                        '<input id="call_extension' + indx + '" type="checkbox" name="call_extension' + indx + '" value="0" class="call_extension"> Created Call Extension </label>' +
+                    '</div>' +
+                  '</div>'
+
+  analytics_tracking = '<div id="codebehaviour' + indx + '">'+
+                      '<div class="col-md-3"><div class="checkbox"><label><input id="product_behaviour' + indx + '" type="checkbox" name="product_behaviour' + indx + '" value="0" class="code_behaviour"> Product Behaviour </label></div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label><input id="cartpage_behaviour' + indx + '" type="checkbox" name="cartpage_behaviour' + indx + '" value="0" class="code_behaviour"> Cart Page Behaviour </label></div></div>'+
+                      '<div class="col-md-2"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="checkout_process' + indx + '" type="checkbox" name="checkout_process' + indx + '" value="0" class="code_behaviour"> Check Out Process </label>'+
+                      '</div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="transaction_behaviour' + indx + '" type="checkbox" name="transaction_behaviour' + indx + '" value="0" class="code_behaviour">Transaction Behaviour </label>'+
+                      '</div></div>' +
+                      '<div class="col-md-9"><div class="checkbox">'+
+                        '<label>' +
+                          'Implementation time to set up the code for each Behaviour will take apprx. 1  hour'+
+                        '</label>'+
+                     ' </div></div>'+
+                    '</div>'
 
         if(indx == 1){
             tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
@@ -702,8 +783,14 @@ function createTagFields(indx){
             tail =  '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteDiffTagRows(' + indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></div>'+
                   '</div>'
         }
-
-    $("#diff_tag_"+indx).append(ele+tail);
+    if(window.agency_diff_code_type == 'other'){
+      $("#diff_tag_"+indx).append(ele+tail);  
+    } else if(window.agency_diff_code_type == 'call_conversion'){
+      $("#diff_tag_"+indx).append(ele+call_extension+tail);  
+    } else if(window.agency_diff_code_type == 'analytics_tracking'){
+      $("#diff_tag_"+indx).append(ele+analytics_tracking+tail);
+    }
+    
 }
 
 function createAnalyticsTagFields(indx){
@@ -790,7 +877,7 @@ function createShopFields(indx){
 /* ############################################ End Customer ################################## */
 
 // Same Task and select the Code type
-$("#same_task_cust_type").change(function(){
+$("#same_task_cust_type").change(function() {
     $(".tag").remove();
     $(".shop").remove();
     $(".add_tag_1, .add_shop_1").show()
@@ -798,22 +885,31 @@ $("#same_task_cust_type").change(function(){
     $('#gasetupSameCustomer').hide();
     $('#analytics_code_row').remove();
     $('#ga_setupSamecustomer').prop('checked', false);
-    if(selectedCtype == 'Google Shopping Setup'){
+    $('.website-call-conversion').remove();
+    window.same_customer_code_type = ''
+    if (selectedCtype == 'Google Shopping Setup') {
         addMoreCustomerShopRows(1);
-        
-    }else if(selectedCtype == '0' || selectedCtype == ''){
+    } else if (selectedCtype == '0' || selectedCtype == '') {
         $("#same_cust_tag_1").hide();
         $("#same_cust_shop_1").hide();
-    }
-    else if(selectedCtype.indexOf('Dynamic') != -1){
-          createCusetomerSameTagForDynamic(1);
-    }else{
-      if(selectedCtype.indexOf('Analytics') != -1){
-        $('#gasetupSameCustomer').show();
-        addMoreCustomerRowsAnalyticsRows(1)
-      }else{
-        addMoreCustomerRows(1);
-      }
+    } else if (selectedCtype.indexOf('Dynamic') != -1) {
+        createCusetomerSameTagForDynamic(1);
+    } else {
+        if (selectedCtype.indexOf('Analytics') != -1) {
+          if(selectedCtype.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
+            window.same_customer_code_type = 'analytics_tracking';
+            addMoreCustomerRows(1);
+          } else{
+            $('#gasetupSameCustomer').show();
+            addMoreCustomerRowsAnalyticsRows(1);
+            }
+        } else if (selectedCtype.indexOf('Website Call Conversion') != -1) {
+            window.same_customer_code_type = 'call_conversion';
+            addMoreCustomerRows(1);
+        } else {
+            window.same_customer_code_type = 'other';
+            addMoreCustomerRows(1);
+        }
     }
 });
 
@@ -844,7 +940,7 @@ function deleteCustomerRows(indx){
 }
 
 
-// addMoreRows Click functionality
+// addMoreCustomerShopRows Click functionality
 function addMoreCustomerShopRows(indx){
     createCustomerSameShop(indx);
     prevIndx = parseInt(indx) - 1;
@@ -863,35 +959,46 @@ function deleteCustomerShopRows(indx){
 
 $(document).on('change', '.customer_diff', function() {
     selectedCtype = $(this).val();
-    if(selectedCtype == '' || selectedCtype == '0'){
-      $('.fields').hide();
-    }else if(selectedCtype == 'Google Shopping Setup'){
-      selectedindex = $(this).attr('id').split('-')[1];
-      $("#shopFields" + selectedindex).remove();
-      $("#tagFields" + selectedindex).remove();
-      createCustomerShopFields(parseInt(selectedindex));
-    }else if(selectedCtype.indexOf('Dynamic') != -1){
-      selectedindex = $(this).attr('id').split('-')[1];
-      $("#shopFields" + selectedindex).remove();
-      $("#tagFields" + selectedindex).remove();
-      createCustomerDiffDynamicFields(parseInt(selectedindex));
-      }
-      else if(selectedCtype.indexOf('Analytics') != -1){
+    window.customer_diff_code_type = ''
+    if (selectedCtype == '' || selectedCtype == '0') {
+        $('.fields').hide();
+    } else if (selectedCtype == 'Google Shopping Setup') {
         selectedindex = $(this).attr('id').split('-')[1];
         $("#shopFields" + selectedindex).remove();
         $("#tagFields" + selectedindex).remove();
-        createCustomerAnalyticsTagFields(parseInt(selectedindex));//createCustomerAnalyticsTagFields
-      }else{
+        createCustomerShopFields(parseInt(selectedindex));
+    } else if (selectedCtype.indexOf('Dynamic') != -1) {
         selectedindex = $(this).attr('id').split('-')[1];
         $("#shopFields" + selectedindex).remove();
         $("#tagFields" + selectedindex).remove();
+        createCustomerDiffDynamicFields(parseInt(selectedindex));
+    } else if (selectedCtype.indexOf('Analytics') != -1) {
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        if(selectedCtype.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
+            window.customer_diff_code_type = 'analytics_tracking';
+            createCustomerTagFields(parseInt(selectedindex));
+        } else{
+            createCustomerAnalyticsTagFields(parseInt(selectedindex)); //createCustomerAnalyticsTagFields
+        }
+    }else if (selectedCtype.indexOf('Website Call Conversion') != -1) {
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        window.customer_diff_code_type = 'call_conversion';
+        createCustomerTagFields(parseInt(selectedindex)); //createCustomerAnalyticsTagFields
+    } else {
+        selectedindex = $(this).attr('id').split('-')[1];
+        $("#shopFields" + selectedindex).remove();
+        $("#tagFields" + selectedindex).remove();
+        window.customer_diff_code_type = 'other';
         createCustomerTagFields(parseInt(selectedindex));
     }
     showAppointments('customer_diff');
- });
+});
 
-
-// addMoreRows Click functionality
+// addMoreCustomerTagRows Click functionality
 function addMoreCustomerTagRows(indx){
   createCustomerCodeTypeForTag(indx);
   prevIndx = parseInt(indx) - 1;
@@ -933,6 +1040,32 @@ var next_indx = indx + 1;
                  '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
+    call_extension = '<div class="col-md-4" id="callextension' + indx + '" >' +
+                    '<div class="checkbox">' +
+                      '<label>'+
+                        '<input id="call_extension' + indx + '" type="checkbox" name="call_extension' + indx + '" value="0" class="call_extension"> Created Call Extension </label>' +
+                    '</div>' +
+                  '</div>'
+
+    analytics_tracking = '<div id="codebehaviour' + indx + '">'+
+                      '<div class="col-md-2"><div class="checkbox"><label><input id="product_behaviour' + indx + '" type="checkbox" name="product_behaviour' + indx + '" value="0" class="code_behaviour"> Product Behaviour </label></div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label><input id="cartpage_behaviour' + indx + '" type="checkbox" name="cartpage_behaviour' + indx + '" value="0" class="code_behaviour"> Cart Page Behaviour </label></div></div>'+
+                      '<div class="col-md-2"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="checkout_process' + indx + '" type="checkbox" name="checkout_process' + indx + '" value="0" class="code_behaviour"> Check Out Process </label>'+
+                      '</div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="transaction_behaviour' + indx + '" type="checkbox" name="transaction_behaviour' + indx + '" value="0" class="code_behaviour">Transaction Behaviour </label>'+
+                      '</div></div>' +
+                      '<div class="col-md-9"><div class="checkbox">'+
+                        '<label>' +
+                          'Implementation time to set up the code for each Behaviour will take apprx. 1  hour'+
+                        '</label>'+
+                     ' </div></div>'+
+                    '</div>'
+
     if(indx == 1){
         tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div></div>'
     }else if(indx == 10){
@@ -942,11 +1075,15 @@ var next_indx = indx + 1;
         tail = '<div class="col-md-1"><span  onclick="addMoreCustomerRows('+ next_indx +');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span><span  onclick="deleteCustomerRows('+ indx + ');" class="delete_tag_' + indx + '"><img src="{% static "images/minus.png" %}" class="img-responsive plusicon"></span></div>' +
         '</div>'
     }
-    
 
-  $("#same_task_customer").append(ele + tail);
+    if(window.same_customer_code_type == 'call_conversion'){
+      $("#same_task_customer").append(ele + call_extension + tail);
+    } else if(window.same_customer_code_type == 'other'){
+      $("#same_task_customer").append(ele + tail);
+    } else if(window.same_customer_code_type = 'analytics_tracking'){
+      $("#same_task_customer").append(ele + analytics_tracking + tail);
+    }
 }
-
 
 function createCustomerSameTagAnalyticsRow(indx){
 var next_indx = indx + 1;
@@ -1054,6 +1191,32 @@ function createCustomerTagFields(indx){
                  '<textarea class="form-control bggrey" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea>'+
               '</div>'
 
+  call_extension = '<div class="col-md-4" id="callextension' + indx + '" >' +
+                    '<div class="checkbox">' +
+                      '<label>'+
+                        '<input id="call_extension' + indx + '" type="checkbox" name="call_extension' + indx + '" value="0" class="call_extension"> Created Call Extension </label>' +
+                    '</div>' +
+                  '</div>'
+
+  analytics_tracking = '<div id="codebehaviour' + indx + '">'+
+                      '<div class="col-md-2"><div class="checkbox"><label><input id="product_behaviour' + indx + '" type="checkbox" name="product_behaviour' + indx + '" value="0" class="code_behaviour"> Product Behaviour </label></div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label><input id="cartpage_behaviour' + indx + '" type="checkbox" name="cartpage_behaviour' + indx + '" value="0" class="code_behaviour"> Cart Page Behaviour </label></div></div>'+
+                      '<div class="col-md-2"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="checkout_process' + indx + '" type="checkbox" name="checkout_process' + indx + '" value="0" class="code_behaviour"> Check Out Process </label>'+
+                      '</div></div>'+
+                      '<div class="col-md-3"><div class="checkbox">'+
+                        '<label>'+
+                          '<input id="transaction_behaviour' + indx + '" type="checkbox" name="transaction_behaviour' + indx + '" value="0" class="code_behaviour">Transaction Behaviour </label>'+
+                      '</div></div>' +
+                      '<div class="col-md-9"><div class="checkbox">'+
+                        '<label>' +
+                          'Implementation time to set up the code for each Behaviour will take apprx. 1  hour'+
+                        '</label>'+
+                     ' </div></div>'+
+                    '</div>'
+
         if(indx == 1){
             tail = '<div class="col-md-1"><span onclick="addMoreCustomerTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
                   '</div>'
@@ -1063,7 +1226,13 @@ function createCustomerTagFields(indx){
                   '</div>'
         }
 
-    $("#diff_cust_tag_"+indx).append(ele+tail);
+     if(window.customer_diff_code_type == 'other'){
+      $("#diff_cust_tag_"+indx).append(ele+tail);  
+    } else if(window.customer_diff_code_type == 'call_conversion'){
+      $("#diff_cust_tag_"+indx).append(ele+call_extension+tail);  
+    } else if(window.customer_diff_code_type = 'analytics_tracking'){
+      $("#diff_cust_tag_"+indx).append(ele+analytics_tracking+tail);
+    }
 }
 
 function createCustomerAnalyticsTagFields(indx){
@@ -1377,6 +1546,14 @@ function createCustomerDiffDynamicFields(indx){
 
 $("#contact_person_name").change(function(){
   $("#agency_poc").val($(this).val());
+});
+
+$(document).on('change', '.call_extension', function() {
+    if ($('.call_extension').is(':checked')) {
+        $(this).val(1);
+    } else {
+        $(this).val(0);
+    }
 });
 
 </script>

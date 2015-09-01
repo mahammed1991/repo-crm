@@ -652,10 +652,14 @@ $('.code_type').change(function(){
   selectedId = $(this).attr('id')
   selectedindex = selectedId[selectedId.length-1]
 
-  $('#ga_setup'+selectedindex).prop('checked', false)
+  $('#ga_setup'+selectedindex).prop('checked', false);
   $('#analytics_code'+selectedindex).val('');
   $('#analyticscode'+selectedindex).hide();
-  
+  $('#callextension'+selectedindex).hide();
+  $('#call_extension'+selectedindex).prop('checked', false);
+  $('#codebehaviour'+selectedindex).hide();
+  uncheckAllBehaviourCheckBoxs(selectedindex);
+    
   $('#ctype_campaign'+selectedindex).hide();
   $('#gasetup'+selectedindex).hide();
 
@@ -664,6 +668,13 @@ $('.code_type').change(function(){
   }
   else if(selectedCodeType.indexOf('Dynamic') != -1){
       $('#ctype_campaign'+selectedindex).show();    
+  }
+  else if(selectedCodeType.indexOf('Website Call Conversion') != -1){
+      $('#callextension'+selectedindex).show();
+  }
+  if(selectedCodeType.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
+      $('#gasetup'+selectedindex).hide();
+      $('#codebehaviour'+selectedindex).show();
   }
 });
 
@@ -706,3 +717,10 @@ $('#region').change(function(){
   console.log(countryList);
   setLocationsForRegion(window.locations, countryList);
 });
+
+function uncheckAllBehaviourCheckBoxs(selectedindex){
+  $('#product_behaviour'+selectedindex).prop('checked', false);
+  $('#cartpage_behaviour'+selectedindex).prop('checked', false);
+  $('#checkout_process'+selectedindex).prop('checked', false);
+  $('#transaction_behaviour'+selectedindex).prop('checked', false);
+}

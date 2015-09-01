@@ -596,6 +596,13 @@ function resetBtn(elem){
   }
 }
 
+function uncheckAllBehaviourCheckBoxs(selectedindex){
+  $('#product_behaviour'+selectedindex).prop('checked', false);
+  $('#cartpage_behaviour'+selectedindex).prop('checked', false);
+  $('#checkout_process'+selectedindex).prop('checked', false);
+  $('#transaction_behaviour'+selectedindex).prop('checked', false);
+}
+
 $(".ctype").change(function(){
     window.lead_type = '';
     $("#ctype2 option").show();
@@ -604,6 +611,11 @@ $(".ctype").change(function(){
     var indx = selectedId[selectedId.length - 1];
     $('#analytics_code'+indx).val('');
     $('#analyticscode'+indx).hide();
+    $('#callextension'+indx).hide();
+    $('#call_extension'+indx).prop('checked', false);
+    $('#codebehaviour'+indx).hide();
+    uncheckAllBehaviourCheckBoxs(indx);
+
     var selectedId1 = $("#ctype1 option:selected").attr('id');
     if(selectedId1){
         id1 = selectedId1.split('_')[1];
@@ -658,10 +670,26 @@ $(".ctype").change(function(){
         $("#gasetup" + indx).hide();
     }else if($(this).val().indexOf('Analytics') != -1){
       $("#gasetup" + indx).show();   
-    }else{
+    }
+    else if($(this).val().indexOf('Website Call Conversion') != -1){
+        $('#callextension'+indx).show();
+    }
+    else{
       $("#ga_setup" + indx).attr('checked', false);
       $("#gasetup" + indx).hide();
     }
+
+    if($(this).val().indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
+      $('#gasetup'+indx).hide();
+      $("#ga_setup" + indx).attr('checked', false);
+      $('#codebehaviour'+indx).show();
+    } 
+    
+    if($("#call_extension"+indx).is(":checked")){
+        $("#call_extension"+indx).val(1);
+      }else{
+        $("#call_extension"+indx).val(0);
+     }
 
     var ctype1 = $("#ctype1").val()
     var ctype2 = $("#ctype2").val()
