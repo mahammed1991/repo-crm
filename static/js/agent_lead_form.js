@@ -153,11 +153,6 @@ function setLocations(newLocations){
     tzoneElem = document.getElementById('tzone');
     validateFiled(tzoneElem);
 
-    // Advertiser Info
-    // Advertiser Name Validation
-    advertiserNameElem = document.getElementById('contact_person_name');
-    validateFiled(advertiserNameElem);
-
     var isTagLeads = false;
     var isShopLeads = false;
     // Check Agency fields
@@ -196,7 +191,7 @@ function setLocations(newLocations){
                       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                       $(cidElem).addClass('error-box');
                       //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                      cidElem.focus();
+                      window.failedFields.push(cidElem);
                       window.is_error = true;
                     }
 
@@ -247,7 +242,7 @@ function setLocations(newLocations){
                           //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                           $(cidElem).addClass('error-box');
                           //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                          cidElem.focus();
+                          window.failedFields.push(cidElem);
                           window.is_error = true;
                         }
 
@@ -331,7 +326,7 @@ function setLocations(newLocations){
                       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                       $(cidElem).addClass('error-box');
                       //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                      cidElem.focus();
+                      window.failedFields.push(cidElem);
                       window.is_error = true;
                     }
 
@@ -367,7 +362,7 @@ function setLocations(newLocations){
                           //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                           $(cidElem).addClass('error-box');
                           //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                          cidElem.focus();
+                          window.failedFields.push(cidElem);
                           window.is_error = true;
                         }
 
@@ -452,7 +447,7 @@ function setLocations(newLocations){
                       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                       $(cidElem).addClass('error-box');
                       //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                      cidElem.focus();
+                      window.failedFields.push(cidElem);
                       window.is_error = true;
                     }
 
@@ -523,7 +518,7 @@ function setLocations(newLocations){
                           //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                           $(cidElem).addClass('error-box');
                           //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                          cidElem.focus();
+                          window.failedFields.push(cidElem);
                           window.is_error = true;
                         }
 
@@ -609,7 +604,7 @@ function setLocations(newLocations){
                       //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                       $(cidElem).addClass('error-box');
                       //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                      cidElem.focus();
+                      window.failedFields.push(cidElem);
                       window.is_error = true;
                     }
 
@@ -660,7 +655,7 @@ function setLocations(newLocations){
                           //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
                           $(cidElem).addClass('error-box');
                           //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
-                          cidElem.focus();
+                          window.failedFields.push(cidElem);
                           window.is_error = true;
                         }
 
@@ -705,6 +700,11 @@ function setLocations(newLocations){
             }
         }
       }
+
+      // Advertiser Info
+      // Advertiser Name Validation
+      advertiserNameElem = document.getElementById('contact_person_name');
+      validateFiled(advertiserNameElem);
 
       // Analytics setup check box
       $('.is_ga_setup').each(function(){
@@ -757,6 +757,7 @@ function validateEmailField(elem) {
   if (!$(elem).val().trim().match(check)) {
       $(elem).addClass('error-box');
       $(elem).focus();
+      window.failedFields.push(elem);
       window.is_error = true;
       return false;
     }
