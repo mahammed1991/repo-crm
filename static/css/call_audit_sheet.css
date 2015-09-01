@@ -1,0 +1,43 @@
+	.ca{
+	padding:0px;
+	}
+	.ca_f{clear:both;}
+	.ca_f1 .form-group{
+		width: 23%;
+		float: left;
+		margin: 1%;
+		height: auto;
+	}
+	.ca_f02 li{
+	display: block;
+    width: 18%;
+    float: left;
+    margin: 1%;
+    padding: 1.5%;
+    text-align: center;
+    font-weight: bold;
+    background-color: #109d59;
+    color: #fff;
+    font-size: 16px
+	}
+	.ca_f02 li:hover,.ca_f02 li:active,.ca_f02 li:focus,.ca_f02 li:visited{
+	background-color: #df970d;
+	cursor:pointer;
+   }
+   .ca_f02aa{
+	background-color: #df970d !important;
+	cursor:pointer;
+   }
+   .ca_f3{    margin-top: 2%;}
+   .ca_f4{
+    padding: 15px 30px;
+    font-family: 'robotoblack';
+     
+}
+.uxx{
+display:none;
+}
+.ca_t{
+    width: 100%;
+    min-height: 90px;
+}
