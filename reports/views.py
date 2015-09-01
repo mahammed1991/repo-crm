@@ -760,3 +760,10 @@ def download_timezones_by_location(request):
     DownloadLeads.conver_to_csv(path, location_list, fields)
     response = DownloadLeads.get_downloaded_file_response(path)
     return response
+
+
+@login_required
+def call_audit_sheet(request):
+    """ CALL AUDIT SHEET """
+
+    return render(request, 'reports/call_audit_sheet.html')
