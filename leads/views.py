@@ -86,10 +86,20 @@ def lead_form(request):
                 rbudget_key = 'rbudget' + i
                 ga_setup_key = 'ga_setup' + i
                 analytics_code_key = 'analytics_code' + i
+                call_extension_key = 'call_extension' + i
+                product_behaviour_key = 'product_behaviour' + i
+                cartpage_behaviour_key = 'cartpage_behaviour' + i
+                checkout_process_key = 'checkout_process' + i
+                transaction_behaviour_key = 'transaction_behaviour' + i
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
                 tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
                 tag_data[tag_leads[analytics_code_key]] = request.POST.get(analytics_code_key)
+                tag_data[tag_leads[call_extension_key]] = request.POST.get(call_extension_key)
+                tag_data[tag_leads[product_behaviour_key]] = request.POST.get(product_behaviour_key)
+                tag_data[tag_leads[cartpage_behaviour_key]] = request.POST.get(cartpage_behaviour_key)
+                tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
+                tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
@@ -346,6 +356,12 @@ def submit_agency_same_tasks(request, agency_bundle):
             if str(request.POST.get('ga_setup' + indx)) == '1':
                 tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
 
+            tag_data[tag_leads['call_extension1']] = request.POST.get('call_extension' + indx)
+            tag_data[tag_leads['product_behaviour1']] = request.POST.get('product_behaviour' + indx)
+            tag_data[tag_leads['cartpage_behaviour1']] = request.POST.get('cartpage_behaviour' + indx)
+            tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
+            tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
+
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
             tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
@@ -437,6 +453,12 @@ def submit_agency_different_tasks(request, agency_bundle):
             if str(request.POST.get('ga_setup' + indx)) == '1':
                 tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
 
+            tag_data[tag_leads['call_extension1']] = request.POST.get('call_extension' + indx)
+            tag_data[tag_leads['product_behaviour1']] = request.POST.get('product_behaviour' + indx)
+            tag_data[tag_leads['cartpage_behaviour1']] = request.POST.get('cartpage_behaviour' + indx)
+            tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
+            tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
+
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
             tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
@@ -513,6 +535,12 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
             if str(request.POST.get('ga_setup' + indx)) == '1':
                 tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
+
+            tag_data[tag_leads['call_extension1']] = request.POST.get('call_extension' + indx)
+            tag_data[tag_leads['product_behaviour1']] = request.POST.get('product_behaviour' + indx)
+            tag_data[tag_leads['cartpage_behaviour1']] = request.POST.get('cartpage_behaviour' + indx)
+            tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
+            tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -617,6 +645,12 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['ga_setup1']] = request.POST.get('ga_setup' + indx)
             if str(request.POST.get('ga_setup' + indx)) == '1':
                 tag_data[tag_leads['analytics_code1']] = request.POST.get('analytics_code' + indx)
+
+            tag_data[tag_leads['call_extension1']] = request.POST.get('call_extension' + indx)
+            tag_data[tag_leads['product_behaviour1']] = request.POST.get('product_behaviour' + indx)
+            tag_data[tag_leads['cartpage_behaviour1']] = request.POST.get('cartpage_behaviour' + indx)
+            tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
+            tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -947,7 +981,6 @@ def bundle_lead_form(request):
     Bundle Lead Form
     Combination of 3 Code Types
     """
-
     if request.method == 'POST':
 
         return_url = bundle_lead_to_salesforce(request)
@@ -1075,7 +1108,6 @@ def bundle_lead_to_salesforce(request):
 
 def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
     """ Post Tag Lead to Salesforce """
-
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
@@ -1111,6 +1143,11 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('rbid' + str(indx))] = post_data.get('rbid_campaign' + str(cindx))  # Recommended Bid
         tag_data[tag_leads.get('rbudget' + str(indx))] = post_data.get('rbudget_campaign' + str(cindx))  # Recommended Budget
 
+        tag_data[tag_leads.get('call_extension' + str(indx))] = post_data.get('call_extension' + str(cindx))
+        tag_data[tag_leads.get('product_behaviour' + str(indx))] = post_data.get('product_behaviour' + str(cindx))
+        tag_data[tag_leads.get('cartpage_behaviour' + str(indx))] = post_data.get('cartpage_behaviour' + str(cindx))
+        tag_data[tag_leads.get('checkout_process' + str(indx))] = post_data.get('checkout_process' + str(cindx))
+        tag_data[tag_leads.get('transaction_behaviour' + str(indx))] = post_data.get('transaction_behaviour' + str(cindx))
         # elif indx == 2:
         #     # Code Type 2 Details
         #     tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1

@@ -198,6 +198,41 @@
                 <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
                 <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
 
+                <div id="callextension1" style="display:none;">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension1" type="checkbox" name="call_extension1" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div id="codebehaviour1" style="display:none;">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour1" type="checkbox" name="product_behaviour1" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour1" type="checkbox" name="cartpage_behaviour1" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process1" type="checkbox" name="checkout_process1" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour1" type="checkbox" name="transaction_behaviour1" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+
                 <div class="checkbox">
                   <label>
                     <input id="keep_url" type="checkbox" value="">
@@ -255,7 +290,41 @@
 
                     <input type="text" class="form-control" id="url2" name="url2" placeholder="URL">
                     <textarea class="form-control" id="comment2" name="comment2" placeholder="Special Instructions (Optional)"></textarea>
-              </div>  
+                    <div  id="callextension2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension2" type="checkbox" name="call_extension2" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div id="codebehaviour2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour2" type="checkbox" name="product_behaviour2" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour2" type="checkbox" name="cartpage_behaviour2" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process2" type="checkbox" name="checkout_process2" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour2" type="checkbox" name="transaction_behaviour2" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+              </div>
 
             <!--  Bundle Codetype 3 -->
             <div class="col-md-4">
@@ -307,6 +376,40 @@
               </div>
                 <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
                 <textarea class="form-control" id="comment3" name="comment3" placeholder="Special Instructions (Optional)"></textarea>
+               <div id="callextension3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension3" type="checkbox" name="call_extension3" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div id="codebehaviour3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour3" type="checkbox" name="product_behaviour3" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour3" type="checkbox" name="cartpage_behaviour3" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process3" type="checkbox" name="checkout_process3" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour3" type="checkbox" name="transaction_behaviour3" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
             </div>   
           </div>
         </div>
@@ -447,6 +550,23 @@ $("input:radio[name=webmasterCheck]").click(function() {
     $('#tag_primary_role').append(' <option value="">Primary Contact Role</option><option value="Webmaster">Webmaster</option>');
 
 });
-  
+
+$(document).on('change', '.call_extension', function() {
+    if ($('.call_extension').is(':checked')) {
+        $(this).val(1);
+    } else {
+        $(this).val(0);
+    }
+});
+
+$(document).on('change', '.code_behaviour', function() {
+    if ($('#'+$(this).attr('id')).is(':checked')){
+       $('#'+$(this).attr('id')).val(1);
+    } else {
+        $('#'+$(this).attr('id')).val(0);
+      }
+    
+});
+
 </script>
 {% endblock main_js %}
