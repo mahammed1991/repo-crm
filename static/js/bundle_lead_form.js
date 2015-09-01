@@ -227,11 +227,6 @@ function validatethis(frm) {
     emailElem = document.getElementById("manager_email");
     validateEmailField(emailElem);
 
-    // Location/Country Validation
-    countryElem = document.getElementById('country');
-    validateField(countryElem);
-    
-
     // Advertiser Info
     // Advertiser Name Validation
     advertiserNameElem = document.getElementById('advertiser_name');
@@ -263,6 +258,10 @@ function validatethis(frm) {
       /*frm.cid.focus();*/
       window.is_error = true;
     }
+
+    // Location/Country Validation
+    countryElem = document.getElementById('country');
+    validateField(countryElem);
 
     // Advertiser Location validation
     // advertiserLocationElem = document.getElementById('advertiser_location');
@@ -496,8 +495,8 @@ function validatethis(frm) {
       tagDateElem = document.getElementById('tag_datepick');
       if ($(tagDateElem).val() == "" || $(tagDateElem).val() == "0" || !$(tagDateElem).val()) {
           $(tagDateElem).addClass('error-box');
+          window.failedFields.push(tagDateElem);
           window.is_error = true;
-          return false;
         }
       // validateField(tagDateElem);
 
@@ -519,7 +518,8 @@ function validatethis(frm) {
         }else{
             $(".shopping-policy").addClass('error-box');
             $("#is_shopping_policies").val(0);
-            return false;
+            window.failedFields.push($("#is_shopping_policies"));
+            window.is_error = true;
         }
     }
 

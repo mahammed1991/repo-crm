@@ -446,18 +446,13 @@ def update_sfdc_leads(records, sf):
     for lead in records:
         location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')
-        # appointment_date = lead.get('Appointment_Date__c')
-        # appointment_in_ist = lead.get('IST_TIME_N__c')
-        # appointment_in_pst = lead.get('Appointment_Time_in_PST__c')
+        type_1 = lead.get('Code_Type__c')
         rescheduled_appointment = lead.get('Rescheduled_Appointments__c')
+        appointment_date = lead.get('Appointment_Date__c')
+        appointment_in_ist = lead.get('IST_TIME_N__c')
+        # appointment_in_pst = lead.get('Appointment_Time_in_PST__c')
         if rescheduled_appointment:
             sf_lead_id = lead.get('Id')
-            # appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
-            # timezone = SalesforceApi.get_current_timezone_by_location(appointment_date, location, time_zone)
-            # appointment_in_ist = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, 'IST')
-            # tz = SalesforceApi.get_current_timezone_of_salesforce()
-            # appointment_in_pst = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, tz.zone_name)
-
             rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
             timezone = SalesforceApi.get_current_timezone_by_location(rescheduled_appointment, location, time_zone)
             reschedule_in_ist = SalesforceApi.convert_appointment_to_timezone(rescheduled_appointment, timezone, 'IST')
@@ -467,3 +462,14 @@ def update_sfdc_leads(records, sf):
             except Exception as e:
                 print e
                 logging.info("Failed to update the Reschedule Appointment because of this reason: %s" % (e))
+        if type_1 == 'WPP' and appointment_date:
+            appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
+            timezone = SalesforceApi.get_current_timezone_by_location(appointment_date, location, time_zone)
+            appointment_in_ist = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, 'IST')
+            # tz = SalesforceApi.get_current_timezone_of_salesforce()
+            # appointment_in_pst = SalesforceApi.convert_appointment_to_timezone(appointment_date, timezone, tz.zone_name)
+            try:
+                sf.Lead.update(sf_lead_id, {'IST_TIME_N__c': appointment_in_ist})
+            except Exception as e:
+                print e
+                logging.info("Failed to update the WPP Appointment because of this reason: %s" % (e))

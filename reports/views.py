@@ -763,6 +763,7 @@ def download_timezones_by_location(request):
 
 
 @login_required
+@wpp_user_required
 def call_audit_sheet(request):
     """ CALL AUDIT SHEET """
 
