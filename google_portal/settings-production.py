@@ -232,7 +232,8 @@ CODE_TYPE_DICT = {'Adwords Conversion Code': ['Adwords Conversion Code', 'AdWord
                   'SDK Conversion Tracking': ['Mobile Conversion Tracking', 'SDK Conversion Tracking'],
                   'Google Shopping Migration': ['Google Shopping Migration'], 'GA Conversion Tracking': ['GA Conversion Tracking'],
                   'Google Analytics Dynamic Remarketing  (Retail)': ['Google Analytics Dynamic Remarketing  (Retail)'],
-                  'WCC Beta': ['WCC Beta']}
+                  'WCC Beta': ['WCC Beta'],
+                  'Analytics Enhanced E-Commerce Tracking': ['Analytics Enhanced E-Commerce Tracking']}
 
 FILE_UPLOAD_TEMP_DIR = os.path.join(os.path.dirname(__file__), 'tmp').replace('\\', '/')
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.MemoryFileUploadHandler",
