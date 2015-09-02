@@ -323,7 +323,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
             wpp_lead_status_dict['in_stage'] += status_dict['count']
         elif status_dict['lead_status'] == 'Implemented':
             wpp_lead_status_dict['implemented'] += status_dict['count']
-        elif status_dict['lead_status'] == 'AB Testing':
+        elif status_dict['lead_status'] == 'In A/B Test':
             wpp_lead_status_dict['ab_testing'] += status_dict['count']
 
     wpp_lead_status_dict['total_leads'] = total_count
@@ -440,7 +440,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         query['lead_status__in'] = ['Implemented']
         lead_status_dict['implemented'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
-        query['lead_status__in'] = ['AB Testing']
+        query['lead_status__in'] = ['In A/B Test']
         lead_status_dict['ab_testing'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
     return lead_status_dict
 

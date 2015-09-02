@@ -67,3 +67,32 @@ class QuarterTargetLeads(models.Model):
         db_table = 'quarter_target_leads'
         ordering = ['target_leads']
         verbose_name_plural = "Quarter Target Leads"
+
+
+class CSATReport(models.Model):
+    """ CSAT Report data """
+
+    language = models.CharField(max_length=100, unique=True)
+    customer_id = models.CharField(max_length=100, unique=True)
+    cli = models.CharField(max_length=100, unique=True)
+
+    q1 = models.IntegerField(max_length=10, default=0)
+    q2 = models.IntegerField(max_length=10, default=0)
+    q3 = models.IntegerField(max_length=10, default=0)
+    q4 = models.IntegerField(max_length=10, default=0)
+    q5 = models.IntegerField(max_length=10, default=0)
+    sf_lead_id = models.CharField(max_length=50, unique=True)
+    survey_date = models.DateTimeField(blank=True, null=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    channel = models.CharField(max_length=10, blank=False, choices=(
+        ('PHONE', 'PHONE'),
+        ('EMAIL', 'EMAIL')))
+    process = models.CharField(max_length=10, blank=False, choices=(
+        ('TAG', 'TAG'),
+        ('SHOPPING', 'SHOPPING')), default='TAG')
+    category = models.CharField(max_length=10, blank=False, choices=(
+        ('MAPPED', 'MAPPED'),
+        ('UNMAPPPED', 'UNMAPPPED')), default='UNMAPPPED')
