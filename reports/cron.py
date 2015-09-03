@@ -347,8 +347,12 @@ def create_or_update_leads(records, sf):
                 tat = ReportService.get_tat_by_implemented(
                     lead.date_of_installation, lead.appointment_date, lead.created_date)
         else:
-            tat = ReportService.get_tat_by_first_contacted_on(
-                lead.first_contacted_on, lead.appointment_date, lead.created_date)
+            if lead.type_1 == 'WPP':
+                tat = ReportService.get_tat_by_implemented(
+                    lead.date_of_installation, lead.appointment_date, lead.created_date)
+            else:
+                tat = ReportService.get_tat_by_first_contacted_on(
+                    lead.first_contacted_on, lead.appointment_date, lead.created_date)
         lead.tat = tat
         try:
             lead.save()
