@@ -1556,5 +1556,13 @@ $(document).on('change', '.call_extension', function() {
     }
 });
 
+$(document).on('change', '.code_behaviour', function() {
+    if ($('#'+$(this).attr('id')).is(':checked')){
+       $('#'+$(this).attr('id')).val(1);
+    } else {
+        $('#'+$(this).attr('id')).val(0);
+      }
+});
+
 </script>
 {% endblock main_js %}
