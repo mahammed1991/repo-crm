@@ -2034,7 +2034,7 @@ def lead_history(request, lid):
     lead_status['In Development'] = {'title': 'Regalix team coding the website'}
     lead_status['In Stage'] = {'title': 'On a staging server for feedback from the advertiser'}
     lead_status['In A/B Test'] = {'title': 'A/B Test launched on Analytics/Adwords'}
-    lead_status['Implemented'] = {'title': 'New website launched post successful A/B Test'}
+    lead_status['Implemented'] = {'title': 'New website launched'}
     lead = None
     try:
         lead = WPPLeads.objects.get(sf_lead_id=lid)
