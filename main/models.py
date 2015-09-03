@@ -302,7 +302,6 @@ def send_testimonial_notification(lead, testimonial):
         'rwieker@google.com',
         'tkhan@regalix-inc.com',
         'sabinaa@google.com',
-        'anak@google.com',
         'analytics.support@regalix-inc.com'
     ])
 

@@ -672,7 +672,8 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
         'g-crew@regalix-inc.com',
         'rwieker@google.com',
         'sabinaa@google.com',
-        'anak@google.com',
+        'vsharan@regalix-inc.com',
+        'babla@regalix-inc.com',
         feedback.lead_owner.email,
         request.user.email
     ])
