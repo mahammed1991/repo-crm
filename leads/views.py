@@ -2091,7 +2091,7 @@ def lead_history(request, lid):
 
     del lead_status['On Hold']
 
-    if is_ab_test != 'YES':
+    if is_ab_test != 'Yes':
         del lead_status['In A/B Test']
         del tat_by_status['In A/B Test']
 
