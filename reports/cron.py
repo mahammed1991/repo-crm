@@ -8,6 +8,11 @@ from leads.models import Leads, SfdcUsers, WPPLeads
 from django.core.exceptions import ObjectDoesNotExist
 import pytz
 from representatives.models import GoogeRepresentatives, RegalixRepresentatives
+import json
+import gspread
+from oauth2client.client import SignedJwtAssertionCredentials
+from reports.models import CallLogAccountManager
+from datetime import datetime
 
 logging.basicConfig(filename='/tmp/cronjob.log',
                     filemode='a',
@@ -477,3 +482,53 @@ def update_sfdc_leads(records, sf):
             except Exception as e:
                 print e
                 logging.info("Failed to update the WPP Appointment because of this reason: %s" % (e))
+
+
+@kronos.register('*/10 * * * *')
+def get_call_log_response_from_spreadsheet():
+    """ Get Current Quarter updated Leads from SFDC """
+
+    json_file = settings.MEDIA_ROOT + '/gtrack-test-0e3eb2372302.json'
+
+    json_key = json.load(open(json_file))
+    scope = ['https://spreadsheets.google.com/feeds']
+
+    credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
+
+    gc = gspread.authorize(credentials)
+
+    sheet_url = settings.SPREADSHEET_URL
+
+    worksheet = gc.open_by_url(sheet_url).sheet1
+
+    db_total_records = CallLogAccountManager.objects.all().count()
+    sheet_total_records = worksheet.row_count
+
+    spreadsheet_records = list()
+    if db_total_records == 0:
+        for i in range(2, sheet_total_records + 1):
+            spreadsheet_records.append(worksheet.row_values(i))
+    else:
+        sheet_row_start = CallLogAccountManager.objects.all().order_by('-id')[0].sheet_row_count
+        for i in range(sheet_row_start + 1, sheet_total_records + 1):
+            spreadsheet_records.append(worksheet.row_values(i))
+
+    objects_list = list()
+    for record in spreadsheet_records:
+        if record[6]:
+            log_details = CallLogAccountManager()
+            log_details.username = record[8]  # record['Username']
+            log_details.seller_name = record[1]  # record['Seller Name']
+            log_details.seller_id = record[2]  # record['Seller ID']
+            log_details.phone_number = record[3]  # record['Phone Number']
+            log_details.alternate_number = record[4]  # record['Alternate Number']
+            meeting_time_in_cst = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
+
+            log_details.meeting_time = meeting_time_in_cst  # record['Meeting Time']
+            log_details.call_status = record[5]  # record['Call Status']
+            log_details.log_time_stamp = datetime.strptime(record[0], "%m/%d/%Y %H:%M:%S")  # record['Timestamp']
+            log_details.sheet_row_count = sheet_total_records
+            objects_list.append(log_details)
+
+    # # total records - 1 saved
+    CallLogAccountManager.objects.bulk_create(objects_list)
