@@ -818,15 +818,16 @@ def google_doc(request):
             log_details.seller_id = record[2]  # record['Seller ID']
             log_details.phone_number = record[3]  # record['Phone Number']
             log_details.alternate_number = record[4]  # record['Alternate Number']
+            meeting_time_in_cst = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
 
             # Meeting time from cst to ist
-            cst_time = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
-            tz_cst = Timezone.objects.get(zone_name='CST')
-            utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
-            tz_ist = Timezone.objects.get(zone_name='IST')
-            meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+            # cst_time = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
+            # tz_cst = Timezone.objects.get(zone_name='CST')
+            # utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
+            # tz_ist = Timezone.objects.get(zone_name='IST')
+            # meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
 
-            log_details.meeting_time = meeting_time_ist  # record['Meeting Time']
+            log_details.meeting_time = meeting_time_in_cst  # record['Meeting Time']
             log_details.call_status = record[5]  # record['Call Status']
             log_details.log_time_stamp = datetime.strptime(record[0], "%m/%d/%Y %H:%M:%S")  # record['Timestamp']
             log_details.sheet_row_count = sheet_total_records
