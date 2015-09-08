@@ -1,0 +1,62 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% load custom_tags %}
+
+{% block title %}
+    Calendar Event
+{% endblock title %}
+
+{% block main_css %}
+    <link href="{% static 'css/reports/fullcalendar.css' %} " rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container-fluid">
+        <h1 style="margin-top:15px;">Calendar Event</h1>
+        <div id="calendar">
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/reports/moment.min.js' %}" ></script>
+<script src="{% static 'js/reports/fullcalendar.js' %}" ></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    // page is now ready, initialize the calendar...
+    $('#calendar').fullCalendar({
+        // put your options and callbacks here
+        theme: true,
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+        editable: true,
+        eventLimit: true,
+        events: {{events|safe}},
+        dayClick: function(date, jsEvent, view) {
+
+        alert('Clicked on: ' + date.format());
+
+        alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+
+        alert('Current view: ' + view.name);
+
+    },
+    eventClick: function(event, element) {
+
+        event.title = "CLICKED!";
+
+        $('#calendar').fullCalendar('updateEvent', event);
+
+    },
+        height: 450,
+    })
+});
+</script>
+{% endblock main_js %}

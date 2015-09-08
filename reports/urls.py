@@ -18,5 +18,5 @@ urlpatterns = patterns(
     url(r'^wpp/get-wpp-reports/$', views.get_wpp_reports),
     url(r'^wpp/master-list/$', views.wpp_master_list),
     url(r'^wpp/call-audit-sheet/$', views.call_audit_sheet),
-
+    url(r'^google-doc/$', views.google_doc),
 )

@@ -1030,13 +1030,14 @@ def rep_details_download(request):
 def get_notifications(request):
     """ Get all Notifications """
     # Notifications list
-    notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
     notification = list()
-    for notif in notifications:
-        notif_dict = dict()
-        notif_dict['id'] = notif.id
-        notif_dict['text'] = notif.text
-        notification.append(notif_dict)
+    if 'WPP' not in request.session['groups']:
+        notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+        for notif in notifications:
+            notif_dict = dict()
+            notif_dict['id'] = notif.id
+            notif_dict['text'] = notif.text
+            notification.append(notif_dict)
 
     return HttpResponse(dumps(notification), content_type='application/json')
 
