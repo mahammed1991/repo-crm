@@ -17,9 +17,9 @@
 
 # print "Done"
 
-# import os
+import os
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings")
 # from leads.models import Leads, WPPLeads
 
 # total_leads_before_delete = Leads.objects.all().count()
@@ -74,8 +74,10 @@ for record in all_records[1:]:
         log_details.seller_id = record['Seller ID']
         log_details.phone_number = record['Phone Number']
         log_details.alternate_number = record['Alternate Number']
-        meeting_time_in_cst = datetime.strptime(record['Meeting Time'], "%m/%d/%Y %H:%M:%S")
-
+        try:
+            meeting_time_in_cst = datetime.strptime(record['Meeting Time'], "%m/%d/%Y %H:%M:%S")
+        except Exception:
+            continue
         # Meeting time from cst to ist
         # cst_time = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
         # tz_cst = Timezone.objects.get(zone_name='CST')
