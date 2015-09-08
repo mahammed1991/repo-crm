@@ -316,4 +316,4 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c,\
     Stage_URL_Credentials__c, AB_Testing__c"
 
-SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1bwtmehebZVAMbt1pB1e8q_qD2PIIHNs19QxEuM-aN2Y/edit#gid=782277640'
+SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/16crEI36EeBDGuOx0GBusJ8gloH6zWsJNErf5opeavzE/edit#gid=782277640'
