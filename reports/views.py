@@ -3,17 +3,21 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location
+from leads.models import Location, Timezone
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
-from reports.models import Region
+from reports.models import Region, CallLogAccountManager
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import re
+import json
+import gspread
+from oauth2client.client import SignedJwtAssertionCredentials
+from lib.salesforce import SalesforceApi
 
 
 @login_required
@@ -768,3 +772,69 @@ def call_audit_sheet(request):
     """ CALL AUDIT SHEET """
 
     return render(request, 'reports/call_audit_sheet.html')
+
+
+@login_required
+@wpp_user_required
+def google_doc(request):
+
+    json_file = settings.MEDIA_ROOT + '/gtrack-test-0e3eb2372302.json'
+
+    json_key = json.load(open(json_file))
+    scope = ['https://spreadsheets.google.com/feeds']
+
+    credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
+
+    gc = gspread.authorize(credentials)
+
+    # wks = gc.open("Basava").sheet1
+
+    #  worksheet1  = gc.open_by_url('https://docs.google.com/spreadsheets/d/1bwtmehebZVAMbt1pB1e8q_qD2PIIHNs19QxEuM-aN2Y/edit#gid=782277640').sheet1
+
+    #  all_records = wks.get_all_records()
+    worksheet1 = gc.open_by_url('https://docs.google.com/spreadsheets/d/1U5_fREWGszsYQMRf3sl6nbBRz6zTtm_IhPClC80c9fg/edit#gid=1168002147')
+
+    worksheet = worksheet1.get_worksheet(1)
+
+    db_total_records = CallLogAccountManager.objects.all().count()
+    # sheet_total_records = worksheet.row_count
+    sheet_total_records = 10
+
+    spreadsheet_records = list()
+    if db_total_records == 0:
+        for i in range(2, sheet_total_records + 1):
+            spreadsheet_records.append(worksheet.row_values(i))
+    else:
+        sheet_row_start = CallLogAccountManager.objects.all().order_by('-id')[0].sheet_row_count
+        for i in range(sheet_row_start + 1, sheet_total_records + 1):
+            spreadsheet_records.append(worksheet.row_values(i))
+
+    objects_list = list()
+    for record in spreadsheet_records:
+        if record[6]:
+            log_details = CallLogAccountManager()
+            log_details.username = record[8]  # record['Username']
+            log_details.seller_name = record[1]  # record['Seller Name']
+            log_details.seller_id = record[2]  # record['Seller ID']
+            log_details.phone_number = record[3]  # record['Phone Number']
+            log_details.alternate_number = record[4]  # record['Alternate Number']
+
+            # Meeting time from cst to ist
+            cst_time = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
+            tz_cst = Timezone.objects.get(zone_name='CST')
+            utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
+            tz_ist = Timezone.objects.get(zone_name='IST')
+            meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+
+            log_details.meeting_time = meeting_time_ist  # record['Meeting Time']
+            log_details.call_status = record[5]  # record['Call Status']
+            log_details.log_time_stamp = datetime.strptime(record[0], "%m/%d/%Y %H:%M:%S")  # record['Timestamp']
+            log_details.sheet_row_count = sheet_total_records
+            objects_list.append(log_details)
+
+    # # total records - 1 saved
+    CallLogAccountManager.objects.bulk_create(objects_list)
+
+    events = []
+
+    return render(request, 'reports/calendar_view.html', {'events': events})

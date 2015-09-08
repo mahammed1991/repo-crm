@@ -96,3 +96,28 @@ class CSATReport(models.Model):
     category = models.CharField(max_length=10, blank=False, choices=(
         ('MAPPED', 'MAPPED'),
         ('UNMAPPPED', 'UNMAPPPED')), default='UNMAPPPED')
+
+    class Meta:
+        db_table = "csat_report"
+        verbose_name_plural = "CSAT Report"
+
+
+class CallLogAccountManager(models.Model):
+    """ Call Log Response from spreadsheet"""
+
+    username = models.CharField(max_length=100, null=False, blank=False)
+    seller_name = models.CharField(max_length=100, null=True, blank=True)
+    seller_id = models.CharField(max_length=100, null=True, blank=True)
+    phone_number = models.CharField(max_length=100, null=True, blank=True)
+    alternate_number = models.CharField(max_length=100, null=True, blank=True)
+    meeting_time = models.DateTimeField(blank=True, null=True)
+    call_status = models.CharField(max_length=100, null=True, blank=True)
+    log_time_stamp = models.DateTimeField(blank=True, null=True)
+    sheet_row_count = models.IntegerField(max_length=10, default=0)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'call_log_account_manager'
+        verbose_name_plural = "Call Log Account Manager"
