@@ -14,6 +14,8 @@ from leads.models import Leads, WPPLeads
 from django.db.models import Q, Count
 import operator
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
+from lib.salesforce import SalesforceApi
+from leads.models import Timezone
 
 from django.contrib.auth.models import User
 
@@ -614,3 +616,22 @@ def convert_excel_data_into_list(workbook):
         # append row data to excel sheet data
         excel_data.append(excel_row_data)
     return excel_data
+
+
+def logs_to_events(call_logs):
+    events = []
+    for log in call_logs:
+        event = dict()
+        seller_name = str(log.seller_name.encode('utf-8')) if log.seller_name else ''
+        seller_id = str(log.seller_id) if log.seller_id else ''
+        phone_number = str(log.phone_number) if log.phone_number else ''
+        alternate_number = str(log.alternate_number) if log.alternate_number else ''
+        event['title'] = seller_name + ' ' + seller_id + ' ' + phone_number + ' ' + alternate_number
+        cst_time = datetime.strptime(str(log.meeting_time), "%Y-%m-%d %H:%M:%S")
+        tz_cst = Timezone.objects.get(zone_name='CST')
+        utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
+        tz_ist = Timezone.objects.get(zone_name='IST')
+        meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+        event['start'] = datetime.strftime(meeting_time_ist, "%Y-%m-%dT%H:%M:%S")
+        events.append(event)
+    return events

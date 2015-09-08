@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from leads.models import Location, Timezone
 from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
@@ -772,25 +772,23 @@ def call_audit_sheet(request):
 
 
 @login_required
-@wpp_user_required
 def google_doc(request):
 
     users = CallLogAccountManager.objects.values_list('username', flat=True).distinct().order_by('username')
+    users = [str(user) for user in users]
     call_logs = CallLogAccountManager.objects.all()
-    events = []
-    for log in call_logs:
-        event = dict()
-        seller_name = str(log.seller_name) if log.seller_name else ''
-        seller_id = str(log.seller_id) if log.seller_id else ''
-        phone_number = str(log.phone_number) if log.phone_number else ''
-        alternate_number = str(log.alternate_number) if log.alternate_number else ''
-        event['title'] = seller_name + ' ' + seller_id + ' ' + phone_number + ' ' + alternate_number
-        cst_time = datetime.strptime(str(log.meeting_time), "%Y-%m-%d %H:%M:%S")
-        tz_cst = Timezone.objects.get(zone_name='CST')
-        utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
-        tz_ist = Timezone.objects.get(zone_name='IST')
-        meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
-        event['start'] = datetime.strftime(meeting_time_ist, "%Y-%m-%dT%H:%M:%S")
-        events.append(event)
-
+    events = logs_to_events(call_logs)
     return render(request, 'reports/calendar_view.html', {'events': events, 'users': users})
+
+
+def user_events(request):
+    users = CallLogAccountManager.objects.values_list('username', flat=True).distinct().order_by('username')
+    users = [str(user) for user in users]
+    if request.is_ajax():
+        user = str(request.GET.get('user'))
+        if user != 'all':
+            user_logs = CallLogAccountManager.objects.filter(username=user)
+        else:
+            user_logs = CallLogAccountManager.objects.all()
+        events = logs_to_events(user_logs)
+    return HttpResponse(json.dumps({'events': events, 'users': users}))

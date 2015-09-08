@@ -15,8 +15,20 @@
 {% block content %}
 <section class="content-region inner-page">
     <div class="container-fluid">
-        <h1 style="margin-top:15px;">Calendar Event</h1>
-        <div id="calendar">
+        <div class="row" style="border-bottom: 1px solid #ccc; padding-top: 15px; padding-bottom: 15px;"> 
+            <div class="col-xs-12 col-sm-12 col-md-12" style="padding-top: 2px;">
+              <div class="col-xs-7 col-sm-7 col-md-7" style="font-size: 24px;  font-family: 'robotoblack';  text-transform: uppercase;  text-align: center;">Calendar Event</div>
+              <div class="col-xs-5 col-sm-5 col-md-5 wpp-type">Calendar View For:
+                  <select id="users" class="user bgicon" style="height: 38px;">
+                    <option value="all">All</option>
+                    {% for user in users %}
+                      <option value="{{user}}"> {{user}}</option>
+                    {% endfor %}
+                  </select>
+                  </div>
+            </div>
+        </div> 
+        <div id="calendar"  style="padding-top: 15px;">
         </div>
     </div>
 </section>
@@ -26,9 +38,12 @@
 <script src="{% static 'js/reports/moment.min.js' %}" ></script>
 <script src="{% static 'js/reports/fullcalendar.js' %}" ></script>
 <script type="text/javascript">
+var curSources = new Array();
 $(document).ready(function() {
     // page is now ready, initialize the calendar...
-    $('#calendar').fullCalendar({
+curSources[0] = {{events|safe}};
+
+$('#calendar').fullCalendar({
         // put your options and callbacks here
         theme: true,
             header: {
@@ -38,8 +53,8 @@ $(document).ready(function() {
             },
         editable: true,
         eventLimit: true,
-        events: {{events|safe}},
-        dayClick: function(date, jsEvent, view) {
+        eventSources: [curSources[0]],
+        /*dayClick: function(date, jsEvent, view) {
 
         alert('Clicked on: ' + date.format());
 
@@ -47,7 +62,7 @@ $(document).ready(function() {
 
         alert('Current view: ' + view.name);
 
-    },
+    },*/
    /* eventClick: function(event, element) {
 
         event.title = "CLICKED!";
@@ -57,6 +72,27 @@ $(document).ready(function() {
     },*/
         height: 450,
     })
+
+});
+
+$(document).on('change', '#users', function(){
+    alert($(this).val());
+    $.ajax({
+        url: "/reports/user-events",
+        data: {'user': $(this).val()},
+        type: 'GET',
+        dataType: "json",
+        success: function(data) {
+            $('#calendar').fullCalendar('removeEventSource', curSources[0]);
+            $('#calendar').fullCalendar('refetchEvents');
+            curSources[0] = data['events'];
+            $('#calendar').fullCalendar('addEventSource', curSources[0]);
+            $('#calendar').fullCalendar('refetchEvents');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
 });
 </script>
 {% endblock main_js %}
