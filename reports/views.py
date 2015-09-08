@@ -14,9 +14,6 @@ from reports.models import Region, CallLogAccountManager
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import re
-import json
-import gspread
-from oauth2client.client import SignedJwtAssertionCredentials
 from lib.salesforce import SalesforceApi
 
 
@@ -778,64 +775,22 @@ def call_audit_sheet(request):
 @wpp_user_required
 def google_doc(request):
 
-    json_file = settings.MEDIA_ROOT + '/gtrack-test-0e3eb2372302.json'
-
-    json_key = json.load(open(json_file))
-    scope = ['https://spreadsheets.google.com/feeds']
-
-    credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
-
-    gc = gspread.authorize(credentials)
-
-    # wks = gc.open("Basava").sheet1
-
-    #  worksheet1  = gc.open_by_url('https://docs.google.com/spreadsheets/d/1bwtmehebZVAMbt1pB1e8q_qD2PIIHNs19QxEuM-aN2Y/edit#gid=782277640').sheet1
-
-    #  all_records = wks.get_all_records()
-    worksheet1 = gc.open_by_url('https://docs.google.com/spreadsheets/d/1U5_fREWGszsYQMRf3sl6nbBRz6zTtm_IhPClC80c9fg/edit#gid=1168002147')
-
-    worksheet = worksheet1.get_worksheet(1)
-
-    db_total_records = CallLogAccountManager.objects.all().count()
-    # sheet_total_records = worksheet.row_count
-    sheet_total_records = 10
-
-    spreadsheet_records = list()
-    if db_total_records == 0:
-        for i in range(2, sheet_total_records + 1):
-            spreadsheet_records.append(worksheet.row_values(i))
-    else:
-        sheet_row_start = CallLogAccountManager.objects.all().order_by('-id')[0].sheet_row_count
-        for i in range(sheet_row_start + 1, sheet_total_records + 1):
-            spreadsheet_records.append(worksheet.row_values(i))
-
-    objects_list = list()
-    for record in spreadsheet_records:
-        if record[6]:
-            log_details = CallLogAccountManager()
-            log_details.username = record[8]  # record['Username']
-            log_details.seller_name = record[1]  # record['Seller Name']
-            log_details.seller_id = record[2]  # record['Seller ID']
-            log_details.phone_number = record[3]  # record['Phone Number']
-            log_details.alternate_number = record[4]  # record['Alternate Number']
-            meeting_time_in_cst = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
-
-            # Meeting time from cst to ist
-            # cst_time = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
-            # tz_cst = Timezone.objects.get(zone_name='CST')
-            # utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
-            # tz_ist = Timezone.objects.get(zone_name='IST')
-            # meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
-
-            log_details.meeting_time = meeting_time_in_cst  # record['Meeting Time']
-            log_details.call_status = record[5]  # record['Call Status']
-            log_details.log_time_stamp = datetime.strptime(record[0], "%m/%d/%Y %H:%M:%S")  # record['Timestamp']
-            log_details.sheet_row_count = sheet_total_records
-            objects_list.append(log_details)
-
-    # # total records - 1 saved
-    CallLogAccountManager.objects.bulk_create(objects_list)
-
+    users = CallLogAccountManager.objects.values_list('username', flat=True).distinct().order_by('username')
+    call_logs = CallLogAccountManager.objects.all()
     events = []
+    for log in call_logs:
+        event = dict()
+        seller_name = str(log.seller_name) if log.seller_name else ''
+        seller_id = str(log.seller_id) if log.seller_id else ''
+        phone_number = str(log.phone_number) if log.phone_number else ''
+        alternate_number = str(log.alternate_number) if log.alternate_number else ''
+        event['title'] = seller_name + ' ' + seller_id + ' ' + phone_number + ' ' + alternate_number
+        cst_time = datetime.strptime(str(log.meeting_time), "%Y-%m-%d %H:%M:%S")
+        tz_cst = Timezone.objects.get(zone_name='CST')
+        utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
+        tz_ist = Timezone.objects.get(zone_name='IST')
+        meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+        event['start'] = datetime.strftime(meeting_time_ist, "%Y-%m-%dT%H:%M:%S")
+        events.append(event)
 
-    return render(request, 'reports/calendar_view.html', {'events': events})
+    return render(request, 'reports/calendar_view.html', {'events': events, 'users': users})
