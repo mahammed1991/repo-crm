@@ -3,7 +3,7 @@
 
 {% load staticfiles %}
 {% block title %}
-  Manage Help
+  Resource
 {% endblock title %}
 {% block content %}
 
@@ -6813,9 +6813,14 @@ var google_remarketing_only = true;<br />
             <h1 class="form-head">Newsletter</h1>
             <div class="row">
              
+             <div class="col-xs-12 col-md-4 col-sm-4 " >
+                <a href="#" data-toggle="modal" data-target="#sep2015" class="fck-work">
+                 <div class="newsletter_style11 newsletter_style19">September 2015</div></a>
+              </div>
+
               <div class="col-xs-12 col-md-4 col-sm-4 " >
                 <a href="#" data-toggle="modal" data-target="#july2015" class="fck-work">
-                 <div class="newsletter_style11 newsletter_style19">July 2015</div></a>
+                 <div class="newsletter_style11" >July 2015</div></a>
               </div>
 
               <div class="col-xs-12 col-md-4 col-sm-4 " >
@@ -6845,6 +6850,23 @@ var google_remarketing_only = true;<br />
       </div>
     </div>
   </section>
+
+
+  <div  id="sep2015" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog1 modal-lg" role="document">
+    <div class="modal-content" style="">
+      <div class="modal-header" style="background-color:#109d59;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -11px;  opacity: 1;"><span aria-hidden="true">&times;</span></button>
+        <div class="modal-title model-scroll-llb1" id="myModalLabel" style="color: rgb(255, 255, 255); font-size: 20px; padding-bottom: 0px; display: none;">
+        <span style="font-size: 20px;">UPDATES SEPTEMBER 2015</span></div>
+        </div>
+         <div class="modal-body model-scrolll1" style="position:relative; max-height:500px; overflow:auto;">
+              {% include "newsletter/2015/september-vol-1.html" %}
+          </div>
+      
+    </div> 
+  </div>
+</div>
 
   <div  id="july2015" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog1 modal-lg" role="document">
