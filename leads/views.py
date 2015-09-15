@@ -2443,3 +2443,17 @@ def get_pagination_lead_summary(request):
             return HttpResponse(json.dumps(lead_list))
         else:
             return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))
+
+
+@login_required
+def check_url_priority(request):
+    """ Check priority for WPP URL """
+
+    if request.is_ajax():
+        url = request.GET.get('name')
+        post_url = 'http://lp.wppperformance.com/wg/xp.php'
+        data = {'url': url}
+        res = requests.post(post_url, data=data)
+        return HttpResponse(json.dumps({'json': res.json(), 'status': res.ok}))
+    else:
+        return HttpResponse('FAIL')
