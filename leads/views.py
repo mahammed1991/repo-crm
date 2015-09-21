@@ -2296,7 +2296,6 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
             appointment_in_pst = datetime.strftime(appointment_in_pst, '%m/%d/%Y %I:%M %p')
         lead_data[appointment_in_ist_key] = appointment_in_ist
         lead_data[appointment_in_pst_key] = appointment_in_pst
-
         try:
             requests.post(url=sf_api_url, data=lead_data)
             # Get Advertiser Details
@@ -2457,3 +2456,10 @@ def check_url_priority(request):
         return HttpResponse(json.dumps({'json': res.json(), 'status': res.ok}))
     else:
         return HttpResponse('FAIL')
+
+
+@login_required
+def priority_check(request):
+    """ Website priority Checker LP """
+    template_args = dict()
+    return render(request, 'leads/website_priority_checker.html', template_args)

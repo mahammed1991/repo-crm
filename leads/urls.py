@@ -36,5 +36,8 @@ urlpatterns = patterns(
     url(r'^pagination-leads-summary/$', views.get_pagination_lead_summary),
     url(r'^get-wpp-lead-summary-by-treatment/$', views.get_wpp_lead_summary_by_treatment),
     url(r'^lead-history/(?P<lid>[\w]+)$', views.lead_history),
+    url(r'^priority-check/$', views.priority_check),
     url(r'^check-url-priority/$', views.check_url_priority)
+
+
 )
