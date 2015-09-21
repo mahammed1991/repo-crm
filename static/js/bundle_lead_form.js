@@ -167,6 +167,7 @@ function validatethis(frm) {
     $(".lead-form .form-control").removeClass('error-box');
     $('.shopping-policy').removeClass('error-box');
     $('.web-access').removeClass('error-box');
+    $('.error-box').removeClass('error-box');
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
@@ -521,6 +522,7 @@ function validatethis(frm) {
             window.failedFields.push($("#is_shopping_policies"));
             window.is_error = true;
         }
+        isAgree = ensureAllPolicies()
     }
 
       // Analytics setup check box
@@ -587,6 +589,23 @@ function validateEmailField(elem) {
     }
 }
 
+function ensureAllPolicies(){
+  var isAgree = false;
+  if($("#shoppingTerms").is(":visible")){
+      $(".shopping-group").each(function(){
+        if($(this).is(":checked")){
+          isAgree = true;
+        }else{
+          isAgree = false;
+          window.failedFields.push($(this));
+          $(this).parent().addClass('error-box');
+          window.is_error = true;
+          return isAgree;
+        }
+      });
+    }
+    return isAgree
+}
     
 function resetBtn(elem){
   elemId = $(elem).attr('id');

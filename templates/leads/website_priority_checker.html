@@ -1,0 +1,140 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  WPP Priority Checker
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .tblPriority tr td{
+      padding: 5px;
+      padding-left: 20px;
+    }
+    .tblPriorityHeader tr td{
+      padding: 10px;
+      text-align: center;
+    }
+    .tblPriority {
+      margin: 20px 0px;
+    }
+    .tblPrioritytblPriorityHeader {
+      margin: 30px 0px;
+    }
+    .tblPriorityHeader table {
+      border-collapse: collapse;
+    }
+
+  .tblPriorityHeader table, .tblPriorityHeader th, .tblPriorityHeader td {
+      border: 1px solid #fff;
+  }
+  </style>
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>WEBSITE PRIORITY CHECKER</h1>
+    <div class="col-md-12">
+      <div class="col-md-1 col-sm-12">
+      <label style="line-height:47px">URL</label>
+      </div>
+      <div class="col-md-8 col-sm-12">
+       <input type="text" class="form-control" id="check_url" placeholder="Please enter URL" name="check_url">
+      </div>
+      <div class="col-md-3 col-sm-12">
+      <button class="btn std-btn" id="check_priority" style="padding:12px">Check Priority</button>
+      </div>
+    </div>
+  <div class="col-md-12" id="priority">
+    <table border="1" class="tblPriorityHeader" width="100%">
+      <tbody>
+        <tr style="background-color:#5aa940;color:#fff;font-weight: bold;">
+            <td width="50%">Priority</td>
+            <td width="50%">Suggestion</td>
+        </tr>
+        <tr style="background-color:#cee8c5">
+            <td id='p_priority'></td>
+            <td id='p_suggestion'></td>
+        </tr>
+      </tbody> 
+    </table>
+    <table border="1" class="tblPriority" width="100%">
+      <tbody>
+        <tr>
+            <td width="20%">URL</td>
+            <td width="80%" id='p_url'></td>
+        </tr>
+        <tr>
+            <td>Server</td>
+            <td id='p_server'></td>
+        </tr>
+        <tr>
+            <td>Technology/Framework</td>
+            <td id='p_technology'></td>
+        </tr>
+        <tr>
+            <td>CMS</td>
+            <td id='p_cms'></td>
+        </tr>
+        <tr>
+            <td>No. Pages</td>
+            <td id='p_pages'></td>
+        </tr>
+        <tr>
+            <td>E-Commerce</td>
+            <td id='p_ecommerce'></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+  $("#check_priority").click(function(){
+
+      var post_url = $("#check_url").val();
+      if (!post_url){
+        $("#check_url").addClass('error-box');
+        return false;
+      }
+      $("#preloaderOverlay").show();
+      $.ajax({
+        url: "/leads/check-url-priority/",
+        dataType: "json",
+        type: 'GET',
+        data: {'name': post_url},
+        success: function(data) {
+            $("#preloaderOverlay").hide();
+            console.log(data);
+            if(data != 'FAIL' && data['status']){
+              json = data['json'];
+              $('#p_url').text(json['url']);
+              $('#p_priority').text(json['priority']);
+              $('#p_server').text(json['server']);
+              $('#p_technology').text(json['Technology/Framework']);
+              $('#p_cms').text(json['cms']);
+              $('#p_pages').text(json['pages']);
+              $('#p_ecommerce').text(json['E-Commerce']);
+              $('#p_suggestion').text(json['suggestion']);
+              $("#priority").show();
+            }
+        },
+        error: function(errorThrown) {
+          $("#preloaderOverlay").hide();
+            console.log('failure');
+        }
+    });
+
+  });
+</script>
+{% endblock main_js %}
