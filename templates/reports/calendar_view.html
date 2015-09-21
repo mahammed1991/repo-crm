@@ -76,7 +76,6 @@ $('#calendar').fullCalendar({
 });
 
 $(document).on('change', '#users', function(){
-    alert($(this).val());
     $.ajax({
         url: "/reports/user-events",
         data: {'user': $(this).val()},

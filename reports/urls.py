@@ -20,4 +20,5 @@ urlpatterns = patterns(
     url(r'^wpp/call-audit-sheet/$', views.call_audit_sheet),
     url(r'^google-doc/$', views.google_doc),
     url(r'^user-events/$', views.user_events),
+    url(r'^csat-reports/$', views.csat_reports),
 )

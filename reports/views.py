@@ -792,3 +792,15 @@ def user_events(request):
             user_logs = CallLogAccountManager.objects.all()
         events = logs_to_events(user_logs)
     return HttpResponse(json.dumps({'events': events, 'users': users}))
+
+
+@login_required
+def csat_reports(request):
+    if request.is_ajax():
+        report_type = str(request.GET.get('report_type'))
+        timeline = str(request.GET.get('timeline'))
+        comparison = request.GET.get('comparison')
+        selected_filters = request.GET.getlist('filter[]')
+        # print report_type, selected_filters, timeline, comparison
+        return HttpResponse(json.dumps({'success': 'success'}))
+    return render(request, 'reports/csat_reports.html')

@@ -15,7 +15,8 @@ from django.db.models import Q, Count
 import operator
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from lib.salesforce import SalesforceApi
-from leads.models import Timezone
+from leads.models import Timezone, Location
+import pytz
 
 from django.contrib.auth.models import User
 
@@ -627,9 +628,11 @@ def logs_to_events(call_logs):
         phone_number = str(log.phone_number) if log.phone_number else ''
         alternate_number = str(log.alternate_number) if log.alternate_number else ''
         event['title'] = seller_name + ' ' + seller_id + ' ' + phone_number + ' ' + alternate_number
-        cst_time = datetime.strptime(str(log.meeting_time), "%Y-%m-%d %H:%M:%S")
-        tz_cst = Timezone.objects.get(zone_name='CST')
-        utc_date = SalesforceApi.get_utc_date(cst_time, tz_cst.time_value)
+
+        chicago_timezone = pytz.timezone('America/Chicago')
+        meeting_time = datetime.strptime(str(log.meeting_time), "%Y-%m-%d %H:%M:%S")
+        utc_date = pytz.utc.normalize(chicago_timezone.localize(meeting_time))
+
         tz_ist = Timezone.objects.get(zone_name='IST')
         meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
         event['start'] = datetime.strftime(meeting_time_ist, "%Y-%m-%dT%H:%M:%S")
