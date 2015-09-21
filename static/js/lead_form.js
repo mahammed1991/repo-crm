@@ -312,6 +312,7 @@ function validatethis(frm) {
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
     $('.web-access').removeClass('error-box');
+    $('.error-box').removeClass('error-box');
     var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -514,6 +515,8 @@ function validatethis(frm) {
           $("#is_shopping_policies").val(0);
       }
 
+      isAgree = ensureAllPolicies()
+
       }else{
         // If Setup Date Slot Not Selected
         frm.setup_datepick.value = '';
@@ -580,6 +583,24 @@ function validateFormatField(elem, check) {
       window.is_error = true;
       return false;
     }
+}
+
+function ensureAllPolicies(){
+  var isAgree = false;
+  if($("#shoppingTerms").is(":visible")){
+      $(".shopping-group").each(function(){
+        if($(this).is(":checked")){
+          isAgree = true;
+        }else{
+          isAgree = false;
+          window.failedFields.push($(this));
+          $(this).parent().addClass('error-box');
+          window.is_error = true;
+          return isAgree;
+        }
+      });
+    }
+    return isAgree
 }
 
 function validateTaskFields(indx){
