@@ -8,6 +8,9 @@
 {% block main_css %}
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
+    .shopping-policies .subitems li{
+      list-style: none;
+    }
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -670,10 +673,31 @@
               <li>This advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
                 <li>This advertiser's website meets Google Shopping's <a href="https://support.google.com/merchants/answer/188486?ref_topic=3163841" target="_blank">user safety requirements</a>. Notably, this advertiser's website contains:
                   <ul>
-                      <li>Shopping cart functionality with secure checkout (https://);</li>
-                        <li>Clearly labeled contact info</li>
-                        <li>Refund policy</li>
-                        <li>Billing terms & conditions</li>
+                        <li> 
+                          <label> 
+                            <input class="shopping-group" type="checkbox" value="" id="rules-1" name="rules-1"> Website has a secured payment gateway.
+                          </label>
+                        </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-2" name="rules-2" class="shopping-group">  Website has a return and refund page. 
+                          </label>
+                          </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-3" name="rules-3" class="shopping-group"> Website has payment options displayed on the home page. 
+                          </label>
+                          </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-4" name="rules-4" class="shopping-group"> Website has clear contact information (Company Address and Phone number). 
+                          </label>
+                          </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-5" name="rules-5" class="shopping-group"> Advertiser's Google Merchant Center account is not suspended. 
+                          </label>
+                        </li>
                     </ul>
                 </li>
             </ol>         

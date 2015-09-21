@@ -8,12 +8,6 @@
 {% block main_css %}
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
-    .tblPriority tr td{
-      padding: 5px;
-    }
-    .tblPriority {
-      margin: 20px 0px;
-    }
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -161,55 +155,6 @@
         </div>
     </div>
   </form>
-    <div class="col-md-12">
-      <div class="col-md-3 col-sm-12">
-      <label style="line-height:47px">Website priority checker</label>
-      </div>
-      <div class="col-md-6 col-sm-12">
-       <input type="text" class="form-control" id="check_url" placeholder="Please enter URL" name="check_url">
-      </div>
-      <div class="col-md-3 col-sm-12">
-      <button class="btn std-btn" id="check_priority">Check Priority</button>
-      </div>
-    </div>
-  <div class="col-md-12" id="priority" style="display:none">
-    <table border="1" class="tblPriority" width="100%">
-      <tbody>
-        <tr>
-            <td width="20%">URL</td>
-            <td width="80%" id='p_url'></td>
-        </tr>
-        <tr>
-            <td>Priority</td>
-            <td id='p_priority'></td>
-        </tr>
-        <tr>
-            <td>Server</td>
-            <td id='p_server'></td>
-        </tr>
-        <tr>
-            <td>Technology\/Framework</td>
-            <td id='p_technology'></td>
-        </tr>
-        <tr>
-            <td>cms</td>
-            <td id='p_cms'></td>
-        </tr>
-        <tr>
-            <td>Pages</td>
-            <td id='p_pages'></td>
-        </tr>
-        <tr>
-            <td>E-Commerce</td>
-            <td id='p_ecommerce'></td>
-        </tr>
-        <tr>
-            <td>Suggestion</td>
-            <td id='p_suggestion'></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
 </div>
 </section>
 <div id="preloaderOverlay" style='display:none;'>
@@ -246,43 +191,6 @@
       $(".role_other").hide();
       $("#role_other").val('');
     }
-  });
-
-  $("#check_priority").click(function(){
-
-      var post_url = $("#check_url").val();
-      if (!post_url){
-        $("#check_url").addClass('error-box');
-        return false;
-      }
-      $("#preloaderOverlay").show();
-      $.ajax({
-        url: "/leads/check-url-priority/",
-        dataType: "json",
-        type: 'GET',
-        data: {'name': post_url},
-        success: function(data) {
-            $("#preloaderOverlay").hide();
-            console.log(data);
-            if(data != 'FAIL' && data['status']){
-              json = data['json'];
-              $('#p_url').text(json['url']);
-              $('#p_priority').text(json['priority']);
-              $('#p_server').text(json['server']);
-              $('#p_technology').text(json['Technology/Framework']);
-              $('#p_cms').text(json['cms']);
-              $('#p_pages').text(json['pages']);
-              $('#p_ecommerce').text(json['E-Commerce']);
-              $('#p_suggestion').text(json['suggestion']);
-              $("#priority").show();
-            }
-        },
-        error: function(errorThrown) {
-          $("#preloaderOverlay").hide();
-            console.log('failure');
-        }
-    });
-
   });
 </script>
 {% endblock main_js %}
