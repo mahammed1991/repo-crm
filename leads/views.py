@@ -1742,6 +1742,8 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         'skumar@regalix-inc.com',
         'sprasad@regalix-inc.com',
         'abraham@regalix-inc.com',
+        'gedward@regalix-inc.com',
+        'gshylendra@regalix-inc.com'
 
     ])
 
@@ -2368,6 +2370,7 @@ def get_advertiser_details(sf_api_url, lead_data):
         agency_details['additional_notes'] = lead_data.get(basic_leads.get('additional_notes'))
         agency_details['email'] = lead_data.get(basic_leads.get('wpp_aemail'))
         agency_details['role'] = lead_data.get(basic_leads.get('advertiser_role'))
+        agency_details['treatment_type'] = lead_data.get(basic_leads.get('treatment_type'))
         if agency_details['role'] == 'Other':
             agency_details['role_other'] = lead_data.get(basic_leads.get('role_other'))
 

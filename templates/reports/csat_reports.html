@@ -29,7 +29,7 @@ CSAT Reports
               <div class="col-xs-12 msdrop ms ms_none" id="msid" aria-labelledby="dropdownMenu1" style="width:100% !important;line-height: 32px;border: 1px solid rgba(0, 0, 0, .15);margin-top: 2px; display:block;">
                     <div class="col-xs-12 col-md-12 mscol1 ms2">
                         <div class="mscol1a msc12">
-                            <input class="msc1a3" type="checkbox" name="" id="sel_all" value=""><span class="msc14" style="padding-left: 5%;">Select All</span>
+                            <input class="msc1a3 " type="checkbox" name="" id="sel_all" value=""><span class="msc14" style="padding-left: 5%;">Select All</span>
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-12 mscol1 ms2">
@@ -38,10 +38,13 @@ CSAT Reports
                             <span class="msc14">Survey Category </span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="survey_category_mapped" type="checkbox" name="survey_category_mapped" value="Mapped"><span class="msc15">Mapped</span>
+                            <input class="msc13 " id="survey_category_mapped" type="checkbox" name="survey_category" value="Mapped"><span class="msc15">Mapped</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="survey_category_unmapped" type="checkbox" name="survey_category_unmapped" value="Unmapped"><span class="msc15">Unmapped</span>
+                            <input class="msc13 " id="survey_category_unmapped" type="checkbox" name="survey_category" value="Unmapped"><span class="msc15">Unmapped</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="suervey_category_combined" type="checkbox" name="survey_category" value="Category Combined"><span class="msc15">Combined</span>
                         </div>
                         
                     </div>
@@ -51,13 +54,13 @@ CSAT Reports
                             <span class="msc14 ">Survey Channel </span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="suervey_channel_phone" type="checkbox" name="suervey_channel_phone" value="Phone"><span class="msc15">Phone</span>
+                            <input class="msc13 " id="suervey_channel_phone" type="checkbox" name="suervey_channel" value="Phone"><span class="msc15">Phone</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="suervey_channel_email" type="checkbox" name="suervey_channel_email" value="Email"><span class="msc15">Email</span>
+                            <input class="msc13 " id="suervey_channel_email" type="checkbox" name="suervey_channel" value="Email"><span class="msc15">Email</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="suervey_channel_combined" type="checkbox" name="suervey_channel_combined" value="Combined"><span class="msc15">Combined</span>
+                            <input class="msc13 " id="suervey_channel_combined" type="checkbox" name="suervey_channel" value="Language Combined"><span class="msc15">Combined</span>
                         </div>
                     </div>
                     
@@ -66,13 +69,13 @@ CSAT Reports
                             <span class="msc14">Language Category</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="language_english" type="checkbox" name="language_english" value="English"><span class="msc15"> English</span>
+                            <input class="msc13 " id="language_english" type="checkbox" name="language" value="English"><span class="msc15"> English</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="language_non_english" type="checkbox" name="language_non_english" value="Non-English"><span class="msc15">Non-English</span>
+                            <input class="msc13 " id="language_non_english" type="checkbox" name="language" value="Non-English"><span class="msc15">Non-English</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="language_combined" type="checkbox" name="language_combined" value="Combined"><span class="msc15">Combined</span>
+                            <input class="msc13 " id="language_combined" type="checkbox" name="language" value="Language Combined"><span class="msc15">Combined</span>
                         </div>
                     </div>
                     
@@ -81,30 +84,30 @@ CSAT Reports
                             <span class="msc14 ">Tagteam Process</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 "  id="process_tag" type="checkbox" name="process_tag" value="Tag"><span class="msc15">Tag</span>
+                            <input class="msc13 "  id="process_tag" type="checkbox" name="process" value="Tag"><span class="msc15">Tag</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="process_shopping" type="checkbox" name="process_shopping" value="Shopping"><span class="msc15">Shopping</span>
+                            <input class="msc13 " id="process_shopping" type="checkbox" name="process" value="Shopping"><span class="msc15">Shopping</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="process_combined" type="checkbox" name="process_combined" value="Combined"><span class="msc15">Combined</span>
+                            <input class="msc13 " id="process_combined" type="checkbox" name="process" value="Process Combined"><span class="msc15">Combined</span>
                         </div>
                     </div>
                     
-                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                    <!-- <div class="col-xs-12 col-md-12 mscol1 ms2">
                         <div class="mscol1a mscol1a2">
                             <span class="msc14">Tagteam Location</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="tag_location_bangalore" type="checkbox" name="tag_location_bangalore" value="Bangalore"><span class="msc15">Bangalore</span>
+                            <input class="msc13 " id="tag_location_bangalore" type="checkbox" name="tag_location" value="Bangalore"><span class="msc15">Bangalore</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="tag_location_palo_alto" type="checkbox" name="tag_location_palo_alto" value="Palo alto"><span class="msc15">Palo alto</span>
+                            <input class="msc13 " id="tag_location_palo_alto" type="checkbox" name="tag_location" value="Palo alto"><span class="msc15">Palo alto</span>
                         </div>
                         <div class="mscol1a msc12">
-                            <input class="msc13 " id="tag_location_combined" type="checkbox" name="tag_location_combined" value="Combined"><span class="msc15">Combined</span>
+                            <input class="msc13 " id="tag_location_combined" type="checkbox" name="tag_location" value="Location Combined"><span class="msc15">Combined</span>
                         </div>
-                    </div>
+                    </div> -->
              </div>
             </div>
          </div> 
@@ -121,10 +124,10 @@ CSAT Reports
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Region</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Program</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Location</a></li>
-                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Language</a></li>
+                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Language</a></li> -->
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Code Type</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Lead Owner</a></li>
-                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Platform</a></li>
+                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Platform</a></li> -->
                 
               </ul>
         </div>
@@ -138,10 +141,10 @@ CSAT Reports
               </button>
               <div class="dropdown-menu" style="display:block;   padding: 0px 0; border:0px solid transparent">
               <ul class="dropdown-menu2a msdrop msdropa2 timeline" style="display:block;position:relative;  box-shadow: none;">
-                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Custom Date Range</a></li>
-                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>This Week</a></li>
-                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>This Month</a></li>
-                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>This Quarter</a></li>
+                <li id="custom_date"><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Custom Date Range</a></li>
+                <li id="this_week"><a href="#" class="msdropa" data-value="this_week"><span class="glyphicon glyphicon-ok mcico"></span>This Week</a></li>
+                <li id="this_month"><a href="#" class="msdropa" data-value="this_month"><span class="glyphicon glyphicon-ok mcico"></span>This Month</a></li>
+                <li id="this_quarter"><a href="#" class="msdropa" data-value="this_week"><span class="glyphicon glyphicon-ok mcico"></span>This Quarter</a></li>
                 
               </ul>
 
@@ -162,7 +165,7 @@ CSAT Reports
          <div class="btn-group" style="clear:both;">
                     <button id="viewButton" class="btn std-btn">Submit</button><br>
                     <div style="width:100%;float: left; text-align:left;"><br>
-                    <input class="comp" type="checkbox" name="comparison" id="comparison"><span class="msc15" style="width: 100%;padding-left:2px;">Compare Current vs Previous</span>
+                    <!-- <input class="comp" type="checkbox" name="comparison" id="comparison"><span class="msc15" style="width: 100%;padding-left:2px;">Compare Current vs Previous</span> -->
                     </div>
 
         </div>
@@ -178,168 +181,6 @@ CSAT Reports
         <div class="col-xs-12">
             <div class="table-responsive">
               <table class="table table-condensed table-bordered">
-                <tr >
-                    <th class="msc24">Region</th>
-                    <th class="msc24">Survey Channel</th>
-                    <th class="msc24">Response Type</th>
-                    <th class="msc24">Leads</th>
-                    <th class="msc24">Wins</th>
-                    <th class="msc24">Actual</th>
-                    <th class="msc24">vs Target</th>
-                    <th class="msc24">Extremely Satisfied</th>
-                    <th class="msc24">Moderately Satisfied</th>
-                    <th class="msc24">Slightly Satisfied</th>
-                    <th class="msc24">Neither satisfied nor dissatisfied</th>
-                    <th class="msc24">Slightly dissatisfied</th>
-                    <th class="msc24">Moderately satisfied</th>
-                    <th class="msc24">Extremely satisfied</th>
-                    <th class="msc23">Grand Total</th>
-                    
-                </tr>
-                <tr>
-                    <td>Americas</td>
-                    <td>Phone</td>
-                    <td>Phone</td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td>Actual</td>
-                    <td>vs Target</td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;" class="msc23">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    
-                </tr>
-                <tr>
-                    <td>Americas</td>
-                    <td>Phone</td>
-                    <td>Phone</td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td>Actual</td>
-                    <td>vs Target</td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;" class="msc23">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    
-                </tr>
-                <tr>
-                    <td class="msc23">Americas</td>
-                    <td class="msc23">Phone</td>
-                    <td class="msc23">Phone</td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23">Actual</td>
-                    <td class="msc23">vs Target</td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td  class="msc23" style="padding: 0px !important;">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    <td style="padding: 0px !important;" class="msc23">
-                        <div class="msc20">0000</div>
-                        <div class="msc21">00.00%</div>
-                    </td>
-                    
-                </tr>
               </table>
             </div>
         </div>
@@ -352,8 +193,16 @@ CSAT Reports
             <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
         </div>
     </div> -->
+
+    
  
   </div>
+  <div id="preloaderOverlay" style='display:none;'>
+      <div class="preloader">
+      <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+      
+      </div>
+    </div>
 </section>
 {% endblock %}
 
@@ -400,40 +249,6 @@ $(document).ready(function() {
 
     });
 
-
-     $('#msid input[type="checkbox"]').click(function() {
-         if ($(this).attr('id') == "sel_all") {
-            window.filters = [];
-             $('.msc13').prop('checked', false);
-             $('.msc18').remove();
-             if ($('#sel_all').prop('checked') == true) {
-                 $('.msc13 ').trigger("click");
-             } else {
-                 $('.msc13 ').attr('checked', false)
-                 $('.msc18').remove();
-             }
-         }
-         if ($(this).is(":checked")) {
-             var se = $(this).attr('id');
-             var val1 = $(this).val();
-             window.filters.push(se);
-             if (se != 'sel_all') {
-                 $("#myselect").append('<li class="msc18" >' + val1 + '<span id="we-' + se + '" class="glyphicon glyphicon-remove msc19"></span></li>');
-             }
-         } else if ($(this).is(":not(:checked)")) {
-             
-             $('#sel_all').prop('checked', false);
-             var se = $(this).attr('id');
-
-             eleIndex = window.filters.indexOf(se);
-             window.filters.splice(eleIndex, 1);
-
-             var remov = "#we-" + se;
-             $(remov).parent().remove();
-
-         }
-     });
-
  });
 
  $(document).on('click', '.msc19', function() {
@@ -460,7 +275,7 @@ $(document).ready(function() {
 
  $(document).on('click', '.timeline li', function() {
     window.timeline = []
-    window.timeline.push($(this).text());
+    window.timeline.push($(this).attr('id'));
     $("#datepickerFrom").val('');
     $("#datepickerTo").val('');
     if($(this).text() == "Custom Date Range"){
@@ -500,7 +315,7 @@ $('#viewButton').on('click', function(){
         isError = true;
         alert("Please Choose Timeline Section!")
     } else{
-        if(window.timeline[0] == 'Custom Date Range'){
+        if(window.timeline[0] == 'custom_date'){
             fromDate = $("#datepickerFrom").val();
             toDate = $("#datepickerTo").val();
             if(fromDate && toDate){
@@ -511,7 +326,7 @@ $('#viewButton').on('click', function(){
             }
 
         } else{
-            data['timeline'] = window.timeline[0];
+            data['timeline'] = [window.timeline[0]];
         }
     }
 
@@ -525,8 +340,7 @@ $('#viewButton').on('click', function(){
         alert('Failure!');
         return false;
     }else{
-        console.log(data);
-        alert('Success!');
+        $('#preloaderOverlay').show();
         $.ajax({
             method: 'GET',
             url: '/reports/csat-reports',
@@ -534,7 +348,9 @@ $('#viewButton').on('click', function(){
             dataType: "json",
             success: function(data) {
                 console.log('Success Response From Ajax');
-                console.log(data);
+                //console.log(data);
+                $('#preloaderOverlay').hide();
+                displayReportData(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log('Failure');
@@ -542,6 +358,116 @@ $('#viewButton').on('click', function(){
         })
     }
 });
+
+ $("input:checkbox").on('click', function() {
+  // in the handler, 'this' refers to the box clicked on
+  var $box = $(this);
+  var se = $(this).attr('id');
+  var val1 = $(this).val();
+
+  if ($(this).attr('id') == "sel_all") {
+    window.filters = [];
+     $('.msc13').prop('checked', false);
+     $('.msc18').remove();
+     if ($('#sel_all').prop('checked') == true) {
+         $('.msc13 ').trigger("click");
+     } else {
+         $('.msc13 ').attr('checked', false)
+         $('.msc18').remove();
+     }
+ }
+
+  if ($box.is(":checked")) {
+    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+    $(group).prop("checked", false);
+    $box.prop("checked", true);
+    customFilter()
+  } else {
+    $box.prop("checked", false);
+    customFilter()
+  }
+
+});
+
+ function customFilter(){
+    window.filters = [];
+    window.showFilter = [];
+    updateFilter('survey_category');
+    updateFilter('suervey_channel');
+    updateFilter('language');
+    updateFilter('process');
+    displayFilters();
+
+ }
+
+ function updateFilter(name){
+    var group = "input:checkbox[name='" + name + "']";
+    $(group).each(function(){
+        var grp = $(this).attr('id');
+        var val = $(this).val();
+        if ($(this).is(":checked")){
+           window.filters.push(grp);
+           window.showFilter.push({'val':val, 'id': grp});
+        }
+    });
+
+ }
+
+ function displayFilters(){
+    $("#myselect li").remove();
+    for(i=0; i<window.showFilter.length;i++){
+        $("#myselect").append('<li class="msc18" >' + window.showFilter[i]['val'] + '<span id="we-' + window.showFilter[i]['id'] + '" class="glyphicon glyphicon-remove msc19"></span></li>');
+    }
+ }
+
+
+function displayReportData(reportData){
+     $('.table').empty();
+     header =  '<tr >'+
+                    '<th class="msc24">'+reportData['report_type']+'</th>' +
+                    '<th class="msc24">CSAT%</th>' +
+                    '<th class="msc24">vs Target</th>' + 
+                    '<th class="msc24">Survey Channel</th>' + 
+                    '<th class="msc24">Transfer Rate</th>' +
+                    '<th class="msc24">Leads</th>' +
+                    '<th class="msc24">Wins</th>' +
+                    '<th class="msc24">Extremely Satisfied</th>' +
+                    '<th class="msc24">Moderately Satisfied</th>' +
+                    '<th class="msc24">Slightly Satisfied</th>' +
+                    '<th class="msc24">Neither Satisfied nor Dissatisfied</th>' +
+                    '<th class="msc24">Slightly Dissatisfied</th>' +
+                    '<th class="msc24">Moderately Dissatisfied</th>' +
+                    '<th class="msc24">Extremely Dissatisfied</th>' +
+                    '<th class="msc23">Grand Total</th>'+
+                '</tr>'
+    row = '';
+
+    for ( i=0; i<reportData['report_data'].length; i++){
+
+                row += '<tr>'+
+                            '<td>'+ reportData['report_data'][i][reportData['report_type'].toString()]+'</td>' +
+                            '<td>'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</td>' +
+                            '<td>'+ (parseInt(reportData['report_data'][i]['Extremely satisfied in pcg']) - 95).toString() +'%</td>' +
+                            '<td>'+ reportData['channel']+'</td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">'+ reportData['report_data'][i]['Wins in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Leads']+'</div><div class="msc21">'+ reportData['report_data'][i]['Leads in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">'+ reportData['report_data'][i]['Wins in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Extremely satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Moderately satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Moderately satisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Slightly satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Slightly satisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Neither satisfied nor dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Neither satisfied nor dissatisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Slightly dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Slightly dissatisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Moderately dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Moderately dissatisfied in pcg']+'%</div></td>' +
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Extremely dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Extremely dissatisfied in pcg']+'%</div></td>' + 
+                            
+
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Grand Total']+'</div><div class="msc21">100%</div></td>' + 
+                       ' </tr>'
+
+    }
+
+    $('.table').append(header+row);
+}
 
 </script>
 {% endblock main_js %}

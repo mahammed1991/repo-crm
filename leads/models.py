@@ -90,6 +90,8 @@ class Leads(models.Model):
 
     sf_lead_id = models.CharField(max_length=50, unique=True)
     wpp_treatment_type = models.CharField(max_length=100, blank=True, null=True)
+    language = models.CharField(max_length=50, blank=True, null=True)
+    gcss = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Leads"
