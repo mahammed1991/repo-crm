@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reports.models import Region, QuarterTargetLeads
+from reports.models import Region, QuarterTargetLeads, CSATReport
 from reports.forms import RegionForm
 
 
@@ -15,3 +15,9 @@ class QuarterTargetLeadsAdmin(admin.ModelAdmin):
     list_display = ('program', 'location', 'quarter', 'year', 'target_leads')
 
 admin.site.register(QuarterTargetLeads, QuarterTargetLeadsAdmin)
+
+
+class CSATReportAdmin(admin.ModelAdmin):
+    list_display = ('customer_id', 'language', 'channel', 'category',)
+
+admin.site.register(CSATReport, CSATReportAdmin)

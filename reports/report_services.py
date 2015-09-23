@@ -3,7 +3,7 @@ import os
 import mimetypes
 from datetime import datetime, date, timedelta
 from leads.models import Leads, RegalixTeams, Team, Location, TreatmentType, WPPLeads
-from reports.models import QuarterTargetLeads
+from reports.models import QuarterTargetLeads, Region, CSATReport
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
                          last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range, get_months_from_date,
                          get_previous_month_start_end_days, get_weeks_in_quarter_to_date, is_manager)
@@ -631,6 +631,231 @@ class ReportService(object):
         return wpp_treatment_type_lead_status_analysis, pie_chart_dict
 
     # ======================================================end of optimization==============
+
+    @staticmethod
+    def get_csat_report(selected_filters, report_type, start_date, end_date):
+        report_data = list()
+        key_response = {1: 'Extremely satisfied', 2: 'Moderately satisfied', 3: 'Slightly satisfied', 4: 'Neither satisfied nor dissatisfied', 5: 'Slightly dissatisfied', 6: 'Moderately dissatisfied', 7: 'Extremely dissatisfied'}
+
+        csat_query = dict()
+
+        if 'sel_all' in selected_filters:
+            csat_query['category__in'] = ['MAPPED', 'UNMAPPED']
+            csat_query['channel__in'] = ['EMAIL', 'PHONE']
+            csat_query['process__in'] = ['TAG', 'SHOPPING']
+        else:
+            if 'suervey_category_combined' in selected_filters:
+                csat_query['category__in'] = ['MAPPED', 'UNMAPPED']
+            if 'suervey_category_mapped' in selected_filters:
+                csat_query['category__in'] = ['MAPPED']
+            if 'suervey_category_mapped' in selected_filters:
+                csat_query['category__in'] = ['UNMAPPED']
+
+            if 'suervey_channel_phone' in selected_filters:
+                csat_query['channel__in'] = ['PHONE']
+            if 'suervey_channel_email' in selected_filters:
+                csat_query['channel__in'] = ['EMAIL']
+            if 'suervey_channel_combined' in selected_filters:
+                csat_query['channel__in'] = ['EMAIL', 'PHONE']
+
+            if 'process_tag' in selected_filters:
+                csat_query['process__in'] = ['TAG']
+            if 'process_shopping' in selected_filters:
+                csat_query['process__in'] = ['SHOPPING']
+            if 'process_combined' in selected_filters:
+                csat_query['process__in'] = ['TAG', 'SHOPPING']
+
+            # if 'language_english' in selected_filters:
+            #     csat_query['langauge__in'] = ['ENGLISH']
+            # if 'language_combined' in selected_filters:
+            #     csat_query = csat_query
+
+        csat_query['survey_date__gte'] = start_date
+        csat_query['survey_date__lte'] = end_date
+
+        if report_type == 'Region':
+            regions = Region.objects.all()
+            total_leads = Leads.objects.filter(country__in=ReportService.get_all_locations(),
+                                               created_date__gte=start_date, created_date__lte=end_date).count()
+            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(country__in=ReportService.get_all_locations(), lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
+                                                                                              created_date__gte=start_date, created_date__lte=end_date).count()
+            for region in regions:
+                query = dict()
+                region_data = dict()
+                region_data['Region'] = region.name
+                region_locations = Location.objects.filter(region=region).values_list('location_name', flat=True)
+                query['country__in'] = region_locations
+                query['created_date__gte'] = start_date
+                query['created_date__lte'] = end_date
+                region_data['Leads'] = Leads.objects.filter(**query).count()
+                region_data['Leads in pcg'] = ReportService.get_percentage_value(region_data['Leads'], total_leads)
+
+                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+                region_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+                region_data['Wins in pcg'] = ReportService.get_percentage_value(region_data['Wins'], implemented_leads)
+
+                csat_query['region__in'] = region_locations
+
+                if 'language_english' in selected_filters:
+                    csat_query['language'] = 'ENGLISH'
+                    region_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                elif 'language_non_english' in selected_filters:
+                    region_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                else:
+                    region_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+
+                region_data = ReportService.get_response_dict(region_csat, region_data, key_response)
+
+                report_data.append(region_data)
+        elif report_type == 'Program':
+            programs = ReportService.get_all_teams()
+            total_leads = Leads.objects.filter(team__in=programs,
+                                               created_date__gte=start_date, created_date__lte=end_date).count()
+            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(team__in=programs, lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
+                                                                                              created_date__gte=start_date, created_date__lte=end_date).count()
+            for program in programs:
+                query = dict()
+                program_data = dict()
+                program_data['Program'] = program
+                query['team'] = program
+                query['created_date__gte'] = start_date
+                query['created_date__lte'] = end_date
+                program_data['Leads'] = Leads.objects.filter(**query).count()
+                program_data['Leads in pcg'] = ReportService.get_percentage_value(program_data['Leads'], total_leads)
+                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+                program_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+                program_data['Wins in pcg'] = ReportService.get_percentage_value(program_data['Wins'], implemented_leads)
+
+                csat_query['program'] = program
+                if 'language_english' in selected_filters:
+                    csat_query['language'] = 'ENGLISH'
+                    program_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                elif 'language_non_english' in selected_filters:
+                    program_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                else:
+                    program_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+
+                program_data = ReportService.get_response_dict(program_csat, program_data, key_response)
+                report_data.append(program_data)
+
+        elif report_type == 'Location':
+            locations = ReportService.get_all_locations()
+            total_leads = Leads.objects.filter(country__in=locations,
+                                               created_date__gte=start_date, created_date__lte=end_date).count()
+            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(country__in=locations, lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
+                                                                                              created_date__gte=start_date, created_date__lte=end_date).count()
+            for location in locations:
+                query = dict()
+                location_data = dict()
+                location_data['Location'] = location
+                query['country'] = location
+                query['created_date__gte'] = start_date
+                query['created_date__lte'] = end_date
+                location_data['Leads'] = Leads.objects.filter(**query).count()
+                location_data['Leads in pcg'] = ReportService.get_percentage_value(location_data['Leads'], total_leads)
+                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+                location_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+                location_data['Wins in pcg'] = ReportService.get_percentage_value(location_data['Wins'], implemented_leads)
+
+                csat_query['region'] = location
+                if 'language_english' in selected_filters:
+                    csat_query['language'] = 'ENGLISH'
+                    location_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                elif 'language_non_english' in selected_filters:
+                    location_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                else:
+                    location_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                location_data = ReportService.get_response_dict(location_csat, location_data, key_response)
+                report_data.append(location_data)
+
+        elif report_type == 'Code Type':
+            code_types = ReportService.get_all_code_type()
+            total_leads = Leads.objects.filter(type_1__in=code_types,
+                                               created_date__gte=start_date, created_date__lte=end_date).count()
+            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(type_1__in=code_types, lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
+                                                                                              created_date__gte=start_date, created_date__lte=end_date).count()
+            for code_type in code_types:
+                query = dict()
+                code_type_data = dict()
+                code_type_data['Code Type'] = code_type
+                query['type_1'] = code_type
+                query['created_date__gte'] = start_date
+                query['created_date__lte'] = end_date
+                code_type_data['Leads'] = Leads.objects.filter(**query).count()
+                code_type_data['Leads in pcg'] = ReportService.get_percentage_value(code_type_data['Leads'], total_leads)
+                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+                code_type_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+                code_type_data['Wins in pcg'] = ReportService.get_percentage_value(code_type_data['Wins'], implemented_leads)
+
+                csat_query['code_type'] = code_type
+                if 'language_english' in selected_filters:
+                    csat_query['language'] = 'ENGLISH'
+                    code_type_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                elif 'language_non_english' in selected_filters:
+                    code_type_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                else:
+                    code_type_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                code_type_data = ReportService.get_response_dict(code_type_csat, code_type_data, key_response)
+                report_data.append(code_type_data)
+
+        elif report_type == 'Lead Owner':
+            lead_owners = Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date).values_list('lead_owner_name', 'lead_owner_email').distinct().order_by('lead_owner_name')
+            lead_onwer_emails = [lead_owner[1] for lead_owner in lead_owners]
+            total_leads = Leads.objects.filter(lead_owner_email__in=lead_onwer_emails,
+                                               created_date__gte=start_date, created_date__lte=end_date).count()
+            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_owner_email__in=lead_onwer_emails, lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
+                                                                                              created_date__gte=start_date, created_date__lte=end_date).count()
+            for lead_owner in lead_owners:
+                query = dict()
+                lead_owner_data = dict()
+                lead_owner_data['Lead Owner'] = lead_owner[0]
+                query['lead_owner_email'] = lead_owner[1]
+                query['created_date__gte'] = start_date
+                query['created_date__lte'] = end_date
+                lead_owner_data['Leads'] = Leads.objects.filter(**query).count()
+                lead_owner_data['Leads in pcg'] = ReportService.get_percentage_value(lead_owner_data['Leads'], total_leads)
+                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+                lead_owner_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+                lead_owner_data['Wins in pcg'] = ReportService.get_percentage_value(lead_owner_data['Wins'], implemented_leads)
+
+                csat_query['lead_owner'] = lead_owner[1]
+                if 'language_english' in selected_filters:
+                    csat_query['language'] = 'ENGLISH'
+                    lead_owner_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                elif 'language_non_english' in selected_filters:
+                    lead_owner_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                else:
+                    lead_owner_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                lead_owner_data = ReportService.get_response_dict(lead_owner_csat, lead_owner_data, key_response)
+                report_data.append(lead_owner_data)
+
+        return report_data
+
+    @staticmethod
+    def get_response_dict(response_dict, region_data, key_response):
+        total_response = 0
+
+        for value in key_response.values():
+            region_data[value] = 0
+
+        for resp in response_dict:
+            if resp['q1'] in key_response:
+                region_data[key_response[resp['q1']]] = resp['dcount']
+                total_response += resp['dcount']
+
+        for response in key_response.values():
+            if response in region_data:
+                region_data['%s in pcg' % (response)] = ReportService.get_percentage_value(region_data[response], total_response)
+        region_data['Grand Total'] = total_response
+        return region_data
+
+    @staticmethod
+    def get_percentage_value(numerator, denaminator):
+        try:
+            result = round((float(numerator) / denaminator) * 100, 2)
+        except Exception as e:
+            result = 0.0
+        return result
 
     @staticmethod
     def get_average_tat_for_leads(leads):

@@ -3,14 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location, Timezone
+from leads.models import Location, Timezone, Leads
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
-from reports.models import Region, CallLogAccountManager
+from reports.models import Region, CallLogAccountManager, CSATReport
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import re
@@ -798,9 +798,22 @@ def user_events(request):
 def csat_reports(request):
     if request.is_ajax():
         report_type = str(request.GET.get('report_type'))
-        timeline = str(request.GET.get('timeline'))
-        comparison = request.GET.get('comparison')
+        timeline = request.GET.getlist('timeline[]')
+        # comparison = request.GET.get('comparison')
         selected_filters = request.GET.getlist('filter[]')
-        # print report_type, selected_filters, timeline, comparison
-        return HttpResponse(json.dumps({'success': 'success'}))
+
+        if timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(timeline)
+        print start_date, end_date
+
+        if 'suervey_channel_phone' in selected_filters:
+            channel = 'PHONE'
+        elif 'suervey_channel_email' in selected_filters:
+            channel = 'EMAIL'
+        else:
+            channel = 'Combined'
+
+        report_data = ReportService.get_csat_report(selected_filters, report_type, start_date, end_date)
+
+        return HttpResponse(json.dumps({'report_data': report_data, 'report_type': report_type, 'channel': channel}))
     return render(request, 'reports/csat_reports.html')

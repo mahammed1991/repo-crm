@@ -211,6 +211,8 @@ def create_or_update_leads(records, sf):
                 is_new_lead = True
                 lead = Leads()
             lead.lead_status = rec.get('Status')
+            lead.language = rec.get('Language__c')
+            lead.gcss = rec.get('GCSS_Status__c')
 
         # Google Representative email and name
         rep_email = rec.get('Email')

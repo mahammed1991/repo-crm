@@ -69,39 +69,6 @@ class QuarterTargetLeads(models.Model):
         verbose_name_plural = "Quarter Target Leads"
 
 
-class CSATReport(models.Model):
-    """ CSAT Report data """
-
-    language = models.CharField(max_length=100, unique=True)
-    customer_id = models.CharField(max_length=100, unique=True)
-    cli = models.CharField(max_length=100, unique=True)
-
-    q1 = models.IntegerField(max_length=10, default=0)
-    q2 = models.IntegerField(max_length=10, default=0)
-    q3 = models.IntegerField(max_length=10, default=0)
-    q4 = models.IntegerField(max_length=10, default=0)
-    q5 = models.IntegerField(max_length=10, default=0)
-    sf_lead_id = models.CharField(max_length=50, unique=True)
-    survey_date = models.DateTimeField(blank=True, null=True)
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-
-    channel = models.CharField(max_length=10, blank=False, choices=(
-        ('PHONE', 'PHONE'),
-        ('EMAIL', 'EMAIL')))
-    process = models.CharField(max_length=10, blank=False, choices=(
-        ('TAG', 'TAG'),
-        ('SHOPPING', 'SHOPPING')), default='TAG')
-    category = models.CharField(max_length=10, blank=False, choices=(
-        ('MAPPED', 'MAPPED'),
-        ('UNMAPPPED', 'UNMAPPPED')), default='UNMAPPPED')
-
-    class Meta:
-        db_table = "csat_report"
-        verbose_name_plural = "CSAT Report"
-
-
 class CallLogAccountManager(models.Model):
     """ Call Log Response from spreadsheet"""
 
@@ -121,3 +88,40 @@ class CallLogAccountManager(models.Model):
     class Meta:
         db_table = 'call_log_account_manager'
         verbose_name_plural = "Call Log Account Manager"
+
+
+class CSATReport(models.Model):
+    """ CSAT Report data """
+
+    language = models.CharField(max_length=100, blank=True)
+    customer_id = models.CharField(max_length=100, null=False)
+    cli = models.CharField(max_length=100, null=True, default='')
+
+    q1 = models.IntegerField(max_length=10, default=0)
+    q2 = models.IntegerField(max_length=10, default=0)
+    q3 = models.IntegerField(max_length=10, default=0)
+    q4 = models.IntegerField(max_length=10, default=0)
+    q5 = models.IntegerField(max_length=10, default=0)
+    sf_lead_id = models.CharField(max_length=50, default=None)
+    survey_date = models.DateTimeField(blank=True)
+
+    channel = models.CharField(max_length=10, blank=False, choices=(
+        ('PHONE', 'PHONE'),
+        ('EMAIL', 'EMAIL')), default='PHONE')
+    process = models.CharField(max_length=10, blank=False, choices=(
+        ('TAG', 'TAG'),
+        ('SHOPPING', 'SHOPPING')), default='TAG')
+    category = models.CharField(max_length=10, blank=False, choices=(
+        ('MAPPED', 'MAPPED'),
+        ('UNMAPPPED', 'UNMAPPPED')), default='UNMAPPPED')
+
+    region = models.CharField(max_length=100, default='')
+    lead_owner = models.CharField(max_length=100, default='')
+    code_type = models.CharField(max_length=100, default='')
+    program = models.CharField(max_length=100, default='')
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "CSAT Report"

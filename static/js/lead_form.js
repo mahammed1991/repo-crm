@@ -512,6 +512,8 @@ function validatethis(frm) {
           $(".shopping-policy").removeClass('error-box');
       }else{
           $(".shopping-policy").addClass('error-box');
+          window.failedFields.push($("#is_shopping_policies"));
+          window.is_error = true;
           $("#is_shopping_policies").val(0);
       }
 
