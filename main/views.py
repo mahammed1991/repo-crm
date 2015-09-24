@@ -1365,99 +1365,102 @@ def upload_file_handling(request):
                         return render(request, 'main/upload_file.html', template_args)
 
             elif upload_target == 'csat_report_data':
-                default_headers = ['Date', 'Time', 'Category', 'Language', 'CID', 'CLI', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']
+                if request.POST.get('survey_channel') == 'Phone':
+                    default_headers = ['Date', 'Time', 'Category', 'Language', 'CID', 'CLI', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']
                 for element in default_headers:
                     if element not in uploaded_headers:
                         template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
                         return render(request, 'main/upload_file.html', template_args)
                     else:
                         sheet = workbook.sheet_by_index(0)
-                        implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
-                        for r_i in range(1, sheet.nrows):
-                            str_cid = str(int(sheet.cell(r_i, get_col_index(sheet, 'CID')).value))
-                            lead_date = sheet.cell(r_i, get_col_index(sheet, 'Date')).value
-                            lead_time = sheet.cell(r_i, get_col_index(sheet, 'Time')).value
-                            process = sheet.cell(r_i, get_col_index(sheet, 'Category')).value
-                            cid = '%s-%s-%s' % (str_cid[:3], str_cid[3:6], str_cid[6:])
-
-                            survey_date_tuple = xldate_as_tuple(lead_date + lead_time, workbook.datemode)
-                            survey_date = datetime(survey_date_tuple[0], survey_date_tuple[1], survey_date_tuple[2], survey_date_tuple[3], survey_date_tuple[4], survey_date_tuple[5])
-                            try:
-                                csat_record = CSATReport.objects.get(customer_id=cid, survey_date=survey_date, process=process)
-                            except ObjectDoesNotExist:
-                                csat_record = CSATReport()
-                            csat_record.region = ''
-                            csat_record.program = ''
-                            csat_record.code_type = ''
-                            csat_record.lead_owner = ''
-                            csat_record.sf_lead_id = ''
-                            csat_record.channel = 'PHONE'
-
-                            if cid in implemented_cids:
-
-                                # survey date in ist and date_of_installation in pst but month and year will be the same
-                                if process == 'TAG':
-                                    csat_lead = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(customer_id=cid, date_of_installation__month=survey_date.month, date_of_installation__year=survey_date.year)
-                                elif process == 'SHOPPING':
-                                    csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__month=survey_date.month,
-                                                                     date_of_installation__year=survey_date.year, type_1__in=['Google Shopping Setup', 'Google Shopping Migration'])
-
-                                if csat_lead:
-                                    if len(csat_lead) == 1:
-                                        csat_record.sf_lead_id = csat_lead[0].sf_lead_id
-                                        csat_record.region = csat_lead[0].country
-                                        csat_record.program = csat_lead[0].team
-                                        csat_record.code_type = csat_lead[0].type_1
-                                        csat_record.lead_owner = csat_lead[0].lead_owner_email
-                                        if csat_lead[0].gcss == 'Advertiser Transferred to GCSS':
-                                            csat_record.channel = 'PHONE'
-                                        else:
-                                            csat_record.channel = 'EMAIL'
-                                        csat_record.category = 'MAPPED'
-                                    else:
-                                        # csat_lead should be one but here is mutiple
-                                        csat_record.category = 'UNMAPPED'
-                                        # survey_prev_date = survey_date - datetime.timedelta(1)
-                                        # csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__gte=survey_prev_date, date_of_installation__lte=survey_date).order_by('-date_of_installation')
-
-                                        # us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
-
-                                        # if csat_lead:
-                                        #     # Lead's date of installation is in PST,comparing it with pst or pdt timezone to convert ist
-                                        #     if csat_lead[0].date_of_installation >= us_zone[0].daylight_start and csat_lead[0].date_of_installation <= us_zone[0].daylight_end:
-                                        #         tz = Timezone.objects.get(zone_name='PDT')
-                                        #     else:
-                                        #         tz = Timezone.objects.get(zone_name='PST')
-                                        #     utc_date = SalesforceApi.get_utc_date(csat_lead[0].date_of_installation, tz.time_value)
-                                        #     ist_tz = Timezone.objects.get(zone_name='IST')
-                                        #     date_of_installation_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, ist_tz.time_value)
-                                        # else:
-                                        #     csat_record.sf_lead_id = ''
-                                        #     csat_record.category = 'UNMAPPED'
-
-                                else:
-                                    csat_record.category = 'UNMAPPED'
-
-                            else:
-                                csat_record.category = 'UNMAPPED'
-
-                            csat_record.customer_id = cid
-                            csat_record.survey_date = survey_date
-                            csat_record.process = process
-                            csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
-                            csat_record.cli = int(sheet.cell(r_i, get_col_index(sheet, 'CLI')).value)
-                            csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
-                            csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
-                            csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
-                            csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
-                            csat_record.q5 = int(sheet.cell(r_i, get_col_index(sheet, 'Q5')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q5')).value else 0
-
-                            try:
-                                csat_record.save()
-                            except Exception as e:
-                                print e, cid
+                        get_survey_data_from_excel(workbook, sheet, request.POST.get('survey_channel'))
+                        return render(request, 'main/upload_file.html')
 
     return render(request, 'main/upload_file.html')
+
+
+def get_survey_data_from_excel(workbook, sheet, survey_channel):
+    implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
+    if survey_channel == 'Phone':
+        for r_i in range(1, sheet.nrows):
+            str_cid = str(int(sheet.cell(r_i, get_col_index(sheet, 'CID')).value))
+            lead_date = sheet.cell(r_i, get_col_index(sheet, 'Date')).value
+            lead_time = sheet.cell(r_i, get_col_index(sheet, 'Time')).value
+            process = sheet.cell(r_i, get_col_index(sheet, 'Category')).value
+            cid = '%s-%s-%s' % (str_cid[:3], str_cid[3:6], str_cid[6:])
+
+            survey_date_tuple = xldate_as_tuple(lead_date + lead_time, workbook.datemode)
+            survey_date = datetime(survey_date_tuple[0], survey_date_tuple[1], survey_date_tuple[2], survey_date_tuple[3], survey_date_tuple[4], survey_date_tuple[5])
+            try:
+                csat_record = CSATReport.objects.get(customer_id=cid, survey_date=survey_date, process=process)
+            except ObjectDoesNotExist:
+                csat_record = CSATReport()
+
+            csat_record.region = ''
+            csat_record.program = ''
+            csat_record.code_type = ''
+            csat_record.lead_owner = ''
+            csat_record.sf_lead_id = ''
+            csat_record.channel = 'PHONE'
+            csat_record.category = 'UNMAPPED'
+
+            if cid in implemented_cids:
+
+                # survey date in ist and date_of_installation in pst but month and year will be the same
+                if process == 'TAG':
+                    csat_lead = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(customer_id=cid, date_of_installation__month=survey_date.month, date_of_installation__year=survey_date.year)
+                elif process == 'SHOPPING':
+                    csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__month=survey_date.month,
+                                                     date_of_installation__year=survey_date.year, type_1__in=['Google Shopping Setup', 'Google Shopping Migration'])
+
+                if csat_lead:
+                    if len(csat_lead) == 1:
+                        csat_record.sf_lead_id = csat_lead[0].sf_lead_id
+                        csat_record.region = csat_lead[0].country
+                        csat_record.program = csat_lead[0].team
+                        csat_record.code_type = csat_lead[0].type_1
+                        csat_record.lead_owner = csat_lead[0].lead_owner_email
+                        if csat_lead[0].gcss == 'Advertiser Transferred to GCSS':
+                            csat_record.channel = 'PHONE'
+                        else:
+                            csat_record.channel = 'EMAIL'
+                        csat_record.category = 'MAPPED'
+                    else:
+                        # csat_lead should be one but here is mutiple
+                        csat_record.category = 'UNMAPPED'
+                        # survey_prev_date = survey_date - datetime.timedelta(1)
+                        # csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__gte=survey_prev_date, date_of_installation__lte=survey_date).order_by('-date_of_installation')
+
+                        # us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
+
+                        # if csat_lead:
+                        #     # Lead's date of installation is in PST,comparing it with pst or pdt timezone to convert ist
+                        #     if csat_lead[0].date_of_installation >= us_zone[0].daylight_start and csat_lead[0].date_of_installation <= us_zone[0].daylight_end:
+                        #         tz = Timezone.objects.get(zone_name='PDT')
+                        #     else:
+                        #         tz = Timezone.objects.get(zone_name='PST')
+                        #     utc_date = SalesforceApi.get_utc_date(csat_lead[0].date_of_installation, tz.time_value)
+                        #     ist_tz = Timezone.objects.get(zone_name='IST')
+                        #     date_of_installation_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, ist_tz.time_value)
+                        # else:
+                        #     csat_record.sf_lead_id = ''
+                        #     csat_record.category = 'UNMAPPED'
+
+            csat_record.customer_id = cid
+            csat_record.survey_date = survey_date
+            csat_record.process = process
+            csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+            csat_record.cli = int(sheet.cell(r_i, get_col_index(sheet, 'CLI')).value)
+            csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
+            csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
+            csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
+            csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
+            csat_record.q5 = int(sheet.cell(r_i, get_col_index(sheet, 'Q5')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q5')).value else 0
+
+            try:
+                csat_record.save()
+            except Exception as e:
+                print e, cid
 
 
 @csrf_exempt
