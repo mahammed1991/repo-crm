@@ -34,7 +34,14 @@ File Upload
         <input type="text" id="filename1" readonly="true" style="width:58%; padding:5% 0 5% 0;" />
        
       </div>
-    </div> 
+    </div>
+    <div class="row" style="display:none;" id="survey">
+      <span>&nbsp;&nbsp;&nbsp;</span>
+      <span> Survey Channel </span>
+       <span>&nbsp;</span>
+      <input type="radio" name="survey_channel" value="Phone" checked="checked"><span> Phone </span> 
+      <input type="radio" name="survey_channel" value="Email"><span> Email</span>
+    </div>
     <div class="btns text-center">
         <div class="btn-group">
             <button class="btn std-btn" id="file_submit">Upload</button>
@@ -166,6 +173,14 @@ function validate(){
     }
     return is_error;
 }
+
+$(document).on('change', '#uploadTarget', function(){
+  if($(this).val() == 'csat_report_data'){
+    $('#survey').show();
+  } else{
+    $('#survey').hide();
+  }
+})
 
 </script>
 
