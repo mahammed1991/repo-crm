@@ -2450,7 +2450,6 @@ def get_pagination_lead_summary(request):
 @login_required
 def check_url_priority(request):
     """ Check priority for WPP URL """
-
     if request.is_ajax():
         url = request.GET.get('name')
         post_url = 'http://lp.wppperformance.com/wg/xp.php'
@@ -2466,3 +2465,32 @@ def priority_check(request):
     """ Website priority Checker LP """
     template_args = dict()
     return render(request, 'leads/website_priority_checker.html', template_args)
+
+
+@login_required
+def report_team(request):
+    """ Send/Report status code to WPP Team """
+    url = request.GET.get('url')
+    status_code = request.GET.get('status_code')
+    mail_subject = "WPP Priority check inquiry"
+
+    mail_body = get_template('leads/advertiser_mail/report_team.html').render(
+        Context({
+            'url': url,
+            'status_code': status_code,
+        })
+    )
+
+    bcc = set()
+
+    mail_to = set([
+        'skumar@regalix-inc.com',
+        'sprasad@regalix-inc.com',
+        'akumar@regalix-inc.com'
+    ])
+
+    mail_from = "implementation-support@google.com"
+    attachments = list()
+
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+    return HttpResponse(json.dumps('SUCCESS'))
