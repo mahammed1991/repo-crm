@@ -1,0 +1,473 @@
+ {% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+CSAT Reports
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/reports/csat_reports.css' %}">
+<link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>CSAT REPORTS</h1>
+ 
+  
+    <div class="row">
+      <div class="col-md-6 ms2">
+         <div class="col-md-12">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle mcsatbut" type="button" id="dropdownMenu1">
+                <div class="msbutton1">
+                <span class="mcsatbut2">Choose Filters</span><br><span class="mcsatbut3">Single or Multi-Select</span>
+                </div><div class="msbutton2"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </button>
+              <div class="col-xs-12 msdrop ms ms_none" id="msid" aria-labelledby="dropdownMenu1" style="width:100% !important;line-height: 32px;border: 1px solid rgba(0, 0, 0, .15);margin-top: 2px; display:block;">
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a msc12">
+                            <input class="msc1a3 " type="checkbox" name="" id="sel_all" value=""><span class="msc14" style="padding-left: 5%;">Select All</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14">Survey Category </span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_category_mapped" type="checkbox" name="survey_category" value="Mapped"><span class="msc15">Mapped</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_category_unmapped" type="checkbox" name="survey_category" value="Unmapped"><span class="msc15">Unmapped</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="suervey_category_combined" type="checkbox" name="survey_category" value="Category Combined"><span class="msc15">Combined</span>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14 ">Survey Channel </span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="suervey_channel_phone" type="checkbox" name="suervey_channel" value="Phone"><span class="msc15">Phone</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="suervey_channel_email" type="checkbox" name="suervey_channel" value="Email"><span class="msc15">Email</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="suervey_channel_combined" type="checkbox" name="suervey_channel" value="Language Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14">Language Category</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="language_english" type="checkbox" name="language" value="English"><span class="msc15"> English</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="language_non_english" type="checkbox" name="language" value="Non-English"><span class="msc15">Non-English</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="language_combined" type="checkbox" name="language" value="Language Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14 ">Tagteam Process</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 "  id="process_tag" type="checkbox" name="process" value="Tag"><span class="msc15">Tag</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="process_shopping" type="checkbox" name="process" value="Shopping"><span class="msc15">Shopping</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="process_combined" type="checkbox" name="process" value="Process Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14">Tagteam Location</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="tag_location_bangalore" type="checkbox" name="tag_location" value="Bangalore"><span class="msc15">Bangalore</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="tag_location_palo_alto" type="checkbox" name="tag_location" value="Palo alto"><span class="msc15">Palo alto</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="tag_location_combined" type="checkbox" name="tag_location" value="Location Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div> -->
+             </div>
+            </div>
+         </div> 
+         
+      </div>
+      <div class="col-md-3">
+        <div class="dropdown mm1">
+              <button class="btn btn-default mcsatbut mcsatbuta2" type="button" id="dropdownMenu1">
+                <div class="msbutton1">
+                <span class="mcsatbut2">Choose Report Type</span><br><span class="mcsatbut3">Single-Select</span>
+                </div><div class="msbutton2"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </button>
+              <ul class="dropdown-menu msdrop msdropa2 report-type" style="display:block;position:relative;">
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Region</a></li>
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Program</a></li>
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Location</a></li>
+                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Language</a></li> -->
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Code Type</a></li>
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Lead Owner</a></li>
+                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Platform</a></li> -->
+                
+              </ul>
+        </div>
+      </div>
+      <div class="col-md-3 mm2">
+         <div class="dropdown">
+              <button class="btn btn-default  mcsatbut mcsatbuta2" type="button" id="dropdownMenu1">
+                <div class="msbutton1">
+                <span class="mcsatbut2">Choose Timeline</span>
+                </div><div class="msbutton2"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </button>
+              <div class="dropdown-menu" style="display:block;   padding: 0px 0; border:0px solid transparent">
+              <ul class="dropdown-menu2a msdrop msdropa2 timeline" style="display:block;position:relative;  box-shadow: none;">
+                <li id="custom_date"><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Custom Date Range</a></li>
+                <li id="this_week"><a href="#" class="msdropa" data-value="this_week"><span class="glyphicon glyphicon-ok mcico"></span>This Week</a></li>
+                <li id="this_month"><a href="#" class="msdropa" data-value="this_month"><span class="glyphicon glyphicon-ok mcico"></span>This Month</a></li>
+                <li id="this_quarter"><a href="#" class="msdropa" data-value="this_week"><span class="glyphicon glyphicon-ok mcico"></span>This Quarter</a></li>
+                
+              </ul>
+
+            <ul class="msdropa2" style="position:relative;">
+                     <li style="background:#fff;display:none;border-bottom: 0px solid transparent;" id="custome_date">
+                    <input type="text" id="datepickerFrom" class="msc16" placeholder="Start Date">
+                    <input class="msc16" id="datepickerTo" type="text" placeholder="End Date">
+                </li>
+            </ul>
+            </div>
+        </div>
+      </div>
+        
+     
+    </div>
+    
+    <div class="row msc17" >
+         <div class="btn-group" style="clear:both;">
+                    <button id="viewButton" class="btn std-btn">Submit</button><br>
+                    <div style="width:100%;float: left; text-align:left;"><br>
+                    <!-- <input class="comp" type="checkbox" name="comparison" id="comparison"><span class="msc15" style="width: 100%;padding-left:2px;">Compare Current vs Previous</span> -->
+                    </div>
+
+        </div>
+    </div>
+    
+    <div class="row msc17" >
+         <div class="col-xs-12">
+                <ul id="myselect">
+                    
+                </ul>
+
+        </div>
+        <div class="col-xs-12">
+            <div class="table-responsive">
+              <table class="table table-condensed table-bordered">
+              </table>
+            </div>
+        </div>
+    </div>
+    
+
+   <!--  <div class="btns text-center" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div> -->
+
+    
+ 
+  </div>
+  <div id="preloaderOverlay" style='display:none;'>
+      <div class="preloader">
+      <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+      
+      </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block main_js %}
+<link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/reports/moment.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery.comiseo.daterangepicker.js' %}"></script>
+<script>
+$(document).ready(function() {
+    window.reportType = '';
+    window.filters = new Array();
+    window.timeline = new Array();
+    $(function() {
+        $("#datepickerFrom").datepicker({
+          defaultDate : "+1w",
+          changeMonth : true,
+          numberOfMonths : 1,
+          dateFormat: "M dd, yy",
+          onClose : function(selectedDate) {
+            $("#to").datepicker("option", "minDate", selectedDate);
+          },
+          onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() + 1);
+                $("#datepickerTo").datepicker("option", "minDate", dt);
+            }
+        });
+        $("#datepickerTo").datepicker({
+          defaultDate : "+1w",
+          changeMonth : true,
+          numberOfMonths : 1,
+          dateFormat: "M dd, yy",
+          onClose : function(selectedDate) {
+            $("#from").datepicker("option", "maxDate", selectedDate);
+          },
+          onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() - 1);
+                $("#datepickerFrom").datepicker("option", "maxDate", dt);
+            }
+        });
+
+    });
+
+ });
+
+ $(document).on('click', '.msc19', function() {
+     $('#sel_all').prop('checked', false);
+     var iim = $(this).attr('id');
+     var arr1 = iim.split('-');
+     var arr2 = "#" + arr1[1];
+     $(arr2).attr('checked', false);
+     $(this).parent().remove();
+ });
+
+ $(document).on('click', '.report-type li', function() {
+    window.reportType = '';
+    window.reportType = $(this).text();
+    var thischeck = $(this).find('.mcico');
+    $('.mm1 .mcico').css('display','none');
+    $('.mm1 .report-type li').css('background','#fff');
+    $('.mm1 .report-type li a').css('color','#474747');
+    $(this).css('background','#1e66c6','color','#fff');
+    $(this).find('a').css('color','#fff');
+    $(thischeck).css('display','inline-block');
+
+ });
+
+ $(document).on('click', '.timeline li', function() {
+    window.timeline = []
+    window.timeline.push($(this).attr('id'));
+    $("#datepickerFrom").val('');
+    $("#datepickerTo").val('');
+    if($(this).text() == "Custom Date Range"){
+        $('#custome_date').show();
+    }
+    if($(this).text().indexOf('This') != -1){
+         $('#custome_date').hide();
+    }
+     var thischeck = $(this).find('.mcico');
+     $('.mm2 .mcico').css('display', 'none');
+     $('.mm2 .timeline li').css('background', '#fff');
+     $('.mm2 .timeline li a').css('color', '#474747');
+     $(this).css('background', '#1e66c6', 'color', '#fff');
+     $(this).find('a').css('color', '#fff');
+     $(thischeck).css('display', 'inline-block');
+
+ }); 
+
+$('#viewButton').on('click', function(){
+    var isError = false;
+    var data = {}
+    if(window.filters.length == 0){
+        isError = true;
+        alert("Please Select Any One Filter From Choose Filter Section!")
+    } else{
+        data['filter'] = window.filters;
+    }
+
+    if(window.reportType == ''){
+        isError = true;
+        alert("Please Choose Report Type Report Section!")
+    } else{
+        data['report_type'] = window.reportType;
+    }
+
+    if(window.timeline.length == 0){
+        isError = true;
+        alert("Please Choose Timeline Section!")
+    } else{
+        if(window.timeline[0] == 'custom_date'){
+            fromDate = $("#datepickerFrom").val();
+            toDate = $("#datepickerTo").val();
+            if(fromDate && toDate){
+                data['timeline'] = [fromDate, toDate]
+            } else{
+                isError = true;
+                alert("Please Custome Date Range From Calendar")
+            }
+
+        } else{
+            data['timeline'] = [window.timeline[0]];
+        }
+    }
+
+    if($('#comparison').prop('checked') == true){
+        data['comparison'] = 'yes';
+    }else{
+        data['comparison'] = '';
+    }
+
+    if(isError){
+        alert('Failure!');
+        return false;
+    }else{
+        $('#preloaderOverlay').show();
+        $.ajax({
+            method: 'GET',
+            url: '/reports/csat-reports',
+            data: data,
+            dataType: "json",
+            success: function(data) {
+                console.log('Success Response From Ajax');
+                //console.log(data);
+                $('#preloaderOverlay').hide();
+                displayReportData(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Failure');
+            }
+        })
+    }
+});
+
+ $("input:checkbox").on('click', function() {
+  // in the handler, 'this' refers to the box clicked on
+  var $box = $(this);
+  var se = $(this).attr('id');
+  var val1 = $(this).val();
+
+  if ($(this).attr('id') == "sel_all") {
+    window.filters = [];
+     $('.msc13').prop('checked', false);
+     $('.msc18').remove();
+     if ($('#sel_all').prop('checked') == true) {
+         $('.msc13 ').trigger("click");
+     } else {
+         $('.msc13 ').attr('checked', false)
+         $('.msc18').remove();
+     }
+ }
+
+  if ($box.is(":checked")) {
+    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+    $(group).prop("checked", false);
+    $box.prop("checked", true);
+    customFilter()
+  } else {
+    $box.prop("checked", false);
+    customFilter()
+  }
+
+});
+
+ function customFilter(){
+    window.filters = [];
+    window.showFilter = [];
+    updateFilter('survey_category');
+    updateFilter('suervey_channel');
+    updateFilter('language');
+    updateFilter('process');
+    displayFilters();
+
+ }
+
+ function updateFilter(name){
+    var group = "input:checkbox[name='" + name + "']";
+    $(group).each(function(){
+        var grp = $(this).attr('id');
+        var val = $(this).val();
+        if ($(this).is(":checked")){
+           window.filters.push(grp);
+           window.showFilter.push({'val':val, 'id': grp});
+        }
+    });
+
+ }
+
+ function displayFilters(){
+    $("#myselect li").remove();
+    for(i=0; i<window.showFilter.length;i++){
+        $("#myselect").append('<li class="msc18" >' + window.showFilter[i]['val'] + '<span id="we-' + window.showFilter[i]['id'] + '" class="glyphicon glyphicon-remove msc19"></span></li>');
+    }
+ }
+
+
+function displayReportData(reportData){
+     $('.table').empty();
+     header =  '<tr >'+
+                    '<th class="msc24">'+reportData['report_type']+'</th>' +
+                    '<th class="msc24">CSAT%</th>' +
+                    '<th class="msc24">vs Target</th>' + 
+                    '<th class="msc24">Survey Channel</th>' + 
+                    '<th class="msc24">Transfer Rate</th>' +
+                    '<th class="msc24">Leads</th>' +
+                    '<th class="msc24">Wins</th>' +
+                    '<th class="msc24">Extremely Satisfied</th>' +
+                    '<th class="msc24">Moderately Satisfied</th>' +
+                    '<th class="msc24">Slightly Satisfied</th>' +
+                    '<th class="msc24">Neither Satisfied nor Dissatisfied</th>' +
+                    '<th class="msc24">Slightly Dissatisfied</th>' +
+                    '<th class="msc24">Moderately Dissatisfied</th>' +
+                    '<th class="msc24">Extremely Dissatisfied</th>' +
+                    '<th class="msc23">Grand Total</th>'+
+                '</tr>'
+    row = '';
+
+    for ( i=0; i<reportData['report_data'].length; i++){
+
+                row += '<tr>'+
+                            '<td>'+ reportData['report_data'][i][reportData['report_type'].toString()]+'</td>' +
+                            '<td>'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</td>' +
+                            '<td>'+ (parseInt(reportData['report_data'][i]['Extremely satisfied in pcg']) - 95).toString() +'%</td>' +
+                            '<td>'+ reportData['channel']+'</td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">'+ reportData['report_data'][i]['Wins in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Leads']+'</div><div class="msc21">'+ reportData['report_data'][i]['Leads in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">'+ reportData['report_data'][i]['Wins in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Extremely satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Moderately satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Moderately satisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Slightly satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Slightly satisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Neither satisfied nor dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Neither satisfied nor dissatisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Slightly dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Slightly dissatisfied in pcg']+'%</div></td>' + 
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Moderately dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Moderately dissatisfied in pcg']+'%</div></td>' +
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Extremely dissatisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Extremely dissatisfied in pcg']+'%</div></td>' + 
+                            
+
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Grand Total']+'</div><div class="msc21">100%</div></td>' + 
+                       ' </tr>'
+
+    }
+
+    $('.table').append(header+row);
+}
+
+</script>
+{% endblock main_js %}
