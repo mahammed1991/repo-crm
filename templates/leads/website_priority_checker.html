@@ -43,11 +43,11 @@
        <input type="text" class="form-control" id="check_url" placeholder="Please enter URL" name="check_url">
       </div>
       <div class="col-md-3 col-sm-12">
-      <button class="btn std-btn" id="check_priority" style="padding:12px">Check Priority</button>
+        <button class="btn std-btn" id="check_priority" style="padding:12px">Check Priority</button>
       </div>
     </div>
-  <div class="col-md-12" id="priority">
-    <table border="1" class="tblPriorityHeader" width="100%">
+  <div class="col-md-12" id="priority" style="display:none;">
+    <table border="1" class="tblPriorityHeader" width="98%">
       <tbody>
         <tr style="background-color:#5aa940;color:#fff;font-weight: bold;">
             <td width="50%">Priority</td>
@@ -59,7 +59,11 @@
         </tr>
       </tbody> 
     </table>
-    <table border="1" class="tblPriority" width="100%">
+    <div class="col-md-12">
+      <button class="btn std-btn" id="contact-team" onclick="reportTeam();" style="padding:12px;float:right;margin:10px;">CONTACT WPP TEAM</button>
+      <div id="success_msg" style="padding:12px;margin:10px;display:none;text-align:center;"> Thank you for contacting WPP team! We will get back to you with required details soon(with in 24hrs) </div>
+    </div>
+    <table border="1" class="tblPriority" width="98%">
       <tbody>
         <tr>
             <td width="20%">URL</td>
@@ -118,6 +122,15 @@
             console.log(data);
             if(data != 'FAIL' && data['status']){
               json = data['json'];
+              status_code = json['status_code']
+              window.statusCode = status_code;
+              window.url = json['url'];
+              if(status_code != -1 || status_code > 0){
+                $("#contact-team").show();
+              }else{
+                $("#contact-team").hide();
+                $("#success_msg").hide();
+              }
               $('#p_url').text(json['url']);
               $('#p_priority').text(json['priority']);
               $('#p_server').text(json['server']);
@@ -136,5 +149,29 @@
     });
 
   });
+
+  function reportTeam(){
+    $("#preloaderOverlay").show();
+    $.ajax({
+        url: "/leads/report-team/",
+        dataType: "json",
+        type: 'GET',
+        data: {'status_code': window.statusCode, 'url': window.url},
+        success: function(data) {
+            $("#preloaderOverlay").hide();
+            if(data == 'SUCCESS'){
+              $("#success_msg").show();
+              $("#contact-team").hide();
+            }else{
+              $("#success_msg").hide();
+            }
+            
+        },
+        error: function(errorThrown) {
+          $("#preloaderOverlay").hide();
+            console.log('failure');
+        }
+    });
+  }
 </script>
 {% endblock main_js %}
