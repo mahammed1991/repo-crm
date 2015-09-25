@@ -31,6 +31,9 @@
         <div id="calendar"  style="padding-top: 15px;">
         </div>
     </div>
+    <div>
+        &nbsp;
+    </div>
 </section>
 {% endblock content %}
 
@@ -52,24 +55,20 @@ $('#calendar').fullCalendar({
                 right: 'month,agendaWeek,agendaDay'
             },
         editable: true,
+        selectable: false,
         eventLimit: true,
         eventSources: [curSources[0]],
-        /*dayClick: function(date, jsEvent, view) {
-
-        alert('Clicked on: ' + date.format());
-
-        alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-
-        alert('Current view: ' + view.name);
-
-    },*/
-   /* eventClick: function(event, element) {
-
-        event.title = "CLICKED!";
-
-        $('#calendar').fullCalendar('updateEvent', event);
-
-    },*/
+        eventClick: function(calEvent, jsEvent, view) {
+        jsEvent.preventDefault();
+        $('#calendar').fullCalendar('gotoDate', calEvent.start);
+        $('#calendar').fullCalendar('changeView', "agendaDay");
+    },
+        dayClick: function(date, jsEvent, view) {
+            if(view.name == 'month' || view.name == 'basicWeek') {
+                $('#calendar').fullCalendar('changeView', 'agendaDay');
+                $('#calendar').fullCalendar('gotoDate', date);      
+            }
+        },
         height: 450,
     })
 

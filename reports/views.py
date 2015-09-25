@@ -3,18 +3,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location, Timezone, Leads
+from leads.models import Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
-from reports.models import Region, CallLogAccountManager, CSATReport
+from reports.models import Region, CallLogAccountManager
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import re
-from lib.salesforce import SalesforceApi
 
 
 @login_required
@@ -36,8 +35,7 @@ def reports(request):
     code_types = ReportService.get_all_code_type()
     code_types = [str(codes.encode('utf-8')) for codes in code_types]
     return render(request, 'reports/reports.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
-                                                    'teams': teams, 'rgx_teams': rgx_teams,
-                                                    'code_types': code_types})
+                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types})
 
 
 @login_required

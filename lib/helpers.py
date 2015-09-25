@@ -13,9 +13,9 @@ from main.models import UserDetails
 from leads.models import Leads, WPPLeads
 from django.db.models import Q, Count
 import operator
-from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
+from xlrd import XL_CELL_DATE, xldate_as_tuple
 from lib.salesforce import SalesforceApi
-from leads.models import Timezone, Location
+from leads.models import Timezone
 import pytz
 
 from django.contrib.auth.models import User
@@ -522,7 +522,6 @@ def get_rep_details_from_leads(reps, start_date, end_date):
     implemented_leads_dict = Leads.objects.exclude(type_1='WPP', lead_sub_status='RR - Inactive').values('google_rep_email').filter(created_date__gt=start_date, created_date__lt=end_date, lead_status__in=['Implemented', 'Rework Required', 'Pending QC - WIN']).annotate(count=Count('lead_status'))
     users_total_leads = {str(rec['google_rep_email']): rec['count'] for rec in total_leads_dict}
     users_implemented_leads = {str(rec['google_rep_email']): rec['count'] for rec in implemented_leads_dict}
-    print len(users_implemented_leads)
 
     user_dict = UserDetails.objects.filter(user__email__in=reps).values('location__location_name', 'user__email', 'user__first_name', 'user__last_name', 'profile_photo_url', 'team__team_name')
     for user in user_dict:
@@ -636,5 +635,6 @@ def logs_to_events(call_logs):
         tz_ist = Timezone.objects.get(zone_name='IST')
         meeting_time_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
         event['start'] = datetime.strftime(meeting_time_ist, "%Y-%m-%dT%H:%M:%S")
+        event['end'] = datetime.strftime(meeting_time_ist + timedelta(minutes=30), "%Y-%m-%dT%H:%M:%S")
         events.append(event)
     return events
