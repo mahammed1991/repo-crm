@@ -775,13 +775,6 @@ $('#region').change(function(){
   setLocationsForRegion(window.locations, countryList);
 });
 
-$(document).on('change', '.rlsa_bulk', function() {
-    if ($('#'+$(this).attr('id')).is(':checked')){
-       $('#'+$(this).attr('id')).val(1);
-    } else {
-        $('#'+$(this).attr('id')).val(0);
-      }
-});
 
 function uncheckAllBehaviourCheckBoxs(selectedindex){
   $('#product_behaviour'+selectedindex).prop('checked', false);
@@ -789,14 +782,3 @@ function uncheckAllBehaviourCheckBoxs(selectedindex){
   $('#checkout_process'+selectedindex).prop('checked', false);
   $('#transaction_behaviour'+selectedindex).prop('checked', false);
 }
-
-/*function clearAllValues(ids, checkboxs, index){
-     for (i = 0; i < ids.length; i++) { 
-        $('#'+ids[i]).val('');
-      }
-      for (i = 0; i < checkboxs.length; i++) { 
-        $('#'+checkboxs[i]).prop('checked', false);
-      }
-
-
-}*/
