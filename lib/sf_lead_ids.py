@@ -160,6 +160,11 @@ class SalesforceLeads(object):
                              'cartpage_behaviour1': '00NZ0000001j0qp',  # Cart Page Behaviour1
                              'checkout_process1': '00NZ0000001j0rE',  # Check Out Behaviour1
                              'transaction_behaviour1': '00NZ0000001j0ri',  # Transaction Behaviour1
+                             'user_list_id1': '00NZ0000001jwDC',  # User List ID 1 for RLSA Bulk Implementation
+                             'rsla_adjustment1': '00NZ0000001jwDq',  # RLSA Bid Adjustment checkbox 1 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment1': '00NZ0000001jwKI',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
+                             'rlsa_user_lists1': '00NZ0000001jwKh',  # RLSA User List 1 for RLSA Bulk Implementation
+                             'rsla_policies1': '00NZ0000001jwFX',  # RLSA Policies 1 for RLSA Bulk Implementation
 
                              # Code Type 2 Details
                              'ctype2': '00Nd0000005WYkS',  # Code Type2
@@ -175,6 +180,11 @@ class SalesforceLeads(object):
                              'cartpage_behaviour2': '00NZ0000001j0qu',  # Cart Page Behaviour2
                              'checkout_process2': '00NZ0000001j0rJ',  # Check Out Behaviour2
                              'transaction_behaviour2': '00NZ0000001j0rn',  # Transaction Behaviour2
+                             'user_list_id2': '00NZ0000001jwDH',  # User List ID 2 for RLSA Bulk Implementation
+                             'rsla_adjustment2': '00NZ0000001jwDv',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment2': '00NZ0000001jwKN',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
+                             'rlsa_user_lists2': '00NZ0000001jwKm',  # RLSA User List 2 for RLSA Bulk Implementation
+                             'rsla_policies2': '00NZ0000001jwFh',  # RLSA Policies 2 for RLSA Bulk Implementation
 
                              # Code Type 3 Details
                              'ctype3': '00Nd0000005WYkX',  # Code Type3
@@ -190,6 +200,11 @@ class SalesforceLeads(object):
                              'cartpage_behaviour3': '00NZ0000001j0qz',  # Cart Page Behaviour3
                              'checkout_process3': '00NZ0000001j0rO',  # Check Out Behaviour3
                              'transaction_behaviour3': '00NZ0000001j0rx',  # Transaction Behaviour3
+                             'user_list_id3': '00NZ0000001jwDM',  # User List ID 3 for RLSA Bulk Implementation
+                             'rsla_adjustment3': '00NZ0000001jwE5',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment3': '00NZ0000001jwKS',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
+                             'rlsa_user_lists3': '00NZ0000001jwKr',  # RLSA User List 3 for RLSA Bulk Implementation
+                             'rsla_policies3': '00NZ0000001jwFm',  # RLSA Policies 3 for RLSA Bulk Implementation
 
                              # Code Type 4 Details
                              'ctype4': '00Nd0000005WYkm',  # Code Type4
@@ -205,6 +220,11 @@ class SalesforceLeads(object):
                              'cartpage_behaviour4': '00NZ0000001j0r4',  # Cart Page Behaviour4
                              'checkout_process4': '00NZ0000001j0rT',  # Check Out Behaviour4
                              'transaction_behaviour4': '00NZ0000001j0s2',  # Transaction Behaviour4
+                             'user_list_id4': '00NZ0000001jwDR',  # User List ID 4 for RLSA Bulk Implementation
+                             'rsla_adjustment4': '00NZ0000001jwEA',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment4': '00NZ0000001jwKX',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
+                             'rlsa_user_lists4': '00NZ0000001jwKw',  # RLSA User List 4 for RLSA Bulk Implementation
+                             'rsla_policies4': '00NZ0000001jwFw',  # RLSA Policies 4 for RLSA Bulk Implementation
 
                              # Code Type 4 Details
                              'ctype5': '00Nd0000005WYl6',  # Code Type5
@@ -220,6 +240,11 @@ class SalesforceLeads(object):
                              'cartpage_behaviour5': '00NZ0000001j0r9',  # Cart Page Behaviour5
                              'checkout_process5': '00NZ0000001j0rd',  # Check Out Behaviour5
                              'transaction_behaviour5': '00NZ0000001j0s7',  # Transaction Behaviour5
+                             'user_list_id5': '00NZ0000001jwDb',  # User List ID 5 for RLSA Bulk Implementation
+                             'rsla_adjustment5': '00NZ0000001jwEj',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment5': '00NZ0000001jwKc',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
+                             'rlsa_user_lists5': '00NZ0000001jwL1',  # RLSA User List 5 for RLSA Bulk Implementation
+                             'rsla_policies5': '00NZ0000001jwKD',  # RLSA Policies 5 for RLSA Bulk Implementation
 
                              'tag_via_gtm': '00Nd0000007esIr',
                              }
@@ -243,6 +268,12 @@ class SalesforceLeads(object):
                                  'cartpage_behaviour1': '00Nd0000008Mi64',  # Cart Page Behaviour1
                                  'checkout_process1': '00Nd0000008Mi6T',  # Check Out Behaviour1
                                  'transaction_behaviour1': '00Nd0000008Mi6s',  # Transaction Behaviour1
+                                 'user_list_id1': '',  # User List ID 1 for RLSA Bulk Implementation
+                                 'rsla_adjustment1': '',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
+                                 'rsla_bid_adjustment1': '',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
+                                 'rlsa_user_lists1': '',  # RLSA User List 1 for RLSA Bulk Implementation
+                                 'rsla_policies1': '',  # RLSA Policies 1 for RLSA Bulk Implementation
+
                                  # Code Type 2 Details
                                  'ctype2': '00Nd0000005WYkS',  # Code Type2
                                  'url2': '00Nd0000005WYi9',   # URL2
@@ -257,6 +288,12 @@ class SalesforceLeads(object):
                                  'cartpage_behaviour2': '00Nd0000008Mi69',  # Cart Page Behaviour2
                                  'checkout_process2': '00Nd0000008Mi6Y',  # Check Out Behaviour2
                                  'transaction_behaviour2': '00Nd0000008Mi6x',  # Transaction Behaviour2
+                                 'user_list_id2': '',  # User List ID 2 for RLSA Bulk Implementation
+                                 'rsla_adjustment2': '',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
+                                 'rsla_bid_adjustment2': '',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
+                                 'rlsa_user_lists2': '',  # RLSA User List 2 for RLSA Bulk Implementation
+                                 'rsla_policies2': '',  # RLSA Policies 2 for RLSA Bulk Implementation
+
                                  # Code Type 3 Details
                                  'ctype3': '00Nd0000005WYkX',  # Code Type3
                                  'url3': '00Nd0000005WYjU',   # URL3
@@ -271,6 +308,12 @@ class SalesforceLeads(object):
                                  'cartpage_behaviour3': '00Nd0000008Mi6E',  # Cart Page Behaviour3
                                  'checkout_process3': '00Nd0000008Mi6d',  # Check Out Behaviour3
                                  'transaction_behaviour3': '00Nd0000008Mi72',  # Transaction Behaviour3
+                                 'user_list_id3': '',  # User List ID 3 for RLSA Bulk Implementation
+                                 'rsla_adjustment3': '',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
+                                 'rsla_bid_adjustment3': '',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
+                                 'rlsa_user_lists3': '',  # RLSA User List 3 for RLSA Bulk Implementation
+                                 'rsla_policies3': '',  # RLSA Policies 3 for RLSA Bulk Implementation
+
                                  # Code Type 4 Details
                                  'ctype4': '00Nd0000005WYkm',  # Code Type4
                                  'url4': '00Nd0000005WYjZ',   # URL4
@@ -285,6 +328,12 @@ class SalesforceLeads(object):
                                  'cartpage_behaviour4': '00Nd0000008Mi6J',  # Cart Page Behaviour4
                                  'checkout_process4': '00Nd0000008Mi6i',  # Check Out Behaviour4
                                  'transaction_behaviour4': '00Nd0000008Mi77',  # Transaction Behaviour4
+                                 'user_list_id4': '',  # User List ID 4 for RLSA Bulk Implementation
+                                 'rsla_adjustment4': '',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
+                                 'rsla_bid_adjustment4': '',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
+                                 'rlsa_user_lists4': '',  # RLSA User List 4 for RLSA Bulk Implementation
+                                 'rsla_policies4': '',  # RLSA Policies 4 for RLSA Bulk Implementation
+
                                  # Code Type 4 Details
                                  'ctype5': '00Nd0000005WYl6',  # Code Type5
                                  'url5': '00Nd0000005WYjo',   # URL5
@@ -299,6 +348,11 @@ class SalesforceLeads(object):
                                  'cartpage_behaviour5': '00Nd0000008Mi6O',  # Cart Page Behaviour5
                                  'checkout_process5': '00Nd0000008Mi6n',  # Check Out Behaviour5
                                  'transaction_behaviour5': '00Nd0000008Mi7C',  # Transaction Behaviour5
+                                 'user_list_id5': '',  # User List ID 5 for RLSA Bulk Implementation
+                                 'rsla_adjustment5': '',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
+                                 'rsla_bid_adjustment5': '',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
+                                 'rlsa_user_lists5': '',  # RLSA User List 5 for RLSA Bulk Implementation
+                                 'rsla_policies5': '',  # RLSA Policies 5 for RLSA Bulk Implementation
 
                                  'tag_via_gtm': '00Nd0000007esIr',
                                  }

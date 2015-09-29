@@ -1367,14 +1367,14 @@ def upload_file_handling(request):
             elif upload_target == 'csat_report_data':
                 if request.POST.get('survey_channel') == 'Phone':
                     default_headers = ['Date', 'Time', 'Category', 'Language', 'CID', 'CLI', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']
-                for element in default_headers:
-                    if element not in uploaded_headers:
-                        template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
-                        return render(request, 'main/upload_file.html', template_args)
-                    else:
-                        sheet = workbook.sheet_by_index(0)
-                        get_survey_data_from_excel(workbook, sheet, request.POST.get('survey_channel'))
-                        return render(request, 'main/upload_file.html')
+                    for element in default_headers:
+                        if element not in uploaded_headers:
+                            template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
+                            return render(request, 'main/upload_file.html', template_args)
+                        else:
+                            sheet = workbook.sheet_by_index(0)
+                            get_survey_data_from_excel(workbook, sheet, request.POST.get('survey_channel'))
+                            return render(request, 'main/upload_file.html')
 
     return render(request, 'main/upload_file.html')
 
@@ -1403,6 +1403,7 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
             csat_record.sf_lead_id = ''
             csat_record.channel = 'PHONE'
             csat_record.category = 'UNMAPPED'
+            csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
 
             if cid in implemented_cids:
 
@@ -1420,10 +1421,7 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
                         csat_record.program = csat_lead[0].team
                         csat_record.code_type = csat_lead[0].type_1
                         csat_record.lead_owner = csat_lead[0].lead_owner_email
-                        if csat_lead[0].gcss == 'Advertiser Transferred to GCSS':
-                            csat_record.channel = 'PHONE'
-                        else:
-                            csat_record.channel = 'EMAIL'
+                        csat_record.language = csat_lead[0].language if csat_lead[0].language else ''
                         csat_record.category = 'MAPPED'
                     else:
                         # csat_lead should be one but here is mutiple
@@ -1449,7 +1447,6 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
             csat_record.customer_id = cid
             csat_record.survey_date = survey_date
             csat_record.process = process
-            csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
             csat_record.cli = int(sheet.cell(r_i, get_col_index(sheet, 'CLI')).value)
             csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
             csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0

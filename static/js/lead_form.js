@@ -612,6 +612,9 @@ function validateTaskFields(indx){
   urlElem = document.getElementById('url' + indx);
   validateFiled(urlElem)
 
+  rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
+  validateFiled(rlsaBidAdjustment)
+
   if($('#analyticscode' + indx).is(":visible")){
       var analyticsCodeElem = document.getElementById('analytics_code' + indx)
       validateFiled(analyticsCodeElem)
@@ -681,6 +684,21 @@ $('.code_type').change(function(){
   $('#callextension'+selectedindex).hide();
   $('#call_extension'+selectedindex).prop('checked', false);
   $('#codebehaviour'+selectedindex).hide();
+
+  $('#rbid'+selectedindex).val('');
+  $('#rbudget'+selectedindex).val('');
+
+  $('#rlsa_bulk'+selectedindex).hide();
+  $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional)");
+  $('#rsla_bid_adjustment'+selectedindex).val('');
+  $('#rlsa_user_lists'+selectedindex).val('');
+  $('#rsla_policies'+selectedindex).prop('checked', false);
+  $('#user_list_id'+selectedindex).prop('checked', false);
+  $('#rsla_adjustment'+selectedindex).prop('checked', false);
+  $('#user_list_id'+selectedindex).val(0);
+  $('#rsla_adjustment'+selectedindex).val(0);
+  $('#rsla_policies'+selectedindex).val(0);
+
   uncheckAllBehaviourCheckBoxs(selectedindex);
     
   $('#ctype_campaign'+selectedindex).hide();
@@ -694,6 +712,13 @@ $('.code_type').change(function(){
   }
   else if(selectedCodeType.indexOf('Website Call Conversion') != -1){
       $('#callextension'+selectedindex).show();
+  } else if(selectedCodeType.indexOf('RLSA Bulk Implementation') != -1){
+      $('#rlsa_bulk'+selectedindex).show();
+      $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional, if there is an issue with applying RLSA to a campaign, please provide the Campaign ID for the campaign you wish to exclude)");
+      $('#user_list_id'+selectedindex).prop('checked', true);
+      $('#user_list_id'+selectedindex).val(1);
+      $('#rsla_adjustment'+selectedindex).prop('checked', true);
+      $('#rsla_adjustment'+selectedindex).val(1);
   }
   if(selectedCodeType.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
       $('#gasetup'+selectedindex).hide();
@@ -707,6 +732,15 @@ $(document).on('click', '.is_campaign_created', function() {
         $("."+ thisId).hide().val('');
     }else{
       $("."+ thisId).show().val('');
+    }
+});
+
+$(document).on('click', '.headsup-policies', function() {
+    thisId = $(this).attr('id');
+    if($(this).is(":checked")){
+        $("#"+ thisId).val(1);
+    }else{
+        $("#"+ thisId).val(0);
     }
     
 });
@@ -741,9 +775,28 @@ $('#region').change(function(){
   setLocationsForRegion(window.locations, countryList);
 });
 
+$(document).on('change', '.rlsa_bulk', function() {
+    if ($('#'+$(this).attr('id')).is(':checked')){
+       $('#'+$(this).attr('id')).val(1);
+    } else {
+        $('#'+$(this).attr('id')).val(0);
+      }
+});
+
 function uncheckAllBehaviourCheckBoxs(selectedindex){
   $('#product_behaviour'+selectedindex).prop('checked', false);
   $('#cartpage_behaviour'+selectedindex).prop('checked', false);
   $('#checkout_process'+selectedindex).prop('checked', false);
   $('#transaction_behaviour'+selectedindex).prop('checked', false);
 }
+
+/*function clearAllValues(ids, checkboxs, index){
+     for (i = 0; i < ids.length; i++) { 
+        $('#'+ids[i]).val('');
+      }
+      for (i = 0; i < checkboxs.length; i++) { 
+        $('#'+checkboxs[i]).prop('checked', false);
+      }
+
+
+}*/

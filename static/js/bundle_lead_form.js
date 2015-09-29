@@ -362,7 +362,11 @@ function validatethis(frm) {
                 rbudgetElem = document.getElementById('rbudget_campaign1');
                 validateField(rbudgetElem);
             }
-          }else{
+          } else if(task1.indexOf('RLSA') != -1){
+            rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment1');
+            validateField(rlsaBidAdjustment);
+
+          } else{
             $("#rbid_campaign1").val('');
             $("#rbudget_campaign1").val('');
           }
@@ -415,7 +419,11 @@ function validatethis(frm) {
                 rbudgetElem = document.getElementById('rbudget_campaign2');
                 validateField(rbudgetElem);
             }
-          }else{
+          } else if(task2.indexOf('RLSA') != -1){
+            rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment2');
+            validateField(rlsaBidAdjustment);
+
+          } else{
             $("#rbid_campaign2").val('');
             $("#rbudget_campaign2").val('');
           }
@@ -466,7 +474,11 @@ function validatethis(frm) {
                 rbudgetElem = document.getElementById('rbudget_campaign3');
                 validateField(rbudgetElem);
             }
-          }else{
+          } else if(task3.indexOf('RLSA') != -1){
+            rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment3');
+            validateField(rlsaBidAdjustment);
+
+          } else{
             $("#rbid_campaign3").val('');
             $("#rbudget_campaign3").val('');
           }
@@ -633,6 +645,23 @@ $(".ctype").change(function(){
     $('#callextension'+indx).hide();
     $('#call_extension'+indx).prop('checked', false);
     $('#codebehaviour'+indx).hide();
+    
+    $('#url'+indx).val('');
+    $('#comment'+indx).val('');
+    $('#rbudget_campaign'+indx).val('');
+    $('#rbid_campaign'+indx).val('');
+
+    $('#rlsa_bulk'+indx).hide();
+    $('#rsla_bid_adjustment'+indx).val('');
+    $('#rlsa_user_lists'+indx).val('');
+    
+    $('#user_list_id'+indx).prop('checked', false);
+    $('#rsla_adjustment'+indx).prop('checked', false);
+    $('#rsla_policies'+indx).prop('checked', false);
+    $('#user_list_id'+indx).val(0);
+    $('#rsla_adjustment'+indx).val(0);
+    $('#rsla_policies'+indx).val(0);
+
     uncheckAllBehaviourCheckBoxs(indx);
 
     var selectedId1 = $("#ctype1 option:selected").attr('id');
@@ -692,8 +721,13 @@ $(".ctype").change(function(){
     }
     else if($(this).val().indexOf('Website Call Conversion') != -1){
         $('#callextension'+indx).show();
-    }
-    else{
+    } else if($(this).val().indexOf('RLSA Bulk Implementation') != -1){
+        $('#rlsa_bulk'+indx).show();
+         $('#user_list_id'+indx).prop('checked', true);
+        $('#user_list_id'+indx).val(1);
+        $('#rsla_adjustment'+indx).prop('checked', true);
+        $('#rsla_adjustment'+indx).val(1);
+    } else{
       $("#ga_setup" + indx).attr('checked', false);
       $("#gasetup" + indx).hide();
     }
@@ -797,6 +831,15 @@ $("#keep_url").click(function(){
     }
 });
 
+$(document).on('click', '.headsup-policies', function() {
+    thisId = $(this).attr('id');
+    if($(this).is(":checked")){
+        $("#"+ thisId).val(1);
+    }else{
+        $("#"+ thisId).val(0);
+    }
+    
+});
 
 $('#region').change(function(){
   var regionId = $('option:selected', this).attr('region_id');

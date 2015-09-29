@@ -50,12 +50,14 @@
     <table border="1" class="tblPriorityHeader" width="98%">
       <tbody>
         <tr style="background-color:#5aa940;color:#fff;font-weight: bold;">
-            <td width="50%">Priority</td>
-            <td width="50%">Suggestion</td>
+            <td width="30%">Priority</td>
+            <td width="37%">Expected TAT</td>
+            <td width="33%">Suggested Treatment</td>
         </tr>
         <tr style="background-color:#cee8c5">
             <td id='p_priority'></td>
             <td id='p_suggestion'></td>
+            <td id='p_treatment'></td>
         </tr>
       </tbody> 
     </table>
@@ -139,6 +141,12 @@
               $('#p_pages').text(json['pages']);
               $('#p_ecommerce').text(json['E-Commerce']);
               $('#p_suggestion').text(json['suggestion']);
+              if(json['treatment'] == "Entire site revamp as full responsive site"){
+                $('#p_treatment').text(" Full Desktop/Mobile Optimization");
+              } else{
+                $('#p_treatment').text(json['treatment']);
+              }
+              
               $("#priority").show();
             }
         },

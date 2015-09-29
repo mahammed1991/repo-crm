@@ -797,12 +797,8 @@ def csat_reports(request):
     if request.is_ajax():
         report_type = str(request.GET.get('report_type'))
         timeline = request.GET.getlist('timeline[]')
-        # comparison = request.GET.get('comparison')
+        comparison = request.GET.get('comparison', None)
         selected_filters = request.GET.getlist('filter[]')
-
-        if timeline:
-            start_date, end_date = ReportService.get_date_range_by_timeline(timeline)
-        print start_date, end_date
 
         if 'suervey_channel_phone' in selected_filters:
             channel = 'PHONE'
@@ -811,7 +807,27 @@ def csat_reports(request):
         else:
             channel = 'Combined'
 
-        report_data = ReportService.get_csat_report(selected_filters, report_type, start_date, end_date)
+        if comparison == 'yes':
+            if timeline:
+                if timeline[0] == 'this_week':
+                    current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                    previous_timeline_start, previous_timeline_end = ReportService.get_date_range_by_timeline(['last_week'])
+                elif timeline[0] == 'this_month':
+                    current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                    previous_timeline_start, previous_timeline_ed = ReportService.get_date_range_by_timeline(['last_month'])
+                elif timeline[0] == 'this_quarter':
+                    current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                    previous_timeline_start, previous_timeline_end = ReportService.prev_quarter_date_range(datetime.now())
 
-        return HttpResponse(json.dumps({'report_data': report_data, 'report_type': report_type, 'channel': channel}))
+            current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
+            previous_report_data = ReportService.get_csat_report(selected_filters, report_type, previous_timeline_start, previous_timeline_end)
+
+        else:
+            if timeline:
+                current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+
+            current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
+            previous_report_data = ''
+
+        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'channel': channel}))
     return render(request, 'reports/csat_reports.html')
