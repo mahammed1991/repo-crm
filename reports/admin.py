@@ -19,5 +19,6 @@ admin.site.register(QuarterTargetLeads, QuarterTargetLeadsAdmin)
 
 class CSATReportAdmin(admin.ModelAdmin):
     list_display = ('customer_id', 'language', 'channel', 'category',)
+    list_filter = ('category',)
 
 admin.site.register(CSATReport, CSATReportAdmin)

@@ -739,7 +739,7 @@ class ReportService(object):
                 report_data.append(program_data)
 
         elif report_type == 'Location':
-            locations = ReportService.get_all_locations()
+            locations = list(Leads.objects.exclude(country='').filter(created_date__gte=start_date, created_date__lte=end_date).values_list('country', flat=True).distinct().order_by('country'))
             total_leads = Leads.objects.filter(country__in=locations,
                                                created_date__gte=start_date, created_date__lte=end_date).count()
             implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(country__in=locations, lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
@@ -751,10 +751,11 @@ class ReportService(object):
                 query['country'] = location
                 query['created_date__gte'] = start_date
                 query['created_date__lte'] = end_date
-                location_data['Leads'] = Leads.objects.filter(**query).count()
+                csat_query['country'] = location
+                location_data['Leads'] = Leads.objects.filter(**csat_query).count()
                 location_data['Leads in pcg'] = ReportService.get_percentage_value(location_data['Leads'], total_leads)
-                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-                location_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+                csat_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+                location_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**csat_query).count()
                 location_data['Wins in pcg'] = ReportService.get_percentage_value(location_data['Wins'], implemented_leads)
 
                 csat_query['region'] = location
@@ -768,7 +769,7 @@ class ReportService(object):
                 location_data = ReportService.get_response_dict(location_csat, location_data, key_response)
                 report_data.append(location_data)
 
-        elif report_type == 'Code Type':
+        elif report_type == 'Task Type':
             code_types = ReportService.get_all_code_type()
             total_leads = Leads.objects.filter(type_1__in=code_types,
                                                created_date__gte=start_date, created_date__lte=end_date).count()
@@ -777,7 +778,7 @@ class ReportService(object):
             for code_type in code_types:
                 query = dict()
                 code_type_data = dict()
-                code_type_data['Code Type'] = code_type
+                code_type_data['Task Type'] = code_type
                 query['type_1'] = code_type
                 query['created_date__gte'] = start_date
                 query['created_date__lte'] = end_date
@@ -878,6 +879,14 @@ class ReportService(object):
             if lead.type_1 in code_types:
                 code_type_analysis[lead.type_1] += 1
         return code_type_analysis
+
+    @staticmethod
+    def get_implemented_leads_and_leads_count(query):
+        ''' Returns Implemented Leads and implemented leads count '''
+        query['lead_status__in'] == ['Implemented', 'Pending QC - WIN', 'Rework Required']
+        implemented_leads = Leads.exclude(lead_sub_status='RR - Inactive').filter(**query)
+        implemented_leads_count = Leads.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
+        return implemented_leads, implemented_leads_count
 
     @staticmethod
     def get_lead_status_analysis(leads):

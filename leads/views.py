@@ -32,12 +32,10 @@ from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
-from lib.helpers import first_day_of_month
 from django.db.models import Q
 from random import randint
 from lib.sf_lead_ids import SalesforceLeads
 from reports.models import Region
-from reports.cron import create_or_update_leads
 import operator
 import collections
 
@@ -91,6 +89,11 @@ def lead_form(request):
                 cartpage_behaviour_key = 'cartpage_behaviour' + i
                 checkout_process_key = 'checkout_process' + i
                 transaction_behaviour_key = 'transaction_behaviour' + i
+                user_list_id_key = 'user_list_id' + i
+                rsla_adjustment_key = 'rsla_adjustment' + i
+                rsla_bid_adjustment_key = 'rsla_bid_adjustment' + i
+                rlsa_user_lists_key = 'rlsa_user_lists' + i
+                rsla_policies_key = 'rsla_policies' + i
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
                 tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
@@ -100,6 +103,12 @@ def lead_form(request):
                 tag_data[tag_leads[cartpage_behaviour_key]] = request.POST.get(cartpage_behaviour_key)
                 tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
                 tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
+
+                tag_data[tag_leads[user_list_id_key]] = request.POST.get(user_list_id_key)
+                tag_data[tag_leads[rsla_adjustment_key]] = request.POST.get(rsla_adjustment_key)
+                tag_data[tag_leads[rsla_bid_adjustment_key]] = request.POST.get(rsla_bid_adjustment_key)
+                tag_data[tag_leads[rlsa_user_lists_key]] = request.POST.get(rlsa_user_lists_key)
+                tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
@@ -1148,6 +1157,13 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('cartpage_behaviour' + str(indx))] = post_data.get('cartpage_behaviour' + str(cindx))
         tag_data[tag_leads.get('checkout_process' + str(indx))] = post_data.get('checkout_process' + str(cindx))
         tag_data[tag_leads.get('transaction_behaviour' + str(indx))] = post_data.get('transaction_behaviour' + str(cindx))
+
+        tag_data[tag_leads.get('user_list_id' + str(indx))] = post_data.get('user_list_id' + str(cindx))
+        tag_data[tag_leads.get('rsla_adjustment' + str(indx))] = post_data.get('rsla_adjustment' + str(cindx))
+        tag_data[tag_leads.get('rsla_bid_adjustment' + str(indx))] = post_data.get('rsla_bid_adjustment' + str(cindx))
+        tag_data[tag_leads.get('rlsa_user_lists' + str(indx))] = post_data.get('rlsa_user_lists' + str(cindx))
+        tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
+
         # elif indx == 2:
         #     # Code Type 2 Details
         #     tag_data[tag_leads.get('ctype' + str(indx))] = post_data.get('ctype' + str(indx))  # Code Type1
