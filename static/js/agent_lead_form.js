@@ -216,6 +216,10 @@ function setLocations(newLocations){
                       validateFiled(analyticsCodeElem);  
                     }
 
+                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
+                    if($(bidAdjustmentElem).is(":visible")){
+                      validateFiled(bidAdjustmentElem);  
+                    }
                 }
             }
               var sameShopTask = $(".shop:visible").length;
@@ -352,6 +356,11 @@ function setLocations(newLocations){
                       validateFiled(analyticsCodeElem);  
                     }
 
+                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
+                    if($(bidAdjustmentElem).is(":visible")){
+                      validateFiled(bidAdjustmentElem);  
+                    }
+
                 }else{
                     if($("#shopFields" + i).is(":visible")){
                         // CID Validation
@@ -475,6 +484,11 @@ function setLocations(newLocations){
                     analyticsCodeElem = document.getElementById('analytics_code' + i);
                     if($(analyticsCodeElem).is(":visible")){
                       validateFiled(analyticsCodeElem);  
+                    }
+
+                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
+                    if($(bidAdjustmentElem).is(":visible")){
+                      validateFiled(bidAdjustmentElem);  
                     }
             }
             }
@@ -631,6 +645,11 @@ function setLocations(newLocations){
                     analyticsCodeElem = document.getElementById('analytics_code' + i);
                     if($(analyticsCodeElem).is(":visible")){
                       validateFiled(analyticsCodeElem);  
+                    }
+
+                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
+                    if($(bidAdjustmentElem).is(":visible")){
+                      validateFiled(bidAdjustmentElem);  
                     }
 
                      cnameElem = document.getElementById('advertiser_name' + i);

@@ -661,6 +661,7 @@ $(".ctype").change(function(){
     $('#user_list_id'+indx).val(0);
     $('#rsla_adjustment'+indx).val(0);
     $('#rsla_policies'+indx).val(0);
+    $('#comment'+indx).attr("placeholder", "Special Instructions (Optional)");
 
     uncheckAllBehaviourCheckBoxs(indx);
 
@@ -727,6 +728,7 @@ $(".ctype").change(function(){
         $('#user_list_id'+indx).val(1);
         $('#rsla_adjustment'+indx).prop('checked', true);
         $('#rsla_adjustment'+indx).val(1);
+        $('#comment'+indx).attr("placeholder", "Special Instructions (Optional, if there is an issue with applying RLSA to a campaign, please provide the Campaign ID for the campaign you wish to exclude)");
     } else{
       $("#ga_setup" + indx).attr('checked', false);
       $("#gasetup" + indx).hide();

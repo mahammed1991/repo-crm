@@ -371,6 +371,12 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
+            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
+            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
             tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
@@ -468,6 +474,12 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
+            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
+            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
             tag_data[tag_leads['rbudget1']] = request.POST.get('rbudget' + indx)
@@ -550,6 +562,12 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['cartpage_behaviour1']] = request.POST.get('cartpage_behaviour' + indx)
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
+
+            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
+            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -660,6 +678,12 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['cartpage_behaviour1']] = request.POST.get('cartpage_behaviour' + indx)
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
+
+            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
+            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)

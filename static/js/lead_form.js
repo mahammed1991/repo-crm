@@ -179,6 +179,13 @@
       $("#rbudget" + indx).val('');
       $("#ga_setup" + indx).val('0');
 
+      $("#rsla_bid_adjustment"+ indx).val('');
+      $("#rlsa_user_lists"+ indx).val('');
+      $("#rsla_policies"+indx).prop('checked', false);
+      $("#rsla_policies"+indx).val(0);
+      $('#rsla_adjustment'+indx).val(0);
+      $('#user_list_id'+indx).val(0);
+
       $( "#task_" + indx).animate({
       height: "toggle"
       }, 300, function() {
@@ -612,8 +619,10 @@ function validateTaskFields(indx){
   urlElem = document.getElementById('url' + indx);
   validateFiled(urlElem)
 
-  rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
-  validateFiled(rlsaBidAdjustment)
+  if($('#rsla_bid_adjustment' + indx).is(":visible")){
+      rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
+      validateFiled(rlsaBidAdjustment)
+  }
 
   if($('#analyticscode' + indx).is(":visible")){
       var analyticsCodeElem = document.getElementById('analytics_code' + indx)
