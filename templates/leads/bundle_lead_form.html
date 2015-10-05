@@ -241,26 +241,31 @@
               </div>
               <!-- RLSA Bulk Implementation -->
               <div id="rlsa_bulk1" style="display:none;">
-                <div class="checkbox">
-                  <label>
-                    <input id="user_list_id1" type="checkbox" name="user_list_id1" value="0" class="rlsa_bulk">
-                    User List ID (This is next to the remarketing list in Shared Library, should have > 1000 Google Search list users)</label>
-                 </div>
-                  <div class="checkbox">
-                  <label>
-                    <input id="rsla_adjustment1"  name="rsla_adjustment1" type="checkbox" value="0" class="rlsa_bulk">
-                    RLSA Bid Adjustment (Check PitchIQ or go/rlsa-bid-dasb for customer specific recommendations! We recommend at least +40%.) </label>
-                  </div>
-                  <div>
-                    <textarea type="text" id="rsla_bid_adjustment1" class="form-control" name="rsla_bid_adjustment1" placeholder="RLSA Bid Adjustment"></textarea>
-                  </div>
-                   <div>
-                      <textarea class="form-control" id="rlsa_user_lists1" name="rlsa_user_lists1" placeholder="Additional RLSA User Lists (Optional, please specify User List ID & Recommended Bid modifier)"></textarea>
-                  </div>
-                  <div class="checkbox" >
+                  <input type="text" class="form-control" id="user_list_id1" name="user_list_id1" placeholder="User List ID">
+                    <label>This is next to each of the remarketing list in Shared Library, and they should have > 1000 Google Search list users. Note: You can add a list that comntains &nbsp; < 1000 if you are certain that that number will increase eventually.</label>
+                    <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="Internal Customer ID">
+                    <label>The Google AdWords internal customer ID of the Client account that you want us to work on. Do not use the MCC ID.</label>
+                    <input type="text" id="rsla_bid_adjustment1" class="form-control" name="rsla_bid_adjustment1" placeholder="RLSA Bid Adjustment">
+                    <label>Check PitchIQ or go/rlsa-bid-dasb for customer specific recommendations! We recommend at least +40%</label>
+                    <select title="Overwrite existing bid modifiers" class="form-control bgicon" name="overwrite_existing_bid_modifiers1" id="overwrite_existing_bid_modifiers1">
+                            <option value="">Overwrite existing bid modifiers</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                        </select>
+                    <label>Should the existing bid modifiers(if any) be overwritten by the value specified herein.</label>
+                    <select title="Create new bid modifiers" class="form-control bgicon" name="create_new_bid_modifiers1" id="create_new_bid_modifiers1">
+                            <option value="">Create New bid modifiers</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                    </select>
+                    <label>Should there be new bid modifiers created if they aren't specified already.</label>
+                    <textarea class="form-control" id="campaign_ids1" name="campaign_ids1" placeholder="Campaign Ids (comma-separated)"></textarea>
+                    <label>This is next to each of the campaigns on AWICS. Please provide all the search campaigns that you would like us to apply RLSA. eg: 91872638,1298732190 If you want to apply it to all eligible campaigns, then type "All"</label>
+                    <div class="checkbox" >
                         <label>
                           <input id="rsla_policies1" type="checkbox" name="rsla_policies1" value="0" class="rlsa_bulk headsup-policies">
-                              Heads Up! Have you ensured that the website meets the RLSA policies?
+                              Have you ensured that the website meets the RLSA policies specified 
+                              <a href="https://support.google.com/adwordspolicy/answer/6258407 ?" target="_blank">here?</a>
                         </label>
                     </div>
               </div>
@@ -356,28 +361,33 @@
                   </label>
                 </div>
               </div>
-              <!-- RLSA Bulk Implementation 2 -->
+              <!-- RLSA Bulk Implementation -->
               <div id="rlsa_bulk2" style="display:none;">
-                <div class="checkbox">
-                  <label>
-                    <input id="user_list_id2" type="checkbox" name="user_list_id2" value="0" class="rlsa_bulk">
-                    User List ID (This is next to the remarketing list in Shared Library, should have > 1000 Google Search list users)</label>
-                 </div>
-                  <div class="checkbox">
-                  <label>
-                    <input id="rsla_adjustment2" name="rsla_adjustment2" type="checkbox" value="0" class="rlsa_bulk">
-                    RLSA Bid Adjustment (Check PitchIQ or go/rlsa-bid-dasb for customer specific recommendations! We recommend at least +40%.) </label>
-                  </div>
-                  <div>
-                    <textarea type="text" id="rsla_bid_adjustment2" class="form-control" name="rsla_bid_adjustment2" placeholder="RLSA Bid Adjustment"></textarea>
-                  </div>
-                   <div>
-                      <textarea class="form-control" id="rlsa_user_lists2" name="rlsa_user_lists2" placeholder="Additional RLSA User Lists (Optional, please specify User List ID & Recommended Bid modifier)"></textarea>
-                  </div>
-                  <div class="checkbox" >
+                  <input type="text" class="form-control" id="user_list_id2" name="user_list_id2" placeholder="User List ID">
+                    <label>This is next to each of the remarketing list in Shared Library, and they should have > 1000 Google Search list users. Note: You can add a list that comntains &nbsp; < 1000 if you are certain that that number will increase eventually.</label>
+                    <input type="text" class="form-control" id="internal_cid2" name="internal_cid2" placeholder="Internal Customer ID">
+                    <label>The Google AdWords internal customer ID of the Client account that you want us to work on. Do not use the MCC ID.</label>
+                    <input type="text" id="rsla_bid_adjustment2" class="form-control" name="rsla_bid_adjustment2" placeholder="RLSA Bid Adjustment">
+                    <label>Check PitchIQ or go/rlsa-bid-dasb for customer specific recommendations! We recommend at least +40%</label>
+                    <select title="Overwrite existing bid modifiers" class="form-control bgicon" name="overwrite_existing_bid_modifiers2" id="overwrite_existing_bid_modifiers2">
+                            <option value="">Overwrite existing bid modifiers</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                        </select>
+                    <label>Should the existing bid modifiers(if any) be overwritten by the value specified herein.</label>
+                    <select title="Create new bid modifiers" class="form-control bgicon" name="create_new_bid_modifiers2" id="create_new_bid_modifiers2">
+                            <option value="">Create New bid modifiers</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                    </select>
+                    <label>Should there be new bid modifiers created if they aren't specified already.</label>
+                    <textarea class="form-control" id="campaign_ids2" name="campaign_ids2" placeholder="Campaign Ids (comma-separated)"></textarea>
+                    <label>This is next to each of the campaigns on AWICS. Please provide all the search campaigns that you would like us to apply RLSA. eg: 91872638,1298732190 If you want to apply it to all eligible campaigns, then type "All"</label>
+                    <div class="checkbox" >
                         <label>
                           <input id="rsla_policies2" type="checkbox" name="rsla_policies2" value="0" class="rlsa_bulk headsup-policies">
-                              Heads Up! Have you ensured that the website meets the RLSA policies?
+                              Have you ensured that the website meets the RLSA policies specified 
+                              <a href="https://support.google.com/adwordspolicy/answer/6258407 ?" target="_blank">here?</a>
                         </label>
                     </div>
               </div>
@@ -468,28 +478,33 @@
                   </label>
                 </div>
               </div>
-              <!-- RLSA Bulk Implementation 3-->
+             <!-- RLSA Bulk Implementation -->
               <div id="rlsa_bulk3" style="display:none;">
-                <div class="checkbox">
-                  <label>
-                    <input id="user_list_id3" type="checkbox" name="user_list_id3" value="0" class="rlsa_bulk">
-                    User List ID (This is next to the remarketing list in Shared Library, should have > 1000 Google Search list users)</label>
-                 </div>
-                  <div class="checkbox">
-                  <label>
-                    <input id="rsla_adjustment3" name="rsla_adjustment3" type="checkbox" value="0" class="rlsa_bulk">
-                    RLSA Bid Adjustment (Check PitchIQ or go/rlsa-bid-dasb for customer specific recommendations! We recommend at least +40%.) </label>
-                  </div>
-                  <div>
-                    <textarea type="text" id="rsla_bid_adjustment3" class="form-control" name="rsla_bid_adjustment3" placeholder="RLSA Bid Adjustment"></textarea>
-                  </div>
-                   <div>
-                      <textarea class="form-control" id="rlsa_user_lists3" name="rlsa_user_lists3" placeholder="Additional RLSA User Lists (Optional, please specify User List ID & Recommended Bid modifier)"></textarea>
-                  </div>
-                  <div class="checkbox" >
+                  <input type="text" class="form-control" id="user_list_id3" name="user_list_id3" placeholder="User List ID">
+                    <label>This is next to each of the remarketing list in Shared Library, and they should have > 1000 Google Search list users. Note: You can add a list that comntains &nbsp; < 1000 if you are certain that that number will increase eventually.</label>
+                    <input type="text" class="form-control" id="internal_cid3" name="internal_cid3" placeholder="Internal Customer ID">
+                    <label>The Google AdWords internal customer ID of the Client account that you want us to work on. Do not use the MCC ID.</label>
+                    <input type="text" id="rsla_bid_adjustment3" class="form-control" name="rsla_bid_adjustment3" placeholder="RLSA Bid Adjustment">
+                    <label>Check PitchIQ or go/rlsa-bid-dasb for customer specific recommendations! We recommend at least +40%</label>
+                    <select title="Overwrite existing bid modifiers" class="form-control bgicon" name="overwrite_existing_bid_modifiers3" id="overwrite_existing_bid_modifiers3">
+                            <option value="">Overwrite existing bid modifiers</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                        </select>
+                    <label>Should the existing bid modifiers(if any) be overwritten by the value specified herein.</label>
+                    <select title="Create new bid modifiers" class="form-control bgicon" name="create_new_bid_modifiers3" id="create_new_bid_modifiers3">
+                            <option value="">Create New bid modifiers</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                    </select>
+                    <label>Should there be new bid modifiers created if they aren't specified already.</label>
+                    <textarea class="form-control" id="campaign_ids3" name="campaign_ids3" placeholder="Campaign Ids (comma-separated)"></textarea>
+                    <label>This is next to each of the campaigns on AWICS. Please provide all the search campaigns that you would like us to apply RLSA. eg: 91872638,1298732190 If you want to apply it to all eligible campaigns, then type "All"</label>
+                    <div class="checkbox" >
                         <label>
                           <input id="rsla_policies3" type="checkbox" name="rsla_policies3" value="0" class="rlsa_bulk headsup-policies">
-                              Heads Up! Have you ensured that the website meets the RLSA policies?
+                              Have you ensured that the website meets the RLSA policies specified 
+                              <a href="https://support.google.com/adwordspolicy/answer/6258407 ?" target="_blank">here?</a>
                         </label>
                     </div>
               </div>
@@ -599,6 +614,8 @@
 
     window.rep_location = "{{user.profile.rep_location|safe}}";
 
+    $('#country').trigger('change');
+
     if(window.rep_location){
       $('#rep_location').val(window.rep_location);
     }else{
@@ -671,6 +688,19 @@ $(document).on('change', '.code_behaviour', function() {
       }
     
 });
+
+/*$(document).on('change', '#country', function(){
+  var country = $(this).val()
+  if(country =='AU/NZ' || country == 'Canada' || country == 'UK/I' || country == 'United States' || country == 'India'){
+      var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
+     newOption.insertAfter('#ctype1 option[value="Google Analytics Dynamic Remarketing  (Retail)"], #ctype2 option[value="Google Analytics Dynamic Remarketing  (Retail)"], #ctype3 option[value="Google Analytics Dynamic Remarketing  (Retail)"]');
+  }
+  else{
+    $("#ctype1 option[value='RLSA Bulk Implementation'], #ctype2 option[value='RLSA Bulk Implementation'], #ctype3 option[value='RLSA Bulk Implementation']").remove();
+    $("#rlsa_bulk1, #rlsa_bulk2, #rlsa_bulk3").hide();
+    $('#comment1, #comment2, #comment3').attr("placeholder", "Special Instructions (Optional)");
+  }
+})*/
 
 </script>
 {% endblock main_js %}

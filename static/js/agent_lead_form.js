@@ -216,10 +216,34 @@ function setLocations(newLocations){
                       validateFiled(analyticsCodeElem);  
                     }
 
-                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
-                    if($(bidAdjustmentElem).is(":visible")){
-                      validateFiled(bidAdjustmentElem);  
-                    }
+                    if($('#rlsa_bulk' + i).is(":visible")){
+
+                          rlsaUserListEle = document.getElementById('user_list_id' + i);
+                          validateFiled(rlsaUserListEle);
+
+                          InternalCIDEle = document.getElementById('internal_cid' + i);
+                          validateFiled(InternalCIDEle);
+
+                          rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
+                          validateFiled(rlsaBidAdjustment);
+
+                          campaignIds = document.getElementById('campaign_ids' + i);
+                          validateFiled(campaignIds);
+
+                          existingBid = document.getElementById('overwrite_existing_bid_modifiers' + i);
+                          validateFiled(existingBid);
+
+                          newBid = document.getElementById('create_new_bid_modifiers' + i);
+                          validateFiled(newBid);
+
+                          rlsaPolicies = document.getElementById('rsla_policies' + i);
+                          if(!$(rlsaPolicies).is(":checked")){
+                             $(rlsaPolicies).parent().addClass('error-box');
+                              window.failedFields.push(rlsaPolicies);
+                              window.is_error = true;
+                              return false;
+                          }
+                      }
                 }
             }
               var sameShopTask = $(".shop:visible").length;
@@ -356,10 +380,34 @@ function setLocations(newLocations){
                       validateFiled(analyticsCodeElem);  
                     }
 
-                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
-                    if($(bidAdjustmentElem).is(":visible")){
-                      validateFiled(bidAdjustmentElem);  
-                    }
+                   if($('#rlsa_bulk' + i).is(":visible")){
+
+                          rlsaUserListEle = document.getElementById('user_list_id' + i);
+                          validateFiled(rlsaUserListEle);
+
+                          InternalCIDEle = document.getElementById('internal_cid' + i);
+                          validateFiled(InternalCIDEle);
+
+                          rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
+                          validateFiled(rlsaBidAdjustment);
+
+                          campaignIds = document.getElementById('campaign_ids' + i);
+                          validateFiled(campaignIds);
+
+                          existingBid = document.getElementById('overwrite_existing_bid_modifiers' + i);
+                          validateFiled(existingBid);
+
+                          newBid = document.getElementById('create_new_bid_modifiers' + i);
+                          validateFiled(newBid);
+
+                          rlsaPolicies = document.getElementById('rsla_policies' + i);
+                          if(!$(rlsaPolicies).is(":checked")){
+                             $(rlsaPolicies).parent().addClass('error-box');
+                              window.failedFields.push(rlsaPolicies);
+                              window.is_error = true;
+                              return false;
+                          }
+                      }
 
                 }else{
                     if($("#shopFields" + i).is(":visible")){
@@ -486,11 +534,35 @@ function setLocations(newLocations){
                       validateFiled(analyticsCodeElem);  
                     }
 
-                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
-                    if($(bidAdjustmentElem).is(":visible")){
-                      validateFiled(bidAdjustmentElem);  
-                    }
-            }
+                    if($('#rlsa_bulk' + i).is(":visible")){
+
+                          rlsaUserListEle = document.getElementById('user_list_id' + i);
+                          validateFiled(rlsaUserListEle);
+
+                          InternalCIDEle = document.getElementById('internal_cid' + i);
+                          validateFiled(InternalCIDEle);
+
+                          rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
+                          validateFiled(rlsaBidAdjustment);
+
+                          campaignIds = document.getElementById('campaign_ids' + i);
+                          validateFiled(campaignIds);
+
+                          existingBid = document.getElementById('overwrite_existing_bid_modifiers' + i);
+                          validateFiled(existingBid);
+
+                          newBid = document.getElementById('create_new_bid_modifiers' + i);
+                          validateFiled(newBid);
+
+                          rlsaPolicies = document.getElementById('rsla_policies' + i);
+                          if(!$(rlsaPolicies).is(":checked")){
+                             $(rlsaPolicies).parent().addClass('error-box');
+                              window.failedFields.push(rlsaPolicies);
+                              window.is_error = true;
+                              return false;
+                          }
+                      }
+                }
             }
 
               var sameShopTask = $(".shop:visible").length;
@@ -647,10 +719,34 @@ function setLocations(newLocations){
                       validateFiled(analyticsCodeElem);  
                     }
 
-                    bidAdjustmentElem = document.getElementById('rsla_bid_adjustment' + i);
-                    if($(bidAdjustmentElem).is(":visible")){
-                      validateFiled(bidAdjustmentElem);  
-                    }
+                    if($('#rlsa_bulk' + i).is(":visible")){
+
+                          rlsaUserListEle = document.getElementById('user_list_id' + i);
+                          validateFiled(rlsaUserListEle);
+
+                          InternalCIDEle = document.getElementById('internal_cid' + i);
+                          validateFiled(InternalCIDEle);
+
+                          rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
+                          validateFiled(rlsaBidAdjustment);
+
+                          campaignIds = document.getElementById('campaign_ids' + i);
+                          validateFiled(campaignIds);
+
+                          existingBid = document.getElementById('overwrite_existing_bid_modifiers' + i);
+                          validateFiled(existingBid);
+
+                          newBid = document.getElementById('create_new_bid_modifiers' + i);
+                          validateFiled(newBid);
+
+                          rlsaPolicies = document.getElementById('rsla_policies' + i);
+                          if(!$(rlsaPolicies).is(":checked")){
+                             $(rlsaPolicies).parent().addClass('error-box');
+                              window.failedFields.push(rlsaPolicies);
+                              window.is_error = true;
+                              return false;
+                          }
+                      }
 
                      cnameElem = document.getElementById('advertiser_name' + i);
                       validateFiled(cnameElem);
