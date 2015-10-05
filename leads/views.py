@@ -89,11 +89,15 @@ def lead_form(request):
                 cartpage_behaviour_key = 'cartpage_behaviour' + i
                 checkout_process_key = 'checkout_process' + i
                 transaction_behaviour_key = 'transaction_behaviour' + i
+
                 user_list_id_key = 'user_list_id' + i
-                rsla_adjustment_key = 'rsla_adjustment' + i
                 rsla_bid_adjustment_key = 'rsla_bid_adjustment' + i
-                rlsa_user_lists_key = 'rlsa_user_lists' + i
+                rlsa_internal_cid_key = 'internal_cid' + i
+                campaign_ids_key = 'campaign_ids' + i
+                create_new_bid_modifiers_key = 'create_new_bid_modifiers' + i
+                overwrite_existing_bid_modifiers_key = 'overwrite_existing_bid_modifiers' + i
                 rsla_policies_key = 'rsla_policies' + i
+
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
                 tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
@@ -105,9 +109,11 @@ def lead_form(request):
                 tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
 
                 tag_data[tag_leads[user_list_id_key]] = request.POST.get(user_list_id_key)
-                tag_data[tag_leads[rsla_adjustment_key]] = request.POST.get(rsla_adjustment_key)
                 tag_data[tag_leads[rsla_bid_adjustment_key]] = request.POST.get(rsla_bid_adjustment_key)
-                tag_data[tag_leads[rlsa_user_lists_key]] = request.POST.get(rlsa_user_lists_key)
+                tag_data[tag_leads[rlsa_internal_cid_key]] = request.POST.get(rlsa_internal_cid_key)
+                tag_data[tag_leads[campaign_ids_key]] = request.POST.get(campaign_ids_key)
+                tag_data[tag_leads[create_new_bid_modifiers_key]] = request.POST.get(create_new_bid_modifiers_key)
+                tag_data[tag_leads[overwrite_existing_bid_modifiers_key]] = request.POST.get(overwrite_existing_bid_modifiers_key)
                 tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
 
             # Split Tag Contact Person Name to First and Last Name
@@ -372,10 +378,12 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
             tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
-            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
             tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -475,10 +483,12 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
             tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
-            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
             tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -564,10 +574,12 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
             tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
-            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
             tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -680,10 +692,12 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
             tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_adjustment1']] = request.POST.get('rsla_adjustment' + indx)
-            tag_data[tag_leads['rlsa_user_lists1']] = request.POST.get('rlsa_user_lists' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
             tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -1183,9 +1197,11 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('transaction_behaviour' + str(indx))] = post_data.get('transaction_behaviour' + str(cindx))
 
         tag_data[tag_leads.get('user_list_id' + str(indx))] = post_data.get('user_list_id' + str(cindx))
-        tag_data[tag_leads.get('rsla_adjustment' + str(indx))] = post_data.get('rsla_adjustment' + str(cindx))
         tag_data[tag_leads.get('rsla_bid_adjustment' + str(indx))] = post_data.get('rsla_bid_adjustment' + str(cindx))
-        tag_data[tag_leads.get('rlsa_user_lists' + str(indx))] = post_data.get('rlsa_user_lists' + str(cindx))
+        tag_data[tag_leads.get('internal_cid' + str(indx))] = post_data.get('internal_cid' + str(cindx))
+        tag_data[tag_leads.get('campaign_ids' + str(indx))] = post_data.get('campaign_ids' + str(cindx))
+        tag_data[tag_leads.get('create_new_bid_modifiers' + str(indx))] = post_data.get('create_new_bid_modifiers' + str(cindx))
+        tag_data[tag_leads.get('overwrite_existing_bid_modifiers' + str(indx))] = post_data.get('overwrite_existing_bid_modifiers' + str(cindx))
         tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
 
         # elif indx == 2:
@@ -2103,7 +2119,7 @@ def lead_history(request, lid):
 
         for i in range(0, len(history['records'])):
             old_status = history['records'][i]['OldValue']
-            new_status = history['records'][i]['NewValue']
+            #  new_status = history['records'][i]['NewValue']
             status_modified_date = history['records'][i]['CreatedDate']
             status_modified_date = SalesforceApi.salesforce_date_to_datetime_format(status_modified_date)
             status_tat = tat_by_dates(last_modified_date, status_modified_date)
