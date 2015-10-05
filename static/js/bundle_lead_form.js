@@ -801,7 +801,7 @@ $(".ctype").change(function(){
         $('#callextension'+indx).show();
     } else if($(this).val().indexOf('RLSA Bulk Implementation') != -1){
         $('#rlsa_bulk'+indx).show();
-        $('#comment'+indx).attr("placeholder", "Special Instructions (Optional, if there is an issue with applying RLSA to a campaign, please provide the Campaign ID for the campaign you wish to exclude)");
+        $('#comment'+indx).attr("placeholder", "Special Instructions (Optional, if there is an issue with applying RLSA to a campaign, please provide the Campaign ID for the campaign you wish to exclude).");
     } else{
       $("#ga_setup" + indx).attr('checked', false);
       $("#gasetup" + indx).hide();
