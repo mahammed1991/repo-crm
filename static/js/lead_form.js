@@ -627,9 +627,6 @@ function validateTaskFields(indx){
     rlsaUserListEle = document.getElementById('user_list_id' + indx);
     validateFiled(rlsaUserListEle);
 
-    InternalCIDEle = document.getElementById('internal_cid' + indx);
-    validateFiled(InternalCIDEle);
-
     rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
     validateFiled(rlsaBidAdjustment);
 

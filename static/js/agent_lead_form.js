@@ -221,9 +221,6 @@ function setLocations(newLocations){
                           rlsaUserListEle = document.getElementById('user_list_id' + i);
                           validateFiled(rlsaUserListEle);
 
-                          InternalCIDEle = document.getElementById('internal_cid' + i);
-                          validateFiled(InternalCIDEle);
-
                           rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
                           validateFiled(rlsaBidAdjustment);
 
@@ -385,9 +382,6 @@ function setLocations(newLocations){
                           rlsaUserListEle = document.getElementById('user_list_id' + i);
                           validateFiled(rlsaUserListEle);
 
-                          InternalCIDEle = document.getElementById('internal_cid' + i);
-                          validateFiled(InternalCIDEle);
-
                           rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
                           validateFiled(rlsaBidAdjustment);
 
@@ -538,9 +532,6 @@ function setLocations(newLocations){
 
                           rlsaUserListEle = document.getElementById('user_list_id' + i);
                           validateFiled(rlsaUserListEle);
-
-                          InternalCIDEle = document.getElementById('internal_cid' + i);
-                          validateFiled(InternalCIDEle);
 
                           rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
                           validateFiled(rlsaBidAdjustment);
@@ -723,9 +714,6 @@ function setLocations(newLocations){
 
                           rlsaUserListEle = document.getElementById('user_list_id' + i);
                           validateFiled(rlsaUserListEle);
-
-                          InternalCIDEle = document.getElementById('internal_cid' + i);
-                          validateFiled(InternalCIDEle);
 
                           rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + i);
                           validateFiled(rlsaBidAdjustment);
