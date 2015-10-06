@@ -423,8 +423,8 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
 
     # For Location Germay we have only one regalix team for both TAG ang Shopping form.
     # If Location Gernamy and process_type is SHOPPING refer avalability slots from team TAG - EMEA - German
-    if int(location_id) == 47 and process_type == 'SHOPPING':
-        process_type = 'TAG'
+    # if int(location_id) == 47 and process_type == 'SHOPPING':
+    #     process_type = 'TAG'
 
     # get all appointments for future dates in the given week
     slots_data = Availability.objects.filter(
@@ -559,8 +559,8 @@ def check_and_add_appointment(request):
 
             # For Location Germay we have only one regalix team for both TAG ang Shopping form.
             # If Location Gernamy and process_type is SHOPPING refer avalability slots from team TAG - EMEA - German
-            if int(location_id) == 47 and process_type == 'SHOPPING':
-                process_type = 'TAG'
+            # if int(location_id) == 47 and process_type == 'SHOPPING':
+            #     process_type = 'TAG'
 
             response['status'] = 'FAILED'
             response['type'] = process_type

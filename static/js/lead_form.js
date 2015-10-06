@@ -179,12 +179,15 @@
       $("#rbudget" + indx).val('');
       $("#ga_setup" + indx).val('0');
 
+      
+      $("#user_list_id"+ indx).val('');
+      $("#internal_cid"+ indx).val('');
       $("#rsla_bid_adjustment"+ indx).val('');
-      $("#rlsa_user_lists"+ indx).val('');
+      $("#campaign_ids"+ indx).val('');
+      $("#overwrite_existing_bid_modifiers"+indx).val('');
+      $("#create_new_bid_modifiers"+indx).val('');
       $("#rsla_policies"+indx).prop('checked', false);
       $("#rsla_policies"+indx).val(0);
-      $('#rsla_adjustment'+indx).val(0);
-      $('#user_list_id'+indx).val(0);
 
       $( "#task_" + indx).animate({
       height: "toggle"
@@ -619,9 +622,32 @@ function validateTaskFields(indx){
   urlElem = document.getElementById('url' + indx);
   validateFiled(urlElem)
 
-  if($('#rsla_bid_adjustment' + indx).is(":visible")){
-      rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
-      validateFiled(rlsaBidAdjustment)
+  if($('#rlsa_bulk' + indx).is(":visible")){
+
+    rlsaUserListEle = document.getElementById('user_list_id' + indx);
+    validateFiled(rlsaUserListEle);
+
+    rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
+    validateFiled(rlsaBidAdjustment);
+
+    campaignIds = document.getElementById('campaign_ids' + indx);
+    validateFiled(campaignIds);
+
+    existingBid = document.getElementById('overwrite_existing_bid_modifiers' + indx);
+    validateFiled(existingBid);
+
+    newBid = document.getElementById('create_new_bid_modifiers' + indx);
+    validateFiled(newBid);
+
+    rlsaPolicies = document.getElementById('rsla_policies' + indx);
+    if(!$(rlsaPolicies).is(":checked")){
+       $(rlsaPolicies).parent().addClass('error-box');
+        window.failedFields.push(rlsaPolicies);
+        window.is_error = true;
+        return false;
+    }
+
+
   }
 
   if($('#analyticscode' + indx).is(":visible")){
@@ -698,15 +724,15 @@ $('.code_type').change(function(){
   $('#rbudget'+selectedindex).val('');
 
   $('#rlsa_bulk'+selectedindex).hide();
+  $("#user_list_id"+ selectedindex).val('');
+  $("#internal_cid"+ selectedindex).val('');
+  $("#rsla_bid_adjustment"+ selectedindex).val('');
+  $("#campaign_ids"+ selectedindex).val('');
+  $("#rsla_policies"+selectedindex).prop('checked', false);
+  $("#rsla_policies"+selectedindex).val(0);
+  $("#overwrite_existing_bid_modifiers"+selectedindex).val('');
+  $("#create_new_bid_modifiers"+selectedindex).val('');
   $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional)");
-  $('#rsla_bid_adjustment'+selectedindex).val('');
-  $('#rlsa_user_lists'+selectedindex).val('');
-  $('#rsla_policies'+selectedindex).prop('checked', false);
-  $('#user_list_id'+selectedindex).prop('checked', false);
-  $('#rsla_adjustment'+selectedindex).prop('checked', false);
-  $('#user_list_id'+selectedindex).val(0);
-  $('#rsla_adjustment'+selectedindex).val(0);
-  $('#rsla_policies'+selectedindex).val(0);
 
   uncheckAllBehaviourCheckBoxs(selectedindex);
     
@@ -724,10 +750,7 @@ $('.code_type').change(function(){
   } else if(selectedCodeType.indexOf('RLSA Bulk Implementation') != -1){
       $('#rlsa_bulk'+selectedindex).show();
       $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional, if there is an issue with applying RLSA to a campaign, please provide the Campaign ID for the campaign you wish to exclude)");
-      $('#user_list_id'+selectedindex).prop('checked', true);
-      $('#user_list_id'+selectedindex).val(1);
-      $('#rsla_adjustment'+selectedindex).prop('checked', true);
-      $('#rsla_adjustment'+selectedindex).val(1);
+
   }
   if(selectedCodeType.indexOf('Analytics Enhanced E-Commerce Tracking') != -1){
       $('#gasetup'+selectedindex).hide();
