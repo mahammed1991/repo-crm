@@ -368,9 +368,6 @@ function validatethis(frm) {
                         rlsaUserListEle = document.getElementById('user_list_id1');
                         validateField(rlsaUserListEle);
 
-                        InternalCIDEle = document.getElementById('internal_cid1');
-                        validateField(InternalCIDEle);
-
                         rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment1');
                         validateField(rlsaBidAdjustment);
 
@@ -451,9 +448,6 @@ function validatethis(frm) {
                     rlsaUserListEle = document.getElementById('user_list_id2');
                     validateField(rlsaUserListEle);
 
-                    InternalCIDEle = document.getElementById('internal_cid2');
-                    validateField(InternalCIDEle);
-
                     rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment2');
                     validateField(rlsaBidAdjustment);
 
@@ -531,9 +525,6 @@ function validatethis(frm) {
 
                     rlsaUserListEle = document.getElementById('user_list_id3');
                     validateField(rlsaUserListEle);
-
-                    InternalCIDEle = document.getElementById('internal_cid3');
-                    validateField(InternalCIDEle);
 
                     rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment3');
                     validateField(rlsaBidAdjustment);
