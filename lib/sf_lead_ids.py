@@ -282,11 +282,11 @@ class SalesforceLeads(object):
 
                                  'user_list_id1': '00Nd0000008N42s',  # User List ID 1 for RLSA Bulk Implementation
                                  'rsla_bid_adjustment1': '00Nd0000008N445',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
-                                 'internal_cid1': '',  # RLSA Internal Xustomer ID 1
-                                 'campaign_ids1': '',  # RLSA campaign Ids 1
+                                 'internal_cid1': '00Nd0000008N8wL',  # RLSA Internal Xustomer ID 1
+                                 'campaign_ids1': '00Nd0000008N8x4',  # RLSA campaign Ids 1
                                  'rsla_policies1': '00Nd0000008N43g',  # RLSA Policies 1 for RLSA Bulk Implementation
-                                 'create_new_bid_modifiers1': '',  # RLSA New Bid Modifiers 1 for RLSA Bulk Implementation
-                                 'overwrite_existing_bid_modifiers1': '',  # RLSA Exist Bid Modifiers 1 for RLSA Bulk Implementation
+                                 'create_new_bid_modifiers1': '00Nd0000008N8yC',  # RLSA New Bid Modifiers 1 for RLSA Bulk Implementation
+                                 'overwrite_existing_bid_modifiers1': '00Nd0000008N8xY',  # RLSA Exist Bid Modifiers 1 for RLSA Bulk Implementation
 
                                  # Code Type 2 Details
                                  'ctype2': '00Nd0000005WYkS',  # Code Type2
@@ -305,11 +305,11 @@ class SalesforceLeads(object):
 
                                  'user_list_id2': '00Nd0000008N42x',  # User List ID 2 for RLSA Bulk Implementation
                                  'rsla_bid_adjustment2': '00Nd0000008N44A',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
-                                 'internal_cid2': '',  # RLSA Internal Xustomer ID 2
-                                 'campaign_ids2': '',  # RLSA campaign Ids 2
+                                 'internal_cid2': '00Nd0000008N8wV',  # RLSA Internal Xustomer ID 2
+                                 'campaign_ids2': '00Nd0000008N8x9',  # RLSA campaign Ids 2
                                  'rsla_policies2': '00Nd0000008N43l',  # RLSA Policies 2 for RLSA Bulk Implementation
-                                 'create_new_bid_modifiers2': '',  # RLSA New Bid Modifiers 2 for RLSA Bulk Implementation
-                                 'overwrite_existing_bid_modifiers2': '',  # RLSA Exist Bid Modifiers 2 for RLSA Bulk Implementation
+                                 'create_new_bid_modifiers2': '00Nd0000008N8yM',  # RLSA New Bid Modifiers 2 for RLSA Bulk Implementation
+                                 'overwrite_existing_bid_modifiers2': '00Nd0000008N8xd',  # RLSA Exist Bid Modifiers 2 for RLSA Bulk Implementation
 
                                  # Code Type 3 Details
                                  'ctype3': '00Nd0000005WYkX',  # Code Type3
@@ -328,11 +328,11 @@ class SalesforceLeads(object):
 
                                  'user_list_id3': '00Nd0000008N432',  # User List ID 3 for RLSA Bulk Implementation
                                  'rsla_bid_adjustment3': '00Nd0000008N44F',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
-                                 'internal_cid3': '',  # RLSA Internal Xustomer ID 3
-                                 'campaign_ids3': '',  # RLSA campaign Ids 3
+                                 'internal_cid3': '00Nd0000008N8wk',  # RLSA Internal Xustomer ID 3
+                                 'campaign_ids3': '00Nd0000008N8xE',  # RLSA campaign Ids 3
                                  'rsla_policies3': '00Nd0000008N43q',  # RLSA Policies 3 for RLSA Bulk Implementation
-                                 'create_new_bid_modifiers3': '',  # RLSA New Bid Modifiers 3 for RLSA Bulk Implementation
-                                 'overwrite_existing_bid_modifiers3': '',  # RLSA Exist Bid Modifiers 3 for RLSA Bulk Implementation
+                                 'create_new_bid_modifiers3': '00Nd0000008N8yR',  # RLSA New Bid Modifiers 3 for RLSA Bulk Implementation
+                                 'overwrite_existing_bid_modifiers3': '00Nd0000008N8xi',  # RLSA Exist Bid Modifiers 3 for RLSA Bulk Implementation
 
                                  # Code Type 4 Details
                                  'ctype4': '00Nd0000005WYkm',  # Code Type4
@@ -351,11 +351,11 @@ class SalesforceLeads(object):
 
                                  'user_list_id4': '00Nd0000008N437',  # User List ID 4 for RLSA Bulk Implementation
                                  'rsla_bid_adjustment4': '00Nd0000008N44K',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
-                                 'internal_cid4': '',  # RLSA Internal Xustomer ID 4
-                                 'campaign_ids4': '',  # RLSA campaign Ids 4
+                                 'internal_cid4': '00Nd0000008N8wu',  # RLSA Internal Xustomer ID 4
+                                 'campaign_ids4': '00Nd0000008N8xO',  # RLSA campaign Ids 4
                                  'rsla_policies4': '00Nd0000008N43v',  # RLSA Policies 4 for RLSA Bulk Implementation
-                                 'create_new_bid_modifiers4': '',  # RLSA New Bid Modifiers 4 for RLSA Bulk Implementation
-                                 'overwrite_existing_bid_modifiers4': '',  # RLSA Exist Bid Modifiers 4 for RLSA Bulk Implementation
+                                 'create_new_bid_modifiers4': '00Nd0000008N8yg',  # RLSA New Bid Modifiers 4 for RLSA Bulk Implementation
+                                 'overwrite_existing_bid_modifiers4': '00Nd0000008N8xn',  # RLSA Exist Bid Modifiers 4 for RLSA Bulk Implementation
 
                                  # Code Type 4 Details
                                  'ctype5': '00Nd0000005WYl6',  # Code Type5
@@ -374,11 +374,11 @@ class SalesforceLeads(object):
 
                                  'user_list_id5': '00Nd0000008N43C',  # User List ID 5 for RLSA Bulk Implementation
                                  'rsla_bid_adjustment5': '00Nd0000008N44P',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
-                                 'internal_cid5': '',  # RLSA Internal Xustomer ID 5
-                                 'campaign_ids5': '',  # RLSA campaign Ids 5
+                                 'internal_cid5': '00Nd0000008N8wz',  # RLSA Internal Xustomer ID 5
+                                 'campaign_ids5': '00Nd0000008N8xT',  # RLSA campaign Ids 5
                                  'rsla_policies5': '00Nd0000008N440',  # RLSA Policies 5 for RLSA Bulk Implementation
-                                 'create_new_bid_modifiers5': '',  # RLSA New Bid Modifiers 5 for RLSA Bulk Implementation
-                                 'overwrite_existing_bid_modifiers5': '',  # RLSA Exist Bid Modifiers 5 for RLSA Bulk Implementation
+                                 'create_new_bid_modifiers5': '00Nd0000008N8yl',  # RLSA New Bid Modifiers 5 for RLSA Bulk Implementation
+                                 'overwrite_existing_bid_modifiers5': '00Nd0000008N8xx',  # RLSA Exist Bid Modifiers 5 for RLSA Bulk Implementation
 
                                  'tag_via_gtm': '00Nd0000007esIr',
                                  }
