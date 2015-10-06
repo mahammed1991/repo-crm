@@ -180,7 +180,7 @@ $('#viewButton').on('click', function(){
     window.filters = [];
     window.showFilter = [];
     updateFilter('survey_category');
-    updateFilter('suervey_channel');
+    updateFilter('survey_channel');
     updateFilter('language');
     updateFilter('process');
     displayFilters();
@@ -234,10 +234,15 @@ function displayReportData(reportData){
                 row += '<tr>'+
                             '<td>'+ reportData['report_data'][i][reportData['report_type'].toString()]+'</td>' +
                             '<td>'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</td>' +
-                            '<td>'+ (parseInt(reportData['report_data'][i]['Extremely satisfied in pcg']) - 95).toString() +'%</td>' +
-                            '<td>'+ reportData['channel']+'</td>' + 
-                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">'+ reportData['report_data'][i]['Wins in pcg']+'%</div></td>' + 
-                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Leads']+'</div><div class="msc21">'+ reportData['report_data'][i]['Leads in pcg']+'%</div></td>' + 
+                            '<td>'+ (parseInt(reportData['report_data'][i]['Extremely satisfied']) - 95).toString() +'%</td>' +
+                            '<td>'+ reportData['channel']+'</td>';
+                            if(reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL'){
+                            channel = '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Grand Total']+'</div><div class="msc21">100%</div></td>'
+                            } else{
+                            channel = '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">100%</div></td>'
+                            }
+                            
+                 row_end =  '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Leads']+'</div><div class="msc21">'+ reportData['report_data'][i]['Leads in pcg']+'%</div></td>' + 
                             '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">'+ reportData['report_data'][i]['Wins in pcg']+'%</div></td>' + 
                             '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Extremely satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</div></td>' + 
                             '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Moderately satisfied']+'</div><div class="msc21">'+ reportData['report_data'][i]['Moderately satisfied in pcg']+'%</div></td>' + 
@@ -250,6 +255,8 @@ function displayReportData(reportData){
 
                             '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Grand Total']+'</div><div class="msc21">100%</div></td>' + 
                        ' </tr>'
+                       
+                row += channel+row_end;
 
     }
 

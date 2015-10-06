@@ -799,10 +799,9 @@ def csat_reports(request):
         timeline = request.GET.getlist('timeline[]')
         comparison = request.GET.get('comparison', None)
         selected_filters = request.GET.getlist('filter[]')
-
-        if 'suervey_channel_phone' in selected_filters:
+        if 'survey_channel_phone' in selected_filters:
             channel = 'PHONE'
-        elif 'suervey_channel_email' in selected_filters:
+        elif 'survey_channel_email' in selected_filters:
             channel = 'EMAIL'
         else:
             channel = 'Combined'
