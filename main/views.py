@@ -1449,6 +1449,8 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
             csat_record.process = process
             csat_record.cli = int(sheet.cell(r_i, get_col_index(sheet, 'CLI')).value)
             csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
+            if csat_record.q1 == 0:
+                csat_record.category = 'UNMAPPED'
             csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
             csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
             csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0

@@ -766,7 +766,7 @@ class ReportService(object):
                 region_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
             else:
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
-            details = {'report_type': 'Task Type', 'totacsat_countl_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'type_1', 'csat_attribute': 'code_type'}
+            details = {'report_type': 'Task Type', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'type_1', 'csat_attribute': 'code_type'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, code_types, details)
 
         elif report_type == 'Lead Owner':
@@ -837,8 +837,8 @@ class ReportService(object):
                 if key == csat_dict[details['csat_attribute']]:
                     value[key_response[csat_dict['q1']]] = csat_dict.get('dcount')
                     value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], csat_count)
-                    if csat_dict['q1'] != 0:
-                        value['Grand Total'] += csat_dict.get('dcount')
+                    # if csat_dict['q1'] != 0:
+                    value['Grand Total'] += csat_dict.get('dcount')
             if details['csat_attribute'] == 'program':
                 if value['Program'] == '':
                     value['Program'] = 'Others'
