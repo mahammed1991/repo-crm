@@ -753,6 +753,7 @@ class ReportService(object):
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
             code_types = list(Leads.objects.filter(**query).values_list('type_1', flat=True).distinct().order_by('type_1'))
+            code_types.append('')
             query['type_1__in'] = code_types
             total_leads_dict = Leads.objects.filter(**query).values('type_1').annotate(cnt=Count('type_1'))
             total_leads_count = Leads.objects.filter(**query).values('type_1').count()
@@ -822,7 +823,7 @@ class ReportService(object):
         key_response = {0: '', 1: 'Extremely satisfied', 2: 'Moderately satisfied', 3: 'Slightly satisfied', 4: 'Neither satisfied nor dissatisfied', 5: 'Slightly dissatisfied', 6: 'Moderately dissatisfied', 7: 'Extremely dissatisfied'}
         global report_type
         report_type = details['report_type']
-        report_records = {key: {report_type: key, 'Leads': 0, 'Wins': 0, 'Leads in pcg': 0, ' ': 0, 'Extremely satisfied in pcg': 0, 'Extremely satisfied': 0, 'Moderately satisfied in pcg': 0, 'Moderately satisfied': 0, 'Slightly satisfied in pcg': 0, 'Slightly satisfied': 0, 'Neither satisfied nor dissatisfied in pcg': 0, 'Neither satisfied nor dissatisfied': 0, 'Slightly dissatisfied in pcg': 0, 'Slightly dissatisfied': 0, 'Wins in pcg': 0, 'Moderately dissatisfied in pcg': 0, 'Moderately dissatisfied': 0, 'Extremely dissatisfied in pcg': 0, 'Extremely dissatisfied': 0, 'Grand Total': 0} for key in keys}
+        report_records = {key: {report_type: key, 'Leads': 0, 'Wins': 0, 'Leads in pcg': 0, '': 0, 'Extremely satisfied in pcg': 0, 'Extremely satisfied': 0, 'Moderately satisfied in pcg': 0, 'Moderately satisfied': 0, 'Slightly satisfied in pcg': 0, 'Slightly satisfied': 0, 'Neither satisfied nor dissatisfied in pcg': 0, 'Neither satisfied nor dissatisfied': 0, 'Slightly dissatisfied in pcg': 0, 'Slightly dissatisfied': 0, 'Wins in pcg': 0, 'Moderately dissatisfied in pcg': 0, 'Moderately dissatisfied': 0, 'Extremely dissatisfied in pcg': 0, 'Extremely dissatisfied': 0, 'Grand Total': 0, 'Transfer Rate': 0, 'Transfer Rate in pcg': 0, 'Response Rate in pcg': 0} for key in keys}
         csat_count = sum([csat_dict['dcount'] for csat_dict in csat_report_dict_lists])
         for key, value in report_records.iteritems():
             for total_dict in total_leads_dict:
@@ -837,11 +838,17 @@ class ReportService(object):
                 if key == csat_dict[details['csat_attribute']]:
                     value[key_response[csat_dict['q1']]] = csat_dict.get('dcount')
                     value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], csat_count)
-                    # if csat_dict['q1'] != 0:
-                    value['Grand Total'] += csat_dict.get('dcount')
+                    if csat_dict['q1'] != 0:
+                        value['Grand Total'] += csat_dict.get('dcount')
+                    value['Transfer Rate'] += csat_dict.get('dcount')
+                    value['Transfer Rate in pcg'] = ReportService.get_percentage_value(value['Transfer Rate'], value['Wins'])
+                    value['Response Rate in pcg'] = ReportService.get_percentage_value(value['Grand Total'], value['Transfer Rate'])
             if details['csat_attribute'] == 'program':
                 if value['Program'] == '':
                     value['Program'] = 'Others'
+            if details['csat_attribute'] == 'code_type':
+                if value['Task Type'] == '':
+                    value['Task Type'] = 'Unmapped Leads'
         return report_records.values()
 
     @staticmethod

@@ -214,7 +214,8 @@ function displayReportData(reportData){
                     '<th class="msc24">'+reportData['report_type']+'</th>' +
                     '<th class="msc24">CSAT%</th>' +
                     '<th class="msc24">vs Target(95%)</th>' + 
-                    '<th class="msc24">Survey Channel</th>' + 
+                    '<th class="msc24">Survey Channel</th>' +
+                    '<th class="msc24">Response Rate</th>' + 
                     '<th class="msc24">Transfer Rate</th>' +
                     '<th class="msc24">Leads</th>' +
                     '<th class="msc24">Wins</th>' +
@@ -235,9 +236,10 @@ function displayReportData(reportData){
                             '<td>'+ reportData['report_data'][i][reportData['report_type'].toString()]+'</td>' +
                             '<td>'+ reportData['report_data'][i]['Extremely satisfied in pcg']+'%</td>' +
                             '<td>'+ (parseInt(reportData['report_data'][i]['Extremely satisfied']) - 95).toString() +'%</td>' +
-                            '<td>'+ reportData['channel']+'</td>';
+                            '<td>'+ reportData['channel']+'</td>' +
+                            '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Grand Total']+'</div><div class="msc21">'+ reportData['report_data'][i]['Response Rate in pcg']+'%</div></td>' ;
                             if(reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL'){
-                            channel = '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Grand Total']+'</div><div class="msc21">100%</div></td>'
+                            channel = '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Transfer Rate']+'</div><div class="msc21">'+ reportData['report_data'][i]['Transfer Rate in pcg']+'%</div></td>'
                             } else{
                             channel = '<td style="padding: 0px !important;"><div class="msc20">'+ reportData['report_data'][i]['Wins']+'</div><div class="msc21">100%</div></td>'
                             }
