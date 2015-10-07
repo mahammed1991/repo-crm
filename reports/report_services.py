@@ -732,6 +732,7 @@ class ReportService(object):
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
             locations = list(Leads.objects.filter(**query).values_list('country', flat=True).distinct().order_by('country'))
+            locations.append('')
             query['country__in'] = locations
             total_leads_dict = Leads.objects.filter(**query).values('country').annotate(cnt=Count('country'))
             total_leads_count = Leads.objects.filter(**query).values('country').count()
@@ -775,6 +776,7 @@ class ReportService(object):
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
             lead_owner_emails = list(Leads.objects.filter(**query).values_list('lead_owner_email', flat=True).distinct())
+            lead_owner_emails.append('')
             query['lead_owner_email__in'] = lead_owner_emails
             total_leads_dict = Leads.objects.filter(**query).values('lead_owner_email').annotate(cnt=Count('lead_owner_email'))
             total_leads_count = Leads.objects.filter(**query).values('lead_owner_email').count()
@@ -795,19 +797,24 @@ class ReportService(object):
     @staticmethod
     def get_response_dict(response_dict, region_data, key_response):
         total_response = 0
-
+        total_transferred = 0
         for value in key_response.values():
             region_data[value] = 0
 
         for resp in response_dict:
             if resp['q1'] in key_response:
+                if resp['q1'] != 0:
+                    total_response += resp['dcount']
+                total_transferred += resp['dcount']
                 region_data[key_response[resp['q1']]] = resp['dcount']
-                total_response += resp['dcount']
 
         for response in key_response.values():
             if response in region_data:
                 region_data['%s in pcg' % (response)] = ReportService.get_percentage_value(region_data[response], total_response)
         region_data['Grand Total'] = total_response
+        region_data['Transfer Rate'] = total_transferred
+        region_data['Transfer Rate in pcg'] = ReportService.get_percentage_value(total_transferred, region_data.get('Wins'))
+        region_data['Response Rate in pcg'] = ReportService.get_percentage_value(total_response, total_transferred)
         return region_data
 
     @staticmethod
@@ -846,9 +853,6 @@ class ReportService(object):
             if details['csat_attribute'] == 'program':
                 if value['Program'] == '':
                     value['Program'] = 'Others'
-            if details['csat_attribute'] == 'code_type':
-                if value['Task Type'] == '':
-                    value['Task Type'] = 'Unmapped Leads'
         return report_records.values()
 
     @staticmethod
