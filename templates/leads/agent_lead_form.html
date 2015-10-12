@@ -1848,8 +1848,6 @@ $(document).on('change', '#country', function() {
     $('#different_task_agency, #different_task_customer').children('.tag-child').remove();
     $('#tagFields1').remove();
     
-    console.log(window.code_types)
-
     if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx != -1) { 
