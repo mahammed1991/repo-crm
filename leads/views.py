@@ -2251,7 +2251,8 @@ def get_basic_lead_data(request):
     else:
         teams = Team.objects.exclude(belongs_to='WPP').filter(is_active=True)
 
-    code_types = CodeType.objects.filter(is_active=True)
+    code_types = CodeType.objects.filter(is_active=True).values_list('name', flat=True)
+    code_types = [str(ctype) for ctype in code_types]
     programs = ReportService.get_all_teams()
     programs = [str(pgm) for pgm in programs]
 

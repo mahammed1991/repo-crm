@@ -166,10 +166,6 @@
           <div class="row">
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype1" id="ctype1">
-              <option value="">Select Task Type</option>
-              {% for c_type in code_types %}
-                <option value="{{c_type.name}}">{{c_type.name}}</option>
-              {% endfor %}
             </select>
               <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
             </div>
@@ -314,10 +310,6 @@
           <div class="row">
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype2" id="ctype2">
-              <option value="">Select Task Type</option>
-              {% for c_type in code_types %}
-                <option value="{{c_type.name}}">{{c_type.name}}</option>
-              {% endfor %}
             </select>
               <input type="text" class="form-control" id="url2" name="url2" placeholder="URL">
             </div>
@@ -470,10 +462,6 @@
           <div class="row">
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype3" id="ctype3">
-              <option value="">Select Task Type</option>
-              {% for c_type in code_types %}
-                <option value="{{c_type.name}}">{{c_type.name}}</option>
-              {% endfor %}
             </select>
               <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
             </div>
@@ -617,10 +605,6 @@
           <div class="row">
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype4" id="ctype4">
-              <option value="">Select Task Type</option>
-              {% for c_type in code_types %}
-                <option value="{{c_type.name}}">{{c_type.name}}</option>
-              {% endfor %}
             </select>
               <input type="text" class="form-control" id="url4" name="url4" placeholder="URL">
             </div>
@@ -764,10 +748,6 @@
           <div class="row">
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype5" id="ctype5">
-              <option value="">Select Task Type</option>
-              {% for c_type in code_types %}
-                <option value="{{c_type.name}}">{{c_type.name}}</option>
-              {% endfor %}
             </select>
               <input type="text" class="form-control" id="url5" name="url5" placeholder="URL">
             </div>
@@ -1049,9 +1029,10 @@
     window.new_locations = {{new_locations|safe}};
     window.is_loc_changed = false;
 
-    window.rep_location = "{{user.profile.rep_location|safe}}";
-
+    window.code_types = {{code_types|safe}};
     $('#country').trigger('change');
+
+    window.rep_location = "{{user.profile.rep_location|safe}}";
 
     if(window.rep_location){
       $('#rep_location').val(window.rep_location);
@@ -1120,38 +1101,67 @@ $(document).on('change', '.code_behaviour', function() {
       }
 });
 
-/*$(document).on('change', '#country', function(){
-  var country = $(this).val()
-  if(country =='AU/NZ' || country == 'Canada' || country == 'UK/I' || country == 'United States' || country == 'India'){
+function GetOption(text, value) {
+        return "<option value = '" + value + "'>" + text + "</option>"
+    }
 
-      if ($('#ctype1 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype1 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
-       if ($('#ctype2 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype2 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
-       if ($('#ctype3 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype3 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
-       if ($('#ctype4 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype4 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
-       if ($('#ctype5 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype5 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
+$(document).on('change', '#country', function() {
+    var location = $(this).val();
     
+    $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
+    $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption("Select Task Type", ""));
+
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I'].indexOf(location) == -1) {
+
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx != -1) {
+            window.code_types.splice(rlsaIndx, 1);
+        }
+
+    } else {
+
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx == -1) {
+            window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");
+        }
+    }
+    //Loop through array and add options
+    $.each(window.code_types, function(index) {
+        $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption(window.code_types[index], window.code_types[index]));
+    });
+    clearAndHideFields();
+})
+
+function clearAndHideFields(){
+  for(var selectedindex=1; selectedindex<6;selectedindex++){
+    $('#ga_setup'+selectedindex).prop('checked', false);
+    $('#analytics_code'+selectedindex).val('');
+    $('#analyticscode'+selectedindex).hide();
+    $('#callextension'+selectedindex).hide();
+    $('#call_extension'+selectedindex).prop('checked', false);
+    $('#codebehaviour'+selectedindex).hide();
+
+    $('#rbid'+selectedindex).val('');
+    $('#rbudget'+selectedindex).val('');
+
+    $('#rlsa_bulk'+selectedindex).hide();
+    $("#user_list_id"+ selectedindex).val('');
+    $("#internal_cid"+ selectedindex).val('');
+    $("#rsla_bid_adjustment"+ selectedindex).val('');
+    $("#campaign_ids"+ selectedindex).val('');
+    $("#rsla_policies"+selectedindex).prop('checked', false);
+    $("#rsla_policies"+selectedindex).val(0);
+    $("#overwrite_existing_bid_modifiers"+selectedindex).val('');
+    $("#create_new_bid_modifiers"+selectedindex).val('');
+    $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional)");
+
+    uncheckAllBehaviourCheckBoxs(selectedindex);
+      
+    $('#ctype_campaign'+selectedindex).hide();
+    $('#gasetup'+selectedindex).hide();
+
   }
-  else{
-    $("#ctype1 option[value='RLSA Bulk Implementation'], #ctype2 option[value='RLSA Bulk Implementation'], #ctype3 option[value='RLSA Bulk Implementation'], #ctype4 option[value='RLSA Bulk Implementation'], #ctype5 option[value='RLSA Bulk Implementation']").remove();
-    $("#rlsa_bulk1, #rlsa_bulk2, #rlsa_bulk3, #rlsa_bulk4, #rlsa_bulk5").hide();
-    $('#comment1, #comment2, #comment3, #comment4, #comment5').attr("placeholder", "Special Instructions (Optional)");
-  }
-})*/
+}
 
 </script>
 {% endblock main_js %}
