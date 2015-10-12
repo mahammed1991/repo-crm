@@ -284,7 +284,10 @@ $(document).ready(function(){
     window.rep_location = "{{user.profile.rep_location|safe}}";
 
     window.code_types = {{code_types|safe}};
-    $('#country').trigger('change');
+
+    $(window).bind("load", function() {
+      $('#country').trigger('change');
+    });
 
     if(window.rep_location){
       $('#rep_location').val(window.rep_location);
@@ -1847,7 +1850,7 @@ $(document).on('change', '#country', function() {
     
     console.log(window.code_types)
 
-    if (['AU/NZ', 'Canada', 'United States', 'UK/I'].indexOf(location) == -1) {
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx != -1) { 
             window.code_types.splice(rlsaIndx, 1);

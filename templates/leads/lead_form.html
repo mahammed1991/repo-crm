@@ -1030,7 +1030,9 @@
     window.is_loc_changed = false;
 
     window.code_types = {{code_types|safe}};
+    $(window).bind("load", function() {
     $('#country').trigger('change');
+    });
 
     window.rep_location = "{{user.profile.rep_location|safe}}";
 

@@ -613,7 +613,9 @@
     window.regionWiseLocations = {{region_locations|safe}};
 
     window.code_types = {{code_types|safe}};
-    $('#country').trigger('change');
+    $(window).bind("load", function() {
+      $('#country').trigger('change');
+    });
 
     window.rep_location = "{{user.profile.rep_location|safe}}";
 
@@ -702,7 +704,7 @@ $(document).on('change', '#country', function() {
     $("#ctype1 option, #ctype2 option, #ctype3 option").remove();
     $("#ctype1, #ctype2, #ctype3").append(GetOption("Select Task Type", ""));
 
-    if (location == 'AU/NZ') {
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1)) {
 
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx != -1) {
