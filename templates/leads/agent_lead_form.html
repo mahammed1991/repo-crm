@@ -1860,6 +1860,12 @@ $(document).on('change', '#country', function() {
         }
         $("#same_task_ctype, #same_task_cust_type, #diff_ctype-1, #diff_cust_type-1").append(GetOption("Select Task Type", ""));
     }
+
+        rlsaIndx = window.code_types.indexOf('Google Shopping Setup');
+        if (rlsaIndx == -1) {
+            window.code_types.splice(window.rlsaIndx, 0, "Google Shopping Setup");
+        }
+
     //Loop through array and add options
     $.each(window.code_types, function(index) {
         $("#same_task_ctype, #same_task_cust_type, #diff_ctype-1, #diff_cust_type-1").append(GetOption(window.code_types[index], window.code_types[index]));
