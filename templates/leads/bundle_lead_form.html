@@ -612,6 +612,11 @@
     window.regions = {{regions|safe}};
     window.regionWiseLocations = {{region_locations|safe}};
 
+    window.code_types = {{code_types|safe}};
+    $(window).bind("load", function() {
+      $('#country').trigger('change');
+    });
+
     window.rep_location = "{{user.profile.rep_location|safe}}";
 
     $('#country').trigger('change');
@@ -689,29 +694,35 @@ $(document).on('change', '.code_behaviour', function() {
     
 });
 
-/*$(document).on('change', '#country', function(){
-  var country = $(this).val()
-  if(country =='AU/NZ' || country == 'Canada' || country == 'UK/I' || country == 'United States' || country == 'India'){
+function GetOption(text, value) {
+        return "<option value = '" + value + "'>" + text + "</option>"
+    }
 
-      if ($('#ctype1 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype1 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
-       if ($('#ctype2 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype2 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
-       if ($('#ctype3 option:contains(RLSA Bulk Implementation)').length == 0) {
-          var newOption = $("<option value='RLSA Bulk Implementation'>RLSA Bulk Implementation</option>");
-          newOption.insertAfter('#ctype3 option[value="Google Analytics Dynamic Remarketing (Retail)"]');
-      }
+$(document).on('change', '#country', function() {
+    var location = $(this).val();
     
-  }
-  else{
-    $("#ctype1 option[value='RLSA Bulk Implementation'], #ctype2 option[value='RLSA Bulk Implementation'], #ctype3 option[value='RLSA Bulk Implementation']").remove();
-    $("#rlsa_bulk1, #rlsa_bulk2, #rlsa_bulk3").hide();
-    $('#comment1, #comment2, #comment3').attr("placeholder", "Special Instructions (Optional)");
-  }
-})*/
+    $("#ctype1 option, #ctype2 option, #ctype3 option").remove();
+    $("#ctype1, #ctype2, #ctype3").append(GetOption("Select Task Type", ""));
+
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1)) {
+
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx != -1) {
+            window.code_types.splice(rlsaIndx, 1);
+        }
+
+    } else {
+
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx == -1) {
+            window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");
+        }
+    }
+    //Loop through array and add options
+    $.each(window.code_types, function(index) {
+        $("#ctype1, #ctype2, #ctype3").append(GetOption(window.code_types[index], window.code_types[index]));
+    });
+    $("#ctype1, #ctype2, #ctype3").append(GetOption("Google Shopping Setup", "Google Shopping Setup"));
+})
 </script>
 {% endblock main_js %}

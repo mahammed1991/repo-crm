@@ -168,11 +168,6 @@
               <div class="row" id="same_task_agency_row">
                 <div class="col-md-4">
                   <select title="Task Type" class="form-control bgicon agency-same" name="same_task_ctype" id="same_task_ctype">
-                    <option value="">Select Task Type</option>
-                    {% for c_type in code_types %}
-                      <option value="{{c_type.name}}">{{c_type.name}}</option>
-                    {% endfor %}
-                    <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
                 </div>
               </div>
@@ -189,11 +184,6 @@
               <div class="row" id="diff_tag_1">
                         <div class="col-md-4  customwidth custom2">
                            <select title="Task Type" class="form-control bgicon agency_diff" name="diff_ctype1" id="diff_ctype-1">
-                              <option value="">Select Task Type</option>
-                              {% for c_type in code_types %}
-                                <option value="{{c_type.name}}">{{c_type.name}}</option>
-                              {% endfor %}
-                              <option value="Google Shopping Setup">Google Shopping Setup</option>
                             </select>
                         </div>
               </div> 
@@ -208,11 +198,6 @@
               <div class="row">
                 <div class="col-md-4">
                   <select title="Task Type" class="form-control bgicon end-customer-same" name="same_task_cust_type" id="same_task_cust_type">
-                    <option value="">Select Task Type</option>
-                    {% for c_type in code_types %}
-                      <option value="{{c_type.name}}">{{c_type.name}}</option>
-                    {% endfor %}
-                    <option value="Google Shopping Setup">Google Shopping Setup</option>
                   </select>
                 </div>
               </div>
@@ -297,6 +282,12 @@ $(document).ready(function(){
     window.regions = {{regions|safe}};
     window.regionWiseLocations = {{region_locations|safe}};
     window.rep_location = "{{user.profile.rep_location|safe}}";
+
+    window.code_types = {{code_types|safe}};
+
+    $(window).bind("load", function() {
+      $('#country').trigger('change');
+    });
 
     if(window.rep_location){
       $('#rep_location').val(window.rep_location);
@@ -964,18 +955,16 @@ function createAnalyticsTagFields(indx){
 }
 
 function createCodeTypeForTag(indx){
-  ele  = '<div class="row" id="diff_tag_' + indx + '">'+
+  ele  = '<div class="row tag-child" id="diff_tag_' + indx + '">'+
                       '<div class="col-md-4  customwidth custom2">'+
-                         '<select title="Task Type" class="form-control bgicon agency_diff" name="diff_ctype' + indx + '" id="diff_ctype-' + indx + '">'+
-                            '<option value="">Select Task Type</option>'+
-                            '{% for c_type in code_types %}'+
-                              '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
-                            '{% endfor %}'+
-                            '<option value="Google Shopping Setup">Google Shopping Setup</option>'+
-                          '</select>'+
+                         '<select title="Task Type" class="form-control bgicon agency_diff" name="diff_ctype' + indx + '" id="diff_ctype-' + indx + '">'
+                            
+          tail =              '</select>'+
                       '</div>'+
             '</div>'
-  $('#different_task_agency').append(ele);
+  options = getOptions("diff_ctype-", indx);
+
+  $('#different_task_agency').append(ele+options+tail);
 }
 
 function createShopFields(indx){
@@ -1558,18 +1547,15 @@ function createCustomerAnalyticsTagFields(indx){
 
 
 function createCustomerCodeTypeForTag(indx){
-  ele  = '<div class="row" id="diff_cust_tag_' + indx + '">'+
+  ele  = '<div class="row tag-child" id="diff_cust_tag_' + indx + '">'+
                       '<div class="col-md-4  customwidth custom2">'+
-                         '<select title="Task Type" class="form-control bgicon customer_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'+
-                            '<option value="">Select Task Type</option>'+
-                            '{% for c_type in code_types %}'+
-                              '<option value="{{c_type.name}}">{{c_type.name}}</option>'+
-                            '{% endfor %}'+
-                            '<option value="Google Shopping Setup">Google Shopping Setup</option>'+
-                          '</select>'+
+                         '<select title="Task Type" class="form-control bgicon customer_diff" name="diff_cust_type' + indx + '" id="diff_cust_type-' + indx + '">'
+                            
+     tail =        '</select>'+
                       '</div>'+
             '</div>'
-  $('#different_task_customer').append(ele);
+    options = getOptions("diff_cust_type-", indx);
+  $('#different_task_customer').append(ele+options+tail);
 }
 
 function createCustomerShopFields(indx){
@@ -1847,6 +1833,56 @@ $(document).on('change', '.rlsa_bulk', function() {
         $('#'+$(this).attr('id')).val(0);
       }
 });
+
+function GetOption(text, value) {
+        return "<option value = '" + value + "'>" + text + "</option>"
+    }
+
+$(document).on('change', '#country', function() {
+    var location = $(this).val();
+    $("#same_task_ctype option, #same_task_cust_type option, #diff_ctype-1 option,  #diff_cust_type-1 option").remove();
+
+    //to remove all fields 
+    $('#same_task_agency, #same_task_customer').children('.tag').remove();
+
+    $('#different_task_agency, #different_task_customer').children('.tag-child').remove();
+    $('#tagFields1').remove();
+    
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx != -1) { 
+            window.code_types.splice(rlsaIndx, 1);
+        }
+        $("#same_task_ctype, #same_task_cust_type, #diff_ctype-1, #diff_cust_type-1").append(GetOption("Select Task Type", ""));
+    } else {
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx == -1) {
+            window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");
+        }
+        $("#same_task_ctype, #same_task_cust_type, #diff_ctype-1, #diff_cust_type-1").append(GetOption("Select Task Type", ""));
+    }
+
+        rlsaIndx = window.code_types.indexOf('Google Shopping Setup');
+        if (rlsaIndx == -1) {
+            window.code_types.splice(window.rlsaIndx, 0, "Google Shopping Setup");
+        }
+
+    //Loop through array and add options
+    $.each(window.code_types, function(index) {
+        $("#same_task_ctype, #same_task_cust_type, #diff_ctype-1, #diff_cust_type-1").append(GetOption(window.code_types[index], window.code_types[index]));
+    });
+})
+
+function getOptions(id, index){
+      var location = $('#country').val();
+      $('#'+id+index+' option').remove();
+      options = GetOption("Select Task Type", "");
+
+      $.each(window.code_types, function(index) {
+        options += GetOption(window.code_types[index], window.code_types[index]);
+    });
+    return options
+}
 
 </script>
 {% endblock main_js %}
