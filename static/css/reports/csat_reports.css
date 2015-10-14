@@ -186,3 +186,46 @@ display:none;
     
 }
 .mm2 a:hover,.mm2 a:active, .mm2 a:focus{color:#fff !important; text-decoration: none;}
+
+.previous{
+    background-color: #DCDCDC;
+    border: 1px solid #A9A9A9;
+}
+
+.prev{
+    height: 38px;
+    margin-top: 2px;
+    padding-top: 8px;
+    background-color: #DCDCDC;
+    border: 1px solid #A9A9A9;
+}
+.tabletop{
+      margin-top: 16px;
+}
+
+#color-box1{
+   width: 18px;
+  height: 17px;
+  left: 19px;
+  top: 79px;
+  position: relative;
+  border: 1px solid #A9A9A9;
+}
+#color-box2{
+     width: 18px;
+  height: 17px;
+  left: 140px;
+  top: 42px;
+  position: relative;
+  border: 1px solid #A9A9A9;
+}
+#displayclass1{
+      position: relative;
+  left: -412px;
+  top: 97px;
+}
+#displayclass2{
+    position: relative;
+  left: -292px;
+  top: 60px;
+}

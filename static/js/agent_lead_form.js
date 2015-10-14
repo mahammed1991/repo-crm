@@ -144,6 +144,11 @@ function setLocations(newLocations){
       validateFiled(phoneElem);
       $("#phone").val(phoneElem.value);
 
+      if(!$(phoneElem).val().match(phoneFormat)){
+      $(phoneElem).addClass('error-box');
+      window.is_error = true;
+    }
+
     }
 
     companyElem = document.getElementById('company');
