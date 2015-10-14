@@ -225,6 +225,11 @@
           agency_email = document.getElementById('agency_email_' + i);
           validateFiled(agency_email)
 
+          if(!$(agency_phone).val().match(phoneFormat)){
+            $(agency_phone).addClass('error-box');
+            window.is_error = true;
+          }
+          
           if (!$(agency_email).val().trim().match(check)) {
             $(agency_email).addClass('error-box');
             $(agency_email).focus();

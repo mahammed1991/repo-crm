@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from leads.models import Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
@@ -813,20 +813,21 @@ def csat_reports(request):
                     previous_timeline_start, previous_timeline_end = ReportService.get_date_range_by_timeline(['last_week'])
                 elif timeline[0] == 'this_month':
                     current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
-                    previous_timeline_start, previous_timeline_ed = ReportService.get_date_range_by_timeline(['last_month'])
+                    previous_timeline_start, previous_timeline_end = ReportService.get_date_range_by_timeline(['last_month'])
                 elif timeline[0] == 'this_quarter':
                     current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
-                    previous_timeline_start, previous_timeline_end = ReportService.prev_quarter_date_range(datetime.now())
+                    previous_timeline_start, previous_timeline_end = prev_quarter_date_range(datetime.now())
 
             current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
             previous_report_data = ReportService.get_csat_report(selected_filters, report_type, previous_timeline_start, previous_timeline_end)
-
+            current_report_data, previous_report_data = ReportService.give_compare(current_report_data, previous_report_data, report_type, comparison)
         else:
             if timeline:
                 current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
 
             current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
             previous_report_data = ''
+            current_report_data, previous_report_data = ReportService.give_compare(current_report_data, previous_report_data, report_type, comparison)
 
-        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'channel': channel}))
+        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'channel': channel, 'comparison': comparison}))
     return render(request, 'reports/csat_reports.html')

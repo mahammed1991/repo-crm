@@ -708,9 +708,9 @@ class ReportService(object):
                 report_data.append(region_data)
         elif report_type == 'Program':
             query = dict()
+            programs = list(Leads.objects.filter(**query).values_list('team', flat=True).distinct().order_by('team'))
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
-            programs = list(Leads.objects.filter(**query).values_list('team', flat=True).distinct().order_by('team'))
             query['team__in'] = programs
             total_leads_dict = Leads.objects.filter(**query).values('team').annotate(cnt=Count('team'))
             total_leads_count = Leads.objects.filter(**query).values('team').count()
@@ -729,9 +729,9 @@ class ReportService(object):
 
         elif report_type == 'Location':
             query = dict()
+            locations = list(Leads.objects.filter(**query).values_list('country', flat=True).distinct().order_by('country'))
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
-            locations = list(Leads.objects.filter(**query).values_list('country', flat=True).distinct().order_by('country'))
             locations.append('')
             query['country__in'] = locations
             total_leads_dict = Leads.objects.filter(**query).values('country').annotate(cnt=Count('country'))
@@ -751,9 +751,9 @@ class ReportService(object):
 
         elif report_type == 'Task Type':
             query = dict()
+            code_types = list(Leads.objects.filter(**query).values_list('type_1', flat=True).distinct().order_by('type_1'))
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
-            code_types = list(Leads.objects.filter(**query).values_list('type_1', flat=True).distinct().order_by('type_1'))
             code_types.append('')
             query['type_1__in'] = code_types
             total_leads_dict = Leads.objects.filter(**query).values('type_1').annotate(cnt=Count('type_1'))
@@ -773,10 +773,12 @@ class ReportService(object):
 
         elif report_type == 'Lead Owner':
             query = dict()
-            query['created_date__gte'] = start_date
-            query['created_date__lte'] = end_date
             lead_owner_emails = list(Leads.objects.filter(**query).values_list('lead_owner_email', flat=True).distinct())
             lead_owner_emails.append('')
+            query['created_date__gte'] = start_date
+            query['created_date__lte'] = end_date
+            lead_owners = Leads.objects.filter(**query).values_list('lead_owner_name', 'lead_owner_email').distinct().order_by('lead_owner_name')
+            lead_onwer_dict = {lead_owner[1]: lead_owner[0]for lead_owner in lead_owners}
             query['lead_owner_email__in'] = lead_owner_emails
             total_leads_dict = Leads.objects.filter(**query).values('lead_owner_email').annotate(cnt=Count('lead_owner_email'))
             total_leads_count = Leads.objects.filter(**query).values('lead_owner_email').count()
@@ -792,6 +794,10 @@ class ReportService(object):
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
             details = {'report_type': 'Lead Owner', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'lead_owner_email', 'csat_attribute': 'lead_owner'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, lead_owner_emails, details)
+            for report in report_data:
+                for key, value in lead_onwer_dict.iteritems():
+                    if report['Lead Owner'] == key:
+                        report['Lead Owner'] = value
         return report_data
 
     @staticmethod
@@ -880,6 +886,24 @@ class ReportService(object):
         print (time() - start_time)
 
         return report_records.values()
+
+    @staticmethod
+    def give_compare(current_report_data, previous_report_data, report_type, comparison):
+        current_list = []
+        previous_list = []
+        if comparison == 'yes':
+            for current_report in current_report_data:
+                for previous_report in previous_report_data:
+                    if current_report[report_type] == previous_report[report_type]:
+                        if current_report['Leads'] != 0 and previous_report['Leads'] != 0:
+                            current_list.append(current_report)
+                            previous_list.append(previous_report)
+            return current_list, previous_list
+        else:
+            for current_report in current_report_data:
+                if current_report['Leads'] != 0:
+                    current_list.append(current_report)
+            return current_list, previous_list
 
     @staticmethod
     def get_average_tat_for_leads(leads):
