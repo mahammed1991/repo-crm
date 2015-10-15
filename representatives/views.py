@@ -444,37 +444,76 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     daylight_end = None
     std_time_zone = None
     ds_time_zone = None
-
     # New Feature for future appointments in daylight saving mode
     try:
         location = Location.objects.get(id=location_id)
         if location.daylight_start and location.daylight_end:
             daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
-            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 23, 59, 59)
+            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 0, 0, 0)
             daylight_start = SalesforceApi.get_utc_date(daylight_start, tz.time_value)
             daylight_end = SalesforceApi.get_utc_date(daylight_end, tz.time_value)
-            # Check if appointment slot is between the daylight time
-            if utc_start_date >= daylight_start and utc_start_date <= daylight_end:
-                is_daylight_now = True
-                try:
-                    # Get standard timezone ussing TimezoneMapping table
-                    std_time_zone = TimezoneMapping.objects.get(daylight_timezone_id=tz.id)
-                    std_time_zone = std_time_zone.standard_timezone
-                    utc_std_date = SalesforceApi.get_utc_date(avail_date, std_time_zone.time_value)
-                    std_diff = divmod((utc_std_date - avail_date).total_seconds(), 60)
-                    std_diff_in_minutes = std_diff[0]
-                except ObjectDoesNotExist:
-                    std_diff_in_minutes = diff_in_minutes
-            else:
-                is_daylight_now = False
-                try:
-                    ds_time_zone = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
-                    ds_time_zone = ds_time_zone.daylight_timezone
-                    utc_ds_date = SalesforceApi.get_utc_date(avail_date, ds_time_zone.time_value)
-                    ds_diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
-                    ds_diff_in_minutes = ds_diff[0]
-                except ObjectDoesNotExist:
-                    ds_diff_in_minutes = diff_in_minutes
+            std_time_zones_list = TimezoneMapping.objects.values_list('standard_timezone', flat=True).distinct()
+            ds_time_zones_list = TimezoneMapping.objects.values_list('daylight_timezone', flat=True).distinct()
+            if tz.id in ds_time_zones_list:
+                timezone_mapping = TimezoneMapping.objects.get(daylight_timezone_id=tz.id)
+            elif tz.id in std_time_zones_list:
+                timezone_mapping = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
+
+            std_timezone = timezone_mapping.standard_timezone
+            utc_ds_date = SalesforceApi.get_utc_date(avail_date, std_timezone.time_value)
+            diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
+            std_diff_in_minutes = diff[0]
+
+            ds_time_zone = timezone_mapping.daylight_timezone
+            utc_ds_date = SalesforceApi.get_utc_date(avail_date, ds_time_zone.time_value)
+            diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
+            ds_diff_in_minutes = diff[0]
+
+            # # Check if appointment slot is between the daylight time
+            # if utc_start_date >= daylight_start and utc_start_date <= daylight_end:
+            #     is_daylight_now = True
+            #     try:
+            #         # import ipdb; ipdb.set_trace()
+            #         # Get standard timezone ussing TimezoneMapping table
+            #         if tz.id in ds_time_zones_list:
+            #             timezone_mapping = TimezoneMapping.objects.get(daylight_timezone_id=tz.id)
+            #             new_time_zone = timezone_mapping.daylight_timezone
+            #             utc_ds_date = SalesforceApi.get_utc_date(avail_date, new_time_zone.time_value)
+            #             diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
+            #             new_diff_in_minutes = diff[0]
+            #             new_time_zone1 = timezone_mapping.standard_timezone
+            #             utc_ds_date1 = SalesforceApi.get_utc_date(avail_date, new_time_zone1.time_value)
+            #             diff1 = divmod((utc_ds_date1 - avail_date).total_seconds(), 60)
+            #             new_diff_in_minutes1 = diff1[0]
+            #         elif tz.id in std_time_zones_list:
+            #             timezone_mapping = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
+            #             new_time_zone = timezone_mapping.daylight_timezone
+            #             utc_std_date = SalesforceApi.get_utc_date(avail_date, new_time_zone.time_value)
+            #             diff = divmod((utc_std_date - avail_date).total_seconds(), 60)
+            #             new_diff_in_minutes = diff[0]
+            #             new_time_zone1 = timezone_mapping.standard_timezone
+            #             utc_ds_date1 = SalesforceApi.get_utc_date(avail_date, new_time_zone1.time_value)
+            #             diff1 = divmod((utc_ds_date1 - avail_date).total_seconds(), 60)
+            #             new_diff_in_minutes1 = diff1[0]
+            #     except ObjectDoesNotExist:
+            #         std_diff_in_minutes = diff_in_minutes
+            # else:
+            #     # import ipdb; ipdb.set_trace()
+            #     is_daylight_now = False
+            #     try:
+            #         ds_time_zone = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
+            #         ds_time_zone = ds_time_zone.daylight_timezone
+            #         utc_ds_date = SalesforceApi.get_utc_date(avail_date, ds_time_zone.time_value)
+            #         ds_diff = divmod((utc_ds_date - avail_date).total_seconds(), 60)
+            #         ds_diff_in_minutes = ds_diff[0]
+            #         timezone_mapping = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
+            #         new_time_zone1 = timezone_mapping.standard_timezone
+            #         utc_ds_date1 = SalesforceApi.get_utc_date(avail_date, new_time_zone1.time_value)
+            #         diff1 = divmod((utc_ds_date1 - avail_date).total_seconds(), 60)
+            #         new_diff_in_minutes1 = diff1[0]
+            #     except ObjectDoesNotExist:
+            #         ds_diff_in_minutes = diff_in_minutes
+            #     print ds_diff_in_minutes
     except ObjectDoesNotExist:
         location = None
 
@@ -492,27 +531,42 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
 
     slot_diff = 0
     for apptmnt in slots_data:
-        related_timezone = time_zone
-        # If Daylight saving changes in between the slots/appointments
+        # related_timezone = time_zone
+        # print time_zone, apptmnt.date_in_utc
+        # # If Daylight saving changes in between the slots/appointments
+        # if location and daylight_start and daylight_end:
+        #     if is_daylight_now:
+        #         # If week starts with day light savings and ends with in the week then
+        #         # Calculate appointments on standard timezones
+        #         if apptmnt.date_in_utc >= daylight_start and apptmnt.date_in_utc <= daylight_end:
+        #             apptmnt.date_in_utc -= timedelta(minutes=new_diff_in_minutes)
+        #             related_timezone = new_time_zone.zone_name if new_time_zone else time_zone
+        #         else:
+        #             # import ipdb; ipdb.set_trace();
+        #             apptmnt.date_in_utc -= timedelta(minutes=new_diff_in_minutes1)
+        #     else:
+        #         print 'not day light each slot'
+        #         # If week starts with standard timezones and ends with in the week then
+        #         # Calculate appointments on daylight timezones
+        #         print 'ds_diff_in_minutes', ds_diff_in_minutes, 'new_diff_in_minutes1', new_diff_in_minutes1
+        #         if apptmnt.date_in_utc >= daylight_start and apptmnt.date_in_utc <= daylight_end:
+        #             apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
+        #             related_timezone = ds_time_zone.zone_name if ds_time_zone else time_zone
+        #         else:
+        #             apptmnt.date_in_utc -= timedelta(minutes=new_diff_in_minutes1)
+        # else:
+        #     apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+
         if location and daylight_start and daylight_end:
-            if is_daylight_now:
-                # If week starts with day light savings and ends with in the week then
-                # Calculate appointments on standard timezones
-                if not (apptmnt.date_in_utc >= daylight_start and apptmnt.date_in_utc <= daylight_end):
-                    apptmnt.date_in_utc -= timedelta(minutes=std_diff_in_minutes)
-                    related_timezone = std_time_zone.zone_name if std_time_zone else time_zone
-                else:
-                    apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+            if apptmnt.date_in_utc >= daylight_start and apptmnt.date_in_utc <= daylight_end:
+                apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
+                related_timezone = ds_time_zone
             else:
-                # If week starts with standard timezones and ends with in the week then
-                # Calculate appointments on daylight timezones
-                if apptmnt.date_in_utc >= daylight_start and apptmnt.date_in_utc <= daylight_end:
-                    apptmnt.date_in_utc -= timedelta(minutes=ds_diff_in_minutes)
-                    related_timezone = ds_time_zone.zone_name if ds_time_zone else time_zone
-                else:
-                    apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+                apptmnt.date_in_utc -= timedelta(minutes=std_diff_in_minutes)
+                related_timezone = std_timezone
         else:
-            apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+            apptmnt.date_in_utc = SalesforceApi.convert_utc_to_timezone(apptmnt.date_in_utc, tz.time_value)
+            related_timezone = tz
 
         slot_diff = apptmnt.date_in_utc.minute
         key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
