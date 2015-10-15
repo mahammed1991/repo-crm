@@ -1875,10 +1875,11 @@ def get_wpp_lead_summary_by_treatment(request):
         treatment_type_list = [treatment_type]
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
         # start_date = first_day_of_month(datetime.utcnow())
-        # end_date = datetime.utcnow()
+        end_date = datetime.utcnow()
+        start_date = datetime(2015, 01, 01)
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date, end_date)
         query = {'treatment_type__in': treatment_type_list,
