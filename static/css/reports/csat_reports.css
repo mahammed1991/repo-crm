@@ -188,7 +188,7 @@ display:none;
 .mm2 a:hover,.mm2 a:active, .mm2 a:focus{color:#fff !important; text-decoration: none;}
 
 .previous{
-    background-color: #DCDCDC;
+    background-color: #E4E4E4;
     border: 1px solid #A9A9A9;
 }
 
@@ -196,7 +196,7 @@ display:none;
     height: 38px;
     margin-top: 2px;
     padding-top: 8px;
-    background-color: #DCDCDC;
+    background-color: #E4E4E4;
     border: 1px solid #A9A9A9;
 }
 .tabletop{

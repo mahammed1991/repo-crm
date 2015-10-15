@@ -773,12 +773,12 @@ class ReportService(object):
 
         elif report_type == 'Lead Owner':
             query = dict()
-            lead_owner_emails = list(Leads.objects.filter(**query).values_list('lead_owner_email', flat=True).distinct())
-            lead_owner_emails.append('')
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
             lead_owners = Leads.objects.filter(**query).values_list('lead_owner_name', 'lead_owner_email').distinct().order_by('lead_owner_name')
-            lead_onwer_dict = {lead_owner[1]: lead_owner[0]for lead_owner in lead_owners}
+            lead_onwer_dict = {lead_owner[1]: lead_owner[0] for lead_owner in lead_owners}
+            lead_owner_emails = [key for key, value in lead_onwer_dict.iteritems()]
+            lead_owner_emails.append('')
             query['lead_owner_email__in'] = lead_owner_emails
             total_leads_dict = Leads.objects.filter(**query).values('lead_owner_email').annotate(cnt=Count('lead_owner_email'))
             total_leads_count = Leads.objects.filter(**query).values('lead_owner_email').count()
@@ -888,7 +888,7 @@ class ReportService(object):
         return report_records.values()
 
     @staticmethod
-    def give_compare(current_report_data, previous_report_data, report_type, comparison):
+    def get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison):
         current_list = []
         previous_list = []
         if comparison == 'yes':
