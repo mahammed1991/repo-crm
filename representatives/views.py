@@ -473,7 +473,6 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
             # if utc_start_date >= daylight_start and utc_start_date <= daylight_end:
             #     is_daylight_now = True
             #     try:
-            #         # import ipdb; ipdb.set_trace()
             #         # Get standard timezone ussing TimezoneMapping table
             #         if tz.id in ds_time_zones_list:
             #             timezone_mapping = TimezoneMapping.objects.get(daylight_timezone_id=tz.id)
@@ -498,7 +497,6 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
             #     except ObjectDoesNotExist:
             #         std_diff_in_minutes = diff_in_minutes
             # else:
-            #     # import ipdb; ipdb.set_trace()
             #     is_daylight_now = False
             #     try:
             #         ds_time_zone = TimezoneMapping.objects.get(standard_timezone_id=tz.id)
@@ -542,7 +540,6 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
         #             apptmnt.date_in_utc -= timedelta(minutes=new_diff_in_minutes)
         #             related_timezone = new_time_zone.zone_name if new_time_zone else time_zone
         #         else:
-        #             # import ipdb; ipdb.set_trace();
         #             apptmnt.date_in_utc -= timedelta(minutes=new_diff_in_minutes1)
         #     else:
         #         print 'not day light each slot'
