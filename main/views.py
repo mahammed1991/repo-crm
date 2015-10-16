@@ -203,7 +203,9 @@ def main_home(request):
 
     else:
         if request.user.groups.filter(name='SUPERUSER'):
-            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+            # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+            start_date = datetime(2015, 01, 01)
+            end_date = datetime.now()
 
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
         else:
