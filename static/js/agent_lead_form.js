@@ -142,12 +142,7 @@ function setLocations(newLocations){
       // Advertiser Phone Validation
       phoneElem = document.getElementById('agency_phone');
       validateFiled(phoneElem);
-      $("#phone").val(phoneElem.value);
-
-      if(!$(phoneElem).val().match(phoneFormat)){
-      $(phoneElem).addClass('error-box');
-      window.is_error = true;
-    }
+     
 
     }
 
