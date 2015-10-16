@@ -449,7 +449,7 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
         location = Location.objects.get(id=location_id)
         if location.daylight_start and location.daylight_end:
             daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
-            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 23, 59, 59)
+            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 0, 0, 0)
             daylight_start = SalesforceApi.get_utc_date(daylight_start, tz.time_value)
             daylight_end = SalesforceApi.get_utc_date(daylight_end, tz.time_value)
             std_time_zones_list = TimezoneMapping.objects.values_list('standard_timezone', flat=True).distinct()

@@ -244,11 +244,6 @@ function validatethis(frm) {
     phoneElem = document.getElementById('phone');
     validateField(phoneElem);
 
-    if(!$(phoneElem).val().match(phoneFormat)){
-      $(phoneElem).addClass('error-box');
-      window.is_error = true;
-    }
-
     // Advertiser Company Validation
     companyElem = document.getElementById('company');
     validateField(companyElem);
