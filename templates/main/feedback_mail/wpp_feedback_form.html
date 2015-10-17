@@ -1,0 +1,135 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+Regalix Google Portal
+{% endblock title %}
+
+{% block main_css %}
+
+  {% load static %}
+ 
+{% endblock main_css %}
+
+{% block content %}
+
+<!-- content-region -->
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Feedback Form</h1>
+  <form class="lead-form" onsubmit="return validate(this);" action="{% url 'main.views.create_feedback' %}" method="post" name="help-form" enctype="multipart/form-data">
+  {% csrf_token %}
+    <div class="std-sub-title">Feedback Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title" name="title">
+        <input type="hidden" class="form-control" id="code_type" name="code_type">
+        <select class="form-control bgicon" id="feedbackLocation" name="location">
+          <option value='0'>Select Location</option>
+          {% for l in locations %}
+            <option value="{{ l.location_name }}">{{l.location_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="feedbackCID" placeholder="Customer ID (xxx-xxx-xxxx)" name="cid">
+        <input type="hidden" name="feedback_type" value="{{ feedback_type }}">
+        <select class="form-control" id="advertiserNames" name="sf_type" style="display:none;">
+        </select>
+        <select class="form-control bgicon" id="feedbackType" name="feedbackType">
+         <option value="Feedback Type">Feedback Type</option>
+          <option value="Rude / Unprofessional">Rude / Unprofessional</option>
+          <option value="Bad Communication">Bad Communication</option>
+          <option value="Missed Appointment(S) / No Follow Up">Missed Appointment(S) / No Follow Up</option>
+          <option value="Incorrect Information Provided">Incorrect Information Provided</option>
+          <option value="Good / Perfect Implementation">Good / Perfect Implementation</option>
+          <option value="Excellent Follow Up">Excellent Follow Up</option>
+          <option value="100%+">100%+</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <textarea class="form-control" placeholder="Feedback Description" name="description" id='description'></textarea>
+      </div>
+    </div>
+    <div class="std-sub-title">Additional Info (Optional)</div>
+    <div class="row">
+      <div class="col-md-4">
+
+        <input type="text" class="form-control" id="googleAcManager" placeholder="Google Account Manager" name='googleAcManager' disabled>
+         <input type="hidden" name="google_acManager_name"/>
+      </div>
+          <div class="col-md-4">
+            <input type="email" class="form-control" id="lead_owner" placeholder="Feedback to" disabled>
+            <input type="hidden" name="lead_owner"  />
+          </div>
+          <div class="col-md-4">
+            <input type="tel" class="form-control" id="advertiser" placeholder="Name of the Advertiser" disabled >
+            <input type="hidden" name="advertiser">
+          </div>      
+      <div class="col-md-4">
+        <select class="form-control bgicon" id="advertiserLanguage" name="language">
+             <option value="Language"> Select Language</option>
+             {% for l in languages %}
+                <option value="{{l.id}}">{{l.language_name}}</option>
+              {% endfor %}
+             
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control bgicon" id="advProgram" name='program'>
+          <option value="0"> Select Program</option>
+          {% for p in programs %}
+            <option value="{{ p.id }}">{{p.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%; padding:5% 0 5% 0;"/> 
+        <input type="file" id="attachment_name" name="attachment_name" style="display: none" onChange="Handlechange();" />
+        <input type="text" id="filename1" readonly="true" style="width:58%; padding:5% 0 5% 0;" />
+      </div>
+    </div>    
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn" id="feedback_submit">Submit</button>
+            <button class="btn std-btn grayed cancel" onclick='window.history.back()'>Cancel</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+<!-- content-region ends --> 
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/feedback_form.js' %}"></script>
+<script type="text/javascript">
+    var res = $('#feedback_submit').click(function(){
+      $("#preloaderOverlay").show();
+    });
+</script>
+<script>
+function HandleBrowseClick()
+{
+    var fileinput = document.getElementById("attachment_name");
+    fileinput.click();
+}
+
+function Handlechange()
+{
+    var fileinput = document.getElementById("attachment_name");
+    var textinput = document.getElementById("filename1");
+    textinput.value = fileinput.value;
+}
+
+</script>
+
+{% endblock main_js %}
