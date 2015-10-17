@@ -237,6 +237,59 @@ def wpp_lead_form(request):
     )
 
 
+@login_required
+@wpp_user_required
+@csrf_exempt
+def picasso_lead_form(request):
+
+    """
+    Lead Submission to Salesforce
+    """
+    # Check The Rep Status and redirect
+    if request.method == 'POST':
+        if settings.SFDC == 'STAGE':
+            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+            oid = '00DZ000000MjkJO'
+        elif settings.SFDC == 'PRODUCTION':
+            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+            oid = '00Dd0000000fk18'
+
+        ret_url = ''
+        # Get Basic/Common form field data
+        if settings.SFDC == 'STAGE':
+            basic_data = get_common_sandbox_lead_data(request.POST)
+        else:
+            basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+        basic_data['oid'] = oid
+        basic_data['Campaign_ID'] = None
+        ret_url = basic_data['retURL']
+        picasso_data = basic_data
+        for key, value in tag_leads.items():
+            picasso_data[value] = request.POST.get(key)
+
+        submit_lead_to_sfdc(sf_api_url, picasso_data)
+        advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
+        send_calendar_invite_to_advertiser(advirtiser_details, False)
+
+        return redirect(ret_url)
+
+    # Get all location, teams codetypes
+    lead_args = get_basic_lead_data(request)
+    lead_args['teams'] = Team.objects.exclude(belongs_to='TAG').filter(is_active=True)
+    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
+    lead_args['picasso'] = True
+
+    return render(
+        request,
+        'leads/picasso_lead_form.html',
+        lead_args
+    )
+
+
 def get_common_sandbox_lead_data(post_data):
     """ Get basic data from both lead forms """
     basic_data = dict()
@@ -1310,17 +1363,22 @@ def thankyou(request):
         '3': reverse('leads.views.agency_lead_form'),
         '4': reverse('leads.views.wpp_lead_form'),
         '5': reverse('leads.views.agent_bulk_upload'),
+        '6': reverse('leads.views.picasso_lead_form'),
     }
 
     if redirect_page in redirect_page_source.keys():
         redirect_page = redirect_page_source[redirect_page]
 
-    if str(lead_category) == '4':
-        template = 'leads/thankyou_wpp.html'
-    else:
-        template = 'leads/thankyou.html'
+    template_args = {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID}
 
-    return render(request, template, {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
+    if str(lead_category) == '4':
+        template_args.update({'lead_type': 'WPP'})
+    elif str(lead_category) == '6':
+        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True})
+    else:
+        template_args.update({'lead_type': 'Implementation'})
+
+    return render(request, 'leads/thankyou.html', template_args)
 
 
 @login_required

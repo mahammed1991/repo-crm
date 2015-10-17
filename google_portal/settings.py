@@ -78,7 +78,7 @@ ADMINS = (
 )
 
 # Application constants
-PORTAL_MAIL_ID = 'rajuk@regalix-inc.com'
+PORTAL_MAIL_ID = 'basavaraju@regalix-inc.com'
 REGALIX_DEFAULT_ROLE = 1
 GOOGLE_DEFAULT_ROLE = 3
 ADMIN_DOMAIN = 'regalix-inc.com'
@@ -90,10 +90,10 @@ EMAIL_HOST_PASSWORD = 'regalix123'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
-DEFAULT_LEAD_OWNER_EMAIL = 'rajuk@regalix-inc.com'
+DEFAULT_LEAD_OWNER_EMAIL = 'Basavaraju@regalix-inc.com'
 DEFAULT_LEAD_OWNER_ROLE = 'RR'
-DEFAULT_LEAD_OWNER_FNAME = 'Raju'
-DEFAULT_LEAD_OWNER_LNAME = 'K R'
+DEFAULT_LEAD_OWNER_FNAME = 'Basavaraju'
+DEFAULT_LEAD_OWNER_LNAME = 'U S'
 
 BCC_EMAIL = 'gtracktesting@gmail.com'
 

@@ -38,7 +38,8 @@ urlpatterns = patterns(
     url(r'^lead-history/(?P<lid>[\w]+)$', views.lead_history),
     url(r'^priority-check/$', views.priority_check),
     url(r'^check-url-priority/$', views.check_url_priority),
-    url(r'^report-team/$', views.report_team)
+    url(r'^report-team/$', views.report_team),
+    url(r'^picasso-lead-form/$', views.picasso_lead_form)
 
 
 )
