@@ -28,10 +28,6 @@ function validatethis(frm) {
     teamElem = document.getElementById('team');
     validateFiled(teamElem);
 
-    code1Elem = document.getElementById('code1');
-    validateFiled(code1Elem);
-
-
     cidElem = document.getElementById('cid');
     validateFiled(cidElem);
 
