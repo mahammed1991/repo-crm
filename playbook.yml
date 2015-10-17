@@ -9,6 +9,8 @@
         - libmysqlclient-dev
         - python-dev
         - python-setuptools
+        - libffi-dev
+        - libsll-dev
       tags:
         - core_sytem
 
