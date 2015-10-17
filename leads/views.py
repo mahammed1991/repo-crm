@@ -271,10 +271,13 @@ def picasso_lead_form(request):
         for key, value in tag_leads.items():
             picasso_data[value] = request.POST.get(key)
 
-        submit_lead_to_sfdc(sf_api_url, picasso_data)
+        response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         send_calendar_invite_to_advertiser(advirtiser_details, False)
-
+        if response.status_code == 200:
+            ret_url = basic_data['retURL']
+        else:
+            ret_url = basic_data['errorURL']
         return redirect(ret_url)
 
     # Get all location, teams codetypes
@@ -1385,18 +1388,24 @@ def thankyou(request):
 def lead_error(request):
     """ Error message fail to submitting salesforce """
     redirect_page = request.GET.get('n', reverse('main.views.home'))
+    redirect_page_key = redirect_page
     redirect_page_source = {
         '1': reverse('leads.views.lead_form'),
         '2': reverse('leads.views.bundle_lead_form'),
         '3': reverse('leads.views.agency_lead_form'),
         '4': reverse('leads.views.wpp_lead_form'),
         '5': reverse('leads.views.agent_bulk_upload'),
+        '6': reverse('leads.views.picasso_lead_form'),
     }
 
     if redirect_page in redirect_page_source.keys():
         redirect_page = redirect_page_source[redirect_page]
 
-    return render(request, 'leads/lead_error.html', {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID})
+    template_args = {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID}
+    if str(redirect_page_key) == '6':
+        template_args.update({'picasso': True})
+
+    return render(request, 'leads/lead_error.html', template_args)
 
 
 @login_required
@@ -2414,8 +2423,9 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
             appointment_in_pst = datetime.strftime(appointment_in_pst, '%m/%d/%Y %I:%M %p')
         lead_data[appointment_in_ist_key] = appointment_in_ist
         lead_data[appointment_in_pst_key] = appointment_in_pst
+        sf_resp = None
         try:
-            requests.post(url=sf_api_url, data=lead_data)
+            sf_resp = requests.post(url=sf_api_url, data=lead_data)
             # Get Advertiser Details
             advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
@@ -2430,6 +2440,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
                 # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
         except Exception as e:
             print e
+        return sf_resp
 
 
 def get_codetype_abbreviation(code_type):
