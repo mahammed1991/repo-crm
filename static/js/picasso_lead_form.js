@@ -40,12 +40,8 @@ function validatethis(frm) {
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
-    countryElem = document.getElementById('comment1');
+    countryElem = document.getElementById('code1');
     validateFiled(countryElem);
-
-   
-
-
 
     // Check If Error in Form
     if(window.is_error){
