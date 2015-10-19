@@ -20,7 +20,14 @@
 
 <section class="content-region inner-page">
   <div class="container-fluid">
-  <h2 class='header'>Submit Mobile Site Request</h2>
+  <h1 style="font-size: 24px;
+  font-family: 'robotoblack';
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+  margin-top: 50px;
+  margin-bottom: 20px;">Submit Mobile Site Request</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
