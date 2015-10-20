@@ -38,20 +38,7 @@
     <input type="hidden" id="ctype1" name="ctype1" value="PICASSO">
     <input type="hidden" id="company" name="company" value="">
     <input type="hidden" id="country" name="country" value=".">
-    <div class="row">
-      
-      <div class="col-md-6">
-        <label for="picasso_objective">Objective</label>
-        <select class="form-control bgicon" id="picasso_objective" title="Picasso Objective" name="picasso_objective">
-          <option value=""> Please Select Objective</option>
-            <option value="pBuy Online">pBuy Online</option>
-            <option value="Form Entry">Form Entry</option>
-            <option value="Call your Business">Call your Business</option>
-            <option value="Engage with your Content">Engage with your Content</option>
-            <option value="Become a Fan">Become a Fan</option>
-        </select>
-      </div>
-    </div>
+
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <div class="std-sub-title">Google Rep Information</div>
     <div class="row">
@@ -82,6 +69,22 @@
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
       <div class="col-md-6">
+        <label for="last_name">Company Name</label>
+        <input type="text" class="form-control" id="last_name" maxlength="255" name="last_name" placeholder="Company Name">
+      </div>
+
+      <div class="col-md-6">
+        <label for="picasso_objective">Objective</label>
+        <select class="form-control bgicon" id="picasso_objective" title="Picasso Objective" name="picasso_objective">
+          <option value=""> Please Select Objective</option>
+            <option value="pBuy Online">pBuy Online</option>
+            <option value="Form Entry">Form Entry</option>
+            <option value="Call your Business">Call your Business</option>
+            <option value="Engage with your Content">Engage with your Content</option>
+            <option value="Become a Fan">Become a Fan</option>
+        </select>
+      </div>
+      <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
           <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
         </div>
@@ -98,7 +101,7 @@
       </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
-            <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect">Submit Request</button>
+            <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
             <button class="grey mdl-button2 mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="resetBtn(this);" id="formReset">Reset</button>
         </div>
     </div>

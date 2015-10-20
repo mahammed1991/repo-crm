@@ -41,7 +41,7 @@
   line-height: 36px;
   vertical-align: middle;
 }
-.std-btn:hover{
+#formsubmit:hover{
 	background: #FF1919;
 }
 
