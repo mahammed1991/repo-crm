@@ -238,7 +238,6 @@ def wpp_lead_form(request):
 
 
 @login_required
-@wpp_user_required
 @csrf_exempt
 def picasso_lead_form(request):
 
