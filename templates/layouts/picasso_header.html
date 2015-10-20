@@ -1,0 +1,41 @@
+{% load static %}
+	<header class="header">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid"> 
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand">
+            <img src="{% static 'images/GTrack-logo.png' %}" alt="Gtrack Team"/>
+          </a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span> <i class="fa fa-bars"></i> </button>
+        </div>
+        
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="submit-lead-btn">
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>Submit Lead</button>
+          </li>
+          
+          {% if user.is_authenticated %}
+          <li class="dropdown user-area"> 
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              {% if request.session.profile_image %}
+                <img src="{{request.session.profile_image}}?sz=32"/>
+              {% else %}
+                <img src="{% static 'images/profile-avtar.png' %}"/>
+              {% endif %}
+              <span class="user-name">{{user.first_name}} {{user.last_name}}</span> 
+              <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <!-- /.container-fluid --> 
+    </nav>
+  </header>
