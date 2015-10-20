@@ -25,9 +25,6 @@ function validatethis(frm) {
     grefElem = document.getElementById('gref');
     validateFiled(grefElem);
 
-    teamElem = document.getElementById('team');
-    validateFiled(teamElem);
-
     cidElem = document.getElementById('cid');
     validateFiled(cidElem);
 

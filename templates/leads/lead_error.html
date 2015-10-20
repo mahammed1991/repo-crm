@@ -1,7 +1,38 @@
 {% extends 'layouts/main.html' %}
 
 {% load staticfiles %}
-
+{% if picasso %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<style type="text/css">
+  .mdl-button {  background: 0 0;
+  border: none;
+  border-radius: 2px;
+  color: #000;
+  position: relative;
+  height: 36px;
+  min-width: 64px;
+  padding: 0 8px;
+  display: inline-block;
+  font-family: 'robotomedium';
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  overflow: hidden;
+  will-change: box-shadow,transform;
+  -webkit-transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  line-height: 11px;
+  vertical-align: middle;
+}
+</style>
+{% endblock main_css %}
+{% endif %}
 {% block content %}
 {% if picasso %}
 {% include 'layouts/picasso_header.html' %}
@@ -16,3 +47,10 @@
     </div>
 </div>
 {% endblock content %}
+{% block main_js %}
+{% if picasso %}
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
+{% endif %}
+{% endblock main_js %}

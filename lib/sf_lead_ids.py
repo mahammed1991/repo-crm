@@ -258,7 +258,7 @@ class SalesforceLeads(object):
                              'overwrite_existing_bid_modifiers5': '00NZ0000001o0Ae',  # RLSA Exist Bid Modifiers 5 for RLSA Bulk Implementation
 
                              'tag_via_gtm': '00Nd0000007esIr',
-                             'picasso_objective': '00NZ0000001oMgc'
+                             'picasso_objective': '00NZ0000001oMgc',
                              }
 
     PRODUCTION_TAG_LEADS_ARGS = {'first_name': 'first_name',
@@ -382,6 +382,7 @@ class SalesforceLeads(object):
                                  'overwrite_existing_bid_modifiers5': '00Nd0000008N8xx',  # RLSA Exist Bid Modifiers 5 for RLSA Bulk Implementation
 
                                  'tag_via_gtm': '00Nd0000007esIr',
+                                 'picasso_objective': '00Nd0000007xSXh',
                                  }
 
     SANDBOX_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',

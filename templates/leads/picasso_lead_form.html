@@ -77,7 +77,7 @@
         <label for="picasso_objective">Objective</label>
         <select class="form-control bgicon" id="picasso_objective" title="Picasso Objective" name="picasso_objective">
           <option value=""> Please Select Objective</option>
-            <option value="pBuy Online">pBuy Online</option>
+            <option value="Buy Online">Buy Online</option>
             <option value="Form Entry">Form Entry</option>
             <option value="Call your Business">Call your Business</option>
             <option value="Engage with your Content">Engage with your Content</option>
@@ -119,4 +119,7 @@
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
 {% endblock main_js %}

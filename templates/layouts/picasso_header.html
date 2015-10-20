@@ -17,10 +17,7 @@
           <li class="submit-lead-btn">
               <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>Submit Lead</button>
           </li>
-          <li class="dropdown notification"> <a href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bell"></i><span id="notifications_count"></span></a>
-            <ul class="dropdown-menu" role="menu" id="notifications">
-            </ul>
-          </li>
+          
           {% if user.is_authenticated %}
           <li class="dropdown user-area"> 
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
