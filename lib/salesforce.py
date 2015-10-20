@@ -45,15 +45,16 @@ class SalesforceApi(object):
         if settings.SFDC == 'STAGE':
             try:
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
-                                       password='1q2w3e4r5t',
-                                       security_token='HC27hZgXQEfWrElZDfPtl20U2', sandbox=True)
+                                       password='5t4r3e2w1q',
+                                       security_token='H9aKYptBRft6oBYMU2EHzlWTZ', sandbox=True)
                 return sf
             except Exception, e:
                 print Exception, e
                 return None
         else:
             try:
-                sf = CustomeSalesforce(username='google.tech@regalix-inc.com', password='1q2w3e4r5t', security_token='t5gGSv6yxcQm99gfso28RJV9I')
+                sf = CustomeSalesforce(username='google.tech@regalix-inc.com', password='sfdcsupport123', security_token='enfTcpWGlwx6ObKwksx3Bt9I')
+
                 return sf
             except Exception, e:
                 print Exception, e
