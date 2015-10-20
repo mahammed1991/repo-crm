@@ -37,6 +37,9 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
+    companyElem  = document.getElementById('last_name')
+    validateFiled(companyElem)
+
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
@@ -49,6 +52,8 @@ function validatethis(frm) {
       $(focusElem).focus();
       return false;
     }else{
+      $('#company').val($('#last_name').val());
+      $('#preloaderOverlay').show();
       return true;
     }  
   }
@@ -61,7 +66,7 @@ function validatethis(frm) {
     window.failedFields.push(elem);
     window.is_error = true;
     return false;
-    }
+  }
 }
 
 function validateEmailField(elem) {
@@ -82,3 +87,4 @@ function resetBtn(elem){
     window.location.reload();
   }
 }
+
