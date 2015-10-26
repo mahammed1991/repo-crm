@@ -281,8 +281,7 @@ def picasso_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.exclude(belongs_to='TAG').filter(is_active=True)
-    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
+    lead_args['teams'] = Team.objects.filter(is_active=True)
     lead_args['picasso'] = True
 
     return render(
