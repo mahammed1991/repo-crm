@@ -34,7 +34,7 @@
               <ul class="dropdown-menu" role="menu">
               {% if "WPP" in request.session.groups %}
                 <li><a href="{% url 'reports.views.wpp_reports' %}"> Reports</a></li>
-                <li><a href="{% url 'reports.views.wpp_master_list' %}"> MaterList</a></li>
+                <li><a href="{% url 'reports.views.wpp_master_list' %}"> Master List</a></li>
               {% else %}
                   <li><a href="{% url 'reports.views.reports' %}">Reports</a></li>
               {% endif %}
