@@ -1,0 +1,132 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  PICASSO Lead Form
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+  </style>
+{% endblock main_css %}
+{% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
+
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1 style="font-size: 24px;
+  font-family: 'robotoblack';
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+  margin-top: 50px;
+  margin-bottom: 20px;">Submit Mobile Site Request</h1>
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=6" name="errorURL">
+    <input type="hidden" name="oid" value="00DZ000000MipUa">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+    <input type="hidden" id="ctype1" name="ctype1" value="PICASSO">
+    <input type="hidden" id="company" name="company" value="">
+    <input type="hidden" id="country" name="country" value=".">
+
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <div class="std-sub-title">Google Rep Information</div>
+    <div class="row">
+      <div class="col-md-6">
+        <label for="gref">Google Rep Name</label>
+        <!-- <input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /> -->
+        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+        <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+        <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+        <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+        <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email">
+
+      </div>
+      <div class="col-md-6">
+        <label for="team">Program name</label>
+        <select class="form-control bgicon" id="team" title="Program Name" name="team">
+          <option value="">Select Program</option>
+          {% for program in teams %}
+            <option value="{{program.team_name}}">{{program.team_name}}</option>
+          {% endfor %}
+          <option value="Managed Agency - SEM">Managed Agency - SEM</option>
+            <option value="Managed Agency - FSD">Managed Agency - FSD</option>
+            <option value="Managed Agency - TMA">Managed Agency - TMA</option>
+            <option value="Managed Agency - Canada">Managed Agency - Canada</option>
+            <option value="Managed Agency - Dynamic">Managed Agency - Dynamic</option>
+            <option value="SBS">SBS</option>
+        </select>
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Details</div>
+      <div class="row">
+        <div class="col-md-6">
+        <label for="cid">Customer ID</label>
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+      </div>
+      <div class="col-md-6">
+        <label for="last_name">Company Name</label>
+        <input type="text" class="form-control" id="last_name" maxlength="255" name="last_name" placeholder="Company Name">
+      </div>
+
+      <div class="col-md-6">
+        <label for="picasso_objective">Objective</label>
+        <select class="form-control bgicon" id="picasso_objective" title="Picasso Objective" name="picasso_objective">
+          <option value=""> Please Select Objective</option>
+            <option value="Buy Online">Buy Online</option>
+            <option value="Form Entry">Form Entry</option>
+            <option value="Call your Business">Call your Business</option>
+            <option value="Engage with your Content">Engage with your Content</option>
+            <option value="Become a Fan">Become a Fan</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+         <label for="url" id="url_label_id">Website URL</label>
+          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
+        </div>
+     
+      
+       <div class="col-md-6">
+          <label for="code1">Goal</label>
+          <textarea class="form-control" name="code1" id="code1"></textarea>
+        </div>
+        <div class="col-md-6">
+          <label for="comment1">Recommendations</label>
+          <textarea class="form-control" name="comment1" id="comment1"></textarea>
+        </div>
+      </div>
+    <div class="btns text-center" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
+            <button class="grey mdl-button2 mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div>
+  </form>
+</div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
+{% endblock main_js %}
