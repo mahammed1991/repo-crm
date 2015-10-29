@@ -2619,3 +2619,8 @@ def report_team(request):
 
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
     return HttpResponse(json.dumps('SUCCESS'))
+
+
+@login_required
+def get_picasso_lead_summary(request):
+    return render(request, 'leads/picasso_lead_summary.html', {'picasso': True})
