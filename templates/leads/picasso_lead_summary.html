@@ -1,0 +1,218 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+{% load custom_tags %}
+{% block title %}
+  PICASSO Summary
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: absolute;}
+    h1 {
+	  font-size: 24px;
+	  font-family: 'robotoblack';
+	  text-transform: uppercase;
+	  text-align: center;
+	  border-bottom: 1px solid #ccc;
+	  padding-bottom: 12px;
+	  margin-top: 50px;
+	  margin-bottom: 20px;
+	}
+	h2 {
+	  font-family: 'robotoblack';
+	  font-size: 21px;
+	  text-transform: uppercase;
+	  border-bottom: 1px solid #ccc;
+	  padding-bottom: 12px;
+	  text-align: center;
+	  margin-bottom: 30px;
+	}
+	#ldap-user-info {
+        margin-top: 0 !important;
+        margin-bottom: 30px !important;
+        text-align: center;
+        }
+    .summary-container {
+	  max-width: 932px;
+	  margin: 0 auto;
+	}
+	.sum-lbl {
+	  font-family: 'robotoblack';
+	  font-size: 16px;
+	  margin: 14px -8px;
+	}
+	a {
+	  color: #2763c9;
+	  font-weight: 500;
+	}
+  </style>
+{% endblock main_css %}
+{% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
+
+   <!-- content-region -->
+   <section class="content-region">
+   	<div class="container-fluid">
+   		<div class="row" style="border-bottom: 1px solid #ccc;  padding-top: 25px; padding-bottom: 19px;"> 
+        <div class="col-xs-12 col-sm-12 col-md-12" style="padding-top: 10px;">
+          <div class="col-xs-7 col-sm-7 col-md-7" style="font-size: 24px;  font-family: 'robotoblack';  text-transform: uppercase;  text-align: center;">Mobile site Leads Summary</div>
+          <div class="col-xs-5 col-sm-5 col-md-5 wpp-type">Objectives:
+              <select id="objective_type" class="lead_summary bgicon" style="height: 38px;">
+                <option value="all">All</option>
+                  <option value="Buy Online">Buy Online</option>
+                  <option value="Form Entry">Form Entry</option>
+                  <option value="Call your Business">Call your Business</option>
+                  <option value="Engage with your Content">Engage with your Content</option>
+                  <option value="Become a Fan">Become a Fan</option>
+              </select>
+              </div>
+        </div>
+          
+      </div>
+   		<div class="row summary-container" style="margin-left: 299px;">
+   			<div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+	          <div class="circle_yellow" id='inqueue'>100</div>
+	          <div class="sum-lbl">In Queue</div>
+	        </div>
+	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+	          <div class="circle_red" id='audited'>50</div>
+	          <div class="sum-lbl">Audited</div>
+	        </div>
+	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+	          <div class="circle_blue" id="alreadyresponsive" >200</div>
+	          <div class="sum-lbl">Already Responsive</div>
+	        </div>
+	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+	          <div class="circle_green" id="delivered">150</div>
+	          <div class="sum-lbl">Delivered</div>
+	        </div>
+   		</div>
+   		<h1 class="lead_status">Leads Status</h1>
+   		<div class="row pagination1">
+   			<div class="col-xs-10 col-sm-12 col-md-10">
+   				<ul class="pagination pull-left">
+   				  <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
+	              <li><a class="page" href="javascript:void(0);" id='InQueue'>In Queue</a></li>
+	              <li><a class="page" href="javascript:void(0);" id='Audited'>Audited</a></li>
+	              <li><a class="page" href="javascript:void(0);" id='AlreadyResponsive'>Already Responsive</a></li>
+	              <li><a class="page" href="javascript:void(0);" id='Delivered' >Delivered</a></li>
+   				</ul>
+   			</div>
+   			<div class="col-xs-2 col-md-2">
+   				<ul class="filter-area navbar-right">
+   					<li class="lbl">Sort by: </li>
+                	<li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span id='sortBy'>Recent</span> <i class="fa fa-angle-down"></i></a>
+	                  <ul class="dropdown-menu light" role="menu">
+	                    <li><a href="javascript:void(0);" id="RecentHeader">Recent</a></li>
+	                    <li><a href="javascript:void(0);" id='CodeTypeHeader'>Task Type</a></li>
+	                    <li><a href="javascript:void(0);" id="statusHeader">Status</a></li>
+	                  </ul>
+                  </li>
+   				</ul>
+   			</div>
+   		</div>
+   		<div class="table-container pagination1">
+   			<table class="table status-table tablesorter">
+   				<thead>
+   					<tr class="table_bg">
+   					  <th class="hidden-xs hidden-sm nthchild">No.</th>
+	                  <th class="hidden-xs hidden-sm nthchild1">Website</th>
+	                  <th width="20%" class="nthchild2">CID </th>
+	                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
+	                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
+	                  <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
+	                  <th class="hidden-xs hidden-sm nthchild3">Treatment Type</th>
+                  	  <th class="nthchild3" id='StatusRow'>Status </th>
+   					</tr>
+   				</thead>
+   				<tbody id="tableBody">
+                  
+          		</tbody>
+   			</table>
+   			<img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/>
+   		</div>
+   	</div>
+   	<div id="preloaderOverlay" style='display:none;'>
+        <div class="preloader">
+        <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+        </div>
+    </div>
+   </section>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/picasso_lead_summary.js' %}"></script>
+
+<script type="text/javascript">
+function setPicassoLeadSummary(lead_status){
+    $('#inqueue').text(lead_status['inqueue'])
+    $('#audited').text(lead_status['audited'])
+    $('#alreadyresponsive').text(lead_status['alreadyresponsive'])
+    $('#delivered').text(lead_status['delivered'])
+  }
+
+function setPicassoLeadSummaryTable(leads){
+	$('#tableBody').html('')
+    for(i=0; i<leads.length; i += 1){
+        c = i + 1
+        if(leads[i].lead_status == 'In Queue' ){
+          counter = '<tr class="status-inqueue inqueue searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+       }
+
+       else if (leads[i].lead_status == 'Audited'){
+         counter =  '<tr class="status-audited audited searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }
+
+        else if (leads[i].lead_status == 'Already Responsive'){
+         counter =  '<tr class="status-alreadyresponsive alreadyresponsive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }
+
+       else if (leads[i].lead_status == 'Delivered'){
+         counter =  '<tr class="status-delivered delivered searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else{
+          counter = '<tr class="status-impl impl searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        }
+        other =  '<td class="hidden-xs hidden-sm">' + leads[i].url + '</td>' +
+                '<td><a href="' + historyURL + '" target="_blank">' + leads[i].cid + '</a></td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].google_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].regalix_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'
+        treatmentType = '<td class="hidden-xs hidden-sm">' + leads[i].treatment_type + '</td>'
+      	status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
+      }
+      $("#Leads").trigger("update");
+  }
+
+$('#objective_type').on('change', function(){
+  objectiveType = $(this).val();
+  get_picasso_lead_summary(objectiveType);
+
+})
+  function get_picasso_lead_summary(input_args){
+  $.ajax({
+          url: "/leads/get-picasso-lead-summary-by-objective",
+          dataType: "json",
+          type: 'GET',
+          data: {'objective_type': input_args},
+          success: function(data) {
+              setPicassoLeadSummary(data['status_count'])
+              setPicassoLeadSummaryTable(data['leads_list'])
+
+          },
+          error: function(errorThrown) {
+              console.log('failure');
+          }
+        }); 
+}
+</script>
+
+{% endblock main_js %}
