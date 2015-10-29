@@ -1526,3 +1526,9 @@ def migrate_table_data(request):
         template_args.update({'result': 'WPP Master List', 'number_of_saved_records': number_of_saved_records, 'number_of_records': number_of_records,
                               'number_of_records': number_of_records, 'number_of_updated_records': number_of_updated_records})
         return render(request, 'main/upload_file.html', template_args)
+
+
+def picasso_home(request):
+    lead_args = {}
+    lead_args['picasso'] = True
+    return render(request, 'main/picasso_index.html', lead_args)

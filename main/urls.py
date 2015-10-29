@@ -32,5 +32,6 @@ urlpatterns = patterns(
     url(r'^reps/details-upload$', views.rep_details_upload),
     url(r'^upload/file-handling$', views.upload_file_handling),
     url(r'^upload/migrate-data$', views.migrate_table_data),
+    url(r'^picasso/$', views.picasso_home),
 
 )

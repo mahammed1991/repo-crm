@@ -39,7 +39,9 @@ urlpatterns = patterns(
     url(r'^priority-check/$', views.priority_check),
     url(r'^check-url-priority/$', views.check_url_priority),
     url(r'^report-team/$', views.report_team),
-    url(r'^picasso-lead-form/$', views.picasso_lead_form)
+    url(r'^picasso-lead-form/$', views.picasso_lead_form),
+    url(r'^picasso-lead-summary/$', views.get_picasso_lead_summary),
+    url(r'^get-picasso-lead-summary-by-objective/$', views.get_picasso_lead_summary_by_objective),
 
 
 )

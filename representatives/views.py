@@ -853,3 +853,14 @@ def mail_slot_changes(request, selected_team, changed_records):
     attachments = list()
 
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
+def manage_appointments(request):
+    exclude_types = ['MIGRATION']
+    teams = RegalixTeams.objects.exclude(process_type__in=exclude_types).filter(is_active=True).exclude(team_name='default team')
+    process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
+    import ipdb;ipdb.set_trace()
+    if request.is_ajax():
+        a = request.GET.get('val')
+        print a
+    return render(request, 'representatives/manager_total.html', {'teams': teams, 'process_types': process_types})

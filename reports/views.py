@@ -831,3 +831,16 @@ def csat_reports(request):
 
         return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'channel': channel, 'comparison': comparison}))
     return render(request, 'reports/csat_reports.html')
+
+
+@login_required
+def picasso_reports(request):
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        team_members = get_user_under_manager(request.user.email)
+    return render(request, 'reports/picasso_reports.html', {'picasso': True, 'manager': manager, 'team_members': team_members})
+
+
+def get_picasso_reports(request):
+    return HttpResponse()
