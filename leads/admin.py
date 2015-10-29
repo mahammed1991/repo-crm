@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType,
+from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, PicassoLeads,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
@@ -28,6 +28,9 @@ class LeadsAdmin(admin.ModelAdmin):
         return super(LeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(Leads, LeadsAdmin)
+
+
+admin.site.register(PicassoLeads)
 
 
 class TimezoneAdmin(admin.ModelAdmin):

@@ -584,3 +584,46 @@ class TreatmentType(models.Model):
         db_table = 'treatment_type'
         ordering = ['name']
         verbose_name_plural = "Treatment Types"
+
+
+class PicassoLeads(models.Model):
+    google_rep_name = models.CharField(max_length=255)
+    google_rep_email = models.CharField(max_length=255)
+
+    lead_owner_name = models.CharField(max_length=255, null=False)
+    lead_owner_email = models.CharField(max_length=255, null=False)
+    company = models.CharField(max_length=255)
+    lead_status = models.CharField(max_length=50)
+    country = models.CharField(max_length=255)
+
+    customer_id = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=100)
+
+    date_of_installation = models.DateTimeField(blank=True, null=True)
+
+    regalix_comment = models.TextField()
+    google_comment = models.TextField()
+
+    code_1 = models.TextField()
+    url_1 = models.CharField(max_length=255)
+    type_1 = models.CharField(max_length=150)
+    comment_1 = models.TextField()
+
+    team = models.CharField(max_length=100)
+    is_active = models.IntegerField(default=1)
+
+    tat = models.IntegerField(default=0)
+
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+    sf_lead_id = models.CharField(max_length=50, unique=True)
+    additional_notes = models.TextField(default='')
+    picasso_objective = models.CharField(max_length=100, blank=True, null=True)
+    internal_cid = models.CharField(max_length=50, null=True)
+    pod_name = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name_plural = "Picasso Leads"

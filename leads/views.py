@@ -272,7 +272,7 @@ def picasso_lead_form(request):
 
         response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
-        send_calendar_invite_to_advertiser(advirtiser_details, False)
+        # send_calendar_invite_to_advertiser(advirtiser_details, False)
         if response.status_code == 200:
             ret_url = basic_data['retURL']
         else:
