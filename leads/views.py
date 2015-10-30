@@ -23,11 +23,11 @@ from representatives.models import (
 )
 from lib.salesforce import SalesforceApi
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
-                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads
+                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
                           )
 from main.models import UserDetails
 from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
-                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required)
+                         is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -2624,3 +2624,61 @@ def report_team(request):
 @login_required
 def get_picasso_lead_summary(request):
     return render(request, 'leads/picasso_lead_summary.html', {'picasso': True})
+
+
+def get_picasso_lead_summary_by_objective(request):
+    lead_status = settings.PICASSO_LEAD_STATUS
+    email = request.user.email
+    objective_type = request.GET.get('objective_type')
+
+    if request.user.groups.filter(name='SUPERUSER'):
+        end_date = datetime.utcnow()
+        start_date = datetime(2015, 01, 01)
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        status_count = get_picasso_count_of_each_lead_status_by_rep(email, start_date, end_date)
+        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        if objective_type != 'all':
+            query['picasso_objective'] = objective_type
+        leads = PicassoLeads.objects.filter(**query).order_by('-created_date')
+        leads_list = [convert_picasso_lead_to_dict(lead) for lead in leads]
+    else:
+        if is_manager(email):
+            email_list = get_user_list_by_manager(email)
+            email_list.append(email)
+        else:
+            email_list = [email]
+
+        mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+        query = {'lead_status__in': lead_status}
+        if objective_type != 'all':
+            query['picasso_objective'] = objective_type
+        status_count = get_picasso_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
+        leads = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
+        leads_list = [convert_picasso_lead_to_dict(lead) for lead in leads]
+
+    return HttpResponse(json.dumps({'leads_list': leads_list, 'status_count': status_count}))
+
+
+def convert_picasso_lead_to_dict(model):
+    lead = {}
+    lead['lead_id'] = model.id
+    lead['sf_lead_id'] = model.sf_lead_id
+    lead['company'] = model.company
+    lead['url'] = model.url_1
+    lead['cid'] = model.customer_id
+    lead['code_type'] = model.type_1
+    lead['google_rep'] = model.google_rep_name
+    lead['regalix_rep'] = model.lead_owner_name
+    if model.created_date:
+        lead['date_created'] = datetime.strftime(model.created_date, "%m/%d/%Y")
+    else:
+        lead['date_created'] = ''
+    if model.date_of_installation:
+        lead['date_of_installation'] = datetime.strftime(model.date_of_installation, "%m/%d/%Y")
+    else:
+        lead['date_of_installation'] = ''
+    lead['regalix_comment'] = model.regalix_comment
+    lead['lead_status'] = model.lead_status
+    lead['pod_name'] = model.pod_name
+    lead['picasso_objective'] = model.picasso_objective
+    return lead

@@ -345,7 +345,6 @@ def get_wpp_reports(request):
         bar_chart_data[0].extend(wpp_report_detail['wpp_treatment_type_analysis'].keys())
 
         wpp_report_detail['bar_chart_data'] = bar_chart_data
-
         wpp_report_details = {'reports': wpp_report_detail,
                               'report_type': report_type, 'report_timeline': report_timeline}
 
@@ -843,4 +842,54 @@ def picasso_reports(request):
 
 
 def get_picasso_reports(request):
-    return HttpResponse()
+    picasso_report_detail = dict()
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        team_members = request.GET.getlist('team_members[]')
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        picasso_report_details = dict()
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+        if report_type == 'default_report':
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, list())
+        elif report_type == 'leadreport_individualRep':
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, [request.user.email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            team_emails.append(request.user.email)
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, team_emails)
+        elif report_type == 'leadreport_superUser':
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, list())
+        else:
+            pass
+
+        picasso_report_detail['program_type_header'] = [sts for sts in settings.PICASSO_LEAD_STATUS]
+        picasso_report_detail['program_type_header'].append('TOTAL')
+
+        status_list = [status for status in settings.PICASSO_LEAD_STATUS]
+        status_list.append('TOTAL')
+
+        bar_chart_data = [['Lead Status']]
+        for status in status_list:
+            status_row = [status]
+            for treatment_type in picasso_report_detail['picasso_program_type_analysis']:
+                status_row.append(picasso_report_detail['picasso_program_type_analysis'][treatment_type][status])
+            bar_chart_data.append(status_row)
+        bar_chart_data[0].extend(picasso_report_detail['picasso_program_type_analysis'].keys())
+
+        picasso_report_detail['bar_chart_data'] = bar_chart_data
+
+        picasso_report_details = {'reports': picasso_report_detail,
+                                  'report_type': report_type, 'report_timeline': report_timeline}
+
+        return HttpResponse(json.dumps(picasso_report_details))

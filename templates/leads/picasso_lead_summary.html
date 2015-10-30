@@ -8,11 +8,14 @@
   PICASSO Summary
 {% endblock title %}
 {% block main_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+
 <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}"> 
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
-    .footer{position: absolute;}
+    .footer{position: relative;}
+    .table-container{ min-height:300px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
     h1 {
 	  font-size: 24px;
 	  font-family: 'robotoblack';
@@ -51,6 +54,7 @@
 	  font-weight: 500;
 	}
   </style>
+  
 {% endblock main_css %}
 {% block content %}
 
@@ -79,19 +83,19 @@
       </div>
    		<div class="row summary-container" style="margin-left: 299px;">
    			<div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-	          <div class="circle_yellow" id='inqueue'>100</div>
+	          <div class="circle_yellow" id='inqueue'>{{lead_status_dict.in_queue}}</div>
 	          <div class="sum-lbl">In Queue</div>
 	        </div>
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-	          <div class="circle_red" id='audited'>50</div>
+	          <div class="circle_red" id='audited'>{{lead_status_dict.audited}}</div>
 	          <div class="sum-lbl">Audited</div>
 	        </div>
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-	          <div class="circle_blue" id="alreadyresponsive" >200</div>
+	          <div class="circle_blue" id="alreadyresponsive" >{{lead_status_dict.already_responsive}}</div>
 	          <div class="sum-lbl">Already Responsive</div>
 	        </div>
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-	          <div class="circle_green" id="delivered">150</div>
+	          <div class="circle_green" id="delivered">{{lead_status_dict.delivered}}</div>
 	          <div class="sum-lbl">Delivered</div>
 	        </div>
    		</div>
@@ -112,7 +116,7 @@
                 	<li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span id='sortBy'>Recent</span> <i class="fa fa-angle-down"></i></a>
 	                  <ul class="dropdown-menu light" role="menu">
 	                    <li><a href="javascript:void(0);" id="RecentHeader">Recent</a></li>
-	                    <li><a href="javascript:void(0);" id='CodeTypeHeader'>Task Type</a></li>
+	                    <li><a href="javascript:void(0);" id='CodeTypeHeader'>Objective</a></li>
 	                    <li><a href="javascript:void(0);" id="statusHeader">Status</a></li>
 	                  </ul>
                   </li>
@@ -120,24 +124,24 @@
    			</div>
    		</div>
    		<div class="table-container pagination1">
-   			<table class="table status-table tablesorter">
+   			<table class="table status-table tablesorter" id='Leads'>
    				<thead>
    					<tr class="table_bg">
    					  <th class="hidden-xs hidden-sm nthchild">No.</th>
 	                  <th class="hidden-xs hidden-sm nthchild1">Website</th>
 	                  <th width="20%" class="nthchild2">CID </th>
+                    <th class="hidden-xs hidden-sm nthchild3" id="CodeTypeRow">Objective</th>
 	                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
 	                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
+                    <th class="hidden-xs hidden-sm nthchild3">POD name</th>
 	                  <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
-	                  <th class="hidden-xs hidden-sm nthchild3">Treatment Type</th>
-                  	  <th class="nthchild3" id='StatusRow'>Status </th>
+                  	<th class="nthchild3" id='StatusRow'>Status </th>
    					</tr>
    				</thead>
    				<tbody id="tableBody">
                   
           		</tbody>
    			</table>
-   			<img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/>
    		</div>
    	</div>
    	<div id="preloaderOverlay" style='display:none;'>
@@ -145,7 +149,7 @@
         <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
         </div>
     </div>
-   </section>
+</section>
 {% endblock content %}
 
 {% block main_js %}
@@ -153,11 +157,14 @@
 <script src="{% static 'js/picasso_lead_summary.js' %}"></script>
 
 <script type="text/javascript">
+$(document).ready(function(){
+ get_picasso_lead_summary('all');
+})
 function setPicassoLeadSummary(lead_status){
-    $('#inqueue').text(lead_status['inqueue'])
-    $('#audited').text(lead_status['audited'])
-    $('#alreadyresponsive').text(lead_status['alreadyresponsive'])
-    $('#delivered').text(lead_status['delivered'])
+    $('#inqueue').text(lead_status['In_Queue'])
+    $('#audited').text(lead_status['Audited'])
+    $('#alreadyresponsive').text(lead_status['Already_Responsive'])
+    $('#delivered').text(lead_status['Delivered'])
   }
 
 function setPicassoLeadSummaryTable(leads){
@@ -178,16 +185,16 @@ function setPicassoLeadSummaryTable(leads){
 
        else if (leads[i].lead_status == 'Delivered'){
          counter =  '<tr class="status-delivered delivered searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else{
-          counter = '<tr class="status-impl impl searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
         other =  '<td class="hidden-xs hidden-sm">' + leads[i].url + '</td>' +
-                '<td><a href="' + historyURL + '" target="_blank">' + leads[i].cid + '</a></td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].cid + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].picasso_objective + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].google_rep + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].regalix_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].pod_name + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'
-        treatmentType = '<td class="hidden-xs hidden-sm">' + leads[i].treatment_type + '</td>'
       	status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
+        $('#tableBody').append(counter+other+status)
       }
       $("#Leads").trigger("update");
   }
@@ -214,5 +221,7 @@ $('#objective_type').on('change', function(){
         }); 
 }
 </script>
-
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
 {% endblock main_js %}
