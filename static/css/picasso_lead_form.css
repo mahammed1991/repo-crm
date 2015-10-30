@@ -1,13 +1,4 @@
-.footer {
-  bottom: 0;
-  width: 100%;
-  height: 61px;
-  color: #8b8b8b;
-  font-size: 12px;
-  text-align: center;
-  background: #333;
-  line-height: 61px;
-}
+
 
 .header{
 	font-size: 30px;
@@ -99,4 +90,30 @@
   line-height: 26px;
   vertical-align: middle;
   transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+}
+
+.status-inqueue .status-txt-color {
+  color:#f6b300;
+}
+.status-audited .status-txt-color {
+  color:#e57368;
+}
+.status-alreadyresponsive .status-txt-color {
+  color:#77a7fb;
+}
+.status-delivered .status-txt-color {
+  color:#34b67a;
+}
+
+.status-inqueue .status-bor-color {
+  border-left: 6px solid #f6b300;
+}
+.status-audited .status-bor-color {
+  border-left: 6px solid #e57368;
+}
+.status-alreadyresponsive .status-bor-color {
+  border-left: 6px solid #77a7fb;
+}
+.status-delivered .status-bor-color {
+  border-left: 6px solid #34b67a;
 }

@@ -217,6 +217,8 @@ LEAD_STATUS_DICT = {'Attempting Contact': ['Attempting Contact'],
                     'In Queue': ['In Queue', 'ON CALL'],
                     }
 
+PICASSO_LEAD_STATUS = ['In Queue', 'Audited', 'Already Responsive', 'Delivered']
+
 SERVICES = ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']
 
 CODE_TYPE_DICT = {'Adwords Conversion Code': ['Adwords Conversion Code', 'AdWords Conversion Tracking', 'Conversion Code'],

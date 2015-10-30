@@ -23,7 +23,7 @@ from lib.helpers import send_mail, manager_info_required, wpp_user_required
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ)
-from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads
+from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
@@ -1529,6 +1529,22 @@ def migrate_table_data(request):
 
 
 def picasso_home(request):
-    lead_args = {}
-    lead_args['picasso'] = True
-    return render(request, 'main/picasso_index.html', lead_args)
+    user_profile = get_user_profile(request.user)
+
+    start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    current_quarter = ReportService.get_current_quarter(datetime.utcnow())
+    title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
+    query = dict()
+    query['created_date__gte'] = start_date
+    query['created_date__lte'] = end_date
+    if request.user.groups.filter(name='SUPERUSER'):
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        lead_status = {'In Queue': 0, 'Audited': 0, 'Already Responsive': 0, 'Delivered': 0}
+        total_lead_status_dict = PicassoLeads.objects.filter(**query).values('lead_status').annotate(cnt=Count('lead_status'))
+        for lead_status_cnt in total_lead_status_dict:
+            lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
+        picasso_lead_status = {key.replace(' ', '_'): value for key, value in lead_status.iteritems()}
+    else:
+        picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
+
+    return render(request, 'main/picasso_index.html', {'picasso': True, 'user_profile': user_profile, 'title': title, 'picasso_lead_status': picasso_lead_status})

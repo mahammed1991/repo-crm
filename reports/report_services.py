@@ -2,7 +2,7 @@ import csv
 import os
 import mimetypes
 from datetime import datetime, date, timedelta
-from leads.models import Leads, RegalixTeams, Team, Location, TreatmentType, WPPLeads
+from leads.models import Leads, RegalixTeams, Team, Location, TreatmentType, WPPLeads, PicassoLeads
 from reports.models import QuarterTargetLeads, Region, CSATReport
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
                          last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range, get_months_from_date,
@@ -1513,6 +1513,52 @@ class ReportService(object):
                 dials_rec[code] = 0
 
         return dials_rec
+
+    @staticmethod
+    def get_picasso_report_details_for_filters(start_date, end_date, emails):
+        picasso_report_detail = dict()
+        if emails:
+            query = {'created_date__gte': start_date, 'created_date__lte': end_date,
+                     'google_rep_email__in': emails, 'lead_status__in': settings.PICASSO_LEAD_STATUS}
+        else:
+            query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'lead_status__in': settings.PICASSO_LEAD_STATUS}
+
+        picasso_lead_status_counts = PicassoLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        picasso_lead_status_count_dict = {str(rec['lead_status']): rec['count'] for rec in picasso_lead_status_counts}
+        picasso_lead_status_count_dict['TOTAL'] = PicassoLeads.objects.filter(**query).count()
+
+        key_order = [sts for sts in settings.PICASSO_LEAD_STATUS]
+        key_order.append('TOTAL')
+
+        for lead_status in settings.PICASSO_LEAD_STATUS:
+            if lead_status not in picasso_lead_status_count_dict:
+                picasso_lead_status_count_dict[lead_status] = 0
+
+        picasso_keyorder = {k: v for v, k in enumerate(key_order)}
+        picasso_report_detail['picasso_lead_status_analysis'] = OrderedDict(sorted(picasso_lead_status_count_dict.items(), key=lambda i: picasso_keyorder.get(i[0])))
+        picasso_report_detail['picasso_program_type_analysis'], picasso_report_detail['pie_chart_dict'] = ReportService.get_picasso_objective_type_lead_status_analysis(query)
+        return picasso_report_detail
+
+    @staticmethod
+    def get_picasso_objective_type_lead_status_analysis(query):
+        picasso_program_type_lead_status_analysis = dict()
+        lead_status_per_objective_type = PicassoLeads.objects.filter(**query).values('team').annotate(count=Count('pk'))
+        pie_chart_dict = {str(rec['team']): rec['count'] for rec in lead_status_per_objective_type}
+
+        key_order = [sts for sts in settings.PICASSO_LEAD_STATUS]
+        key_order.append('TOTAL')
+        picasso_keyorder = {k: v for v, k in enumerate(key_order)}
+
+        for team in lead_status_per_objective_type:
+            query['team'] = team.get('team')
+            lead_status_per_objective_type = PicassoLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+            lead_status_per_objective_type_dict = {str(rec['lead_status']): rec['count'] for rec in lead_status_per_objective_type}
+            for lead_status in settings.PICASSO_LEAD_STATUS:
+                if lead_status not in lead_status_per_objective_type_dict:
+                    lead_status_per_objective_type_dict[lead_status] = 0
+            lead_status_per_objective_type_dict['TOTAL'] = PicassoLeads.objects.filter(**query).count()
+            picasso_program_type_lead_status_analysis[team.get('team')] = OrderedDict(sorted(lead_status_per_objective_type_dict.items(), key=lambda i: picasso_keyorder.get(i[0])))
+        return picasso_program_type_lead_status_analysis, pie_chart_dict
     # ##################### Number of Dials report ends ###########################
 
 

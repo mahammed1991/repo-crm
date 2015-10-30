@@ -102,15 +102,50 @@ function getPicassoReport(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data){
-          // $('#preloaderOverlay').hide();
-          // console.log(data)
-          // $('#wpp_treatment_lead_status_table').empty()
-          // reports = data['reports'];
-          // treatment_type_and_lead_status_analysis_table(reports['treatment_type_header'], reports['wpp_treatment_type_analysis'], reports['wpp_lead_status_analysis'])
-          // barChartDraw(reports['bar_chart_data'], '', 'barchart');
+          $('#preloaderOverlay').hide();
+          console.log(data)
+          $('#picasso_treatment_lead_status_table').empty()
+          reports = data['reports'];
+          treatment_type_and_lead_status_analysis_table(reports['program_type_header'], reports['picasso_program_type_analysis'], reports['picasso_lead_status_analysis'])
+          barChartDraw(reports['bar_chart_data'], '', 'barchart');
         },
         error: function(jqXHR, textStatus, errorThrown){
             $('#preloaderOverlay').hide();
         }
     })
+}
+
+function treatment_type_and_lead_status_analysis_table(table_header , table_data, total_data){
+
+  var rows = ""
+  var lead_status = ""
+  var data_row = ""
+  var header = "<tr><td> Program Type/Lead Status</td>"
+  for (ele in table_header){
+    header += '<td>'+table_header[ele]+'</td>'
+     }
+  header += '</tr>'
+
+  for (data in table_data){
+      data_row += '<tr><td>'+data+'</td>'
+      for(lead in table_data[data]){
+        data_row += '<td>'+table_data[data][lead]+'</td>'
+      }
+      data_row += "</tr>"
+  }
+
+  var values = "<tr><td>Total</td>"
+  for(var key in total_data){
+        if (key == 'TAT'){
+
+         values += '<td> Avg TAT=' + total_data[key] + '</td>'
+        }
+        else{
+          values += '<td>' + total_data[key] + '</td>'
+        }
+        
+  }
+  values += '</tr>'
+
+  $('#picasso_treatment_lead_status_table').append(header+data_row+values)
 }

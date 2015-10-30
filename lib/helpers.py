@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from collections import defaultdict
 from main.models import UserDetails
-from leads.models import Leads, WPPLeads
+from leads.models import Leads, WPPLeads, PicassoLeads
 from django.db.models import Q, Count
 import operator
 from xlrd import XL_CELL_DATE, xldate_as_tuple
@@ -638,3 +638,27 @@ def logs_to_events(call_logs):
         event['end'] = datetime.strftime(meeting_time_ist + timedelta(minutes=30), "%Y-%m-%dT%H:%M:%S")
         events.append(event)
     return events
+
+
+def get_picasso_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
+    if is_manager(email):
+        email_list = get_user_list_by_manager(email)
+        email_list.append(email)
+    else:
+        email_list = [email]
+
+    lead_status = {'In Queue': 0, 'Audited': 0, 'Already Responsive': 0, 'Delivered': 0}
+
+    if start_date and end_date:
+        mylist = [Q(lead_status__in=lead_status)]
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date}
+    else:
+        mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+        query = {'lead_status__in': lead_status}
+
+    total_lead_status_dict = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(cnt=Count('lead_status'))
+    for lead_status_cnt in total_lead_status_dict:
+        lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
+    picasso_lead_status = {key.replace(' ', '_'): value for key, value in lead_status.iteritems()}
+    return picasso_lead_status

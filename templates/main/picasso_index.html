@@ -30,22 +30,22 @@
 							<div style="padding-top: 20px;"> &nbsp</div>
 	                        <div class="btn-group">
 	                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>SUBMIT MOBILE SITE OPTIMIZATION REQUEST</button>
-	                            <button class="btn std-btn lead-status" onclick='location.href=""' >Check the Status of Your Leads</button>
+	                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_picasso_lead_summary'%}"' >Check the Status of Your Leads</button>
 	                        </div>
 	                        <div class="wpp_leads-summary" style=" margin-top: 45px;">
 	                        	<h2 class="sub-title">Your Leads Summary</h2>
 	                        	<div class="row" style="max-width: 670px;">
 	                        		<div class="summary-breakup">
-	                                    <span>100</span> In Queue
+	                                    <span>{{picasso_lead_status.In_Queue}}</span> In Queue
 	                                </div>
 	                                <div class="summary-breakup">
-	                                    <span>50</span> Audited
+	                                    <span>{{picasso_lead_status.Audited}}</span> Audited
 	                                </div>
 	                                <div class="summary-breakup">
-	                                    <span>200</span> Already Responsive
+	                                    <span>{{picasso_lead_status.Already_Responsive}}</span> Already Responsive
 	                                </div>
 	                                <div class="summary-breakup">
-	                                    <span>150</span> Delivered
+	                                    <span>{{picasso_lead_status.Delivered}}</span> Delivered
 	                                </div>
 	                        	</div>
 	                        </div>
@@ -56,7 +56,7 @@
 						<!--  Starts Picasso Reports section -->
 						<div class="slide-wrap" id="wpp_reports">
 							<h1 class="sub-title">Reports</h1>
-							<button class="btn std-btn sm-btn" onclick='location.href=""'>View all reports</button>
+							<button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_picasso_lead_summary'%}"'>View all reports</button>
 						</div>
 						<!-- End Picasso Reports section -->
 					</li>
