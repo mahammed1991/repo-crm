@@ -303,6 +303,10 @@ def get_top_performer_by_date_range(start_date, end_date, lead_type):
         topper_list = Leads.objects.exclude(google_rep_email='').filter(
             created_date__gte=start_date,
             created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
+    elif lead_type == 'PICASSO':
+        topper_list = PicassoLeads.objects.exclude(google_rep_email='').filter(
+            created_date__gte=start_date,
+            created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
     else:
         topper_list = WPPLeads.objects.exclude(google_rep_email='').filter(
             created_date__gte=start_date,
@@ -337,6 +341,10 @@ def get_top_performer_by_date_range(start_date, end_date, lead_type):
                     last_lead_submitted = Leads.objects.filter(google_rep_email=email,
                                                                created_date__gte=start_date,
                                                                created_date__lte=end_date).order_by('-created_date')[:1]
+                elif lead_type == 'PICASSO':
+                    last_lead_submitted = PicassoLeads.objects.filter(google_rep_email=email,
+                                                                      created_date__gte=start_date,
+                                                                      created_date__lte=end_date).order_by('-created_date')[:1]
                 else:
                     last_lead_submitted = WPPLeads.objects.filter(google_rep_email=email,
                                                                   created_date__gte=start_date,
@@ -1530,7 +1538,7 @@ def migrate_table_data(request):
 
 def picasso_home(request):
     user_profile = get_user_profile(request.user)
-
+    picasso_objective_total = dict()
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
@@ -1539,12 +1547,22 @@ def picasso_home(request):
     query['created_date__lte'] = end_date
     if request.user.groups.filter(name='SUPERUSER'):
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        lead_status = {'In Queue': 0, 'Audited': 0, 'Already Responsive': 0, 'Delivered': 0}
-        total_lead_status_dict = PicassoLeads.objects.filter(**query).values('lead_status').annotate(cnt=Count('lead_status'))
-        for lead_status_cnt in total_lead_status_dict:
-            lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
-        picasso_lead_status = {key.replace(' ', '_'): value for key, value in lead_status.iteritems()}
+        picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'picasso', start_date=start_date, end_date=end_date)
+        picasso_objective_counts = PicassoLeads.objects.filter(**query).values('picasso_objective').annotate(count=Count('pk'))
     else:
-        picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'normal', start_date=None, end_date=None)
+        picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'picasso', start_date=None, end_date=None)
+        picasso_objective_counts = PicassoLeads.objects.filter(**query).values('picasso_objective').annotate(count=Count('pk'))
 
-    return render(request, 'main/picasso_index.html', {'picasso': True, 'user_profile': user_profile, 'title': title, 'picasso_lead_status': picasso_lead_status})
+    picasso_status_dict = {'Buy Online': 0, 'Engage with your Content': 0, 'Call your Business': 0, 'Form Entry': 0, 'Become a Fan': 0}
+    for each_objective in picasso_objective_counts:
+        picasso_status_dict[each_objective['picasso_objective']] = each_objective.get('count')
+    picasso_objective_total = sum([picasso_dict.get('count') for picasso_dict in picasso_objective_counts])
+    picasso_status_dict = {key.replace(' ', '_'): value for key, value in picasso_status_dict.iteritems()}
+    current_date = datetime.utcnow()
+    picasso_top_performer = get_top_performer_list(current_date, 'PICASSO')
+    return render(request, 'main/picasso_index.html', {'picasso': True, 'user_profile': user_profile,
+                                                                        'title': title,
+                                                                        'picasso_lead_status': picasso_lead_status,
+                                                                        'picasso_status_dict': picasso_status_dict,
+                                                                        'picasso_objective_total': picasso_objective_total,
+                                                                        'picasso_top_performer': picasso_top_performer})

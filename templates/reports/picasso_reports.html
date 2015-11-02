@@ -11,7 +11,7 @@
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
     .footer{position: relative;}
-    .table-container{ min-height:300px;}
+    .table-container, .display_footer{ min-height:300px;}
     .footer .container-fluid  ul{ line-height: 62px;}
     h1 {
 	  font-size: 24px;
@@ -32,6 +32,9 @@
 	  text-align: center;
 	  margin-bottom: 30px;
 	}
+    #no_data{
+        margin-left: 448px;
+    }
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -89,17 +92,19 @@
                 <button class="btn std-btn" id='get_picasso_report'>View Report</button>
             </div>
             <h2>Lead Status Summary</h2>
-            <div class="report-section c">      
-                <div class="report-section-content">
-                    <div class="report-img" id="barchart" style="width: 900px; height: 500px;"></div>
-                    <div class="report-data">
-                        <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="picasso_treatment_lead_status_table">
-                        </table>
+            <div id="no_data" style="margin-left=475px;">Currently No Leads for selected timeline</div>
+            <div class="display_footer">
+                <div class="report-section c" id='report-section'>      
+                    <div class="report-section-content">
+
+                        <div class="report-img" id="barchart" style="width: 900px; height: 500px;"></div>
+                        <div class="report-data">
+                            <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="picasso_treatment_lead_status_table">
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <h2 id="tag"></h2>
 		</div>
 	</section>
 </div>
@@ -115,6 +120,7 @@
 {% block main_js %}
 
 <script src="{% static 'js/chart.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script src="{% static 'js/picasso-reports.js' %}"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
