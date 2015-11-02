@@ -22,5 +22,4 @@ urlpatterns = patterns(
     url(r'^user-events/$', views.user_events),
     url(r'^csat-reports/$', views.csat_reports),
     url(r'^picasso/$', views.picasso_reports),
-    url(r'^picasso/get-picasso-reports/$', views.get_picasso_reports),
 )

@@ -655,7 +655,7 @@ def logs_to_events(call_logs):
     return events
 
 
-def get_picasso_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None):
+def get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_date=None, end_date=None):
     if is_manager(email):
         email_list = get_user_list_by_manager(email)
         email_list.append(email)
@@ -671,6 +671,9 @@ def get_picasso_count_of_each_lead_status_by_rep(email, start_date=None, end_dat
     else:
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
         query = {'lead_status__in': lead_status}
+
+    if objective_type != 'all':
+        query['picasso_objective'] = objective_type
 
     total_lead_status_dict = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(cnt=Count('lead_status'))
     for lead_status_cnt in total_lead_status_dict:
