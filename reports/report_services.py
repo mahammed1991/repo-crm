@@ -837,7 +837,6 @@ class ReportService(object):
         global report_type
         report_type = details['report_type']
         report_records = {key: {report_type: key, 'Leads': 0, 'Wins': 0, 'Leads in pcg': 0, '': 0, 'Extremely satisfied in pcg': 0, 'Extremely satisfied': 0, 'Moderately satisfied in pcg': 0, 'Moderately satisfied': 0, 'Slightly satisfied in pcg': 0, 'Slightly satisfied': 0, 'Neither satisfied nor dissatisfied in pcg': 0, 'Neither satisfied nor dissatisfied': 0, 'Slightly dissatisfied in pcg': 0, 'Slightly dissatisfied': 0, 'Wins in pcg': 0, 'Moderately dissatisfied in pcg': 0, 'Moderately dissatisfied': 0, 'Extremely dissatisfied in pcg': 0, 'Extremely dissatisfied': 0, 'Grand Total': 0, 'Transfer Rate': 0, 'Transfer Rate in pcg': 0, 'Response Rate in pcg': 0} for key in keys}
-        csat_count = sum([csat_dict['dcount'] for csat_dict in csat_report_dict_lists])
         for key, value in report_records.iteritems():
             for total_dict in total_leads_dict:
                 if key == total_dict[details['lead_attribute']]:
@@ -850,12 +849,14 @@ class ReportService(object):
             for csat_dict in csat_report_dict_lists:
                 if key == csat_dict[details['csat_attribute']]:
                     value[key_response[csat_dict['q1']]] = csat_dict.get('dcount')
-                    value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], csat_count)
                     if csat_dict['q1'] != 0:
                         value['Grand Total'] += csat_dict.get('dcount')
                     value['Transfer Rate'] += csat_dict.get('dcount')
                     value['Transfer Rate in pcg'] = ReportService.get_percentage_value(value['Transfer Rate'], value['Wins'])
                     value['Response Rate in pcg'] = ReportService.get_percentage_value(value['Grand Total'], value['Transfer Rate'])
+            for csat_dict in csat_report_dict_lists:
+                if key == csat_dict[details['csat_attribute']]:
+                    value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], value['Grand Total'])
             if details['csat_attribute'] == 'program':
                 if value['Program'] == '':
                     value['Program'] = 'Others'

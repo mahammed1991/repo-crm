@@ -9,50 +9,51 @@
 {% endblock title %}
 {% block main_css %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+
 <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}"> 
+<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
     .footer{position: relative;}
     .table-container{ min-height:300px;}
     .footer .container-fluid  ul{ line-height: 62px;}
     h1 {
-	  font-size: 24px;
-	  font-family: 'robotoblack';
-	  text-transform: uppercase;
-	  text-align: center;
-	  border-bottom: 1px solid #ccc;
-	  padding-bottom: 12px;
-	  margin-top: 50px;
-	  margin-bottom: 20px;
-	}
-	h2 {
-	  font-family: 'robotoblack';
-	  font-size: 21px;
-	  text-transform: uppercase;
-	  border-bottom: 1px solid #ccc;
-	  padding-bottom: 12px;
-	  text-align: center;
-	  margin-bottom: 30px;
-	}
-	#ldap-user-info {
+    font-size: 24px;
+    font-family: 'robotoblack';
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-family: 'robotoblack';
+    font-size: 21px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  #ldap-user-info {
         margin-top: 0 !important;
         margin-bottom: 30px !important;
         text-align: center;
         }
     .summary-container {
-	  max-width: 932px;
-	  margin: 0 auto;
-	}
-	.sum-lbl {
-	  font-family: 'robotoblack';
-	  font-size: 16px;
-	  margin: 14px -8px;
-	}
-	a {
-	  color: #2763c9;
-	  font-weight: 500;
-	}
+    max-width: 932px;
+    margin: 0 auto;
+  }
+  .sum-lbl {
+    font-family: 'robotoblack';
+    font-size: 16px;
+    margin: 14px -8px;
+  }
+  a {
+    color: #2763c9;
+    font-weight: 500;
+  }
   </style>
   
 {% endblock main_css %}
@@ -62,13 +63,14 @@
   {% include 'layouts/picasso_header.html'%}
 {% endif %}
 
+
    <!-- content-region -->
    <section class="content-region">
    	<div class="container-fluid">
    		<div class="row" style="border-bottom: 1px solid #ccc;  padding-top: 25px; padding-bottom: 19px;"> 
         <div class="col-xs-12 col-sm-12 col-md-12" style="padding-top: 10px;">
           <div class="col-xs-7 col-sm-7 col-md-7" style="font-size: 24px;  font-family: 'robotoblack';  text-transform: uppercase;  text-align: center;">Mobile site Leads Summary</div>
-          <div class="col-xs-5 col-sm-5 col-md-5 wpp-type">Objectives:
+          <div class="col-xs-5 col-sm-5 col-md-5 picasso-type">Objectives:
               <select id="objective_type" class="lead_summary bgicon" style="height: 38px;">
                 <option value="all">All</option>
                   <option value="Buy Online">Buy Online</option>
@@ -103,7 +105,7 @@
    		<div class="row pagination1">
    			<div class="col-xs-10 col-sm-12 col-md-10">
    				<ul class="pagination pull-left">
-   				  <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
+   				  <li><a class="picasso" href="javascript:void(0);" id='all'>All</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='InQueue'>In Queue</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='Audited'>Audited</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='AlreadyResponsive'>Already Responsive</a></li>
@@ -155,7 +157,7 @@
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script src="{% static 'js/picasso_lead_summary.js' %}"></script>
-
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
 $(document).ready(function(){
  get_picasso_lead_summary('all');

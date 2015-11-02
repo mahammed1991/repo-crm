@@ -1,7 +1,7 @@
 {% extends 'layouts/main.html' %}
 
 {% load staticfiles %}
-
+{% load static %}
 {% block title %}
   PICASSO
 {% endblock title %}
@@ -10,7 +10,31 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
-    .footer{position: absolute;}
+    .footer{position: relative;}
+    .table-container{ min-height:300px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    .home-banner{ height: auto;}
+    .home-banner h1{  margin: 30px 0 25px;}
+    .bx-wrapper .bx-viewport{ height: 400px !important;}
+    .reports button {margin-top: 43px;}
+
+    h2 {
+    font-family: 'robotoblack';
+    font-size: 21px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  h3 {
+    font-family: 'robotoblack';
+    font-size: 14px;
+    text-transform: uppercase;
+    padding-bottom: 15px;
+    text-align: center;
+    margin-bottom: 5px;
+  }
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -20,75 +44,181 @@
 
 <!-- content-region -->
 <section class="content-region">
-	<section class="home-banner">
-		<div class="banner-content">
-			<div class="wrap">
-				<ul class="bxslider">
-					<li class="leads" id="tag_leads">
-					<!-- Starts Picasso leads section  -->
-						<div class="slide-wrap" id="wpp_status">
-							<div style="padding-top: 20px;"> &nbsp</div>
-	                        <div class="btn-group">
-	                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>SUBMIT MOBILE SITE OPTIMIZATION REQUEST</button>
-	                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_picasso_lead_summary'%}"' >Check the Status of Your Leads</button>
-	                        </div>
-	                        <div class="wpp_leads-summary" style=" margin-top: 45px;">
-	                        	<h2 class="sub-title">Your Leads Summary</h2>
-	                        	<div class="row" style="max-width: 670px;">
-	                        		<div class="summary-breakup">
-	                                    <span>{{picasso_lead_status.In_Queue}}</span> In Queue
-	                                </div>
-	                                <div class="summary-breakup">
-	                                    <span>{{picasso_lead_status.Audited}}</span> Audited
-	                                </div>
-	                                <div class="summary-breakup">
-	                                    <span>{{picasso_lead_status.Already_Responsive}}</span> Already Responsive
-	                                </div>
-	                                <div class="summary-breakup">
-	                                    <span>{{picasso_lead_status.Delivered}}</span> Delivered
-	                                </div>
-	                        	</div>
-	                        </div>
-						</div>
-						<!-- End WPP leads section  -->
-					</li>
-					<li class="reports">
-						<!--  Starts Picasso Reports section -->
-						<div class="slide-wrap" id="wpp_reports">
-							<h1 class="sub-title">Reports</h1>
-							<button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_picasso_lead_summary'%}"'>View all reports</button>
-						</div>
-						<!-- End Picasso Reports section -->
-					</li>
-				</ul>
-				<div id="bx-pager">
-	              <a data-slide-index="0" href=""><span></span><i class="fa fa-code"></i>Leads</a>
-	              <a data-slide-index="1" href=""><span></span><i class="fa fa-file-text"></i>Reports</a>
-	              <!-- <a data-slide-index="2" href=""><span></span><i class="fa fa-quote-left"></i>Feedback</a> -->
-	            </div>
-			</div>
-		</div>
-	</section>
-	<section class="notifications">
+  <section class="home-banner">
+    <div class="banner-content">
+      <div class="wrap">
+        <ul class="bxslider">
+          <li class="leads" id="tag_leads">
+          <!-- Starts Picasso leads section  -->
+            <div class="slide-wrap" id="picasso_status">
+              <div style="padding-top: 20px;"> &nbsp</div>
+                          <div class="btn-group">
+                              <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>SUBMIT MOBILE SITE OPTIMIZATION REQUEST</button>
+                              <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_picasso_lead_summary'%}"' >Check the Status of Your Leads</button>
+                          </div>
+                          <div class="picasso_leads-summary" style=" margin-top: 45px;">
+                            <h2 class="sub-title">Your Leads Summary</h2>
+                            <div class="row" style="max-width: 670px;">
+                              <div class="summary-breakup">
+                                      <span>{{picasso_lead_status.In_Queue}}</span> In Queue
+                                  </div>
+                                  <div class="summary-breakup">
+                                      <span>{{picasso_lead_status.Audited}}</span> Audited
+                                  </div>
+                                  <div class="summary-breakup">
+                                      <span>{{picasso_lead_status.Already_Responsive}}</span> Already Responsive
+                                  </div>
+                                  <div class="summary-breakup">
+                                      <span>{{picasso_lead_status.Delivered}}</span> Delivered
+                                  </div>
+                            </div>
+                          </div>
+            </div>
+            <!-- End Picasso leads section  -->
+          </li>
+          <li class="reports">
+            <!--  Starts Picasso Reports section -->
+             <div class="slide-wrap" id="picasso_reports">
+                        <h1>{{title}}</h1>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="chart first-chart">
+                                  <canvas id="totalWins" class="reports-canvas"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="totalwins">45%</span></div>
+                                </div>
+                                <span>Total Picasso Leads</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="BuyOnline" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Buyonline">45%</span></div>
+                                </div>
+                                <span>Buy Online</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="FormEntry" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Formentry">65%</span></div>
+                                </div>
+                                <span>Form Entry</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="CallyourBusiness" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Callyourbusiness">65%</span></div>
+                                </div>
+                                <span>Call your Business</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="EngagewithyourContent" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Engagewithyourcontent">65%</span></div>
+                                </div>
+                                <span>Engage with your Content</span>
+                            </div>
+                            <div class="col-md-6"><button class="btn std-btn sm-btn" onclick='location.href="{% url 'reports.views.picasso_reports' %}"'>View all reports</button></div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="BecomeaFan" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Becomeafan">65%</span></div>
+                                </div>
+                                <span>Become a Fan</span>
+                            </div>
+                        </div>
+                           
+                    </div>
+            <!-- End Picasso Reports section -->
+          </li>
+        </ul>
+        <div id="bx-pager">
+                <a data-slide-index="0" href=""><span></span><i class="fa fa-code"></i>Leads</a>
+                <a data-slide-index="1" href=""><span></span><i class="fa fa-file-text"></i>Reports</a>
+       </div>
+      </div>
+    </div>
+  </section>
+  <section class="notifications">
       <div class="slick-slider container-fluid trans" id="marquee_notofication">
           <div>&nbsp;</div>
       </div>
+  </section>
+  <section class="performers testimonials">
+      <div class="container-fluid">
+          <h2>TOP LEAD SUBMITTERS</h2>
+            <div class="row" id="picasso_toppers">
+              {% if picasso_top_performer.quarterly %}
+                <div class="slick-slider col-md-4">
+                   {% for quarter_topper in picasso_top_performer.quarterly %}
+                      <div class="performer">
+                            <h3>Last Quarter</h3>
+                            <img src="{% static quarter_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{quarter_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{quarter_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if picasso_top_performer.monthly %}
+                <div class="slick-slider col-md-4">
+                   {% for month_topper in picasso_top_performer.monthly %}
+                      <div class="performer">
+                            <h3>Last Month</h3>
+                            <img src="{% static month_topper.image_url %}" />
+                            <div class="performer-info">
+                              <span>{{month_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{month_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if picasso_top_performer.weekly %}
+                <div class="slick-slider col-md-4">
+                   {% for week_topper in picasso_top_performer.weekly %}
+                      <div class="performer">
+                            <h3>Last Week</h3>
+                            <img src="{% static week_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{week_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{week_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+            </div>
+        </div>
     </section>
 </section>
 
 {% endblock content %}
 
 {% block main_js %}
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
 <script>
+
 $(document).ready(function() {
-
-  // wpp_treatment_type_report = {{wpp_treatment_type_report|safe}}
-
-  // $("#totalWPPWin").text(parseInt(wpp_treatment_type_report['TOTAL']) + "%");
-  // $("#FullDesktopMobileWin").text(parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']) + "%");
-  // $("#LandingPageWin").text(parseInt(wpp_treatment_type_report['LandingPageOptimization']) + "%");
-  // $("#Mobile-onlyWin").text(parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']) + "%");
+  var mydict = {{picasso_status_dict|safe}}
+  if ($(window).width() < 768 ) {
+  classyloader2()
+}else{
+  classyloader1()
+}
+  
+  $("#totalwins").text(parseInt({{picasso_objective_total|safe}}) + "%");
+  $("#Buyonline").text(parseInt(mydict['Buy_Online']) + "%");
+  $("#Formentry").text(parseInt(mydict['Form_Entry']) + "%");
+  $("#Callyourbusiness").text(parseInt(mydict['Call_your_Business']) + "%");
+  $("#Engagewithyourcontent").text(parseInt(mydict['Engage_with_your_Content']) + "%");
+  $("#Becomeafan").text(parseInt(mydict['Become_a_Fan']) + "%");
 
   $("#owl-demo").owlCarousel({
     autoPlay : true,
@@ -124,120 +254,124 @@ $(document).ready(function() {
 function include(arr,obj) {
   return (arr.indexOf(obj) != -1);
 }
-
-function showOlark(){
-  olark('api.box.show');
-}
-
 function hideOlark(){
   olark('api.box.hide');
 }
-
-$(window).on('resize',function() {
-   // do whatever
-    if ($(window).width() < 768 ) {
-      // alert(screen.width)
-
-          $('#buyonline').ClassyLoader({
+function classyloader1(){
+  mydict = {{picasso_status_dict|safe}}
+  $('#totalWins').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(116,62,209)',
+            percentage : parseInt({{picasso_objective_total|safe}}),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#BuyOnline').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(62,194,209)',
+            percentage : parseInt(mydict['Buy_Online']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#FormEntry').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(62,209,76)',
+            percentage : parseInt(mydict['Form_Entry']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#CallyourBusiness').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(209,62,62)',
+            percentage : parseInt(mydict['Call_your_Business']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#EngagewithyourContent').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(184,209,62)',
+            percentage : parseInt(mydict['Engage_with_your_Content']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#BecomeaFan').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(255,187,0)',
+            percentage : parseInt(mydict['Become_a_Fan']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+}
+function classyloader2(){
+  mydict = {{picasso_status_dict|safe}}
+  $('#totalWins').ClassyLoader({
             width: 90,
             height: 90 ,
             diameter : 40,
-            lineColor : 'rgb(70,138,255)',
-            // percentage : parseInt(wpp_treatment_type_report['TOTAL']),
+            lineColor : 'rgb(116,62,209)',
+            percentage : parseInt({{picasso_objective_total|safe}}),
             lineWidth : 5,
             animate: false,
             remainingLineColor : 'rgba(0,0,0,0.15)'    
           });
-          $('#formentry').ClassyLoader({
+          $('#BuyOnline').ClassyLoader({
             width: 90,
             height: 90 ,
             diameter : 40,
-            lineColor : 'rgb(20,195,111)',
-            // percentage : parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']),
+            lineColor : 'rgb(62,194,209)',
+            percentage : parseInt(mydict['Buy_Online']),
             lineWidth : 5,
             animate: false,
             remainingLineColor : 'rgba(0,0,0,0.15)'    
           });
-          $('#callyourbusiness').ClassyLoader({
+          $('#FormEntry').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(62,209,76)',
+            percentage : parseInt(mydict['Form_Entry']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#CallyourBusiness').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(209,62,62)',
+            percentage : parseInt(mydict['Call_your_Business']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#EngagewithyourContent').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(184,209,62)',
+            percentage : parseInt(mydict['Engage_with_your_Content']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#BecomeaFan').ClassyLoader({
             width: 90,
             height: 90 ,
             diameter : 40,
             lineColor : 'rgb(255,187,0)',
-            // percentage : parseInt(wpp_treatment_type_report['LandingPageOptimization']),
+            percentage : parseInt(mydict['Become_a_Fan']),
             lineWidth : 5,
             animate: false,
             remainingLineColor : 'rgba(0,0,0,0.15)'    
           });
-          $('#engagewithyourcontent').ClassyLoader({
-            width: 90,
-            height: 90 ,
-            diameter : 40,
-            lineColor : 'rgb(70,138,255)',
-            // percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
-            lineWidth : 5,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-          $('#becomeafan').ClassyLoader({
-            width: 90,
-            height: 90 ,
-            diameter : 40,
-            lineColor : 'rgb(70,138,255)',
-            // percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
-            lineWidth : 5,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-
-    }else{
-
-      $('#buyonline').ClassyLoader({
-            diameter : 49,
-            lineColor : 'rgb(70,138,255)',
-            // percentage : parseInt(wpp_treatment_type_report['TOTAL']),
-            lineWidth : 6,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-          $('#formentry').ClassyLoader({
-            diameter : 49,
-            lineColor : 'rgb(20,195,111)',
-            // percentage : parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']),
-            lineWidth : 6,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-          $('#callyourbusiness').ClassyLoader({
-            diameter : 49,
-            lineColor : 'rgb(255,187,0)',
-            // percentage : parseInt(wpp_treatment_type_report['LandingPageOptimization']),
-            lineWidth : 6,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-          $('#engagewithyourcontent').ClassyLoader({
-            diameter : 49,
-            lineColor : 'rgb(70,138,255)',
-            // percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
-            lineWidth : 6,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-          $('#becomeafan').ClassyLoader({
-            diameter : 49,
-            lineColor : 'rgb(70,138,255)',
-            // percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
-            lineWidth : 6,
-            animate: false,
-            remainingLineColor : 'rgba(0,0,0,0.15)'    
-          });
-
-    }
-
-
-});
-
-
+}
+$('#picasso_status, #picasso_reports, #picasso_toppers').show()
 </script>
 
 {% endblock main_js %}

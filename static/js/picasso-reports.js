@@ -1,5 +1,6 @@
 $(document).ready(function() {
   getPicassoReport({'report_type': 'default_report', 'report_timeline': ['today']})
+
 });
 
 
@@ -96,6 +97,8 @@ $("#get_picasso_report").click(function(){
 
 function getPicassoReport(dataString){
     $('#preloaderOverlay').show();
+    $('#nodata').hide();
+    $('#report-section').show();
     $.ajax({
         url: "get-picasso-reports",
         data: dataString,
@@ -106,6 +109,11 @@ function getPicassoReport(dataString){
           console.log(data)
           $('#picasso_treatment_lead_status_table').empty()
           reports = data['reports'];
+          if(reports['picasso_lead_status_analysis']['TOTAL'] == 0)
+          {
+            $('#report-section').hide();
+            $('#nodata').show();
+          }
           treatment_type_and_lead_status_analysis_table(reports['program_type_header'], reports['picasso_program_type_analysis'], reports['picasso_lead_status_analysis'])
           barChartDraw(reports['bar_chart_data'], '', 'barchart');
         },
