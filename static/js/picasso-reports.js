@@ -100,7 +100,7 @@ function getPicassoReport(dataString){
     $('#nodata').hide();
     $('#report-section').show();
     $.ajax({
-        url: "get-picasso-reports",
+        url: "",
         data: dataString,
         type: 'GET',
         dataType: "json",

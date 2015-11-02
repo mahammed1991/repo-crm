@@ -834,15 +834,6 @@ def csat_reports(request):
 
 @login_required
 def picasso_reports(request):
-    manager = is_manager(request.user.email)
-    team_members = list()
-    if manager:
-        team_members = get_user_under_manager(request.user.email)
-    return render(request, 'reports/picasso_reports.html', {'picasso': True, 'manager': manager, 'team_members': team_members})
-
-
-def get_picasso_reports(request):
-    picasso_report_detail = dict()
     if request.is_ajax():
         report_type = request.GET.get('report_type', None)
         report_timeline = request.GET.getlist('report_timeline[]')
@@ -893,3 +884,8 @@ def get_picasso_reports(request):
                                   'report_type': report_type, 'report_timeline': report_timeline}
 
         return HttpResponse(json.dumps(picasso_report_details))
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        team_members = get_user_under_manager(request.user.email)
+    return render(request, 'reports/picasso_reports.html', {'picasso': True, 'manager': manager, 'team_members': team_members})

@@ -208,7 +208,7 @@ $('#objective_type').on('change', function(){
 })
   function get_picasso_lead_summary(input_args){
   $.ajax({
-          url: "/leads/get-picasso-lead-summary-by-objective",
+          url: "/leads/picasso-lead-summary",
           dataType: "json",
           type: 'GET',
           data: {'objective_type': input_args},

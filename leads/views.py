@@ -2623,40 +2623,37 @@ def report_team(request):
 
 @login_required
 def get_picasso_lead_summary(request):
-    return render(request, 'leads/picasso_lead_summary.html', {'picasso': True})
-
-
-def get_picasso_lead_summary_by_objective(request):
-    lead_status = settings.PICASSO_LEAD_STATUS
-    email = request.user.email
-    objective_type = request.GET.get('objective_type')
-
-    if request.user.groups.filter(name='SUPERUSER'):
-        end_date = datetime.utcnow()
-        start_date = datetime(2015, 01, 01)
-        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-        status_count = get_picasso_count_of_each_lead_status_by_rep(email, start_date, end_date)
-        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        if objective_type != 'all':
-            query['picasso_objective'] = objective_type
-        leads = PicassoLeads.objects.filter(**query).order_by('-created_date')
-        leads_list = [convert_picasso_lead_to_dict(lead) for lead in leads]
-    else:
-        if is_manager(email):
-            email_list = get_user_list_by_manager(email)
-            email_list.append(email)
-        else:
-            email_list = [email]
-
-        mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+    if request.is_ajax():
+        lead_status = settings.PICASSO_LEAD_STATUS
+        email = request.user.email
         query = {'lead_status__in': lead_status}
+        objective_type = request.GET.get('objective_type')
         if objective_type != 'all':
             query['picasso_objective'] = objective_type
-        status_count = get_picasso_count_of_each_lead_status_by_rep(email, start_date=None, end_date=None)
-        leads = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
-        leads_list = [convert_picasso_lead_to_dict(lead) for lead in leads]
 
-    return HttpResponse(json.dumps({'leads_list': leads_list, 'status_count': status_count}))
+        if request.user.groups.filter(name='SUPERUSER'):
+            end_date = datetime.utcnow()
+            start_date = datetime(2015, 01, 01)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+            status_count = get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_date, end_date)
+            query['created_date__gte'] = start_date
+            query['created_date__lte'] = end_date
+            leads = PicassoLeads.objects.filter(**query).order_by('-created_date')
+            leads_list = [convert_picasso_lead_to_dict(lead) for lead in leads]
+        else:
+            if is_manager(email):
+                email_list = get_user_list_by_manager(email)
+                email_list.append(email)
+            else:
+                email_list = [email]
+
+            mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+            status_count = get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_date=None, end_date=None)
+            leads = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
+            leads_list = [convert_picasso_lead_to_dict(lead) for lead in leads]
+
+        return HttpResponse(json.dumps({'leads_list': leads_list, 'status_count': status_count}))
+    return render(request, 'leads/picasso_lead_summary.html', {'picasso': True})
 
 
 def convert_picasso_lead_to_dict(model):
