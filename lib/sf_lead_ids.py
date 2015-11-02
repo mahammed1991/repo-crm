@@ -9,7 +9,8 @@ class SalesforceLeads(object):
                                 'manager_email': '00Nd00000077r3s',  # Manager Email
                                 'team': '00Nd0000005XIWB',  # Team
                                 'service_segment': '00Nd0000007e2AF',  # Service Segment
-                                'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
+                                # 'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
+                                'g_cases_id': '00Nd0000007f0fj',
                                 'country': '00Nd0000005WYga',  # Country
                                 'cid': '00Nd0000005WYgV',  # Customer ID
                                 'language': '00Nd0000007clUn',  # Language
@@ -79,7 +80,8 @@ class SalesforceLeads(object):
                                    'manager_email': '00Nd00000077r3s',  # Manager Email
                                    'team': '00Nd0000005XIWB',  # Team
                                    'service_segment': '00Nd0000007e2AF',  # Service Segment
-                                   'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
+                                   # 'g_cases_id': '00Nd0000007dWIH',  # G Cases Id
+                                   'g_cases_id': '00Nd0000007f0fj',
                                    'country': '00Nd0000005WYga',  # Country
                                    'cid': '00Nd0000005WYgV',  # Customer ID
                                    'language': '00Nd0000007clUn',  # Language
