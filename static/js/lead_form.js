@@ -224,7 +224,19 @@
       $('#g_cases_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
-    }else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+    }else if(selectedTeam =='GCE Kickstart Reactive'){
+      if (window.is_loc_changed){
+        setLocations(window.locations);
+        window.is_loc_changed = false;
+      }
+      $("#service_segment").hide();
+      $("#service_segment").val('');
+      $(".tr_service_segment").show();
+      $('#g_cases_id').show();
+      $('label[for="g_cases_id"]').show();
+      $('label[for="service_segment"]').hide();
+    }
+    else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
       if (window.is_loc_changed){
         setLocations(window.locations);
         window.is_loc_changed = false;
