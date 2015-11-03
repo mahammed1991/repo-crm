@@ -206,12 +206,13 @@
 <script>
 
 $(document).ready(function() {
-  var mydict = {{picasso_status_dict|safe}}
+  var mydict = {{picasso_objective_dict|safe}}
   if ($(window).width() < 768 ) {
-  classyloader2()
-}else{
-  classyloader1()
-}
+      classyloader2()
+    }else{
+      classyloader1()
+    }
+
   
   $("#totalwins").text(parseInt({{picasso_objective_total|safe}}) + "%");
   $("#Buyonline").text(parseInt(mydict['Buy_Online']) + "%");
@@ -258,7 +259,7 @@ function hideOlark(){
   olark('api.box.hide');
 }
 function classyloader1(){
-  mydict = {{picasso_status_dict|safe}}
+  mydict = {{picasso_objective_dict|safe}}
   $('#totalWins').ClassyLoader({
             diameter : 49,
             lineColor : 'rgb(116,62,209)',
@@ -309,7 +310,7 @@ function classyloader1(){
           });
 }
 function classyloader2(){
-  mydict = {{picasso_status_dict|safe}}
+  mydict = {{picasso_objective_dict|safe}}
   $('#totalWins').ClassyLoader({
             width: 90,
             height: 90 ,
