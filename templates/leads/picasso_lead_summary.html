@@ -83,7 +83,7 @@
         </div>
           
       </div>
-   		<div class="row summary-container" style="margin-left: 299px;">
+   		<div class="row summary-container" style="margin-left: 228px;">
    			<div class="col-xs-4 col-sm-4 col-md-2 placeholder">
 	          <div class="circle_yellow" id='inqueue'>{{lead_status_dict.in_queue}}</div>
 	          <div class="sum-lbl">In Queue</div>
@@ -100,6 +100,10 @@
 	          <div class="circle_green" id="delivered">{{lead_status_dict.delivered}}</div>
 	          <div class="sum-lbl">Delivered</div>
 	        </div>
+          <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+            <div class="circle_black" id="total">{{lead_status_dict.Total}}</div>
+            <div class="sum-lbl">Total</div>
+          </div>
    		</div>
    		<h1 class="lead_status">Leads Status</h1>
    		<div class="row pagination1">
@@ -167,6 +171,7 @@ function setPicassoLeadSummary(lead_status){
     $('#audited').text(lead_status['Audited'])
     $('#alreadyresponsive').text(lead_status['Already_Responsive'])
     $('#delivered').text(lead_status['Delivered'])
+    $('#total').text(lead_status['Total'])
   }
 
 function setPicassoLeadSummaryTable(leads){

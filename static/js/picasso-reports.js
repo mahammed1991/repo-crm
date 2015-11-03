@@ -97,8 +97,9 @@ $("#get_picasso_report").click(function(){
 
 function getPicassoReport(dataString){
     $('#preloaderOverlay').show();
-    $('#nodata').hide();
+    $('#no_data').hide();
     $('#report-section').show();
+    $('#google-visualization-errors-all-1').hide();
     $.ajax({
         url: "",
         data: dataString,
@@ -112,7 +113,8 @@ function getPicassoReport(dataString){
           if(reports['picasso_lead_status_analysis']['TOTAL'] == 0)
           {
             $('#report-section').hide();
-            $('#nodata').show();
+            $('#no_data').show();
+            $('#google-visualization-errors-all-1').hide();
           }
           treatment_type_and_lead_status_analysis_table(reports['program_type_header'], reports['picasso_program_type_analysis'], reports['picasso_lead_status_analysis'])
           barChartDraw(reports['bar_chart_data'], '', 'barchart');

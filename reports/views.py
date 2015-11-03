@@ -798,12 +798,19 @@ def csat_reports(request):
         timeline = request.GET.getlist('timeline[]')
         comparison = request.GET.get('comparison', None)
         selected_filters = request.GET.getlist('filter[]')
-        if 'survey_channel_phone' in selected_filters:
-            channel = 'PHONE'
-        elif 'survey_channel_email' in selected_filters:
-            channel = 'EMAIL'
+        # if 'survey_channel_phone' in selected_filters:
+        #     channel = 'PHONE'
+        # elif 'survey_channel_email' in selected_filters:
+        #     channel = 'EMAIL'
+        # else:
+        #     channel = 'Combined'
+
+        if 'process_tag' in selected_filters:
+            process = 'Tag'
+        elif 'process_shopping' in selected_filters:
+            process = 'Shopping'
         else:
-            channel = 'Combined'
+            process = 'Combined'
 
         if comparison == 'yes':
             if timeline:
@@ -828,7 +835,7 @@ def csat_reports(request):
             previous_report_data = ''
             current_report_data, previous_report_data = ReportService.get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison)
 
-        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'channel': channel, 'comparison': comparison}))
+        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'process': process, 'comparison': comparison}))
     return render(request, 'reports/csat_reports.html')
 
 
@@ -857,7 +864,6 @@ def picasso_reports(request):
             picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, [request.user.email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            team_emails.append(request.user.email)
             picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, team_emails)
         elif report_type == 'leadreport_superUser':
             picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, list())

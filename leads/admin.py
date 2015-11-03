@@ -1,16 +1,18 @@
 from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, PicassoLeads,
                           Location, Team, CodeType, Language, LeadForm,
-                          LeadFormAccessControl, TimezoneMapping)
+                          LeadFormAccessControl, TimezoneMapping, PicassoLeads)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
 from lib.admin_helpers import CustomAdmin
 
 
 class LeadsAdmin(admin.ModelAdmin):
     list_display = ('google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
-                    'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'first_contacted_on', 'tat')
+                    'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'language', 'tat')
 
     search_fields = ['customer_id', ]
+    list_filter = ('language', )
+
     readonly_fields = ['google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
                        'company', 'lead_status', 'team', 'type_1', 'date_of_installation', 'appointment_date', 'first_contacted_on', 'tat']
 
@@ -28,9 +30,6 @@ class LeadsAdmin(admin.ModelAdmin):
         return super(LeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(Leads, LeadsAdmin)
-
-
-admin.site.register(PicassoLeads)
 
 
 class TimezoneAdmin(admin.ModelAdmin):
@@ -228,3 +227,23 @@ class TreatmentTypeAdmin(admin.ModelAdmin):
         return super(TreatmentTypeAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(TreatmentType, TreatmentTypeAdmin)
+
+
+class PicassoLeadsAdmin(admin.ModelAdmin):
+    list_display = ('google_rep_name', 'lead_owner_name', 'customer_id','company', 'lead_status', 'code_1', 'type_1', 'team', 'picasso_objective', 'pod_name',)
+    search_fields = ['customer_id', ]
+
+    def get_readonly_fields(self, request, obj=None):
+        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
+
+    def has_add_permission(self, request):
+        return CustomAdmin.get_permission_status(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return CustomAdmin.get_permission_status(request)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = CustomAdmin.get_view_status(request, extra_context)
+        return super(LeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+
+admin.site.register(PicassoLeads, PicassoLeadsAdmin)
