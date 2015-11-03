@@ -1547,7 +1547,7 @@ def picasso_home(request):
     query['created_date__lte'] = end_date
     if request.user.groups.filter(name='SUPERUSER'):
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'picasso', start_date=start_date, end_date=end_date)
+        picasso_lead_status = get_count_of_each_lead_status_by_rep(list(), 'picasso', start_date=start_date, end_date=end_date)
         picasso_objective_counts = PicassoLeads.objects.filter(**query).values('picasso_objective').annotate(count=Count('pk'))
     else:
         picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'picasso', start_date=None, end_date=None)

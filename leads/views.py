@@ -2635,7 +2635,7 @@ def get_picasso_lead_summary(request):
             end_date = datetime.utcnow()
             start_date = datetime(2015, 01, 01)
             end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-            status_count = get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_date, end_date)
+            status_count = get_picasso_count_of_each_lead_status_by_rep(list(), objective_type, start_date, end_date)
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
             leads = PicassoLeads.objects.filter(**query).order_by('-created_date')
