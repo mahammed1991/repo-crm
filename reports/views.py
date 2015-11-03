@@ -745,7 +745,6 @@ def get_trends_reports(request):
 @login_required
 def download_timezones_by_location(request):
     """ List all Timezones by Locations """
-
     location_list = list()
     locations = Location.objects.all().order_by('location_name')
     path = "/tmp/location_list.csv"
