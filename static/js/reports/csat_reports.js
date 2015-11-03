@@ -224,19 +224,19 @@ function displayReportData(reportData) {
         '<th class="msc24">' + reportData['report_type'] + '</th>' +
         '<th class="msc24">CSAT%</th>' +
         '<th class="msc24">vs Target(95%)</th>' +
-        '<th class="msc24">Survey Channel</th>' +
-        '<th class="msc24">Response Rate</th>' +
-        '<th class="msc24">Transfer Rate</th>' +
+        '<th class="msc24">Process</th>' +
+        '<th class="msc24">TR</th>' +
+        /*'<th class="msc24">Transfer Rate1</th>' +*/
         '<th class="msc24">Leads</th>' +
         '<th class="msc24">Wins</th>' +
-        '<th class="msc24">Extremely Satisfied</th>' +
-        '<th class="msc24">Moderately Satisfied</th>' +
-        '<th class="msc24">Slightly Satisfied</th>' +
-        '<th class="msc24">Neither Satisfied nor Dissatisfied</th>' +
-        '<th class="msc24">Slightly Dissatisfied</th>' +
-        '<th class="msc24">Moderately Dissatisfied</th>' +
-        '<th class="msc24">Extremely Dissatisfied</th>' +
-        '<th class="msc23">Grand Total</th>' +
+        '<th class="msc24">ES</th>' +
+        '<th class="msc24">MS</th>' +
+        '<th class="msc24">SS</th>' +
+        '<th class="msc24">NS/D</th>' +
+        '<th class="msc24">SD</th>' +
+        '<th class="msc24">MD</th>' +
+        '<th class="msc24">ED</th>' +
+        '<th class="msc23">GT</th>' +
         '</tr>'
     row = '';
 
@@ -244,15 +244,15 @@ function displayReportData(reportData) {
 
         row += '<tr>' +
             '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
-            '<td>' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '</td>' +
-            '<td>' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '</td>' +
-            '<td>' + reportData['channel'] + '</td>' +
+            '<td>' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</td>' +
+            '<td>' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</td>' +
+            '<td>' + reportData['process'] + '</td>' +
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">' + reportData['report_data'][i]['Response Rate in pcg'] + '%</div></td>';
-        if (reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL') {
+       /* if (reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL') {
             channel = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Transfer Rate'] + '</div><div class="msc21">' + reportData['report_data'][i]['Transfer Rate in pcg'] + '%</div></td>'
         } else {
             channel = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">100%</div></td>'
-        }
+        }*/
 
         row_end = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Leads'] + '</div><div class="msc21">' + reportData['report_data'][i]['Leads in pcg'] + '%</div></td>' +
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">' + reportData['report_data'][i]['Wins in pcg'] + '%</div></td>' +
@@ -268,7 +268,7 @@ function displayReportData(reportData) {
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">100%</div></td>' +
             ' </tr>'
 
-        row += channel + row_end;
+        row +=  row_end;
 
     }
 
@@ -279,36 +279,36 @@ function CSATComparisonReport(reportData) {
     $('.table').empty();
     header = '<tr >' +
         '<th class="msc24">' + reportData['report_type'] + '</th>' +
-        '<th class="msc24">Survey Channel</th>' +
+        '<th class="msc24">Process</th>' +
         '<th class="msc24">CSAT%</th>' +
         '<th class="msc24">vs Target(95%)</th>' +
-        '<th class="msc24">Response Rate</th>' +
         '<th class="msc24">Transfer Rate</th>' +
+        /*'<th class="msc24">Transfer Rate1</th>' +*/
         '<th class="msc24">Leads</th>' +
         '<th class="msc24">Wins</th>' +
-        '<th class="msc24">Extremely Satisfied</th>' +
-        '<th class="msc24">Moderately Satisfied</th>' +
-        '<th class="msc24">Slightly Satisfied</th>' +
-        '<th class="msc24">Neither Satisfied nor Dissatisfied</th>' +
-        '<th class="msc24">Slightly Dissatisfied</th>' +
-        '<th class="msc24">Moderately Dissatisfied</th>' +
-        '<th class="msc24">Extremely Dissatisfied</th>' +
-        '<th class="msc23">Grand Total</th>' +
+        '<th class="msc24">ES</th>' +
+        '<th class="msc24">MS</th>' +
+        '<th class="msc24">SS</th>' +
+        '<th class="msc24">NS/D</th>' +
+        '<th class="msc24">SD</th>' +
+        '<th class="msc24">MD</th>' +
+        '<th class="msc24">ED</th>' +
+        '<th class="msc23">GT</th>' +
         '</tr>'
     row = '';
 
     for (i = 0; i < reportData['report_data'].length; i++) {
         row += '<tr>' +
             '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
-            '<td>' + reportData['channel'] + '</td>' +
-            '<td style="padding: 0px !important;"><div class="tabletop">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '</div><div class="prev">' + reportData['previous_report_data'][i]['Extremely satisfied in pcg'] + '</div></td>' +
-            '<td style="padding: 0px !important;"><div class="tabletop">' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '</div><div class="prev">' + (reportData['previous_report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '</div></td>' +
+            '<td>' + reportData['process'] + '</td>' +
+            '<td style="padding: 0px !important;"><div class="tabletop">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</div><div class="prev">' + reportData['previous_report_data'][i]['Extremely satisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;"><div class="tabletop">' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</div><div class="prev">' + (reportData['previous_report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</div></td>' +
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">' + reportData['report_data'][i]['Response Rate in pcg'] + '%</div><div class="msc20 previous">' + reportData['previous_report_data'][i]['Grand Total'] + '</div><div class="msc21 previous">' + reportData['previous_report_data'][i]['Response Rate in pcg'] + '%</div></td>';
-        if (reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL') {
+        /*if (reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL') {
             channel = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Transfer Rate'] + '</div><div class="msc21">' + reportData['report_data'][i]['Transfer Rate in pcg'] + '%</div><div class="msc20 previous">' + reportData['previous_report_data'][i]['Transfer Rate'] + '</div><div class="msc21 previous">' + reportData['previous_report_data'][i]['Transfer Rate in pcg'] + '%</div></td>'
         } else {
             channel = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">100%</div><div class="msc20 previous">' + reportData['previous_report_data'][i]['Wins'] + '%</div><div class="msc21 previous">100%</div></td>'
-        }
+        }*/
 
         row_end = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Leads'] + '</div><div class="msc21">' + reportData['report_data'][i]['Leads in pcg'] + '%</div><div class="msc20 previous">' + reportData['previous_report_data'][i]['Leads'] + '</div><div class="msc21 previous">' + reportData['previous_report_data'][i]['Leads in pcg'] + '%</div></td>' +
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">' + reportData['report_data'][i]['Wins in pcg'] + '%</div><div class="msc20 previous">' + reportData['previous_report_data'][i]['Wins'] + '</div><div class="msc21 previous">' + reportData['previous_report_data'][i]['Wins in pcg'] + '%</div></td>' +
@@ -323,7 +323,7 @@ function CSATComparisonReport(reportData) {
 
             ' </tr>'
 
-        row += channel + row_end;
+        row +=  row_end;
 
     }
 

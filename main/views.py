@@ -1538,13 +1538,14 @@ def migrate_table_data(request):
 
 def picasso_home(request):
     user_profile = get_user_profile(request.user)
-    picasso_objective_total = dict()
+    query = dict()
+    picasso_objective_dict =dict()
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
-    query = dict()
     query['created_date__gte'] = start_date
     query['created_date__lte'] = end_date
+    objectives = ['Engage with your Content', 'Become a Fan', 'Buy Online', 'Form Entry', 'Call your Business']
     if request.user.groups.filter(name='SUPERUSER'):
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         picasso_lead_status = get_count_of_each_lead_status_by_rep(request.user.email, 'picasso', start_date=start_date, end_date=end_date)
@@ -1557,12 +1558,16 @@ def picasso_home(request):
     for each_objective in picasso_objective_counts:
         picasso_status_dict[each_objective['picasso_objective']] = each_objective.get('count')
     picasso_objective_total = sum([picasso_dict.get('count') for picasso_dict in picasso_objective_counts])
-    picasso_status_dict = {key.replace(' ', '_'): value for key, value in picasso_status_dict.iteritems()}
+
+    for key, value in picasso_status_dict.iteritems():
+        if key in objectives:
+            picasso_objective_dict[key.replace(' ', '_')] = value
+
     current_date = datetime.utcnow()
     picasso_top_performer = get_top_performer_list(current_date, 'PICASSO')
     return render(request, 'main/picasso_index.html', {'picasso': True, 'user_profile': user_profile,
                                                                         'title': title,
                                                                         'picasso_lead_status': picasso_lead_status,
-                                                                        'picasso_status_dict': picasso_status_dict,
+                                                                        'picasso_objective_dict': picasso_objective_dict,
                                                                         'picasso_objective_total': picasso_objective_total,
                                                                         'picasso_top_performer': picasso_top_performer})

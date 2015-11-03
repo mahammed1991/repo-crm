@@ -712,11 +712,10 @@ class ReportService(object):
             query['created_date__gte'] = start_date
             query['created_date__lte'] = end_date
             query['team__in'] = programs
-            total_leads_dict = Leads.objects.filter(**query).values('team').annotate(cnt=Count('team'))
-            total_leads_count = Leads.objects.filter(**query).values('team').count()
-            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('team').annotate(cnt=Count('team'))
-            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('team').count()
+            report_type = 'team'
+
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
+
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
@@ -724,6 +723,7 @@ class ReportService(object):
                 region_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
             else:
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
+           
             details = {'report_type': 'Program', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'team', 'csat_attribute': 'program'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, programs, details)
 
@@ -734,11 +734,13 @@ class ReportService(object):
             query['created_date__lte'] = end_date
             locations.append('')
             query['country__in'] = locations
-            total_leads_dict = Leads.objects.filter(**query).values('country').annotate(cnt=Count('country'))
-            total_leads_count = Leads.objects.filter(**query).values('country').count()
-            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('country').annotate(cnt=Count('country'))
-            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('country').count()
+            report_type = 'country'
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
+            # total_leads_dict = Leads.objects.filter(**query).values('country').annotate(cnt=Count('country'))
+            # total_leads_count = Leads.objects.filter(**query).values('country').count()
+            # query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            # implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('country').annotate(cnt=Count('country'))
+            # implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('country').count()
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
@@ -756,11 +758,14 @@ class ReportService(object):
             query['created_date__lte'] = end_date
             code_types.append('')
             query['type_1__in'] = code_types
-            total_leads_dict = Leads.objects.filter(**query).values('type_1').annotate(cnt=Count('type_1'))
-            total_leads_count = Leads.objects.filter(**query).values('type_1').count()
-            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('type_1').annotate(cnt=Count('type_1'))
-            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('type_1').count()
+            report_type = 'type_1'
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
+
+            # total_leads_dict = Leads.objects.filter(**query).values('type_1').annotate(cnt=Count('type_1'))
+            # total_leads_count = Leads.objects.filter(**query).values('type_1').count()
+            # query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            # implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('type_1').annotate(cnt=Count('type_1'))
+            # implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('type_1').count()
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
@@ -799,6 +804,38 @@ class ReportService(object):
                     if report['Lead Owner'] == key:
                         report['Lead Owner'] = value
         return report_data
+    
+    @staticmethod
+    def get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type):
+
+        if 'process_tag' in selected_filters:
+            shopping_code_types = ['Google Shopping Setup', 'Google Shopping Migration']
+        elif 'process_shopping' in selected_filters:
+            shopping_code_types = []
+            query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Migration']
+        else:
+            shopping_code_types = []
+
+        if 'language_english' in selected_filters:
+            query['language'] = 'ENGLISH'
+            total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
+            total_leads_count = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive', type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count('type_1'))
+            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive', type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+        elif 'language_non_english' in selected_filters:
+            total_leads_dict = Leads.objects.exclude(language='ENGLISH', type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
+            total_leads_count = Leads.objects.exclude(language='ENGLISH', type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive', language='ENGLISH', type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count('type_1'))
+            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive', language='ENGLISH', type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+        else:
+            total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
+            total_leads_count = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive', type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count('type_1'))
+            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive', type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+        return total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count
 
     @staticmethod
     def get_response_dict(response_dict, region_data, key_response):
@@ -819,8 +856,8 @@ class ReportService(object):
                 region_data['%s in pcg' % (response)] = ReportService.get_percentage_value(region_data[response], total_response)
         region_data['Grand Total'] = total_response
         region_data['Transfer Rate'] = total_transferred
-        region_data['Transfer Rate in pcg'] = ReportService.get_percentage_value(total_transferred, region_data.get('Wins'))
-        region_data['Response Rate in pcg'] = ReportService.get_percentage_value(total_response, total_transferred)
+        region_data['Response Rate in pcg'] = ReportService.get_percentage_value(total_transferred, region_data.get('Wins'))
+        region_data['Transfer Rate in pcg'] = ReportService.get_percentage_value(total_response, region_data.get('Wins'))
         return region_data
 
     @staticmethod
@@ -852,8 +889,8 @@ class ReportService(object):
                     if csat_dict['q1'] != 0:
                         value['Grand Total'] += csat_dict.get('dcount')
                     value['Transfer Rate'] += csat_dict.get('dcount')
-                    value['Transfer Rate in pcg'] = ReportService.get_percentage_value(value['Transfer Rate'], value['Wins'])
-                    value['Response Rate in pcg'] = ReportService.get_percentage_value(value['Grand Total'], value['Transfer Rate'])
+                    value['Response Rate in pcg'] = ReportService.get_percentage_value(value['Transfer Rate'], value['Wins'])
+                    value['Transfer Rate in pcg'] = ReportService.get_percentage_value(value['Grand Total'], value['Wins'])
             for csat_dict in csat_report_dict_lists:
                 if key == csat_dict[details['csat_attribute']]:
                     value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], value['Grand Total'])
@@ -862,31 +899,9 @@ class ReportService(object):
                     value['Program'] = 'Others'
         return report_records.values()
 
-    @staticmethod
-    def get_report_record_from_values_dictold(total_leads_dict, implemented_leads_dict, csat_report_dict_lists, keys, details):
-        key_response = {0: '', 1: 'Extremely satisfied', 2: 'Moderately satisfied', 3: 'Slightly satisfied', 4: 'Neither satisfied nor dissatisfied', 5: 'Slightly dissatisfied', 6: 'Moderately dissatisfied', 7: 'Extremely dissatisfied'}
-        global report_type
-        report_type = details['report_type']
-        from time import time
-        start_time = time()
-        report_records = {key: {report_type: key} for key in keys}
-        csat_count = sum([csat_dict['dcount'] for csat_dict in csat_report_dict_lists])
-        for key, value in report_records.items():
-            for total_dict in total_leads_dict:
-                if key is total_dict[details['lead_attribute']]:
-                    value['Leads'] = total_dict['cnt']
-                    value['Leads in pcg'] = ReportService.get_percentage_value(total_dict['cnt'], details['total_leads_count'])
-            for implemented_dict in implemented_leads_dict:
-                if key in implemented_dict[details['lead_attribute']]:
-                    value['Wins'] = total_dict['cnt']
-                    value['Leads in pcg'] = ReportService.get_percentage_value(total_dict['cnt'], details['implemented_leads_count'])
-            for csat_dict in csat_report_dict_lists:
-                if key in csat_dict[details['csat_attribute']]:
-                    value[key_response[csat_dict['q1']]] = csat_dict['dcount']
-                    value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], csat_count)
-        print (time() - start_time)
+    
 
-        return report_records.values()
+
 
     @staticmethod
     def get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison):
