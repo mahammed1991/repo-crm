@@ -575,7 +575,6 @@ def month_on_month_leads_details(reps, start_date, end_date):
     # total leads with each rep
     total_leads = Leads.objects.exclude(type_1='WPP').extra({'created_month': 'month(created_date)'}).values('google_rep_email', 'created_month').order_by().annotate(total_leads=Count('lead_status')).filter(google_rep_email__in=reps, created_date__gt=start_date, created_date__lt=end_date)
     month_details = dict()
-    # import ipdb; ipdb.set_trace()
     for record in total_leads:
         if str(record['google_rep_email']) not in month_details.keys():
             month_details[str(record['google_rep_email'])] = {record['created_month']: {'total_leads': record['total_leads']}}
@@ -662,7 +661,7 @@ def get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_da
     else:
         email_list = [email]
 
-    lead_status = {'In Queue': 0, 'Audited': 0, 'Already Responsive': 0, 'Delivered': 0}
+    lead_status = {'In Queue': 0, 'Audited': 0, 'Already Responsive': 0, 'Delivered': 0, 'Total': 0}
 
     if start_date and end_date:
         mylist = [Q(lead_status__in=lead_status)]
@@ -676,6 +675,7 @@ def get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_da
         query['picasso_objective'] = objective_type
 
     total_lead_status_dict = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(cnt=Count('lead_status'))
+    lead_status['Total'] = sum([total_leads.get('cnt') for total_leads in total_lead_status_dict])
     for lead_status_cnt in total_lead_status_dict:
         lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
     picasso_lead_status = {key.replace(' ', '_'): value for key, value in lead_status.iteritems()}
