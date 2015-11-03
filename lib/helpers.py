@@ -459,7 +459,6 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         for lead_status_cnt in total_lead_status_dict:
             lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
         lead_status_dict = {key.replace(' ', '_'): value for key, value in lead_status.iteritems()}
-
     return lead_status_dict
 
 
