@@ -115,7 +115,7 @@ admin.site.register(Location, LocationAdmin)
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('team_name', 'belongs_to', 'is_active',)
-    list_filter = ('is_active', )
+    list_filter = ('is_active', 'belongs_to')
 
     def get_readonly_fields(self, request, obj=None):
         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
