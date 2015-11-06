@@ -1,6 +1,6 @@
 $(document).ready(function() {
   getPicassoReport({'report_type': 'default_report', 'report_timeline': ['today']})
-
+  
 });
 
 
@@ -99,7 +99,6 @@ function getPicassoReport(dataString){
     $('#preloaderOverlay').show();
     $('#no_data').hide();
     $('#report-section').show();
-    $('#google-visualization-errors-all-1').hide();
     $.ajax({
         url: "",
         data: dataString,
@@ -114,7 +113,6 @@ function getPicassoReport(dataString){
           {
             $('#report-section').hide();
             $('#no_data').show();
-            $('#google-visualization-errors-all-1').hide();
           }
           treatment_type_and_lead_status_analysis_table(reports['program_type_header'], reports['picasso_program_type_analysis'], reports['picasso_lead_status_analysis'])
           barChartDraw(reports['bar_chart_data'], '', 'barchart');
@@ -159,3 +157,4 @@ function treatment_type_and_lead_status_analysis_table(table_header , table_data
 
   $('#picasso_treatment_lead_status_table').append(header+data_row+values)
 }
+

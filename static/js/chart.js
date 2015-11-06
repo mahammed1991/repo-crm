@@ -9,6 +9,8 @@ function columnChartDraw(columnChart_datatable, title, divselect){
 
       var chart = new google.visualization.ColumnChart(document.getElementById(divselect));
 
+      google.visualization.events.addListener(chart, 'error', errorHandler);
+
       chart.draw(data, options);
  
  }
@@ -20,6 +22,8 @@ function columnChartDraw(columnChart_datatable, title, divselect){
         var options = {title: title};
 
         var chart = new google.visualization.PieChart(document.getElementById(divselect));
+
+        google.visualization.events.addListener(chart, 'error', errorHandler);
 
         chart.draw(data, options);
  
@@ -36,6 +40,8 @@ function lineChartDraw(linechart_datatable, title, divselect){
         };
 
     var chart = new google.visualization.LineChart(document.getElementById(divselect));
+
+    google.visualization.events.addListener(chart, 'error', errorHandler);
 
 	chart.draw(data, options);
 }
@@ -56,6 +62,14 @@ function barChartDraw(barChart_datatable, title, divselect){
 
       var chart = new google.visualization.ColumnChart(document.getElementById(divselect));
 
+      google.visualization.events.addListener(chart, 'error', errorHandler);
+
       chart.draw(data, options);
  
  }
+
+ function errorHandler(errorMessage) {
+    console.log(errorMessage);
+
+    google.visualization.errors.removeError(errorMessage.id);
+}

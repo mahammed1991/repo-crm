@@ -244,6 +244,6 @@ class PicassoLeadsAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = CustomAdmin.get_view_status(request, extra_context)
-        return super(LeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+        return super(PicassoLeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(PicassoLeads, PicassoLeadsAdmin)

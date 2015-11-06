@@ -10,6 +10,7 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarte
 from django.conf import settings
 from django.http import HttpResponse
 import time
+import collections
 from collections import OrderedDict
 from django.db.models import Count, Avg
 
@@ -736,11 +737,7 @@ class ReportService(object):
             query['country__in'] = locations
             report_type = 'country'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
-            # total_leads_dict = Leads.objects.filter(**query).values('country').annotate(cnt=Count('country'))
-            # total_leads_count = Leads.objects.filter(**query).values('country').count()
-            # query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            # implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('country').annotate(cnt=Count('country'))
-            # implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('country').count()
+
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
@@ -760,12 +757,7 @@ class ReportService(object):
             query['type_1__in'] = code_types
             report_type = 'type_1'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
-
-            # total_leads_dict = Leads.objects.filter(**query).values('type_1').annotate(cnt=Count('type_1'))
-            # total_leads_count = Leads.objects.filter(**query).values('type_1').count()
-            # query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            # implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('type_1').annotate(cnt=Count('type_1'))
-            # implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('type_1').count()
+            
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
@@ -785,11 +777,9 @@ class ReportService(object):
             lead_owner_emails = [key for key, value in lead_onwer_dict.iteritems()]
             lead_owner_emails.append('')
             query['lead_owner_email__in'] = lead_owner_emails
-            total_leads_dict = Leads.objects.filter(**query).values('lead_owner_email').annotate(cnt=Count('lead_owner_email'))
-            total_leads_count = Leads.objects.filter(**query).values('lead_owner_email').count()
-            query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('lead_owner_email').annotate(cnt=Count('lead_owner_email'))
-            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values('lead_owner_email').count()
+            report_type = 'lead_owner_email'
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
+            
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
                 region_csat = CSATReport.objects.filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
@@ -803,11 +793,12 @@ class ReportService(object):
                 for key, value in lead_onwer_dict.iteritems():
                     if report['Lead Owner'] == key:
                         report['Lead Owner'] = value
+                    elif report['Lead Owner'] == '':
+                        report['Lead Owner'] = 'Others'
         return report_data
-    
+
     @staticmethod
     def get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type):
-
         if 'process_tag' in selected_filters:
             shopping_code_types = ['Google Shopping Setup', 'Google Shopping Migration']
         elif 'process_shopping' in selected_filters:
@@ -833,8 +824,8 @@ class ReportService(object):
             total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
             total_leads_count = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive', type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count('type_1'))
-            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive', type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+            implemented_leads_dict = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values(report_type).annotate(cnt=Count('type_1'))
+            implemented_leads_count = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).values(report_type).count()
         return total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count
 
     @staticmethod
@@ -897,6 +888,7 @@ class ReportService(object):
             if details['csat_attribute'] == 'program':
                 if value['Program'] == '':
                     value['Program'] = 'Others'
+        report_records = collections.OrderedDict(sorted(report_records.items()))
         return report_records.values()
 
     
@@ -1574,6 +1566,10 @@ class ReportService(object):
                     lead_status_per_objective_type_dict[lead_status] = 0
             lead_status_per_objective_type_dict['TOTAL'] = PicassoLeads.objects.filter(**query).count()
             picasso_program_type_lead_status_analysis[team.get('team')] = OrderedDict(sorted(lead_status_per_objective_type_dict.items(), key=lambda i: picasso_keyorder.get(i[0])))
+        for key, value in picasso_program_type_lead_status_analysis.iteritems():
+            if key == '':
+                picasso_program_type_lead_status_analysis['Others'] = picasso_program_type_lead_status_analysis[key]
+                del picasso_program_type_lead_status_analysis[key]
         return picasso_program_type_lead_status_analysis, pie_chart_dict
     # ##################### Number of Dials report ends ###########################
 

@@ -139,4 +139,35 @@
 <script type="text/javascript">
   olark('api.box.hide');
 </script>
+<script type="text/javascript">
+  select_team = document.getElementById('team')
+  sortSelect(select_team);
+  function sortSelect(select_team) {
+    var tmpAry = new Array();
+    for (var i=0;i<select_team.options.length;i++) {
+        if (select_team.options[i].text != 'Select Program')
+        {
+          tmpAry[i] = new Array();
+          tmpAry[i]= select_team.options[i].text;
+        }
+    }
+    tmpAry.sort();
+    for (var i=0;i<tmpAry.length-1;i++) {
+      if (select_team.options[i].text != 'Select Program')
+      {
+        var op = new Option(tmpAry[i][0], tmpAry[i][1]);
+        console.log(op);
+        select_team.options[i] = op;  
+      }    
+    }
+    $("#team").html('');
+    $("#team").append('<option id="options" value="">Select Program</option>');
+    for (var j=0; j<tmpAry.length-1;j++)
+    {
+      $("#team").append('<option value="'+ tmpAry[j] +'">'+ tmpAry[j]+'</option>');
+    }
+    return tmpAry;
+}
+
+</script>
 {% endblock main_js %}
