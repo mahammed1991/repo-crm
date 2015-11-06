@@ -216,7 +216,7 @@ def wpp_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.exclude(belongs_to='TAG').filter(is_active=True)
+    lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
 
     wpp_locations = list()
@@ -281,7 +281,8 @@ def picasso_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.filter(is_active=True)
+    # lead_args['teams'] = Team.objects.filter(is_active=True)
+    lead_args['teams'] = Team.objects.filter(belongs_to__in=['BOTH', 'PICASSO']).order_by('team_name')
     lead_args['picasso'] = True
 
     return render(
@@ -2313,9 +2314,9 @@ def get_basic_lead_data(request):
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
     if 'google.com' in request.user.email:
-        teams = Team.objects.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound']).filter(is_active=True)
+        teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO'], team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound']).filter(is_active=True)
     else:
-        teams = Team.objects.exclude(belongs_to='WPP').filter(is_active=True)
+        teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
 
     code_types = CodeType.objects.filter(is_active=True).values_list('name', flat=True)
     code_types = [str(ctype) for ctype in code_types]

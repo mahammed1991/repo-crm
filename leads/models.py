@@ -375,6 +375,7 @@ class Team(models.Model):
     belongs_to = models.CharField(max_length=10, blank=False, choices=(
         ('TAG', 'TAG'),
         ('WPP', 'WPP'),
+        ('PICASSO', 'PICASSO'),
         ('BOTH', 'BOTH')), default='TAG'
     )
 
