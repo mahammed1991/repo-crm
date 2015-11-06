@@ -1,0 +1,221 @@
+ {% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+CSAT Reports
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/reports/csat_reports.css' %}">
+<link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>CSAT REPORTS</h1>
+ 
+  
+    <div class="row">
+      <div class="col-md-6 ms2">
+         <div class="col-md-12">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle mcsatbut" type="button" id="dropdownMenu1">
+                <div class="msbutton1">
+                <span class="mcsatbut2">Choose Filters</span><br><span class="mcsatbut3">Single or Multi-Select</span>
+                </div><div class="msbutton2"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </button>
+              <div class="col-xs-12 msdrop ms ms_none" id="msid" aria-labelledby="dropdownMenu1" style="width:100% !important;line-height: 32px;border: 1px solid rgba(0, 0, 0, .15);margin-top: 2px; display:block;">
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a msc12">
+                            <input class="msc1a3 " type="checkbox" name="" id="sel_all" value=""><span class="msc14" style="padding-left: 5%;">Select All</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14">Survey Category </span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_category_mapped" type="checkbox" name="survey_category" value="Mapped"><span class="msc15">Mapped</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_category_unmapped" type="checkbox" name="survey_category" value="Unmapped"><span class="msc15">Unmapped</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_category_combined" type="checkbox" name="survey_category" value="Category Combined"><span class="msc15">Combined</span>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14 ">Survey Channel </span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_channel_phone" type="checkbox" name="survey_channel" value="Phone"><span class="msc15">Phone</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_channel_email" type="checkbox" name="survey_channel" value="Email"><span class="msc15">Email</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="survey_channel_combined" type="checkbox" name="survey_channel" value="Channel Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14">Language Category</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="language_english" type="checkbox" name="language" value="English"><span class="msc15"> English</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="language_non_english" type="checkbox" name="language" value="Non-English"><span class="msc15">Non-English</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="language_combined" type="checkbox" name="language" value="Language Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14 ">Tagteam Process</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 "  id="process_tag" type="checkbox" name="process" value="Tag"><span class="msc15">Tag</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="process_shopping" type="checkbox" name="process" value="Shopping"><span class="msc15">Shopping</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="process_combined" type="checkbox" name="process" value="Process Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="col-xs-12 col-md-12 mscol1 ms2">
+                        <div class="mscol1a mscol1a2">
+                            <span class="msc14">Tagteam Location</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="tag_location_bangalore" type="checkbox" name="tag_location" value="Bangalore"><span class="msc15">Bangalore</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="tag_location_palo_alto" type="checkbox" name="tag_location" value="Palo alto"><span class="msc15">Palo alto</span>
+                        </div>
+                        <div class="mscol1a msc12">
+                            <input class="msc13 " id="tag_location_combined" type="checkbox" name="tag_location" value="Location Combined"><span class="msc15">Combined</span>
+                        </div>
+                    </div> -->
+             </div>
+            </div>
+         </div> 
+         
+      </div>
+      <div class="col-md-3">
+        <div class="dropdown mm1">
+              <button class="btn btn-default mcsatbut mcsatbuta2" type="button" id="dropdownMenu1">
+                <div class="msbutton1">
+                <span class="mcsatbut2">Choose Report Type</span><br><span class="mcsatbut3">Single-Select</span>
+                </div><div class="msbutton2"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </button>
+              <ul class="dropdown-menu msdrop msdropa2 report-type" style="display:block;position:relative;">
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Region</a></li>
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Program</a></li>
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Location</a></li>
+                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Language</a></li> -->
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Task Type</a></li>
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Lead Owner</a></li>
+                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Platform</a></li> -->
+                
+              </ul>
+        </div>
+      </div>
+      <div class="col-md-3 mm2">
+         <div class="dropdown">
+              <button class="btn btn-default  mcsatbut mcsatbuta2" type="button" id="dropdownMenu1">
+                <div class="msbutton1">
+                <span class="mcsatbut2">Choose Timeline</span>
+                </div><div class="msbutton2"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </button>
+              <div class="dropdown-menu" style="display:block;   padding: 0px 0; border:0px solid transparent">
+              <ul class="dropdown-menu2a msdrop msdropa2 timeline" style="display:block;position:relative;  box-shadow: none;">
+                <li id="custom_date"><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Custom Date Range</a></li>
+                <li id="this_week"><a href="#" class="msdropa" data-value="this_week"><span class="glyphicon glyphicon-ok mcico"></span>This Week</a></li>
+                <li id="this_month"><a href="#" class="msdropa" data-value="this_month"><span class="glyphicon glyphicon-ok mcico"></span>This Month</a></li>
+                <li id="this_quarter"><a href="#" class="msdropa" data-value="this_week"><span class="glyphicon glyphicon-ok mcico"></span>This Quarter</a></li>
+                
+              </ul>
+
+            <ul class="msdropa2" style="position:relative;">
+                     <li style="background:#fff;display:none;border-bottom: 0px solid transparent;" id="custome_date">
+                    <input type="text" id="datepickerFrom" class="msc16" placeholder="Start Date">
+                    <input class="msc16" id="datepickerTo" type="text" placeholder="End Date">
+                </li>
+            </ul>
+            </div>
+        </div>
+      </div>
+        
+     
+    </div>
+    
+    <div class="row msc17" >
+          <div style="width:100%;float: left; text-align:left; margin-bottom: 16px;margin-left: 401px;" id="prev_comp"><br>
+          <input class="comp" type="checkbox" name="comparison" id="comparison"><span class="msc15" style="width: 100%;padding-left:2px;">Compare Current vs Previous</span>
+          </div>
+         <div class="btn-group" style="clear:both;">
+                    <button id="viewButton" class="btn std-btn">Submit</button><br>
+        </div>
+    </div>
+    
+    <div class="row msc17" >
+                    <div class="input-color" id="displaycolor" style='display:none;'>
+                      <div id="displayclass1">Current Data</div>
+                      <div id="color-box1" style="background-color: #FFFFFF;"></div>
+                      <div id="displayclass2">Previous Data</div>
+                      <div id="color-box2" style="background-color: #E4E4E4;"></div>
+                    </div>
+         <div class="col-xs-12">
+                <ul id="myselect">
+                    
+                </ul>
+
+        </div>
+        <div class="col-xs-12">
+            <div class="table-responsive">
+              <table class="table table-condensed table-bordered">
+              </table>
+            </div>
+        </div>
+    </div>
+    
+
+   <!--  <div class="btns text-center" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div> -->
+
+    
+ 
+  </div>
+  <div id="preloaderOverlay" style='display:none;'>
+      <div class="preloader">
+      <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+      
+      </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block main_js %}
+<link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/reports/moment.min.js' %}"></script>
+<script src="{% static 'js/reports/jquery.comiseo.daterangepicker.js' %}"></script>
+<script src="{% static 'js/reports/csat_reports.js' %}"></script>
+{% endblock main_js %}
