@@ -57,6 +57,7 @@ class SalesforceLeads(object):
                                 'role_other': '00Nd0000008MP6r',
                                 'additional_notes': '00Nd0000007eiKf',
                                 'advertiser_role': '00Nd0000008MVDh',
+                                'picasso_lead_status': '00NZ0000001grqW',
 
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
@@ -128,6 +129,7 @@ class SalesforceLeads(object):
                                    'role_other': '00Nd0000008MP6r',
                                    'additional_notes': '00Nd0000007eiKf',
                                    'advertiser_role': '00Nd0000008MVDh',
+                                   'picasso_lead_status': '',
 
                                    # Appointment IST time
                                    'appointment_in_ist': '00Nd0000007fnbe',
