@@ -261,11 +261,20 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     utc_date = SalesforceApi.get_utc_date(plan_date, tzone.time_value)
     utc_start_date = utc_date
     utc_end_date = utc_start_date + timedelta(days=6)
-
     selected_team = RegalixTeams.objects.get(id=team_id)
     appointments_list = Availability.objects.filter(
         date_in_utc__range=(utc_start_date, utc_end_date),
         team=selected_team)
+
+    #  for daylight savings notifications
+    daylight_locations = list()
+    locations = selected_team.location.all()
+    for location in locations:
+        if location.daylight_start and location.daylight_end:
+            daylight_location = {'location_name': location.location_name,
+                                 'daylight_start': location.daylight_start.date(),
+                                 'daylight_end': location.daylight_end.date()}
+            daylight_locations.append(daylight_location)
 
     diff = divmod((utc_date - plan_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
@@ -334,6 +343,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
          'process_types': process_types,
          'selected_team': selected_team,
          'total_slots': total_slots,
+         'daylight_locations': daylight_locations,
          }
     )
 
