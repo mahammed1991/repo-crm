@@ -272,7 +272,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     for location in locations:
         if location.daylight_start and location.daylight_end:
 
-            daylight_marquee_msg += " Daylight Starts on %s and Daylight Ends on %s for %s ::" % (location.daylight_start.date(), location.daylight_end.date(), location.location_name)
+            daylight_marquee_msg += " Daylight Starts on %s and Daylight Ends on %s for %s ::" % (location.daylight_start.strftime("%B %d, %Y"), location.daylight_end.strftime("%B %d, %Y"), location.location_name)
 
     diff = divmod((utc_date - plan_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
