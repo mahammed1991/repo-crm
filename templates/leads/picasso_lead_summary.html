@@ -101,7 +101,7 @@
 	        </div>
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
 	          <div class="circle_blue" id="alreadyresponsive" >{{lead_status_dict.already_responsive}}</div>
-	          <div class="sum-lbl">Already Responsive</div>
+	          <div class="sum-lbl">Already responsive</div>
 	        </div>
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
 	          <div class="circle_green" id="delivered">{{lead_status_dict.delivered}}</div>
@@ -119,7 +119,7 @@
    				  <li><a class="picasso" href="javascript:void(0);" id='all'>All</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='InQueue'>In Queue</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='Audited'>Audited</a></li>
-	              <li><a class="page" href="javascript:void(0);" id='AlreadyResponsive'>Already Responsive</a></li>
+	              <li><a class="page" href="javascript:void(0);" id='AlreadyResponsive'>Already responsive</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='Delivered' >Delivered</a></li>
    				</ul>
    			</div>
@@ -176,7 +176,7 @@ $(document).ready(function(){
 function setPicassoLeadSummary(lead_status){
     $('#inqueue').text(lead_status['In_Queue'])
     $('#audited').text(lead_status['Audited'])
-    $('#alreadyresponsive').text(lead_status['Already_Responsive'])
+    $('#alreadyresponsive').text(lead_status['Already_responsive'])
     $('#delivered').text(lead_status['Delivered'])
     $('#total').text(lead_status['Total'])
   }
@@ -193,7 +193,7 @@ function setPicassoLeadSummaryTable(leads){
          counter =  '<tr class="status-audited audited searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }
 
-        else if (leads[i].lead_status == 'Already Responsive'){
+        else if (leads[i].lead_status == 'Already responsive'){
          counter =  '<tr class="status-alreadyresponsive alreadyresponsive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }
 

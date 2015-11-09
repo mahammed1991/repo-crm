@@ -217,7 +217,7 @@ LEAD_STATUS_DICT = {'Attempting Contact': ['Attempting Contact'],
                     'In Queue': ['In Queue', 'ON CALL'],
                     }
 
-PICASSO_LEAD_STATUS = ['In Queue', 'Audited', 'Already Responsive', 'Delivered']
+PICASSO_LEAD_STATUS = ['In Queue', 'Audited', 'Already responsive', 'Delivered']
 
 SERVICES = ['Services', 'Services (Traverwood)', 'Services Revenue Program (SRP)']
 
