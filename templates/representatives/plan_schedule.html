@@ -16,17 +16,13 @@ Manage Appointments
 <section class="content-region inner-page">
     <div class="container-fluid">
       <h1>SCHEDULE APPOINTMENTS</h1>
-      <div class="slick-slider" style="margin-bottom:0px;">
-      {% if  daylight_locations %}
-            {% for location in daylight_locations %}
+      {% if  daylight_marquee_msg %}
                       <div class="performer">
                             <div class="performer-info" style="text-align:center; margin-bottom:8px; color:red;">
-                              <span>Attension!! Daylight Starts on {{location.daylight_start}} and Daylight Ends on {{location.daylight_end}} for {{location.location_name}}</span>
+                              <marquee>{{daylight_marquee_msg}}</marquee>
                             </div>
                         </div>
-            {% endfor %} 
        {% endif %} 
-      </div>
      <!-- google rep info -->
         {% if error %}
         <div class="row std-sub-top">
@@ -474,18 +470,6 @@ Manage Appointments
             loc = loc.substring(0, loc.lastIndexOf(old_team)) + selected_team;
             window.location.href = decodeURI(loc).replace(old_process, selected_process);
         });
-
-        $('.slick-slider').slick({
-              dots: false,
-              infinite: true,
-              speed: 50,
-              fade: true,
-              slide: 'div',
-              cssEase: 'linear',
-              autoplay:true,
-              autoplaySpeed:3000,
-              adaptiveHeight:true
-            });
 
         // Click on Schedule button
         // Validate the slots entry
