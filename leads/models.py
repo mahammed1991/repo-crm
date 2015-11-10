@@ -622,10 +622,9 @@ class PicassoLeads(models.Model):
 
     sf_lead_id = models.CharField(max_length=50, unique=True)
     additional_notes = models.TextField(default='')
-    picasso_objective = models.CharField(max_length=100, blank=True, null=True)
+    picasso_objective = models.CharField(max_length=255, null=True, blank=True)
     internal_cid = models.CharField(max_length=50, null=True)
     pod_name = models.CharField(max_length=50)
-    picasso_multiple_objectives = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"
