@@ -226,8 +226,7 @@ def create_or_update_picasso_leads(records, sf):
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
-        lead.picasso_objective = rec.get('Picasso_Objective__c') if rec.get('Picasso_Objective__c') else ''
-        lead.picasso_multiple_objectives = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else '' #replace(';', ',')
+        lead.picasso_objective = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
         lead.pod_name = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
 
         try:
@@ -251,7 +250,7 @@ def create_or_update_picasso_leads(records, sf):
     logging.info("Exist Picasso lead failed to update: %s" % (exist_lead_failed))
 
 end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-start_date = end_date - timedelta(days=1)
+start_date = end_date - timedelta(days=30)
 start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
 end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
 sf = SalesforceApi.connect_salesforce()
@@ -262,7 +261,6 @@ where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s
 sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
 try:
     picasso_leads = sf.query_all(sql_query_picasso)
-    import ipdb; ipdb.set_trace()
     create_or_update_picasso_leads(picasso_leads['records'], sf)
 except Exception as e:
     print e
