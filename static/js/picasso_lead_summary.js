@@ -42,10 +42,6 @@
       hideAll();
       $('.audited').show(); 
     })
- $('#AlreadyResponsive').click(function(){
-      hideAll();
-      $('.alreadyresponsive').show(); 
-    })
  $('#Delivered').click(function(){
       hideAll();
       $('.delivered').show(); 
@@ -53,14 +49,12 @@
  function showAll(){
       $('.inqueue').show()
       $('.audited').show()
-      $('.alreadyresponsive').show()
       $('.delivered').show()
   }
 
  function hideAll(){
       $('.inqueue').hide()
       $('.audited').hide()
-      $('.alreadyresponsive').hide()
       $('.delivered').hide()
   }
 

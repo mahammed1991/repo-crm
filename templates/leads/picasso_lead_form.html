@@ -85,16 +85,25 @@
         <input type="text" class="form-control" id="last_name" maxlength="255" name="last_name" placeholder="Company Name">
       </div>
 
-      <div class="col-md-6">
-        <label for="picasso_objective">Objective</label>
-        <select class="form-control bgicon" id="picasso_objective" title="Picasso Objective" name="picasso_objective">
-          <option value=""> Please Select Objective</option>
-            <option value="Buy Online">Buy Online</option>
-            <option value="Form Entry">Form Entry</option>
-            <option value="Call your Business">Call your Business</option>
-            <option value="Engage with your Content">Engage with your Content</option>
-            <option value="Become a Fan">Become a Fan</option>
-        </select>
+      <div class="col-md-3">
+        <label for="picasso_objective">Objective</label></br>
+        <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+          <input class="mdl-checkbox__input" type="checkbox" name="buy_online" id="buy_online"><span>Buy Online</span></br>
+        </label>
+        <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+          <input class="mdl-checkbox__input" type="checkbox" name="form_entry" id="form_entry"><span>Form Entry</span></br>
+        </label>
+          <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+          <input class="mdl-checkbox__input" type="checkbox" name="call_your_business" id="call_your_business"><span>Call your Business</span>
+        </label>
+      </div>
+      <div class="col-md-3" style="margin-top: 27px;">
+        <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+          <input class="mdl-checkbox__input" type="checkbox" name="engage_with_your_content" id="engage_with_your_content"><span>Engage with your Content</span></br>
+        </label>
+        <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+          <input class="mdl-checkbox__input" type="checkbox" name="become_a_fan" id="become_a_fan"><span>Become a Fan</span>
+        </label>
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
@@ -102,11 +111,11 @@
         </div>
      
       
-       <div class="col-md-6">
+       <div class="col-md-6" style="margin-left: -251px; margin-top:20px">
           <label for="code1">Goal</label>
           <textarea class="form-control" name="code1" id="code1"></textarea>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" style="margin-top:20px">
           <label for="comment1">Recommendations</label>
           <textarea class="form-control" name="comment1" id="comment1"></textarea>
         </div>

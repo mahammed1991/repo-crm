@@ -90,7 +90,7 @@
         </div>
           
       </div>
-   		<div class="row summary-container" style="margin-left: 228px;">
+   		<div class="row summary-container" style="margin-left: 312px;">
    			<div class="col-xs-4 col-sm-4 col-md-2 placeholder">
 	          <div class="circle_yellow" id='inqueue'>{{lead_status_dict.in_queue}}</div>
 	          <div class="sum-lbl">In Queue</div>
@@ -98,10 +98,6 @@
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
 	          <div class="circle_red" id='audited'>{{lead_status_dict.audited}}</div>
 	          <div class="sum-lbl">Audited</div>
-	        </div>
-	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-	          <div class="circle_blue" id="alreadyresponsive" >{{lead_status_dict.already_responsive}}</div>
-	          <div class="sum-lbl">Already responsive</div>
 	        </div>
 	        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
 	          <div class="circle_green" id="delivered">{{lead_status_dict.delivered}}</div>
@@ -119,7 +115,6 @@
    				  <li><a class="picasso" href="javascript:void(0);" id='all'>All</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='InQueue'>In Queue</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='Audited'>Audited</a></li>
-	              <li><a class="page" href="javascript:void(0);" id='AlreadyResponsive'>Already responsive</a></li>
 	              <li><a class="page" href="javascript:void(0);" id='Delivered' >Delivered</a></li>
    				</ul>
    			</div>
@@ -176,7 +171,6 @@ $(document).ready(function(){
 function setPicassoLeadSummary(lead_status){
     $('#inqueue').text(lead_status['In_Queue'])
     $('#audited').text(lead_status['Audited'])
-    $('#alreadyresponsive').text(lead_status['Already_responsive'])
     $('#delivered').text(lead_status['Delivered'])
     $('#total').text(lead_status['Total'])
   }
@@ -191,10 +185,6 @@ function setPicassoLeadSummaryTable(leads){
 
        else if (leads[i].lead_status == 'Audited'){
          counter =  '<tr class="status-audited audited searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }
-
-        else if (leads[i].lead_status == 'Already responsive'){
-         counter =  '<tr class="status-alreadyresponsive alreadyresponsive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }
 
        else if (leads[i].lead_status == 'Delivered'){
