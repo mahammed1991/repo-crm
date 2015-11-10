@@ -268,7 +268,10 @@ def picasso_lead_form(request):
         ret_url = basic_data['retURL']
         picasso_data = basic_data
         for key, value in tag_leads.items():
-            picasso_data[value] = request.POST.get(key)
+            if key == 'picasso_objective_list[]':
+                picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
+            else:
+                picasso_data[value] = request.POST.get(key)
 
         response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)

@@ -88,22 +88,22 @@
       <div class="col-md-6">
         <label for="picasso_objective">Objective</label></br>
         <div class="checkboxvalidation" style="height:71px;">
-        <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="buy_online" id="buy_online" value="0"><span>Buy Online</span></br>
+        <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" value="Buy Online"><span>Buy Online</span></br>
         </label>
-        <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="form_entry" id="form_entry" value="0"><span>Form Entry</span></br>
+        <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" value="Form Entry"><span>Form Entry</span></br>
         </label>
-          <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="call_your_business" id="call_your_business" value="0"><span>Call your Business</span>
+          <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" value="Call your Business"><span>Call your Business</span>
         </label>
       <!-- </div>
       <div class="col-md-3 check1" style="margin-top: 27px;"> -->
-        <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="margin-left: 198px;margin-top: -142px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="engage_with_your_content" id="engage_with_your_content" value="0"><span>Engage with your Content</span></br>
+        <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" value="Engage with your Content"><span>Engage with your Content</span></br>
         </label>
-        <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="margin-left: 198px;margin-top: -130px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="become_a_fan" id="become_a_fan" value="0"><span>Become a Fan</span>
+        <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" value="Become a Fan"><span>Become a Fan</span>
         </label>
         </div>
       </div>
@@ -149,11 +149,20 @@
      $(document).on('change', '.mdl-checkbox__input', function() {
         id = $(this).attr('id');
         if($('#'+id).is(':checked')){
-          $('#'+id).val(1);
+          //$('#'+id).val(1);
         }else{
-          $('#'+id).val(0);
+          $('#'+id).val('');
         }
     });
+
+    /* $(function(){
+      $('#mdl-checkbox__input').click(function(){
+        window.val = [];
+        $(':checkbox:checked').each(function(i){
+          window.val[i] = $(this).val();
+        });
+      });
+    });*/
 
 });
 </script>

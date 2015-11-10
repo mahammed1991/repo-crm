@@ -264,6 +264,7 @@ class SalesforceLeads(object):
                              'tag_via_gtm': '00Nd0000007esIr',
                              'picasso_objective': '00NZ0000001oMgc',
                              'picasso_pod': '00NZ0000001p4oL',  # Picasso POD name
+                             'picasso_objective_list[]': '00NZ0000001gtTe',
                              }
 
     PRODUCTION_TAG_LEADS_ARGS = {'first_name': 'first_name',

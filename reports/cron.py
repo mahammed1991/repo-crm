@@ -609,6 +609,7 @@ def create_or_update_picasso_leads(records, sf):
         lead.team = team
         lead.sf_lead_id = sf_lead_id
         lead.picasso_objective = rec.get('Picasso_Objective__c') if rec.get('Picasso_Objective__c') else ''
+        lead.picasso_multiple_objectives = (rec.get('Test_List__c')).replace(';', ',') if rec.get('Test_List__c') else '' #replace(';', ',')
         lead.pod_name = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
 
         try:

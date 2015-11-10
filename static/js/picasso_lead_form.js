@@ -18,9 +18,6 @@ function validatethis(frm) {
       return false;
     }
 
-    t_typeElem = document.getElementById('picasso_objective')
-    validateFiled(t_typeElem)
-    
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
     validateFiled(grefElem);
@@ -36,11 +33,13 @@ function validatethis(frm) {
 
     if($('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked")){
       $('.checkboxvalidation').removeClass('error-box');
+
     }else{
       alert('Please select atleast one objective')
       $('.checkboxvalidation').addClass('error-box');
       window.is_error = true;
     }
+
     companyElem  = document.getElementById('last_name')
     validateFiled(companyElem)
 
