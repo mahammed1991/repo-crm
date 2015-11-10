@@ -454,7 +454,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         else:
             mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
             query = {'lead_status__in': lead_status, 'type_1': 'PICASSO'}
-        lead_status = {'In Queue': 0, 'Audited': 0, 'Already responsive': 0, 'Delivered': 0}
+        lead_status = {'In Queue': 0, 'Audited': 0, 'Delivered': 0}
         total_lead_status_dict = PicassoLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(cnt=Count('lead_status'))
         for lead_status_cnt in total_lead_status_dict:
             lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
@@ -660,7 +660,7 @@ def get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_da
     else:
         email_list = [email]
 
-    lead_status = {'In Queue': 0, 'Audited': 0, 'Already responsive': 0, 'Delivered': 0, 'Total': 0}
+    lead_status = {'In Queue': 0, 'Audited': 0, 'Delivered': 0, 'Total': 0}
 
     if start_date and end_date:
         mylist = [Q(lead_status__in=lead_status)]
