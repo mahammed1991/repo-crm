@@ -85,25 +85,27 @@
         <input type="text" class="form-control" id="last_name" maxlength="255" name="last_name" placeholder="Company Name">
       </div>
 
-      <div class="col-md-3">
+      <div class="col-md-6">
         <label for="picasso_objective">Objective</label></br>
+        <div class="check1" style="height:71px;">
         <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input" type="checkbox" name="buy_online" id="buy_online"><span>Buy Online</span></br>
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="buy_online" id="buy_online" value="0"><span>Buy Online</span></br>
         </label>
         <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input" type="checkbox" name="form_entry" id="form_entry"><span>Form Entry</span></br>
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="form_entry" id="form_entry" value="0"><span>Form Entry</span></br>
         </label>
           <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input" type="checkbox" name="call_your_business" id="call_your_business"><span>Call your Business</span>
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="call_your_business" id="call_your_business" value="0"><span>Call your Business</span>
         </label>
-      </div>
-      <div class="col-md-3" style="margin-top: 27px;">
-        <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input" type="checkbox" name="engage_with_your_content" id="engage_with_your_content"><span>Engage with your Content</span></br>
+      <!-- </div>
+      <div class="col-md-3 check1" style="margin-top: 27px;"> -->
+        <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="margin-left: 198px;margin-top: -142px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="engage_with_your_content" id="engage_with_your_content" value="0"><span>Engage with your Content</span></br>
         </label>
-        <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-          <input class="mdl-checkbox__input" type="checkbox" name="become_a_fan" id="become_a_fan"><span>Become a Fan</span>
+        <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="margin-left: 198px;margin-top: -130px;">
+          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="become_a_fan" id="become_a_fan" value="0"><span>Become a Fan</span>
         </label>
+        </div>
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
@@ -111,7 +113,7 @@
         </div>
      
       
-       <div class="col-md-6" style="margin-left: -251px; margin-top:20px">
+       <div class="col-md-6" style="margin-left: -1000px; margin-top:113px">
           <label for="code1">Goal</label>
           <textarea class="form-control" name="code1" id="code1"></textarea>
         </div>
@@ -141,6 +143,18 @@
 <script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
-  olark('api.box.hide');
+  $(document).ready(function(){
+    olark('api.box.hide');
+
+     $(document).on('change', '.mdl-checkbox__input', function() {
+        id = $(this).attr('id');
+        if($('#'+id).is(':checked')){
+          $('#'+id).val(1);
+        }else{
+          $('#'+id).val(0);
+        }
+    });
+
+});
 </script>
 {% endblock main_js %}
