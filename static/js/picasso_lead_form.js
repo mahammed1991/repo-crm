@@ -35,10 +35,10 @@ function validatethis(frm) {
     }
 
     if($('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked")){
-      $('.check1').removeClass('error-box');
+      $('.checkboxvalidation').removeClass('error-box');
     }else{
       alert('Please select atleast one objective')
-      $('.check1').addClass('error-box');
+      $('.checkboxvalidation').addClass('error-box');
       window.is_error = true;
     }
     companyElem  = document.getElementById('last_name')
@@ -62,11 +62,6 @@ function validatethis(frm) {
     }  
   }
 
-// if('.picasso_objective').prop("checked"){
-//   var id = $(this).attr('id');
-//   var value = $(this).attr('value')
-//   alert(value)
-// }
   function validateFiled(elem){
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
