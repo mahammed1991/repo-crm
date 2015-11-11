@@ -512,7 +512,7 @@ def create_or_update_picasso_leads(records, sf):
             # create new lead
             is_new_lead = True
             lead = PicassoLeads()
-        lead.lead_status = rec.get('Picasso_Lead_Stage__c')
+        lead.lead_status = rec.get('Picasso_Lead_Stage__c') if rec.get('Picasso_Lead_Stage__c') else 'In Queue'
         lead.type_1 = type_1
 
         # Google Representative email and name

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location
+from leads.models import Location, PicassoLeads
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range
 from django.conf import settings
@@ -894,3 +894,38 @@ def picasso_reports(request):
     if manager:
         team_members = get_user_under_manager(request.user.email)
     return render(request, 'reports/picasso_reports.html', {'picasso': True, 'manager': manager, 'team_members': team_members})
+
+
+def download_picasso_report(request):
+    report_type = request.POST.get('download_report_type', None)
+    report_timeline = request.POST.getlist('download_report_timeline')
+    team_members = request.POST.getlist('download_team_members[]')
+
+    if report_timeline:
+        start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+    # Get teams
+    if 'all' in team_members:
+        if len(team_members) > 1:
+            team_members.remove('all')
+        else:
+            team_members = team_members
+    if report_type == 'default_report':
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
+    elif report_type == 'leadreport_individualRep':
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, google_rep_email__in=[request.user.email])
+    elif report_type == 'leadreport_teamLead':
+        team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+        team_emails.append(request.user.email)
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, google_rep_email__in=team_emails)
+    elif report_type == 'leadreport_superUser':
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
+
+    selected_fields = ['Google Account Manager', 'Email', 'Team', 'Customer ID', 'Internal CID', 'POD Name', 'Company / Account', 'Objectives', 'Recommondation', 'URL', 'Lead Status', 'Lead ID', 'Goal', 'Lead Owner','First Name', 'Last Name' ]
+    filename = "leads-%s-to-%s" % (datetime.strftime(start_date, "%d-%b-%Y"), datetime.strftime(end_date, "%d-%b-%Y"))
+    leads = DownloadLeads.get_leads_for_picasso_report(leads, start_date, end_date, selected_fields)
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, leads, selected_fields)
+    response = DownloadLeads.get_downloaded_file_response(path)
+    return response

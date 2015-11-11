@@ -22,4 +22,5 @@ urlpatterns = patterns(
     url(r'^user-events/$', views.user_events),
     url(r'^csat-reports/$', views.csat_reports),
     url(r'^picasso/$', views.picasso_reports),
+    url(r'^download-picasso-report/$', views.download_picasso_report),
 )

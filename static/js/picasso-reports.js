@@ -1,8 +1,19 @@
 $(document).ready(function() {
   getPicassoReport({'report_type': 'default_report', 'report_timeline': ['today']})
-  
-});
 
+  });
+
+
+$("#download_picasso").click(function(){
+    if($(this).is(":checked")){
+      $('#download_picasso_report').show();
+    }else{
+      $('#download_picasso_report').hide();
+      $('#download_report_type').val('');
+      $('#download_report_timeline').val('');
+    }
+
+});
 
 function showFilters(){
   $('#filter_picasso_report_type').show();
@@ -48,7 +59,6 @@ $("#filter_picasso_report_type").change(function() {
 
 /*=================Get Reports by clicking view Reports Button=====================*/
 $("#get_picasso_report").click(function(){
-  $("#download").prop('disabled', false);
     $('#form_ldap_id').prop("value",window.current_ldap);
     var isError = false;
     var dataString = {}
@@ -158,3 +168,53 @@ function treatment_type_and_lead_status_analysis_table(table_header , table_data
   $('#picasso_treatment_lead_status_table').append(header+data_row+values)
 }
 
+$("#download_picasso_report").click(function(){
+    $('#form_ldap_id').prop("value",window.current_ldap);
+    var isError = false;
+    var dataString = {}
+    var selectedReportType = $("#filter_picasso_report_type").val();
+    var selectedTimeline = $("#picasso_filter_timeline").val();
+    //var selectedRegion = $('#filter_region').val();
+
+    // Get report type details
+    if(!selectedReportType){
+        var errMsg = "Please select report type";
+          showErrorMessage(errMsg);
+          isError = true;
+    }else{
+        dataString['report_type'] = selectedReportType;
+        $('#download_report_type').val($("#filter_picasso_report_type").val());
+      
+    }
+    // Get timeline details
+    if(!selectedTimeline){
+        var errMsg = "Please select timeline from dropdown list";
+        showErrorMessage(errMsg);
+        isError = true;
+    }else{
+      dataString['report_timeline'] = [selectedTimeline];
+      $('#download_report_timeline').val([$("#picasso_filter_timeline").val()]);
+    }
+
+    team_members = [];
+    if ($("#picasso_filter_team_members").is(":visible")){
+      $("#picasso_filter_team_members label input:checked").each(function(){
+        team_members.push($(this).val());
+      });  
+      if (team_members.length < 1){
+          var errMsg = "Please select atleast one member from your team";
+          showErrorMessage(errMsg);
+          isError = true;
+        }  
+    }
+
+    dataString['team_members'] = team_members;
+    $('#download_team_members').val(team_members)
+
+     if(isError){
+        return false;
+    }else{
+      // Ajax call for get reports
+      return true
+    }
+});

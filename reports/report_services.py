@@ -1685,6 +1685,45 @@ class DownloadLeads(object):
         return results
 
     @staticmethod
+    def get_leads_for_picasso_report(leads, from_date, to_date, selected_fields):
+        results = list()
+        for lead in leads:
+            row = dict()
+            lead_dict = dict()
+
+            row['Email'] = str(lead.google_rep_email.encode('utf-8'))
+            row['Lead Owner'] = str(lead.lead_owner_name.encode('utf-8'))
+            row['Regalix E-mails'] = str(lead.lead_owner_email.encode('utf-8'))
+            row['Company / Account'] = str(lead.company.encode('utf-8'))
+
+            row['Customer ID'] = lead.customer_id
+            row['First Name'] = str(lead.first_name.encode('utf-8'))
+            row['Last Name'] = str(lead.last_name.encode('utf-8'))
+            row['Phone'] = str(lead.phone.encode('utf-8'))
+
+            row['Goal'] = str(lead.code_1.encode('utf-8'))
+            row['URL'] = str(lead.url_1.encode('utf-8'))
+            row['Recommondation'] = str(lead.comment_1.encode('utf-8'))
+            row['Internal CID'] = str(lead.internal_cid)
+            row['POD Name'] = str(lead.pod_name.encode('utf-8'))
+            row['Objectives'] = str(lead.picasso_objective.encode('utf-8')).replace(';', ',')
+
+            row['Google Account Manager'] = str(lead.google_rep_name.encode('utf-8'))
+            row['Lead Status'] = lead.lead_status
+            row['Task Type'] = str(lead.type_1.encode('utf-8'))
+            row['Team'] = lead.team
+
+            row['Lead ID'] = lead.sf_lead_id
+
+            for field in selected_fields:
+                if field in row.keys():
+                    lead_dict[field] = row[field]
+
+            results.append(lead_dict)
+
+        return results
+
+    @staticmethod
     def download_lead_data(from_date, to_date, fields_type):
         from_date = datetime.strptime(from_date, "%b %d, %Y")
         to_date = datetime.strptime(to_date, "%b %d, %Y")
