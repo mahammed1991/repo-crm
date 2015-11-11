@@ -21,4 +21,11 @@ urlpatterns = patterns(
     url(r'^export-appointments/$', views.export_appointments),
     url(r'^manage-appointments/$', views.manage_appointments),
 
+    # initially for demo
+    url(r'^total-appoitments/$', views.total_appoitments),
+    url(
+        r'^total-appoitments/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/$',
+        views.total_appoitments
+    ),
+
 )

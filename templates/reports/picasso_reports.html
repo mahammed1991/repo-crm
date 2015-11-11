@@ -90,6 +90,18 @@
 			</div>
 			<div class="btn-row">
                 <button class="btn std-btn" id='get_picasso_report'>View Report</button>
+                <br>
+                <label for="download_picasso" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:198px;margin-top:12px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="download_picasso" id="download_picasso" ><span>Want to Download Report?</span>
+                <form method="POST" action="{% url 'reports.views.download_picasso_report' %}" name="download_reports" id="download_reports">
+                    {% csrf_token %}
+                        <input type="hidden" name="download_report_type" id="download_report_type" value="" />
+                        <input type="hidden" name="download_report_timeline" id="download_report_timeline" value="" />
+                        <input type="hidden" name="download_team_members" id="download_team_members" value="" />
+                        <button class="btn std-btn" id='download_picasso_report' style="margin-top: 7px; margin-left: -25px; display:none;">Download Report</button>
+                </form>
+
+        </label>
             </div>
             <h2>Lead Status Summary</h2>
             <div id="no_data" style="margin-left=475px;">Currently No Leads for selected Timeline</div>

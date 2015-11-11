@@ -346,6 +346,13 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     )
 
 
+def manage_appointments(request):
+    exclude_types = ['MIGRATION']
+    teams = RegalixTeams.objects.exclude(process_type__in=exclude_types).filter(is_active=True).exclude(team_name='default team')
+    process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
+    return render(request, 'representatives/manager_total.html', {'teams': teams, 'process_types': process_types})
+
+
 @login_required
 def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process_type='TAG', location_id=0, time_zone='IST'):
     # if month is not specified, select current month
@@ -863,8 +870,174 @@ def mail_slot_changes(request, selected_team, changed_records):
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
 
-def manage_appointments(request):
+@login_required
+def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
+    """ Manage scheduling appointments"""
+    process_type = ['TAG', 'SHOPPING', 'WPP']
+    team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team').values('id')
+    time_zone = 'IST'
+    if request.method == 'POST':
+        team_ids = request.POST.getlist('team')
+        process_type = request.POST.getlist('process_type')
+
     exclude_types = ['MIGRATION']
-    teams = RegalixTeams.objects.exclude(process_type__in=exclude_types).filter(is_active=True).exclude(team_name='default team')
+    teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team')
     process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
-    return render(request, 'representatives/manager_total.html', {'teams': teams, 'process_types': process_types})
+    if not teams:
+        # if team is not specified, select first team by default
+        return render(
+            request,
+            'representatives/total_appoitments.html',
+            {'error': True,
+             'message': "No Teams"
+             }
+        )
+
+    if not int(plan_month):
+        # if month is not specified, select current month
+        today = datetime.today()
+        plan_month = today.month
+        return redirect(
+            'representatives.views.total_appoitments',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+            # process_type=process_type,
+            # team_id=team_id
+        )
+
+    if not int(plan_day):
+        # if day is not specified, select today's day
+        today = datetime.today()
+        plan_day = today.day
+        return redirect(
+            'representatives.views.total_appoitments',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+            # process_type=process_type,
+            # team_id=team_id
+        )
+
+    if not int(plan_year):
+        # if year is not specified, select current year
+        today = datetime.today()
+        plan_year = today.year
+        return redirect(
+            'representatives.views.total_appoitments',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+            # process_type=process_type,
+            # team_id=team_id
+        )
+
+    # create date from week start day
+    plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    # if week start day is not monday, select appropriate start week day of given date
+    if plan_date.weekday():
+        plan_date -= timedelta(days=plan_date.weekday())
+        return redirect(
+            'representatives.views.total_appoitments',
+            plan_month=plan_date.month,
+            plan_day=plan_date.day,
+            plan_year=plan_date.year,
+            # process_type=process_type,
+            # team_id=team_id
+        )
+
+    # prepare slot dates to display
+    plan_dates = {
+        'day1': plan_date,
+        'day2': plan_date + timedelta(days=1),
+        'day3': plan_date + timedelta(days=2),
+        'day4': plan_date + timedelta(days=3),
+        'day5': plan_date + timedelta(days=4),
+        'day6': plan_date + timedelta(days=5)
+    }
+
+    # compute next week and previous week start dates
+    prev_week = plan_date + timedelta(days=-7)
+    next_week = plan_date + timedelta(days=7)
+
+    tzone = Timezone.objects.get(zone_name=time_zone)
+    utc_date = SalesforceApi.get_utc_date(plan_date, tzone.time_value)
+    utc_start_date = utc_date
+    utc_end_date = utc_start_date + timedelta(days=6)
+
+    selected_teams = RegalixTeams.objects.filter(id__in=team_ids)
+    appointments_list = Availability.objects.filter(
+        date_in_utc__range=(utc_start_date, utc_end_date),
+        team__in=selected_teams)
+
+    diff = divmod((utc_date - plan_date).total_seconds(), 60)
+    diff_in_minutes = diff[0]
+    total_booked = dict()
+    total_available = dict()
+    # prepare appointments slot keys
+    appointments = dict()
+    for key, _date in plan_dates.items():
+        total_booked[datetime.strftime(_date, '%Y_%m_%d')] = []
+        total_available[datetime.strftime(_date, '%Y_%m_%d')] = []
+        for hour in range(24):
+            # even hour slot
+            minutes = 0
+            even_key = 'input_'  # input_16_6_2014_0_00
+            even_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+            even_key += '_'
+            even_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+            even_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes)
+
+            appointments[even_key] = dict()
+            appointments[even_key]['value'] = 0
+            appointments[even_key]['booked'] = 0
+            appointments[even_key]['disabled'] = True if datetime(
+                _date.year, _date.month, _date.day, hour, minutes) < datetime.utcnow() else False
+
+            # odd hour slot
+            minutes = 30
+            odd_key = 'input_'  # input_16_6_2014_0_00
+            odd_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+            odd_key += '_'
+            odd_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+            odd_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes)
+
+            appointments[odd_key] = dict()
+            appointments[odd_key]['value'] = 0
+            appointments[odd_key]['booked'] = 0
+            appointments[odd_key]['disabled'] = True if datetime(
+                _date.year, _date.month, _date.day, hour, minutes) < datetime.utcnow() else False
+
+    # calculate slots available vs booked for week
+    for apptmnt in appointments_list:
+        apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+
+        key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
+            '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
+        appointments[key]['value'] += int(apptmnt.availability_count)
+        appointments[key]['booked'] += int(apptmnt.booked_count)
+
+        total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
+        total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.booked_count))
+    total_slots = list()
+    for key, value in sorted(total_available.iteritems()):
+        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})
+
+    return render(
+        request,
+        'representatives/total_appoitments.html',
+        {'schedule_date': plan_date,
+         'time_zone': time_zone,
+         'dates': plan_dates,
+         'appointments': appointments,
+         'prev_week': prev_week,
+         'next_week': next_week,
+         'teams': teams,
+         'plan_month': plan_month,
+         'plan_day': plan_day,
+         'plan_year': plan_year,
+         'process_type': process_type,
+         'process_types': process_types,
+         'total_slots': total_slots,
+         }
+    )
