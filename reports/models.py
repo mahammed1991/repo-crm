@@ -119,6 +119,9 @@ class CSATReport(models.Model):
     lead_owner = models.CharField(max_length=100, default='')
     code_type = models.CharField(max_length=100, default='')
     program = models.CharField(max_length=100, default='')
+    mapped_lead_created_date = models.DateTimeField(blank=True, null=True)
+    lead_owner_name = models.CharField(max_length=255, null=True)
+    lead_owner_email = models.CharField(max_length=255, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
