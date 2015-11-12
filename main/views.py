@@ -392,7 +392,11 @@ def get_top_performer_by_date_range(start_date, end_date, lead_type):
 def edit_profile_info(request):
     """ Profile information for user """
     locations = Location.objects.filter(is_active=True)
-    teams = Team.objects.filter(is_active=True)
+    if 'google.com' in request.user.email:
+        tag_teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
+        teams = tag_teams.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound'])
+    else:
+        teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
     managers = User.objects.values_list('email', flat=True)
     managers = [str(m) for m in managers]
     users = User.objects.all()
@@ -464,7 +468,11 @@ def edit_profile_info(request):
 def get_started(request):
     """ Get Initial information from user """
     locations = Location.objects.filter(is_active=True)
-    teams = Team.objects.filter(is_active=True)
+    if 'google.com' in request.user.email:
+        tag_teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
+        teams = tag_teams.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound'])
+    else:
+        teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
     managers = User.objects.values_list('email', flat=True)
     managers = [str(m) for m in managers]
     users = User.objects.all()
