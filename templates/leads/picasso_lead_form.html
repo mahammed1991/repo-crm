@@ -149,9 +149,9 @@
      $(document).on('change', '.mdl-checkbox__input', function() {
         id = $(this).attr('id');
         if($('#'+id).is(':checked')){
-          //$('#'+id).val(1);
+          $('#'+id).val(1);
         }else{
-          $('#'+id).val('');
+          $('#'+id).val(0);
         }
     });
 
