@@ -674,11 +674,17 @@ class ReportService(object):
         csat_query['mapped_lead_created_date__lte'] = end_date
 
         if report_type == 'Region':
+            region_query = dict()
+            region_query['created_date__gte'] = start_date
+            region_query['created_date__lte'] = end_date
+            region_query['country__in'] = ReportService.get_all_locations()
+
+            total_leads, implemented_leads = ReportService.get_region_report_counts(region_query, selected_filters)
+            
+
             regions = Region.objects.all()
-            total_leads = Leads.objects.filter(country__in=ReportService.get_all_locations(),
-                                               created_date__gte=start_date, created_date__lte=end_date).count()
-            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(country__in=ReportService.get_all_locations(), lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required'],
-                                                                                              created_date__gte=start_date, created_date__lte=end_date).count()
+
+
             for region in regions:
                 query = dict()
                 region_data = dict()
@@ -687,22 +693,32 @@ class ReportService(object):
                 query['country__in'] = region_locations
                 query['created_date__gte'] = start_date
                 query['created_date__lte'] = end_date
-                region_data['Leads'] = Leads.objects.filter(**query).count()
+                region_data['Leads'] , region_data['Wins'] = ReportService.get_region_report_counts(query, selected_filters)
+                
                 region_data['Leads in pcg'] = ReportService.get_percentage_value(region_data['Leads'], total_leads)
 
-                query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
-                region_data['Wins'] = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**query).count()
                 region_data['Wins in pcg'] = ReportService.get_percentage_value(region_data['Wins'], implemented_leads)
 
                 csat_query['region__in'] = region_locations
 
+                if 'tag_location_palo_alto' in selected_filters:
+                    csat_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+                    lead_owner_name = []
+                elif 'tag_location_bangalore' in selected_filters:
+                    lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+                else:
+                    lead_owner_name = []
+
                 if 'language_english' in selected_filters:
                     csat_query['language'] = 'ENGLISH'
-                    region_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                    region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
+                    region_csat = region_csat.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
                 elif 'language_non_english' in selected_filters:
-                    region_csat = CSATReport.objects.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                    region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
+                    region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
                 else:
-                    region_csat = CSATReport.objects.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
+                    region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
+                    region_csat = region_csat.filter(**csat_query).values('q1').annotate(dcount=Count('q1'))
 
                 region_data = ReportService.get_response_dict(region_csat, region_data, key_response)
 
@@ -726,15 +742,16 @@ class ReportService(object):
             else:
                 lead_owner_name = []
 
+            csat_query['program__in'] = programs
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
             elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
             else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
            
             details = {'report_type': 'Program', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'team', 'csat_attribute': 'program'}
@@ -758,15 +775,16 @@ class ReportService(object):
             else:
                 lead_owner_name = []
 
+            csat_query['region__in'] = locations
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
             elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
             else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
             details = {'report_type': 'Location', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'country', 'csat_attribute': 'region'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, locations, details)
@@ -788,16 +806,16 @@ class ReportService(object):
                 lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
             else:
                 lead_owner_name = []
-
+            csat_query['code_type__in'] = code_types
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
             elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
             else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
             details = {'report_type': 'Task Type', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'type_1', 'csat_attribute': 'code_type'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, code_types, details)
@@ -822,15 +840,16 @@ class ReportService(object):
             else:
                 lead_owner_name = []
 
+            csat_query['lead_owner__in'] = lead_owner_emails
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
             elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
             else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name=lead_owner_name)
+                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
                 region_csat = region_csat.filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
             details = {'report_type': 'Lead Owner', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'lead_owner_email', 'csat_attribute': 'lead_owner'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, lead_owner_emails, details)
@@ -870,45 +889,83 @@ class ReportService(object):
         if 'language_english' in selected_filters:
             query['language'] = 'ENGLISH'
             total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
-            total_leads_dict = total_leads_dict.exclude(lead_owner_name=lead_owner_name)
-            total_leads_count = Leads.objects.exclude(lead_owner_name=lead_owner_name)
+            total_leads_dict = total_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
+            total_leads_count = Leads.objects.exclude(lead_owner_name__in=lead_owner_name)
             total_leads_count = total_leads_count.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads_dict = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types).values(report_type).annotate(cnt=Count(report_type))
             implemented_leads_dict = implemented_leads_dict.exclude(lead_sub_status='RR - Inactive')
-            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name=lead_owner_name)
+            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types)
-            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name=lead_owner_name)
+            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = implemented_leads_count.exclude(lead_sub_status='RR - Inactive').values(report_type).count()
         elif 'language_non_english' in selected_filters:
             total_leads_dict = Leads.objects.filter(**query).exclude(language='ENGLISH').values(report_type).annotate(cnt=Count(report_type))
-            total_leads_dict = total_leads_dict.exclude(lead_owner_name=lead_owner_name)
+            total_leads_dict = total_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             total_leads_dict = total_leads_dict.exclude(type_1__in=shopping_code_types)
             total_leads_count = Leads.objects.filter(**query).exclude(language='ENGLISH')
-            total_leads_count = total_leads_count.exclude(lead_owner_name=lead_owner_name)
+            total_leads_count = total_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             total_leads_count = total_leads_count.exclude(type_1__in=shopping_code_types).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads_dict = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types).values(report_type).annotate(cnt=Count(report_type))
             implemented_leads_dict = implemented_leads_dict.exclude(language='ENGLISH')
             implemented_leads_dict = implemented_leads_dict.exclude(lead_sub_status='RR - Inactive')
-            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name=lead_owner_name)
+            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types)
             implemented_leads_count = implemented_leads_count.exclude(language='ENGLISH')
-            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name=lead_owner_name)
+            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = implemented_leads_count.exclude(lead_sub_status='RR - Inactive').values(report_type).count()
         else:
             total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
-            total_leads_dict = total_leads_dict.exclude(lead_owner_name=lead_owner_name)
-            total_leads_count = Leads.objects.filter(**query).exclude(lead_owner_name=lead_owner_name)
+            total_leads_dict = total_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
+            total_leads_count = Leads.objects.filter(**query).exclude(lead_owner_name__in=lead_owner_name)
             total_leads_count = Leads.objects.exclude(type_1__in=shopping_code_types).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads_dict = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types).values(report_type).annotate(cnt=Count(report_type))
             implemented_leads_dict = implemented_leads_dict.exclude(lead_sub_status='RR - Inactive')
-            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name=lead_owner_name)
+            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types)
-            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name=lead_owner_name)
+            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = implemented_leads_count.exclude(lead_sub_status='RR - Inactive').values(report_type).count()
         return total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count
+
+
+    @staticmethod
+
+    def get_region_report_counts(region_query, selected_filters):
+        if 'tag_location_palo_alto' in selected_filters:
+            region_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+            lead_owner_name = []
+        elif 'tag_location_bangalore' in selected_filters:
+            lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+        else:
+            lead_owner_name = []
+
+
+        if 'process_tag' in selected_filters:
+            shopping_code_types = ['Google Shopping Setup', 'Google Shopping Migration']
+
+            total_leads = Leads.objects.exclude(lead_owner_name__in=lead_owner_name)
+            total_leads = total_leads.exclude(type_1__in=shopping_code_types).filter(**region_query).count()
+            region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            implemented_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**region_query)
+            implemented_leads = implemented_leads.exclude(lead_owner_name__in=lead_owner_name)
+            implemented_leads = implemented_leads.exclude(lead_sub_status='RR - Inactive').count()
+
+        elif 'process_shopping' in selected_filters:
+            region_query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Migration']
+            total_leads = Leads.objects.exclude(lead_owner_name__in=lead_owner_name).filter(**region_query).count()
+            region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            implemented_leads = Leads.objects.filter(**region_query)
+            implemented_leads = implemented_leads.exclude(lead_owner_name__in=lead_owner_name)
+            implemented_leads = implemented_leads.exclude(lead_sub_status='RR - Inactive').count()
+        else:
+            shopping_code_types = []
+            total_leads = Leads.objects.filter(**region_query).count()
+            region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
+            implemented_leads = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(**region_query).count()
+
+        return total_leads, implemented_leads
 
     @staticmethod
     def get_response_dict(response_dict, region_data, key_response):
