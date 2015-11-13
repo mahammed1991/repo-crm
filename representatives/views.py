@@ -871,7 +871,7 @@ def mail_slot_changes(request, selected_team, changed_records):
 
 
 @login_required
-def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
+def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     """ Manage scheduling appointments"""
     process_type = ['TAG', 'SHOPPING', 'WPP']
     team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team').values('id')
@@ -887,7 +887,7 @@ def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
         # if team is not specified, select first team by default
         return render(
             request,
-            'representatives/total_appoitments.html',
+            'representatives/total_appointments.html',
             {'error': True,
              'message': "No Teams"
              }
@@ -898,7 +898,7 @@ def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
         today = datetime.today()
         plan_month = today.month
         return redirect(
-            'representatives.views.total_appoitments',
+            'representatives.views.total_appointments',
             plan_month=plan_month,
             plan_day=plan_day,
             plan_year=plan_year,
@@ -911,7 +911,7 @@ def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
         today = datetime.today()
         plan_day = today.day
         return redirect(
-            'representatives.views.total_appoitments',
+            'representatives.views.total_appointments',
             plan_month=plan_month,
             plan_day=plan_day,
             plan_year=plan_year,
@@ -924,7 +924,7 @@ def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
         today = datetime.today()
         plan_year = today.year
         return redirect(
-            'representatives.views.total_appoitments',
+            'representatives.views.total_appointments',
             plan_month=plan_month,
             plan_day=plan_day,
             plan_year=plan_year,
@@ -938,7 +938,7 @@ def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
     if plan_date.weekday():
         plan_date -= timedelta(days=plan_date.weekday())
         return redirect(
-            'representatives.views.total_appoitments',
+            'representatives.views.total_appointments',
             plan_month=plan_date.month,
             plan_day=plan_date.day,
             plan_year=plan_date.year,
@@ -1025,7 +1025,7 @@ def total_appoitments(request, plan_month=0, plan_day=0, plan_year=0):
 
     return render(
         request,
-        'representatives/total_appoitments.html',
+        'representatives/total_appointments.html',
         {'schedule_date': plan_date,
          'time_zone': time_zone,
          'dates': plan_dates,

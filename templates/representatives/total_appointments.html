@@ -33,13 +33,13 @@ Manage Appointments
         {% else %}
             <div class="row std-sub-top">
                 <div class="col-xs-2 ">
-                    <a href="{% url 'representatives.views.total_appoitments' prev_week.month prev_week.day prev_week.year %}" class="text-prev">Previous Week</a>
+                    <a href="{% url 'representatives.views.total_appointments' prev_week.month prev_week.day prev_week.year %}" class="text-prev">Previous Week</a>
                 </div>
                 <div class="col-xs-8  title-text">
                     <span>Time Zone: IST(UTC:5:30)</span>
                 </div>
                 <div class="col-xs-2 ">
-                    <a href="{% url 'representatives.views.total_appoitments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
+                    <a href="{% url 'representatives.views.total_appointments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
                 </div>
             </div>
             <form method="post" action="">
@@ -51,19 +51,10 @@ Manage Appointments
                 </div>
                 <div class="col-md-2 box2 bb process" style="padding-top: 9px; margin-left: -9px;">
                     {% for type in process_types %}
-                        <input type='checkbox' name='process_type' value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</input>
+                        <input type='checkbox' name='process_type' id='{{type}}' value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</input>
                     {% endfor %}
                 </div>
-                <div class="col-md-1 cutomwid1">
-                    <label class="lab2">Team</label>
-                </div>
-                <div class="col-md-2 box2 bb team" style='width:433px; padding-top: 9px;margin-left: -9px;'>
-                    {% for team in teams %}
-                        <input type='checkbox' name='team' value='{{team.id}}' {% if team.id == selected_team.id %}selected{% endif %}>{{team}}</input></br>
-                    {% endfor %}
-                </div>
-                
-                <div class="col-md-3 bbc">
+                 <div class="col-md-3 bbc">
                     <div class="checkbox web-access">
                         <span>
                             <svg width="10" height="10" style="margin-right:3%">
@@ -72,18 +63,34 @@ Manage Appointments
                         </span><br />
                       <span>
                         <svg width="12" height="12" style="margin-right:3%">
-                            <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1">
+                            <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1"></rect>
                         </svg>
                       Slots Available</span>
                     </div>
                 </div>
-
-                <div class="col-md-5 bbd">
+            </div>
+             <div class="col-md-1 cutomwid1" style="padding-left:0px;">
+                    <label class="lab2">Team</label>
+                </div>
+            <div class="row">
+               
+                <div class="col-md-12 team" style='padding-top: 9px;'>
+                    {% for team in teams %}
+                        
+                        <div class="col-md-4"> <div class="row">   <input type='checkbox' name='team' id='{{team.id}}' value='{{team.id}}'>{{team}}</input></div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+               
+                </div>
+                <div class="row">
+                <div style="text-align:center; margin: 10px 0px;">
                     <button class="btn std-btn ">Submit</button> 
                 </div>     
             </div>
         </form>
-        <form method="post" action="{% url 'representatives.views.total_appoitments' plan_month plan_day plan_year %}">
+        <form method="post" action="{% url 'representatives.views.total_appointments' plan_month plan_day plan_year %}">
             {% csrf_token %}
             <!-- <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
             <div class="row">
@@ -487,6 +494,7 @@ Manage Appointments
 {% block main_js %}
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script type="text/javascript">
+
     $(document).ready(function(){
         window.old_team = '{{selected_team.id}}';
         window.old_process = '{{process_type}}'

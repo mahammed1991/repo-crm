@@ -1446,6 +1446,9 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
                     csat_record.program = csat_lead[0].team
                     csat_record.code_type = csat_lead[0].type_1
                     csat_record.lead_owner = csat_lead[0].lead_owner_email
+                    csat_record.mapped_lead_created_date = csat_lead[0].created_date
+                    csat_record.lead_owner_name = csat_lead[0].lead_owner_name
+                    csat_record.lead_owner_email = csat_lead[0].lead_owner_email
                     csat_record.language = csat_lead[0].language if csat_lead[0].language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
                     csat_record.category = 'MAPPED'
                 else:
