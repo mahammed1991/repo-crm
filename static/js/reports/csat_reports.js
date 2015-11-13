@@ -190,6 +190,7 @@ function customFilter() {
     updateFilter('survey_channel');
     updateFilter('language');
     updateFilter('process');
+    updateFilter('tag_location');
     displayFilters();
 
 }
