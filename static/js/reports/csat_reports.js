@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    UncheckAll();
     window.reportType = '';
     window.filters = new Array();
     window.timeline = new Array();
@@ -35,6 +36,14 @@ $(document).ready(function() {
     });
 
 });
+function UncheckAll(){ 
+    var getinputelements = document.getElementsByTagName('input'); 
+    for(var i = 0; i < getinputelements.length; i++){ 
+        if(getinputelements[i].type=='checkbox'){ 
+        getinputelements[i].checked = false; 
+        }
+    }
+}
 
 $(document).on('click', '.msc19', function() {
     $('#sel_all').prop('checked', false);
@@ -210,6 +219,10 @@ function updateFilter(name) {
     });
 
 }
+
+$(document).on('click', '#myselect li', function() {
+    customFilter();
+});
 
 function displayFilters() {
     $("#myselect li").remove();
