@@ -54,10 +54,10 @@ class SalesforceLeads(object):
                                 'treatment_type': '00Nd0000008MFng',
                                 'ab_testing': '00Nd0000008MFnl',
                                 'tracking_code': '00Nd0000008MFnq',
-                                'role_other': '00Nd0000008MP6r',
+                                'role_other1': '00Nd0000008MP6r',
                                 'additional_notes': '00Nd0000007eiKf',
-                                'advertiser_role': '00Nd0000008MVDh',
-                                'picasso_lead_status': '00NZ0000001grqW',
+                                'advertiser_role1': '00Nd0000008MVDh',
+                                'picasso_lead_status': '00Nd0000007xSwh',
 
                                 # Appointment IST time
                                 'appointment_in_ist': '00Nd0000007fnbe',
@@ -67,6 +67,20 @@ class SalesforceLeads(object):
 
                                 # Lead Type
                                 'lead_type': '00Nd0000007fftD',
+
+                                # 'first_name2': '00Nd0000005WYgp',
+                                # 'last_name2': '00Nd0000005WYgu',
+                                'phone2': '00Nd0000005WYgz',
+                                'wpp_aemail2': '00Nd0000005WYh4',
+                                'advertiser_role2': '00Nd00000081NuM',
+                                'role_other2': '00Nd00000081R68',
+
+                                'first_name3': '00Nd00000081NuR',
+                                'last_name3': '00Nd00000081NuW',
+                                'wpp_aemail3': '00Nd00000081Nub',
+                                'phone3': '00Nd00000081Nug',
+                                'advertiser_role3': '00Nd00000081Nul',
+                                'role_other3': '00Nd00000081R6D',
 
                                 'Campaign_ID': 'Campaign_ID',
                                 'oid': 'oid',
@@ -126,9 +140,9 @@ class SalesforceLeads(object):
                                    'treatment_type': '00Nd0000008MFng',
                                    'ab_testing': '00Nd0000008MFnl',
                                    'tracking_code': '00Nd0000008MFnq',
-                                   'role_other': '00Nd0000008MP6r',
+                                   'role_other1': '00Nd0000008MP6r',
                                    'additional_notes': '00Nd0000007eiKf',
-                                   'advertiser_role': '00Nd0000008MVDh',
+                                   'advertiser_role1': '00Nd0000008MVDh',
                                    'picasso_lead_status': '00Nd0000007xSwh',
 
                                    # Appointment IST time
@@ -139,6 +153,20 @@ class SalesforceLeads(object):
 
                                    # Lead Type
                                    'lead_type': '00Nd0000007fftD',
+
+                                   # 'first_name2': '00Nd0000005WYgp',
+                                   # 'last_name2': '00Nd0000005WYgu',
+                                   'phone2': '00Nd0000005WYgz',
+                                   'wpp_aemail2': '00Nd0000005WYh4',
+                                   'advertiser_role2': '00Nd00000081NuM',
+                                   'role_other2': '00Nd00000081R68',
+
+                                   'first_name3': '00Nd00000081NuR',
+                                   'last_name3': '00Nd00000081NuW',
+                                   'wpp_aemail3': '00Nd00000081Nub',
+                                   'phone3': '00Nd00000081Nug',
+                                   'advertiser_role3': '00Nd00000081Nul',
+                                   'role_other3': '00Nd00000081R6D',
 
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
@@ -159,19 +187,19 @@ class SalesforceLeads(object):
                              'rbudget1': '00Nd0000007fJ4E',  # Recommended Budget1
                              'ga_setup1': '00Nd0000007fIlH',  # Is GS Setup1
                              'analytics_code1': '00Nd0000008MVDI',  # analytics_code1
-                             'call_extension1': '00NZ0000001j0pm',  # Created Call Extension1
-                             'product_behaviour1': '00NZ0000001j0qQ',  # Product Behaviour1
-                             'cartpage_behaviour1': '00NZ0000001j0qp',  # Cart Page Behaviour1
-                             'checkout_process1': '00NZ0000001j0rE',  # Check Out Behaviour1
-                             'transaction_behaviour1': '00NZ0000001j0ri',  # Transaction Behaviour1
-                             'user_list_id1': '00NZ0000001jwDC',  # User List ID 1 for RLSA Bulk Implementation
-                             'rsla_bid_adjustment1': '00NZ0000001jwKI',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
-                             'internal_cid1': '00NZ0000001o07G',  # RLSA Internal Xustomer ID 1
-                             'campaign_ids1': '00NZ0000001o084',  # RLSA campaign Ids 1
-                             'rsla_policies1': '00NZ0000001jwFX',  # RLSA Policies 1 for RLSA Bulk Implementation
-                             'create_new_bid_modifiers1': '00NZ0000001o08n',  # RLSA New Bid Modifiers 1 for RLSA Bulk Implementation
-                             'overwrite_existing_bid_modifiers1': '00NZ0000001o09l',  # RLSA Exist Bid Modifiers 1 for RLSA Bulk Implementation
+                             'call_extension1': '00Nd0000008Mi5L',  # Created Call Extension1
+                             'product_behaviour1': '00Nd0000008Mi5f',  # Product Behaviour1
+                             'cartpage_behaviour1': '00Nd0000008Mi64',  # Cart Page Behaviour1
+                             'checkout_process1': '00Nd0000008Mi6T',  # Check Out Behaviour1
+                             'transaction_behaviour1': '00Nd0000008Mi6s',  # Transaction Behaviour1
 
+                             'user_list_id1': '00Nd0000008N42s',  # User List ID 1 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment1': '00Nd0000008N445',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
+                             'internal_cid1': '00Nd0000008N8wL',  # RLSA Internal Xustomer ID 1
+                             'campaign_ids1': '00Nd0000008N8x4',  # RLSA campaign Ids 1
+                             'rsla_policies1': '00Nd0000008N43g',  # RLSA Policies 1 for RLSA Bulk Implementation
+                             'create_new_bid_modifiers1': '00Nd0000008N8yC',  # RLSA New Bid Modifiers 1 for RLSA Bulk Implementation
+                             'overwrite_existing_bid_modifiers1': '00Nd0000008N8xY',  # RLSA Exist Bid Modifiers 1 for RLSA Bulk Implementation
 
                              # Code Type 2 Details
                              'ctype2': '00Nd0000005WYkS',  # Code Type2
@@ -182,18 +210,19 @@ class SalesforceLeads(object):
                              'rbudget2': '00Nd0000007fJ4J',  # Recommended Budget2
                              'ga_setup2': '00Nd0000007fJ1y',  # Is GS Setup2
                              'analytics_code2': '00Nd0000008MVDN',  # analytics_code2
-                             'call_extension2': '00NZ0000001j0pr',  # Created Call Extension2
-                             'product_behaviour2': '00NZ0000001j0qV',  # Product Behaviour2
-                             'cartpage_behaviour2': '00NZ0000001j0qu',  # Cart Page Behaviour2
-                             'checkout_process2': '00NZ0000001j0rJ',  # Check Out Behaviour2
-                             'transaction_behaviour2': '00NZ0000001j0rn',  # Transaction Behaviour2
-                             'user_list_id2': '00NZ0000001jwDH',  # User List ID 2 for RLSA Bulk Implementation
-                             'rsla_bid_adjustment2': '00NZ0000001jwKN',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
-                             'internal_cid2': '00NZ0000001o07k',  # RLSA Internal Xustomer ID 2
-                             'campaign_ids2': '00NZ0000001o089',  # RLSA campaign Ids 2
-                             'rsla_policies2': '00NZ0000001jwFh',  # RLSA Policies 2 for RLSA Bulk Implementation
-                             'create_new_bid_modifiers2': '00NZ0000001o08s',  # RLSA New Bid Modifiers 2 for RLSA Bulk Implementation
-                             'overwrite_existing_bid_modifiers2': '00NZ0000001o0A0',  # RLSA Exist Bid Modifiers 2 for RLSA Bulk Implementation
+                             'call_extension2': '00Nd0000008MhD9',  # Created Call Extension2
+                             'product_behaviour2': '00Nd0000008Mi5k',  # Product Behaviour2
+                             'cartpage_behaviour2': '00Nd0000008Mi69',  # Cart Page Behaviour2
+                             'checkout_process2': '00Nd0000008Mi6Y',  # Check Out Behaviour2
+                             'transaction_behaviour2': '00Nd0000008Mi6x',  # Transaction Behaviour2
+
+                             'user_list_id2': '00Nd0000008N42x',  # User List ID 2 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment2': '00Nd0000008N44A',  # RLSA Bid Adjustment 2 for RLSA Bulk Implementation
+                             'internal_cid2': '00Nd0000008N8wV',  # RLSA Internal Xustomer ID 2
+                             'campaign_ids2': '00Nd0000008N8x9',  # RLSA campaign Ids 2
+                             'rsla_policies2': '00Nd0000008N43l',  # RLSA Policies 2 for RLSA Bulk Implementation
+                             'create_new_bid_modifiers2': '00Nd0000008N8yM',  # RLSA New Bid Modifiers 2 for RLSA Bulk Implementation
+                             'overwrite_existing_bid_modifiers2': '00Nd0000008N8xd',  # RLSA Exist Bid Modifiers 2 for RLSA Bulk Implementation
 
                              # Code Type 3 Details
                              'ctype3': '00Nd0000005WYkX',  # Code Type3
@@ -204,18 +233,19 @@ class SalesforceLeads(object):
                              'rbudget3': '00Nd0000007fJ4O',  # Recommended Budget3
                              'ga_setup3': '00Nd0000007fJ23',  # Is GS Setup3
                              'analytics_code3': '00Nd0000008MVDS',  # analytics_code3
-                             'call_extension3': '00NZ0000001j0q1',  # Created Call Extension3
-                             'product_behaviour3': '00NZ0000001j0qa',  # Product Behaviour3
-                             'cartpage_behaviour3': '00NZ0000001j0qz',  # Cart Page Behaviour3
-                             'checkout_process3': '00NZ0000001j0rO',  # Check Out Behaviour3
-                             'transaction_behaviour3': '00NZ0000001j0rx',  # Transaction Behaviour3
-                             'user_list_id3': '00NZ0000001jwDM',  # User List ID 3 for RLSA Bulk Implementation
-                             'rsla_bid_adjustment3': '00NZ0000001jwKS',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
-                             'internal_cid3': '00NZ0000001o07p',  # RLSA Internal Xustomer ID 3
-                             'campaign_ids3': '00NZ0000001o08J',  # RLSA campaign Ids 3
-                             'rsla_policies3': '00NZ0000001jwFm',  # RLSA Policies 3 for RLSA Bulk Implementation
-                             'create_new_bid_modifiers3': '00NZ0000001o08x',  # RLSA New Bid Modifiers 3 for RLSA Bulk Implementation
-                             'overwrite_existing_bid_modifiers3': '00NZ0000001o0AA',  # RLSA Exist Bid Modifiers 3 for RLSA Bulk Implementation
+                             'call_extension3': '00Nd0000008Mi5Q',  # Created Call Extension3
+                             'product_behaviour3': '00Nd0000008Mi5p',  # Product Behaviour3
+                             'cartpage_behaviour3': '00Nd0000008Mi6E',  # Cart Page Behaviour3
+                             'checkout_process3': '00Nd0000008Mi6d',  # Check Out Behaviour3
+                             'transaction_behaviour3': '00Nd0000008Mi72',  # Transaction Behaviour3
+
+                             'user_list_id3': '00Nd0000008N432',  # User List ID 3 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment3': '00Nd0000008N44F',  # RLSA Bid Adjustment 3 for RLSA Bulk Implementation
+                             'internal_cid3': '00Nd0000008N8wk',  # RLSA Internal Xustomer ID 3
+                             'campaign_ids3': '00Nd0000008N8xE',  # RLSA campaign Ids 3
+                             'rsla_policies3': '00Nd0000008N43q',  # RLSA Policies 3 for RLSA Bulk Implementation
+                             'create_new_bid_modifiers3': '00Nd0000008N8yR',  # RLSA New Bid Modifiers 3 for RLSA Bulk Implementation
+                             'overwrite_existing_bid_modifiers3': '00Nd0000008N8xi',  # RLSA Exist Bid Modifiers 3 for RLSA Bulk Implementation
 
                              # Code Type 4 Details
                              'ctype4': '00Nd0000005WYkm',  # Code Type4
@@ -225,19 +255,21 @@ class SalesforceLeads(object):
                              'rbid4': '00Nd0000007fJ44',  # Recommended Bid4
                              'rbudget4': '00Nd0000007fJ4Y',  # Recommended Budget4
                              'ga_setup4': '00Nd0000007fJ28',  # Is GS Setup4
-                             'analytics_code4': '00Nd0000008MVDX',  # analytics_code1
-                             'call_extension4': '00NZ0000001j0q6',  # Created Call Extension4
-                             'product_behaviour4': '00NZ0000001j0qf',  # Product Behaviour4
-                             'cartpage_behaviour4': '00NZ0000001j0r4',  # Cart Page Behaviour4
-                             'checkout_process4': '00NZ0000001j0rT',  # Check Out Behaviour4
-                             'transaction_behaviour4': '00NZ0000001j0s2',  # Transaction Behaviour4
-                             'user_list_id4': '00NZ0000001jwDR',  # User List ID 4 for RLSA Bulk Implementation
-                             'rsla_bid_adjustment4': '00NZ0000001jwKX',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
-                             'internal_cid4': '00NZ0000001o07u',  # RLSA Internal Xustomer ID 4
-                             'campaign_ids4': '00NZ0000001o08O',  # RLSA campaign Ids 4
-                             'rsla_policies4': '00NZ0000001jwFw',  # RLSA Policies 4 for RLSA Bulk Implementation
-                             'create_new_bid_modifiers4': '00NZ0000001o092',  # RLSA New Bid Modifiers 4 for RLSA Bulk Implementation
-                             'overwrite_existing_bid_modifiers4': '00NZ0000001o0AP',  # RLSA Exist Bid Modifiers 4 for RLSA Bulk Implementation
+                             'analytics_code4': '00Nd0000008MVDX',  # analytics_code4
+                             'call_extension4': '00Nd0000008Mi5V',  # Created Call Extension4
+                             'product_behaviour4': '00Nd0000008Mi5u',  # Product Behaviour4
+                             'cartpage_behaviour4': '00Nd0000008Mi6J',  # Cart Page Behaviour4
+                             'checkout_process4': '00Nd0000008Mi6i',  # Check Out Behaviour4
+                             'transaction_behaviour4': '00Nd0000008Mi77',  # Transaction Behaviour4
+
+                             'user_list_id4': '00Nd0000008N437',  # User List ID 4 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment4': '00Nd0000008N44K',  # RLSA Bid Adjustment 4 for RLSA Bulk Implementation
+                             'internal_cid4': '00Nd0000008N8wu',  # RLSA Internal Xustomer ID 4
+                             'campaign_ids4': '00Nd0000008N8xO',  # RLSA campaign Ids 4
+                             'rsla_policies4': '00Nd0000008N43v',  # RLSA Policies 4 for RLSA Bulk Implementation
+                             'create_new_bid_modifiers4': '00Nd0000008N8yg',  # RLSA New Bid Modifiers 4 for RLSA Bulk Implementation
+                             'overwrite_existing_bid_modifiers4': '00Nd0000008N8xn',  # RLSA Exist Bid Modifiers 4 for RLSA Bulk Implementation
+
 
                              # Code Type 4 Details
                              'ctype5': '00Nd0000005WYl6',  # Code Type5
@@ -247,23 +279,24 @@ class SalesforceLeads(object):
                              'rbid5': '00Nd0000007fJ49',  # Recommended Bid5
                              'rbudget5': '00Nd0000007fJ4d',  # Recommended Budget5
                              'ga_setup5': '00Nd0000007fJ2D',  # Is GS Setup5
-                             'analytics_code5': '00Nd0000008MVDc',  # analytics_code1
-                             'call_extension5': '00NZ0000001j0qB',  # Created Call Extension5
-                             'product_behaviour5': '00NZ0000001j0qk',  # Product Behaviour5
-                             'cartpage_behaviour5': '00NZ0000001j0r9',  # Cart Page Behaviour5
-                             'checkout_process5': '00NZ0000001j0rd',  # Check Out Behaviour5
-                             'transaction_behaviour5': '00NZ0000001j0s7',  # Transaction Behaviour5
-                             'user_list_id5': '00NZ0000001jwDb',  # User List ID 5 for RLSA Bulk Implementation
-                             'rsla_bid_adjustment5': '00NZ0000001jwKc',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
-                             'internal_cid5': '00NZ0000001o07z',  # RLSA Internal Xustomer ID 5
-                             'campaign_ids5': '00NZ0000001o08T',  # RLSA campaign Ids 5
-                             'rsla_policies5': '00NZ0000001jwKD',  # RLSA Policies 5 for RLSA Bulk Implementation
-                             'create_new_bid_modifiers5': '00NZ0000001o097',  # RLSA New Bid Modifiers 5 for RLSA Bulk Implementation
-                             'overwrite_existing_bid_modifiers5': '00NZ0000001o0Ae',  # RLSA Exist Bid Modifiers 5 for RLSA Bulk Implementation
+                             'analytics_code5': '00Nd0000008MVDc',  # analytics_code5
+                             'call_extension5': '00Nd0000008Mi5a',  # Created Call Extension5
+                             'product_behaviour5': '00Nd0000008Mi5z',  # Product Behaviour5
+                             'cartpage_behaviour5': '00Nd0000008Mi6O',  # Cart Page Behaviour5
+                             'checkout_process5': '00Nd0000008Mi6n',  # Check Out Behaviour5
+                             'transaction_behaviour5': '00Nd0000008Mi7C',  # Transaction Behaviour5
+
+                             'user_list_id5': '00Nd0000008N43C',  # User List ID 5 for RLSA Bulk Implementation
+                             'rsla_bid_adjustment5': '00Nd0000008N44P',  # RLSA Bid Adjustment 5 for RLSA Bulk Implementation
+                             'internal_cid5': '00Nd0000008N8wz',  # RLSA Internal Xustomer ID 5
+                             'campaign_ids5': '00Nd0000008N8xT',  # RLSA campaign Ids 5
+                             'rsla_policies5': '00Nd0000008N440',  # RLSA Policies 5 for RLSA Bulk Implementation
+                             'create_new_bid_modifiers5': '00Nd0000008N8yl',  # RLSA New Bid Modifiers 5 for RLSA Bulk Implementation
+                             'overwrite_existing_bid_modifiers5': '00Nd0000008N8xx',  # RLSA Exist Bid Modifiers 5 for RLSA Bulk Implementation
 
                              'tag_via_gtm': '00Nd0000007esIr',
-                             'picasso_objective_list[]': '00NZ0000001oMgc',
-                             'picasso_pod': '00NZ0000001p4oL',  # Picasso POD name
+                             'picasso_objective_list[]': '00Nd0000007xSXh',
+                             'picasso_pod': '00Nd0000007xVWc',  # Picasso POD name
                              }
 
     PRODUCTION_TAG_LEADS_ARGS = {'first_name': 'first_name',
