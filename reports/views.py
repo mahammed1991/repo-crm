@@ -823,12 +823,16 @@ def csat_reports(request):
                     current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
                     previous_timeline_start, previous_timeline_end = prev_quarter_date_range(datetime.now())
 
+            current_timeline_end = datetime(current_timeline_end.year, current_timeline_end.month, current_timeline_end.day, 23, 59, 59)
+            previous_timeline_end = datetime(previous_timeline_end.year, previous_timeline_end.month, previous_timeline_end.day, 23, 59, 59)
+
             current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
             previous_report_data = ReportService.get_csat_report(selected_filters, report_type, previous_timeline_start, previous_timeline_end)
             current_report_data, previous_report_data = ReportService.get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison)
         else:
             if timeline:
                 current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                current_timeline_end = datetime(current_timeline_end.year, current_timeline_end.month, current_timeline_end.day, 23, 59, 59)
 
             current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
             previous_report_data = ''
@@ -884,7 +888,6 @@ def picasso_reports(request):
         bar_chart_data[0].extend(picasso_report_detail['picasso_program_type_analysis'].keys())
 
         picasso_report_detail['bar_chart_data'] = bar_chart_data
-
         picasso_report_details = {'reports': picasso_report_detail,
                                   'report_type': report_type, 'report_timeline': report_timeline}
 

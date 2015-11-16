@@ -697,17 +697,13 @@ class ReportService(object):
                 
                 region_data['Leads in pcg'] = ReportService.get_percentage_value(region_data['Leads'], total_leads)
 
-                region_data['Wins in pcg'] = ReportService.get_percentage_value(region_data['Wins'], implemented_leads)
+                region_data['Wins in pcg'] = ReportService.get_percentage_value(region_data['Wins'], region_data['Leads'])
 
                 csat_query['region__in'] = region_locations
 
+                csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
                 if 'tag_location_palo_alto' in selected_filters:
-                    csat_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-                    lead_owner_name = []
-                elif 'tag_location_bangalore' in selected_filters:
-                    lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-                else:
-                    lead_owner_name = []
+                    csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
                 if 'language_english' in selected_filters:
                     csat_query['language'] = 'ENGLISH'
@@ -734,13 +730,9 @@ class ReportService(object):
 
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
 
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
-                csat_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-                lead_owner_name = []
-            elif 'tag_location_bangalore' in selected_filters:
-                lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-            else:
-                lead_owner_name = []
+                csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['program__in'] = programs
             if 'language_english' in selected_filters:
@@ -767,13 +759,9 @@ class ReportService(object):
             report_type = 'country'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
 
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
-                csat_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-                lead_owner_name = []
-            elif 'tag_location_bangalore' in selected_filters:
-                lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-            else:
-                lead_owner_name = []
+                csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['region__in'] = locations
             if 'language_english' in selected_filters:
@@ -799,13 +787,10 @@ class ReportService(object):
             report_type = 'type_1'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
             
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
-                csat_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-                lead_owner_name = []
-            elif 'tag_location_bangalore' in selected_filters:
-                lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-            else:
-                lead_owner_name = []
+                csat_query['lead_owner_name__in'] = csat_query_tagteam_location
+
             csat_query['code_type__in'] = code_types
             if 'language_english' in selected_filters:
                 csat_query['language'] = 'ENGLISH'
@@ -832,13 +817,9 @@ class ReportService(object):
             report_type = 'lead_owner_email'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
             
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
-                csat_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-                lead_owner_name = []
-            elif 'tag_location_bangalore' in selected_filters:
-                lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-            else:
-                lead_owner_name = []
+                csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['lead_owner__in'] = lead_owner_emails
             if 'language_english' in selected_filters:
@@ -871,13 +852,9 @@ class ReportService(object):
         else:
             shopping_code_types = []
 
+        query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
         if 'tag_location_palo_alto' in selected_filters:
-            query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-            lead_owner_name = []
-        elif 'tag_location_bangalore' in selected_filters:
-            lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-        else:
-            lead_owner_name = []
+            query['lead_owner_name__in'] = query_tagteam_location
 
         lead_owner_list = ['tom@regalix-inc.com', 'tadashis@google.com', 'yukieh@google.com', 'abaldessin@regalix-inc.com', 'jmartens@regalix-inc.com', 'cburak@google.com', 'arnulfom@google.com']    
         if report_type == 'lead_owner_email':
@@ -931,7 +908,6 @@ class ReportService(object):
 
 
     @staticmethod
-
     def get_region_report_counts(region_query, selected_filters):
         if 'tag_location_palo_alto' in selected_filters:
             region_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
@@ -1032,7 +1008,18 @@ class ReportService(object):
         report_records = collections.OrderedDict(sorted(report_records.items()))
         return report_records.values()
 
-    
+    @staticmethod
+    def get_tagteam_location_for_managers(selected_filters):
+        if 'tag_location_palo_alto' in selected_filters:
+            csat_query = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+            lead_owner_name = []
+        elif 'tag_location_bangalore' in selected_filters:
+            lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+            csat_query = []
+        else:
+            lead_owner_name = []
+            csat_query = []
+        return csat_query, lead_owner_name
 
 
 
