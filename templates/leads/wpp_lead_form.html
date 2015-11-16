@@ -25,6 +25,9 @@
     <input type="hidden" id="ctype1" name="ctype1" value="WPP">
     <input type="hidden" id="code1" name="code1" value="">
     <input type="hidden" id="company" name="company" value="">
+    <input type="hidden" id="fopt" name="fopt" value="">
+    <input type="hidden" id="lopt" name="lopt" value="">
+
     <div class="row">
       
       <div class="col-md-6">
@@ -89,8 +92,8 @@
           <textarea class="form-control" placeholder="Tracking Codes" name="tracking_code" id="tracking_code"></textarea>
         </div>
       </div>
-    <div class="std-sub-title">Advertiser's Contact Details</div>
-    <div class="row">
+    <div class="std-sub-title" >Advertiser's Contact Details</div>
+    <div class="row" id="advertiser_details1">
         <div class="col-md-6">
           <label for="first_name">First Name</label>
           <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
@@ -108,8 +111,8 @@
           <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
         </div>
         <div class="col-md-6">
-        <label for="advertiser_role">Role</label>
-          <select title="Role" class="form-control bgicon" name="advertiser_role" id="advertiser_role">
+          <label for="advertiser_role1">Role</label>
+          <select title="Role" class="form-control bgicon advertiser-role" name="advertiser_role1" id="advertiser_role1">
             <option value="">Role</option>
             <option value="Owner">Owner</option>
             <option value="Marketing">Marketing</option>
@@ -117,11 +120,15 @@
             <option value="Other">Other (please specify)</option>
           </select>
         </div>
-        <div class="col-md-6 role_other" style="display:none;">
-          <label for="role_other">Role Other</label>
-          <input type="tel" class="form-control" id="role_other" name="role_other" placeholder="Role Other">
+        <div class="col-md-6 role-other1" style="display:none;">
+          <label for="role_other1">Role Other</label>
+          <input type="tel" class="form-control" id="role_other1" name="role_other1" placeholder="Role Other">
         </div>
-      </div>
+        <div>
+        <a id="addAdvertiser_1" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Advertiser</a>
+        </div>
+       <!--  <a id="removeAdvertiser_2" class="btn std-btn task-btn remove" style="display:none;"><i class="fa fa-minus-circle"></i>Remove Advertiser</a> -->
+    </div>
     <div class="std-sub-title">Initial Appointment Details</div>
       <div class="row">
         <div class="col-md-6" >
@@ -171,7 +178,88 @@
 <script type="text/javascript">
   $(document).ready(function(){
     $("#country").trigger('change');
-  })
+
+    function addAdvertiser(index){
+    prevIndex = parseInt(index) - 1;
+    nextIndex = parseInt(index) + 1;
+    $('#addAdvertiser_'+prevIndex).hide();
+    $('#removeAdvertiser_'+prevIndex).hide();
+    $('#removeAdvertiser_'+index).show();
+
+   advertiserDetails = '<div class="row" id="advertiser_details'+index+'">' +
+                          '<div class="col-md-6">' +
+                            '<label for="first_name'+index+'">First Name</label>' +
+                            '<input type="text" class="form-control" id="first_name'+index+'" name="first_name'+index+'" placeholder="First Name">' +
+                          '</div>' +
+                          '<div class="col-md-6">' + 
+                            '<label for="last_name'+index+'">Last Name</label>' +
+                            '<input type="text" class="form-control" id="last_name'+index+'" name="last_name'+index+'" placeholder="Last Name">' +
+                          '</div>' +
+                          '<div class="col-md-6">' +
+                            '<label for="wpp_aemail'+index+'">Advertiser Email</label>' +
+                            '<input type="email" class="form-control" id="wpp_aemail'+index+'" name="wpp_aemail'+index+'" placeholder="Advertiser Email">' +
+                          '</div>' +
+                          '<div class="col-md-6">' +
+                            '<label for="phone'+index+'">Advertiser Telephone</label>' +
+                            '<input type="tel" class="form-control" id="phone'+index+'" name="phone'+index+'" placeholder="Advertiser Telephone">' +
+                         ' </div>' +
+                          '<div class="col-md-6" >' +
+                            '<label for="advertiser_role'+index+'">Role</label>' +
+                            '<select title="Role" class="form-control bgicon advertiser-role" name="advertiser_role'+index+'" id="advertiser_role'+index+'">' +
+                              '<option value="">Role</option>' +
+                              '<option value="Owner">Owner</option>' + 
+                              '<option value="Marketing">Marketing</option>' +
+                              '<option value="Webmaster">Webmaster</option>' +
+                              '<option value="Other">Other (please specify)</option>' +
+                            '</select>' +
+                          '</div>' +
+                          '<div class="col-md-6 role-other'+index+'" style="display:none;">' + 
+                            '<label for="role_other'+index+'">Role Other</label>' +
+                            '<input type="tel" class="form-control" id="role_other'+index+'" name="role_other'+index+'" placeholder="Role Other">' +
+                          '</div>'
+
+
+      addAdvertiserBtn = '<div><a id="addAdvertiser_'+index+'" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Advertiser</a></div>' + 
+                        '</div>'
+
+      removeAdvertiserBtn = '<div class="row" ><a id="removeAdvertiser_'+index+'" class="btn std-btn task-btn remove"><i class="fa fa-minus-circle"></i>Remove Advertiser</a></div>'
+
+         if(index!=3){
+          $('#advertiser_details'+prevIndex).after(removeAdvertiserBtn+advertiserDetails+addAdvertiserBtn);
+        }else{
+          $('#advertiser_details'+prevIndex).after(removeAdvertiserBtn+advertiserDetails);
+        }
+}
+
+
+function removeAdvertiser(index){
+  prevIndex = parseInt(index) - 1;
+  $('#advertiser_details'+index).remove();
+  $('#removeAdvertiser_'+index).remove();
+  $('#removeAdvertiser_'+prevIndex).show();
+  $('#addAdvertiser_'+prevIndex).show();
+}
+
+
+
+$(document).on('click', '.add', function() {
+    selectedId = $(this).attr('id');
+    selectedIndex = selectedId.slice(-1);
+    addAdvertiser(parseInt(selectedIndex)+1)
+
+})
+
+
+$(document).on('click', '.remove', function() {
+    selectedId = $(this).attr('id');
+    selectedIndex = selectedId.slice(-1);
+    removeAdvertiser(parseInt(selectedIndex))
+
+})
+
+
+
+})
 
   $('#treatment_type').on('change', function(){
     treatment_type = $(this).val();
@@ -183,14 +271,20 @@
     }
   })
 
-  $("#advertiser_role").change(function(){
+
+$(document).on('change', '.advertiser-role', function(e) {
+    var selectedId = $(this).attr('id')
     var selectedRole = $(this).val();
     if (selectedRole == 'Other'){
-      $(".role_other").show();
+      $(".role-other"+selectedId.slice(-1)).show();
     }else{
-      $(".role_other").hide();
-      $("#role_other").val('');
+      $(".role-other"+selectedId.slice(-1)).hide();
+      $("#role_other"+selectedId.slice(-1)).val('');
     }
   });
+
+
+
+
 </script>
 {% endblock main_js %}

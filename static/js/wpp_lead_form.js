@@ -64,13 +64,48 @@ function validatethis(frm) {
     phoneElem = document.getElementById('phone');
     validateFiled(phoneElem);
 
-    roleElem = document.getElementById('advertiser_role');
+    roleElem = document.getElementById('advertiser_role1');
     validateFiled(roleElem);
 
-    roleOther = document.getElementById('role_other');
+    roleOther = document.getElementById('role_other1');
     if($(roleOther).is(":visible")){
       validateFiled(roleOther);
     }
+
+
+    //advertiser_details
+
+    for(i=2; i<4; i++){
+
+        advertiserDetails = document.getElementById('advertiser_details'+i);
+        if($(advertiserDetails).is(":visible")){
+
+
+        fnameElemAdditional = document.getElementById('first_name'+i);
+        validateFiled(fnameElemAdditional);
+
+        lnameElemAdditional = document.getElementById('last_name'+i);
+        validateFiled(lnameElemAdditional);
+
+        aemailElemAdditional = document.getElementById('wpp_aemail'+i);
+        validateFiled(aemailElemAdditional);
+
+        validateEmailField(aemailElemAdditional)
+
+        phoneElemAdditional = document.getElementById('phone'+i);
+        validateFiled(phoneElemAdditional);
+
+        roleElemAdditional = document.getElementById('advertiser_role'+i);
+        validateFiled(roleElemAdditional);
+
+        roleOtherAdditional = document.getElementById('role_other'+i);
+        if($(roleOtherAdditional).is(":visible")){
+          validateFiled(roleOtherAdditional);
+        }
+      }
+    }
+
+   
 
     tzoneElem = document.getElementById('tzone');
     validateFiled(tzoneElem);
@@ -103,6 +138,13 @@ function validatethis(frm) {
       var url = $(urlElem).val();
       $("#company").val(url);
       var status = true;
+
+      //updating Advertiser2 details to Advertaiser Optional
+      $('#fopt').val($('#first_name2').val());
+      $('#lopt').val($('#last_name2').val());
+      /*$('#web_master_email').val($('#wpp_aemail2'));
+      $('#popt').val($('#phone2'));*/
+
       if (fix_slots.length) {
         status = check_and_create_appointment(fix_slots);
       }
