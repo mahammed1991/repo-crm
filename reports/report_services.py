@@ -735,16 +735,8 @@ class ReportService(object):
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['program__in'] = programs
-            if 'language_english' in selected_filters:
-                csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
-            elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
-            else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'program').annotate(dcount=Count('program'))
+            region_csat_type = 'program'
+            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
            
             details = {'report_type': 'Program', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'team', 'csat_attribute': 'program'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, programs, details)
@@ -764,16 +756,9 @@ class ReportService(object):
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['region__in'] = locations
-            if 'language_english' in selected_filters:
-                csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
-            elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
-            else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'region').annotate(dcount=Count('region'))
+            region_csat_type = 'region'
+            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+
             details = {'report_type': 'Location', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'country', 'csat_attribute': 'region'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, locations, details)
 
@@ -792,16 +777,10 @@ class ReportService(object):
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['code_type__in'] = code_types
-            if 'language_english' in selected_filters:
-                csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
-            elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
-            else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'code_type').annotate(dcount=Count('code_type'))
+
+            region_csat_type = 'code_type'
+            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+
             details = {'report_type': 'Task Type', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'type_1', 'csat_attribute': 'code_type'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, code_types, details)
 
@@ -822,16 +801,10 @@ class ReportService(object):
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['lead_owner__in'] = lead_owner_emails
-            if 'language_english' in selected_filters:
-                csat_query['language'] = 'ENGLISH'
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
-            elif 'language_non_english' in selected_filters:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
-            else:
-                region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
-                region_csat = region_csat.filter(**csat_query).values('q1', 'lead_owner').annotate(dcount=Count('lead_owner'))
+
+            region_csat_type = 'lead_owner'
+            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+
             details = {'report_type': 'Lead Owner', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'lead_owner_email', 'csat_attribute': 'lead_owner'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, lead_owner_emails, details)
             for report in report_data:
@@ -1021,7 +994,19 @@ class ReportService(object):
             csat_query = []
         return csat_query, lead_owner_name
 
-
+    @staticmethod
+    def get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query):
+        if 'language_english' in selected_filters:
+            csat_query['language'] = 'ENGLISH'
+            region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
+            region_csat = region_csat.filter(**csat_query).values('q1', region_csat_type).annotate(dcount=Count(region_csat_type))
+        elif 'language_non_english' in selected_filters:
+            region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
+            region_csat = region_csat.exclude(language='ENGLISH').filter(**csat_query).values('q1', region_csat_type).annotate(dcount=Count(region_csat_type))
+        else:
+            region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
+            region_csat = region_csat.filter(**csat_query).values('q1', region_csat_type).annotate(dcount=Count(region_csat_type))
+        return region_csat
 
     @staticmethod
     def get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison):

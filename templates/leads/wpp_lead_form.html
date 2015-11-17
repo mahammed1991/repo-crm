@@ -125,7 +125,7 @@
           <input type="tel" class="form-control" id="role_other1" name="role_other1" placeholder="Role Other">
         </div>
         <div>
-        <a id="addAdvertiser_1" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Advertiser</a>
+        <a id="addAdvertiser_1" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Additional Advertiser</a>
         </div>
        <!--  <a id="removeAdvertiser_2" class="btn std-btn task-btn remove" style="display:none;"><i class="fa fa-minus-circle"></i>Remove Advertiser</a> -->
     </div>
@@ -219,10 +219,10 @@
                           '</div>'
 
 
-      addAdvertiserBtn = '<div><a id="addAdvertiser_'+index+'" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Advertiser</a></div>' + 
+      addAdvertiserBtn = '<div><a id="addAdvertiser_'+index+'" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Additional Advertiser</a></div>' + 
                         '</div>'
 
-      removeAdvertiserBtn = '<div class="row" ><a id="removeAdvertiser_'+index+'" class="btn std-btn task-btn remove"><i class="fa fa-minus-circle"></i>Remove Advertiser</a></div>'
+      removeAdvertiserBtn = '<div class="row" ><a id="removeAdvertiser_'+index+'" class="btn std-btn task-btn remove"><i class="fa fa-minus-circle"></i>Remove Additional Advertiser</a></div>'
 
          if(index!=3){
           $('#advertiser_details'+prevIndex).after(removeAdvertiserBtn+advertiserDetails+addAdvertiserBtn);
