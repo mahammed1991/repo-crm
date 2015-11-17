@@ -701,7 +701,7 @@ class ReportService(object):
 
                 csat_query['region__in'] = region_locations
 
-                csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
+                csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
                 if 'tag_location_palo_alto' in selected_filters:
                     csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
@@ -730,13 +730,13 @@ class ReportService(object):
 
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
 
-            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['program__in'] = programs
             region_csat_type = 'program'
-            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+            region_csat = ReportService.get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query)
            
             details = {'report_type': 'Program', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'team', 'csat_attribute': 'program'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, programs, details)
@@ -751,13 +751,13 @@ class ReportService(object):
             report_type = 'country'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
 
-            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['region__in'] = locations
             region_csat_type = 'region'
-            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+            region_csat = ReportService.get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query)
 
             details = {'report_type': 'Location', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'country', 'csat_attribute': 'region'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, locations, details)
@@ -772,14 +772,14 @@ class ReportService(object):
             report_type = 'type_1'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
             
-            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['code_type__in'] = code_types
 
             region_csat_type = 'code_type'
-            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+            region_csat = ReportService.get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query)
 
             details = {'report_type': 'Task Type', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'type_1', 'csat_attribute': 'code_type'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, code_types, details)
@@ -796,14 +796,14 @@ class ReportService(object):
             report_type = 'lead_owner_email'
             total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
             
-            csat_query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
                 csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
             csat_query['lead_owner__in'] = lead_owner_emails
 
             region_csat_type = 'lead_owner'
-            region_csat = ReportService.get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query)
+            region_csat = ReportService.get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query)
 
             details = {'report_type': 'Lead Owner', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'lead_owner_email', 'csat_attribute': 'lead_owner'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, lead_owner_emails, details)
@@ -825,7 +825,7 @@ class ReportService(object):
         else:
             shopping_code_types = []
 
-        query_tagteam_location, lead_owner_name = ReportService.get_tagteam_location_for_managers(selected_filters)
+        query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
         if 'tag_location_palo_alto' in selected_filters:
             query['lead_owner_name__in'] = query_tagteam_location
 
@@ -982,7 +982,7 @@ class ReportService(object):
         return report_records.values()
 
     @staticmethod
-    def get_tagteam_location_for_managers(selected_filters):
+    def get_csat_query_for_tagteam_location(selected_filters):
         if 'tag_location_palo_alto' in selected_filters:
             csat_query = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
             lead_owner_name = []
@@ -995,7 +995,7 @@ class ReportService(object):
         return csat_query, lead_owner_name
 
     @staticmethod
-    def get_region_csat_for_language_english(selected_filters, region_csat_type, lead_owner_name, csat_query):
+    def get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query):
         if 'language_english' in selected_filters:
             csat_query['language'] = 'ENGLISH'
             region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)
