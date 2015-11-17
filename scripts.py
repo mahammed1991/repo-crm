@@ -256,8 +256,8 @@ end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
 sf = SalesforceApi.connect_salesforce()
 select_items = settings.SFDC_FIELDS
 tech_team_id = settings.TECH_TEAM_ID
-code_type = 'Picasso'
-where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' AND Code_Type__c = '%s'" % (start_date, end_date, tech_team_id, code_type)
+code_type = 'WPP'
+where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s)" % (start_date, end_date)
 sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
 try:
     picasso_leads = sf.query_all(sql_query_picasso)

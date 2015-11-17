@@ -939,8 +939,8 @@ def resources(request):
         except Exception:
             return HttpResponse(json.dumps('FAILURE'))
     customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
-    mp4_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.mp4'
-    ogg_url = settings.MEDIA_URL + 'TaggingWins_06_18_2015.ogg'
+    mp4_url = settings.MEDIA_URL + 'TaggingWins_11_13_2015.mp4'
+    ogg_url = settings.MEDIA_URL + 'TaggingWins_11_13_2015.ogg'
     return render(request, 'main/new_resources.html', {'customer_testimonials': customer_testimonials, 'mp4_url': mp4_url, 'ogg_url': ogg_url})
 
 
