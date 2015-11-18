@@ -877,7 +877,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team').values('id')
     time_zone = 'IST'
     if request.method == 'POST':
-        team_ids = request.POST.getlist('team')
+        team_ids = request.POST.getlist('selectedteam-dataprovider')
         process_type = request.POST.getlist('process_type')
 
     exclude_types = ['MIGRATION']

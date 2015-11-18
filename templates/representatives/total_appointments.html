@@ -9,6 +9,7 @@ Manage Appointments
 
 {% block main_css %}
   <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+  <link rel="stylesheet" href="{% static 'css/representative/bootstrap-multiselect.css' %}">
 {% endblock main_css %}
 
 {% block content %}
@@ -49,12 +50,21 @@ Manage Appointments
                 <div class="col-md-1">
                     <label class="lab2">Process</label>
                 </div>
-                <div class="col-md-2 box2 bb process" style="padding-top: 9px; margin-left: -9px;">
-                    {% for type in process_types %}
-                        <input type='checkbox' name='process_type' id='{{type}}' value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</input>
-                    {% endfor %}
+                <div class="col-md-2 box2 bb" style="width: 117px;">
+                    <select id='process-buttonWidth' name='process_type' multiple='multiple'>
+                        {% for type in process_types %}
+                            <option value='{{type}}' {% if type == process_type %}selected{% endif %}>{{type}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                 <div class="col-md-3 bbc">
+                <div class="col-md-1 cutomwid1">
+                    <label class="lab2">Team</label>
+                </div>
+                <div class="col-md-2 box2 bb">
+                    <select id="selectedteam-dataprovider" name="selectedteam-dataprovider" multiple="multiple"></select>
+                </div>
+                
+                <div class="col-md-3 bbc" style="margin-left: 88px;margin-top: -10px;">
                     <div class="checkbox web-access">
                         <span>
                             <svg width="10" height="10" style="margin-right:3%">
@@ -63,30 +73,14 @@ Manage Appointments
                         </span><br />
                       <span>
                         <svg width="12" height="12" style="margin-right:3%">
-                            <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1"></rect>
+                            <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1">
                         </svg>
                       Slots Available</span>
                     </div>
                 </div>
-            </div>
-             <div class="col-md-1 cutomwid1" style="padding-left:0px;">
-                    <label class="lab2">Team</label>
-                </div>
-            <div class="row">
-               
-                <div class="col-md-12 team" style='padding-top: 9px;'>
-                    {% for team in teams %}
-                        
-                        <div class="col-md-4"> <div class="row">   <input type='checkbox' name='team' id='{{team.id}}' value='{{team.id}}'>{{team}}</input></div>
-                        </div>
-                    {% endfor %}
-                </div>
-                
-               
-                </div>
-                <div class="row">
-                <div style="text-align:center; margin: 10px 0px;">
-                    <button class="btn std-btn ">Submit</button> 
+
+                <div class="col-md-5 bbd" style="margin-left: -8px;">
+                     <button class="btn std-btn">Submit</button>
                 </div>     
             </div>
         </form>
@@ -489,14 +483,30 @@ Manage Appointments
     {% endif %}
     </div>
 </section>
+<div id='hideteam'>
+<select id='team' multiple='multiple' style='display:none;'>
+{% for team in teams %}
+    <option value='{{team.id}}' name='team'>{{team}}</option>
+{% endfor %}
+</select>
+</div>
 {% endblock content %}
 
 {% block main_js %}
+<script src="{% static 'js/bootstrap-multiselect.js' %}"></script>
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script type="text/javascript">
-
     $(document).ready(function(){
-        window.old_team = '{{selected_team.id}}';
+        $("#hideteam").hide();
+        $('#team').hide();
+        $('#selectedteam-dataprovider').multiselect({
+            buttonWidth: '310px',
+        });
+        $('#team').multiselect({
+            buttonWidth: '348.031px',
+        });
+
+      /*  window.old_team = '{{selected_team.id}}';
         window.old_process = '{{process_type}}'
         $('select[name=team]').change(function(){
             var selected_team = $(this).val();
@@ -512,7 +522,7 @@ Manage Appointments
             loc = loc.substring(0, loc.lastIndexOf(old_team)) + selected_team;
             window.location.href = decodeURI(loc).replace(old_process, selected_process);
         });
-
+*/
         // Click on Schedule button
         // Validate the slots entry
         $('.logbtn').click(function(){
@@ -543,5 +553,38 @@ Manage Appointments
         if ( isNaN( String.fromCharCode(key) ) ) return false;
     })
     
+</script>
+<script type="text/javascript">
+    $('#process-buttonWidth').multiselect({
+        buttonWidth: '130px',
+        onChange: function(element, checked){
+            var selected = [];
+            var allteam = {};
+            var selectedteam = {};
+            $('#process-buttonWidth option:selected').each(function(){
+                selected.push($(this).val());
+            })
+            $('#team option').each(function(){
+                allteam[$(this).text()] = $(this).val()
+            })
+            for(var i=0;i<selected.length;i++){
+                for(var team in allteam){
+                    if(allteam.hasOwnProperty(team)){
+                        if(selected[i].substring(0,1)==team.substring(0,1)){
+                            selectedteam[allteam[team]] = team
+                        }
+                    }
+                }
+            }
+            var options = []
+            for(var team in selectedteam){
+                if(selectedteam.hasOwnProperty(team)){
+                    options.push({label: selectedteam[team], title: selectedteam[team], value: team})
+                }
+            }
+            $('#selectedteam-dataprovider').multiselect('dataprovider', options);
+        }   
+    })
+
 </script>
 {% endblock main_js %}
