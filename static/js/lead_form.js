@@ -222,6 +222,7 @@
     $('#g_cases_id').val('')
     $("#service_segment").val('');
     $('#tagCheckBoxs').hide();
+    $('#tag_appointment_aware, #tag_admin_access, #tag_admin_code').prop('checked', false);
     if (selectedTeam.indexOf('Services') != -1){
       if(selectedTeam == 'Services/GCE'){
         $("#team_service_gce").show();
