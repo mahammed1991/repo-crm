@@ -140,6 +140,12 @@ $(document).ready(function(){
     var targetSet = "{{upload_target}}";
     $("#uploadTarget").val(targetSet);
 
+    if(targetSet == 'csat_report_data'){
+      $('#survey').show();
+    }else{
+      $('#survey').hide();
+    }
+
     var result = "{{result}}"
     if (result){
         $('.btn_modal').show();

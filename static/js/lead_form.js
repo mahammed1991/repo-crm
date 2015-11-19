@@ -88,9 +88,11 @@
       }, 200, function() {
         if($(".tag-policies").is(":visible")){
             $(".tag-policies").hide();
+            $(".tag-policies-aware, .tag-policies-access").hide();
             $("#is_tag_lead").val('no');
           }else{
             $(".tag-policies").show();
+            $(".tag-policies-aware, .tag-policies-access").show();
             $("#heads_up").show();
             $("#is_tag_lead").val('yes'); 
           }
@@ -565,6 +567,27 @@ function validatethis(frm) {
           $(this).val(0);
         }
       });
+
+      if($('.tag-policies-aware').is(':visible')){
+        if($('#tag_appointment_aware').is(':checked')){
+
+        }else{
+           window.failedFields.push($("#tag_appointment_aware"));
+           window.is_error = true;
+           $('.tag-policies-aware').addClass('error-box')
+          
+        }
+      }
+      if($('.tag-policies-access').is(':visible')){
+        if($('#tag_admin_access').is(':checked')){
+          
+        }else{
+           window.failedFields.push($("#tag_admin_access"));
+           window.is_error = true;
+           $('.tag-policies-access').addClass('error-box')
+          
+        }
+      }
 
     if(window.is_error){
       focusElem = failedFields[0];
