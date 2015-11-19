@@ -88,11 +88,16 @@
       }, 200, function() {
         if($(".tag-policies").is(":visible")){
             $(".tag-policies").hide();
-            $(".tag-policies-aware, .tag-policies-access").hide();
+            $('#tagCheckBoxs').hide();
             $("#is_tag_lead").val('no');
           }else{
             $(".tag-policies").show();
-            $(".tag-policies-aware, .tag-policies-access").show();
+            selectedTeam = $('#team').val()
+            if((selectedTeam.indexOf('ETO') != -1) || (selectedTeam.indexOf('UMM') != -1)){
+              $('#tagCheckBoxs').show();
+            }else{
+              $('#tagCheckBoxs').hide();
+            }
             $("#heads_up").show();
             $("#is_tag_lead").val('yes'); 
           }
@@ -216,6 +221,7 @@
     $("#team_service_gce").hide();
     $('#g_cases_id').val('')
     $("#service_segment").val('');
+    $('#tagCheckBoxs').hide();
     if (selectedTeam.indexOf('Services') != -1){
       if(selectedTeam == 'Services/GCE'){
         $("#team_service_gce").show();
@@ -226,6 +232,7 @@
       $('#g_cases_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
+      $('#tagCheckBoxs').hide();
     }else if(selectedTeam =='GCE Kickstart Reactive'){
       if (window.is_loc_changed){
         setLocations(window.locations);
@@ -237,12 +244,14 @@
       $('#g_cases_id').show();
       $('label[for="g_cases_id"]').show();
       $('label[for="service_segment"]').hide();
+      $('#tagCheckBoxs').hide();
     }
     else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
       if (window.is_loc_changed){
         setLocations(window.locations);
         window.is_loc_changed = false;
       }
+      $('#tagCheckBoxs').show();
       $("#service_segment").show();
       $("#service_segment").val('');
       $(".tr_service_segment").show();
@@ -250,7 +259,13 @@
 
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').show();
-    }else{
+    }else if(selectedTeam == 'UMM'){
+      $("#team_service_gce").hide();
+      $('#g_cases_id').val('')
+      $("#service_segment").val('');
+      $('#tagCheckBoxs').show();
+    }
+    else{
       if (window.is_loc_changed){
         setLocations(window.locations);
         window.is_loc_changed = false;
@@ -261,6 +276,7 @@
 
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
+      $('#tagCheckBoxs').hide();
     }
   });
 
@@ -574,7 +590,7 @@ function validatethis(frm) {
         }else{
            window.failedFields.push($("#tag_appointment_aware"));
            window.is_error = true;
-           $('.tag-policies-aware').addClass('error-box')
+           $('.tag-policies-aware').addClass('error-box');
           
         }
       }
@@ -584,7 +600,17 @@ function validatethis(frm) {
         }else{
            window.failedFields.push($("#tag_admin_access"));
            window.is_error = true;
-           $('.tag-policies-access').addClass('error-box')
+           $('.tag-policies-access').addClass('error-box');
+          
+        }
+      }
+      if($('.tag-policies-code').is(':visible')){
+        if($('#tag_admin_code').is(':checked')){
+          
+        }else{
+           window.failedFields.push($("#tag_admin_code"));
+           window.is_error = true;
+           $('.tag-policies-code').addClass('error-box');
           
         }
       }

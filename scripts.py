@@ -19,7 +19,7 @@
 
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings-staging")
 # from leads.models import Leads, WPPLeads
 
 # total_leads_before_delete = Leads.objects.all().count()
@@ -250,7 +250,7 @@ def create_or_update_picasso_leads(records, sf):
     logging.info("Exist Picasso lead failed to update: %s" % (exist_lead_failed))
 
 end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-start_date = end_date - timedelta(days=30)
+start_date = end_date - timedelta(days=1)
 start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
 end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
 sf = SalesforceApi.connect_salesforce()
@@ -261,7 +261,8 @@ where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s
 sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
 try:
     picasso_leads = sf.query_all(sql_query_picasso)
-    create_or_update_picasso_leads(picasso_leads['records'], sf)
+    import ipdb; ipdb.set_trace()
+    # create_or_update_picasso_leads(picasso_leads['records'], sf)
 except Exception as e:
     print e
     logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
