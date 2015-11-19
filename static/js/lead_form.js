@@ -792,7 +792,11 @@ $(document).on('click', '.headsup-policies', function() {
 $("#tagCheck").click(function(){
     var elem = document.getElementById('tag_via_gtm'); 
     if(elem.checked == true){
-      $("#comment1, #comment2, #comment3, #comment4, #comment5").val('implement via GTM');
+      for( i=1; i <= $(".task").length; i++){
+        if($("#comment" + i).is(":visible")){
+         $("#comment"+i).val('implement via GTM');
+        }
+      }
     }else{
       $("#comment1, #comment2, #comment3, #comment4, #comment5").val('');
     }
