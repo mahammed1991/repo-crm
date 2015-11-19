@@ -224,7 +224,7 @@ def main_home(request):
 
         # print wpp_details['wpp_lead_status_analysis']
 
-        key_dict = {'Open': 'open', 'On Hold': 'on_hold', 'In UI/UX Review': 'in_ui_ux_review', 'In File Transfer': 'in_file_transfer', 'In Mockup': 'in_mockup', 'TOTAL': 'total',
+        key_dict = {'Open': 'open', 'On Hold': 'on_hold', 'In UI/UX Review': 'in_ui_ux_review', 'In Stage - Adv Implementation': 'in_stage_adv_impl', 'In Mockup': 'in_mockup', 'TOTAL': 'total',
                     'Mockup Review': 'mockup_review', 'In Development': 'in_development', 'In Stage': 'in_statge', 'In A/B Test': 'in_ab_test', 'Implemented': 'implemented', 'Deferred': 'deferred'}
 
         wpp_lead_dict = dict()

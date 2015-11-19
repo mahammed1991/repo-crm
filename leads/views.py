@@ -2156,12 +2156,12 @@ def lead_history(request, lid):
     lead_status = collections.OrderedDict()
     lead_status['Open'] = {'title': 'Just received, studying requirements'}
     lead_status['In UI/UX Review'] = {'title': 'Awaiting response from advertiser on files/instructions'}
-    lead_status['In File Transfer'] = {'title': 'In File Transfer'}
     lead_status['On Hold'] = {'title': 'On Hold'}
     lead_status['In Mockup'] = {'title': 'Regalix team designing the Mock Up'}
     lead_status['Mockup Review'] = {'title': 'Google CSRs &amp; Advertisers reviewing mock up'}
     lead_status['In Development'] = {'title': 'Regalix team coding the website'}
     lead_status['In Stage'] = {'title': 'On a staging server for feedback from the advertiser'}
+    lead_status['In Stage - Adv Implementation'] = {'title': 'In Stage advance to Implementation'}
     lead_status['In A/B Test'] = {'title': 'A/B Test launched on Analytics/Adwords'}
     lead_status['Implemented'] = {'title': 'New website launched'}
     lead = None

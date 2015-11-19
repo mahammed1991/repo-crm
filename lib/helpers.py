@@ -295,7 +295,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
     wpp_lead_status_dict = {'total_leads': 0,
                             'open': 0,
                             'in_ui_ux_review': 0,
-                            'in_file_transfer': 0,
+                            'in_stage_adv_impl': 0,
                             'on_hold': 0,
                             'in_mockup': 0,
                             'mockup_review': 0,
@@ -310,8 +310,8 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
             wpp_lead_status_dict['open'] += status_dict['count']
         elif status_dict['lead_status'] == 'In UI/UX Review':
             wpp_lead_status_dict['in_ui_ux_review'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In File Transfer':
-            wpp_lead_status_dict['in_file_transfer'] += status_dict['count']
+        elif status_dict['lead_status'] == 'In Stage - Adv Implementation':
+            wpp_lead_status_dict['in_stage_adv_impl'] += status_dict['count']
         elif status_dict['lead_status'] == 'On Hold':
             wpp_lead_status_dict['on_hold'] += status_dict['count']
         elif status_dict['lead_status'] == 'In Mockup':
@@ -407,6 +407,7 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
                             'deferred': 0,
                             'in_development': 0,
                             'in_stage': 0,
+                            'in_stage_adv_impl': 0,
                             'implemented': 0,
                             'ab_testing': 0,
                             }
@@ -419,8 +420,8 @@ def get_count_of_each_lead_status_by_rep(email, lead_form, start_date=None, end_
         query['lead_status__in'] = ['In UI/UX Review']
         lead_status_dict['in_ui_ux_review'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
-        query['lead_status__in'] = ['In File Transfer']
-        lead_status_dict['in_file_transfer'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
+        query['lead_status__in'] = ['In Stage - Adv Implementation']
+        lead_status_dict['in_stage_adv_impl'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()
 
         query['lead_status__in'] = ['On Hold']
         lead_status_dict['on_hold'] = Leads.objects.filter(reduce(operator.or_, mylist), **query).count()

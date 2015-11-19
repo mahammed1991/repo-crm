@@ -37,9 +37,9 @@
       $('.inuiuxreview').show()
     })
 
-    $('#InFileTransfer').click(function(){
+    $('#InStageAdvImpl').click(function(){
       hideAll();
-      $('.infiletransfer').show()
+      $('.instageadvimpl').show()
     })
     $('#InDevelopment').click(function(){
       hideAll();
@@ -66,7 +66,7 @@
       $('.mockupreview').show()
       $('.deferred').show()
       $('.inuiuxreview').show()
-      $('.infiletransfer').show()
+      $('.instageadvimpl').show()
       $('.indevelopment').show()
       $('.instage').show()
       $('.ab-testing').show()
@@ -80,7 +80,7 @@
       $('.mockupreview').hide()
       $('.deferred').hide()
       $('.inuiuxreview').hide()
-      $('.infiletransfer').hide()
+      $('.instageadvimpl').hide()
       $('.indevelopment').hide()
       $('.instage').hide()
       $('.ab-testing').hide()
