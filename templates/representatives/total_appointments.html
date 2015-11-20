@@ -43,28 +43,42 @@ Manage Appointments
                     <a href="{% url 'representatives.views.total_appointments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
                 </div>
             </div>
-            <form method="post" action="">
+            <form method="post" action="" class="form">
                 {% csrf_token %}
             <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
-            <div class="row">
-                <div class="col-md-1">
-                    <label class="lab2">Process</label>
+            <div class="row" style="margin-left: 5px;">
+                <div class="col-md-2 box2">
+                    <div id="processTypesDiv" class="btn-group drpDown" style="width: 130px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" id="processTypeBtn" style="width: 130px;">Process Type<span class="caret"></span></button>
+                        <ul class="dropdown-menu process-ul">
+                            {% for item in process_types %}
+                                <li id="{{item}}">
+                                    <a href="#" class="small"><input type="checkbox"/>&nbsp;{{item}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-md-2 box2 bb" style="width: 117px;">
-                    <select id='process-buttonWidth' name='process_type' multiple='multiple'>
-                        {% for type in process_types %}
-                            <option value='{{type}}' {% if type == process_type %}selected{% endif %}>{{type}}</option>
-                        {% endfor %}
+                <div class="col-md-2 box2" style="margin-left: 61px;">
+                    <div id="teamsDiv" class="btn-group drpDown" style="width: 130px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" id="teamTypeBtn" style="width: 130px;">Teams<span class="caret"></span></button>
+                        <ul class="dropdown-menu process-ul">
+                            {% for team in default_teams %}
+                                <li idValue='{{team.id}}' id='{{team.process_type}}_{{team.id}}' class='{{team.process_type}} hideItems'>
+                                    <a href="#" class="small"><input type="checkbox"/>&nbsp;{{team}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 box2 bb hideItems">
+                    <select id="selectedProcessType" name="selectedProcessType" multiple="multiple">                        
+                    </select>
+                    <select id="selectedTeams" name="selectedTeams" multiple="multiple">
                     </select>
                 </div>
-                <div class="col-md-1 cutomwid1">
-                    <label class="lab2">Team</label>
-                </div>
-                <div class="col-md-2 box2 bb">
-                    <select id="selectedteam-dataprovider" name="selectedteam-dataprovider" multiple="multiple"></select>
-                </div>
                 
-                <div class="col-md-3 bbc" style="margin-left: 88px;margin-top: -10px;">
+                <div class="col-md-3 bbc" style="margin-left: 168px;margin-top: -10px;">
                     <div class="checkbox web-access">
                         <span>
                             <svg width="10" height="10" style="margin-right:3%">
@@ -79,53 +93,13 @@ Manage Appointments
                     </div>
                 </div>
 
-                <div class="col-md-5 bbd" style="margin-left: -8px;">
+                <div class="col-md-5 bbd" style="margin-left: -8px;  margin-top: -8px;">
                      <button class="btn std-btn">Submit</button>
                 </div>     
             </div>
         </form>
         <form method="post" action="{% url 'representatives.views.total_appointments' plan_month plan_day plan_year %}">
             {% csrf_token %}
-            <!-- <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
-            <div class="row">
-                <div class="col-md-1">
-                    <label class="lab2">Process</label>
-                </div>
-                <div class="col-md-2 box2 bb">
-                    <select class="form-control bgicon" name="process_type">
-                        {% for type in process_types %}
-                            <option value="{{type}}" {% if type == process_type %}selected{% endif %}>{{type}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-1 cutomwid1">
-                    <label class="lab2">Team</label>
-                </div>
-                <div class="col-md-2 box2 bb">
-                     <select class="form-control bgicon" name="team">
-                        {% for team in teams %}
-                            <option value="{{team.id}}" {% if team.id == selected_team.id %}selected{% endif %}>{{team}}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="col-md-3 bbc">
-                    <div class="checkbox web-access">
-                        <span>
-                            <svg width="10" height="10" style="margin-right:3%">
-                            <rect x="2" y="2" width="5" height="5" style="fill:blue;stroke:#C7F4D3;stroke-width:5;fill-opacity:0.1;stroke-opacity:1">
-                            </svg>Appointments Booked
-                        </span><br />
-                      <span>
-                        <svg width="12" height="12" style="margin-right:3%">
-                            <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1">
-                        </svg>
-                      Slots Available</span>
-                    </div>
-                </div>
-
-            </div> -->
             <div style=" overflow-x: scroll !important;">
                 <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
                     <tr>
@@ -493,36 +467,69 @@ Manage Appointments
 {% endblock content %}
 
 {% block main_js %}
-<script src="{% static 'js/bootstrap-multiselect.js' %}"></script>
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script type="text/javascript">
+    $('#processTypeBtn').on('click', function(){
+        $('.drpDown .process-ul').toggle();
+    });
+
+    function initializeProcessData(){
+        var process = {{default_process_type|safe}};
+        for(item in process){
+            $('#'+process[item]).on('click', function(){
+                processTeamsPopulateData(this);
+            });
+            $('.'+process[item]).on('click', function(){
+                selectTeams(process[item], this);
+            });
+        }
+    }
+
+    function processTeamsPopulateData(processElement){
+        var processOptionElement = "<option value='"+processElement.id+"' selected></option>";
+        var selectedProcessElement = $(processElement).children("a").children("input");
+        if(selectedProcessElement.is(':checked')){
+            selectedProcessElement.prop('checked', false);
+            $('.'+processElement.id).children("a").children("input").prop('checked', false);
+            $('#selectedTeams').children("option[class='"+processElement.id+"']").remove();
+            $('.'+processElement.id).hide();
+            $('#selectedProcessType').children("option[value='"+processElement.id+"']").remove();
+        }
+        else{
+            $('.'+processElement.id).show();
+            selectedProcessElement.prop('checked', true);
+            $('#selectedProcessType').append(processOptionElement);
+        }
+    }
+
+    function selectTeams(parentElementId, selectedElement){
+        var selectedTeamsElement = $(selectedElement).children("a").children("input");
+        var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('idValue')+"' selected></option>";
+        if(selectedTeamsElement.is(':checked')){
+            selectedTeamsElement.prop('checked', false);
+            $('#selectedTeams').children("option[value='"+ $(selectedElement).attr('idValue')+"']").remove();
+        }
+        else{
+            selectedTeamsElement.prop('checked', true);
+            $('#selectedTeams').append(optionElement);
+        }
+    }
+
     $(document).ready(function(){
-        $("#hideteam").hide();
-        $('#team').hide();
-        $('#selectedteam-dataprovider').multiselect({
-            buttonWidth: '310px',
-        });
-        $('#team').multiselect({
-            buttonWidth: '348.031px',
-        });
-
-      /*  window.old_team = '{{selected_team.id}}';
-        window.old_process = '{{process_type}}'
-        $('select[name=team]').change(function(){
-            var selected_team = $(this).val();
-            loc = window.location.href;
-            window.location.href = loc.substring(0, loc.lastIndexOf(old_team)) + selected_team;
-        });
-
-        $('select[name=process_type]').change(function(){
-            var selected_process = $(this).val();
-            console.log(decodeURI(window.location.href).replace(old_process, selected_process));
-            loc = window.location.href;
-            var selected_team = 0;
-            loc = loc.substring(0, loc.lastIndexOf(old_team)) + selected_team;
-            window.location.href = decodeURI(loc).replace(old_process, selected_process);
-        });
-*/
+        initializeProcessData();
+        var post_result_dict = {{post_result_dict|safe}};
+        for(team in post_result_dict){
+            $('#'+team).children("a").children("input").prop('checked', true);
+            var processOptionElement = "<option value='"+$('#'+team).attr('id')+"' selected></option>";
+            $('#selectedProcessType').append(processOptionElement);
+            var teams = post_result_dict[team];
+            for (item in teams){
+                $('.'+team).show();
+                $('#'+team+'_'+teams[item]).children("a").children("input").prop('checked', true);
+                var optionElement = "<option class ='"+team+"' value='"+ $('#'+team+'_'+teams[item]).attr('idValue')+"' selected></option>";
+                $('#selectedTeams').append(optionElement);
+            }
+        }
         // Click on Schedule button
         // Validate the slots entry
         $('.logbtn').click(function(){
@@ -551,40 +558,6 @@ Manage Appointments
         // body...
         var key = e.keyCode ? e.keyCode : e.which;
         if ( isNaN( String.fromCharCode(key) ) ) return false;
-    })
-    
-</script>
-<script type="text/javascript">
-    $('#process-buttonWidth').multiselect({
-        buttonWidth: '130px',
-        onChange: function(element, checked){
-            var selected = [];
-            var allteam = {};
-            var selectedteam = {};
-            $('#process-buttonWidth option:selected').each(function(){
-                selected.push($(this).val());
-            })
-            $('#team option').each(function(){
-                allteam[$(this).text()] = $(this).val()
-            })
-            for(var i=0;i<selected.length;i++){
-                for(var team in allteam){
-                    if(allteam.hasOwnProperty(team)){
-                        if(selected[i].substring(0,1)==team.substring(0,1)){
-                            selectedteam[allteam[team]] = team
-                        }
-                    }
-                }
-            }
-            var options = []
-            for(var team in selectedteam){
-                if(selectedteam.hasOwnProperty(team)){
-                    options.push({label: selectedteam[team], title: selectedteam[team], value: team})
-                }
-            }
-            $('#selectedteam-dataprovider').multiselect('dataprovider', options);
-        }   
-    })
-
+    });
 </script>
 {% endblock main_js %}
