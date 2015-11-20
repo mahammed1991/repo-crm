@@ -191,3 +191,23 @@ list-style: inherit;
 	margin-right: 5px;
   margin-left: -8px;
 }
+
+.hideItems{
+	display: none;
+}
+
+.drpDown ul{
+	position: absolute;
+	z-index: 10;
+	display: none;
+	padding: 0;  
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15); 
+	border-radius: 4px; 
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+.drpDown ul li{ 
+  list-style-type: none;   
+  border-bottom: 1px solid #dbdbdb;
+}
