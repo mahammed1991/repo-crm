@@ -874,14 +874,22 @@ def mail_slot_changes(request, selected_team, changed_records):
 def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     """ Manage scheduling appointments"""
     process_type = ['TAG', 'SHOPPING', 'WPP']
+    default_process_type = ['TAG', 'SHOPPING', 'WPP']
     team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team').values('id')
     time_zone = 'IST'
+    post_result_dict = {}
     if request.method == 'POST':
-        team_ids = request.POST.getlist('selectedteam-dataprovider')
-        process_type = request.POST.getlist('process_type')
+        team_ids = request.POST.getlist('selectedTeams')
+        process_type = request.POST.getlist('selectedProcessType')
+        selected_teams = RegalixTeams.objects.filter(id__in=team_ids)
+        post_result_dict = {process:[] for process in process_type}
+        for team in selected_teams:
+            if team.process_type in post_result_dict:
+                post_result_dict[team.process_type].append(int(team.id))
 
     exclude_types = ['MIGRATION']
     teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team')
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
     process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
     if not teams:
         # if team is not specified, select first team by default
@@ -965,7 +973,15 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     utc_start_date = utc_date
     utc_end_date = utc_start_date + timedelta(days=6)
 
+    process = json.dumps(process_type)
     selected_teams = RegalixTeams.objects.filter(id__in=team_ids)
+
+    result_dict = {process:[] for process in process_type}
+    for team in selected_teams:
+        if team.process_type in result_dict:
+            result_dict[team.process_type].append(int(team.id))
+
+
     appointments_list = Availability.objects.filter(
         date_in_utc__range=(utc_start_date, utc_end_date),
         team__in=selected_teams)
@@ -1023,6 +1039,8 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     for key, value in sorted(total_available.iteritems()):
         total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})
 
+
+    from django.core import serializers
     return render(
         request,
         'representatives/total_appointments.html',
@@ -1032,6 +1050,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'appointments': appointments,
          'prev_week': prev_week,
          'next_week': next_week,
+         'default_teams': default_teams,
          'teams': teams,
          'plan_month': plan_month,
          'plan_day': plan_day,
@@ -1039,5 +1058,9 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'process_type': process_type,
          'process_types': process_types,
          'total_slots': total_slots,
+         'result_dict': json.dumps(result_dict),
+         'process': process,
+         'default_process_type': default_process_type,
+         'post_result_dict': json.dumps(post_result_dict),
          }
     )
