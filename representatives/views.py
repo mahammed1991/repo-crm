@@ -346,13 +346,6 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     )
 
 
-def manage_appointments(request):
-    exclude_types = ['MIGRATION']
-    teams = RegalixTeams.objects.exclude(process_type__in=exclude_types).filter(is_active=True).exclude(team_name='default team')
-    process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
-    return render(request, 'representatives/manager_total.html', {'teams': teams, 'process_types': process_types})
-
-
 @login_required
 def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process_type='TAG', location_id=0, time_zone='IST'):
     # if month is not specified, select current month

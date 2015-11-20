@@ -1865,6 +1865,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 
     mail_to = set([
         # str(advertiser_details['email']),
+        'asarkar@regalix-inc.com',
         'skumar@regalix-inc.com',
         'sprasad@regalix-inc.com',
         'abraham@regalix-inc.com',
