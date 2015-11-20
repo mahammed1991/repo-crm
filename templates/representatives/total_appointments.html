@@ -43,7 +43,7 @@ Manage Appointments
                     <a href="{% url 'representatives.views.total_appointments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
                 </div>
             </div>
-            <form method="post" action="" class="form">
+            <form method="post" action="" class="form" onsubmit="return validateForm()">
                 {% csrf_token %}
             <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
             <div class="row" style="margin-left: 5px;">
@@ -62,7 +62,10 @@ Manage Appointments
                 <div class="col-md-2 box2" style="margin-left: 61px;">
                     <div id="teamsDiv" class="btn-group drpDown" style="width: 130px;">
                         <button type="button" class="btn btn-default dropdown-toggle" id="teamTypeBtn" style="width: 130px;">Teams<span class="caret"></span></button>
-                        <ul class="dropdown-menu process-ul">
+                        <ul class="dropdown-menu teams-ul">
+                            <li idValue='000' id='selectAll' class='selectAll hideItems'>
+                                    <a href="#" class="small"><input type="checkbox"/>&nbsp;Select All</a>
+                            </li>
                             {% for team in default_teams %}
                                 <li idValue='{{team.id}}' id='{{team.process_type}}_{{team.id}}' class='{{team.process_type}} hideItems'>
                                     <a href="#" class="small"><input type="checkbox"/>&nbsp;{{team}}</a>
@@ -94,7 +97,7 @@ Manage Appointments
                 </div>
 
                 <div class="col-md-5 bbd" style="margin-left: -8px;  margin-top: -8px;">
-                     <button class="btn std-btn">Submit</button>
+                     <button class="btn std-btn" id="form_submit" >Submit</button>
                 </div>     
             </div>
         </form>
@@ -469,37 +472,99 @@ Manage Appointments
 {% block main_js %}
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script type="text/javascript">
-    $('#processTypeBtn').on('click', function(){
-        $('.drpDown .process-ul').toggle();
-    });
 
-    function initializeProcessData(){
-        var process = {{default_process_type|safe}};
-        for(item in process){
-            $('#'+process[item]).on('click', function(){
-                processTeamsPopulateData(this);
-            });
-            $('.'+process[item]).on('click', function(){
-                selectTeams(process[item], this);
-            });
+    // Show Error msg if no items are selected.
+    function validateForm(){
+
+        $('.drpDown .process-ul, .teams-ul').hide();
+
+        // Check for process items, select-all, teams.
+        if(!($('#selectedProcessType').children().length) || (!($('#selectedTeams option[value="000"]:only-child').length) && !$('#selectedTeams').children().length)){
+            alert('Please select atleast one Process and Team value');
+            return false;
         }
+
+        return true;
     }
 
-    function processTeamsPopulateData(processElement){
-        var processOptionElement = "<option value='"+processElement.id+"' selected></option>";
+    // Process Select Button - show Process list.
+    $('#processTypeBtn').on('click', function(){
+        $('.drpDown .process-ul, .teams-ul').toggle();
+    });
+
+    // Call Process Select.
+    $('.process-ul').children().on('click', function(){
+        selectProcessPopulateTeamData(this);
+    });
+
+    // Call Team Select.
+    $('.teams-ul').children().on('click', function(){
+        selectTeams(this.className, this);
+    });
+
+    // Select All Button. 
+    $('#selectAll').on('click', function(){
+
+        // UnSelect all.
+        if($(this).hasClass('all-selected')){
+            $(this).parent().children(':not(.hideItems)').children("a").children("input").prop('checked', false);
+            $(this).parent().children(':not(.hideItems)').each(function(){
+                $('#selectedTeams').children("option[value='"+ $(this).attr('idValue')+"']").remove();
+            });
+            $(this).removeClass('all-selected');
+            return;
+        }
+
+        // Select all.
+        $(this).parent().children(':not(.hideItems)').children("a").children("input").prop('checked', true);
+        $(this).parent().children(':not(.hideItems)').each(function(){
+            var optionElement = "<option class ='"+$(this).attr('class')+"' value='"+ $(this).attr('idValue')+"' selected></option>";
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(this).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        });
+        $(this).addClass('all-selected');
+
+    });
+
+    function selectProcessPopulateTeamData(processElement){
+        var processOptionElement = "<option value='"+$(processElement).attr('id')+"' selected></option>";
         var selectedProcessElement = $(processElement).children("a").children("input");
+
+        // UnSelect Process Items.
         if(selectedProcessElement.is(':checked')){
             selectedProcessElement.prop('checked', false);
-            $('.'+processElement.id).children("a").children("input").prop('checked', false);
-            $('#selectedTeams').children("option[class='"+processElement.id+"']").remove();
-            $('.'+processElement.id).hide();
-            $('#selectedProcessType').children("option[value='"+processElement.id+"']").remove();
+            $('.'+$(processElement).attr('id')).children("a").children("input").prop('checked', false);
+            $('#selectedTeams').children("option[class='"+$(processElement).attr('id')+"']").remove();
+            $('.'+$(processElement).attr('id')).addClass('hideItems');
+
+            $('#selectAll').children("a").children("input").prop('checked', false);
+            $('#selectedProcessType').children("option[value='"+$(processElement).attr('id')+"']").remove();
+
+            // If the selectedTeams list has only selectAll option element then remove 'all-selected' from it.
+            if($('#selectedTeams option[value="000"]:only-child').length){
+                $('#selectAll').removeClass('all-selected');
+            }
+
+            // If selectAll element has Not got the class 'all-selected', then hide it.
+            if(!$('#selectAll').hasClass('all-selected') && !$('#selectedProcessType').children().length){
+                $('#selectAll').addClass('hideItems');
+            }
+
         }
+
+        // Select Process Items.
         else{
-            $('.'+processElement.id).show();
+            $('.'+$(processElement).attr('id') + ', #selectAll').removeClass('hideItems');
             selectedProcessElement.prop('checked', true);
             $('#selectedProcessType').append(processOptionElement);
+
+            // Remove select all tick.
+            $('#selectAll').children("a").children("input").prop('checked', false);
         }
+
     }
 
     function selectTeams(parentElementId, selectedElement){
@@ -508,26 +573,26 @@ Manage Appointments
         if(selectedTeamsElement.is(':checked')){
             selectedTeamsElement.prop('checked', false);
             $('#selectedTeams').children("option[value='"+ $(selectedElement).attr('idValue')+"']").remove();
+            $('#selectAll').children("a").children("input").prop('checked', false);
         }
         else{
             selectedTeamsElement.prop('checked', true);
-            $('#selectedTeams').append(optionElement);
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(selectedElement).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
         }
     }
 
     $(document).ready(function(){
-        initializeProcessData();
         var post_result_dict = {{post_result_dict|safe}};
         for(team in post_result_dict){
-            $('#'+team).children("a").children("input").prop('checked', true);
-            var processOptionElement = "<option value='"+$('#'+team).attr('id')+"' selected></option>";
-            $('#selectedProcessType').append(processOptionElement);
+            selectProcessPopulateTeamData('#'+team);
             var teams = post_result_dict[team];
             for (item in teams){
-                $('.'+team).show();
-                $('#'+team+'_'+teams[item]).children("a").children("input").prop('checked', true);
-                var optionElement = "<option class ='"+team+"' value='"+ $('#'+team+'_'+teams[item]).attr('idValue')+"' selected></option>";
-                $('#selectedTeams').append(optionElement);
+                selectTeams(team, '#'+team+'_'+teams[item]);
+                $('.'+team).removeClass('hideItems');
             }
         }
         // Click on Schedule button
@@ -559,5 +624,6 @@ Manage Appointments
         var key = e.keyCode ? e.keyCode : e.which;
         if ( isNaN( String.fromCharCode(key) ) ) return false;
     });
+
 </script>
 {% endblock main_js %}
