@@ -634,6 +634,22 @@ class ReportService(object):
     # ======================================================end of optimization==============
 
     @staticmethod
+    def get_unmapped_survey(selected_filters, report_type, start_date, end_date):
+        csat_query = dict()
+        csat_query['survey_date__gte'] = start_date
+        csat_query['survey_date__lte'] = end_date
+
+        if 'survey_channel_phone' in selected_filters:
+            csat_query['channel__in'] = ['PHONE']
+        if 'survey_channel_email' in selected_filters:
+            csat_query['channel__in'] = ['EMAIL']
+        if 'survey_channel_combined' in selected_filters:
+            csat_query['channel__in'] = ['EMAIL', 'PHONE']
+
+        unmapped_count = CSATReport.objects.exclude(category='MAPPED').filter(**csat_query).count()
+        return unmapped_count
+
+    @staticmethod
     def get_csat_report(selected_filters, report_type, start_date, end_date):
         report_data = list()
         key_response = {1: 'Extremely satisfied', 2: 'Moderately satisfied', 3: 'Slightly satisfied', 4: 'Neither satisfied nor dissatisfied', 5: 'Slightly dissatisfied', 6: 'Moderately dissatisfied', 7: 'Extremely dissatisfied'}
@@ -670,8 +686,8 @@ class ReportService(object):
             # if 'language_combined' in selected_filters:
             #     csat_query = csat_query
 
-        csat_query['mapped_lead_created_date__gte'] = start_date
-        csat_query['mapped_lead_created_date__lte'] = end_date
+        csat_query['survey_date__gte'] = start_date
+        csat_query['survey_date__lte'] = end_date
 
         if report_type == 'Region':
             region_query = dict()
@@ -699,12 +715,12 @@ class ReportService(object):
 
                 region_data['Wins in pcg'] = ReportService.get_percentage_value(region_data['Wins'], region_data['Leads'])
 
-                csat_query['region__in'] = region_locations
 
                 csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
                 if 'tag_location_palo_alto' in selected_filters:
                     csat_query['lead_owner_name__in'] = csat_query_tagteam_location
 
+                csat_query['region__in'] = region_locations
                 if 'language_english' in selected_filters:
                     csat_query['language'] = 'ENGLISH'
                     region_csat = CSATReport.objects.exclude(lead_owner_name__in=lead_owner_name)

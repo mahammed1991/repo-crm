@@ -147,11 +147,17 @@ $('#viewButton').on('click', function() {
             success: function(data) {
                 console.log('Success Response From Ajax');
                 $('#preloaderOverlay').hide();
-                if (data['comparison'] == 'yes') {
+                console.log(data);
+                if(data['survey_for_unmapped'] != null){
+                    $('#tabledescription').hide();
+                    displayUnmappedData(data);
+                }else if(data['comparison'] == 'yes'){
                     $('#displaycolor').show();
+                    $('#tabledescription').show();
                     CSATComparisonReport(data);
-                } else {
+                }else{
                     $('#displaycolor').hide();
+                    $('#tabledescription').show();
                     displayReportData(data);
                 }
             },
@@ -231,6 +237,19 @@ function displayFilters() {
     }
 }
 
+function displayUnmappedData(reportData){
+    $('.table').empty();
+    header = '<tr >' +
+        '<th class="msc23">Channel</th>' +
+        '<th class="msc23">Total Count</th>' +
+        '</tr>'
+    row = '';
+    row += '<tr>' +
+        '<td>' + reportData['channel'] + '</td>' +
+        '<td>' + reportData['survey_for_unmapped'] + '</td>' +
+        ' </tr>'
+    $('.table').append(header + row);
+}
 
 function displayReportData(reportData) {
     $('.table').empty();

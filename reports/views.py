@@ -797,12 +797,13 @@ def csat_reports(request):
         timeline = request.GET.getlist('timeline[]')
         comparison = request.GET.get('comparison', None)
         selected_filters = request.GET.getlist('filter[]')
-        # if 'survey_channel_phone' in selected_filters:
-        #     channel = 'PHONE'
-        # elif 'survey_channel_email' in selected_filters:
-        #     channel = 'EMAIL'
-        # else:
-        #     channel = 'Combined'
+        survey_for_unmapped = None
+        if 'survey_channel_phone' in selected_filters:
+            channel = 'PHONE'
+        elif 'survey_channel_email' in selected_filters:
+            channel = 'EMAIL'
+        else:
+            channel = 'Combined'
 
         if 'process_tag' in selected_filters:
             process = 'Tag'
@@ -810,6 +811,12 @@ def csat_reports(request):
             process = 'Shopping'
         else:
             process = 'Combined'
+
+        if 'survey_category_unmapped' in selected_filters:
+            if timeline:
+                current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                current_timeline_end = datetime(current_timeline_end.year, current_timeline_end.month, current_timeline_end.day, 23, 59, 59)
+            survey_for_unmapped = ReportService.get_unmapped_survey(selected_filters, report_type, current_timeline_start, current_timeline_end)
 
         if comparison == 'yes':
             if timeline:
@@ -838,7 +845,7 @@ def csat_reports(request):
             previous_report_data = ''
             current_report_data, previous_report_data = ReportService.get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison)
 
-        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'process': process, 'comparison': comparison}))
+        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'process': process, 'channel':channel, 'comparison': comparison, 'survey_for_unmapped': survey_for_unmapped}))
     return render(request, 'reports/csat_reports.html')
 
 
