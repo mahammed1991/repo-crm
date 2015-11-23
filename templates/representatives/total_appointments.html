@@ -102,7 +102,7 @@ Total Appointments
         </form>
         <form method="post" action="{% url 'representatives.views.total_appointments' plan_month plan_day plan_year %}">
             {% csrf_token %}
-            <div style=" overflow-x: scroll !important;">
+            <div>
                 <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
                     <tr>
                         <!-- <th>Slots/Day</th> -->
@@ -322,7 +322,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %}/></td></tr>
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
