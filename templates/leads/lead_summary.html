@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% load static %}
 {% load question_list_tags %}
+{% load leads_filters %}
 
 {% block title %}
   Lead Status
@@ -156,10 +157,10 @@
                       {% if l.regalix_comment  %}
                           <td class="hidden-xs hidden-sm comments-container comments-container2"><p>
                           {% if l.regalix_comment and l.regalix_comment|length > 100 %}
-                            {{ l.regalix_comment | truncatechars:100 }}</p>
-                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment}}</p> </td>
+                            {{ l.regalix_comment| replace | truncatechars:200 }}</p>
+                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment | replace}}</p> </td>
                           {% elif l.regalix_comment %}
-                            {{ l.regalix_comment }}</p>
+                            {{ l.regalix_comment|replace}}</p>
                           {% else %}
                             ''
                           {% endif %}
@@ -189,16 +190,16 @@
                 {% endfor %}
           </tbody>
         </table>
-        <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/>
+        <!-- <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/> -->
         
         </div>
     </div>
-    <div id="preloaderOverlay" style='display:none;'>
+    <!-- <div id="preloaderOverlay" style='display:none;'>
         <div class="preloader">
         <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
         
         </div>
-      </div>
+      </div> -->
   </section>
   <!-- content-region ends --> 
 
@@ -206,11 +207,11 @@
   {% block model_popup %}
   <!-- feedback modal -->
         <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div id="preloaderOverlay" style='display:none;'>
+          <!-- <div id="preloaderOverlay" style='display:none;'>
             <div class="preloader">
             <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
             </div>
-          </div>
+          </div> -->
           <div class="modal-dialog ping-snippet" id="modal">
             <div class="modal-content">
               <div class="modal-header">
@@ -545,10 +546,10 @@ function setLeadSummaryTableExtend(leads, start_row, end_row){
                 '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
     
       if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
-        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
-                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').substring(1, 200) + '</p>' +
+                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '') + '</p> </td>'
       }else if (leads[i].regalix_comment != 'None'){
-          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment + '</p>'
+          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '') + '</p>'
       }else{
         comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
