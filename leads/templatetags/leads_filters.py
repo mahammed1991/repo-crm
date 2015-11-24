@@ -11,4 +11,4 @@ def get_tup_val(_tuple, index):
 
 @register.filter
 def replace(comment):
-    return comment.replace('-', '').replace('\\n', ' ').replace('\\r', '')
+    return comment.replace('\\n', ' ').replace('\\r', '').replace('-', '').replace('Dial:', '\n \nDial:').lstrip()

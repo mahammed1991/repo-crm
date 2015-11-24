@@ -52,7 +52,7 @@ Total Appointments
                         <ul class="dropdown-menu process-ul">
                             {% for item in process_types %}
                                 <li id="{{item}}">
-                                    <a href="#" class="small"><input type="checkbox"/>&nbsp;{{item}}</a>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
                                 </li>
                             {%endfor%}
                         </ul>
@@ -63,11 +63,11 @@ Total Appointments
                         <button type="button" class="btn btn-default dropdown-toggle" id="teamTypeBtn" style="width: 130px;">Teams<span class="caret"></span></button>
                         <ul class="dropdown-menu teams-ul">
                             <li idValue='000' id='selectAll' class='selectAll hideItems'>
-                                    <a href="#" class="small"><input type="checkbox"/>&nbsp;Select All</a>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
                             </li>
                             {% for team in default_teams %}
                                 <li idValue='{{team.id}}' id='{{team.process_type}}_{{team.id}}' class='{{team.process_type}} hideItems'>
-                                    <a href="#" class="small"><input type="checkbox"/>&nbsp;{{team}}</a>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{team}}</a>
                                 </li>
                             {%endfor%}
                         </ul>
@@ -102,7 +102,7 @@ Total Appointments
         </form>
         <form method="post" action="{% url 'representatives.views.total_appointments' plan_month plan_day plan_year %}">
             {% csrf_token %}
-            <div style=" overflow-x: scroll !important;">
+            <div>
                 <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
                     <tr>
                         <!-- <th>Slots/Day</th> -->
@@ -322,7 +322,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" {% if isdisabled %}disabled {% endif %}/></td></tr>
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -506,7 +506,7 @@ Total Appointments
 
         // UnSelect all.
         if($(this).hasClass('all-selected')){
-            $(this).parent().children(':not(.hideItems)').children("a").children("input").prop('checked', false);
+            $(this).parent().children(':not(.hideItems)').children("a").children("span").removeClass('tickMarkShow');
             $(this).parent().children(':not(.hideItems)').each(function(){
                 $('#selectedTeams').children("option[value='"+ $(this).attr('idValue')+"']").remove();
             });
@@ -515,7 +515,7 @@ Total Appointments
         }
 
         // Select all.
-        $(this).parent().children(':not(.hideItems)').children("a").children("input").prop('checked', true);
+        $(this).parent().children(':not(.hideItems)').children("a").children("span").addClass('tickMarkShow');
         $(this).parent().children(':not(.hideItems)').each(function(){
             var optionElement = "<option class ='"+$(this).attr('class')+"' value='"+ $(this).attr('idValue')+"' selected></option>";
 
@@ -529,17 +529,18 @@ Total Appointments
     });
 
     function selectProcessPopulateTeamData(processElement){
+
         var processOptionElement = "<option value='"+$(processElement).attr('id')+"' selected></option>";
-        var selectedProcessElement = $(processElement).children("a").children("input");
+        var selectedProcessElement = $(processElement).children("a").children('span');
 
         // UnSelect Process Items.
-        if(selectedProcessElement.is(':checked')){
-            selectedProcessElement.prop('checked', false);
-            $('.'+$(processElement).attr('id')).children("a").children("input").prop('checked', false);
+        if(selectedProcessElement.hasClass('tickMarkShow')){
+            selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
+            $('.'+$(processElement).attr('id')).children("a").children('span').removeClass('tickMarkShow'); // UnSelect the Process Element's teams.
             $('#selectedTeams').children("option[class='"+$(processElement).attr('id')+"']").remove();
             $('.'+$(processElement).attr('id')).addClass('hideItems');
 
-            $('#selectAll').children("a").children("input").prop('checked', false);
+            $('#selectAll').children("a").children('span').removeClass('tickMarkShow');;
             $('#selectedProcessType').children("option[value='"+$(processElement).attr('id')+"']").remove();
 
             // If the selectedTeams list has only selectAll option element then remove 'all-selected' from it.
@@ -557,25 +558,25 @@ Total Appointments
         // Select Process Items.
         else{
             $('.'+$(processElement).attr('id') + ', #selectAll').removeClass('hideItems');
-            selectedProcessElement.prop('checked', true);
+            selectedProcessElement.addClass('tickMarkShow');
             $('#selectedProcessType').append(processOptionElement);
 
             // Remove select all tick.
-            $('#selectAll').children("a").children("input").prop('checked', false);
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
         }
 
     }
 
     function selectTeams(parentElementId, selectedElement){
-        var selectedTeamsElement = $(selectedElement).children("a").children("input");
+        var selectedTeamsElement = $(selectedElement).children("a").children('span');
         var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('idValue')+"' selected></option>";
-        if(selectedTeamsElement.is(':checked')){
-            selectedTeamsElement.prop('checked', false);
+        if(selectedTeamsElement.hasClass('tickMarkShow')){
+            selectedTeamsElement.removeClass('tickMarkShow');
             $('#selectedTeams').children("option[value='"+ $(selectedElement).attr('idValue')+"']").remove();
-            $('#selectAll').children("a").children("input").prop('checked', false);
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
         }
         else{
-            selectedTeamsElement.prop('checked', true);
+            selectedTeamsElement.addClass('tickMarkShow');
 
             // Append to list if Element is not present.
             if(!$('#selectedTeams').has("option[value='"+$(selectedElement).attr('idValue')+"']").length){
