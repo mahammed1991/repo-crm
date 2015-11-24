@@ -211,3 +211,12 @@ list-style: inherit;
   list-style-type: none;   
   border-bottom: 1px solid #dbdbdb;
 }
+.tickMark{
+	opacity: 0;
+}
+.tickMarkShow{
+	opacity: 1;
+}
+.hiddenCheckbox{
+	display: none;
+}

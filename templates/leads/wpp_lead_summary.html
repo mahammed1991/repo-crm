@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% load static %}
 {% load question_list_tags %}
+{% load leads_filters %}
 
 {% block title %}
   WPP Lead Status
@@ -302,10 +303,10 @@ function setWppLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].appointment_time + '</td>'
 
       if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
-        commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
-                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+        commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br> <br>Dial:').substring(1, 100) + '</p>' +
+                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br> <br>Dial:') + '</p> </td>'
       }else if (leads[i].regalix_comment != 'None'){
-          commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment + '</p>'
+          commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br> <br>Dial:') + '</p>'
       }else{
         commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
