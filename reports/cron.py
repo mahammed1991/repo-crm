@@ -338,7 +338,7 @@ def create_or_update_leads(records, sf):
         lead.lead_sub_status = rec.get('Lead_Sub_Status__c')
 
         all_regalix_comment = unicode(rec.get('All_Regalix_Comments__c')).encode('unicode_escape')
-        all_regalix_comment = all_regalix_comment.replace('-', '').replace('\\n', ' ').replace('\\r', '')
+        # all_regalix_comment = all_regalix_comment.replace('-', '').replace('\\n', ' ').replace('\\r', '')
 
         lead.regalix_comment = all_regalix_comment
         lead.google_comment = unicode(rec.get('Google_Comment__c')).encode('unicode_escape')
