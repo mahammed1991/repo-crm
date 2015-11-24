@@ -1681,6 +1681,7 @@ class ReportService(object):
         picasso_program_type_lead_status_analysis = dict()
         lead_status_per_objective_type = PicassoLeads.objects.filter(**query).values('team').annotate(count=Count('pk'))
         pie_chart_dict = {str(rec['team']): rec['count'] for rec in lead_status_per_objective_type}
+        pie_chart_dict = collections.OrderedDict(sorted(pie_chart_dict.items()))
 
         key_order = [sts for sts in settings.PICASSO_LEAD_STATUS]
         key_order.append('TOTAL')
@@ -1699,6 +1700,7 @@ class ReportService(object):
             if key == '':
                 picasso_program_type_lead_status_analysis['Others'] = picasso_program_type_lead_status_analysis[key]
                 del picasso_program_type_lead_status_analysis[key]
+        picasso_program_type_lead_status_analysis = collections.OrderedDict(sorted(picasso_program_type_lead_status_analysis.items()))
         return picasso_program_type_lead_status_analysis, pie_chart_dict
     # ##################### Number of Dials report ends ###########################
 

@@ -149,15 +149,12 @@ $('#viewButton').on('click', function() {
                 $('#preloaderOverlay').hide();
                 console.log(data);
                 if(data['survey_for_unmapped'] != null){
-                    $('#tabledescription').hide();
                     displayUnmappedData(data);
                 }else if(data['comparison'] == 'yes'){
                     $('#displaycolor').show();
-                    $('#tabledescription').show();
                     CSATComparisonReport(data);
                 }else{
                     $('#displaycolor').hide();
-                    $('#tabledescription').show();
                     displayReportData(data);
                 }
             },
@@ -258,18 +255,18 @@ function displayReportData(reportData) {
         '<th class="msc24">CSAT%</th>' +
         '<th class="msc24">vs Target(95%)</th>' +
         '<th class="msc24">Process</th>' +
-        '<th class="msc24">TR</th>' +
+        '<th title="Transfer Rate"class="msc24">TR</th>' +
         /*'<th class="msc24">Transfer Rate1</th>' +*/
         '<th class="msc24">Leads</th>' +
         '<th class="msc24">Wins</th>' +
-        '<th class="msc24">ES</th>' +
-        '<th class="msc24">MS</th>' +
-        '<th class="msc24">SS</th>' +
-        '<th class="msc24">NS/D</th>' +
-        '<th class="msc24">SD</th>' +
-        '<th class="msc24">MD</th>' +
-        '<th class="msc24">ED</th>' +
-        '<th class="msc23">GT</th>' +
+        '<th title="Extremely Satisfied" class="msc24">ES</th>' +
+        '<th title="Moderately Satisfied" class="msc24">MS</th>' +
+        '<th title="Slightly Satisfied" class="msc24">SS</th>' +
+        '<th title="Neither Satisfied/Dissatisfied" class="msc24">NS/D</th>' +
+        '<th title="Slightly Dissatisfied" class="msc24">SD</th>' +
+        '<th title="Moderately Dissatisfied" class="msc24">MD</th>' +
+        '<th title="Extremely Dissatisfied" class="msc24">ED</th>' +
+        '<th title="Grand Total" class="msc23">GT</th>' +
         '</tr>'
     row = '';
 
@@ -315,18 +312,18 @@ function CSATComparisonReport(reportData) {
         '<th class="msc24">Process</th>' +
         '<th class="msc24">CSAT%</th>' +
         '<th class="msc24">vs Target(95%)</th>' +
-        '<th class="msc24">Transfer Rate</th>' +
+        '<th title="Transfer Rate"class="msc24">TR</th>' +
         /*'<th class="msc24">Transfer Rate1</th>' +*/
         '<th class="msc24">Leads</th>' +
         '<th class="msc24">Wins</th>' +
-        '<th class="msc24">ES</th>' +
-        '<th class="msc24">MS</th>' +
-        '<th class="msc24">SS</th>' +
-        '<th class="msc24">NS/D</th>' +
-        '<th class="msc24">SD</th>' +
-        '<th class="msc24">MD</th>' +
-        '<th class="msc24">ED</th>' +
-        '<th class="msc23">GT</th>' +
+        '<th title="Extremely Satisfied" class="msc24">ES</th>' +
+        '<th title="Moderately Satisfied" class="msc24">MS</th>' +
+        '<th title="Slightly Satisfied" class="msc24">SS</th>' +
+        '<th title="Neither Satisfied/Dissatisfied" class="msc24">NS/D</th>' +
+        '<th title="Slightly Dissatisfied" class="msc24">SD</th>' +
+        '<th title="Moderately Dissatisfied" class="msc24">MD</th>' +
+        '<th title="Extremely Dissatisfied" class="msc24">ED</th>' +
+        '<th title="Grand Total" class="msc23">GT</th>' +
         '</tr>'
     row = '';
 
