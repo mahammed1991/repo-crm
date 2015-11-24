@@ -158,7 +158,7 @@
                           <td class="hidden-xs hidden-sm comments-container comments-container2"><p>
                           {% if l.regalix_comment and l.regalix_comment|length > 100 %}
                             {{ l.regalix_comment| replace | truncatechars:200 }}</p>
-                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment | replace}}</p> </td>
+                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment | replace }}</p> </td>
                           {% elif l.regalix_comment %}
                             {{ l.regalix_comment|replace}}</p>
                           {% else %}
@@ -546,10 +546,10 @@ function setLeadSummaryTableExtend(leads, start_row, end_row){
                 '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
     
       if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
-        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').substring(1, 200) + '</p>' +
-                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '') + '</p> </td>'
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br>Dial:').substring(1, 200) + '</p>' +
+                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br> <br>Dial:') + '</p> </td>'
       }else if (leads[i].regalix_comment != 'None'){
-          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '') + '</p>'
+          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br> <br>Dial:') + '</p>'
       }else{
         comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
