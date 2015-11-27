@@ -269,7 +269,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
     #  for daylight savings notifications
     daylight_marquee_msg = ''
     today = datetime.today()
-    locations = Location.objects.filter(location_name__in=selected_team.location.values_list('location_name'))
+    locations = selected_team.location.all()
     for location in locations:
         if location.daylight_start and location.daylight_end:
             if today >= location.daylight_start and today <= location.daylight_end:
