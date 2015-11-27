@@ -1,0 +1,638 @@
+{% extends 'layouts/main.html' %}
+
+{% load rep_filters %}
+{% load staticfiles %}
+
+{% block title %}
+Total Appointments
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+{% endblock main_css %}
+
+{% block content %}
+<!-- content-region -->
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>Total APPOINTMENTS</h1>
+      {% if  daylight_marquee_msg %}
+                      <div class="performer">
+                            <div class="performer-info" style="text-align:center; margin-bottom:8px; color:red;">
+                              <marquee>{{daylight_marquee_msg}}</marquee>
+                            </div>
+                        </div>
+       {% endif %} 
+     <!-- google rep info -->
+        {% if error %}
+        <div class="row std-sub-top">
+            <div class="col-xs-12 title-text">
+                <span>Opps you don't have permission to access the appointments slots!</span>
+            </div>
+        </div>
+        {% else %}
+            <div class="row std-sub-top">
+                <div class="col-xs-2 ">
+                    <a href="{% url 'representatives.views.total_appointments' prev_week.month prev_week.day prev_week.year %}" class="text-prev">Previous Week</a>
+                </div>
+                <div class="col-xs-8  title-text">
+                    <span>Time Zone: IST(UTC:5:30)</span>
+                </div>
+                <div class="col-xs-2 ">
+                    <a href="{% url 'representatives.views.total_appointments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
+                </div>
+            </div>
+            <form method="post" action="" class="form" onsubmit="return validateForm()">
+                {% csrf_token %}
+            <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
+            <div class="row" style="margin-left: 5px;">
+                <div class="col-md-2 box2">
+                    <div id="processTypesDiv" class="btn-group drpDown" style="width: 130px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" id="processTypeBtn" style="width: 130px;">Process Type<span class="caret"></span></button>
+                        <ul class="dropdown-menu process-ul">
+                            {% for item in process_types %}
+                                <li id="{{item}}">
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 box2" style="margin-left: 61px;">
+                    <div id="teamsDiv" class="btn-group drpDown" style="width: 130px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" id="teamTypeBtn" style="width: 130px;">Teams<span class="caret"></span></button>
+                        <ul class="dropdown-menu teams-ul">
+                            <li idValue='000' id='selectAll' class='selectAll hideItems'>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
+                            </li>
+                            {% for team in default_teams %}
+                                <li idValue='{{team.id}}' id='{{team.process_type}}_{{team.id}}' class='{{team.process_type}} hideItems'>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{team}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 box2 bb hideItems">
+                    <select id="selectedProcessType" name="selectedProcessType" multiple="multiple">                        
+                    </select>
+                    <select id="selectedTeams" name="selectedTeams" multiple="multiple">
+                    </select>
+                </div>
+                
+                <div class="col-md-3 bbc" style="margin-left: 168px;margin-top: -10px;">
+                    <div class="checkbox web-access">
+                        <span>
+                            <svg width="10" height="10" style="margin-right:3%">
+                            <rect x="2" y="2" width="5" height="5" style="fill:blue;stroke:#C7F4D3;stroke-width:5;fill-opacity:0.1;stroke-opacity:1">
+                            </svg>Appointments Booked
+                        </span><br />
+                      <span>
+                        <svg width="12" height="12" style="margin-right:3%">
+                            <rect x="2" y="2" width="9" height="9" style="fill:white;stroke:#000;stroke-width:0.5;fill-opacity:0.1;stroke-opacity:1">
+                        </svg>
+                      Slots Available</span>
+                    </div>
+                </div>
+
+                <div class="col-md-5 bbd" style="margin-left: -8px;  margin-top: -8px;">
+                     <button class="btn std-btn" id="form_submit" >Submit</button>
+                </div>     
+            </div>
+        </form>
+        <form method="post" action="{% url 'representatives.views.total_appointments' plan_month plan_day plan_year %}">
+            {% csrf_token %}
+            <div>
+                <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
+                    <tr>
+                        <!-- <th>Slots/Day</th> -->
+                        <th style="border-top:none !important; border:none !important; width:8% !important;"></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Mon</td></tr><tr><td class="cubg">{{dates|get_dict_val:'day1'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Tue</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day2'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Wed</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day3'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Thu</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day4'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Fri</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day5'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Sat</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day6'|date:"M d, Y"}}</td></tr></table></th>
+                    </tr>
+                    <tr style="background-color: rgb(166, 166, 104);">
+                        <td class="cubg2">Total</td>
+                        {% for slot in total_slots %}
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="2">
+                                    <tr>
+                                        <td class="cubg3">{{slot.booked}}</td>
+                                        <td class="cubg4">{{slot.available}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% for i in 12|get_range %}
+                        <tr>
+                            {% if forloop.first %}
+                                <td class="cubg2">{{i|add:12|concatenate:':00'}} AM</td>
+                            {% else %}
+                            <td class="cubg2">{{i|concatenate:':00'}} AM</td>
+                            {% endif %}
+                            {% with 'input_' as input %}
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            {% endwith %}
+                        </tr>
+                        <tr>
+                            {% if forloop.first %}
+                                <td class="cubg2">{{i|add:12|concatenate:':30'}} AM</td>
+                            {% else %}
+                            <td class="cubg2">{{i|concatenate:':30'}} AM</td>
+                            {% endif %}
+                            {% with 'input_' as input %}
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </table>
+                            </td>
+                            {% endwith %}
+                        </tr>
+                    {% endfor %}
+
+                    <!-- ################## PM #######################################-->
+                    {% for i in 12|get_range %}
+                        <tr>
+                            {% if forloop.first %}
+                                <td class="cubg2">{{i|add:12|concatenate:':00'}} PM</td>
+                            {% else %}
+                            <td class="cubg2">{{i|concatenate:':00'}} PM</td>
+                            {% endif %}
+                            {% with 'input_' as input %}
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            {% endwith %}
+                        </tr>
+                        <tr>
+                            {% if forloop.first %}
+                                <td class="cubg2">{{i|add:12|concatenate:':30'}} PM</td>
+                            {% else %}
+                            <td class="cubg2">{{i|concatenate:':30'}} PM</td>
+                            {% endif %}
+                            {% with 'input_' as input %}
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="0" cellpadding="0">
+                                    {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
+                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                </table>
+                            </td>
+                            {% endwith %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </form>
+    {% endif %}
+    </div>
+</section>
+<div id='hideteam'>
+<select id='team' multiple='multiple' style='display:none;'>
+{% for team in teams %}
+    <option value='{{team.id}}' name='team'>{{team}}</option>
+{% endfor %}
+</select>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery.classyloader.js' %}"></script>
+<script type="text/javascript">
+
+    // Show Error msg if no items are selected.
+    function validateForm(){
+
+        $('.drpDown .process-ul, .teams-ul').hide();
+
+        // Check for process items, select-all, teams.
+        if(!($('#selectedProcessType').children().length) || (!($('#selectedTeams option[value="000"]:only-child').length) && !$('#selectedTeams').children().length)){
+            alert('Please select atleast one Process and Team value');
+            return false;
+        }
+
+        return true;
+    }
+
+    //Clicking outside process type list hide teams list. 
+    $('body').click(function(evt){
+       if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
+            $('.process-ul, .teams-ul').show();
+       }else{
+            $('.process-ul, .teams-ul').hide();
+       }
+    });
+
+    // Process Select Button - show Process list.
+    $('#processTypeBtn').on('click', function(){
+        $('.drpDown .process-ul, .teams-ul').toggle();
+    });
+
+    // Call Process Select.
+    $('.process-ul').children().on('click', function(){
+        selectProcessPopulateTeamData(this);
+    });
+
+    // Call Team Select.
+    $('.teams-ul').children().on('click', function(){
+        selectTeams(this.className, this);
+    });
+
+    // Select All Button. 
+    $('#selectAll').on('click', function(){
+
+        // UnSelect all.
+        if($(this).hasClass('all-selected')){
+            $(this).parent().children(':not(.hideItems)').children("a").children("span").removeClass('tickMarkShow');
+            $(this).parent().children(':not(.hideItems)').each(function(){
+                $('#selectedTeams').children("option[value='"+ $(this).attr('idValue')+"']").remove();
+            });
+            $(this).removeClass('all-selected');
+            return;
+        }
+
+        // Select all.
+        $(this).parent().children(':not(.hideItems)').children("a").children("span").addClass('tickMarkShow');
+        $(this).parent().children(':not(.hideItems)').each(function(){
+            var optionElement = "<option class ='"+$(this).attr('class')+"' value='"+ $(this).attr('idValue')+"' selected></option>";
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(this).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        });
+        $(this).addClass('all-selected');
+
+    });
+
+    function selectProcessPopulateTeamData(processElement){
+
+        var processOptionElement = "<option value='"+$(processElement).attr('id')+"' selected></option>";
+        var selectedProcessElement = $(processElement).children("a").children('span');
+
+        // UnSelect Process Items.
+        if(selectedProcessElement.hasClass('tickMarkShow')){
+            selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
+            $('.'+$(processElement).attr('id')).children("a").children('span').removeClass('tickMarkShow'); // UnSelect the Process Element's teams.
+            $('#selectedTeams').children("option[class='"+$(processElement).attr('id')+"']").remove();
+            $('.'+$(processElement).attr('id')).addClass('hideItems');
+
+            $('#selectAll').children("a").children('span').removeClass('tickMarkShow');;
+            $('#selectedProcessType').children("option[value='"+$(processElement).attr('id')+"']").remove();
+
+            // If the selectedTeams list has only selectAll option element then remove 'all-selected' from it.
+            if($('#selectedTeams option[value="000"]:only-child').length){
+                $('#selectAll').removeClass('all-selected');
+            }
+
+            // If selectAll element has Not got the class 'all-selected', then hide it.
+            if(!$('#selectAll').hasClass('all-selected') && !$('#selectedProcessType').children().length){
+                $('#selectAll').addClass('hideItems');
+            }
+
+        }
+
+        // Select Process Items.
+        else{
+            $('.'+$(processElement).attr('id') + ', #selectAll').removeClass('hideItems');
+            selectedProcessElement.addClass('tickMarkShow');
+            $('#selectedProcessType').append(processOptionElement);
+
+            // Remove select all tick.
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
+        }
+
+    }
+
+    function selectTeams(parentElementId, selectedElement){
+        var selectedTeamsElement = $(selectedElement).children("a").children('span');
+        var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('idValue')+"' selected></option>";
+        if(selectedTeamsElement.hasClass('tickMarkShow')){
+            selectedTeamsElement.removeClass('tickMarkShow');
+            $('#selectedTeams').children("option[value='"+ $(selectedElement).attr('idValue')+"']").remove();
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
+        }
+        else{
+            selectedTeamsElement.addClass('tickMarkShow');
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(selectedElement).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        }
+    }
+
+    $(document).ready(function(){
+        var post_result_dict = {{post_result_dict|safe}};
+        for(team in post_result_dict){
+            selectProcessPopulateTeamData('#'+team);
+            var teams = post_result_dict[team];
+            for (item in teams){
+                selectTeams(team, '#'+team+'_'+teams[item]);
+                $('.'+team).removeClass('hideItems');
+            }
+        }
+        // Click on Schedule button
+        // Validate the slots entry
+        $('.logbtn').click(function(){
+            var isError = false;
+            $('table tr td input[type=text]:enabled').each(function(){
+                if(isNaN($(this).val())){
+                    $(this).focus();
+                    isError = true;
+                    alert('Please enter a valid entry for available slots');
+                    return false;
+                }else if(parseInt($(this).val()) > 1000000 ){
+                    $(this).focus();
+                    isError = true;
+                    alert('Available slots are out of range');
+                    return false;
+               }
+            });
+            if(isError){
+                return false;
+            }
+        });
+
+    });
+
+    $("input[type=text]").bind("keypress", function(e) {
+        // body...
+        var key = e.keyCode ? e.keyCode : e.which;
+        if ( isNaN( String.fromCharCode(key) ) ) return false;
+    });
+
+</script>
+{% endblock main_js %}

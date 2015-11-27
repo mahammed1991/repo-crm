@@ -1,0 +1,193 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+File Upload
+{% endblock title %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>File Upload Here</h1>
+       <p style="font-family:Times New Roman;font-size:12px;color:red">{{error}}</p>
+       <p style="font-family:Times New Roman;font-size:12px;color:red">{{default_headers}}</p>
+{% if not excel_data %}
+  <form class="lead-form" onsubmit="return validate()" action="#" method="post" name="help-form" enctype="multipart/form-data">
+  {% csrf_token %}
+    <div class="std-sub-title">Upload Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <select class="form-control bgicon" id="uploadTarget" name='uploadTarget'>
+          <option value=""> Select Upload Target</option>
+          {% if "WPP" in request.session.groups %}
+          <option value="wpp_master_list">Website Optimization Master List</option>
+          {% else %}
+          <option value="normal_master_list">Master Data Upload</option>
+          <option value="csat_report_data">CSAT Report Data</option>
+          {% endif %}
+        </select>
+      </div>
+      <div class="col-md-4" id="file_div">
+        <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%; padding:5% 0 5% 0;"/>
+        <input type="file" id="attachment_name" name="attachment_name" style="display: none" onChange="Handlechange();" />
+        <input type="text" id="filename1" readonly="true" style="width:58%; padding:5% 0 5% 0;" />
+       
+      </div>
+    </div>
+    <div class="row" style="display:none;" id="survey">
+      <span>&nbsp;&nbsp;&nbsp;</span>
+      <span> Survey Channel </span>
+       <span>&nbsp;</span>
+      <input type="radio" name="survey_channel" value="Phone" checked="checked"><span> Phone </span> 
+      <input type="radio" name="survey_channel" value="Email"><span> Email</span>
+    </div>
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn" id="file_submit">Upload</button>
+        </div>
+    </div>
+    </form>
+    <!-- Table Start *******************************************  -->  
+    {% else %}
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-bordered">
+            {% for row in excel_data %}
+                <tr align="center">
+                {% if forloop.first %}
+                    {% for col in row %}
+                    <td style="background:#E6E7E9"><b>{{ col }}</b></td>
+                    {% endfor %}
+                {% else %}
+                    {% for col in row %}
+                            <td>{{ col }}</td>
+                    {% endfor %}
+                {% endif %}
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="row">
+    {% if upload_target == 'normal_master_list' %}
+        <form method="post" action="{% url 'main.views.migrate_user_data' %}">
+    {% else %}
+        <form method="post" action="{% url 'main.views.migrate_table_data' %}">
+    {% endif %}
+            {% csrf_token %}
+            <table width="100%" style="border-collapse: collapse">                
+                <tr>
+                    <td style="padding: 1%;">
+                        <input type="submit" value="Save" style="margin: 1% 1% 1% 1%;" class="btn std-btn"/>
+                        <input type="hidden" name='file' value='{{ excel_file }}' />
+                        <input type="hidden" name='target_upload' value='{{ upload_target }}' />
+                        <input type="button" value="Cancel" class="btn std-btn" onclick="window.location.href='{% url 'main.views.upload_file_handling'%}'">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+   
+    <!-- Table Ends *******************************************  -->  
+    
+     {% endif %}
+        <!-- POP UP  STARTS *******************************************  -->  
+        <div class='btn_modal' style="display:none">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" style="display:none;" id='btn_modal'></button>
+            <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+              <div class="modal-dialogx modal-lg" style="margin:auto">
+                  <div class="modal-content" style="margin-top: 17%; border-radius: 3px;padding: 2%;">
+                  {% if upload_target == 'normal_master_list' %}
+
+                        Totally you are trying to upload {{total_record}} records...<br /><br />
+                        {{template_args.number_of_saved_records}} records successfully saved.<br /><br />
+                        Please click here to upload the data again <a href="{% url 'main.views.upload_file_handling' %}"><b>Upload Here</b></a><br /><br />
+                        {{template_args.number_of_unsaved_records}} records not saved.<br /><br />
+                         Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
+
+                         New Programs : {% for pr in new_programs %} {{pr}}, {% endfor %} <br />
+                         New Locations : {% for lc in new_locations %} {{lc}}, {% endfor %} <br />
+                         New Region : {% for rg in new_region %} {{rg}}, {% endfor %} <br />
+
+                  {% else %}
+
+                    Totally you are trying to upload {{number_of_records}} records...<br /><br />
+                    {{number_of_saved_records}} records successfully saved.<br /><br />
+                    {{number_of_updated_records}} records are Updated.<br /><br />
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.href='{% url 'main.views.upload_file_handling'%}'">OK</button>
+                  </div>
+                  {% endif %}
+                 
+
+                  
+                </div>
+              </div>
+            </div>
+
+        </div>
+        <!-- POP UP  ends *******************************************  -->  
+  </div>
+</section>
+<!-- content-region ends --> 
+{% endblock content %}
+
+{% block main_js %}
+<script>
+$(document).ready(function(){
+
+    var targetSet = "{{upload_target}}";
+    $("#uploadTarget").val(targetSet);
+
+    if(targetSet == 'csat_report_data'){
+      $('#survey').show();
+    }else{
+      $('#survey').hide();
+    }
+
+    var result = "{{result}}"
+    if (result){
+        $('.btn_modal').show();
+        $('#btn_modal').trigger('click');
+    }
+
+})
+
+function HandleBrowseClick(){
+    var fileinput = document.getElementById("attachment_name");
+    fileinput.click();
+    }
+
+function Handlechange(){
+    var fileinput = document.getElementById("attachment_name");
+    var textinput = document.getElementById("filename1");
+    textinput.value = fileinput.value;
+}
+
+function validate(){
+    var is_error = true;
+    if($('#uploadTarget').val() == ''){
+        alert('Please Select The Drop Down Value');
+        is_error = false;
+    }
+    if($('#file_div').is(':visible')){
+        if($('#filename1').val() == ''){
+            alert('Please select a file to upload');
+            is_error = false;
+        }
+    }
+    return is_error;
+}
+
+$(document).on('change', '#uploadTarget', function(){
+  if($(this).val() == 'csat_report_data'){
+    $('#survey').show();
+  } else{
+    $('#survey').hide();
+  }
+})
+
+</script>
+
+{% endblock main_js %}
