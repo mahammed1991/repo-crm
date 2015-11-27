@@ -19,7 +19,7 @@ from django.contrib.auth.models import User, Group
 
 from django.conf import settings
 
-from lib.helpers import send_mail, manager_info_required, wpp_user_required
+from lib.helpers import send_mail, manager_info_required, wpp_user_required, check_lead_submitter_for_empty
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ)
@@ -197,7 +197,7 @@ def main_home(request):
 
         # feedback summary end here
         return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                                       'user_profile': user_profile,  # 'question_list': question_list,
+                                                       'user_profile': user_profile, 'no_leads':check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
                                                        'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
                                                        'feedback_list': feedback_list, 'notifications': notifications})
 
@@ -214,6 +214,7 @@ def main_home(request):
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
 
         current_date = datetime.utcnow()
+        # import ipdb;ipdb.set_trace()
         wpp_top_performer = get_top_performer_list(current_date, 'WPP')
 
         wpp_feedback_list = dict()
@@ -235,8 +236,9 @@ def main_home(request):
 
         return render(request, 'main/wpp_index.html', {'wpp_lead_dict': wpp_lead_dict, 'user_profile': user_profile,
                                                        'wpp_feedback_list': wpp_feedback_list, 'wpp_report': wpp_report,
-                                                       'wpp_top_performer': wpp_top_performer, 'title': title,
+                                                       'wpp_top_performer': wpp_top_performer, 'title': title, 'no_leads':check_lead_submitter_for_empty(wpp_top_performer),
                                                        'wpp_treatment_type_report': wpp_treatment_type_report})
+
 
 
 def get_feedbacks(user, feedback_type):
@@ -1592,4 +1594,5 @@ def picasso_home(request):
                                                                         'picasso_lead_status': picasso_lead_status,
                                                                         'picasso_objective_dict': picasso_objective_dict,
                                                                         'picasso_objective_total': picasso_objective_total,
-                                                                        'picasso_top_performer': picasso_top_performer})
+                                                                        'picasso_top_performer': picasso_top_performer,
+                                                                        'no_leads':check_lead_submitter_for_empty(picasso_top_performer)})

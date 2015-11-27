@@ -145,6 +145,7 @@
       </div>
   </section>
   <section class="performers testimonials">
+  {% if not no_leads %}
       <div class="container-fluid">
           <h2>TOP LEAD SUBMITTERS</h2>
             <div class="row" id="picasso_toppers">
@@ -194,6 +195,7 @@
               {% endif %}
             </div>
         </div>
+      {% endif %}
     </section>
 </section>
 

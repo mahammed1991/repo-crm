@@ -203,6 +203,7 @@ Regalix Google Portal
 
 
     <section class="performers testimonials">
+    {% if not no_leads %}
       <div class="container-fluid">
           <h2>TOP LEAD SUBMITTERS</h2>
             <div class="row" id="tag_toppers">
@@ -252,6 +253,7 @@ Regalix Google Portal
               {% endif %}
             </div>
         </div>
+      {% endif %}
      </section>
      <section class="testimonials">
       <div class="container-fluid">
