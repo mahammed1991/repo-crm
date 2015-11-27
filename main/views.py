@@ -214,7 +214,6 @@ def main_home(request):
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
 
         current_date = datetime.utcnow()
-        # import ipdb;ipdb.set_trace()
         wpp_top_performer = get_top_performer_list(current_date, 'WPP')
 
         wpp_feedback_list = dict()
