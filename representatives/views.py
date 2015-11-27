@@ -268,11 +268,18 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
     #  for daylight savings notifications
     daylight_marquee_msg = ''
-    locations = selected_team.location.all()
+    today = datetime.today()
+    locations = Location.objects.filter(location_name__in=selected_team.location.values_list('location_name'))
     for location in locations:
         if location.daylight_start and location.daylight_end:
-
-            daylight_marquee_msg += " Daylight Starts on %s and Daylight Ends on %s for %s ::" % (location.daylight_start.strftime("%B %d, %Y"), location.daylight_end.strftime("%B %d, %Y"), location.location_name)
+            if today >= location.daylight_start and today <= location.daylight_end:
+                date_difference = location.daylight_end.date() - today.date()
+                if date_difference.days <= 15:
+                    daylight_marquee_msg += 'Daylight ends on %s for %s' %(location.daylight_end.strftime("%B %d, %Y"), location.location_name)
+            if today < location.daylight_start:
+                date_difference = location.daylight_start.date() - today.date()
+                if date_difference.days <= 15:
+                    daylight_marquee_msg += 'Daylight starts on %s for %s' %(location.daylight_start.strftime("%B %d, %Y"), location.location_name)
 
     diff = divmod((utc_date - plan_date).total_seconds(), 60)
     diff_in_minutes = diff[0]

@@ -796,7 +796,6 @@ class ReportService(object):
 
             region_csat_type = 'code_type'
             region_csat = ReportService.get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query)
-
             details = {'report_type': 'Task Type', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'type_1', 'csat_attribute': 'code_type'}
             report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, code_types, details)
 
@@ -994,6 +993,9 @@ class ReportService(object):
             if details['csat_attribute'] == 'program':
                 if value['Program'] == '':
                     value['Program'] = 'Others'
+            if details['csat_attribute'] == 'code_type':
+                if value['Task Type'] == '':
+                    value['Task Type'] = 'Others'
         report_records = collections.OrderedDict(sorted(report_records.items()))
         return report_records.values()
 
@@ -1026,8 +1028,11 @@ class ReportService(object):
 
     @staticmethod
     def get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison):
+        key_response = {'Grand Total': 0, 'Leads':0, 'Wins': 0, 'Extremely satisfied': 0, 'Moderately satisfied': 0, 'Slightly satisfied': 0, 'Neither satisfied nor dissatisfied': 0, 'Slightly dissatisfied': 0, 'Moderately dissatisfied': 0, 'Extremely dissatisfied': 0}
+        total_response_count = {'TotalGrand Total': 0, 'report_type': 'Total', 'TotalLeads': 0, 'TotalWins': 0, 'Total': 0, 'TotalExtremely satisfied': 0, 'TotalModerately satisfied': 0, 'TotalSlightly satisfied': 0, 'TotalNeither satisfied nor dissatisfied': 0, 'TotalSlightly dissatisfied': 0, 'TotalModerately dissatisfied': 0, 'TotalExtremely dissatisfied': 0}
         current_list = []
         previous_list = []
+        
         if comparison == 'yes':
             for current_report in current_report_data:
                 for previous_report in previous_report_data:
@@ -1039,7 +1044,12 @@ class ReportService(object):
         else:
             for current_report in current_report_data:
                 if current_report['Leads'] != 0:
+                    for key, value in current_report.iteritems():
+                        for key1, value1 in key_response.iteritems():
+                            if key == key1:
+                                total_response_count['Total'+key1] += value
                     current_list.append(current_report)
+            current_list.append(total_response_count)
             return current_list, previous_list
 
     @staticmethod
