@@ -885,12 +885,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         process_types = RegalixTeams.objects.exclude(
             process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), is_active=True).values_list('process_type', flat=True).distinct().order_by()
 
-        if process_type == 'TAG' and process_type not in process_types:
-            if 'SHOPPING' in process_types:
-                process_type = 'SHOPPING'
-            else:
-                process_type = 'WPP'
-        teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type=process_type, is_active=True).exclude(team_name='default team').distinct().order_by()
+        teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type__in=process_types, is_active=True).exclude(team_name='default team').distinct().order_by()
     if not teams:
         # if team is not specified, select first team by default
         return render(
