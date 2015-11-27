@@ -486,6 +486,15 @@ Total Appointments
         return true;
     }
 
+    //Clicking outside process type list hide teams list. 
+    $('body').click(function(evt){
+       if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
+            $('.process-ul, .teams-ul').show();
+       }else{
+            $('.process-ul, .teams-ul').hide();
+       }
+    });
+
     // Process Select Button - show Process list.
     $('#processTypeBtn').on('click', function(){
         $('.drpDown .process-ul, .teams-ul').toggle();

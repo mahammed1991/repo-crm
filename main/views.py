@@ -299,16 +299,17 @@ def top_30_cms(request):
 
 
 def get_top_performer_by_date_range(start_date, end_date, lead_type):
+
     if lead_type == 'NORMAL':
-        topper_list = Leads.objects.exclude(google_rep_email='').filter(
+        topper_list = Leads.objects.exclude(google_rep_email__contains='regalix-inc').filter(
             created_date__gte=start_date,
             created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
     elif lead_type == 'PICASSO':
-        topper_list = PicassoLeads.objects.exclude(google_rep_email='').filter(
+        topper_list = PicassoLeads.objects.exclude(google_rep_email__contains='regalix').filter(
             created_date__gte=start_date,
             created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
     else:
-        topper_list = WPPLeads.objects.exclude(google_rep_email='').filter(
+        topper_list = WPPLeads.objects.exclude(google_rep_email__contains='regalix').filter(
             created_date__gte=start_date,
             created_date__lte=end_date).values('google_rep_email').annotate(submitted=Count('sf_lead_id')).order_by('-submitted')
     toppers = dict()

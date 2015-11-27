@@ -883,7 +883,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         # if team is not specified, select first team by default
         return render(
             request,
-            'representatives/plan_schedule.html',
+            'representatives/total_appointments.html',
             {'error': True,
              'message': "No Teams"
              }

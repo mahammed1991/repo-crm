@@ -496,10 +496,10 @@ function setLeadSummary(lead_status){
                 '<td class="hidden-xs hidden-sm">' + leads[i].rescheduled_appointment +'</td>'
     
       if (leads[i].regalix_comment != 'None' && leads[i].regalix_comment.length > 100){
-        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.substring(1, 100) + '</p>' +
-                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+        comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br>Dial:').substring(1, 200) + '</p>' +
+                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br>Dial:') + '</p> </td>'
       }else if (leads[i].regalix_comment != 'None'){
-          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment + '</p>'
+          comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p>' + leads[i].regalix_comment.replace(/-/g, '').replace(/\\n/g, ' ').replace(/\\r/g, '').replace(/Dial:/g, '<br>Dial:') + '</p>'
       }else{
         comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
@@ -582,7 +582,7 @@ $(window).scroll(function() {
             dataType: 'json',
             success: function(data){
               setLeadSummaryTableExtend(data, numOfLeads, uptoLeads);
-                console.log(data);
+                //console.log(data);
               }
         });
       }
