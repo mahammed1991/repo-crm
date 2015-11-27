@@ -680,3 +680,12 @@ def get_picasso_count_of_each_lead_status_by_rep(email, objective_type, start_da
         lead_status[lead_status_cnt.get('lead_status')] = lead_status_cnt.get('cnt')
     picasso_lead_status = {key.replace(' ', '_'): value for key, value in lead_status.iteritems()}
     return picasso_lead_status
+
+
+def check_lead_submitter_for_empty(topper_dict):
+    no_leads = False
+    for dt_range, user_list in topper_dict.iteritems():
+        if not user_list:
+            no_leads = True
+            return no_leads
+    return no_leads
