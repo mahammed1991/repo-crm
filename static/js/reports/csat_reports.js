@@ -250,6 +250,7 @@ function displayUnmappedData(reportData){
 
 function displayReportData(reportData) {
     $('.table').empty();
+
     header = '<tr >' +
         '<th class="msc24">' + reportData['report_type'] + '</th>' +
         '<th class="msc24">CSAT%</th>' +
@@ -269,10 +270,35 @@ function displayReportData(reportData) {
         '<th title="Grand Total" class="msc23">GT</th>' +
         '</tr>'
     row = '';
-
     for (i = 0; i < reportData['report_data'].length; i++) {
 
-        row += '<tr>' +
+
+
+        total_row = ''
+        if(reportData['report_data'][i]['report_type'] == 'Total'){
+            console.log(reportData['report_data'][i]['TotalLeads'])
+            total_row += '<tr>' +
+            '<td>' + reportData['report_data'][i]['report_type'] + '</td>' +
+            '<td>' + '-' + '</td>' +
+            '<td>' + '-' + '</td>' +
+            '<td>' + reportData['process'] + '</td>' +
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalGrand Total'] + 
+
+           '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalLeads'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalWins'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalExtremely satisfied'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalModerately satisfied'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalSlightly satisfied'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalNeither satisfied nor dissatisfied'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalSlightly dissatisfied'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalModerately dissatisfied'] + 
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalExtremely dissatisfied'] + 
+
+
+            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalGrand Total'] + 
+            ' </tr>';
+        }else{
+        row += '<tr class="row_border">' +
             '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
             '<td>' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</td>' +
             '<td>' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</td>' +
@@ -299,14 +325,16 @@ function displayReportData(reportData) {
             ' </tr>'
 
         row +=  row_end;
+    }
 
     }
 
-    $('.table').append(header + row);
+    $('.table').append(header + row + total_row);
 }
 
 function CSATComparisonReport(reportData) {
     $('.table').empty();
+
     header = '<tr >' +
         '<th class="msc24">' + reportData['report_type'] + '</th>' +
         '<th class="msc24">Process</th>' +
@@ -328,7 +356,7 @@ function CSATComparisonReport(reportData) {
     row = '';
 
     for (i = 0; i < reportData['report_data'].length; i++) {
-        row += '<tr>' +
+        row += '<tr class="row_border">' +
             '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
             '<td>' + reportData['process'] + '</td>' +
             '<td style="padding: 0px !important;"><div class="tabletop">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</div><div class="prev">' + reportData['previous_report_data'][i]['Extremely satisfied in pcg'] + '%</div></td>' +
