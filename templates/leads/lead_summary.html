@@ -157,10 +157,10 @@
                       {% if l.regalix_comment  %}
                           <td class="hidden-xs hidden-sm comments-container comments-container2"><p>
                           {% if l.regalix_comment and l.regalix_comment|length > 100 %}
-                            {{ l.regalix_comment| replace | truncatechars:200 }}</p>
-                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment | replace }}</p> </td>
+                            {{ l.regalix_comment| replace  | linebreaksbr | truncatechars:200 }}</p>
+                            <p class="comments-full"><img class="left-arrow" src="{%static 'images/comments-left-arrow.png' %}"> {{ l.regalix_comment | replace |linebreaksbr }}</p> </td>
                           {% elif l.regalix_comment %}
-                            {{ l.regalix_comment|replace}}</p>
+                            {{ l.regalix_comment|replace| linebreaksbr}}</p>
                           {% else %}
                             ''
                           {% endif %}
