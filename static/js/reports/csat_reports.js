@@ -298,7 +298,7 @@ function displayReportData(reportData) {
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalGrand Total'] + 
             ' </tr>';
         }else{
-        row += '<tr class="row_border">' +
+        row += '<tr>' +
             '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
             '<td>' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</td>' +
             '<td>' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</td>' +
@@ -356,7 +356,7 @@ function CSATComparisonReport(reportData) {
     row = '';
 
     for (i = 0; i < reportData['report_data'].length; i++) {
-        row += '<tr class="row_border">' +
+        row += '<tr>' +
             '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
             '<td>' + reportData['process'] + '</td>' +
             '<td style="padding: 0px !important;"><div class="tabletop">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</div><div class="prev">' + reportData['previous_report_data'][i]['Extremely satisfied in pcg'] + '%</div></td>' +
