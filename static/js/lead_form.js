@@ -186,7 +186,6 @@
       $("#rbudget" + indx).val('');
       $("#ga_setup" + indx).val('0');
 
-      
       $("#user_list_id"+ indx).val('');
       $("#internal_cid"+ indx).val('');
       $("#rsla_bid_adjustment"+ indx).val('');
