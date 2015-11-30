@@ -110,7 +110,6 @@ class LogEntryAdmin(admin.ModelAdmin):
     readonly_fields = LogEntry._meta.get_all_field_names()
 
     list_filter = [
-        'user',
         'content_type',
         'action_flag'
     ]
