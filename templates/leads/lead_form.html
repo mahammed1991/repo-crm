@@ -1131,11 +1131,6 @@ $(document).on('change', '#country', function() {
     var language = $('#language').val();
     mandatoryAppointmentForLanguages(language);
 
-    if (['Japan'].indexOf(location) == -1){
-      $('#team option[value*="SRP"]').hide();
-    }else{
-      $('#team option[value*="SRP"]').show();
-    }
 
     $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
     $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption("Select Task Type", ""));
