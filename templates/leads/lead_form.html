@@ -1048,6 +1048,7 @@
 
     window.code_types = {{code_types|safe}};
     $(window).bind("load", function() {
+    $('#language').trigger('change');
     $('#country').trigger('change');
     });
 
@@ -1126,6 +1127,9 @@ function GetOption(text, value) {
 
 $(document).on('change', '#country', function() {
     var location = $(this).val();
+
+    var language = $('#language').val();
+    mandatoryAppointmentForLanguages(language);
     
     $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
     $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption("Select Task Type", ""));
@@ -1155,17 +1159,7 @@ $(document).on('change', '#country', function() {
 // Appointments Mandatory for German and France 
 $(document).on('change', '#language', function(){
   var language = $(this).val();
-
-  $('#appointment_check_tag').show();
-  $('#appointment_check_shopping').show();
-    
-  if(['French', 'German'].indexOf(language) != -1){
-      $('#appointment_check_tag').hide();
-       $('#appointment_check_shopping').hide();
-
-  }
-
-
+  mandatoryAppointmentForLanguages(language);
 });
 
 
@@ -1198,6 +1192,18 @@ function clearAndHideFields(){
     $('#gasetup'+selectedindex).hide();
 
   }
+}
+
+function mandatoryAppointmentForLanguages(language){
+  $('#appointment_check_tag').show();
+  $('#appointment_check_shopping').show();
+      
+  if(['French', 'German', 'Italian'].indexOf(language) != -1){
+      $('#appointment_check_tag').hide();
+       $('#appointment_check_shopping').hide();
+
+  }
+    
 }
 
 </script>
