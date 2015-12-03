@@ -40,14 +40,10 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-    companyElem  = document.getElementById('last_name')
-    validateFiled(companyElem)
 
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
-    countryElem = document.getElementById('code1');
-    validateFiled(countryElem);
 
     // Check If Error in Form
     if(window.is_error){
@@ -55,7 +51,7 @@ function validatethis(frm) {
       $(focusElem).focus();
       return false;
     }else{
-      $('#company').val($('#last_name').val());
+      $('#company').val($('#url').val());
       $('#preloaderOverlay').show();
       return true;
     }  
