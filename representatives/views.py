@@ -692,6 +692,151 @@ def copy_appointment_to_next_week(request, plan_month=0, plan_day=0, plan_year=0
     response['appointment'] = appointment_list
     return HttpResponse(json.dumps(response), content_type="application/json")
 
+@login_required
+def export_appointments_new(request):
+    """ Export Appointments by Availability/Booked """
+
+    default_process_type = ['TAG', 'SHOPPING', 'WPP']
+    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+    teams = RegalixTeams.objects.filter(process_type__in=process_types).exclude(team_name='default team')
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
+
+    tag_by_team = dict()
+    for team in teams:
+        rec = {
+            'name': str(team.team_name),
+            'id': str(team.id)
+        }
+        if team.process_type not in tag_by_team:
+            tag_by_team[str(team.process_type)] = [rec]
+        else:
+            tag_by_team[str(team.process_type)].append(rec)
+
+    post_result_dict = {}
+    from_time = 0
+    to_time = 59
+    if request.method == 'POST':
+        from_date = request.POST.get('date_from')
+        to_date = request.POST.get('date_to')
+        process_type = request.POST.getlist('selectedProcessType')
+        regalix_team = request.POST.getlist('selectedTeams')
+        # appointment_type = request.POST.get('appointment-type')
+        from_date = datetime.strptime(from_date, "%d/%m/%Y %H:%M")
+        to_date = datetime.strptime(to_date, "%d/%m/%Y %H:%M")
+        to_date = datetime(to_date.year, to_date.month, to_date.day, to_date.hour, to_date.minute, 59)
+
+        time_zone = 'IST'
+        selected_tzone = Timezone.objects.get(zone_name=time_zone)
+        from_utc_date = SalesforceApi.get_utc_date(from_date, selected_tzone.time_value)
+        to_utc_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
+        diff = divmod((from_utc_date - from_date).total_seconds(), 60)
+        diff_in_minutes = diff[0]
+
+        regalix_teams = RegalixTeams.objects.filter(id__in=regalix_team)
+        post_result_dict = {process: [] for process in process_type}
+        for team in regalix_teams:
+            if team.process_type in post_result_dict:
+                post_result_dict[team.process_type].append(int(team.id))
+        # if regalix_team == 'all':
+        #     regalix_teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
+        # else:
+        #     regalix_teams = RegalixTeams.objects.filter(process_type=process_type, id=regalix_team)
+
+        collumn_attr = ['Hours', 'Team']
+        s_date = from_date
+        while True:
+            if s_date <= to_date:
+                collumn_attr.append(datetime.strftime(s_date, "%d/%m/%Y"))
+                s_date = s_date + timedelta(days=1)
+            else:
+                break
+
+        total_result = list()
+        for rglx_team in regalix_teams:
+            team_name = rglx_team.team_name
+            if team_name[0] == 'S':
+                process_type = 'SHOPPING'
+            elif team_name[0] == 'T':
+                process_type = 'TAG'
+            else:
+                process_type = 'WPP'
+            # get all appointments for selected dates in given range
+
+            slots_data = Availability.objects.filter(
+                date_in_utc__range=(from_date, to_date),
+                team__id=rglx_team.id,
+                team__process_type=process_type
+            ).order_by('team')
+
+            result = list()
+            team_name = rglx_team.team_name
+            for i in range(0, 24):
+                for j in ['00', '30']:
+                    mydict = {}
+                    if len(str(i)) == 1:
+                        indx = '0%s' % (i)
+                    else:
+                        indx = str(i)
+                    hour = "%s:%s" % (indx, j)
+                    for ele in collumn_attr:
+                        if ele == 'Team':
+                            mydict[ele] = team_name
+                        elif ele == 'Hours':
+                            mydict[ele] = hour
+                        else:
+                            mydict[ele] = '-'
+
+                    result.append(mydict)
+
+
+            total_appointments = dict()
+            for slot in slots_data:
+                # time zone conversion
+                requested_date = slot.date_in_utc
+                requested_date -= timedelta(minutes=diff_in_minutes)
+                _date = datetime.strftime(requested_date, "%d/%m/%Y")
+                _time = datetime.strftime(requested_date, "%H:%M")
+                availability_count = slot.availability_count
+                booked_count = slot.booked_count
+                if _date in total_appointments:
+                    total_appointments[_date]['booked_count'] += booked_count
+                    total_appointments[_date]['availability_count'] += availability_count
+                else:
+                    total_appointments[_date] = {'booked_count': booked_count, 'availability_count': availability_count}
+                val = "%s|%s" % (booked_count, availability_count)
+
+                for rec in result:
+                    if str(_time) in rec.values():
+                        rec[_date] = val
+
+            total_dict = dict()
+            for ele in collumn_attr:
+                if ele == 'Team':
+                    total_dict[ele] = ''
+                elif ele == 'Hours':
+                    total_dict[ele] = 'Total'
+                else:
+                    total_dict[ele] = '-'
+
+            for _date_ele in total_appointments:
+                if _date_ele in total_dict:
+                    total_dict[_date_ele] = "%s|%s" % (str(total_appointments[_date_ele]['booked_count']), str(total_appointments[_date_ele]['availability_count']))
+
+            total_result.extend(result)
+            total_result.append(total_dict)
+
+        filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
+        path = write_appointments_to_csv(total_result, collumn_attr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+    return render(request, 'representatives/export_appointments_new.html', {'teams': teams,
+                                                                        'default_teams': default_teams,
+                                                                        'process_types': process_types,
+                                                                        'default_process_type': default_process_type,
+                                                                        'post_result_dict': json.dumps(post_result_dict),
+                                                                        'tag_by_team': tag_by_team})
+
 
 @login_required
 def export_appointments(request):
@@ -900,8 +1045,26 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     time_zone = 'IST'
     post_result_dict = {}
     if request.method == 'POST':
-        team_ids = request.POST.getlist('selectedTeams')
-        process_type = request.POST.getlist('selectedProcessType')
+        if 'prev_week_start_date' in request.POST:
+            team_ids = request.POST.get('prevselectedTeams')
+            process_type = request.POST.get('prevselectedProcessType')
+            team_ids = team_ids.split(',')
+            process_type = process_type.split(',')
+            week_start_date = datetime.strptime(str(request.POST.get('prev_week_start_date')), '%m-%d-%Y')
+            plan_year, plan_month, plan_day = week_start_date.year, week_start_date.month, week_start_date.day
+        elif 'next_week_start_date' in request.POST:
+            team_ids = request.POST.get('nextselectedTeams')
+            process_type = request.POST.get('nextselectedProcessType')
+            team_ids = team_ids.split(',')
+            process_type = process_type.split(',')
+            week_start_date = datetime.strptime(str(request.POST.get('next_week_start_date')), '%m-%d-%Y')
+            plan_year, plan_month, plan_day = week_start_date.year, week_start_date.month, week_start_date.day
+        else:
+            team_ids = request.POST.getlist('selectedTeams')
+            process_type = request.POST.getlist('selectedProcessType')
+            week_start_date = datetime.strptime(str(request.POST.get('schedule_week_start_date')), '%m-%d-%Y')
+            plan_year, plan_month, plan_day = week_start_date.year, week_start_date.month, week_start_date.day
+
         selected_teams = RegalixTeams.objects.filter(id__in=team_ids)
         post_result_dict = {process: [] for process in process_type}
         for team in selected_teams:
@@ -1072,3 +1235,18 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'post_result_dict': json.dumps(post_result_dict),
          }
     )
+
+
+def appointments_calendar(request):
+    from leads.models import Leads
+    from django.db.models import Count
+    total_events = list()
+    leads_dict = Leads.objects.exclude(rescheduled_appointment_in_ist=None).values('rescheduled_appointment_in_ist', 'customer_id').annotate(count=Count('pk'))
+    for res_time in leads_dict:
+        if res_time['rescheduled_appointment_in_ist']:
+            res_dict = dict()
+            res_dict['title'] = ' CID - %s, Total Resch - %s' %(str(res_time['customer_id']), res_time['count'])
+            res_dict['start'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'], "%Y-%m-%dT%H:%M:%S")
+            res_dict['end'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'] + timedelta(minutes=20), "%Y-%m-%dT%H:%M:%S")
+            total_events.append(res_dict)
+    return render(request, 'representatives/appointments_calendar.html', {'events': total_events})

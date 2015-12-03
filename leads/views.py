@@ -2686,3 +2686,8 @@ def convert_picasso_lead_to_dict(model):
     lead['pod_name'] = model.pod_name
     lead['picasso_objective'] = model.picasso_objective
     return lead
+
+
+@login_required
+def picasso_build_wpp_form(request):
+    return render(request, 'leads/picasso_build_wpp_form.html', {})

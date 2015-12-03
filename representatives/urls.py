@@ -19,11 +19,14 @@ urlpatterns = patterns(
     url(r'^check-and-add/$', views.check_and_add_appointment),
     url(r'^copy-appointment/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/(?P<team_id>\d+)/$', views.copy_appointment_to_next_week),
     url(r'^export-appointments/$', views.export_appointments),
+        # new export appointment
+    url(r'^export-appointments_new/$', views.export_appointments_new),
     # manager view
     url(r'^total-appointments/$', views.total_appointments),
     url(
         r'^total-appointments/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/$',
         views.total_appointments
     ),
+    url(r'^appointments-calender/$', views.appointments_calendar),
 
 )
