@@ -31,7 +31,30 @@ Total Appointments
             </div>
         </div>
         {% else %}
+        <form action="" method="post" onsubmit="return validateForm()">
+         {% csrf_token %}
             <div class="row std-sub-top">
+                <div class="col-xs-2 ">
+                     <input type="hidden" name='prev_week_start_date' value="{{prev_week|date:'m-d-Y'}}" />
+                        <input type="hidden" name="prevselectedProcessType" id="prevselectedProcessType">
+                        <input type="hidden" name="prevselectedTeams" id="prevselectedTeams">
+                    <button type="submit" value="prev week" id="prev_week" class="text-prev" style="border: 0;background-color: transparent;color:#2763c9;font-family: 'robotoblack';">Previous Week</button>
+                </div>
+        </form>                        
+                <div class="col-xs-8  title-text">
+                    <span>Time Zone: IST(UTC:5:30)</span>
+                </div>
+        <form action="" method="post" onsubmit="return validateForm()">
+         {% csrf_token %}
+                <div class="col-xs-2 ">
+                     <input type="hidden" name='next_week_start_date' value="{{next_week|date:'m-d-Y'}}" />
+                        <input type="hidden" name="nextselectedProcessType" id="nextselectedProcessType">
+                        <input type="hidden" name="nextselectedTeams" id="nextselectedTeams">
+                    <button type="submit" value="next week" id="next_week" class="text-next" style="border: 0;background-color: transparent; color:#2763c9;font-family: 'robotoblack';">Next Week</button>
+                </div>
+            </div>
+        </form> 
+            <!-- <div class="row std-sub-top">
                 <div class="col-xs-2 ">
                     <a href="{% url 'representatives.views.total_appointments' prev_week.month prev_week.day prev_week.year %}" class="text-prev">Previous Week</a>
                 </div>
@@ -41,7 +64,8 @@ Total Appointments
                 <div class="col-xs-2 ">
                     <a href="{% url 'representatives.views.total_appointments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
                 </div>
-            </div>
+            </div> -->
+        
             <form method="post" action="" class="form" onsubmit="return validateForm()">
                 {% csrf_token %}
             <input type="hidden" name='schedule_week_start_date' value="{{schedule_date|date:'m-d-Y'}}" />
@@ -61,7 +85,7 @@ Total Appointments
                 <div class="col-md-2 box2" style="margin-left: 61px;">
                     <div id="teamsDiv" class="btn-group drpDown" style="width: 130px;">
                         <button type="button" class="btn btn-default dropdown-toggle" id="teamTypeBtn" style="width: 130px;">Teams<span class="caret"></span></button>
-                        <ul class="dropdown-menu teams-ul">
+                        <ul class="dropdown-menu teams-ul" style="overflow: scroll;height: 460px;">
                             <li idValue='000' id='selectAll' class='selectAll hideItems'>
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
                             </li>
@@ -489,7 +513,12 @@ Total Appointments
     //Clicking outside process type list hide teams list. 
     $('body').click(function(evt){
        if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
-            $('.process-ul, .teams-ul').show();
+            $('.process-ul').show();
+            if($('#selectedProcessType').val() == null){
+                $('.teams-ul').hide();
+              }else{
+                $('.teams-ul').show();
+              }
        }else{
             $('.process-ul, .teams-ul').hide();
        }
@@ -632,6 +661,22 @@ Total Appointments
         // body...
         var key = e.keyCode ? e.keyCode : e.which;
         if ( isNaN( String.fromCharCode(key) ) ) return false;
+    });
+
+
+</script>
+<script type="text/javascript">
+    $('#prev_week').on('click', function(){
+        processes = $('#selectedProcessType').val();
+        teams = $('#selectedTeams').val();
+        $('#prevselectedProcessType').val(processes);
+        $('#prevselectedTeams').val(teams);
+    });
+    $('#next_week').on('click', function(){
+        processes = $('#selectedProcessType').val();
+        teams = $('#selectedTeams').val();
+        $('#nextselectedProcessType').val(processes);
+        $('#nextselectedTeams').val(teams);
     });
 
 </script>
