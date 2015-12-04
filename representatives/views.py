@@ -713,14 +713,11 @@ def export_appointments(request):
             tag_by_team[str(team.process_type)].append(rec)
 
     post_result_dict = {}
-    from_time = 0
-    to_time = 59
     if request.method == 'POST':
         from_date = request.POST.get('date_from')
         to_date = request.POST.get('date_to')
         process_type = request.POST.getlist('selectedProcessType')
         regalix_team = request.POST.getlist('selectedTeams')
-        # appointment_type = request.POST.get('appointment-type')
         from_date = datetime.strptime(from_date, "%d/%m/%Y %H:%M")
         to_date = datetime.strptime(to_date, "%d/%m/%Y %H:%M")
         to_date = datetime(to_date.year, to_date.month, to_date.day, to_date.hour, to_date.minute, 59)
@@ -737,10 +734,6 @@ def export_appointments(request):
         for team in regalix_teams:
             if team.process_type in post_result_dict:
                 post_result_dict[team.process_type].append(int(team.id))
-        # if regalix_team == 'all':
-        #     regalix_teams = RegalixTeams.objects.filter(process_type=process_type).exclude(team_name='default team')
-        # else:
-        #     regalix_teams = RegalixTeams.objects.filter(process_type=process_type, id=regalix_team)
 
         collumn_attr = ['Hours', 'Team']
         s_date = from_date
