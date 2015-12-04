@@ -41,6 +41,8 @@ urlpatterns = patterns(
     url(r'^report-team/$', views.report_team),
     url(r'^picasso-lead-form/$', views.picasso_lead_form),
     url(r'^picasso-lead-summary/$', views.get_picasso_lead_summary),
+    # picasso build wpp form
+    url(r'^picasso-build-wpp-form/$', views.picasso_build_wpp_form),
 
 
 )
