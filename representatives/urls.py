@@ -25,5 +25,6 @@ urlpatterns = patterns(
         r'^total-appointments/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/$',
         views.total_appointments
     ),
+    url(r'^appointments-calender/$', views.appointments_calendar),
 
 )

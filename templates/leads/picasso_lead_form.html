@@ -72,19 +72,23 @@
         <label for="cid">Customer ID</label>
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
-      <div class="col-md-6">
+      <!-- <div class="col-md-6">
         <label for="internal_cid1">Internal Customer ID</label>
         <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="Internal Customer ID">
-      </div>
+      </div> -->
       <div class="col-md-6">
         <label for="picasso_pod">POD Name</label>
         <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2">
       </div>
-      <div class="col-md-6">
+      <!-- <div class="col-md-6">
         <label for="last_name">Company Name</label>
         <input type="text" class="form-control" id="last_name" maxlength="255" name="last_name" placeholder="Company Name">
-      </div>
+      </div> -->
 
+      <div class="col-md-6">
+         <label for="url" id="url_label_id">Website URL</label>
+          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
+        </div>
       <div class="col-md-6">
         <label for="picasso_objective">Objective</label></br>
         <div class="checkboxvalidation" style="height:71px;">
@@ -97,8 +101,6 @@
           <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
           <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" value="Call your Business"><span>Call your Business</span>
         </label>
-      <!-- </div>
-      <div class="col-md-3 check1" style="margin-top: 27px;"> -->
         <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
           <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" value="Engage with your Content"><span>Engage with your Content</span></br>
         </label>
@@ -107,20 +109,16 @@
         </label>
         </div>
       </div>
-      <div class="col-md-6">
-         <label for="url" id="url_label_id">Website URL</label>
-          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
-        </div>
      
       
-       <div class="col-md-6" style="margin-left: -1000px; margin-top:113px">
-          <label for="code1">Goal</label>
-          <textarea class="form-control" name="code1" id="code1"></textarea>
-        </div>
-        <div class="col-md-6" style="margin-top:20px">
-          <label for="comment1">Recommendations</label>
+        <div class="col-md-6">
+          <label for="comment1">Additional Notes(Optional)</label>
           <textarea class="form-control" name="comment1" id="comment1"></textarea>
         </div>
+       <!-- <div class="col-md-6" style="margin-left: -1000px; margin-top:113px">
+          <label for="code1">Goal</label>
+          <textarea class="form-control" name="code1" id="code1"></textarea>
+        </div> -->
       </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
