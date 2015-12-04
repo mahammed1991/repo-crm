@@ -75,6 +75,7 @@ class Leads(models.Model):
 
     appointment_date = models.DateTimeField(blank=True, null=True)
     first_contacted_on = models.DateTimeField(blank=True, null=True)
+    appointment_date_in_ist = models.DateTimeField(blank=True, null=True)
 
     # Rescheduled Appointments
     rescheduled_appointment = models.DateTimeField(blank=True, null=True)
