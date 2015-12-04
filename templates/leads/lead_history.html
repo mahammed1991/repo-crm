@@ -1,0 +1,302 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  WPP Lead History
+{% endblock title %}
+{% block main_css %}
+  <link href="{% static 'css/lead_history.css' %}" rel="stylesheet">
+{% endblock main_css %}
+{% block content %}
+	<div class="container">
+	<div class="row">
+		<div class="bline"><h1 class="leadheader">LEADS STATUS</h1></div>
+		{% if lead %}
+		<div class="lead-details">
+		<div class="">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ld">
+				<h2 class="dtl-head">LEADS Details</h2>
+				<table class="table ld">
+				<tbody>
+					<tr>
+						<td>CID</td>
+						<td>{{lead.customer_id}}</td>
+					</tr>
+					<tr>
+						<td>Technology</td>
+						<td>N/A</td>
+					</tr>
+					<tr>
+						<td>Website URL</td>
+						{% if lead.company %}
+						<td><a href="{{company_url}}" class="readmore">{{company_url}}</a></td>
+						{% else %}
+						<td>N/A</td>
+						{% endif %}
+					</tr>
+					<tr>
+						<td>Date Created</td>
+						<td>{{lead.created_date|date:"d/m/Y"}}</td>
+					</tr>
+				</tbody>
+				</table></div>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ar">
+				<div class=""><h2 class="dtl-head">Additional Recommendations</h2>
+				<div class="scroll-pane">
+				{% if lead.additional_notes %}
+					<p>{{lead.additional_notes}}</p>
+				{% else %}
+					<p>-</p>
+				{% endif %}
+			</div>
+			</div></div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 nxt">
+				<div class=""><h2 class="dtl-head">Next communication Date</h2>
+				<div class="date-time">
+					<p><span class="dtime">Date :</span> <span class="data">{{lead.appointment_date|date:"d/m/Y"}}</span> <img src="{% static 'images/calendar-ico.png' %}" alt="calendar" /></p>
+					<p><span class="dtime">Time :</span> <span class="data">{{lead.appointment_date|date:"h:i A"}}</span></p>
+				</div>
+			</div></div>
+			<div class="clearfix"></div>
+		</div>
+		
+		<div class="lead-lifecyle">
+			<h1 class="leadheader">LEAD lifecyle</h1>
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pr0">
+				<div class="process">
+				 <ul class="list-inline">
+				 	{% for key, value in lead_status %}
+				 		{% if value.status == 'PROGRESS'%}
+				 			<div class="tooleft drw" {% if forloop.last %} style="background-repeat: no-repeat;" {% endif %}>
+								<li>
+									<div class="double-border">
+										<span>
+											<a href="#" data-toggle="tooltip" data-placement="top" title="{{value.title}}" class="mockup-rvw">&nbsp;</a>
+										<span>
+									</div>
+								</li>
+								<div class="prcs-title">{{key}}</div>
+								<div class="clearfix"></div>
+							</div>
+						{% elif value.status == 'PAUSE'%}
+				 			<div class="tooleft tlast drw pause" {% if forloop.last %} style="background-repeat: no-repeat;" {% endif %}>
+								<li>
+									<div class="double-border">
+										<span>
+											<a href="#" data-toggle="tooltip" data-placement="top" title="{{value.title}}" class="mockup-rvw">&nbsp;</a>
+										<span>
+									</div>
+								</li>
+								<div class="prcs-title">{{key}}</div>
+								<div class="clearfix"></div>
+							</div>
+				 		{% elif value.status == 'FUTURE' %}
+				 			<div class="tooright gray-inline" {% if forloop.last %} style="background-repeat: no-repeat;" {% endif %}>
+								<li>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="{{value.title}}">&nbsp;</a>
+								</li>
+								<div class="prcs-title">{{key}}</div>
+							</div>
+						{% else %}
+							<div class="tooleft" {% if forloop.last %} style="background-repeat: no-repeat;" {% endif %}>
+								<li>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="{{value.title}}">&nbsp;</a>
+								</li>
+								<div class="prcs-title">{{key}}</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</ul>
+				</div>
+				<div class="clearfix"></div>
+            </div>
+			<div class="clearfix"></div>
+		</div>
+		{% endif %}
+		<div class="bline"></div>
+		<div class="recommendations">
+			<h1 class="leadheader">UI Recommendations & Mocks/ Designs</h1>
+			 <div class="ui-rec">
+			 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<h2 class="dtl-head">UI Recommendations</h2>
+				<div class="table-responsive"><table class="table table-bordered table-responsive uitable">
+					<tbody>
+					<tr class="theading">
+					  <td>S.NO</td>
+					  <td>INVISION URI</td>
+					  <td>Credentials</td>
+					</tr>
+					<tr>
+					  <td>1</td>
+					  <td>
+					  	{% if lead.mockup_url %} 
+					   		<a href="{{lead.mockup_url}}">{{lead.mockup_url}}</a>
+					   	{% else %}
+					   		<a href="#">-</a>
+					   	{% endif %}
+					  </td>
+					  {% if lead.mockup_password %} 
+					   		<td>{{lead.mockup_password}}</td>
+					   	{% else %}
+					   		<td>-</td>
+					   	{% endif %}
+					</tr>
+					<!-- <tr>
+					  <td>2</td>
+					  <td><a href="http://invis.io/M62BKAVQ7">http://invis.io/M62BKAVQ7</a></td>
+					  <td>wrAFevuWrapa&amp;8E</td>
+					</tr>
+					<tr>
+					  <td>3</td>
+					  <td><a href="http://invis.io/M62BKAVQ7">http://invis.io/M62BKAVQ7</a></td>
+					  <td>wrAFevuWrapa&amp;8E</td>
+					</tr>
+					<tr>
+					  <td>4</td>
+					  <td><a href="http://invis.io/M62BKAVQ7">http://invis.io/M62BKAVQ7</a></td>
+					  <td>wrAFevuWrapa&amp;8E</td>
+					</tr>
+					<tr>
+					  <td>5</td>
+					  <td><a href="http://invis.io/M62BKAVQ7">http://invis.io/M62BKAVQ7</a></td>
+					  <td>wrAFevuWrapa&amp;8E</td>
+					</tr>  -->
+					</tbody>
+					</table></div>
+			 </div>  
+			<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+			<!-- <div class="mock">
+					<h2 class="dtl-head acenter">Mocks</h2>
+					<div class="bline"></div>
+					
+		  <br>
+		  <div id="myCarousel" class="carousel slide" data-ride="carousel">  
+
+		    <!-- Wrapper for slides -->
+		    <!-- <div class="carousel-inner" role="listbox">
+		      	<div class="item active">
+	      	<div class="row">
+		      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		        <a href = "{% static 'images/slider_img1.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img1.jpg' %}" alt="" width="147" height="123" /></a>
+		        <p>Home Page Design</p>
+		      </div>
+		       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		         <a href = "{% static 'images/slider_img2.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img2.jpg' %}" alt="" width="147" height="123" /></a>
+		        <p>Inner Page</p>
+		      </div>
+		      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		        <a href = "{% static 'images/slider_img1.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img1.jpg' %}" alt="" width="147" height="123" /></a>
+		        <p>Home Page Design</p>
+		      </div>
+		       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		         <a href = "{% static 'images/slider_img2.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img2.jpg' %}" alt="" width="147" height="123" /></a>
+		        <p>Inner Page</p>
+		      </div>
+	        </div>
+	    </div>
+
+      <div class="item">
+           <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <a href = "{% static 'images/slider_img1.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img1.jpg' %}" alt="" width="147" height="123" /></a>
+        <p>Home Page Design</p>
+      </div>
+       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+         <a href = "{% static 'images/slider_img2.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img2.jpg' %}" alt="" width="147" height="123" /></a>
+        <p>Inner Page</p>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <a href = "{% static 'images/slider_img1.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img1.jpg' %}" alt="" width="147" height="123" /></a>
+        <p>Home Page Design</p>
+      </div>
+       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+         <a href = "{% static 'images/slider_img2.jpg' %}" class="thumbnail fancybox" rel="ligthbox"><img src="{% static 'images/slider_img2.jpg' %}" alt="" width="147" height="123" /></a>
+        <p>Inner Page</p>
+      </div>
+        </div>
+      </div>
+    </div>
+  <div align="center">    <!-- Left and right controls -->
+    <!-- <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+      <img src="{% static 'images/left-icon.jpg' %}" alt="" width="17" height="17" />
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+     <img src="{% static 'images/right-icon.jpg' %}" alt="" width="17" height="17" />
+    </a>
+    </div>
+  </div>
+</div>  -->
+			</div>
+		</div><div class="clearfix"></div>
+</div>
+		<div class="tatmain">
+			<h1 class="leadheader">TAT</h1>
+			<div class="tat">
+			<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+				<div class=""><table class="table table-bordered table-responsive">
+					<tbody>
+					<tr class="theading">
+					  <td>Stage URL</td>
+					</tr>
+					<tr class="even">
+					   <td>
+					   	{% if lead.stage_url %} 
+					   		<a href="{{lead.stage_url}}">{{lead.stage_url}}</a>
+					   	{% else %}
+					   		<a href="#">-</a>
+					   	{% endif %}
+					   </td>
+					</tr> 
+					</tbody>
+					</table></div>
+					<div class=""><table class="table table-bordered table-responsive">
+					<tbody>
+					<tr class="theading">
+					  <td>Credentials</td>
+					</tr>
+					<tr class="even">
+						{% if lead.stage_password %} 
+					   		<td>{{lead.stage_password}}</td>
+					   	{% else %}
+					   		<td>-</td>
+					   	{% endif %}
+					</tr> 
+					</tbody>
+					</table></div>
+			</div>
+			<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+				<div class="">
+				<table class="table table-bordered table-responsive">
+					<tbody>
+						<tr class="theading">
+						  <td>Overall Lead Status</td>
+						  <td class="eventd">TAT (Days)</td>
+						</tr>
+						{% for key, value in tat_by_status %}
+							<tr class="even">
+							  <td>{{key}}</td>
+							  <td class="eventd">{{value.tat}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table></div></div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+{% block main_js %}
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+	    $('[data-toggle="tooltip"]').tooltip();
+	    $(".slide-three").click(function(){
+	        $("#myCarousel").carousel(3);
+	    }); 
+	});
+	
+</script>
+{% endblock main_js %}

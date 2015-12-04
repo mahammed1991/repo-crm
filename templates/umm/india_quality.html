@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load staticfiles %}
+
+<head>
+  <meta charset="utf-8">
+ 
+  <title>Google Portal</title>
+ 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' %}"></script>
+   <link href="http://www.jqueryscript.net/css/jquerysctipttop.css' %}" rel="stylesheet" type="text/css">
+   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart2);
+google.setOnLoadCallback(drawChart2);
+function drawChart2() {
+
+  var data = google.visualization.arrayToDataTable([
+    ['Week', 'UAA' ],
+    ['Week 1',  1000 ],
+    ['Week 2',  1170 ],
+    ['Week 3',  660  ],
+    ['Week 4',  1030 ],
+	['Week 5',  1030 ]
+
+  ]);
+
+  var options = {
+    title: '',
+    hAxis: {title: '', titleTextStyle: {color: 'red'}}
+  };
+
+  var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+
+  chart.draw(data, options);
+
+}
+    </script>
+  <script src="{% static 'css/umm/css/analyticstable.js' %}" async></script><script>if ( top !== self ) top.location.replace( self.location.href );// Hey, don't iframe my iframe!</script>
+  
+  <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-48321973-1', 'themebucket.net');
+	  ga('send', 'pageview');
+
+	</script>
+
+  <link href="{% static 'css/umm/css/style.default.css' %}" rel="stylesheet">
+    <link href="{% static 'css/umm/css/styletable.css' %}" rel="stylesheet">
+  <link href="{% static 'css/umm/css/jquery.datatables.css' %}" rel="stylesheet">
+   <link href="{% static 'css/umm/zb_datepicker/css/default.css' %}" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="{% static 'js/umm/js/html5shiv.js' %}"></script>
+  <script src="{% static 'js/umm/js/respond.min.js' %}"></script>
+    <![endif]-->
+    <style class="firebugResetStyles" type="text/css" charset="utf-8">
+
+
+.firebugResetStyles {
+    z-index: 2147483646 !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: block !important;
+    border: 0 none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    outline: 0 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    position: fixed !important;
+    transform: rotate(0deg) !important;
+    transform-origin: 50% 50% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent none !important;
+    pointer-events: none !important;
+    white-space: normal !important;
+}
+style.firebugResetStyles {
+    display: none !important;
+}
+
+.firebugBlockBackgroundColor {
+    background-color: transparent !important;
+}
+
+.firebugResetStyles:before, .firebugResetStyles:after {
+    content: "" !important;
+}
+/**actual styling to be modified by firebug theme**/
+.firebugCanvas {
+    display: none !important;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.firebugLayoutBox {
+    width: auto !important;
+    position: static !important;
+}
+
+.firebugLayoutBoxOffset {
+    opacity: 0.8 !important;
+    position: fixed !important;
+}
+
+.firebugLayoutLine {
+    opacity: 0.4 !important;
+    background-color: #000000 !important;
+}
+
+.firebugLayoutLineLeft, .firebugLayoutLineRight {
+    width: 1px !important;
+    height: 100% !important;
+}
+
+.firebugLayoutLineTop, .firebugLayoutLineBottom {
+    width: 100% !important;
+    height: 1px !important;
+}
+
+.firebugLayoutLineTop {
+    margin-top: -1px !important;
+    border-top: 1px solid #999999 !important;
+}
+
+.firebugLayoutLineRight {
+    border-right: 1px solid #999999 !important;
+}
+
+.firebugLayoutLineBottom {
+    border-bottom: 1px solid #999999 !important;
+}
+
+.firebugLayoutLineLeft {
+    margin-left: -1px !important;
+    border-left: 1px solid #999999 !important;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.firebugLayoutBoxParent {
+    border-top: 0 none !important;
+    border-right: 1px dashed #E00 !important;
+    border-bottom: 1px dashed #E00 !important;
+    border-left: 0 none !important;
+    position: fixed !important;
+    width: auto !important;
+}
+
+.firebugRuler{
+    position: absolute !important;
+}
+
+.firebugRulerH {
+    top: -15px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 14px !important;
+    background: url("data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%13%88%00%00%00%0E%08%02%00%00%00L%25a%0A%00%00%00%04gAMA%00%00%D6%D8%D4OX2%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%04%F8IDATx%DA%EC%DD%D1n%E2%3A%00E%D1%80%F8%FF%EF%E2%AF2%95%D0D4%0E%C1%14%B0%8Fa-%E9%3E%CC%9C%87n%B9%81%A6W0%1C%A6i%9A%E7y%0As8%1CT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AATE9%FE%FCw%3E%9F%AF%2B%2F%BA%97%FDT%1D~K(%5C%9D%D5%EA%1B%5C%86%B5%A9%BDU%B5y%80%ED%AB*%03%FAV9%AB%E1%CEj%E7%82%EF%FB%18%BC%AEJ8%AB%FA'%D2%BEU9%D7U%ECc0%E1%A2r%5DynwVi%CFW%7F%BB%17%7Dy%EACU%CD%0E%F0%FA%3BX%FEbV%FEM%9B%2B%AD%BE%AA%E5%95v%AB%AA%E3E5%DCu%15rV9%07%B5%7F%B5w%FCm%BA%BE%AA%FBY%3D%14%F0%EE%C7%60%0EU%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5JU%88%D3%F5%1F%AE%DF%3B%1B%F2%3E%DAUCNa%F92%D02%AC%7Dm%F9%3A%D4%F2%8B6%AE*%BF%5C%C2Ym~9g5%D0Y%95%17%7C%C8c%B0%7C%18%26%9CU%CD%13i%F7%AA%90%B3Z%7D%95%B4%C7%60%E6E%B5%BC%05%B4%FBY%95U%9E%DB%FD%1C%FC%E0%9F%83%7F%BE%17%7DkjMU%E3%03%AC%7CWj%DF%83%9An%BCG%AE%F1%95%96yQ%0Dq%5Dy%00%3Et%B5'%FC6%5DS%95pV%95%01%81%FF'%07%00%00%00%00%00%00%00%00%00%F8x%C7%F0%BE%9COp%5D%C9%7C%AD%E7%E6%EBV%FB%1E%E0(%07%E5%AC%C6%3A%ABi%9C%8F%C6%0E9%AB%C0'%D2%8E%9F%F99%D0E%B5%99%14%F5%0D%CD%7F%24%C6%DEH%B8%E9rV%DFs%DB%D0%F7%00k%FE%1D%84%84%83J%B8%E3%BA%FB%EF%20%84%1C%D7%AD%B0%8E%D7U%C8Y%05%1E%D4t%EF%AD%95Q%BF8w%BF%E9%0A%BF%EB%03%00%00%00%00%00%00%00%00%00%B8vJ%8E%BB%F5%B1u%8Cx%80%E1o%5E%CA9%AB%CB%CB%8E%03%DF%1D%B7T%25%9C%D5(%EFJM8%AB%CC'%D2%B2*%A4s%E7c6%FB%3E%FA%A2%1E%80~%0E%3E%DA%10x%5D%95Uig%15u%15%ED%7C%14%B6%87%A1%3B%FCo8%A8%D8o%D3%ADO%01%EDx%83%1A~%1B%9FpP%A3%DC%C6'%9C%95gK%00%00%00%00%00%00%00%00%00%20%D9%C9%11%D0%C0%40%AF%3F%EE%EE%92%94%D6%16X%B5%BCMH%15%2F%BF%D4%A7%C87%F1%8E%F2%81%AE%AAvzr%DA2%ABV%17%7C%E63%83%E7I%DC%C6%0Bs%1B%EF6%1E%00%00%00%00%00%00%00%00%00%80cr%9CW%FF%7F%C6%01%0E%F1%CE%A5%84%B3%CA%BC%E0%CB%AA%84%CE%F9%BF)%EC%13%08WU%AE%AB%B1%AE%2BO%EC%8E%CBYe%FE%8CN%ABr%5Dy%60~%CFA%0D%F4%AE%D4%BE%C75%CA%EDVB%EA(%B7%F1%09g%E5%D9%12%00%00%00%00%00%00%00%00%00H%F6%EB%13S%E7y%5E%5E%FB%98%F0%22%D1%B2'%A7%F0%92%B1%BC%24z3%AC%7Dm%60%D5%92%B4%7CEUO%5E%F0%AA*%3BU%B9%AE%3E%A0j%94%07%A0%C7%A0%AB%FD%B5%3F%A0%F7%03T%3Dy%D7%F7%D6%D4%C0%AAU%D2%E6%DFt%3F%A8%CC%AA%F2%86%B9%D7%F5%1F%18%E6%01%F8%CC%D5%9E%F0%F3z%88%AA%90%EF%20%00%00%00%00%00%00%00%00%00%C0%A6%D3%EA%CFi%AFb%2C%7BB%0A%2B%C3%1A%D7%06V%D5%07%A8r%5D%3D%D9%A6%CAu%F5%25%CF%A2%99%97zNX%60%95%AB%5DUZ%D5%FBR%03%AB%1C%D4k%9F%3F%BB%5C%FF%81a%AE%AB'%7F%F3%EA%FE%F3z%94%AA%D8%DF%5B%01%00%00%00%00%00%00%00%00%00%8E%FB%F3%F2%B1%1B%8DWU%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*UiU%C7%BBe%E7%F3%B9%CB%AAJ%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5J%95*U%AAT%A9R%A5*%AAj%FD%C6%D4%5Eo%90%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5%86%AF%1B%9F%98%DA%EBm%BBV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%ADV%AB%D5j%B5Z%AD%D6%E4%F58%01%00%00%00%00%00%00%00%00%00%00%00%00%00%40%85%7F%02%0C%008%C2%D0H%16j%8FX%00%00%00%00IEND%AEB%60%82") repeat-x !important;
+    border-top: 1px solid #BBBBBB !important;
+    border-right: 1px dashed #BBBBBB !important;
+    border-bottom: 1px solid #000000 !important;
+}
+
+.firebugRulerV {
+    top: 0 !important;
+    left: -15px !important;
+    width: 14px !important;
+    height: 100% !important;
+    background: url("data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%0E%00%00%13%88%08%02%00%00%00%0E%F5%CB%10%00%00%00%04gAMA%00%00%D6%D8%D4OX2%00%00%00%19tEXtSoftware%00Adobe%20ImageReadyq%C9e%3C%00%00%06~IDATx%DA%EC%DD%D1v%A20%14%40Qt%F1%FF%FF%E4%97%D9%07%3BT%19%92%DC%40(%90%EEy%9A5%CB%B6%E8%F6%9Ac%A4%CC0%84%FF%DC%9E%CF%E7%E3%F1%88%DE4%F8%5D%C7%9F%2F%BA%DD%5E%7FI%7D%F18%DDn%BA%C5%FB%DF%97%BFk%F2%10%FF%FD%B4%F2M%A7%FB%FD%FD%B3%22%07p%8F%3F%AE%E3%F4S%8A%8F%40%EEq%9D%BE8D%F0%0EY%A1Uq%B7%EA%1F%81%88V%E8X%3F%B4%CEy%B7h%D1%A2E%EBohU%FC%D9%AF2fO%8BBeD%BE%F7X%0C%97%A4%D6b7%2Ck%A5%12%E3%9B%60v%B7r%C7%1AI%8C%BD%2B%23r%00c0%B2v%9B%AD%CA%26%0C%1Ek%05A%FD%93%D0%2B%A1u%8B%16-%95q%5Ce%DCSO%8E%E4M%23%8B%F7%C2%FE%40%BB%BD%8C%FC%8A%B5V%EBu%40%F9%3B%A72%FA%AE%8C%D4%01%CC%B5%DA%13%9CB%AB%E2I%18%24%B0n%A9%0CZ*Ce%9C%A22%8E%D8NJ%1E%EB%FF%8F%AE%CAP%19*%C3%BAEKe%AC%D1%AAX%8C*%DEH%8F%C5W%A1e%AD%D4%B7%5C%5B%19%C5%DB%0D%EF%9F%19%1D%7B%5E%86%BD%0C%95%A12%AC%5B*%83%96%CAP%19%F62T%86%CAP%19*%83%96%CA%B8Xe%BC%FE)T%19%A1%17xg%7F%DA%CBP%19*%C3%BA%A52T%86%CAP%19%F62T%86%CA%B0n%A9%0CZ%1DV%C6%3D%F3%FCH%DE%B4%B8~%7F%5CZc%F1%D6%1F%AF%84%F9%0F6%E6%EBVt9%0E~%BEr%AF%23%B0%97%A12T%86%CAP%19%B4T%86%CA%B8Re%D8%CBP%19*%C3%BA%A52huX%19%AE%CA%E5%BC%0C%7B%19*CeX%B7h%A9%0C%95%E1%BC%0C%7B%19*CeX%B7T%06%AD%CB%5E%95%2B%BF.%8F%C5%97%D5%E4%7B%EE%82%D6%FB%CF-%9C%FD%B9%CF%3By%7B%19%F62T%86%CA%B0n%D1R%19*%A3%D3%CA%B0%97%A12T%86uKe%D0%EA%B02*%3F1%99%5DB%2B%A4%B5%F8%3A%7C%BA%2B%8Co%7D%5C%EDe%A8%0C%95a%DDR%19%B4T%C66%82fA%B2%ED%DA%9FC%FC%17GZ%06%C9%E1%B3%E5%2C%1A%9FoiB%EB%96%CA%A0%D5qe4%7B%7D%FD%85%F7%5B%ED_%E0s%07%F0k%951%ECr%0D%B5C%D7-g%D1%A8%0C%EB%96%CA%A0%A52T%C6)*%C3%5E%86%CAP%19%D6-%95A%EB*%95q%F8%BB%E3%F9%AB%F6%E21%ACZ%B7%22%B7%9B%3F%02%85%CB%A2%5B%B7%BA%5E%B7%9C%97%E1%BC%0C%EB%16-%95%A12z%AC%0C%BFc%A22T%86uKe%D0%EA%B02V%DD%AD%8A%2B%8CWhe%5E%AF%CF%F5%3B%26%CE%CBh%5C%19%CE%CB%B0%F3%A4%095%A1%CAP%19*Ce%A8%0C%3BO*Ce%A8%0C%95%A12%3A%AD%8C%0A%82%7B%F0v%1F%2FD%A9%5B%9F%EE%EA%26%AF%03%CA%DF9%7B%19*Ce%A8%0C%95%A12T%86%CA%B8Ze%D8%CBP%19*Ce%A8%0C%95%D1ae%EC%F7%89I%E1%B4%D7M%D7P%8BjU%5C%BB%3E%F2%20%D8%CBP%19*Ce%A8%0C%95%A12T%C6%D5*%C3%5E%86%CAP%19*Ce%B4O%07%7B%F0W%7Bw%1C%7C%1A%8C%B3%3B%D1%EE%AA%5C%D6-%EBV%83%80%5E%D0%CA%10%5CU%2BD%E07YU%86%CAP%19*%E3%9A%95%91%D9%A0%C8%AD%5B%EDv%9E%82%FFKOee%E4%8FUe%A8%0C%95%A12T%C6%1F%A9%8C%C8%3D%5B%A5%15%FD%14%22r%E7B%9F%17l%F8%BF%ED%EAf%2B%7F%CF%ECe%D8%CBP%19*Ce%A8%0C%95%E1%93~%7B%19%F62T%86%CAP%19*Ce%A8%0C%E7%13%DA%CBP%19*Ce%A8%0CZf%8B%16-Z%B4h%D1R%19f%8B%16-Z%B4h%D1R%19%B4%CC%16-Z%B4h%D1R%19%B4%CC%16-Z%B4h%D1%A2%A52%CC%16-Z%B4h%D1%A2%A52h%99-Z%B4h%D1%A2%A52h%99-Z%B4h%D1%A2EKe%98-Z%B4h%D1%A2EKe%D02%5B%B4h%D1%A2EKe%D02%5B%B4h%D1%A2E%8B%96%CA0%5B%B4h%D1%A2E%8B%96%CA%A0e%B6h%D1%A2E%8B%96%CA%A0e%B6h%D1%A2E%8B%16-%95a%B6h%D1%A2E%8B%16-%95A%CBl%D1%A2E%8B%16-%95A%CBl%D1%A2E%8B%16-Z*%C3l%D1%A2E%8B%16-Z*%83%96%D9%A2E%8B%16-Z*%83%96%D9%A2E%8B%16-Z%B4T%86%D9%A2E%8B%16-Z%B4T%06-%B3E%8B%16-Z%B4T%06-%B3E%8B%16-Z%B4h%A9%0C%B3E%8B%16-Z%B4h%A9%0CZf%8B%16-Z%B4h%A9%0CZf%8B%16-Z%B4h%D1R%19f%8B%16-Z%B4h%D1R%19%B4%CC%16-Z%B4h%D1R%19%B4%CC%16-Z%B4h%D1%A2%A52%CC%16-Z%B4h%D1%A2%A52h%99-Z%B4h%D1%A2%A52h%99-Z%B4h%D1%A2EKe%98-Z%B4h%D1%A2EKe%D02%5B%B4h%D1%A2EKe%D02%5B%B4h%D1%A2E%8B%96%CA0%5B%B4h%D1%A2E%8B%96%CA%A0e%B6h%D1%A2E%8B%96%CA%A0e%B6h%D1%A2E%8B%16-%95a%B6h%D1%A2E%8B%16-%95A%CBl%D1%A2E%8B%16-%95A%CBl%D1%A2E%8B%16-Z*%C3l%D1%A2E%8B%16-Z*%83%96%D9%A2E%8B%16-Z*%83%96%D9%A2E%8B%16-Z%B4T%86%D9%A2E%8B%16-Z%B4T%06-%B3E%8B%16-Z%B4T%06-%B3E%8B%16-Z%B4h%A9%0C%B3E%8B%16-Z%B4h%A9%0CZf%8B%16-Z%B4h%A9%0CZf%8B%16-Z%B4h%D1R%19f%8B%16-Z%B4h%D1R%19%B4%CC%16-Z%B4h%D1R%19%B4%CC%16-Z%B4h%D1%A2%A52%CC%16-Z%B4h%D1%A2%A52h%99-Z%B4h%D1%A2%A52h%99-Z%B4h%D1%A2EKe%98-Z%B4h%D1%A2EKe%D02%5B%B4h%D1%A2EKe%D02%5B%B4h%D1%A2E%8B%96%CA0%5B%B4h%D1%A2E%8B%96%CA%A0e%B6h%D1%A2E%8B%96%CA%A0e%B6h%D1%A2E%8B%16-%95a%B6h%D1%A2E%8B%16-%95A%CBl%D1%A2E%8B%16-%95A%CBl%D1%A2E%8B%16-Z*%C3l%D1%A2E%8B%16-Z*%83%96%D9%A2E%8B%16-Z*%83%96%D9%A2E%8B%16-Z%B4T%86%D9%A2E%8B%16-Z%B4T%06-%B3E%8B%16-Z%B4%AE%A4%F5%25%C0%00%DE%BF%5C'%0F%DA%B8q%00%00%00%00IEND%AEB%60%82") repeat-y !important;
+    border-left: 1px solid #BBBBBB !important;
+    border-right: 1px solid #000000 !important;
+    border-bottom: 1px dashed #BBBBBB !important;
+}
+
+.overflowRulerX > .firebugRulerV {
+    left: 0 !important;
+}
+
+.overflowRulerY > .firebugRulerH {
+    top: 0 !important;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.fbProxyElement {
+    position: fixed !important;
+    pointer-events: auto !important;
+}
+.numberdiv
+   {
+	width:90%; margin-top:-50px; height:20px; margin: -9px auto 0;   
+   }
+   .left-num
+   {
+	 float:left; font-size:16px; font-family:Arial, Helvetica, sans-serif; color:#666666;
+   }
+   .right-num
+   {
+	  float:right; margin-right:31S%;font-size:16px; font-family:Arial, Helvetica, sans-serif;
+   }
+</style>
+</head>
+
+<body>
+    
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<section>
+  
+  {% include "umm/left_nav.html" %}
+  
+  <div class="mainpanel">
+    
+    <div class="headerbar">
+      
+      <a class="menutoggle"><i class="fa fa-bars"></i></a>
+      
+      
+      
+      
+      
+    </div><!-- headerbar -->
+    
+    <div class="pageheader">
+     
+      <h2  style="height: 51px;"><a href="index-backup1.html"><i class="fa fa-home"></i></a> INDIA / Quality</h2>
+      </div>
+              <div class="pageheader">
+                          
+                          
+              <div class="input-group" style="float:left;  margin-top:20px; margin-right:10px; margin-bottom:15px;">
+               <label style="float:left; margin-top:10px; margin-left:10px; padding-right:6px;">Select From Date : </label>
+                <input type="text" id="datepicker4" placeholder="mm/dd/yyyy" class="form-control hasDatepicker">
+                </div>
+             
+              <div class="input-group" style="float:left;  margin-top:20px;  margin-right:10px; margin-bottom:15px;">
+                 <label style="float:left; margin-top:10px; padding-right:6px;">Select To Date : </label>
+                <input type="text" id="datepicker5" placeholder="mm/dd/yyyy" class="form-control hasDatepicker">
+               
+              </div>
+              
+          
+                 <div class="tab-content mb30">
+          <div id="home" class="tab-pane active">
+          <div class="btn-group">
+              <button data-toggle="dropdown" class="btn btn-default dropdown-toggle tp-icon1">
+               
+                <span class="badge1" style="float:left;">Select Rep</span>
+              </button>
+            
+              <div class="dropdown-menu dropdown-menu-head pull-left" >
+                
+                <ul class="dropdown-list user-list user-padd ">
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user1.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Draniem Daamul</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new bc">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new bc">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  
+                 
+                  
+                 
+                 
+                 
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user5.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Lane Kitmari</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+            </div>
+            
+            
+          </div>
+          <div id="level5" class="tab-pane">
+          <div class="btn-group">
+              <button data-toggle="dropdown" class="btn btn-default dropdown-toggle tp-icon">
+                <i class="glyphicon glyphicon-user" style="left:-7px; top:6px;"></i>
+                <span class="badge">5 REPS (15% of the total)</span>
+              </button>
+            
+              <div class="dropdown-menu dropdown-menu-head pull-left" >
+                
+                <ul class="dropdown-list user-list user-padd ">
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user1.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Draniem Daamul</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> <span class="badge badge-success">new</span></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user3.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Weno Carasbong</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user4.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Nusja Nawancali</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user5.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Lane Kitmari</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                 
+                </ul>
+                
+              </div>
+              
+            </div>
+           
+            
+          </div>
+          <div id="profile" class="tab-pane">
+            <div class="btn-group">
+             <button data-toggle="dropdown" class="btn btn-default dropdown-toggle tp-icon">
+                <i class="glyphicon glyphicon-user"  style="left:-7px; top:6px;"></i>
+                <span class="badge">15 REPS(11% of the total)</span>
+              </button>
+              
+              <div class="dropdown-menu dropdown-menu-head pull-left" >
+               
+                <ul class="dropdown-list user-list user-padd ">
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user1.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Draniem Daamul</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> <span class="badge badge-success">new</span></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user3.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Weno Carasbong</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user4.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Nusja Nawancali</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user5.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Lane Kitmari</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div id="about" class="tab-pane">
+           <div class="btn-group">
+              <button data-toggle="dropdown" class="btn btn-default dropdown-toggle tp-icon">
+                <i class="glyphicon glyphicon-user"  style="left:-7px; top:6px;"></i>
+                <span class="badge">22 REPS(19% of the total)</span>
+              </button>
+             
+              <div class="dropdown-menu dropdown-menu-head pull-left" >
+                
+                <ul class="dropdown-list user-list user-padd ">
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user1.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Draniem Daamul</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> <span class="badge badge-success">new</span></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user3.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Weno Carasbong</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user4.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Nusja Nawancali</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user5.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Lane Kitmari</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div id="contact" class="tab-pane">
+            <div class="btn-group">
+             <button data-toggle="dropdown" class="btn btn-default dropdown-toggle tp-icon">
+                <i class="glyphicon glyphicon-user"  style="left:-7px; top:6px;"></i>
+                <span class="badge">26 REPS (31% of the total)</span>
+              </button>
+             
+              <div class="dropdown-menu dropdown-menu-head pull-left" >
+                
+                <ul class="dropdown-list user-list user-padd ">
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user1.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Draniem Daamul</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a> </h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li class="new">
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user2.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Zaham Sindilmaca</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user3.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Weno Carasbong</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user4.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Nusja Nawancali</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="thumb"><a href=""><img alt="" src="{% static 'images/umm/images/photos/user5.png' %}"></a></div>
+                    <div class="desc">
+                      <h5><a href="">Lane Kitmari</a></h5>
+                      <h5><a href="">Last Change : 06-08-14</a> </h5>
+                      <h5><a href="">INDIA</a> </h5>
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+            </div>
+          </div>
+           <div class="btn-demo">
+               
+                <a class="btn btn-orange">Submit</a>
+                
+              </div>
+        </div>        
+              
+             
+            </div>
+           <!-- contentpanel -->
+    
+     
+                <div class="row" style="margin-top:2%;width: 100%; ">
+				<div class="col-md-6" >
+				<div class="panel panel-info">
+				<div class="panel-body">
+				<h5 class="subtitle">Line Chart</h5>
+				<div class="btn-group" style="float:right;  margin-top: 6px;
+                                         position: relative;    z-index: 99; ">
+                <button class="btn btn-default" type="button">UAA</button>
+                <button class="btn btn-default" type="button">Points</button>
+               
+              </div>
+				 <div id="chart_div" style="width:100%; height: 350px;"></div>
+				</div>
+				</div>
+				</div>
+				<div class="col-md-6">
+				<div class="panel panel-info" style=" height:300px;">
+				<div class="panel-body">
+				<h5 class="subtitle">Line Chart</h5>
+				 <div>
+				
+                	<canvas color-attr="#fa8564" style=" float:left; width:50%;" class="foo" id="foo"></canvas>
+					<div style=" width:40%; height:10px; float:left; position:absolute; left:15%; font-size:19px; top:58%;">0</div>
+					<div style=" width:40%; height:10px; float:left; position:absolute; left:38%; font-size:19px; top:58%;">5</div>
+					<div style=" width:40%; height:10px; float:left; position:absolute; left:16%; font-size:16px; top:66%;">Average call hours</div>
+					</div>
+				 <div>
+			
+					<canvas color-attr="#028ec9" style=" float:right; width:50%;" class="foo" id="foo">sdasdasdas</canvas>
+					<div style="  height:10px; float:left; position:absolute; left:59%; font-size:19px; top:58%;">0</div>
+					<div style="  height:10px; float:left; position:absolute; left:83%; font-size:19px; top:58%;">5</div>
+					<div style="  height:10px; float:left; position:absolute; left:61%; font-size:16px; top:66%;">No of calls per Day</div>
+					
+					</div>
+					
+
+</div>
+</div>
+        </div>
+								
+				
+				</div>    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36251023-1']);
+  _gaq.push(['_setDomainName', 'jqueryscript.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+				
+				
+                    
+                       
+                    
+                   <div class="row">
+            <div class="col-sm-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        CALL QUALITY SCORES
+                        </header>
+                    <div class="panel-body" style="display: block;">
+                    <div class="adv-table">
+                    <div role="grid" class="dataTables_wrapper form-inline" id="hidden-table-info_wrapper"><div class="row-fluid"><div class="span6"><div id="hidden-table-info_length" class="dataTables_length"></div></div><div class="span6"><div class="dataTables_filter" id="hidden-table-info_filter"></div></div></div><table cellspacing="0" cellpadding="0" border="0" id="hidden-table-info" class="display table table-bordered dataTable" aria-describedby="hidden-table-info_info">
+                    <thead>
+                    <tr role="row" style=""><th class="sorting_asc" role="columnheader" tabindex="0" aria-controls="hidden-table-info" rowspan="1" colspan="1" style="width:200px; color:#000;" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">DATE</th><th class="sorting" role="columnheader" tabindex="0" aria-controls="hidden-table-info" rowspan="1" colspan="1" style="width: 300px; color:#000;" aria-label="Browser: activate to sort column ascending">REP LDAP</th><th class="hidden-phone sorting" role="columnheader" tabindex="0" aria-controls="hidden-table-info" rowspan="1" colspan="1" style="width: 272px; color:#000;" aria-label="Platform(s): activate to sort column ascending">AREAS OF IMPROVEMENT</th><th class="hidden-phone sorting" role="columnheader" tabindex="0" aria-controls="hidden-table-info" rowspan="1" colspan="1" style="width: 190px; color:#000;" aria-label="Engine version: activate to sort column ascending">COMPLIANCE ERROR</th><th class="hidden-phone sorting" role="columnheader" tabindex="0" aria-controls="hidden-table-info" rowspan="1" colspan="1" style="width: 150px; color:#000;" aria-label="CSS grade: activate to sort column ascending">QA SCORE</th></tr>
+                    </thead>
+                    
+                    <tbody role="alert" aria-live="polite" aria-relevant="all"><tr class="gradeA odd">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Firefox 1.0</td>
+                        <td class="hidden-phone ">Win 98+ / OSX.2+</td>
+                        <td class="center hidden-phone ">1.7</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA even">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Firefox 1.5</td>
+                        <td class="hidden-phone ">Win 98+ / OSX.2+</td>
+                        <td class="center hidden-phone ">1.8</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA odd">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Firefox 2.0</td>
+                        <td class="hidden-phone ">Win 98+ / OSX.2+</td>
+                        <td class="center hidden-phone ">1.8</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA even">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Firefox 3.0</td>
+                        <td class="hidden-phone ">Win 2k+ / OSX.3+</td>
+                        <td class="center hidden-phone ">1.9</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA odd">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Camino 1.0</td>
+                        <td class="hidden-phone ">OSX.2+</td>
+                        <td class="center hidden-phone ">1.8</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA even">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Camino 1.5</td>
+                        <td class="hidden-phone ">OSX.3+</td>
+                        <td class="center hidden-phone ">1.8</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA odd">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Netscape 7.2</td>
+                        <td class="hidden-phone ">Win 95+ / Mac OS 8.6-9.2</td>
+                        <td class="center hidden-phone ">1.7</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA even">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Netscape Browser 8</td>
+                        <td class="hidden-phone ">Win 98SE+</td>
+                        <td class="center hidden-phone ">1.7</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA odd">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Netscape Navigator 9</td>
+                        <td class="hidden-phone ">Win 98+ / OSX.2+</td>
+                        <td class="center hidden-phone ">1.8</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr><tr class="gradeA even">
+                        <td class="  sorting_1">Gecko</td>
+                        <td class=" ">Mozilla 1.0</td>
+                        <td class="hidden-phone ">Win 95+ / OSX.1+</td>
+                        <td class="center hidden-phone ">1</td>
+                        <td class="center hidden-phone ">A</td>
+                    </tr></tbody></table><div class="row-fluid"><div class="span6"><div class="dataTables_info" id="hidden-table-info_info">Showing 1 to 10 of 57 entries</div></div><div class="span6"><div class="dataTables_paginate paging_bootstrap pagination"><ul><li class="prev disabled"><a href="#">← Previous</a></li><li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li><li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#">Next → </a></li></ul></div></div></div></div>
+
+                    </div>
+                    </div>
+                </section>
+            </div>
+        </div> 
+                    
+        
+        
+                    
+                    
+    </div>  
+    </div>
+    
+  </div><!-- mainpanel -->
+  
+  <div class="rightpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a href="#rp-alluser" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+        <li><a href="#rp-favorites" data-toggle="tab"><i class="fa fa-heart"></i></a></li>
+        <li><a href="#rp-history" data-toggle="tab"><i class="fa fa-clock-o"></i></a></li>
+        <li><a href="#rp-settings" data-toggle="tab"><i class="fa fa-gear"></i></a></li>
+    </ul>
+        
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="rp-alluser">
+            <h5 class="sidebartitle">Online Users</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/userprofile.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <span class="pull-right badge badge-danger">2</span>
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+            
+            <div class="mb30"></div>
+            
+            <h5 class="sidebartitle">Offline Users</h5>
+            <ul class="chatuserlist">
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-favorites">
+            <h5 class="sidebartitle">Favorites</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-history">
+            <h5 class="sidebartitle">History</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Hi hello, ctc?... would you mind if I go to your...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>This is to inform you that your product that we...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static 'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Are you willing to have a long term relat...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane pane-settings" id="rp-settings">
+            
+            <h5 class="sidebartitle mb20">Settings</h5>
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Offline Users</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Enable History</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Full Name</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle-chat1 toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Location</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+        </div><!-- tab-pane -->
+        
+    </div><!-- tab-content -->
+  </div><!-- rightpanel -->
+  
+  
+</section>
+
+
+<script src="{% static 'js/umm/js/jquery-1.10.2.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery-migrate-1.2.1.min.js' %}"></script>
+<script src="{%  static 'js/umm/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/umm/js/modernizr.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.sparkline.min.js' %}"></script>
+<script src="{% static 'js/umm/js/toggles.min.js' %}"></script>
+<script src="{% static 'js/umm/js/retina.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.cookies.js' %}"></script>
+<script src="{% static 'css/umm/css/analyticstable.js' %}"></script> 
+<script src="{% static 'js/umm/js/dynamic_table_init.js' %}"></script> 
+<script src="{% static 'js/umm/js/bootstrap-wizard.min.js' %}"></script>
+ <script src="{% static 'js/umm/js/daterangepicker.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.datatables.min.js' %}"></script>
+ <script src="{% static 'js/umm/js/custom.js' %}"></script>
+ <script src="{% static 'js/umm/js/gauge.min.js' %}"></script>
+
+
+ 
+<script>
+jQuery(document).ready(function(){
+$('#datepicker4').Zebra_DatePicker();
+$('#datepicker5').Zebra_DatePicker();
+  // Basic Wizard
+  jQuery('#basicWizard').bootstrapWizard();
+  jQuery('.nav-parent').eq(0).addClass('active')
+  // Progress Wizard
+  jQuery('#progressWizard').bootstrapWizard({
+    'nextSelector': '.next',
+    'previousSelector': '.previous',
+    onNext: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    },
+    onPrevious: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    },
+    onTabShow: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    }
+  });
+  
+  // Disabled Tab Click Wizard
+  jQuery('#disabledTabWizard').bootstrapWizard({
+    tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+    onTabClick: function(tab, navigation, index) {
+      return false;
+    }
+  });
+  
+  // With Form Validation Wizard
+  var $validator = jQuery("#firstForm").validate({
+    highlight: function(element) {
+      jQuery(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+    },
+    success: function(element) {
+      jQuery(element).closest('.form-group').removeClass('has-error');
+    }
+  });
+  
+  jQuery('#validationWizard').bootstrapWizard({
+    tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+    onTabClick: function(tab, navigation, index) {
+      return false;
+    },
+    onNext: function(tab, navigation, index) {
+      var $valid = jQuery('#firstForm').valid();
+      if(!$valid) {
+        
+        $validator.focusInvalid();
+        return false;
+      }
+    }
+  });	  
+  
+  
+});
+</script>
+
+
+<script>
+  jQuery(document).ready(function() {
+
+    jQuery('#table1').dataTable();
+    
+    jQuery('#table2').dataTable({
+      "sPaginationType": "full_numbers"
+    });
+    
+    // Chosen Select
+    jQuery("select").chosen({
+      'min-width': '100px',
+      'white-space': 'nowrap',
+      disable_search_threshold: 10
+    });
+    
+    // Delete row in a table
+    jQuery('.delete-row').click(function(){
+      var c = confirm("Continue delete?");
+      if(c)
+        jQuery(this).closest('tr').fadeOut(function(){
+          jQuery(this).remove();
+        });
+        
+        return false;
+    });
+    
+    // Show aciton upon row hover
+    jQuery('.table-hidaction tbody tr').hover(function(){
+      jQuery(this).find('.table-action-hide a').animate({opacity: 1});
+    },function(){
+      jQuery(this).find('.table-action-hide a').animate({opacity: 0});
+    });
+  
+  
+  });
+</script>
+
+
+
+<script>
+jQuery(function () {
+
+    var gaugeOptions = {
+
+        chart: {
+            type: 'solidgauge'
+        },
+
+        title: null,
+
+        pane: {
+            center: ['50%', '85%'],
+            size: '140%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+
+        tooltip: {
+            enabled: false
+        },
+
+        // the value axis
+        yAxis: {
+            stops: [
+                [0.1, '#55BF3B'], // green
+                [0.5, '#DDDF0D'], // yellow
+                [0.9, '#DF5353'] // red
+            ],
+            lineWidth: 0,
+            minorTickInterval: null,
+            tickPixelInterval: 400,
+            tickWidth: 0,
+            title: {
+                y: -70
+            },
+            labels: {
+                y: 16
+            }
+        },
+
+        plotOptions: {
+            solidgauge: {
+                dataLabels: {
+                    y: 5,
+                    borderWidth: 0,
+                    useHTML: true
+                }
+            }
+        }
+    };
+
+    // The speed gauge
+    jQuery('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 200,
+            title: {
+                text: 'Speed'
+            }
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        series: [{
+            name: 'Speed',
+            data: [80],
+            dataLabels: {
+                format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+                       '<span style="font-size:12px;color:silver">km/h</span></div>'
+            },
+            tooltip: {
+                valueSuffix: ' km/h'
+            }
+        }]
+
+    }));
+
+    // The RPM gauge
+    jQuery('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 5,
+            title: {
+                text: 'RPM'
+            }
+        },
+
+        series: [{
+            name: 'RPM',
+            data: [1],
+            dataLabels: {
+                format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
+                       '<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+            },
+            tooltip: {
+                valueSuffix: ' revolutions/min'
+            }
+        }]
+
+    }));
+
+    // Bring life to the dials
+    setInterval(function () {
+        // Speed
+        var chart = $('#container-speed').highcharts(),
+            point,
+            newVal,
+            inc;
+
+        if (chart) {
+            point = chart.series[0].points[0];
+            inc = Math.round((Math.random() - 0.5) * 100);
+            newVal = point.y + inc;
+
+            if (newVal < 0 || newVal > 200) {
+                newVal = point.y - inc;
+            }
+
+            point.update(newVal);
+        }
+
+        // RPM
+        chart = jQuery('#container-rpm').highcharts();
+        if (chart) {
+            point = chart.series[0].points[0];
+            inc = Math.random() - 0.5;
+            newVal = point.y + inc;
+
+            if (newVal < 0 || newVal > 5) {
+                newVal = point.y - inc;
+            }
+
+            point.update(newVal);
+        }
+    }, 2000);
+
+
+});
+
+</script>
+
+
+
+	<script>
+for(var i=0;i < document.getElementsByClassName('foo').length;i++)
+{
+	var color_val=document.getElementsByClassName('foo')[i].getAttribute('color-attr');
+		var opts = {
+	  lines: 12,
+      angle: 0,
+      lineWidth: 0.44,
+      pointer: {
+      length: 0.7,
+      strokeWidth: 0.040,
+      color: '#000000'
+
+	
+	  },
+	  limitMax: 'false', 
+	  percentColors: [[0.0, color_val ], [0.50, color_val], [1.0, color_val]], // !!!!
+	  strokeColor: '#E0E0E0',
+
+	  generateGradient: true
+	};
+	var target = document.getElementsByClassName('foo')[i];
+	
+	var gauge = new Gauge(target).setOptions(opts);
+	gauge.maxValue = 3000;
+	gauge.animationSpeed = 100;
+	//gauge.set(2250);
+	gauge.set(1500);
+}
+</script>
+    
+</body>
+
+<!-- Mirrored from themepixels.com/demo/webpage/bracket/index.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 28 Mar 2014 14:23:40 GMT -->
+</html>
