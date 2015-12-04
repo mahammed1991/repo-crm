@@ -54,17 +54,6 @@ Total Appointments
                 </div>
             </div>
         </form> 
-            <!-- <div class="row std-sub-top">
-                <div class="col-xs-2 ">
-                    <a href="{% url 'representatives.views.total_appointments' prev_week.month prev_week.day prev_week.year %}" class="text-prev">Previous Week</a>
-                </div>
-                <div class="col-xs-8  title-text">
-                    <span>Time Zone: IST(UTC:5:30)</span>
-                </div>
-                <div class="col-xs-2 ">
-                    <a href="{% url 'representatives.views.total_appointments' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
-                </div>
-            </div> -->
         
             <form method="post" action="" class="form" onsubmit="return validateForm()">
                 {% csrf_token %}
