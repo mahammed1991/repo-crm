@@ -43,6 +43,6 @@ urlpatterns = patterns(
     url(r'^picasso-lead-summary/$', views.get_picasso_lead_summary),
     # picasso build wpp form
     url(r'^picasso-build-wpp-form/$', views.picasso_build_wpp_form),
-
-
+    url(r'^get-eligible-picasso-lead/(?P<cid>[\w -]+)$', views.get_eligible_picasso_leads),
+    url(r'^get-eligible-picasso-lead-by-lid/(?P<lid>[\w]+)$', views.get_eligible_picasso_lead_by_lid),
 )

@@ -274,7 +274,7 @@ except Exception as e:
 
 
 # Leads based on Region based
-specific_date = datetime(2015, 10, 9)
+specific_date = datetime.today()
 total_count_tag = list()
 total_count_shopping = list()
 final_dict = {'TAG': 0, 'SHOPPING': 0}
