@@ -10,7 +10,7 @@ from django.db.models import F
 from django.views.decorators.csrf import csrf_exempt
 
 from main.models import UserDetails
-from leads.models import Timezone, RegalixTeams, Location, TimezoneMapping
+from leads.models import Timezone, RegalixTeams, Location, TimezoneMapping, Leads, WPPLeads
 from representatives.models import (
     Availability,
     ScheduleLog
@@ -21,6 +21,8 @@ from django.db.models import Q
 from lib.helpers import send_mail
 from django.template.loader import get_template
 from django.template import Context
+from django.db.models import Count
+import time
 
 
 # Create your views here.
@@ -764,13 +766,18 @@ def export_appointments(request):
             result = list()
             team_name = rglx_team.team_name
             for i in range(0, 24):
-                for j in ['00', '30']:
+                for j in range(00, 60):
                     mydict = {}
                     if len(str(i)) == 1:
                         indx = '0%s' % (i)
                     else:
                         indx = str(i)
+                    if len(str(j)) == 1:
+                        j = '0%s' % (j)
+                    else:
+                        j = str(j)
                     hour = "%s:%s" % (indx, j)
+                    print hour
                     for ele in collumn_attr:
                         if ele == 'Team':
                             mydict[ele] = team_name
@@ -824,6 +831,200 @@ def export_appointments(request):
         return response
 
     return render(request, 'representatives/export_appointments.html', {'teams': teams,
+                                                                        'default_teams': default_teams,
+                                                                        'process_types': process_types,
+                                                                        'default_process_type': default_process_type,
+                                                                        'post_result_dict': json.dumps(post_result_dict),
+                                                                        'tag_by_team': tag_by_team})
+
+@login_required
+def export_appointments_with_schedule_appointments(request):
+    """ Export Appointments by Availability/Booked """
+
+    default_process_type = ['TAG', 'SHOPPING', 'WPP']
+    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+    teams = RegalixTeams.objects.filter(process_type__in=process_types).exclude(team_name='default team')
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
+
+    tag_by_team = dict()
+    for team in teams:
+        rec = {
+            'name': str(team.team_name),
+            'id': str(team.id)
+        }
+        if team.process_type not in tag_by_team:
+            tag_by_team[str(team.process_type)] = [rec]
+        else:
+            tag_by_team[str(team.process_type)].append(rec)
+
+    post_result_dict = {}
+    if request.method == 'POST':
+        print datetime.utcnow()
+        from_date = request.POST.get('date_from')
+        to_date = request.POST.get('date_to')
+        process_type = request.POST.getlist('selectedProcessType')
+        regalix_team = request.POST.getlist('selectedTeams')
+        from_date = datetime.strptime(from_date, "%d/%m/%Y %H:%M")
+        to_date = datetime.strptime(to_date, "%d/%m/%Y %H:%M")
+        to_date = datetime(to_date.year, to_date.month, to_date.day, to_date.hour, to_date.minute, 59)
+
+        time_zone = 'IST'
+        selected_tzone = Timezone.objects.get(zone_name=time_zone)
+        from_utc_date = SalesforceApi.get_utc_date(from_date, selected_tzone.time_value)
+        to_utc_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
+        diff = divmod((from_utc_date - from_date).total_seconds(), 60)
+        diff_in_minutes = diff[0]
+
+        regalix_teams = RegalixTeams.objects.filter(id__in=regalix_team)
+        post_result_dict = {process: [] for process in process_type}
+        for team in regalix_teams:
+            if team.process_type in post_result_dict:
+                post_result_dict[team.process_type].append(int(team.id))
+
+        collumn_attr = ['Hours', 'Team']
+        s_date = from_date
+        while True:
+            if s_date <= to_date:
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y"))+' AV|F')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y"))+' RS')
+                s_date = s_date + timedelta(days=1)
+            else:
+                break
+        total_result = list()
+        for rglx_team in regalix_teams:
+            team_name = rglx_team.team_name
+            if team_name[0] == 'S':
+                process_type = 'SHOPPING'
+            elif team_name[0] == 'T':
+                process_type = 'TAG'
+            else:
+                process_type = 'WPP'
+            # get all appointments for selected dates in given range
+            if process_type == 'SHOPPING':
+                schedule_data = Leads.objects.exclude(rescheduled_appointment_in_ist=None).filter(
+                    rescheduled_appointment_in_ist__range=(from_date, to_date),
+                    country__in=rglx_team.location.values_list('location_name'),
+                    type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+            elif process_type == 'TAG':
+                schedule_data = Leads.objects.exclude(rescheduled_appointment_in_ist=None)
+                schedule_data = schedule_data.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(
+                    rescheduled_appointment_in_ist__range=(from_date, to_date),
+                    country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+            else:
+                schedule_data = WPPLeads.objects.exclude(rescheduled_appointment_in_ist=None).filter(
+                    rescheduled_appointment_in_ist__range=(from_date, to_date),
+                    country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+
+
+            slots_data = Availability.objects.filter(
+                date_in_utc__range=(from_date, to_date),
+                team__id=rglx_team.id,
+                team__process_type=process_type
+            ).order_by('team')
+
+            result = list()
+            team_name = rglx_team.team_name
+            for i in range(0, 24):
+                for j in range(0, 60):
+                    mydict = {}
+                    if len(str(i)) == 1:
+                        indx = '0%s' % (i)
+                    else:
+                        indx = str(i)
+                    if len(str(j)) == 1:
+                        j = '0%s' % (j)
+                    else:
+                        j = str(j)
+                    hour = "%s:%s" % (indx, j)
+                    for ele in collumn_attr:
+                        if ele == 'Team':
+                            mydict[ele] = team_name
+                        elif ele == 'Hours':
+                            mydict[ele] = hour
+                        else:
+                            mydict[ele] = '-'
+
+                    result.append(mydict)
+
+
+            total_appointments = dict()
+            for data in schedule_data:
+                requested_date = data.get('rescheduled_appointment_in_ist')
+                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' RS')
+                _time = datetime.strftime(requested_date, "%H:%M")
+                booked_count = data.get('dcount')
+                if _date in total_appointments:
+                    total_appointments[_date]['booked_count'] += booked_count
+                else:
+                    total_appointments[_date] = {'booked_count': booked_count}
+                val = "%s" % (booked_count)
+
+                for rec in result:
+                    if str(_time) in rec.values():
+                        rec[_date] = val
+
+            total_schedule = dict()
+            for slot in slots_data:
+                # time zone conversion
+                requested_date = slot.date_in_utc
+                requested_date -= timedelta(minutes=diff_in_minutes)
+                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' AV|F')
+                _time = datetime.strftime(requested_date, "%H:%M")
+                availability_count = slot.availability_count
+                booked_count = slot.booked_count
+                if _date in total_schedule:
+                    total_schedule[_date]['booked_count'] += booked_count
+                    total_schedule[_date]['availability_count'] += availability_count
+                else:
+                    total_schedule[_date] = {'booked_count': booked_count, 'availability_count': availability_count}
+                val = "%s|%s" % (booked_count, availability_count)
+
+                for rec in result:
+                    if str(_time) in rec.values():
+                        rec[_date] = val
+
+            total_dict = dict()
+            for ele in collumn_attr:
+                if ele == 'Team':
+                    total_dict[ele] = ''
+                elif ele == 'Hours':
+                    total_dict[ele] = 'Total'
+                else:
+                    total_dict[ele] = '-'
+
+            for _date_ele in total_schedule:
+                if _date_ele in total_dict:
+                    total_dict[_date_ele] = "%s|%s" % (str(total_schedule[_date_ele]['booked_count']), str(total_schedule[_date_ele]['availability_count']))
+
+            for _date_ele in total_appointments:
+                if _date_ele in total_dict:
+                    total_dict[_date_ele] = "%s" % (str(total_appointments[_date_ele]['booked_count']))
+
+            total_result.extend(result)
+            total_result.append(total_dict)
+
+
+        # remove empty records from total_result
+        filter_result = list()
+        for each_result in total_result:
+            count = 0
+            for key, value in each_result.iteritems():
+                if each_result[key] == '-':
+                    count += 1
+                if count == (len(collumn_attr)-2):
+                    filter_result.append(each_result)
+        
+        # for each_result in filter_result:
+        #     if each_result in total_result:
+        #         total_result.remove(each_result)
+
+        filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
+        path = write_appointments_to_csv(total_result, collumn_attr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        print datetime.utcnow()
+        return response
+
+    return render(request, 'representatives/export_appointments_with_schedule_appointments.html', {'teams': teams,
                                                                         'default_teams': default_teams,
                                                                         'process_types': process_types,
                                                                         'default_process_type': default_process_type,
