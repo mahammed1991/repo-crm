@@ -75,6 +75,7 @@ class Leads(models.Model):
 
     appointment_date = models.DateTimeField(blank=True, null=True)
     first_contacted_on = models.DateTimeField(blank=True, null=True)
+    appointment_date_in_ist = models.DateTimeField(blank=True, null=True)
 
     # Rescheduled Appointments
     rescheduled_appointment = models.DateTimeField(blank=True, null=True)
@@ -625,6 +626,8 @@ class PicassoLeads(models.Model):
     picasso_objective = models.CharField(max_length=255, null=True, blank=True)
     internal_cid = models.CharField(max_length=50, null=True)
     pod_name = models.CharField(max_length=50)
+    treatment_type = models.CharField(max_length=100, blank=True, null=True)
+    is_build_eligible = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"

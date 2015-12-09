@@ -116,7 +116,7 @@ function getPicassoReport(dataString){
         dataType: "json",
         success: function(data){
           $('#preloaderOverlay').hide();
-          console.log(data)
+          //console.log(data)
           $('#picasso_treatment_lead_status_table').empty()
           reports = data['reports'];
           if(reports['picasso_lead_status_analysis']['TOTAL'] == 0)

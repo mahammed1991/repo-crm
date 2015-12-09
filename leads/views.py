@@ -207,7 +207,10 @@ def wpp_lead_form(request):
         ret_url = basic_data['retURL']
         wpp_data = basic_data
         for key, value in tag_leads.items():
-            wpp_data[value] = request.POST.get(key)
+            if key == 'picasso_objective_list[]':
+                wpp_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
+            else:
+                wpp_data[value] = request.POST.get(key)
 
         submit_lead_to_sfdc(sf_api_url, wpp_data)
         advirtiser_details = get_advertiser_details(sf_api_url, wpp_data)
@@ -1370,6 +1373,7 @@ def thankyou(request):
         '4': reverse('leads.views.wpp_lead_form'),
         '5': reverse('leads.views.agent_bulk_upload'),
         '6': reverse('leads.views.picasso_lead_form'),
+        '7': reverse('leads.views.picasso_build_wpp_form'),
     }
 
     if redirect_page in redirect_page_source.keys():
@@ -1399,6 +1403,7 @@ def lead_error(request):
         '4': reverse('leads.views.wpp_lead_form'),
         '5': reverse('leads.views.agent_bulk_upload'),
         '6': reverse('leads.views.picasso_lead_form'),
+        '7': reverse('leads.views.picasso_build_wpp_form'),
     }
 
     if redirect_page in redirect_page_source.keys():
@@ -2690,4 +2695,107 @@ def convert_picasso_lead_to_dict(model):
 
 @login_required
 def picasso_build_wpp_form(request):
-    return render(request, 'leads/picasso_build_wpp_form.html', {})
+    # Get all location, teams codetypes
+    lead_args = get_basic_lead_data(request)
+    lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG']).filter(is_active=True)
+    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
+
+    wpp_locations = list()
+    for loc in lead_args['locations']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
+            wpp_locations.append(loc)
+    lead_args.update({'wpp_locations': wpp_locations})
+    wpp_loc = list()
+    regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
+    for tm in regalix_team:
+        for loc in tm.location.all():
+            wpp_loc.append(loc)
+    lead_args.update({'wpp_loc': wpp_loc})
+    return render(
+        request,
+        'leads/picasso_build_wpp_form.html',
+        lead_args
+    )
+
+
+def get_eligible_picasso_leads(request, cid):
+    """ Eligible picasso lead as WPP Lead
+        1. Lead should be build Eligible.
+        2. Lead's program name should be in WPP programs list.
+
+    """
+    if request.is_ajax():
+        lead = {'status': 'FAILED', 'details': None}
+        wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
+        leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
+        if not leads:
+            return HttpResponse(json.dumps(lead), content_type='application/json')
+
+        if len(leads) > 1:
+            leads = leads
+            url_list = []
+            for each_lead in leads:
+                details = dict()
+                details['lead_details'] = {
+                    'l_id': each_lead.sf_lead_id,
+                    'url': each_lead.url_1,
+                }
+                url_list.append(details)
+            lead['status'] = "MULTIPLE"
+            lead['details'] = url_list
+            return HttpResponse(json.dumps(lead), content_type='application/json')
+
+        else:
+            leads = leads[0]
+
+        try:
+            team = Team.objects.get(team_name=leads.team)
+        except ObjectDoesNotExist:
+            team = None
+
+        if leads:
+            lead['status'] = 'SUCCESS'
+
+            lead['details'] = {
+                'name': leads.first_name + ' ' + leads.last_name,
+                'email': leads.lead_owner_email,
+                'google_rep_email': leads.google_rep_email,
+                'pod_name': leads.pod_name,
+                'team': team.team_name if team else '',
+                'code_type': leads.type_1,
+                'l_id': leads.sf_lead_id,
+                'url': leads.url_1,
+                'treatment_type': leads.treatment_type,
+                'picasso_objectives': leads.picasso_objective.split(','),
+
+            }
+    return HttpResponse(json.dumps(lead), content_type='application/json')
+
+
+def get_eligible_picasso_lead_by_lid(request, lid):
+    """Get Specific Lead from mulitple elegible leads with same CID by using lead id"""
+    if request.is_ajax():
+        lead = {'status': 'FAILED', 'details': None}
+        leads = PicassoLeads.objects.get(sf_lead_id=lid)
+
+        try:
+            team = Team.objects.get(team_name=leads.team)
+        except ObjectDoesNotExist:
+            team = None
+
+        lead['status'] = 'SUCCESS'
+
+        lead['details'] = {
+            'name': leads.first_name + ' ' + leads.last_name,
+            'email': leads.lead_owner_email,
+            'google_rep_email': leads.google_rep_email,
+            'pod_name': leads.pod_name,
+            'team': team.team_name if team else '',
+            'code_type': leads.type_1,
+            'l_id': leads.sf_lead_id,
+            'url': leads.url_1,
+            'treatment_type': leads.treatment_type,
+            'picasso_objectives': leads.picasso_objective.split(','),
+
+        }
+    return HttpResponse(json.dumps(lead), content_type='application/json')
