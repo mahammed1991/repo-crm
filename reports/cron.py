@@ -43,6 +43,7 @@ def get_updated_leads():
         all_leads = sf.query_all(sql_query_all)
         picasso_leads = sf.query_all(sql_query_picasso)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
+        logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         update_sfdc_leads(all_leads['records'], sf)
         create_or_update_picasso_leads(picasso_leads['records'], sf)
@@ -64,12 +65,18 @@ def get_last_day_leads():
     sf = SalesforceApi.connect_salesforce()
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
-    where_clause = "WHERE (CreatedDate >= %s AND CreatedDate <= %s)" % (start_date, end_date)
-    sql_query = "select %s from Lead %s" % (select_items, where_clause)
+    code_type = 'Picasso'
+    where_clause = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c != '%s'" % (start_date, end_date, code_type)
+    where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
+    sql_query_all = "select %s from Lead %s" % (select_items, where_clause)
+    sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
     try:
-        all_leads = sf.query_all(sql_query)
+        all_leads = sf.query_all(sql_query_all)
+        picasso_leads = sf.query_all(sql_query_picasso)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
+        logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
+        create_or_update_picasso_leads(picasso_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
@@ -313,6 +320,11 @@ def create_or_update_leads(records, sf):
         appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
         lead.appointment_date = appointment_date
 
+        if rec.get('IST_TIME_N__c'):
+            appointment_date_in_ist = rec.get('IST_TIME_N__c')
+            appointment_date_in_ist = SalesforceApi.salesforce_date_to_datetime_format(appointment_date_in_ist)
+            lead.appointment_date_in_ist = appointment_date_in_ist
+
         first_contacted_on = rec.get('X1st_Contact_on__c')
         first_contacted_on = SalesforceApi.salesforce_date_to_datetime_format(first_contacted_on)
         lead.first_contacted_on = first_contacted_on
@@ -495,7 +507,7 @@ def update_sfdc_leads(records, sf):
 
 def create_or_update_picasso_leads(records, sf):
     """ Create a new leads or update existing lead for picasso"""
-    logging.info("Start saving leads to our DB")
+    logging.info("Start saving leads to our PICASSO DB")
     total_leads = 0
     new_lead_saved = 0
     new_lead_failed = 0
@@ -614,6 +626,12 @@ def create_or_update_picasso_leads(records, sf):
         lead.picasso_objective = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
         # lead.picasso_multiple_objectives = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
         lead.pod_name = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
+        lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else ''
+        if rec.get('PICASSO_build_eligible__c'):
+            if rec.get('PICASSO_build_eligible__c') == 'Yes':
+                lead.is_build_eligible = True
+            elif rec.get('PICASSO_build_eligible__c') == 'No':
+                lead.is_build_eligible = False
 
         try:
             lead.save()

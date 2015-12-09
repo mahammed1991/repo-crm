@@ -17,20 +17,10 @@ function validatethis(frm) {
       window.is_reset = false;
       return false;
     }
-
-    t_typeElem = document.getElementById('treatment_type')
-    validateFiled(t_typeElem)
-    
-    // Google Rep Name Validation
-    grefElem = document.getElementById('gref');
-    validateFiled(grefElem);
-
-    teamElem = document.getElementById('team');
-    validateFiled(teamElem);
-
+  
     cidElem = document.getElementById('cid');
     validateFiled(cidElem);
-
+   
     if(!$(cidElem).val().match(cidFormat)){
       $(cidElem).addClass('error-box');
       /*frm.cid.focus();*/
@@ -38,16 +28,42 @@ function validatethis(frm) {
     }
 
     urlElem = document.getElementById('url');
-    validateFiled(urlElem);
+    if ($('#url').is(':visible')){
+      validateFiled(urlElem);
+    }
 
-    countryElem = document.getElementById('country');
-    validateFiled(countryElem);
+    if ($('#multipleUrls').is(':visible')){
+      multiUrlElem = document.getElementById('multipleUrls');
+      validateFiled(multiUrlElem);
+    }
+    
+    t_typeElem = document.getElementById('treatment_type')
+    validateFiled(t_typeElem)
 
-    cgoalElem = document.getElementById('conversion_goal');
-    validateFiled(cgoalElem);
+    grefElem = document.getElementById('gref');
+    validateFiled(grefElem);
+
+    teamElem = document.getElementById('team');
+    validateFiled(teamElem);
+
+    podElem = document.getElementById('picasso_pod');
+    validateFiled(podElem);
+
+
+     if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked") ){
+      $('.checkboxvalidation').removeClass('error-box');
+
+    }else{
+      alert('Please select atleast one objective')
+      $('.checkboxvalidation').addClass('error-box');
+      window.is_error = true;
+    }
 
     ab_testing = document.getElementById('ab_testing');
     validateFiled(ab_testing);
+
+    countryElem = document.getElementById('country');
+    validateFiled(countryElem);
     
     fnameElem = document.getElementById('first_name');
     validateFiled(fnameElem);
@@ -188,4 +204,102 @@ function resetBtn(elem){
     window.is_reset = true;
     window.location.reload();
   }
+}
+
+
+// Verify the CID and get the eligible picasso lead details for the given CID
+$('input[name=cid]').on('focusout', function(){
+        if(!$(this).val()){
+            clearLeadDetails();
+        }else{
+            $.ajax({
+                'method': 'GET',
+                'dataType': 'json',
+                'url': "/leads/get-eligible-picasso-lead/" + $('input[name=cid]').val(),
+                success: function(response){
+                    if(response['status'] == 'FAILED'){
+                        //alert('Lead for Selected CID not available.');
+                        clearLeadDetails();
+                        //$('input[name=cid], input[name=url1], input[id=treatment_type], input[name=treatment_type], input[id=lead_owner], input[id=lead_owner]' ).val('')
+                    }
+                    else if(response['status'] == 'MULTIPLE'){
+                        alert("Getting multiple leads on this " + $('input[name=cid]').val() + " customer id, please choose Website URL");
+                        multiple_leads(response['details']);
+                    }
+                    else{
+                        populateLeadDetails(response);
+                    }
+                },
+                error:function(xhr, status, error){
+                    alert('Something went wrong!. Please check CID');
+                    clearLeadDetails();
+                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                }
+            })
+        }
+    });
+
+// Providing website URL to select elegible lead from Multiple lead with same CID
+function multiple_leads(details){
+    $('#url').hide();
+    $('#multipleUrls').show();
+    $('#multipleUrls option').remove()
+    var html = '<option value>Select Wbsite URL</option>'
+    for(var i=0; i<details.length; i++){
+        var obj = details[i];
+        var rec = '<option value='+ obj['lead_details']['l_id']+'>'+ obj['lead_details']['url'] +'</option>';
+        html += rec
+    }
+    $('#multipleUrls').append(html);
+}
+
+//Geting lead details of multiple leads for single CID
+$('#multipleUrls').change(function(){
+  $('input[type=checkbox]').prop('checked', false);
+    var lid = $(this).val();
+    if(lid){
+        $.ajax({
+          'url': "/leads/get-eligible-picasso-lead-by-lid/" + lid,
+          'dataType': "json",
+          'type': 'GET',
+          success: function(response) {
+             if(response['status'] == 'FAILED'){
+                alert('Lead for Selected CID not available.');
+                clearLeadDetails();
+                //$('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner], input[name=code_type]').val('')
+            } else{
+                populateLeadDetails(response);
+            }
+          },
+          error: function(errorThrown) {
+              alert('Something went wrong!. Please check CID');
+              clearLeadDetails();
+              //$('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+          }
+    }); 
+  }
+});
+
+// Populating Lead Details for selected CID/Lead Id
+function populateLeadDetails(response){
+    $('input[name=url1], input[id=url]').val(response.details.url);
+    $('#team').val(response.details.team);
+    $('#treatment_type').val(response.details.treatment_type);
+    $('#picasso_pod').val(response.details.pod_name);
+    for(i=0;i<=response.details.picasso_objectives.length;i++){
+        //$('input[value="'+response.details.picasso_objectives[i]+'"]').prop('checked', true);
+        $('input[value="'+response.details.picasso_objectives[i]+'"]').parent().addClass('is-checked');
+        $('input[value="'+response.details.picasso_objectives[i]+'"]').prop('checked', true);
+    }
+}
+
+// To clear prepopulated lead Details 
+function clearLeadDetails(){
+  $('input[name=url1], input[id=picasso_pod]').val('');
+  $('#multipleUrls').hide();
+  $('#url').show();
+  $('#multipleUrls option').remove();
+  $('input[type=checkbox]').prop('checked', false);
+  $('#team option[value=""]').attr('selected', 'selected');
+  $('#treatment_type option[value=""]').attr('selected', 'selected');
 }
