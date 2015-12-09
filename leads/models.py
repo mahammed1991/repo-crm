@@ -626,6 +626,8 @@ class PicassoLeads(models.Model):
     picasso_objective = models.CharField(max_length=255, null=True, blank=True)
     internal_cid = models.CharField(max_length=50, null=True)
     pod_name = models.CharField(max_length=50)
+    treatment_type = models.CharField(max_length=100, blank=True, null=True)
+    is_build_eligible = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"

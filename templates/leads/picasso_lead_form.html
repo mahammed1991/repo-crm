@@ -11,8 +11,8 @@
   <style type="text/css">
     .tasks{ margin-bottom: 5px;}
     .footer{position: relative;}
-    .table-container{ min-height:300px;}
     .footer .container-fluid  ul{ line-height: 62px;}
+    .table-container{ min-height:300px;}
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -91,29 +91,35 @@
         </div>
       <div class="col-md-6">
         <label for="picasso_objective">Objective</label></br>
-        <div class="checkboxvalidation" style="height:71px;">
-        <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" value="Buy Online"><span>Buy Online</span></br>
-        </label>
-        <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" value="Form Entry"><span>Form Entry</span></br>
-        </label>
-          <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" value="Call your Business"><span>Call your Business</span>
-        </label>
-        <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" value="Engage with your Content"><span>Engage with your Content</span></br>
-        </label>
-        <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-          <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" value="Become a Fan"><span>Become a Fan</span>
-        </label>
+        <div class="checkboxvalidation" style="height:95px;">
+          <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" value="Buy Online"><span>Buy Online</span></br>
+          </label>
+          <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" value="Form Entry"><span>Form Entry (Generate Leads)</span></br>
+          </label>
+            <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" value="Call your Business"><span>Call your Business</span>
+          </label>
+          <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" value="Engage with your Content"><span>Engage with your Content</span></br>
+          </label>
+          <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" value="Become a Fan"><span>Become a Fan</span>
+          </label>
+           <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" value="Drive Foot Traffic"><span>Drive Foot Traffic</span>
+          </label>
+           <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" value="Install Mobile App"><span>Install Mobile App</span>
+          </label>
         </div>
       </div>
      
       
         <div class="col-md-6">
-          <label for="comment1">Additional Notes(Optional)</label>
-          <textarea class="form-control" name="comment1" id="comment1"></textarea>
+          <label for="additional_notes">Additional Notes(Optional)</label>
+          <textarea class="form-control" name="additional_notes" id="additional_notes"></textarea>
         </div>
        <!-- <div class="col-md-6" style="margin-left: -1000px; margin-top:113px">
           <label for="code1">Goal</label>
@@ -144,15 +150,15 @@
   $(document).ready(function(){
     olark('api.box.hide');
 
-     $(document).on('change', '.mdl-checkbox__input', function() {
+     // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs
+  $(document).on('change', '.mdl-checkbox__input', function() {
         id = $(this).attr('id');
         if($('#'+id).is(':checked')){
-          //$('#'+id).val(1);
+          //$('#'+id).val(1); Aready Text as Value in element so no action
         }else{
-          $('#'+id).val('');
+          $('#'+id).val(''); // if checkbox is unchecked then clearing its value
         }
     });
-
 });
 </script>
 {% endblock main_js %}
