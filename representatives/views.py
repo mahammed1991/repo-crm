@@ -777,7 +777,6 @@ def export_appointments(request):
                     else:
                         j = str(j)
                     hour = "%s:%s" % (indx, j)
-                    print hour
                     for ele in collumn_attr:
                         if ele == 'Team':
                             mydict[ele] = team_name
@@ -859,7 +858,6 @@ def export_appointments_with_schedule_appointments(request):
 
     post_result_dict = {}
     if request.method == 'POST':
-        print datetime.utcnow()
         from_date = request.POST.get('date_from')
         to_date = request.POST.get('date_to')
         process_type = request.POST.getlist('selectedProcessType')
@@ -1021,7 +1019,6 @@ def export_appointments_with_schedule_appointments(request):
         filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
         path = write_appointments_to_csv(total_result, collumn_attr, filename)
         response = DownloadLeads.get_downloaded_file_response(path)
-        print datetime.utcnow()
         return response
 
     return render(request, 'representatives/export_appointments_with_schedule_appointments.html', {'teams': teams,
