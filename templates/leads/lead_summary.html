@@ -82,9 +82,13 @@
               <li><a class="page" href="javascript:void(0);" id='InProgress' >In Progress </a></li>
               <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
             </ul>
-            <div class="table-search">
+            <!-- <div class="table-search">
               <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Filter by text" onkeyup="filter(this, 'Leads')"/>
               <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
+            </div> -->
+            <div class="table-search" style="width: 210px;">
+              <input type="text" class="form-control input-sm" id="leadSearch" name="leadSearch" placeholder="    Search Leads"/>
+               <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
             </div>
           </div>
           <div class="col-xs-2 col-md-2">            
@@ -190,7 +194,7 @@
                 {% endfor %}
           </tbody>
         </table>
-        <!-- <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/> -->
+        <img src="{%static 'images/no_results_found.jpg' %}" alt=" " class="pre-load-img" style="display:none;" />
         
         </div>
     </div>
@@ -438,7 +442,7 @@ $(".search_type").click(function(){
             dataType: 'json',
             success: function(data){
               if(data){
-                console.log(data);
+                //console.log(data);
                 $('.services_action').hide();
                 setLeadSummary(data['lead_status_dict'])
                 setLeadSummaryTable(data['lead_list'])
@@ -573,7 +577,7 @@ $('#ldap').keypress(function (e) {
 $(window).scroll(function() {
    if($(window).scrollTop() + $(window).height() == $(document).height()) {
       if($('.services_action').is(':visible')){
-        var numOfLeads = $('#tableBody tr').length;
+      var numOfLeads = $('#tableBody tr').length;
       uptoLeads = numOfLeads + 500
       $.ajax({
             url: "/leads/pagination-leads-summary",
