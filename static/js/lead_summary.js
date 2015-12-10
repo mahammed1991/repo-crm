@@ -232,19 +232,32 @@ $('.close').click(function(){
 
 
 //Gettong Leads for focus out of search leads field with matching search-text as value
-$('input[name="leadSearch"]').on('focusout', function(){
+$('input[name="leadSearch"]').on('keyup', function(){
     searchLeads($(this).val());
   });
+
+$('input[name="leadSearch"]').on('focusout', function(){
+    $('#searchError').hide();
+  });
+
 
 $('.fa-search').on('click', function(){
     searchLeads($('#leadSearch').val());
 })
 
-
+$('#leadSearch').keypress(function (e) {
+  var key = e.which;
+  if(key == 13)  // the enter key code
+   {
+     searchLeads($('#leadSearch').val());
+   }
+});
 function searchLeads(searchText){
+  $('#searchError').hide();
     if((!searchText) || (searchText.length <=3)){
         //clearLeadDetails();
-        alert("Serach text should me minimum 3 characters");
+        $('#searchError').show();
+
     }else{
         $.ajax({
             'method': 'GET',
@@ -252,7 +265,8 @@ function searchLeads(searchText){
             'data': {'search-text':searchText},
             'url': "/leads/searh-leads/",
             success: function(response){
-              console.log(response);
+              // console.log(response);
+              $('#searchError').hide();
               if(response['lead_list'].length != 0){
                 $('.pre-load-img').hide();
                 $('.services_action').hide();
