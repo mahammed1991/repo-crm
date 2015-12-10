@@ -223,10 +223,12 @@ $('input[name=cid]').on('focusout', function(){
                         //$('input[name=cid], input[name=url1], input[id=treatment_type], input[name=treatment_type], input[id=lead_owner], input[id=lead_owner]' ).val('')
                     }
                     else if(response['status'] == 'MULTIPLE'){
+                        //clearLeadDetails();
                         alert("Getting multiple leads on this " + $('input[name=cid]').val() + " customer id, please choose Website URL");
                         multiple_leads(response['details']);
                     }
                     else{
+                        clearLeadDetails();
                         populateLeadDetails(response);
                     }
                 },
@@ -241,6 +243,9 @@ $('input[name=cid]').on('focusout', function(){
 
 // Providing website URL to select elegible lead from Multiple lead with same CID
 function multiple_leads(details){
+    $('input:checkbox').parent().removeClass('is-checked')
+    $('#team option[value=""]').attr('selected', 'selected');
+    $('#treatment_type option[value=""]').attr('selected', 'selected');
     $('#url').hide();
     $('#multipleUrls').show();
     $('#multipleUrls option').remove()
@@ -255,7 +260,8 @@ function multiple_leads(details){
 
 //Geting lead details of multiple leads for single CID
 $('#multipleUrls').change(function(){
-  $('input[type=checkbox]').prop('checked', false);
+  $('input[type="checkbox"]').parent().removeClass('is-checked');
+  $('input[type="checkbox"]').val('');
     var lid = $(this).val();
     if(lid){
         $.ajax({
@@ -266,7 +272,6 @@ $('#multipleUrls').change(function(){
              if(response['status'] == 'FAILED'){
                 alert('Lead for Selected CID not available.');
                 clearLeadDetails();
-                //$('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner], input[name=code_type]').val('')
             } else{
                 populateLeadDetails(response);
             }
@@ -274,7 +279,6 @@ $('#multipleUrls').change(function(){
           error: function(errorThrown) {
               alert('Something went wrong!. Please check CID');
               clearLeadDetails();
-              //$('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
           }
     }); 
   }
@@ -288,8 +292,8 @@ function populateLeadDetails(response){
     $('#picasso_pod').val(response.details.pod_name);
     for(i=0;i<=response.details.picasso_objectives.length;i++){
         //$('input[value="'+response.details.picasso_objectives[i]+'"]').prop('checked', true);
-        $('input[value="'+response.details.picasso_objectives[i]+'"]').parent().addClass('is-checked');
-        $('input[value="'+response.details.picasso_objectives[i]+'"]').prop('checked', true);
+        $('input[data="'+response.details.picasso_objectives[i]+'"]').parent().addClass('is-checked');
+        $('input[data="'+response.details.picasso_objectives[i]+'"]').val(response.details.picasso_objectives[i]);
     }
 }
 
@@ -299,7 +303,8 @@ function clearLeadDetails(){
   $('#multipleUrls').hide();
   $('#url').show();
   $('#multipleUrls option').remove();
-  $('input[type=checkbox]').prop('checked', false);
+  //$('input[type=checkbox]').prop('checked', false);
+  $('input:checkbox').parent().removeClass('is-checked')
   $('#team option[value=""]').attr('selected', 'selected');
   $('#treatment_type option[value=""]').attr('selected', 'selected');
 }
