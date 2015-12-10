@@ -1012,9 +1012,9 @@ def export_appointments_with_schedule_appointments(request):
                 if count == (len(collumn_attr)-2):
                     filter_result.append(each_result)
         
-        # for each_result in filter_result:
-        #     if each_result in total_result:
-        #         total_result.remove(each_result)
+        for each_result in filter_result:
+            if each_result in total_result:
+                total_result.remove(each_result)
 
         filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
         path = write_appointments_to_csv(total_result, collumn_attr, filename)
