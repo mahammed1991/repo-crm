@@ -20,7 +20,10 @@ import re
 @tag_user_required
 def reports(request):
     """ New Report """
-
+    report_type = 'default_report'
+    report_timeline = ['today']
+    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
     manager = is_manager(request.user.email)
     team_members = list()
     if manager:
@@ -34,8 +37,18 @@ def reports(request):
         teams.append('Other')
     code_types = ReportService.get_all_code_type()
     code_types = [str(codes.encode('utf-8')) for codes in code_types]
+    report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, locations, start_date, end_date, list())
+    if len(report_timeline) > 1:
+        tag = "Week On Week Trends"
+    else:
+        if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+            tag = "Week On Week Trends"
+        elif str(report_timeline[0]) == 'this_quarter':
+            tag = "Month On Month Trends"
+    report_details = {'reports': report_detail, 'code_types': code_types,
+                    'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
     return render(request, 'reports/reports.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
-                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types})
+                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
 
 
 @login_required
@@ -148,9 +161,9 @@ def get_new_reports(request):
         # if '' in teams:
         #     teams.remove('')
 
-        if report_type == 'default_report':
-            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
-        elif report_type == 'leadreport_individualRep':
+        # if report_type == 'default_report':
+        #     report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
+        if report_type == 'leadreport_individualRep':
             report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, [email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))

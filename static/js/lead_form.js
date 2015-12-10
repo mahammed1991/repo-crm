@@ -505,7 +505,7 @@ function validatethis(frm) {
       validateFiled(rbidElem);
 
       rbidmodifierElem = document.getElementById('rbidmodifier');
-      validateFiled(rbidmodifierElem);
+      validateFiledAllowZero(rbidmodifierElem);
 
       rbudgetElem = document.getElementById('rbudget');
       validateFiled(rbudgetElem);
@@ -647,6 +647,15 @@ function validateFiled(elem){
         return false;
       }
   }
+
+function validateFiledAllowZero(elem){
+  if ($(elem).val() == "" || !$(elem).val()) {
+        $(elem).addClass('error-box');
+        window.failedFields.push(elem);
+        window.is_error = true;
+        return false;
+      }
+}
 
 function validateFormatField(elem, check) {
   // Validate Email Field
