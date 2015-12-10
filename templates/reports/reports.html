@@ -272,14 +272,18 @@ Reports
 <script src="{% static 'js/reports.js' %}"></script>
 <script src="{% static 'js/chart.js' %}"></script>
 <script type="text/javascript">
+  default_reports = {{report_details|safe}};
+ 
+</script>
+<script type="text/javascript">
 
 $(document).ready(function(){
   window.current_ldap = {{request.user.id|safe}};
   window.user_id = {{request.user.id|safe}};
-
+draw_and_display_tables(default_reports['reports']);  
+   
 });
 google.load("visualization", "1", {packages:["corechart"]});
-
 
 $("#refresh").on('click', function(){
   $( "#get_report" ).trigger( "click" );

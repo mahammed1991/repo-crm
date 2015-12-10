@@ -4,7 +4,6 @@ $(document).ready(function() {
   $("#download").prop('disabled', false)
 /* ===================== Default Report Starts Here ============= */
   // Get default report while loading template
-  callAjax({'report_type': 'default_report', 'report_timeline': ['today'], 'team': ['all'], 'countries': ['all']})
 /* ===================== Default Report Ends Here ============= */
   // Remove Custome Date range choice option, As discussed with Darshan
 
@@ -584,6 +583,9 @@ function draw_and_display_tables(reports){
     newTable(reports['table_header'], reports['lead_code_type_analysis']);
     drawLineChart(reports['timeline_chart_details']);
     //displayLineChartTable(reports['week_on_week_details_in_qtd']);
+    if(default_reports['report_type'] == 'default_report'){
+      customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Weeks');
+    }
     if (window.report_timeline[0] == "this_quarter"){
       customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Months');
       

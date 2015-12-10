@@ -13,6 +13,9 @@ import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
 from reports.models import CallLogAccountManager
 from datetime import datetime
+from lib.helpers import (send_mail)
+from django.template.loader import get_template
+from django.template import Context
 
 logging.basicConfig(filename='/tmp/cronjob.log',
                     filemode='a',
@@ -151,6 +154,43 @@ def get_deleted_leads():
         #     print e
         #     logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
         #     logging.info("%s" % (e))
+
+
+@kronos.register('* */2 * * *')
+def implemented_leads_count_report():
+    # Leads based on Region based
+    specific_date = datetime.today()
+    total_count_tag = list()
+    total_count_shopping = list()
+    final_dict = {'TAG': 0, 'SHOPPING': 0}
+    all_regions = Region.objects.all()
+    for region in all_regions:
+        each_region_tag = {region.name: 0}
+        each_region_shopping = {region.name: 0}
+        location_list = [loc.location_name for loc in region.location.all()]
+        leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        each_region_tag[region.name] = leads_count_tag
+        total_count_tag.append(each_region_tag)
+        final_dict['TAG'] = total_count_tag
+        leads_count_shopping = Leads.objects.filter(type_1__in=['Google Shopping Setup', 'Google Shopping Migration'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        each_region_shopping[region.name] = leads_count_shopping
+        total_count_shopping.append(each_region_shopping)
+        final_dict['SHOPPING'] = total_count_shopping
+
+        
+    specific_date = specific_date.date()
+    mail_subject = "Leads count based on Regions"
+    mail_body = get_template('leads/leads_count_based_on_region.html').render(
+        Context({
+            'final_dict': final_dict,
+            'specific_date': specific_date,
+            })
+        )
+    mail_from = 'rajuk@regalix-inc.com'
+    mail_to = ['kvinay@regalix-inc.com', 'basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
+    bcc = set([])
+    attachments = list()
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
 
 def get_leads_from_sfdc(start_date, end_date):

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<h3>Leads count for status Pending QC - WIN & Implemented on {{specific_date}}</h3>
+<table border="1" style="width:50%">
+	<tr>
+		<th>Process</th>
+		<th>Americans</th>
+		<th>APAC</th>
+		<th>EMEA</th>
+		<th>Not Assigned</th>
+	</tr>
+	<tr>
+		<td>TAG</td>
+		{% for key, value in final_dict.items %}
+			{% if key == 'TAG' %}
+				{% for val in value %}
+					{% for key, value in val.items %}
+						<td>{{value}}</td>					
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		{% endfor %}
+		<td></td>
+	</tr>
+	<tr>
+		<td>SHOPPING</td>
+		{% for key, value in final_dict.items %}
+			{% if key == 'SHOPPING' %}
+				{% for val in value %}
+					{% for key, value in val.items %}
+						<td>{{value}}</td>					
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		{% endfor %}
+		<td></td>
+	</tr>
+</table>
+</body>
+</html>
