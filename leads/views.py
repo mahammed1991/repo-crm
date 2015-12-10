@@ -1982,7 +1982,7 @@ def get_wpp_lead_summary_by_treatment(request):
 def get_lead_status_by_cid(request):
     """ Lead summary for given CID """
     if request.is_ajax:
-        cid = request.GET.get('cid')
+        cid = request.GET.get('cid', None)
         leads = Leads.objects.exclude(type_1__in=['', 'WPP']).filter(customer_id=cid)
         lead_ids = [lead.id for lead in leads]
         lead_list = list()
@@ -2799,3 +2799,27 @@ def get_eligible_picasso_lead_by_lid(request, lid):
 
         }
     return HttpResponse(json.dumps(lead), content_type='application/json')
+
+
+def searh_leads(request):
+    """
+    From Lead status field Searching the leads with matching search text
+    """
+    if request.is_ajax:
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        search_text = request.GET.get('search-text', None)
+        if search_text:
+            fieldnames = ['lead_owner_name', 'lead_owner_email', 'google_rep_name', 'google_rep_email', 'customer_id', 'company', 'team', 'type_1']
+            qgroup = reduce(operator.or_, (Q(**{fieldname + '%s' % ('__icontains'): search_text}) for fieldname in fieldnames))
+            leads = Leads.objects.filter(qgroup, created_date__gte=start_date, created_date__lte=end_date)
+
+        lead_ids = [lead.id for lead in leads]
+        lead_list = list()
+        lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
+        for l in leads:
+            lead = convert_lead_to_dict(l)
+            lead_list.append(lead)
+        mimetype = 'application/json'
+        lead_list.sort(key=lambda item: item['rescheduled_appointment_in_ist'], reverse=True)
+        return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
+    return render(request, 'leads/lead_summary.html', {})

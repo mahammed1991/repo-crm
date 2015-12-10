@@ -230,4 +230,45 @@ $('.close').click(function(){
   $('#comments').val('');
 })
 
+
+//Gettong Leads for focus out of search leads field with matching search-text as value
+$('input[name="leadSearch"]').on('focusout', function(){
+    searchLeads($(this).val());
+  });
+
+$('.fa-search').on('click', function(){
+    searchLeads($('#leadSearch').val());
+})
+
+
+function searchLeads(searchText){
+    if((!searchText) || (searchText.length <=3)){
+        //clearLeadDetails();
+        alert("Serach text should me minimum 3 characters");
+    }else{
+        $.ajax({
+            'method': 'GET',
+            'dataType': 'json',
+            'data': {'search-text':searchText},
+            'url': "/leads/searh-leads/",
+            success: function(response){
+              console.log(response);
+              if(response['lead_list'].length != 0){
+                $('.pre-load-img').hide();
+                $('.services_action').hide();
+                setLeadSummary(response['lead_status_dict'])
+                setLeadSummaryTable(response['lead_list'])
+              }else{
+                $('.services_action').hide();
+                $('#tableBody').html('');
+                $('.pre-load-img').show();
+              }
+            },
+            error:function(xhr, status, error){
+                alert('No Leads found for the search');
+            }
+        })
+    }
+}
+
 /* feed back submit through leads status page end  here */

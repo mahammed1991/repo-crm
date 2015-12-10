@@ -230,9 +230,9 @@ admin.site.register(TreatmentType, TreatmentTypeAdmin)
 
 
 class PicassoLeadsAdmin(admin.ModelAdmin):
-    list_display = ('google_rep_name', 'lead_owner_name', 'customer_id','company', 'lead_status', 'code_1', 'type_1', 'team', 'picasso_objective', 'pod_name',)
+    list_display = ('google_rep_name', 'lead_owner_name', 'customer_id', 'company', 'lead_status', 'code_1', 'type_1', 'team', 'picasso_objective', 'pod_name', 'is_build_eligible',)
     search_fields = ['customer_id', ]
-    list_filter = ('lead_status', )
+    list_filter = ('lead_status', 'is_build_eligible')
 
     def get_readonly_fields(self, request, obj=None):
         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)

@@ -620,6 +620,7 @@ def create_or_update_picasso_leads(records, sf):
         lead.url_1 = rec.get('URL__c') if rec.get('URL__c') else ''
         lead.type_1 = rec.get('Code_Type__c') if rec.get('Code_Type__c') else ''
         lead.comment_1 = rec.get('Comment_1__c') if rec.get('Comment_1__c') else ''
+        lead.additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
