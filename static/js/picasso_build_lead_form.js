@@ -224,7 +224,7 @@ $('input[name=cid]').on('focusout', function(){
                     }
                     else if(response['status'] == 'MULTIPLE'){
                         //clearLeadDetails();
-                        alert("Getting multiple leads on this " + $('input[name=cid]').val() + " customer id, please choose Website URL");
+                        alert(" We have more than one website URL for this customer ID (" + $('input[name=cid]').val() + "). Please select the right URL from the list.");
                         multiple_leads(response['details']);
                     }
                     else{
