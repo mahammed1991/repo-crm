@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location, PicassoLeads
+from leads.models import Location, PicassoLeads, Leads
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range
 from django.conf import settings
@@ -145,12 +145,15 @@ def get_new_reports(request):
             final_countries = ReportService.get_all_locations()
 
         countries = final_countries
-        code_types = ReportService.get_all_code_type()
-        code_types = [str(codes.encode('utf-8')) for codes in code_types]
 
         if report_timeline:
             start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
             end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+
+        code_types = list(Leads.objects.exclude(type_1__in=['', 'WPP']).filter(created_date__gte=start_date, created_date__lte=end_date).values_list(
+            'type_1', flat=True).distinct().order_by('type_1'))
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
 
         report_details = dict()
         if ldap_id:

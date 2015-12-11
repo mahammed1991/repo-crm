@@ -265,6 +265,7 @@ function callAjax(dataString){
         type: 'GET',
         dataType: "json",
         success: function(data) {
+            default_reports['report_type'] = "";
             report = data['reports'];
             if (data['report_type'] == 'leadreport_programview'){
               $('#view_reports').empty();
@@ -290,10 +291,10 @@ function callAjax(dataString){
             }else{
               $("#profile_div").hide();
             }
-        $('#preloaderOverlay').hide()
+        $('#preloaderOverlay').hide();
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            $('#preloaderOverlay').hide()
+            $('#preloaderOverlay').hide();
         }
       }); 
 

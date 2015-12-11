@@ -203,27 +203,24 @@ class ReportService(object):
 
         lead_status_analysis_table_grp = list()
 
-        for code_type in settings.CODE_TYPE_DICT:
+        for code_type in code_types:
 
-            lead_status_analysis_grp = {code_type: ''}
+            lead_status_analysis_grp = {code_type: ''}  
 
-            leads_per_code_type_grp = Leads.objects.filter(type_1__in=settings.CODE_TYPE_DICT[code_type], id__in=lead_ids)
+            leads_per_code_type_grp = Leads.objects.filter(type_1=code_type, id__in=lead_ids).values('lead_status').annotate(dcount=Count('lead_status'))
 
             lead_status_analysis_grp[code_type] = ReportService.get_lead_status_analysis(leads_per_code_type_grp)
 
             lead_status_analysis_table_grp.append(lead_status_analysis_grp)
-
         pie_chart_dict = dict()
-
+        
         for cod_typ in lead_status_analysis_table_grp:
             key = cod_typ.keys()[0]
             value = cod_typ[key]['Total']
             pie_chart_dict[key] = value
 
         # week_on_week_trends = ReportService.get_week_on_week_trends_details(lead_ids, countries, teams, code_types)
-
         timeline_chart_details = ReportService.get_timeline_chart_details(report_timeline, lead_ids, countries, teams, code_types, emails)
-
         report_detail.update({'lead_status_summary': lead_status_summary,
                               'piechart': pie_chart_dict,
                               'table_header': settings.LEAD_STATUS_DICT,
@@ -1085,21 +1082,18 @@ class ReportService(object):
     @staticmethod
     def get_lead_status_analysis(leads):
         lead_dict = settings.LEAD_STATUS_DICT
-        lead_status_analysis = {lead_status: 0 for lead_status in lead_dict}
+        status_dict = {'In Queue': 0, 'In Progress': 0, 'Attempting Contact': 0, 'In Active': 0, 'Implemented': 0, 'Total': 0}
         for lead in leads:
-            for key, value in lead_dict.items():
-                if lead.lead_status in value:
-                    lead_status_analysis[key] += 1
+            for key, value in lead.iteritems():
+                for status, status_list in lead_dict.iteritems():
+                    if lead[key] in  status_list:
+                        status_dict[status] = lead['dcount'] 
+        for key, value in status_dict.iteritems():
+            if key != 'Total':
+                status_dict['Total'] += value                
 
-        rr_inactive_leads = leads.filter(lead_status='Rework Required', lead_sub_status='RR - Inactive').count()
-        rework_required_implemented_leads = leads.exclude(lead_sub_status='RR - Inactive').filter(lead_status='Rework Required').count()
-
-        lead_status_analysis['In Active'] += rr_inactive_leads
-        lead_status_analysis['Implemented'] += rework_required_implemented_leads
-
-        lead_status_analysis['Total'] = len(leads)
         keyorder = {k: v for v, k in enumerate(['In Queue', 'In Progress', 'Attempting Contact', 'In Active', 'Implemented', 'Total'])}
-        lead_status_analysis = OrderedDict(sorted(lead_status_analysis.items(), key=lambda i: keyorder.get(i[0])))
+        lead_status_analysis = OrderedDict(sorted(status_dict.items(), key=lambda i: keyorder.get(i[0])))
         return lead_status_analysis
 
     @staticmethod
