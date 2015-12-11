@@ -213,7 +213,7 @@ class ReportService(object):
 
             lead_status_analysis_table_grp.append(lead_status_analysis_grp)
         pie_chart_dict = dict()
-        
+
         for cod_typ in lead_status_analysis_table_grp:
             key = cod_typ.keys()[0]
             value = cod_typ[key]['Total']
@@ -1082,15 +1082,13 @@ class ReportService(object):
     @staticmethod
     def get_lead_status_analysis(leads):
         lead_dict = settings.LEAD_STATUS_DICT
-        status_dict = {'In Queue': 0, 'In Progress': 0, 'Attempting Contact': 0, 'In Active': 0, 'Implemented': 0, 'Total': 0}
+        status_dict = {'In Queue': 0, 'In Progress': 0, 'Attempting Contact': 0, 'In Active': 0, 'Implemented': 0}
         for lead in leads:
             for key, value in lead.iteritems():
                 for status, status_list in lead_dict.iteritems():
                     if lead[key] in  status_list:
-                        status_dict[status] = lead['dcount'] 
-        for key, value in status_dict.iteritems():
-            if key != 'Total':
-                status_dict['Total'] += value                
+                        status_dict[status] = lead['dcount']
+        status_dict['Total'] = sum(status_dict.values()) 
 
         keyorder = {k: v for v, k in enumerate(['In Queue', 'In Progress', 'Attempting Contact', 'In Active', 'Implemented', 'Total'])}
         lead_status_analysis = OrderedDict(sorted(status_dict.items(), key=lambda i: keyorder.get(i[0])))
