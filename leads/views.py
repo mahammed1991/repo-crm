@@ -1384,7 +1384,7 @@ def thankyou(request):
     if str(lead_category) == '4':
         template_args.update({'lead_type': 'WPP'})
     elif str(lead_category) == '6':
-        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True})
+        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com'})
     else:
         template_args.update({'lead_type': 'Implementation'})
 

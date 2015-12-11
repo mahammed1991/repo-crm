@@ -16,6 +16,7 @@ from datetime import datetime
 from lib.helpers import (send_mail)
 from django.template.loader import get_template
 from django.template import Context
+from reports.models import Region
 
 logging.basicConfig(filename='/tmp/cronjob.log',
                     filemode='a',
@@ -156,9 +157,10 @@ def get_deleted_leads():
         #     logging.info("%s" % (e))
 
 
-@kronos.register('* */2 * * *')
+@kronos.register('0 */2 * * *')
 def implemented_leads_count_report():
     # Leads based on Region based
+    logging.info("Implemeted Leads Count Mail Details")
     specific_date = datetime.today()
     total_count_tag = list()
     total_count_shopping = list()
@@ -177,20 +179,21 @@ def implemented_leads_count_report():
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
 
-        
     specific_date = specific_date.date()
+    logging.info("Implemeted Leads Count Mail Details sending")
     mail_subject = "Leads count based on Regions"
-    mail_body = get_template('leads/leads_count_based_on_region.html').render(
+    mail_body = get_template('leads/email_template_for_lead_status.html').render(
         Context({
             'final_dict': final_dict,
             'specific_date': specific_date,
-            })
-        )
-    mail_from = 'rajuk@regalix-inc.com'
-    mail_to = ['kvinay@regalix-inc.com', 'basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
+        })
+    )
+    mail_from = 'basavaraju@regalix-inc.com'
+    mail_to = ['kvinay@regalix-inc.com', 'basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'asantosh@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+    logging.info("Implemeted Leads Count Mail Details sent")
 
 
 def get_leads_from_sfdc(start_date, end_date):
