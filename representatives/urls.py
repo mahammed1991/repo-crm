@@ -20,7 +20,7 @@ urlpatterns = patterns(
     url(r'^copy-appointment/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/(?P<team_id>\d+)/$', views.copy_appointment_to_next_week),
     url(r'^export-appointments/$', views.export_appointments),
     # export appointments with schedule appointments
-    url(r'^export-appointments-with-schedule-appointments/$', views.export_appointments_with_schedule_appointments),
+    url(r'^export-total-appointments/$', views.export_appointments_with_schedule_appointments),
     # manager view
     url(r'^total-appointments/$', views.total_appointments),
     url(
