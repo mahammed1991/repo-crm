@@ -587,7 +587,7 @@ function draw_and_display_tables(reports){
     if(default_reports['report_type'] == 'default_report'){
       customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Weeks');
     }
-    if (window.report_timeline[0] == "this_quarter"){
+    else if (window.report_timeline[0] == "this_quarter"){
       customeTimeLineChartTable(reports['timeline_chart_details'], reports['sort_keys'], 'Months');
       
     }

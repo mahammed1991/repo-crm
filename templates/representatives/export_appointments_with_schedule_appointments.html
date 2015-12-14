@@ -33,9 +33,9 @@ Manage Appointments
                 <input id="datetimepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date/Time">
             </div>
             <div class="col-md-2 box2">
-                    <div id="processTypesDiv" class="btn-group drpDown" style="width: 130px; margin-left: 125px; margin-top: 26px;">
-                        <button type="button" class="btn btn-default dropdown-toggle" id="processTypeBtn" style="width: 130px;">Process Type<span class="caret"></span></button>
-                        <ul class="dropdown-menu process-ul">
+                    <div id="processTypesDiv" class="btn-group drpDown" style="width: 130px; margin-left: 89px; margin-top: 26px;">
+                            <button type="button" class="form-control bgicon" id="processTypeBtn" style="width: 215px;">Process Type</button>
+                            <ul class="dropdown-menu process-ul" style="margin-top: -21px;width: 215px;">
                             {% for item in process_types %}
                                 <li id="{{item}}">
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
@@ -45,9 +45,9 @@ Manage Appointments
                     </div>
                 </div>
                 <div class="col-md-2 box2" style="margin-left: 61px;">
-                    <div id="teamsDiv" class="btn-group drpDown" style="width: 130px; margin-left: 125px; margin-top: 26px;">
-                        <button type="button" class="btn btn-default dropdown-toggle" id="teamTypeBtn" style="width: 130px;">Teams<span class="caret"></span></button>
-                        <ul class="dropdown-menu teams-ul" style="overflow: scroll;height: 440px;">
+                  <div id="teamsDiv" class="btn-group drpDown" style="width: 130px; margin-left: 97px; margin-top: 26px;">
+                    <button type="button" class="form-control bgicon" id="teamTypeBtn" style="width: 328px;">Teams</button>
+                    <ul class="dropdown-menu teams-ul" style="overflow: scroll;height: 300px;margin-top: -21px;width: 328px;">
                             <li idValue='000' id='selectAll' class='selectAll hideItems'>
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
                             </li>
