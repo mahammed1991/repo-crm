@@ -31,7 +31,7 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-    if($('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked")){
+    if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked") ){
       $('.checkboxvalidation').removeClass('error-box');
 
     }else{
@@ -40,14 +40,10 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-    companyElem  = document.getElementById('last_name')
-    validateFiled(companyElem)
 
     urlElem = document.getElementById('url');
     validateFiled(urlElem);
 
-    countryElem = document.getElementById('code1');
-    validateFiled(countryElem);
 
     // Check If Error in Form
     if(window.is_error){
@@ -55,7 +51,7 @@ function validatethis(frm) {
       $(focusElem).focus();
       return false;
     }else{
-      $('#company').val($('#last_name').val());
+      $('#company').val($('#url').val());
       $('#preloaderOverlay').show();
       return true;
     }  
@@ -89,3 +85,4 @@ function resetBtn(elem){
     window.location.reload();
   }
 }
+
