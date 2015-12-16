@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reports.models import Region, QuarterTargetLeads, CSATReport
+from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails
 from reports.forms import RegionForm
 
 
@@ -22,3 +22,11 @@ class CSATReportAdmin(admin.ModelAdmin):
     list_filter = ('category', 'language', 'channel', 'process')
 
 admin.site.register(CSATReport, CSATReportAdmin)
+
+
+class CSATFilterDetailsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'lead_owners', 'channel', 'language_category', 'tagteam_location', 'process', 'survey_pin_number')
+    list_filter = ('channel', 'language_category', 'tagteam_location', 'process')
+    filter_horizontal = ('agent_language',)
+
+admin.site.register(CSATFilterDetails, CSATFilterDetailsAdmin)
