@@ -10,7 +10,7 @@
         - python-dev
         - python-setuptools
         - libffi-dev
-        - libsll-dev
+        - libssl-dev
       tags:
         - core_sytem
 

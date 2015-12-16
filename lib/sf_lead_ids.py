@@ -178,6 +178,7 @@ class SalesforceLeads(object):
                              'tag_datepick': '00Nd0000005WYlL',  # TAG Appointment Date
                              'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date
                              'tag_primary_role': '00Nd0000005WayR',  # Role
+                             'dynamic_conversion_tracking': '',
                              # Code Type 1 Details
                              'ctype1': '00Nd0000005WYhJ',  # Code Type1
                              'url1': '00Nd0000005WYhE',   # URL1
@@ -304,6 +305,7 @@ class SalesforceLeads(object):
                                  'tag_datepick': '00Nd0000005WYlL',  # TAG Appointment Date
                                  'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date
                                  'tag_primary_role': '00Nd0000005WayR',  # Role
+                                 'dynamic_conversion_tracking': '00Nd00000081fGG',  # Dynamic value for conversion tracking
                                  # Code Type 1 Details
                                  'ctype1': '00Nd0000005WYhJ',  # Code Type1
                                  'url1': '00Nd0000005WYhE',   # URL1
