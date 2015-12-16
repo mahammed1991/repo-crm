@@ -1595,3 +1595,55 @@ def picasso_home(request):
                                                                         'picasso_objective_total': picasso_objective_total,
                                                                         'picasso_top_performer': picasso_top_performer,
                                                                         'no_leads':check_lead_submitter_for_empty(picasso_top_performer)})
+
+
+@login_required
+def export_feedback(request):
+    if request.method == 'POST':
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
+        to_date = datetime.strptime(str(date_to), '%m/%d/%Y')
+
+        get_feedbacks = Feedback.objects.filter(created_date__gte=from_date, created_date__lte=to_date)
+
+        collattr = ['ID', 'Title', 'CID', 'Advertiser Name', 'Location', 'Language', 'Feedback Type', 'Description', 'Status', 'Lead Owner', 'Google Account Manager', 'Program', 'Code Type', 'Created Date', 'Resolved By', 'Resolved By Date', 'Second Resolved By', 'Second Resolved Date', 'Third Resolved By', 'Third Resolved Date', 'SF Lead ID', 'Comments']
+        feedback_list = list()
+        for feedback in get_feedbacks:
+            get_feedback_comments = FeedbackComment.objects.filter(feedback=feedback.id).values('comment', 'comment_by__username', 'feedback_status')
+            comments = str(get_feedback_comments)
+            feedback_dict = dict()
+            feedback_dict['ID'] = feedback.id
+            feedback_dict['Title'] = feedback.title
+            feedback_dict['CID'] = feedback.cid
+            feedback_dict['Advertiser Name'] = feedback.advertiser_name
+            feedback_dict['Location'] = feedback.location.location_name
+            feedback_dict['Language'] = feedback.language
+            feedback_dict['Feedback Type'] = feedback.feedback_type
+            feedback_dict['Description'] = feedback.description
+            feedback_dict['Status'] = feedback.status
+            feedback_dict['Lead Owner'] = feedback.lead_owner.username
+            feedback_dict['Google Account Manager'] = feedback.google_account_manager.username
+            feedback_dict['Program'] = feedback.program.team_name
+            feedback_dict['Code Type'] = feedback.code_type
+            feedback_dict['Created Date'] = datetime.strftime(feedback.created_date, '%m/%d/%Y')
+            feedback_dict['Resolved By'] = feedback.resolved_by.username if feedback.resolved_by  else ''
+            feedback_dict['Resolved By Date'] = datetime.strftime(feedback.resolved_date, '%m/%d/%Y') if feedback.resolved_date else ''
+            feedback_dict['Second Resolved By'] = feedback.second_resolved_by.username if feedback.second_resolved_by else ''
+            feedback_dict['Second Resolved Date'] = datetime.strftime(feedback.second_resolved_date, '%m/%d/%Y') if feedback.second_resolved_date else ''
+            feedback_dict['Third Resolved By'] = feedback.third_resolved_by.username if feedback.third_resolved_by else ''
+            feedback_dict['Third Resolved Date'] = datetime.strftime(feedback.third_resolved_date, '%m/%d/%Y') if feedback.third_resolved_date else ''
+            feedback_dict['SF Lead ID'] = feedback.sf_lead_id
+            feedback_dict['Comments'] = comments
+            feedback_list.append(feedback_dict)
+
+        filename = "feedbacks" 
+        path = write_appointments_to_csv(feedback_list, collattr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+    return render(request, 'main/export_feedback.html', {})
+
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path

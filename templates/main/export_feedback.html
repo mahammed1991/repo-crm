@@ -1,0 +1,48 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Export Feedback
+{% endblock title %}
+{% block main_css %}
+
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>EXPORT APPOINTMENTS</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="post" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date/Time</label>
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date/Time">
+            </div>
+            <div class="col-md-2">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date/Time</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date/Time">
+            </div>
+        </div>
+        
+        <div style="text-align:center;">
+            <input type="submit" value="Export" class="btn std-btn">
+        </div>
+    </form>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+	$('#datepickerFrom').datepicker();
+	$('#datepickerTo').datepicker();
+
+</script>
+{% endblock main_js %}
