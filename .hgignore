@@ -1,0 +1,15 @@
+syntax: glob
+
+*.pyc
+*.orig
+*.project
+*.pydevproject
+*.settings
+*~
+*egg-info*
+*.bak
+*.sublime-project
+*.sublime-workspace
+static/uploads/*
+.venv
+.vagrant
