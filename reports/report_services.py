@@ -168,6 +168,84 @@ class ReportService(object):
         return leads
 
     # ========================================================optimization ======================
+    @staticmethod
+    def get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries):
+        if 'all' in teams:
+            if len(teams) > 1:
+                teams.remove('all')
+            else:
+                teams = ReportService.get_all_teams()
+        else:
+            if not teams:
+                teams = ReportService.get_all_teams()
+            else:
+                teams = teams
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        final_countries = list()
+
+        if region:
+            if region == 'all':
+                final_countries = ReportService.get_all_locations()
+            else:
+                if 'all' in countries:
+                    if len(countries) > 1:
+                        countries.remove('all')
+                        final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                    else:
+                        final_countries = ReportService.get_all_locations()
+                else:
+                    final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+        else:
+            final_countries = ReportService.get_all_locations()
+
+        countries = final_countries
+        #code_types = ReportService.get_all_code_type()
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        code_types = list(Leads.objects.exclude(type_1__in=['', 'WPP']).filter(created_date__gte=start_date, created_date__lte=end_date).values_list(
+            'type_1', flat=True).distinct().order_by('type_1'))
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+
+
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'type_1__in': code_types}
+        if emails and teams and countries:
+            query['google_rep_email__in'] = emails
+            query['country__in'] = countries
+            query['team__in'] = teams
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
+
+        elif not emails and teams and countries:
+            query['country__in'] = countries
+            query['team__in'] = teams
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
+
+        elif emails and not teams and not countries:
+            query['google_rep_email__in'] = emails
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
+
+        elif not emails and not teams and countries:
+            query['country__in'] = countries
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
+
+        elif emails and not teams and countries:
+            query['country__in'] = countries
+            query['google_rep_email__in'] = emails
+            leads = Leads.objects.values_list('id', flat=True).exclude(type_1='WPP').filter(**query)
+
+        return teams, team_members, countries, start_date, end_date, code_types, emails, leads
+
+
 
     @staticmethod
     def get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, emails):
