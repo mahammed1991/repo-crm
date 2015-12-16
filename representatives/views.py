@@ -836,6 +836,7 @@ def export_appointments(request):
                                                                         'post_result_dict': json.dumps(post_result_dict),
                                                                         'tag_by_team': tag_by_team})
 
+
 @login_required
 def export_appointments_with_schedule_appointments(request):
     """ Export Appointments by Availability/Booked """
@@ -867,6 +868,7 @@ def export_appointments_with_schedule_appointments(request):
         to_date = datetime(to_date.year, to_date.month, to_date.day, to_date.hour, to_date.minute, 59)
 
         time_zone = 'IST'
+
         selected_tzone = Timezone.objects.get(zone_name=time_zone)
         from_utc_date = SalesforceApi.get_utc_date(from_date, selected_tzone.time_value)
         to_utc_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
@@ -883,8 +885,8 @@ def export_appointments_with_schedule_appointments(request):
         s_date = from_date
         while True:
             if s_date <= to_date:
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y"))+' AV|F')
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y"))+' RS')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' AV|F')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' RS')
                 s_date = s_date + timedelta(days=1)
             else:
                 break
@@ -913,9 +915,8 @@ def export_appointments_with_schedule_appointments(request):
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
                     country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
 
-
             slots_data = Availability.objects.filter(
-                date_in_utc__range=(from_date, to_date),
+                date_in_utc__range=(from_utc_date, to_utc_date),
                 team__id=rglx_team.id,
                 team__process_type=process_type
             ).order_by('team')
@@ -943,7 +944,6 @@ def export_appointments_with_schedule_appointments(request):
                             mydict[ele] = '-'
 
                     result.append(mydict)
-
 
             total_appointments = dict()
             for data in schedule_data:
@@ -1001,7 +1001,6 @@ def export_appointments_with_schedule_appointments(request):
             total_result.extend(result)
             total_result.append(total_dict)
 
-
         # remove empty records from total_result
         filter_result = list()
         for each_result in total_result:
@@ -1009,9 +1008,9 @@ def export_appointments_with_schedule_appointments(request):
             for key, value in each_result.iteritems():
                 if each_result[key] == '-':
                     count += 1
-                if count == (len(collumn_attr)-2):
+                if count == (len(collumn_attr) - 2):
                     filter_result.append(each_result)
-        
+
         for each_result in filter_result:
             if each_result in total_result:
                 total_result.remove(each_result)
@@ -1022,11 +1021,11 @@ def export_appointments_with_schedule_appointments(request):
         return response
 
     return render(request, 'representatives/export_appointments_with_schedule_appointments.html', {'teams': teams,
-                                                                        'default_teams': default_teams,
-                                                                        'process_types': process_types,
-                                                                        'default_process_type': default_process_type,
-                                                                        'post_result_dict': json.dumps(post_result_dict),
-                                                                        'tag_by_team': tag_by_team})
+                                                                                                   'default_teams': default_teams,
+                                                                                                   'process_types': process_types,
+                                                                                                   'default_process_type': default_process_type,
+                                                                                                   'post_result_dict': json.dumps(post_result_dict),
+                                                                                                   'tag_by_team': tag_by_team})
 
 
 def write_appointments_to_csv(result, collumn_attr, filename):
