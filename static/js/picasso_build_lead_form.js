@@ -6,6 +6,7 @@ function validatethis(frm) {
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+    var cidFormatWithoutDashes = /^\d{10}$/;
     var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     var numericExpression = /^[0-9]+$/;
     window.failedFields = new Array();
@@ -20,12 +21,18 @@ function validatethis(frm) {
   
     cidElem = document.getElementById('cid');
     validateFiled(cidElem);
-   
-    if(!$(cidElem).val().match(cidFormat)){
-      $(cidElem).addClass('error-box');
-      /*frm.cid.focus();*/
-      window.is_error = true;
-    }
+
+     if($(cidElem).val().indexOf('-') == -1){
+        if(!$(cidElem).val().match(cidFormatWithoutDashes)){
+            $(cidElem).addClass('error-box');
+            window.is_error = true;
+          }
+     } else{
+        if(!$(cidElem).val().match(cidFormat)){
+              $(cidElem).addClass('error-box');
+              window.is_error = true;
+            }
+     }
 
     urlElem = document.getElementById('url');
     if ($('#url').is(':visible')){
@@ -50,7 +57,7 @@ function validatethis(frm) {
     validateFiled(podElem);
 
 
-     if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked") ){
+     if($('#install_mobile_app').parent().hasClass('is-checked') || $('#drive_foot_traffic').parent().hasClass('is-checked') || $('#buy_online').parent().hasClass('is-checked') || $('#form_entry').parent().hasClass('is-checked') || $('#call_your_business').parent().hasClass('is-checked') || $('#engage_with_your_content').parent().hasClass('is-checked') || $('#become_a_fan').parent().hasClass('is-checked') ){
       $('.checkboxvalidation').removeClass('error-box');
 
     }else{
@@ -149,7 +156,8 @@ function validatethis(frm) {
       focusElem = failedFields[0];
       $(focusElem).focus();
       return false;
-    }else{
+    }
+    else{
 
       var url = $(urlElem).val();
       $("#company").val(url);
@@ -158,6 +166,10 @@ function validatethis(frm) {
       //updating Advertiser2 details to Advertaiser Optional
       $('#fopt').val($('#first_name2').val());
       $('#lopt').val($('#last_name2').val());
+      if($('#cid').val().indexOf('-') == -1){
+        var newCid = $('#cid').val().substring(0,3) + '-' + $('#cid').val().substring(3, 6) + '-' +  $('#cid').val().substring(6,12);
+        $('#cid').val(newCid);
+      }
       /*$('#web_master_email').val($('#wpp_aemail2'));
       $('#popt').val($('#phone2'));*/
 
@@ -179,7 +191,7 @@ function validatethis(frm) {
 
   function validateFiled(elem){
     // Validate Form Field
-    if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+    if ($(elem).val().trim() == "" || $(elem).val() == "0" || !$(elem).val()) {
     $(elem).addClass('error-box');
     window.failedFields.push(elem);
     window.is_error = true;
@@ -249,12 +261,13 @@ function multiple_leads(details){
     $('#url').hide();
     $('#multipleUrls').show();
     $('#multipleUrls option').remove()
-    var html = '<option value>Select Wbsite URL</option>'
+    var html = '<option value>Select Website URL</option>'
     for(var i=0; i<details.length; i++){
         var obj = details[i];
         var rec = '<option value='+ obj['lead_details']['l_id']+'>'+ obj['lead_details']['url'] +'</option>';
         html += rec
     }
+    html += '<option value="newWebSite">Want to Add New Website URL</option>'
     $('#multipleUrls').append(html);
 }
 
@@ -262,9 +275,16 @@ function multiple_leads(details){
 $('#multipleUrls').change(function(){
   $('input[type="checkbox"]').parent().removeClass('is-checked');
   $('input[type="checkbox"]').val('');
+  $('#team option[value=""]').attr('selected', 'selected');
+  $('#treatment_type option[value=""]').attr('selected', 'selected');
+  $('#url').hide();
+  $('#url').val('');
     var lid = $(this).val();
     if(lid){
-        $.ajax({
+        if(lid == 'newWebSite'){
+          $('#url').show();
+        }else{
+          $.ajax({
           'url': "/leads/get-eligible-picasso-lead-by-lid/" + lid,
           'dataType': "json",
           'type': 'GET',
@@ -280,7 +300,8 @@ $('#multipleUrls').change(function(){
               alert('Something went wrong!. Please check CID');
               clearLeadDetails();
           }
-    }); 
+      }); 
+    }
   }
 });
 
@@ -295,6 +316,7 @@ function populateLeadDetails(response){
         $('input[data="'+response.details.picasso_objectives[i]+'"]').parent().addClass('is-checked');
         $('input[data="'+response.details.picasso_objectives[i]+'"]').val(response.details.picasso_objectives[i]);
     }
+    //populateObjectives(response.details.picasso_objectives);
 }
 
 // To clear prepopulated lead Details 
@@ -308,3 +330,6 @@ function clearLeadDetails(){
   $('#team option[value=""]').attr('selected', 'selected');
   $('#treatment_type option[value=""]').attr('selected', 'selected');
 }
+
+
+

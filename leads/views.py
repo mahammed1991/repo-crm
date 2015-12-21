@@ -26,7 +26,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
                           )
 from main.models import UserDetails
-from lib.helpers import (get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
+from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -274,9 +274,12 @@ def picasso_lead_form(request):
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
                 picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
+            elif key == 'picasso_ref_id':
+                picasso_data[value] = get_unique_uuid()
             else:
                 picasso_data[value] = request.POST.get(key)
 
+        # picasso_data['00N7A000000HAhN'] = get_unique_uuid()
         response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         # send_calendar_invite_to_advertiser(advirtiser_details, False)
@@ -2694,7 +2697,7 @@ def convert_picasso_lead_to_dict(model):
 
 
 @login_required
-def picasso_build_wpp_form(request):
+def picasso_build_wpp_form(request, ref_id=None):
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
     lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG']).filter(is_active=True)
@@ -2711,6 +2714,12 @@ def picasso_build_wpp_form(request):
         for loc in tm.location.all():
             wpp_loc.append(loc)
     lead_args.update({'wpp_loc': wpp_loc})
+    if ref_id:
+        try:
+            ref_lead = PicassoLeads.objects.get(ref_uuid=ref_id)
+            lead_args['ref_lead'] = ref_lead
+        except:
+            return redirect('leads.views.picasso_build_wpp_form')
     return render(
         request,
         'leads/picasso_build_wpp_form.html',
@@ -2727,6 +2736,10 @@ def get_eligible_picasso_leads(request, cid):
     if request.is_ajax():
         lead = {'status': 'FAILED', 'details': None}
         wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
+        if '-' in cid:
+            cid = cid
+        elif len(cid) == 10:
+            cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
         leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
         if not leads:
             return HttpResponse(json.dumps(lead), content_type='application/json')

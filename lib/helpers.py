@@ -15,8 +15,9 @@ from django.db.models import Q, Count
 import operator
 from xlrd import XL_CELL_DATE, xldate_as_tuple
 from lib.salesforce import SalesforceApi
-from leads.models import Timezone
+from leads.models import Timezone, PicassoLeads
 import pytz
+import uuid
 
 from django.contrib.auth.models import User
 
@@ -689,3 +690,12 @@ def check_lead_submitter_for_empty(topper_dict):
             no_leads = True
             return no_leads
     return no_leads
+
+
+def get_unique_uuid():
+    unique_rf_id = str(uuid.uuid4())[:13].replace('-', '')
+    try:
+        PicassoLeads.objects.get(ref_uuid=unique_rf_id)
+        get_unique_uuid()
+    except:
+        return unique_rf_id

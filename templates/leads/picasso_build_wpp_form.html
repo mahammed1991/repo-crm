@@ -41,15 +41,23 @@
     <input type="hidden" id="lopt" name="lopt" value="">
 
     <div class="row">
+    <div  class="col-md-12">
+      
+          <label>Entering CID will retrieve any applicable Picasso audit submissions</label>
+    </div>
       <div class="col-md-6">
         <label for="cid">External CID</label>
-        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Please enter the CID(xxx-xxx-xxxx)to retrieve PICASSO audit submission">
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Please enter the CID (xxx-xxx-xxxx)" {% if ref_lead.customer_id == "" or ref_lead.customer_id == "None" %} value="" {% else %} value="{{ ref_lead.customer_id }}" {% endif %}>
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
-          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
           <select class="form-control bgicon" id="multipleUrls" name="multipleUrls" style="display:none;">
-        </select>
+          </select>
+          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" {% if ref_lead.url_1 == "" or ref_lead.url_1 == "None" %} value="" {% else %} value="{{ ref_lead.url_1 }}" {% endif %}>
+        </div>
+      <div class="row">
+        <div class="col-md-6">
+          </div>
         </div>
       </div>
       <div class="std-sub-title">Treatment Type</div>
@@ -92,34 +100,34 @@
      
       <div class="col-md-6">
         <label for="picasso_pod">POD Name</label>
-        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2">
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if ref_lead.pod_name == "" or ref_lead.pod_name == "None" %} value="" {% else %} value="{{ ref_lead.pod_name }}" {% endif %}>
       </div>
-       <div class="col-md-6">
-              <label for="picasso_objective">Objective</label></br>
-              <div class="checkboxvalidation" style="height:95px;">
-                <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
-                </label>
-                <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry</span></br>
-                </label>
-                  <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
-                </label>
-                <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
-                </label>
-                <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
-                </label>
-                 <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
-                </label>
-                 <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
-                </label>
+      <div class="col-md-6">
+                    <label for="picasso_objective">Objective</label></br>
+                    <div class="checkboxvalidation" style="height:95px;">
+                      <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
+                      </label>
+                      <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry</span></br>
+                      </label>
+                        <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
+                      </label>
+                      <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
+                      </label>
+                      <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
+                      </label>
+                       <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
+                      </label>
+                       <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                        <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
+                      </label>
+                    </div>
               </div>
-        </div>
         <div class="col-md-6">
           <label for="tracking_code">Tracking Codes(if need additional code adds)</label>
           <textarea class="form-control" placeholder="Tracking Codes" name="tracking_code" id="tracking_code"></textarea>
@@ -219,6 +227,16 @@
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
+
+    window.objectives = "{{ref_lead.picasso_objective|safe}}";
+    
+
+    var team = "{{ref_lead.team|safe}}";
+    $('#team').val(team);
+
+    var treatmentType = "{{ref_lead.treatment_type|safe}}";
+    $('#treatment_type').val(treatmentType);
+
     $("#country").trigger('change');
 
     function addAdvertiser(index){
@@ -274,6 +292,7 @@
 }
 
 
+
 function removeAdvertiser(index){
   prevIndex = parseInt(index) - 1;
   $('#advertiser_details'+index).remove();
@@ -327,12 +346,22 @@ $(document).on('change', '.advertiser-role', function(e) {
  $(document).on('change', '.mdl-checkbox__input', function() {
         id = $(this).attr('id');
         if($('#'+id).is(':checked')){
-          //$('#'+id).val(1); Aready Text as Value in element so no action
+          //Aready Text as Value in element so no action
           $('#'+id).val($('#'+id).attr('data'));
         }else{
           $('#'+id).val(''); // if checkbox is unchecked then clearing its value
         }
     });
+
+// After load enabling objectives checkboxs
+ $(window).bind('load', function() {
+      // code here
+      objectives = window.objectives.split(',');
+      objectives.forEach(function(entry) {
+      $('input[data="'+entry+'"]').trigger('click')
+    });
+
+});
 
 </script>
 {% endblock main_js %}
