@@ -140,7 +140,7 @@ class CSATFilterDetails(models.Model):
         ('PHONE', 'PHONE'),
         ('EMAIL', 'EMAIL'),
         ('BOTH', 'BOTH')), default='PHONE')
-    language_category = models.CharField(max_length=10, blank=False, choices=(
+    language_category = models.CharField(max_length=11, blank=False, choices=(
         ('English', 'English'),
         ('Non English', 'Non English'),
         ('BOTH', 'BOTH')), default='English')

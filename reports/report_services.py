@@ -3,7 +3,7 @@ import os
 import mimetypes
 from datetime import datetime, date, timedelta
 from leads.models import Leads, RegalixTeams, Team, Location, TreatmentType, WPPLeads, PicassoLeads
-from reports.models import QuarterTargetLeads, Region, CSATReport
+from reports.models import QuarterTargetLeads, Region, CSATReport, CSATFilterDetails
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_quarter_date_slots,
                          last_day_of_month, date_range_by_quarter, dsum, prev_quarter_date_range, get_months_from_date,
                          get_previous_month_start_end_days, get_weeks_in_quarter_to_date, is_manager)
@@ -730,6 +730,7 @@ class ReportService(object):
         key_response = {1: 'Extremely satisfied', 2: 'Moderately satisfied', 3: 'Slightly satisfied', 4: 'Neither satisfied nor dissatisfied', 5: 'Slightly dissatisfied', 6: 'Moderately dissatisfied', 7: 'Extremely dissatisfied'}
 
         csat_query = dict()
+        csat_filter_query = dict()
         if 'sel_all' in selected_filters:
             csat_query['category__in'] = ['MAPPED', 'UNMAPPED']
             csat_query['channel__in'] = ['EMAIL', 'PHONE']
@@ -744,31 +745,52 @@ class ReportService(object):
 
             if 'survey_channel_phone' in selected_filters:
                 csat_query['channel__in'] = ['PHONE']
+                csat_filter_query['channel__in'] = ['PHONE']
             if 'survey_channel_email' in selected_filters:
                 csat_query['channel__in'] = ['EMAIL']
+                csat_filter_query['channel__in'] = ['EMAIL']
             if 'survey_channel_combined' in selected_filters:
                 csat_query['channel__in'] = ['EMAIL', 'PHONE']
+                csat_filter_query['channel__in'] = ['BOTH']
 
             if 'process_tag' in selected_filters:
                 csat_query['process__in'] = ['TAG']
+                csat_filter_query['process__in'] = ['TAG']
             if 'process_shopping' in selected_filters:
                 csat_query['process__in'] = ['SHOPPING']
+                csat_filter_query['process__in'] = ['SHOPPING']
             if 'process_combined' in selected_filters:
                 csat_query['process__in'] = ['TAG', 'SHOPPING']
+                csat_filter_query['process__in'] = ['BOTH']
 
-            # if 'language_english' in selected_filters:
+            if 'language_english' in selected_filters:
+                csat_filter_query['language_category__in'] = ['English']
             #     csat_query['langauge__in'] = ['ENGLISH']
-            # if 'language_combined' in selected_filters:
+            if 'language_non_english' in selected_filters:
+                csat_filter_query['language_category__in'] = ['Non English']
+            if 'language_combined' in selected_filters:
+                csat_filter_query['language_category__in'] = ['BOTH']
             #     csat_query = csat_query
+
+            if 'tag_location_bangalore' in selected_filters:
+                csat_filter_query['tagteam_location__in'] = ['Bangalore']
+            if 'tag_location_palo_alto' in selected_filters:
+                csat_filter_query['tagteam_location__in'] = ['Palo Alto']
+            if 'tag_location_combined' in selected_filters:
+                csat_filter_query['tagteam_location__in'] = ['Bangalore', 'Palo Alto']
+
 
         csat_query['survey_date__gte'] = start_date
         csat_query['survey_date__lte'] = end_date
+
+        lead_owner_list = CSATFilterDetails.objects.filter(**csat_filter_query).values_list('lead_owners', flat=True)
 
         if report_type == 'Region':
             region_query = dict()
             region_query['created_date__gte'] = start_date
             region_query['created_date__lte'] = end_date
             region_query['country__in'] = ReportService.get_all_locations()
+            region_query['lead_owner_name__in'] = lead_owner_list
 
             total_leads, implemented_leads = ReportService.get_region_report_counts(region_query, selected_filters)
             
@@ -784,6 +806,7 @@ class ReportService(object):
                 query['country__in'] = region_locations
                 query['created_date__gte'] = start_date
                 query['created_date__lte'] = end_date
+                query['lead_owner_name__in'] = lead_owner_list
                 region_data['Leads'] , region_data['Wins'] = ReportService.get_region_report_counts(query, selected_filters)
                 
                 region_data['Leads in pcg'] = ReportService.get_percentage_value(region_data['Leads'], total_leads)
@@ -818,8 +841,7 @@ class ReportService(object):
             query['team__in'] = programs
             report_type = 'team'
 
-
-            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type) 
 
             csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
@@ -840,7 +862,9 @@ class ReportService(object):
             locations.append('')
             query['country__in'] = locations
             report_type = 'country'
-            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type) 
+
+
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type) 
 
             csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
@@ -861,7 +885,9 @@ class ReportService(object):
             code_types.append('')
             query['type_1__in'] = code_types
             report_type = 'type_1'
-            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
+
+
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type)
             
             csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
@@ -884,7 +910,9 @@ class ReportService(object):
             lead_owner_emails.append('')
             query['lead_owner_email__in'] = lead_owner_emails
             report_type = 'lead_owner_email'
-            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type)
+
+
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type)
             
             csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
             if 'tag_location_palo_alto' in selected_filters:
@@ -906,7 +934,7 @@ class ReportService(object):
         return report_data
 
     @staticmethod
-    def get_leads_details_based_on_selected_filters(query, csat_query, selected_filters, report_type):
+    def get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type):
         if 'process_tag' in selected_filters:
             shopping_code_types = ['Google Shopping Setup', 'Google Shopping Migration']
         elif 'process_shopping' in selected_filters:
@@ -915,88 +943,75 @@ class ReportService(object):
         else:
             shopping_code_types = []
 
-        query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
-        if 'tag_location_palo_alto' in selected_filters:
-            query['lead_owner_name__in'] = query_tagteam_location
+        query['lead_owner_name__in'] = lead_owner_list
+        # query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
+        # if 'tag_location_palo_alto' in selected_filters:
+        #     query['lead_owner_name__in'] = query_tagteam_location
 
-        lead_owner_list = ['tom@regalix-inc.com', 'tadashis@google.com', 'yukieh@google.com', 'abaldessin@regalix-inc.com', 'jmartens@regalix-inc.com', 'cburak@google.com', 'arnulfom@google.com']    
-        if report_type == 'lead_owner_email':
-            if 'tag_location_palo_alto' in selected_filters:
-                query['lead_owner_email__in'] = ['tom@regalix-inc.com', 'tadashis@google.com', 'yukieh@google.com', 'abaldessin@regalix-inc.com', 'jmartens@regalix-inc.com', 'cburak@google.com', 'arnulfom@google.com']
-            elif 'tag_location_bangalore' in selected_filters:
-                query['lead_owner_email__in'] = [lead for lead in query['lead_owner_email__in'] if lead not in lead_owner_list]
+        # lead_owner_list = ['tom@regalix-inc.com', 'tadashis@google.com', 'yukieh@google.com', 'abaldessin@regalix-inc.com', 'jmartens@regalix-inc.com', 'cburak@google.com', 'arnulfom@google.com']    
+        # if report_type == 'lead_owner_email':
+        #     if 'tag_location_palo_alto' in selected_filters:
+        #         query['lead_owner_email__in'] = ['tom@regalix-inc.com', 'tadashis@google.com', 'yukieh@google.com', 'abaldessin@regalix-inc.com', 'jmartens@regalix-inc.com', 'cburak@google.com', 'arnulfom@google.com']
+        #     elif 'tag_location_bangalore' in selected_filters:
+        #         query['lead_owner_email__in'] = [lead for lead in query['lead_owner_email__in'] if lead not in lead_owner_list]
 
         if 'language_english' in selected_filters:
             query['language'] = 'ENGLISH'
             total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
-            total_leads_dict = total_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
-            total_leads_count = Leads.objects.exclude(lead_owner_name__in=lead_owner_name)
-            total_leads_count = total_leads_count.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).count()
+            total_leads_count = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads_dict = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types).values(report_type).annotate(cnt=Count(report_type))
             implemented_leads_dict = implemented_leads_dict.exclude(lead_sub_status='RR - Inactive')
-            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types)
-            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = implemented_leads_count.exclude(lead_sub_status='RR - Inactive').values(report_type).count()
         elif 'language_non_english' in selected_filters:
             total_leads_dict = Leads.objects.filter(**query).exclude(language='ENGLISH').values(report_type).annotate(cnt=Count(report_type))
-            total_leads_dict = total_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             total_leads_dict = total_leads_dict.exclude(type_1__in=shopping_code_types)
             total_leads_count = Leads.objects.filter(**query).exclude(language='ENGLISH')
-            total_leads_count = total_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             total_leads_count = total_leads_count.exclude(type_1__in=shopping_code_types).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads_dict = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types).values(report_type).annotate(cnt=Count(report_type))
             implemented_leads_dict = implemented_leads_dict.exclude(language='ENGLISH')
             implemented_leads_dict = implemented_leads_dict.exclude(lead_sub_status='RR - Inactive')
-            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types)
             implemented_leads_count = implemented_leads_count.exclude(language='ENGLISH')
-            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = implemented_leads_count.exclude(lead_sub_status='RR - Inactive').values(report_type).count()
         else:
             total_leads_dict = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query).values(report_type).annotate(cnt=Count(report_type))
-            total_leads_dict = total_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
-            total_leads_count = Leads.objects.filter(**query).exclude(lead_owner_name__in=lead_owner_name)
+            total_leads_count = Leads.objects.filter(**query)
             total_leads_count = Leads.objects.exclude(type_1__in=shopping_code_types).values(report_type).count()
             query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads_dict = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types).values(report_type).annotate(cnt=Count(report_type))
             implemented_leads_dict = implemented_leads_dict.exclude(lead_sub_status='RR - Inactive')
-            implemented_leads_dict = implemented_leads_dict.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = Leads.objects.filter(**query).exclude(type_1__in=shopping_code_types)
-            implemented_leads_count = implemented_leads_count.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads_count = implemented_leads_count.exclude(lead_sub_status='RR - Inactive').values(report_type).count()
         return total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count
 
 
     @staticmethod
     def get_region_report_counts(region_query, selected_filters):
-        if 'tag_location_palo_alto' in selected_filters:
-            region_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-            lead_owner_name = []
-        elif 'tag_location_bangalore' in selected_filters:
-            lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
-        else:
-            lead_owner_name = []
+        # if 'tag_location_palo_alto' in selected_filters:
+        #     region_query['lead_owner_name__in'] = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+        #     lead_owner_name = []
+        # elif 'tag_location_bangalore' in selected_filters:
+        #     lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+        # else:
+        #     lead_owner_name = []
 
 
         if 'process_tag' in selected_filters:
             shopping_code_types = ['Google Shopping Setup', 'Google Shopping Migration']
 
-            total_leads = Leads.objects.exclude(lead_owner_name__in=lead_owner_name)
-            total_leads = total_leads.exclude(type_1__in=shopping_code_types).filter(**region_query).count()
+            total_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**region_query).count()
             region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**region_query)
-            implemented_leads = implemented_leads.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads = implemented_leads.exclude(lead_sub_status='RR - Inactive').count()
 
         elif 'process_shopping' in selected_filters:
             region_query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Migration']
-            total_leads = Leads.objects.exclude(lead_owner_name__in=lead_owner_name).filter(**region_query).count()
+            total_leads = Leads.objects.filter(**region_query).count()
             region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads = Leads.objects.filter(**region_query)
-            implemented_leads = implemented_leads.exclude(lead_owner_name__in=lead_owner_name)
             implemented_leads = implemented_leads.exclude(lead_sub_status='RR - Inactive').count()
         else:
             shopping_code_types = []
@@ -1060,8 +1075,8 @@ class ReportService(object):
                     if csat_dict['q1'] != 0:
                         value['Grand Total'] += csat_dict.get('dcount')
                     value['Transfer Rate'] += csat_dict.get('dcount')
-                    value['Response Rate in pcg'] = ReportService.get_percentage_value(value['Transfer Rate'], value['Wins'])
-                    value['Transfer Rate in pcg'] = ReportService.get_percentage_value(value['Grand Total'], value['Wins'])
+                    value['Transfer Rate in pcg'] = ReportService.get_percentage_value(value['Transfer Rate'], value['Wins'])
+                    value['Response Rate in pcg'] = ReportService.get_percentage_value(value['Grand Total'], value['Wins'])
             for csat_dict in csat_report_dict_lists:
                 if key == csat_dict[details['csat_attribute']]:
                     value['%s in pcg' % (key_response[csat_dict['q1']])] = ReportService.get_percentage_value(csat_dict['dcount'], value['Grand Total'])
