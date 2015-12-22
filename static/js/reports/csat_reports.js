@@ -251,17 +251,17 @@ function displayUnmappedData(reportData){
 function displayReportData(reportData) {
     $('.table').empty();
 
-    header = '<tr >' +
+    header = '<tr class="nav-head">' +
         '<th class="msc24">' + reportData['report_type'] + '</th>' +
         '<th class="msc24">CSAT%</th>' +
         '<th class="msc24">vs Target(95%)</th>' +
         '<th class="msc24">Process</th>' +
-        '<th title="Transfer Rate"class="msc24">TR</th>' +
+        '<th title="Transfer Rate" class="msc24" data-toggle="tooltip" data-placement="top">TR</th>' +
         /*'<th class="msc24">Transfer Rate1</th>' +*/
         '<th class="msc24">Leads</th>' +
         '<th class="msc24">Wins</th>' +
-        '<th title="Extremely Satisfied" class="msc24">ES</th>' +
-        '<th title="Moderately Satisfied" class="msc24">MS</th>' +
+        '<th title="Extremely Satisfied" data-toggle="tooltip" data-placement="top" class="msc24">ES</th>' +
+        '<th title="Moderately Satisfied" data-toggle="tooltip" data-placement="top" class="msc24">MS</th>' +
         '<th title="Slightly Satisfied" class="msc24">SS</th>' +
         '<th title="Neither Satisfied/Dissatisfied" class="msc24">NS/D</th>' +
         '<th title="Slightly Dissatisfied" class="msc24">SD</th>' +
@@ -269,6 +269,8 @@ function displayReportData(reportData) {
         '<th title="Extremely Dissatisfied" class="msc24">ED</th>' +
         '<th title="Grand Total" class="msc23">GT</th>' +
         '</tr>'
+
+
     row = '';
     for (i = 0; i < reportData['report_data'].length; i++) {
 
@@ -278,50 +280,50 @@ function displayReportData(reportData) {
         if(reportData['report_data'][i]['report_type'] == 'Total'){
             console.log(reportData['report_data'][i]['TotalLeads'])
             total_row += '<tr>' +
-            '<td>' + reportData['report_data'][i]['report_type'] + '</td>' +
-            '<td>' + '-' + '</td>' +
-            '<td>' + '-' + '</td>' +
-            '<td>' + reportData['process'] + '</td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalGrand Total'] + 
+            '<td style="width:400px;">' + reportData['report_data'][i]['report_type'] + '</td>' +
+            '<td style="width:81px;">' + '-' + '</td>' +
+            '<td style="width:88px;">' + '-' + '</td>' +
+            '<td style="width:52px;">' + reportData['process'] + '</td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalGrand Total'] + 
 
-           '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalLeads'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalWins'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalExtremely satisfied'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalModerately satisfied'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalSlightly satisfied'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalNeither satisfied nor dissatisfied'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalSlightly dissatisfied'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalModerately dissatisfied'] + 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalExtremely dissatisfied'] + 
+           '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalLeads'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalWins'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalExtremely satisfied'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalModerately satisfied'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalSlightly satisfied'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalNeither satisfied nor dissatisfied'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalSlightly dissatisfied'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalModerately dissatisfied'] + 
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['TotalExtremely dissatisfied'] + 
 
 
             '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['TotalGrand Total'] + 
             ' </tr>';
         }else{
         row += '<tr>' +
-            '<td>' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
-            '<td>' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</td>' +
-            '<td>' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</td>' +
-            '<td>' + reportData['process'] + '</td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">' + reportData['report_data'][i]['Response Rate in pcg'] + '%</div></td>';
+            '<td style="width:400px;">' + reportData['report_data'][i][reportData['report_type'].toString()] + '</td>' +
+            '<td style="width:81px;">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</td>' +
+            '<td style="width:88px;">' + (reportData['report_data'][i]['Extremely satisfied in pcg'] - 95).toFixed(2) + '%</td>' +
+            '<td style="width:52px;">' + reportData['process'] + '</td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">' + reportData['report_data'][i]['Response Rate in pcg'] + '%</div></td>';
        /* if (reportData['channel'] == 'PHONE' || reportData['channel'] == 'EMAIL') {
             channel = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Transfer Rate'] + '</div><div class="msc21">' + reportData['report_data'][i]['Transfer Rate in pcg'] + '%</div></td>'
         } else {
             channel = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">100%</div></td>'
         }*/
 
-        row_end = '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Leads'] + '</div><div class="msc21">' + reportData['report_data'][i]['Leads in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">' + reportData['report_data'][i]['Wins in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Extremely satisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Moderately satisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Moderately satisfied in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Slightly satisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Slightly satisfied in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Neither satisfied nor dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Neither satisfied nor dissatisfied in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Slightly dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Slightly dissatisfied in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Moderately dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Moderately dissatisfied in pcg'] + '%</div></td>' +
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Extremely dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Extremely dissatisfied in pcg'] + '%</div></td>' +
+        row_end = '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Leads'] + '</div><div class="msc21">' + reportData['report_data'][i]['Leads in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Wins'] + '</div><div class="msc21">' + reportData['report_data'][i]['Wins in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Extremely satisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Extremely satisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Moderately satisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Moderately satisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Slightly satisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Slightly satisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Neither satisfied nor dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Neither satisfied nor dissatisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Slightly dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Slightly dissatisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Moderately dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Moderately dissatisfied in pcg'] + '%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Extremely dissatisfied'] + '</div><div class="msc21">' + reportData['report_data'][i]['Extremely dissatisfied in pcg'] + '%</div></td>' +
 
 
-            '<td style="padding: 0px !important;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">100%</div></td>' +
+            '<td style="padding: 0px !important;width:52px;"><div class="msc20">' + reportData['report_data'][i]['Grand Total'] + '</div><div class="msc21">100%</div></td>' +
             ' </tr>'
 
         row +=  row_end;
@@ -387,3 +389,14 @@ function CSATComparisonReport(reportData) {
 
     $('.table').append(header + row);
 }
+$(window).scroll(function () {
+    if( $(window).scrollTop() > $('.table-responsive').offset().top && !($('.nav-head').hasClass('navbar-fixed-top'))){
+      $('.nav-head').addClass('navbar-fixed-top');
+    } else if ($(window).scrollTop() == 0){
+      $('.nav-head').removeClass('navbar-fixed-top');
+    }
+});
+
+$(document).ready(function () {
+    $("th").tooltip({container:'body'});
+});
