@@ -239,6 +239,7 @@ def main_home(request):
                                                        'wpp_treatment_type_report': wpp_treatment_type_report})
 
 
+
 def get_feedbacks(user, feedback_type):
     """ List Feedbacks by user """
 
@@ -1501,9 +1502,9 @@ def upload_file_handling(request):
 
 def map_leads(leads):
     if len(leads) > 1:
-        return lead[0]
+        return leads[0]
     elif len(leads) == 1:
-        return lead[0]
+        return leads[0]
     else:
         pass
 
@@ -1566,6 +1567,7 @@ def find_leads(cid, process, survey_date):
 
 
 def get_survey_data_from_excel(workbook, sheet, survey_channel):
+    implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
     for r_i in range(1, sheet.nrows):
         if survey_channel == 'Phone':
             str_cid = str(int(sheet.cell(r_i, get_col_index(sheet, 'CID')).value))
@@ -1585,41 +1587,46 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
         except ObjectDoesNotExist:
             csat_record = CSATReport()
 
+        csat_record.region = ''
+        csat_record.program = ''
+        csat_record.code_type = ''
+        csat_record.lead_owner = ''
+        csat_record.sf_lead_id = ''
         if survey_channel == 'Phone':
             csat_record.channel = 'PHONE'
             csat_record.cli = int(sheet.cell(r_i, get_col_index(sheet, 'CLI')).value)
         else:
             csat_record.channel = 'EMAIL'
             csat_record.cli = 0
-    csat_record.customer_id = cid
-    csat_record.survey_date = survey_date
-    csat_record.process = process
-    csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
-    csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
-    csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
-    csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
-    csat_record.q5 = int(sheet.cell(r_i, get_col_index(sheet, 'Q5')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q5')).value else 0
+        csat_record.customer_id = cid
+        csat_record.survey_date = survey_date
+        csat_record.process = process
+        csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
+        csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
+        csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
+        csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
+        csat_record.q5 = int(sheet.cell(r_i, get_col_index(sheet, 'Q5')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q5')).value else 0
 
-    lead = find_leads(cid, process, survey_date)
-    if lead:
-        csat_record.sf_lead_id = lead.sf_lead_id
-        csat_record.region = lead.country
-        csat_record.program = lead.team
-        csat_record.code_type = lead.type_1
-        csat_record.lead_owner = lead.lead_owner_email
-        csat_record.mapped_lead_created_date = lead.created_date
-        csat_record.lead_owner_name = lead.lead_owner_name
-        csat_record.lead_owner_email = lead.lead_owner_email
-        csat_record.language = lead.language if lead.language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
-        csat_record.category = 'MAPPED'
-    else:
-        csat_record.category = 'UNMAPPED'
+        lead = find_leads(cid, process, survey_date)
+        if lead:
+            csat_record.sf_lead_id = lead.sf_lead_id
+            csat_record.region = lead.country
+            csat_record.program = lead.team
+            csat_record.code_type = lead.type_1
+            csat_record.lead_owner = lead.lead_owner_email
+            csat_record.mapped_lead_created_date = lead.created_date
+            csat_record.lead_owner_name = lead.lead_owner_name
+            csat_record.lead_owner_email = lead.lead_owner_email
+            csat_record.language = lead.language if lead.language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+            csat_record.category = 'MAPPED'
+        else:
+            csat_record.category = 'UNMAPPED'
+            csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
 
-    try:
-        csat_record.save()
-    except Exception as e:
-        print e, cid
-
+        try:
+            csat_record.save()
+        except Exception as e:
+            print e, cid
 
 @csrf_exempt
 def migrate_table_data(request):
@@ -1716,3 +1723,55 @@ def picasso_home(request):
                                                                         'picasso_objective_total': picasso_objective_total,
                                                                         'picasso_top_performer': picasso_top_performer,
                                                                         'no_leads': check_lead_submitter_for_empty(picasso_top_performer)})
+
+@login_required
+def export_feedback(request):
+    if request.method == 'POST':
+        import ipdb;ipdb.set_trace()
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
+        to_date = datetime.strptime(str(date_to), '%m/%d/%Y')
+
+        get_feedbacks = Feedback.objects.filter(created_date__gte=from_date, created_date__lte=to_date)
+
+        collattr = ['ID', 'Title', 'CID', 'Advertiser Name', 'Location', 'Language', 'Feedback Type', 'Description', 'Status', 'Lead Owner', 'Google Account Manager', 'Program', 'Code Type', 'Created Date', 'Resolved By', 'Resolved By Date', 'Second Resolved By', 'Second Resolved Date', 'Third Resolved By', 'Third Resolved Date', 'SF Lead ID', 'Comments']
+        feedback_list = list()
+        for feedback in get_feedbacks:
+            get_feedback_comments = FeedbackComment.objects.filter(feedback=feedback.id).values('comment', 'comment_by__username', 'feedback_status')
+            comments = str(get_feedback_comments)
+            feedback_dict = dict()
+            feedback_dict['ID'] = feedback.id
+            feedback_dict['Title'] = feedback.title
+            feedback_dict['CID'] = feedback.cid
+            feedback_dict['Advertiser Name'] = feedback.advertiser_name
+            feedback_dict['Location'] = feedback.location.location_name
+            feedback_dict['Language'] = feedback.language
+            feedback_dict['Feedback Type'] = feedback.feedback_type
+            feedback_dict['Description'] = feedback.description
+            feedback_dict['Status'] = feedback.status
+            feedback_dict['Lead Owner'] = feedback.lead_owner.username
+            feedback_dict['Google Account Manager'] = feedback.google_account_manager.username
+            feedback_dict['Program'] = feedback.program.team_name
+            feedback_dict['Code Type'] = feedback.code_type
+            feedback_dict['Created Date'] = datetime.strftime(feedback.created_date, '%m/%d/%Y')
+            feedback_dict['Resolved By'] = feedback.resolved_by.username if feedback.resolved_by  else ''
+            feedback_dict['Resolved By Date'] = datetime.strftime(feedback.resolved_date, '%m/%d/%Y') if feedback.resolved_date else ''
+            feedback_dict['Second Resolved By'] = feedback.second_resolved_by.username if feedback.second_resolved_by else ''
+            feedback_dict['Second Resolved Date'] = datetime.strftime(feedback.second_resolved_date, '%m/%d/%Y') if feedback.second_resolved_date else ''
+            feedback_dict['Third Resolved By'] = feedback.third_resolved_by.username if feedback.third_resolved_by else ''
+            feedback_dict['Third Resolved Date'] = datetime.strftime(feedback.third_resolved_date, '%m/%d/%Y') if feedback.third_resolved_date else ''
+            feedback_dict['SF Lead ID'] = feedback.sf_lead_id
+            feedback_dict['Comments'] = comments
+            feedback_list.append(feedback_dict)
+
+        filename = "feedbacks" 
+        path = write_appointments_to_csv(feedback_list, collattr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+    return render(request, 'main/export_feedback.html', {})
+
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path

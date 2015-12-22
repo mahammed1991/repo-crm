@@ -281,6 +281,23 @@ Manage Appointments
           $(frm.teamTypeBtn).removeClass('error-box');
         }
 
+        if(frm.datetimepickerTo.value && frm.datetimepickerFrom.value){
+            if(frm.datetimepickerTo.value.split(' ')[0] == frm.datetimepickerFrom.value.split(' ')[0]){
+                if(frm.datetimepickerTo.value.split(' ')[1] == frm.datetimepickerFrom.value.split(' ')[1]){
+                    window.is_error = true;
+                    alert('End Time should be greater than Start Time');
+                }
+            }
+            if(frm.datetimepickerTo.value.split(' ')[0] < frm.datetimepickerFrom.value.split(' ')[0]){
+                window.is_error = true;
+                alert('End Date should be greater than Start Date');
+            }
+            else if(frm.datetimepickerTo.value < frm.datetimepickerFrom.value){
+                window.is_error = true;
+                alert('End Date should be greater than Start Date');
+            }
+        }
+
         if(window.is_error){
           return false;
         }else{
