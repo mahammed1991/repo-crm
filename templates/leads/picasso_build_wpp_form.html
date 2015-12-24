@@ -43,11 +43,11 @@
     <div class="row">
     <div  class="col-md-12">
       
-          <label>Entering CID will retrieve any applicable Picasso audit submissions</label>
     </div>
       <div class="col-md-6">
         <label for="cid">External CID</label>
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Please enter the CID (xxx-xxx-xxxx)" {% if ref_lead.customer_id == "" or ref_lead.customer_id == "None" %} value="" {% else %} value="{{ ref_lead.customer_id }}" {% endif %}>
+          <label>Entering CID will retrieve any applicable Picasso audit submissions</label>
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
