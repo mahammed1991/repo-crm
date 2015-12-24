@@ -298,48 +298,6 @@ border: 0;background-color: transparent;color:#2763c9;font-family: 'robotoblack'
 <script src="{% static 'js/chart.js' %}"></script>
 <script type="text/javascript">
   default_reports = {{report_details|safe}};
- //  $('#default_report_type').show();
- //  $('#piechart-table').hide();
- //  $('#linechart').hide();
- //  $('#task-type-header').hide();
- //  $('#line_chart_table').hide();
- //  $('#week-on-week').hide();
- //  drawColumnChart(default_reports['reports']['lead_status_summary']);
- //  displayLeadStatusTable(default_reports['reports']['lead_status_summary']);
- // $('#default_report_type').change(function(){
- //  report_type = $(this).val();
- //  if(report_type == 'default_lead_summary_status'){
- //    drawColumnChart(default_reports['reports']['lead_status_summary']);
- //    displayLeadStatusTable(default_reports['reports']['lead_status_summary']);
- //    $('#piechart-table').hide();
- //    $('#linechart').hide();
- //    $('#task-type-header').hide();
- //    $('#line_chart_table').hide();
- //    $('#week-on-week').hide();
- //  }else if(report_type == 'default_task_type_analysis'){
- //    $('#columnchart').hide();
- //    $('#view_reports').show();
- //    $('#lead-status-header').hide();
- //    $('#linechart').hide();
- //    $('#line_chart_table').hide();
- //    $('#piechart-table').show();
- //    $('#task-type-header').show();
- //    drawPieChart(default_reports['reports']['piechart']);
- //    newTable(default_reports['reports']['table_header'], default_reports['reports']['lead_code_type_analysis']);
- //  }else{
- //    $('.c').hide();
- //    $('#columnchart').hide();
- //    $('#lead-status-header').hide();
- //    $('#view_reports').show();
- //    $('#linechart').show();
- //    $('#line_chart_table').show();
- //    $('#piechart-table').hide();
- //    $('#task-type-header').hide();
- //    $('#week-on-week').show();
- //    drawLineChart(default_reports['reports']['timeline_chart_details']);
- //    customeTimeLineChartTable(default_reports['reports']['timeline_chart_details'], default_reports['reports']['sort_keys'], 'Months');
- //  }
- // });
 </script>
 <script type="text/javascript">
 
@@ -404,6 +362,7 @@ $(function(){
 
 </script>
 <script type="text/javascript">
+
   $('#default_report_chart_view').show();
   $('#piechart-table').hide();
   $('#linechart').hide();
@@ -455,6 +414,7 @@ $(function(){
     $('#task-type-header').hide();
     $('#week-on-week').show();
     drawLineChart(default_reports['reports']['timeline_chart_details']);
+    default_reports['reports']['sort_keys'] = ["Month 1", "Month 2", "Month 3"]
     customeTimeLineChartTable(default_reports['reports']['timeline_chart_details'], default_reports['reports']['sort_keys'], 'Months');
   }
  });
