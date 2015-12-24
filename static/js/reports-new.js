@@ -41,19 +41,11 @@ $(document).ready(function() {
  //  });
 
 $('#program_split').change(function(){
-  if($('#program_split').is(":checked") == true){
-   $('#get_report').show();
-  }else{
-     $('#get_report').hide();
-  }
+  $('#get_report').show();
 });
 
 $('#location_split').change(function(){
-  if($('#location_split').is(":checked") == true){
-   $('#get_report').show();
-  }else{
-     $('#get_report').hide();
-  }
+  $('#get_report').show();
 });
 
 
