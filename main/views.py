@@ -1567,7 +1567,6 @@ def find_leads(cid, process, survey_date):
 
 
 def get_survey_data_from_excel(workbook, sheet, survey_channel):
-    implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
     for r_i in range(1, sheet.nrows):
         if survey_channel == 'Phone':
             str_cid = str(int(sheet.cell(r_i, get_col_index(sheet, 'CID')).value))
