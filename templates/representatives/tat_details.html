@@ -1,0 +1,140 @@
+{% extends 'layouts/main.html' %}
+
+{% load rep_filters %}
+{% load staticfiles %}
+
+{% block title %}
+Total Appointments
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+{% endblock main_css %}
+
+{% block content %}
+<!-- content-region -->
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>Total APPOINTMENTS</h1>
+      {% if  daylight_marquee_msg %}
+                      <div class="performer">
+                            <div class="performer-info" style="text-align:center; margin-bottom:8px; color:red;">
+                              <marquee>{{daylight_marquee_msg}}</marquee>
+                            </div>
+                        </div>
+       {% endif %} 
+     <!-- google rep info -->
+        {% if error %}
+        <div class="row std-sub-top">
+            <div class="col-xs-12 title-text">
+                <span>Opps you don't have permission to access the appointments slots!</span>
+            </div>
+        </div>
+        {% else %}
+       <div class="row std-sub-top">
+                <div class="col-xs-2 ">
+                    <a href="{% url 'representatives.views.tat_details' prev_week.month prev_week.day prev_week.year %}" class="text-prev">Previous Week</a>
+                </div>
+                <div class="col-xs-8  title-text">
+                    <span>Time Zone: IST(UTC:5:30)</span>
+                </div>
+                <div class="col-xs-2 ">
+                    <a href="{% url 'representatives.views.tat_details' next_week.month next_week.day next_week.year %}" class="text-next">Next Week</a>
+                </div>
+        </div>
+        
+            
+        <form method="post" action="{% url 'representatives.views.tat_details' plan_month plan_day plan_year %}">
+            {% csrf_token %}
+            <div>
+                <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
+                    <tr>
+                        <!-- <th>Slots/Day</th> -->
+                        <th style="border-top:none !important; border:none !important; width:8% !important;"></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Mon</td></tr><tr><td class="cubg">{{dates|get_dict_val:'day1'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Tue</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day2'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Wed</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day3'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Thu</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day4'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Fri</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day5'|date:"M d, Y"}}</td></tr></table></th>
+                        <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Sat</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day6'|date:"M d, Y"}}</td></tr></table></th>
+                    </tr>
+                    <tr style="background: #b3d4fc;">
+                        <!-- <th>Slots/Day</th> -->
+                        <th style="border-top:none !important; border:none !important; width:8% !important;">No of Emp's</th>
+                        {% for input in inputs %}
+                        <td class="cubg" ><input type="text" name="{{input}}" class="css3" {% if isdisabled %}disabled{% endif %} /></td>
+                        {% endfor %}
+                    </tr>
+                    <tr style="background: #b3d4fc;">
+                        <!-- <th>Slots/Day</th> -->
+                        <th style="border-top:none !important; border:none !important; width:8% !important;">Audits/Emp</th>
+                        {% for audit in audits %}
+                        <td class="cubg" ><input type="text" name="{{audit}}" class="css3" {% if isdisabled %}disabled{% endif %} /></td>
+                        {% endfor %}
+                    </tr>
+                    <tr style="background-color: rgb(166, 166, 104);">
+                        <td class="cubg2">Total</td>
+                        {% for slot in total_slots %}
+                            <td class="cubg2">
+                                <table class="table ttb" cellspacing="2">
+                                    <tr>
+                                        <td class="cubg3">{{slot.booked}}</td>
+                                        <td class="cubg4">{{slot.available}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    
+
+                </table>
+            </div>
+        </form>
+    {% endif %}
+    </div>
+</section>
+<div id='hideteam'>
+<select id='team' multiple='multiple' style='display:none;'>
+{% for team in teams %}
+    <option value='{{team.id}}' name='team'>{{team}}</option>
+{% endfor %}
+</select>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery.classyloader.js' %}"></script>
+<script type="text/javascript">
+
+        // Validate the slots entry
+        $('.logbtn').click(function(){
+            var isError = false;
+            $('table tr td input[type=text]:enabled').each(function(){
+                if(isNaN($(this).val())){
+                    $(this).focus();
+                    isError = true;
+                    alert('Please enter a valid entry for available slots');
+                    return false;
+                }else if(parseInt($(this).val()) > 1000000 ){
+                    $(this).focus();
+                    isError = true;
+                    alert('Available slots are out of range');
+                    return false;
+               }
+            });
+            if(isError){
+                return false;
+            }
+        });
+
+    });
+
+    $("input[type=text]").bind("keypress", function(e) {
+        // body...
+        var key = e.keyCode ? e.keyCode : e.which;
+        if ( isNaN( String.fromCharCode(key) ) ) return false;
+    });
+
+
+</script>
+{% endblock main_js %}
