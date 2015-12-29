@@ -1785,7 +1785,7 @@ ul li, ol li {
 .placeholder {
 	text-align: center;
 }
-.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen, .circle_orange, .circle_purple, .circle_light_grn {
+.circle, .circle_red, .circle_blue, .circle_yellow, .circle_green, .circle_black, .circle_pur, .circle_pink, .circle_lgreen, .circle_orange, .circle_purple, .circle_light_grn, .circle_reddish {
 	width: 120px;
 	height: 120px;
 	border-radius: 120px;
@@ -1800,6 +1800,10 @@ ul li, ol li {
 }
 .circle_red, .new {
 	background: #e57368;
+}
+
+.circle_reddish, {
+	background: rgba(184, 22, 191, 0.88);
 }
 .circle_blue {
 	background: #77a7fb;

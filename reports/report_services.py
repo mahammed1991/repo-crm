@@ -653,13 +653,21 @@ class ReportService(object):
         if emails:
             query = {'created_date__gte': start_date, 'created_date__lte': end_date,
                      'google_rep_email__in': emails, 'lead_status__in': settings.WPP_LEAD_STATUS, 'treatment_type__in': treatment_types}
+
+            nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date,
+                                                                            created_date__lte=end_date,
+                                                                            google_rep_email__in=emails,
+                                                                            type_1='WPP - Nomination').count()
         else:
             query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'lead_status__in': settings.WPP_LEAD_STATUS, 'treatment_type__in': treatment_types}
+            nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date,
+                                                                            created_date__lte=end_date,
+                                                                            type_1='WPP - Nomination').count()
 
-        wpp_lead_status_counts = WPPLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        wpp_lead_status_counts = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('lead_status').annotate(count=Count('pk'))
         wpp_lead_status_count_dict = {str(rec['lead_status']): rec['count'] for rec in wpp_lead_status_counts}
         wpp_lead_status_count_dict['TOTAL'] = WPPLeads.objects.filter(**query).count()
-        wpp_lead_status_count_dict['TAT'] = WPPLeads.objects.filter(**query).aggregate(Avg('tat'))['tat__avg']
+        wpp_lead_status_count_dict['TAT'] = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).aggregate(Avg('tat'))['tat__avg']
 
         key_order = [sts for sts in settings.WPP_LEAD_STATUS]
         key_order.append('TAT')
@@ -672,6 +680,8 @@ class ReportService(object):
         if wpp_lead_status_count_dict['TAT'] is None or '':
             wpp_lead_status_count_dict['TAT'] = 0
 
+        wpp_lead_status_count_dict['nominated_leads'] = nominated_leads
+
         wpp_keyorder = {k: v for v, k in enumerate(key_order)}
         wpp_report_detail['wpp_lead_status_analysis'] = OrderedDict(sorted(wpp_lead_status_count_dict.items(), key=lambda i: wpp_keyorder.get(i[0])))
         wpp_report_detail['wpp_treatment_type_analysis'], wpp_report_detail['pie_chart_dict'] = ReportService.get_wpp_treatment_type_lead_status_analysis(query)
@@ -681,7 +691,7 @@ class ReportService(object):
     def get_wpp_treatment_type_lead_status_analysis(query):
 
         wpp_treatment_type_lead_status_analysis = dict()
-        lead_status_per_treatment_type = WPPLeads.objects.filter(**query).values('treatment_type').annotate(count=Count('pk'))
+        lead_status_per_treatment_type = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('treatment_type').annotate(count=Count('pk'))
         pie_chart_dict = {str(rec['treatment_type']): rec['count'] for rec in lead_status_per_treatment_type}
 
         key_order = [sts for sts in settings.WPP_LEAD_STATUS]
@@ -691,7 +701,7 @@ class ReportService(object):
 
         for treatement_type in TreatmentType.objects.all():
             query['treatment_type'] = treatement_type
-            lead_status_per_treatment_type = WPPLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+            lead_status_per_treatment_type = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('lead_status').annotate(count=Count('pk'))
             lead_status_per_treatment_type_dict = {str(rec['lead_status']): rec['count'] for rec in lead_status_per_treatment_type}
             for lead_status in settings.WPP_LEAD_STATUS:
                 if lead_status not in lead_status_per_treatment_type_dict:
