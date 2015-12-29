@@ -228,7 +228,7 @@ $('input[name=cid]').on('focusout', function(){
                 'method': 'GET',
                 'dataType': 'json',
                 'url': "/leads/get-eligible-picasso-lead/",
-                'data': {'cid': $('input[name=cid]').val(), 'lead_type': 'Picasso'},
+                'data': {'cid': $('input[name=cid]').val(), 'lead_type': 'wpp'},
                 success: function(response){
                     if(response['status'] == 'FAILED'){
                         //alert('Lead for Selected CID not available.');
@@ -289,7 +289,7 @@ $('#multipleUrls').change(function(){
           'url': "/leads/get-eligible-picasso-lead-by-lid/",
           'dataType': "json",
           'type': 'GET',
-          'data': {'lid': lid, 'lead_type':'Picasso'},
+          'data': {'lid': lid, 'lead_type':'wpp'},
           success: function(response) {
              if(response['status'] == 'FAILED'){
                 alert('Lead for Selected CID not available.');

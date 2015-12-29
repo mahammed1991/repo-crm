@@ -191,13 +191,20 @@ def main_home(request):
         # print feedbacks, feedback_list
 
         # Notification Section
-        notifications = Notification.objects.filter(is_visible=True)
+        # notifications = Notification.objects.filter(is_visible=True)
+        user = UserDetails.objects.get(user=request.user)
+        notifications = list()
+        if user.location:
+            user_region = user.location.region_set.get()
+            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+        else:
+            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
 
         customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
 
         # feedback summary end here
         return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                                       'user_profile': user_profile, 'no_leads':check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
+                                                       'user_profile': user_profile, 'no_leads': check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
                                                        'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
                                                        'feedback_list': feedback_list, 'notifications': notifications})
 
@@ -1051,9 +1058,15 @@ def rep_details_download(request):
 def get_notifications(request):
     """ Get all Notifications """
     # Notifications list
+    user = UserDetails.objects.get(user=request.user)
     notification = list()
     if 'WPP' not in request.session['groups']:
-        notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+        if user.location:
+            user_region = user.location.region_set.get()
+            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+        else:
+            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
+
         for notif in notifications:
             notif_dict = dict()
             notif_dict['id'] = notif.id
@@ -1098,7 +1111,6 @@ def notify_portal_feedback_activity(request, feedback):
     bcc = set([])
 
     mail_to = set([
-        'dkarthik@regalix-inc.com',
         'tkhan@regalix.com',
         'ram@regalix-inc.com',
         'rajuk@regalix-inc.com',
@@ -1627,6 +1639,7 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
         except Exception as e:
             print e, cid
 
+
 @csrf_exempt
 def migrate_table_data(request):
     template_args = dict()
@@ -1723,10 +1736,10 @@ def picasso_home(request):
                                                                         'picasso_top_performer': picasso_top_performer,
                                                                         'no_leads': check_lead_submitter_for_empty(picasso_top_performer)})
 
+
 @login_required
 def export_feedback(request):
     if request.method == 'POST':
-        import ipdb;ipdb.set_trace()
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
         from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
@@ -1764,11 +1777,12 @@ def export_feedback(request):
             feedback_dict['Comments'] = comments
             feedback_list.append(feedback_dict)
 
-        filename = "feedbacks" 
+        filename = "feedbacks"
         path = write_appointments_to_csv(feedback_list, collattr, filename)
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
     return render(request, 'main/export_feedback.html', {})
+
 
 def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
