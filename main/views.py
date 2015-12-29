@@ -215,10 +215,17 @@ def main_home(request):
             end_date = datetime.now()
 
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
+            nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date,
+                                                                            created_date__lte=end_date,
+                                                                            type_1='WPP - Nomination').count()
         else:
             start_date = datetime(2014, 01, 01)
             end_date = datetime.now()
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
+            nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date,
+                                                                            created_date__lte=end_date,
+                                                                            google_rep_email__in=[request.user.email],
+                                                                            type_1='WPP - Nomination').count()
 
         current_date = datetime.utcnow()
         wpp_top_performer = get_top_performer_list(current_date, 'WPP')
@@ -238,13 +245,14 @@ def main_home(request):
         for key, value in key_dict.items():
             wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
 
+        wpp_lead_dict['nominated_leads'] = nominated_leads
+
         wpp_treatment_type_report = {key.replace(' ', ''): value for key, value in wpp_report.items()}
 
         return render(request, 'main/wpp_index.html', {'wpp_lead_dict': wpp_lead_dict, 'user_profile': user_profile,
                                                        'wpp_feedback_list': wpp_feedback_list, 'wpp_report': wpp_report,
                                                        'wpp_top_performer': wpp_top_performer, 'title': title, 'no_leads':check_lead_submitter_for_empty(wpp_top_performer),
                                                        'wpp_treatment_type_report': wpp_treatment_type_report})
-
 
 
 def get_feedbacks(user, feedback_type):

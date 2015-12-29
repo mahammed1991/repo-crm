@@ -24,15 +24,18 @@ Regalix Google Portal
                   <li class="leads" id="tag_leads">
                     <!-- Starts WPP leads section  -->
                     <div class="slide-wrap" id="wpp_status">
-                    <div style="padding-top: 20px;"> &nbsp</div>
+                    <div> &nbsp</div>
                         <div class="btn-group">
                             <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>SUBMIT WEBSITE OPTIMIZATION REQUEST</button>
                             <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
                         </div>
 
-                        <div class="wpp_leads-summary" style=" margin-top: 45px;">
+                        <div class="wpp_leads-summary" >
                             <h2 class="sub-title">Your Leads Summary</h2>
                             <div class="row" style="max-width: 670px;">
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.nominated_leads}}</span> Nominated Leads
+                                </div>
                                 <div class="summary-breakup">
                                     <span>{{wpp_lead_dict.open}}</span> Open
                                 </div>
@@ -48,11 +51,11 @@ Regalix Google Portal
                                 <div class="summary-breakup">
                                     <span>{{wpp_lead_dict.mockup_review}}</span> Mockup Review
                                 </div>                        
+                            </div>
+                            <div class="row" >
                                 <div class="summary-breakup">
                                     <span>{{wpp_lead_dict.in_development}}</span> In Development
                                 </div>
-                            </div>
-                            <div class="row" style=" margin-top: 15px;">
                                 <div class="summary-breakup">
                                     <span>{{wpp_lead_dict.in_statge}}</span> In Stage
                                 </div>
@@ -68,6 +71,8 @@ Regalix Google Portal
                                 <div class="summary-breakup">
                                     <span>{{wpp_lead_dict.deferred}}</span> Deferred
                                 </div>
+                                </div>
+                                <div class="row">
                                 <div class="summary-breakup">
                                     <span>{{wpp_lead_dict.total}}</span> Total
                                 </div>                        

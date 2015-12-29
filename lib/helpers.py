@@ -285,13 +285,16 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
     if start_date and end_date:
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list, 'lead_status__in': settings.WPP_LEAD_STATUS}
-        wpp_lead_status_analysis = WPPLeads.objects.filter(**query).values('lead_status').annotate(count=Count('pk'))
+        wpp_lead_status_analysis = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('lead_status').annotate(count=Count('pk'))
         total_count = WPPLeads.objects.filter(**query).count()
+        nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date, created_date__lte=end_date, type_1='WPP - Nomination').count()
     else:
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
         query = {'treatment_type__in': treatment_type_list, 'lead_status__in': settings.WPP_LEAD_STATUS}
-        wpp_lead_status_analysis = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
+        wpp_lead_status_analysis = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
         total_count = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).count()
+        query['type_1'] = 'WPP - Nomination'
+        nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(type_1='WPP - Nomination').count()
 
     wpp_lead_status_dict = {'total_leads': 0,
                             'open': 0,
@@ -305,6 +308,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
                             'in_stage': 0,
                             'implemented': 0,
                             'ab_testing': 0,
+                            'nominated_leads': 0,
                             }
     for status_dict in wpp_lead_status_analysis:
         if status_dict['lead_status'] == 'Open':
@@ -331,6 +335,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
             wpp_lead_status_dict['ab_testing'] += status_dict['count']
 
     wpp_lead_status_dict['total_leads'] = total_count
+    wpp_lead_status_dict['nominated_leads'] = nominated_leads
     return wpp_lead_status_dict
 
 
