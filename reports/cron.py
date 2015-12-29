@@ -162,6 +162,7 @@ def implemented_leads_count_report():
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
     specific_date = datetime.today()
+    specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     total_count_tag = list()
     total_count_shopping = list()
     final_dict = {'TAG': 0, 'SHOPPING': 0}
@@ -178,7 +179,6 @@ def implemented_leads_count_report():
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
-
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
     mail_subject = "Leads count based on Regions"
@@ -189,7 +189,7 @@ def implemented_leads_count_report():
         })
     )
     mail_from = 'basavaraju@regalix-inc.com'
-    mail_to = ['kvinay@regalix-inc.com', 'basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'asantosh@regalix-inc.com']
+    mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -236,7 +236,8 @@ def create_or_update_leads(records, sf):
 
         sf_lead_id = rec.get('Id')
         type_1 = rec.get('Code_Type__c')
-        if type_1 == 'WPP':
+        # if type_1 == 'WPP':
+        if type_1 in ['WPP', 'WPP - Nomination']:
             total_wpp_leads += 1
             try:
                 lead = WPPLeads.objects.get(sf_lead_id=sf_lead_id)
@@ -254,7 +255,15 @@ def create_or_update_leads(records, sf):
             lead.mockup_password = rec.get('Mockup_URL_Password__c')
             lead.stage_url = rec.get('Stage_URL__c')
             lead.stage_password = rec.get('Stage_URL_Credentials__c')
+            # Storing obectives and pod name in comment5 & url5 fields
+            lead.comment_5 = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
+            lead.url_5 = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
             lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+            if rec.get('Eligible_Nominated_for_WPP__c'):
+                if rec.get('Eligible_Nominated_for_WPP__c') == 'Yes':
+                    lead.is_nominated = True
+                elif rec.get('Eligible_Nominated_for_WPP__c') == 'No':
+                    lead.is_nominated = False
         else:
             try:
                 # check for existing lead
