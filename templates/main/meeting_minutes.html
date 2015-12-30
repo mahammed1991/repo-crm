@@ -1,0 +1,418 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Meeting Minutes
+{% endblock title %}
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+{% endblock main_css %}
+{% block main_js %}
+  <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+  <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+
+  <script type="text/javascript">
+
+  $('.datetimepickerFrom').datetimepicker({
+     datepicker : false,
+     format : 'g:i A',
+     step:30
+  });
+
+  $(".datepickerFrom_a").datetimepicker({
+      timepicker:false,
+      format:'d.m.Y'
+  });
+
+  $(".datepickerFrom_b").datetimepicker({
+    timepicker:false,
+    format:'d.m.Y'
+  });
+
+   $(".remove").hide();
+   $("#others").hide();
+   $(".remove-action").hide();
+
+   $(".add" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id <= 6)
+      {
+        $( "#key_point_" + indx ).removeAttr('style');
+        $('.add').attr('id',"#addTask_" + next_id);
+        $(".remove" ).show();
+        $('.remove').attr('id',"#removeTask_" + next_id);
+      }
+  });
+
+  $(".bgicon").change(function(){
+        var val = $(".bgicon").val();
+        if(val == "Others")
+        {
+          $("#others").show();
+        }
+        else
+        {
+          $("#others").hide();
+        }
+    });
+
+   $(".remove" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) - 1
+      if(id != "#removeTask_2")
+      {
+        $("#key_point_" + next_id ).attr('style','display:none;');
+        $('.remove').attr('id',"#removeTask_" + next_id);
+        $('.add').attr('id',"#addTask_" + next_id);
+      }
+      id = $(this).attr('id');
+      if(id == "#removeTask_2")
+      {
+        $(".remove").hide();
+      }
+  });
+
+   $(".add-action" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id <= 6)
+      {
+        $( "#action_plan_" + indx ).removeAttr('style');
+        $('.add-action').attr('id',"#addAction_" + next_id);
+        $(".remove-action" ).show();
+          /*$('#ano_'+indx).attr('value',indx);
+          $('#ano_'+indx).attr('disabled',true);*/
+        $('.remove-action').attr('id',"#removeAction_" + next_id);
+      }
+  });
+
+   $(".remove-action" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) - 1
+      if(id != "#removeAction_2")
+      {
+        $("#action_plan_" + next_id ).attr('style','display:none;');
+        $('.remove-action').attr('id',"#removeAction_" + next_id);
+        $('.add-action').attr('id',"#addAction_" + next_id);
+      }
+      id = $(this).attr('id');
+      if(id == "#removeAction_2")
+      {
+        $(".remove-action").hide();
+      }
+  });
+   </script>
+{% endblock main_js %}
+
+
+<style type="text/css">
+h1 {
+    font-size: 24px;
+    font-family: 'robotoblack';
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-top: 500px;
+    margin-bottom: 20px;
+}
+
+</style>
+
+{% block content %}
+<section class="content-region inner-page">
+      <div class="container-fluid">
+        <h1> Meeting Minutes</h1>
+      </div>
+  <div class="container-fluid">
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Program Name</label>
+            </div>
+           <div class="col-md-4">
+              <select class="form-control bgicon" id="" title="" name="">
+                <option value="Choose">Choose</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Biweekly">Biweekly</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly Connect">Quarterly Connect</option>
+                <option value="Ad-Hoc">Ad-Hoc</option>Others
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="others" name="" placeholder="" style="">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Date</label>
+            </div>
+           <div class="col-md-4">
+                <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="date" id="datepickerFrom_a" />
+            </div>
+            <div class="col-md-2">
+              <label for="">Time</label>
+            </div>
+           <div class="col-md-4">
+              <input id="" class="datetimepickerFrom form-control date-from" type="text" name="date_from" placeholder="Time">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Google PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="" name="" placeholder="" value="">
+            </div>
+            <div class="col-md-2">
+              <label for="">Regalix PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="" name="" placeholder="" value="">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Google Team</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="" name="" placeholder="" value="">
+            </div>
+            <div class="col-md-2">
+              <label for="">Region</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="" name="" placeholder="" value="">
+            </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="">Attendees</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="" name="" placeholder="" value="">
+        </div>
+      </div>
+
+     <div class="std-sub-title" style="text-align:center">Key Points Discussed</div>
+  </div>
+</section>
+
+<section class="content-region inner-page">
+  <div class="container-fluid">
+      <table id="keyPoint">
+        <thead >
+          <tr>
+            <td id="no">No.</td>
+            <td id="topic" style="text-align:center" >Topic</td>
+            <td id="higlights" style="text-align:center">Highlights</td>
+          </tr>
+        </thead>
+        <tbody class="add-task">
+          <tr id="key_point_1">
+            <td><input type='text' value="1" readonly min="1" max="1" id="no_1"></td>
+            <td><input type='text' id="topic_1"></td>
+            <td><textarea type='text' id="highlight_1"></textarea></td>
+          </tr>
+          <tr id="key_point_2" style="display:none;">
+            <td><input type='text' value="2" readonly id="no_2"></td>
+            <td><input type='text' id="topic_2"></td>
+            <td><textarea type='text' id="highlight_2"></textarea></td>
+          </tr>
+          <tr id="key_point_3" style="display:none;">
+            <td><input type='text' value="3" readonly id="no_3"></td>
+            <td><input type='text' id="topic_3"></td>
+            <td><textarea type='text' id="highlight_3"></textarea></td>
+          </tr>
+          <tr id="key_point_4" style="display:none;">
+            <td><input type='text' value="4" readonly id="no_4"></td>
+            <td><input type='text' id="topic_4"></td>
+            <td><textarea type='text' id="highlight_4"></textarea></td>
+          </tr>
+          <tr id="key_point_5" style="display:none;">
+            <td><input type='text' value="5" readonly id="no_5"></td>
+            <td><input type='text' id="topic_5"></td>
+            <td><textarea type='text' id="highlight_5"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeTask_2" class="btn std-btn task-btn remove" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addTask_2" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+  </div>
+</section>
+
+
+<section class="content-region inner-page">
+  <div class="container-fluid last">
+    <div class="std-sub-title" style="text-align:center">Action Plan</div>
+      <table id="actionPlan">
+        <thead>
+          <tr>
+            <td id="no">No.</td>
+            <td id="action-item">Action Item(s)</td>
+            <td id="owner">Owner</td>
+            <td id="target-date">Target Date</td>
+          </tr>
+        </thead>
+        <tbody class="action-plan">
+          <tr id="action_plan_1">
+            <td><input type='text' value="1" readonly  id="ano_1"></td>
+            <td><input type='text' id="action_item_1"></td>
+            <td><input type='text' id="owner_1"></td>
+            <td><input type="text" placeholder="Date" class=" datepickerFrom_b" name="date" id=""/></td>
+          </tr>
+          <tr id="action_plan_2" style="display:none;">
+            <td><input type='text' value="2" readonly id="ano_2"></td>
+            <td><input type='text' id="action_item_2"></td>
+            <td><input type='text' id="owner_2"></td>
+            <td><input type="text" placeholder="Date" class=" datepickerFrom_b" name="date" id="" /></td>
+          </tr>
+          <tr id="action_plan_3" style="display:none;">
+            <td><input type='text' value="3" readonly min="3" max="3" id="ano_3"></td>
+            <td><input type='text' id="action_item_3"></td>
+            <td><input type='text' id="owner_3"></td>
+            <td><input type="text" placeholder="Date" class="datepickerFrom_b" name="date" id="" /></td>
+          </tr>
+          <tr id="action_plan_4" style="display:none;">
+            <td><input type='text' value="4" readonly min="4" max="4" id="ano_4"></td>
+            <td><input type='text' id="action_item_4"></td>
+            <td><input type='text' id="owner_4"></td>
+            <td><input type="text" placeholder="Date" class="datepickerFrom_b" name="date" id="" /></td>
+          </tr>
+          <tr id="action_plan_5" style="display:none;">
+            <td><input type='text' value="5" readonly min="5" max="5" id="ano_5"></td>
+            <td><input type='text' id="action_item_5"></td>
+            <td><input type='text' id="owner_5"></td>
+            <td><input type="text" placeholder="Date" class=" datepickerFrom_b" name="date" id="" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeAction_2" class="btn std-btn task-btn remove-action" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addAction_2" class="btn std-btn task-btn add-action" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+  </div>
+</section>
+
+<section class="content-region inner-page">
+  <div class="container-fluid last">
+    <div class="std-sub-title" style="text-align:center">Next meeting</div>
+      <table id="nextMeeting">
+        <tbody class="date-time">
+          <tr id="" style="">
+            <td id="date">Date : </td>
+            <td><input type='text' id="sel_date" placeholder="Date" class="datepickerFrom_b"></td>
+            <td id="time">Time : </td>
+            <td><input id="sel_time" class="datetimepickerFrom date-from" placeholder="Time" type="text" name="date_from"></td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="nextMeeting1">
+        <tbody class="extra">
+          <tr id="" style="">
+            <td id="agenda">Tenantive Agenda : </td>
+            <td><input type='text' id="agenda_text"></td>
+            <td id="next">Link to Previous Meeting Minutes : </td>
+            <td> <input type="text" id="next_text" name="" placeholder="" value=""></td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+</section>
+
+<section class="content-region inner-page">
+  <div class="container-fluid end">
+    <input type="checkbox" id="allow" value=""></input><p>Allow option to send Calendar Invite </p>
+    <button class="btn std-btn" id="submit">Submit</button>
+  </div>
+</section>
+<style type="text/css">
+  
+  #no{width:100px;}
+
+  #topic{width:450px;}
+
+  #higlights{width:450px;}
+
+  table{margin-bottom: 20px;}
+
+  #actionPlan thead tr td, #keyPoint thead tr td{border: 1px solid #D1D1D1;
+              padding: 10px;
+  }
+
+  #actionPlan tbody tr td, #keyPoint tbody tr td,#nextMeeting tbody tr td, #nextMeeting1 tbody tr td{border: 1px solid #D1D1D1;
+  }
+
+  .add-task td input,.action-plan td input {padding: 10px;
+        width: 100%;
+        border: none;
+  }
+
+  .add-task td textarea{padding: 10px;
+        width: 100%;
+        border: none;
+  }
+
+  .remove{position: relative;
+          top: -8px;
+  }
+  
+  label{padding: 15px;}
+
+  #action-item{
+    width:350px;
+    text-align: center;
+  }
+
+  #owner, #target-date{
+    width:275px;
+    text-align: center;
+  }
+
+  .add-action{background: #109d59;}
+
+  .add-action:hover{background: #109d59;}
+
+  .remove-action{background: #d04033;}
+
+  .remove-action:hover{background: #d04033;}
+
+  .last{margin-bottom: 20px;}
+
+  #date,#time{width:60px;padding: 10px;}
+
+  .date-time td input{width: 100%;padding: 11px;border: none;}
+
+  #sel_date,#sel_time{width: 422px;}
+
+  #agenda{width:150px;padding: 10px;}
+
+  .extra td input{width: 100%;padding: 11px;border: none;}
+
+  #agenda_text{width: 332px;}
+
+  #next{padding: 10px;}
+
+  #next_text{width: 244px;}
+
+  #nextMeeting1{position: relative;top: -21px;]}
+
+  #allow{margin: auto 50%;}
+
+   #submit{margin: auto 40%;margin-bottom: 20px;}
+
+  .end p{text-align: center;position: relative;top: -10px;} 
+
+</style>
+
+{% endblock content %}
+
