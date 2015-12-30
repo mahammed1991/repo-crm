@@ -22,7 +22,7 @@ from lib.helpers import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.db.models import Count
-import time
+from collections import OrderedDict
 
 
 # Create your views here.
@@ -694,6 +694,7 @@ def copy_appointment_to_next_week(request, plan_month=0, plan_day=0, plan_year=0
     response['appointment'] = appointment_list
     return HttpResponse(json.dumps(response), content_type="application/json")
 
+
 @login_required
 def export_appointments(request):
     """ Export Appointments by Availability/Booked """
@@ -787,7 +788,6 @@ def export_appointments(request):
 
                     result.append(mydict)
 
-
             total_appointments = dict()
             for slot in slots_data:
                 # time zone conversion
@@ -836,6 +836,7 @@ def export_appointments(request):
                                                                         'post_result_dict': json.dumps(post_result_dict),
                                                                         'tag_by_team': tag_by_team})
 
+
 @login_required
 def export_appointments_with_schedule_appointments(request):
     """ Export Appointments by Availability/Booked """
@@ -867,6 +868,7 @@ def export_appointments_with_schedule_appointments(request):
         to_date = datetime(to_date.year, to_date.month, to_date.day, to_date.hour, to_date.minute, 59)
 
         time_zone = 'IST'
+
         selected_tzone = Timezone.objects.get(zone_name=time_zone)
         from_utc_date = SalesforceApi.get_utc_date(from_date, selected_tzone.time_value)
         to_utc_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
@@ -883,8 +885,8 @@ def export_appointments_with_schedule_appointments(request):
         s_date = from_date
         while True:
             if s_date <= to_date:
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y"))+' AV|F')
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y"))+' RS')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' AV|F')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' RS')
                 s_date = s_date + timedelta(days=1)
             else:
                 break
@@ -913,9 +915,8 @@ def export_appointments_with_schedule_appointments(request):
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
                     country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
 
-
             slots_data = Availability.objects.filter(
-                date_in_utc__range=(from_date, to_date),
+                date_in_utc__range=(from_utc_date, to_utc_date),
                 team__id=rglx_team.id,
                 team__process_type=process_type
             ).order_by('team')
@@ -943,7 +944,6 @@ def export_appointments_with_schedule_appointments(request):
                             mydict[ele] = '-'
 
                     result.append(mydict)
-
 
             total_appointments = dict()
             for data in schedule_data:
@@ -1001,7 +1001,6 @@ def export_appointments_with_schedule_appointments(request):
             total_result.extend(result)
             total_result.append(total_dict)
 
-
         # remove empty records from total_result
         filter_result = list()
         for each_result in total_result:
@@ -1009,9 +1008,9 @@ def export_appointments_with_schedule_appointments(request):
             for key, value in each_result.iteritems():
                 if each_result[key] == '-':
                     count += 1
-                if count == (len(collumn_attr)-2):
+                if count == (len(collumn_attr) - 2):
                     filter_result.append(each_result)
-        
+
         for each_result in filter_result:
             if each_result in total_result:
                 total_result.remove(each_result)
@@ -1022,11 +1021,11 @@ def export_appointments_with_schedule_appointments(request):
         return response
 
     return render(request, 'representatives/export_appointments_with_schedule_appointments.html', {'teams': teams,
-                                                                        'default_teams': default_teams,
-                                                                        'process_types': process_types,
-                                                                        'default_process_type': default_process_type,
-                                                                        'post_result_dict': json.dumps(post_result_dict),
-                                                                        'tag_by_team': tag_by_team})
+                                                                                                   'default_teams': default_teams,
+                                                                                                   'process_types': process_types,
+                                                                                                   'default_process_type': default_process_type,
+                                                                                                   'post_result_dict': json.dumps(post_result_dict),
+                                                                                                   'tag_by_team': tag_by_team})
 
 
 def write_appointments_to_csv(result, collumn_attr, filename):
@@ -1310,8 +1309,100 @@ def appointments_calendar(request):
     for res_time in leads_dict:
         if res_time['rescheduled_appointment_in_ist']:
             res_dict = dict()
-            res_dict['title'] = ' CID - %s, Total Resch - %s' %(str(res_time['customer_id']), res_time['count'])
+            res_dict['title'] = ' CID - %s, Total Resch - %s' % (str(res_time['customer_id']), res_time['count'])
             res_dict['start'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'], "%Y-%m-%dT%H:%M:%S")
             res_dict['end'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'] + timedelta(minutes=20), "%Y-%m-%dT%H:%M:%S")
             total_events.append(res_dict)
     return render(request, 'representatives/appointments_calendar.html', {'events': total_events})
+
+
+@login_required
+def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
+    """ Manage scheduling appointments"""
+
+    if not int(plan_month):
+        # if month is not specified, select current month
+        today = datetime.today()
+        plan_month = today.month
+        return redirect(
+            'representatives.views.tat_details',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+        )
+
+    if not int(plan_day):
+        # if day is not specified, select today's day
+        today = datetime.today()
+        plan_day = today.day
+        return redirect(
+            'representatives.views.tat_details',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+        )
+
+    if not int(plan_year):
+        # if year is not specified, select current year
+        today = datetime.today()
+        plan_year = today.year
+        return redirect(
+            'representatives.views.tat_details',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+        )
+
+    # create date from week start day
+    plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    # if week start day is not monday, select appropriate start week day of given date
+    if plan_date.weekday():
+        plan_date -= timedelta(days=plan_date.weekday())
+        return redirect(
+            'representatives.views.tat_details',
+            plan_month=plan_date.month,
+            plan_day=plan_date.day,
+            plan_year=plan_date.year,
+            # process_type=process_type,
+            # team_id=team_id
+        )
+
+    plan_dates = OrderedDict()
+
+    for i in range(1, 7):
+        plan_dates['day' + str(i)] = plan_date + timedelta(i - 1)
+
+    input_list = list()
+    audit_list = list()
+    for key, _date in plan_dates.items():
+
+        count_key = 'input_'
+        count_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+        count_key += '_'
+        count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+        audit_key = count_key
+        count_key += '_' + str(_date.year) + '_' + 'count'
+        audit_key += '_' + str(_date.year) + '_' + 'audit'
+
+        print count_key
+        input_list.append(count_key)
+        audit_list.append(audit_key)
+
+    # compute next week and previous week start dates
+    prev_week = plan_date + timedelta(days=-7)
+    next_week = plan_date + timedelta(days=7)
+
+    return render(
+        request,
+        'representatives/tat_details.html',
+        {'schedule_date': plan_date,
+         'dates': plan_dates,
+         'inputs': input_list,
+         'audits': audit_list,
+         'prev_week': prev_week,
+         'next_week': next_week,
+         'plan_month': plan_month,
+         'plan_day': plan_day,
+         'plan_year': plan_year,
+         }
+    )

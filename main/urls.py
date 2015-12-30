@@ -33,6 +33,6 @@ urlpatterns = patterns(
     url(r'^upload/file-handling$', views.upload_file_handling),
     url(r'^upload/migrate-data$', views.migrate_table_data),
     url(r'^picasso/$', views.picasso_home),
-    # Meeting Page URL
-    url(r'^meeting_minutes/$', views.meeting_minutes),
+    url(r'^export-feedback/$', views.export_feedback),
+
 )

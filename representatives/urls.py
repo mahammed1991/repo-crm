@@ -28,5 +28,7 @@ urlpatterns = patterns(
         views.total_appointments
     ),
     url(r'^appointments-calender/$', views.appointments_calendar),
+    url(r'^rep-details/$', views.tat_details),
+    url(r'^rep-details/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/$', views.tat_details),
 
 )

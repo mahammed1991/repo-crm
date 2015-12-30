@@ -191,13 +191,20 @@ def main_home(request):
         # print feedbacks, feedback_list
 
         # Notification Section
-        notifications = Notification.objects.filter(is_visible=True)
+        # notifications = Notification.objects.filter(is_visible=True)
+        user = UserDetails.objects.get(user=request.user)
+        notifications = list()
+        if user.location:
+            user_region = user.location.region_set.get()
+            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+        else:
+            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
 
         customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
 
         # feedback summary end here
         return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
-                                                       'user_profile': user_profile, 'no_leads':check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
+                                                       'user_profile': user_profile, 'no_leads': check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
                                                        'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
                                                        'feedback_list': feedback_list, 'notifications': notifications})
 
@@ -208,10 +215,17 @@ def main_home(request):
             end_date = datetime.now()
 
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
+            nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date,
+                                                                            created_date__lte=end_date,
+                                                                            type_1='WPP - Nomination').count()
         else:
             start_date = datetime(2014, 01, 01)
             end_date = datetime.now()
             wpp_details = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
+            nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date,
+                                                                            created_date__lte=end_date,
+                                                                            google_rep_email__in=[request.user.email],
+                                                                            type_1='WPP - Nomination').count()
 
         current_date = datetime.utcnow()
         wpp_top_performer = get_top_performer_list(current_date, 'WPP')
@@ -230,6 +244,8 @@ def main_home(request):
         wpp_lead_dict = dict()
         for key, value in key_dict.items():
             wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
+
+        wpp_lead_dict['nominated_leads'] = nominated_leads
 
         wpp_treatment_type_report = {key.replace(' ', ''): value for key, value in wpp_report.items()}
 
@@ -1051,9 +1067,15 @@ def rep_details_download(request):
 def get_notifications(request):
     """ Get all Notifications """
     # Notifications list
+    user = UserDetails.objects.get(user=request.user)
     notification = list()
     if 'WPP' not in request.session['groups']:
-        notifications = Notification.objects.filter(is_visible=True).order_by('-created_date')
+        if user.location:
+            user_region = user.location.region_set.get()
+            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+        else:
+            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
+
         for notif in notifications:
             notif_dict = dict()
             notif_dict['id'] = notif.id
@@ -1398,6 +1420,174 @@ def upload_file_handling(request):
     return render(request, 'main/upload_file.html')
 
 
+# def get_survey_data_from_excel(workbook, sheet, survey_channel):
+#     implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
+#     for r_i in range(1, sheet.nrows):
+#         if survey_channel == 'Phone':
+#             str_cid = str(int(sheet.cell(r_i, get_col_index(sheet, 'CID')).value))
+#             cid = '%s-%s-%s' % (str_cid[:3], str_cid[3:6], str_cid[6:])
+#         else:
+#             cid = sheet.cell(r_i, get_col_index(sheet, 'CID')).value
+
+#         lead_date = sheet.cell(r_i, get_col_index(sheet, 'Date')).value
+#         lead_time = sheet.cell(r_i, get_col_index(sheet, 'Time')).value
+#         process = sheet.cell(r_i, get_col_index(sheet, 'Category')).value
+
+#         survey_date_tuple = xldate_as_tuple(lead_date + lead_time, workbook.datemode)
+#         survey_date = datetime(survey_date_tuple[0], survey_date_tuple[1], survey_date_tuple[2], survey_date_tuple[3], survey_date_tuple[4], survey_date_tuple[5])
+#         try:
+#             csat_record = CSATReport.objects.get(customer_id=cid, survey_date=survey_date, process=process)
+#         except ObjectDoesNotExist:
+#             csat_record = CSATReport()
+
+#         csat_record.region = ''
+#         csat_record.program = ''
+#         csat_record.code_type = ''
+#         csat_record.lead_owner = ''
+#         csat_record.sf_lead_id = ''
+#         if survey_channel == 'Phone':
+#             csat_record.channel = 'PHONE'
+#             csat_record.cli = int(sheet.cell(r_i, get_col_index(sheet, 'CLI')).value)
+#         else:
+#             csat_record.channel = 'EMAIL'
+#             csat_record.cli = 0
+#         csat_record.category = 'UNMAPPED'
+#         csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+
+#         if cid in implemented_cids:
+
+#             # survey date in ist and date_of_installation in pst but month and year will be the same
+#             if process == 'TAG':
+#                 csat_lead = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(customer_id=cid, date_of_installation__month=survey_date.month, date_of_installation__year=survey_date.year)
+#             elif process == 'SHOPPING':
+#                 csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__month=survey_date.month,
+#                                                  date_of_installation__year=survey_date.year, type_1__in=['Google Shopping Setup', 'Google Shopping Migration'])
+
+#             if csat_lead:
+#                 if len(csat_lead) == 1:
+#                     csat_record.sf_lead_id = csat_lead[0].sf_lead_id
+#                     csat_record.region = csat_lead[0].country
+#                     csat_record.program = csat_lead[0].team
+#                     csat_record.code_type = csat_lead[0].type_1
+#                     csat_record.lead_owner = csat_lead[0].lead_owner_email
+#                     csat_record.mapped_lead_created_date = csat_lead[0].created_date
+#                     csat_record.lead_owner_name = csat_lead[0].lead_owner_name
+#                     csat_record.lead_owner_email = csat_lead[0].lead_owner_email
+#                     csat_record.language = csat_lead[0].language if csat_lead[0].language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+#                     csat_record.category = 'MAPPED'
+#                 else:
+#                     csat_record.sf_lead_id = csat_lead[0].sf_lead_id
+#                     csat_record.region = csat_lead[0].country
+#                     csat_record.program = csat_lead[0].team
+#                     csat_record.code_type = csat_lead[0].type_1
+#                     csat_record.lead_owner = csat_lead[0].lead_owner_email
+#                     csat_record.mapped_lead_created_date = csat_lead[0].created_date
+#                     csat_record.lead_owner_name = csat_lead[0].lead_owner_name
+#                     csat_record.lead_owner_email = csat_lead[0].lead_owner_email
+#                     csat_record.language = csat_lead[0].language if csat_lead[0].language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+#                     csat_record.category = 'MAPPED'
+#                     # csat_lead should be one but here is mutiple
+#                     # csat_record.category = 'UNMAPPED'
+#                     # survey_prev_date = survey_date - datetime.timedelta(1)
+#                     # csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__gte=survey_prev_date, date_of_installation__lte=survey_date).order_by('-date_of_installation')
+
+#                     # us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
+
+#                     # if csat_lead:
+#                     #     # Lead's date of installation is in PST,comparing it with pst or pdt timezone to convert ist
+#                     #     if csat_lead[0].date_of_installation >= us_zone[0].daylight_start and csat_lead[0].date_of_installation <= us_zone[0].daylight_end:
+#                     #         tz = Timezone.objects.get(zone_name='PDT')
+#                     #     else:
+#                     #         tz = Timezone.objects.get(zone_name='PST')
+#                     #     utc_date = SalesforceApi.get_utc_date(csat_lead[0].date_of_installation, tz.time_value)
+#                     #     ist_tz = Timezone.objects.get(zone_name='IST')
+#                     #     date_of_installation_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, ist_tz.time_value)
+#                     # else:
+#                     #     csat_record.sf_lead_id = ''
+#                     #     csat_record.category = 'UNMAPPED'
+
+#         csat_record.customer_id = cid
+#         csat_record.survey_date = survey_date
+#         csat_record.process = process
+#         csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
+#         if csat_record.q1 == 0:
+#             csat_record.category = 'UNMAPPED'
+#         csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
+#         csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
+#         csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
+#         csat_record.q5 = int(sheet.cell(r_i, get_col_index(sheet, 'Q5')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q5')).value else 0
+
+#         try:
+#             csat_record.save()
+#         except Exception as e:
+#             print e, cid
+
+def map_leads(leads):
+    if len(leads) > 1:
+        return leads[0]
+    elif len(leads) == 1:
+        return leads[0]
+    else:
+        pass
+
+
+def find_leads(cid, process, survey_date):
+    query = dict()
+    if process == 'TAG':
+        query['customer_id'] = cid
+        query['date_of_installation'] = survey_date
+        shopping_code_types = ['Google Shopping Setup', 'Google Shopping Migration']
+        day_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query)
+
+        if not day_leads:
+            _dt_start = survey_date - timedelta(7)
+            _dt_end = survey_date
+            del query['date_of_installation']
+            query['date_of_installation__range'] = (_dt_start, _dt_end)
+            week_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query)
+
+            if not week_leads:
+                _dt_start = survey_date - timedelta(30)
+                _dt_end = survey_date
+                query['date_of_installation__range'] = (_dt_start, _dt_end)
+                month_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query)
+
+                if not month_leads:
+                    del query['date_of_installation__range']
+                    all_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query)
+
+                    if not all_leads:
+                        print 'lead_is_unmapped'
+                        return None
+                    else:
+                        lead = map_leads(all_leads)
+
+                else:
+                    lead = map_leads(month_leads)
+            else:
+                lead = map_leads(week_leads)
+        else:
+            lead = map_leads(day_leads)
+    else:
+        query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Migration']
+        query['customer_id'] = cid
+        query['date_of_installation'] = survey_date
+        day_leads = Leads.objects.filter(**query)
+        if not day_leads:
+            del query['date_of_installation']
+            all_leads = Leads.objects.filter(**query)
+
+            if not all_leads:
+                print 'shopping_lead_is_unmapped'
+                return None
+            else:
+                lead = map_leads(all_leads)
+        else:
+            lead = map_leads(day_leads)
+
+    return lead
+
+
 def get_survey_data_from_excel(workbook, sheet, survey_channel):
     implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
     for r_i in range(1, sheet.nrows):
@@ -1412,7 +1602,8 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
         process = sheet.cell(r_i, get_col_index(sheet, 'Category')).value
 
         survey_date_tuple = xldate_as_tuple(lead_date + lead_time, workbook.datemode)
-        survey_date = datetime(survey_date_tuple[0], survey_date_tuple[1], survey_date_tuple[2], survey_date_tuple[3], survey_date_tuple[4], survey_date_tuple[5])
+        # survey_date = datetime(survey_date_tuple[0], survey_date_tuple[1], survey_date_tuple[2], survey_date_tuple[3], survey_date_tuple[4], survey_date_tuple[5])
+        survey_date = datetime(survey_date_tuple[0], survey_date_tuple[1], survey_date_tuple[2], survey_date_tuple[3])
         try:
             csat_record = CSATReport.objects.get(customer_id=cid, survey_date=survey_date, process=process)
         except ObjectDoesNotExist:
@@ -1495,10 +1686,27 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
         csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
         csat_record.q5 = int(sheet.cell(r_i, get_col_index(sheet, 'Q5')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q5')).value else 0
 
+        lead = find_leads(cid, process, survey_date)
+        if lead:
+            csat_record.sf_lead_id = lead.sf_lead_id
+            csat_record.region = lead.country
+            csat_record.program = lead.team
+            csat_record.code_type = lead.type_1
+            csat_record.lead_owner = lead.lead_owner_email
+            csat_record.mapped_lead_created_date = lead.created_date
+            csat_record.lead_owner_name = lead.lead_owner_name
+            csat_record.lead_owner_email = lead.lead_owner_email
+            csat_record.language = lead.language if lead.language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+            csat_record.category = 'MAPPED'
+        else:
+            csat_record.category = 'UNMAPPED'
+            csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+
         try:
             csat_record.save()
         except Exception as e:
             print e, cid
+
 
 @csrf_exempt
 def migrate_table_data(request):
@@ -1562,7 +1770,7 @@ def migrate_table_data(request):
 def picasso_home(request):
     user_profile = get_user_profile(request.user)
     query = dict()
-    picasso_objective_dict =dict()
+    picasso_objective_dict = dict()
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
@@ -1594,7 +1802,60 @@ def picasso_home(request):
                                                                         'picasso_objective_dict': picasso_objective_dict,
                                                                         'picasso_objective_total': picasso_objective_total,
                                                                         'picasso_top_performer': picasso_top_performer,
-                                                                        'no_leads':check_lead_submitter_for_empty(picasso_top_performer)})
+                                                                        'no_leads': check_lead_submitter_for_empty(picasso_top_performer)})
+
+
+@login_required
+def export_feedback(request):
+    if request.method == 'POST':
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
+        to_date = datetime.strptime(str(date_to), '%m/%d/%Y')
+
+        get_feedbacks = Feedback.objects.filter(created_date__gte=from_date, created_date__lte=to_date)
+
+        collattr = ['ID', 'Title', 'CID', 'Advertiser Name', 'Location', 'Language', 'Feedback Type', 'Description', 'Status', 'Lead Owner', 'Google Account Manager', 'Program', 'Code Type', 'Created Date', 'Resolved By', 'Resolved By Date', 'Second Resolved By', 'Second Resolved Date', 'Third Resolved By', 'Third Resolved Date', 'SF Lead ID', 'Comments']
+        feedback_list = list()
+        for feedback in get_feedbacks:
+            get_feedback_comments = FeedbackComment.objects.filter(feedback=feedback.id).values('comment', 'comment_by__username', 'feedback_status')
+            comments = str(get_feedback_comments)
+            feedback_dict = dict()
+            feedback_dict['ID'] = feedback.id
+            feedback_dict['Title'] = feedback.title
+            feedback_dict['CID'] = feedback.cid
+            feedback_dict['Advertiser Name'] = feedback.advertiser_name
+            feedback_dict['Location'] = feedback.location.location_name
+            feedback_dict['Language'] = feedback.language
+            feedback_dict['Feedback Type'] = feedback.feedback_type
+            feedback_dict['Description'] = feedback.description
+            feedback_dict['Status'] = feedback.status
+            feedback_dict['Lead Owner'] = feedback.lead_owner.username
+            feedback_dict['Google Account Manager'] = feedback.google_account_manager.username
+            feedback_dict['Program'] = feedback.program.team_name
+            feedback_dict['Code Type'] = feedback.code_type
+            feedback_dict['Created Date'] = datetime.strftime(feedback.created_date, '%m/%d/%Y')
+            feedback_dict['Resolved By'] = feedback.resolved_by.username if feedback.resolved_by  else ''
+            feedback_dict['Resolved By Date'] = datetime.strftime(feedback.resolved_date, '%m/%d/%Y') if feedback.resolved_date else ''
+            feedback_dict['Second Resolved By'] = feedback.second_resolved_by.username if feedback.second_resolved_by else ''
+            feedback_dict['Second Resolved Date'] = datetime.strftime(feedback.second_resolved_date, '%m/%d/%Y') if feedback.second_resolved_date else ''
+            feedback_dict['Third Resolved By'] = feedback.third_resolved_by.username if feedback.third_resolved_by else ''
+            feedback_dict['Third Resolved Date'] = datetime.strftime(feedback.third_resolved_date, '%m/%d/%Y') if feedback.third_resolved_date else ''
+            feedback_dict['SF Lead ID'] = feedback.sf_lead_id
+            feedback_dict['Comments'] = comments
+            feedback_list.append(feedback_dict)
+
+        filename = "feedbacks"
+        path = write_appointments_to_csv(feedback_list, collattr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+    return render(request, 'main/export_feedback.html', {})
+
+
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
 
 
 # Meeting page template rendering view

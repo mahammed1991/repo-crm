@@ -78,7 +78,8 @@ admin.site.register(UserDetails, UserDetailsAdmin)
 
 
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('text', 'is_visible', )
+    list_display = ('text', 'region_list', 'location_list', 'is_visible',)
+    filter_horizontal = ('target_location', 'region')
 
 admin.site.register(Notification, NotificationAdmin)
 

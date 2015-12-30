@@ -185,6 +185,8 @@ class WPPLeads(models.Model):
     stage_url = models.CharField(max_length=255, null=True)
     stage_password = models.CharField(max_length=255, null=True)
     is_ab_test = models.CharField(max_length=255, null=True, default='YES')
+    is_nominated = models.BooleanField(default=False)
+    ref_uuid = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "WPP Leads"
@@ -628,6 +630,7 @@ class PicassoLeads(models.Model):
     pod_name = models.CharField(max_length=50)
     treatment_type = models.CharField(max_length=100, blank=True, null=True)
     is_build_eligible = models.BooleanField(default=False)
+    ref_uuid = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"
