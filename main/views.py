@@ -1796,3 +1796,9 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+
+# Meeting page template rendering view
+def meeting_minutes(request):
+    return render(request, 'main/meeting_minutes.html', {})
+
