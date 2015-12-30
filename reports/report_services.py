@@ -710,10 +710,11 @@ class ReportService(object):
 
     @staticmethod
     def get_unmapped_survey(selected_filters, report_type, start_date, end_date):
+        key_response = {0: 'No Response', 1: 'Extremely satisfied', 2: 'Moderately satisfied', 3: 'Slightly satisfied', 4: 'Neither satisfied nor dissatisfied', 5: 'Slightly dissatisfied', 6: 'Moderately dissatisfied', 7: 'Extremely dissatisfied'}
+        csat_initial_dict = {'No Response': 0, 'No Response in pcg': 0, 'Extremely satisfied in pcg': 0, 'Extremely satisfied': 0, 'Moderately satisfied in pcg': 0, 'Moderately satisfied': 0, 'Slightly satisfied in pcg': 0, 'Slightly satisfied': 0, 'Neither satisfied nor dissatisfied in pcg': 0, 'Neither satisfied nor dissatisfied': 0, 'Slightly dissatisfied in pcg': 0, 'Slightly dissatisfied': 0, 'Wins in pcg': 0, 'Moderately dissatisfied in pcg': 0, 'Moderately dissatisfied': 0, 'Extremely dissatisfied in pcg': 0, 'Extremely dissatisfied': 0, 'Grand Total': 0}
         csat_query = dict()
         csat_query['survey_date__gte'] = start_date
         csat_query['survey_date__lte'] = end_date
-
         if 'survey_channel_phone' in selected_filters:
             csat_query['channel__in'] = ['PHONE']
         if 'survey_channel_email' in selected_filters:
@@ -721,8 +722,21 @@ class ReportService(object):
         if 'survey_channel_combined' in selected_filters:
             csat_query['channel__in'] = ['EMAIL', 'PHONE']
 
-        unmapped_count = CSATReport.objects.exclude(category='MAPPED').filter(**csat_query).count()
-        return unmapped_count
+        csat_unmapped_count = CSATReport.objects.exclude(category='MAPPED')
+        csat_unmapped_count = csat_unmapped_count.filter(**csat_query).values('q1', 'category').annotate(dcount=Count('category'))
+        
+        for csat_dict in csat_unmapped_count:
+            for key, value in csat_initial_dict.iteritems():
+                if key == key_response[csat_dict['q1']]:
+                    csat_initial_dict[key] = csat_dict.get('dcount')
+                if key == 'Grand Total':
+                    csat_initial_dict[key] += csat_dict.get('dcount')
+
+        for csat_dict in csat_unmapped_count:          
+            for key, value in csat_initial_dict.iteritems():
+                if key == '%s in pcg' % (key_response[csat_dict['q1']]):
+                    csat_initial_dict[key] = ReportService.get_percentage_value(csat_dict['dcount'], csat_initial_dict['Grand Total'])
+        return csat_initial_dict
 
     @staticmethod
     def get_csat_report(selected_filters, report_type, start_date, end_date):
@@ -751,7 +765,7 @@ class ReportService(object):
                 csat_filter_query['channel__in'] = ['EMAIL']
             if 'survey_channel_combined' in selected_filters:
                 csat_query['channel__in'] = ['EMAIL', 'PHONE']
-                csat_filter_query['channel__in'] = ['BOTH']
+                csat_filter_query['channel__in'] = ['EMAIL', 'PHONE', 'BOTH']
 
             if 'process_tag' in selected_filters:
                 csat_query['process__in'] = ['TAG']
@@ -761,7 +775,7 @@ class ReportService(object):
                 csat_filter_query['process__in'] = ['SHOPPING']
             if 'process_combined' in selected_filters:
                 csat_query['process__in'] = ['TAG', 'SHOPPING']
-                csat_filter_query['process__in'] = ['BOTH']
+                csat_filter_query['process__in'] = ['TAG', 'SHOPPING', 'BOTH']
 
             if 'language_english' in selected_filters:
                 csat_filter_query['language_category__in'] = ['English']
@@ -769,7 +783,7 @@ class ReportService(object):
             if 'language_non_english' in selected_filters:
                 csat_filter_query['language_category__in'] = ['Non English']
             if 'language_combined' in selected_filters:
-                csat_filter_query['language_category__in'] = ['BOTH']
+                csat_filter_query['language_category__in'] = ['English', 'Non English', 'BOTH']
             #     csat_query = csat_query
 
             if 'tag_location_bangalore' in selected_filters:
@@ -931,6 +945,27 @@ class ReportService(object):
                         report['Lead Owner'] = value
                     elif report['Lead Owner'] == '':
                         report['Lead Owner'] = 'Others'
+        elif report_type == 'Language':
+            query = dict()
+            languages = list(Leads.objects.exclude(language=None).filter(**query).values_list('language', flat=True).distinct().order_by('language'))
+            query['created_date__gte'] = start_date
+            query['created_date__lte'] = end_date
+            languages.append('')
+            query['language__in'] = languages
+            report_type = 'language'
+
+            total_leads_dict, total_leads_count, implemented_leads_dict, implemented_leads_count = ReportService.get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type)
+
+            csat_query_tagteam_location, lead_owner_name = ReportService.get_csat_query_for_tagteam_location(selected_filters)
+            if 'tag_location_palo_alto' in selected_filters:
+                csat_query['lead_owner_name__in'] = csat_query_tagteam_location
+
+            csat_query['language__in'] = languages
+
+            region_csat_type = 'language'
+            region_csat = ReportService.get_region_csat_for_language(selected_filters, region_csat_type, lead_owner_name, csat_query)
+            details = {'report_type': 'Language', 'total_leads_count': total_leads_count, 'implemented_leads_count': implemented_leads_count, 'lead_attribute': 'language', 'csat_attribute': 'language'}
+            report_data = ReportService.get_report_record_from_values_dict(total_leads_dict, implemented_leads_dict, region_csat, languages, details)
         return report_data
 
     @staticmethod
@@ -1092,10 +1127,10 @@ class ReportService(object):
     @staticmethod
     def get_csat_query_for_tagteam_location(selected_filters):
         if 'tag_location_palo_alto' in selected_filters:
-            csat_query = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+            csat_query = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado', 'Norio Miyago', 'Oliver Hayen']
             lead_owner_name = []
         elif 'tag_location_bangalore' in selected_filters:
-            lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado']
+            lead_owner_name = ['Tom Du', 'Tadashi Soga', 'Yukie Hirano', 'Aurora Baldessin', 'Janno Martens', 'Carolina Burak', 'Arnulfo Maldonado', 'Norio Miyago', 'Oliver Hayen']
             csat_query = []
         else:
             lead_owner_name = []
