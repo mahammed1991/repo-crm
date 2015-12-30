@@ -255,6 +255,7 @@ def main_home(request):
                                                        'wpp_treatment_type_report': wpp_treatment_type_report})
 
 
+
 def get_feedbacks(user, feedback_type):
     """ List Feedbacks by user """
 
@@ -1119,6 +1120,7 @@ def notify_portal_feedback_activity(request, feedback):
     bcc = set([])
 
     mail_to = set([
+        'dkarthik@regalix-inc.com',
         'tkhan@regalix.com',
         'ram@regalix-inc.com',
         'rajuk@regalix-inc.com',
@@ -1587,6 +1589,7 @@ def find_leads(cid, process, survey_date):
 
 
 def get_survey_data_from_excel(workbook, sheet, survey_channel):
+    implemented_cids = Leads.objects.exclude(lead_sub_status='RR - Inactive').filter(lead_status__in=['Implemented', 'Pending QC - WIN', 'Rework Required']).values_list('customer_id', flat=True).distinct()
     for r_i in range(1, sheet.nrows):
         if survey_channel == 'Phone':
             str_cid = str(int(sheet.cell(r_i, get_col_index(sheet, 'CID')).value))
@@ -1617,10 +1620,67 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
         else:
             csat_record.channel = 'EMAIL'
             csat_record.cli = 0
+        csat_record.category = 'UNMAPPED'
+        csat_record.language = sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+
+        if cid in implemented_cids:
+
+            # survey date in ist and date_of_installation in pst but month and year will be the same
+            if process == 'TAG':
+                csat_lead = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(customer_id=cid, date_of_installation__month=survey_date.month, date_of_installation__year=survey_date.year)
+            elif process == 'SHOPPING':
+                csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__month=survey_date.month,
+                                                 date_of_installation__year=survey_date.year, type_1__in=['Google Shopping Setup', 'Google Shopping Migration'])
+
+            if csat_lead:
+                if len(csat_lead) == 1:
+                    csat_record.sf_lead_id = csat_lead[0].sf_lead_id
+                    csat_record.region = csat_lead[0].country
+                    csat_record.program = csat_lead[0].team
+                    csat_record.code_type = csat_lead[0].type_1
+                    csat_record.lead_owner = csat_lead[0].lead_owner_email
+                    csat_record.mapped_lead_created_date = csat_lead[0].created_date
+                    csat_record.lead_owner_name = csat_lead[0].lead_owner_name
+                    csat_record.lead_owner_email = csat_lead[0].lead_owner_email
+                    csat_record.language = csat_lead[0].language if csat_lead[0].language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+                    csat_record.category = 'MAPPED'
+                else:
+                    csat_record.sf_lead_id = csat_lead[0].sf_lead_id
+                    csat_record.region = csat_lead[0].country
+                    csat_record.program = csat_lead[0].team
+                    csat_record.code_type = csat_lead[0].type_1
+                    csat_record.lead_owner = csat_lead[0].lead_owner_email
+                    csat_record.mapped_lead_created_date = csat_lead[0].created_date
+                    csat_record.lead_owner_name = csat_lead[0].lead_owner_name
+                    csat_record.lead_owner_email = csat_lead[0].lead_owner_email
+                    csat_record.language = csat_lead[0].language if csat_lead[0].language else sheet.cell(r_i, get_col_index(sheet, 'Language')).value
+                    csat_record.category = 'MAPPED'
+                    # csat_lead should be one but here is mutiple
+                    # csat_record.category = 'UNMAPPED'
+                    # survey_prev_date = survey_date - datetime.timedelta(1)
+                    # csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__gte=survey_prev_date, date_of_installation__lte=survey_date).order_by('-date_of_installation')
+
+                    # us_zone = Location.objects.filter(location_name__in=['United States', 'Canada'])
+
+                    # if csat_lead:
+                    #     # Lead's date of installation is in PST,comparing it with pst or pdt timezone to convert ist
+                    #     if csat_lead[0].date_of_installation >= us_zone[0].daylight_start and csat_lead[0].date_of_installation <= us_zone[0].daylight_end:
+                    #         tz = Timezone.objects.get(zone_name='PDT')
+                    #     else:
+                    #         tz = Timezone.objects.get(zone_name='PST')
+                    #     utc_date = SalesforceApi.get_utc_date(csat_lead[0].date_of_installation, tz.time_value)
+                    #     ist_tz = Timezone.objects.get(zone_name='IST')
+                    #     date_of_installation_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, ist_tz.time_value)
+                    # else:
+                    #     csat_record.sf_lead_id = ''
+                    #     csat_record.category = 'UNMAPPED'
+
         csat_record.customer_id = cid
         csat_record.survey_date = survey_date
         csat_record.process = process
         csat_record.q1 = int(sheet.cell(r_i, get_col_index(sheet, 'Q1')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q1')).value else 0
+        if csat_record.q1 == 0:
+            csat_record.category = 'UNMAPPED'
         csat_record.q2 = int(sheet.cell(r_i, get_col_index(sheet, 'Q2')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q2')).value else 0
         csat_record.q3 = int(sheet.cell(r_i, get_col_index(sheet, 'Q3')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q3')).value else 0
         csat_record.q4 = int(sheet.cell(r_i, get_col_index(sheet, 'Q4')).value) if sheet.cell(r_i, get_col_index(sheet, 'Q4')).value else 0
@@ -1796,3 +1856,8 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+
+# Meeting page template rendering view
+def meeting_minutes(request):
+    return render(request, 'main/meeting_minutes.html', {})
