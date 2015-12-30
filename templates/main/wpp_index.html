@@ -1,0 +1,488 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+Regalix Google Portal
+{% endblock title %}
+
+  {% load static %}
+  
+{% block content %}
+
+
+<!-- content-region -->
+  <section class="content-region">
+    <section class="home-banner">
+      <div class="banner-content">
+
+        <!-- <div id="tab1" style="display: block;"></div> -->
+          <div class="wrap">
+                <ul class="bxslider">
+                  <li class="leads" id="tag_leads">
+                    <!-- Starts WPP leads section  -->
+                    <div class="slide-wrap" id="wpp_status">
+                    <div style="padding-top: 20px;"> &nbsp</div>
+                        <div class="btn-group">
+                            <button class="btn std-btn submit-lead" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>SUBMIT WEBSITE OPTIMIZATION REQUEST</button>
+                            <button class="btn std-btn lead-status" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"' >Check the Status of Your WPP Leads</button>
+                        </div>
+
+                        <div class="wpp_leads-summary" style=" margin-top: 45px;">
+                            <h2 class="sub-title">Your Leads Summary</h2>
+                            <div class="row" style="max-width: 670px;">
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.open}}</span> Open
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.on_hold}}</span> On Hold
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_ui_ux_review}}</span> In UI/UX Review
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_mockup}}</span> In Mockup
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.mockup_review}}</span> Mockup Review
+                                </div>                        
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_development}}</span> In Development
+                                </div>
+                            </div>
+                            <div class="row" style=" margin-top: 15px;">
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_statge}}</span> In Stage
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_stage_adv_impl}}</span> In Stage - Adv Implementation
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.in_ab_test}}</span> In A/B Test
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.implemented}}</span> Implemented
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.deferred}}</span> Deferred
+                                </div>
+                                <div class="summary-breakup">
+                                    <span>{{wpp_lead_dict.total}}</span> Total
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End WPP leads section  -->
+                  </li>
+                  <li class="reports">
+                  <!--  Starts WPP Reports section -->
+                    <div class="slide-wrap" id="wpp_reports">
+                        <h1>{{title}}</h1>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="chart first-chart">
+                                  <canvas id="totalWPPLeads" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="totalWPPWin">45%</span></div>
+                                </div>
+                                <span>Total Website Optimization Leads</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="FullDesktopMobile" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="FullDesktopMobileWin">45%</span></div>
+                                </div>
+                                <span>Full Desktop/Mobile</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="LandingPage" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="LandingPageWin">65%</span></div>
+                                </div>
+                                <span>Landing Page</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="chart">
+                                  <canvas id="Mobile-only" class="reports-canvas" width="90" height="90"></canvas>
+                                  <div class="report-chart-lbl">Win<span id="Mobile-onlyWin">65%</span></div>
+                                </div>
+                                <span>Mobile-only</span>
+                            </div>
+                        </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'reports.views.wpp_reports' %}"'>View all reports</button>   
+                    </div>             
+                    <!-- End WPP Reports section -->
+                  </li>
+                  <li class="feedback">
+                    <div class="slide-wrap" id="wpp_feedback">
+                        <h1>Website Optimization Feedback Summary</h1>             
+                           <div class="row">
+                                <div class="col-md-3">
+                                    <div class="fdk-status resolved">{{wpp_feedback_list.resolved}}</div>
+                                    <span>Resolved</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status inpro">{{wpp_feedback_list.in_progress}}</div>
+                                    <span>In Progress</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status new">{{wpp_feedback_list.new}}</div>
+                                    <span>New</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status total">{{wpp_feedback_list.total}}</div>
+                                    <span>Total</span>
+                                </div>
+                            </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback_wpp' %}"'>Feedback Status</button>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}?type=WPP"'>Add a Feedback</button>   
+                    </div>             
+                  </li>
+                </ul>
+            <div id="bx-pager">
+              <a data-slide-index="0" href=""><span></span><i class="fa fa-code"></i>Leads</a>
+              <a data-slide-index="1" href=""><span></span><i class="fa fa-file-text"></i>Reports</a>
+              <a data-slide-index="2" href=""><span></span><i class="fa fa-quote-left"></i>Feedback</a>
+            </div>
+          </div>
+        </div>
+    </section>
+    <section class="notifications">
+      <div class="slick-slider container-fluid trans" id="marquee_notofication">
+          <div>&nbsp;</div>
+      </div>
+      <!-- <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal" style=" <i>!important; padding-right:2%; text-align:center;margin-top:4%;" onclick='hideOlark();'><i>Report a bug</i></a> -->
+    </section>
+
+
+    <section class="performers testimonials">
+{% if not no_leads %}
+      <div class="container-fluid">
+          <h2>TOP LEAD SUBMITTERS</h2>
+            <div class="row" id="wpp_toppers">
+              {% if wpp_top_performer.quarterly %}
+                <div class="slick-slider col-md-4">
+                   {% for quarter_topper in wpp_top_performer.quarterly %}
+                      <div class="performer">
+                            <h3>Last Quarter</h3>
+                            <img src="{% static quarter_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{quarter_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{quarter_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if wpp_top_performer.monthly %}
+                <div class="slick-slider col-md-4">
+                   {% for month_topper in wpp_top_performer.monthly %}
+                      <div class="performer">
+                            <h3>Last Month</h3>
+                            <img src="{% static month_topper.image_url %}" />
+                            <div class="performer-info">
+                              <span>{{month_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{month_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+
+              {% if wpp_top_performer.weekly %}
+                <div class="slick-slider col-md-4">
+                   {% for week_topper in wpp_top_performer.weekly %}
+                      <div class="performer">
+                            <h3>Last Week</h3>
+                            <img src="{% static week_topper.image_url %}"/>
+                            <div class="performer-info">
+                              <span>{{week_topper.google_rep_name}}</span>
+                                Sales Manager<br>{{week_topper.location}}
+                            </div>
+                        </div>
+                    {% endfor %}                 
+                </div>
+              {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    </section>
+  </section>
+  <!-- content-region ends --> 
+{% endblock content %}
+{% block model_popup %}
+  <!-- feedback modal -->
+        <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showOlark()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Portal Feedback</h4>
+              </div>
+              <div class="modal-body" id="feedback-body">
+                <form onsubmit='return portalFeedbackValidation(this);' action="{% url 'main.views.create_portal_feedback' %}" method='POST' enctype="multipart/form-data" id="portalFeedback">
+                    {% csrf_token %}
+                   <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                     <select class="form-control" id="feedbackType" name="type">
+                        <option value="Feedback Type">Feedback Type</option>
+                        <option value="UI / Design Related"> UI / Design Related</option>
+                        <option value="UX / Experience Related">UX / Experience Related</option>
+                        <option value="Incorrect Data / Information">Incorrect Data / Information</option>
+                    </select>
+                    <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
+                    
+                      <!--<input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" /> 
+                      <div style="padding-left: 21%;">
+                        <input type="file" id="attachmentfile" style="display:none" name="attachmentfile">
+                        <a href="#"><img src="{% static 'images/browse.png' %}" w id="img1" style="padding-left: 9%;width: 65%;margin: auto;" /></a>
+                      </div>
+                      -->
+                      <div style="width:100%;">  
+                      <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%;"/> 
+                      <input type="file" id="attachmentfile" name="attachmentfile" style="display: none" onChange="Handlechange();" />
+                      <input type="text" id="filename" readonly="true" style="width:58%;" />
+                      
+
+                      </div>                     
+                                          
+                    <!-- <i class="fa fa-paperclip" name="attachmentfile"></i> -->
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+
+                  <div class="btn-group">
+                      <button class="btn std-btn" id='SubmitFeedback' style="border-radius:2px;">Submit</button>
+                  </div>
+                </div>
+               </form>
+            </div>
+          </div>
+        </div>
+        <!-- feedback modal ends -->
+      
+  {% endblock model_popup %}
+{% block main_js %}
+<script src="{% static 'js/jquery.classyloader.js' %}"></script>
+<script>
+$(document).ready(function() {
+
+  wpp_treatment_type_report = {{wpp_treatment_type_report|safe}}
+
+  $("#totalWPPWin").text(parseInt(wpp_treatment_type_report['TOTAL']) + "%");
+  $("#FullDesktopMobileWin").text(parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']) + "%");
+  $("#LandingPageWin").text(parseInt(wpp_treatment_type_report['LandingPageOptimization']) + "%");
+  $("#Mobile-onlyWin").text(parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']) + "%");
+
+  $("#owl-demo").owlCarousel({
+    autoPlay : true,
+    stopOnHover : true,
+    navigation:true,
+    paginationSpeed : 500,
+    goToFirstSpeed : 1000,
+    singleItem : true,
+    autoHeight : true,
+    transitionStyle:"fade"
+  });
+      
+  // banner slider
+  $('.bxslider').bxSlider({
+    pagerCustom: '#bx-pager'
+  });
+
+  $('.slick-slider').slick({
+      dots: false,
+      infinite: true,
+      speed: 500,
+      fade: true,
+      slide: 'div',
+      cssEase: 'linear',
+      autoplay:true,
+      autoplaySpeed:5000,
+      adaptiveHeight:true
+    });
+  $(window).trigger('resize');
+
+});
+
+function include(arr,obj) {
+  return (arr.indexOf(obj) != -1);
+}
+
+function showOlark(){
+  olark('api.box.show');
+}
+
+function hideOlark(){
+  olark('api.box.hide');
+}
+
+$(window).on('resize',function() {
+   // do whatever
+    if ($(window).width() < 768 ) {
+      // alert(screen.width)
+
+          $('#totalWPPLeads').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['TOTAL']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#FullDesktopMobile').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(20,195,111)',
+            percentage : parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#LandingPage').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(255,187,0)',
+            percentage : parseInt(wpp_treatment_type_report['LandingPageOptimization']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#Mobile-only').ClassyLoader({
+            width: 90,
+            height: 90 ,
+            diameter : 40,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
+            lineWidth : 5,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+
+    }else{
+
+      $('#totalWPPLeads').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['TOTAL']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#FullDesktopMobile').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(20,195,111)',
+            percentage : parseInt(wpp_treatment_type_report['FullDesktop/MobileOptimization']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#LandingPage').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(255,187,0)',
+            percentage : parseInt(wpp_treatment_type_report['LandingPageOptimization']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+          $('#Mobile-only').ClassyLoader({
+            diameter : 49,
+            lineColor : 'rgb(70,138,255)',
+            percentage : parseInt(wpp_treatment_type_report['Mobile-onlyOptimization']),
+            lineWidth : 6,
+            animate: false,
+            remainingLineColor : 'rgba(0,0,0,0.15)'    
+          });
+
+    }
+
+
+});
+
+
+</script>
+
+<script type="text/javascript">
+  
+  /* feed back submit through leads status page start here */
+
+
+function portalFeedbackValidation(frm){
+    $(".error-box").removeClass('error-box');
+    var feedbackType = $('#feedbackType').val();
+    var comments = $('#comments').val();
+   if(feedbackType === 'Feedback Type'){
+      $('#feedbackType').addClass('error-box');
+      return false;
+    }else if(comments === ''){
+      $('#comments').addClass('error-box');
+      return false;
+    }else{
+      alert('Portal feedback created')
+      return true;
+      
+      // attachmentfile = $('#attachmentfile').val()
+      // dataString = {'type': feedbackType, 'comment': comments, 'attachmentfile': attachmentfile}
+      // $.ajax({
+      //     url: "/main/portal/feedback",
+      //     data: dataString,
+      //     type: 'GET',
+      //     dataType: "json",
+      //     success: function(data) {
+      //       console.log(data)
+      //       if(data === 'SUCCESS'){
+      //         alert('feedback succesfully created ')
+      //         $('.close').trigger('click');
+      //         $('#feedbackTitle').val('');
+      //         $('#feedbackType').prop('selectedIndex', 0);
+      //         $('#comments').val('');
+      //         $('#attachmentfile').val('')
+      //       }
+      //     }
+      //   }); 
+    }
+    
+    }
+
+$(".fa-times-circle").click(function(){
+    $('#feedbackTitle').val('');
+    $('#feedbackType').prop('selectedIndex', 0);
+    $('#comments').val('');
+    $('#filename').val('');
+    $('.close').trigger('click');
+});
+
+
+$('.close').click(function(){
+  $('#feedbackModal').hide()
+  $('#feedbackTitle').val('');
+  $('#feedbackType').prop('selectedIndex', 0);
+  $('#comments').val('');
+  input = $('#attachmentfile');
+  input.replaceWith(input.val('').clone(true))
+})
+
+/* feed back submit through leads status page end  here */
+</script>
+<script>
+function HandleBrowseClick()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    fileinput.click();
+}
+
+function Handlechange()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+}
+
+$('#wpp_status, #wpp_reports, #wpp_feedback, #wpp_toppers').show();
+
+</script>
+{% endblock main_js %}
