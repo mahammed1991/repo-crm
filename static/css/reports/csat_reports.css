@@ -92,7 +92,7 @@ padding:0px;
 }
 .msc14{
     margin-right: 3%;
-       color: #000;
+    color: #000;
     font-weight: 500;
 }
 .msc15{
@@ -135,38 +135,48 @@ cursor:pointer;
     font-size: 11px;
     padding: 3px;
 }
-.msc20,msc21{
+.msc20,.msc21{
 width:100%;
 }
+
 .msc21{
 border-top:1px solid #ddd;
 }
+
 .msc22{
     padding: 0px !important;
 }
+
 .msc23{
     background: #eee;
 }
+
 .msc24{
 background:transparent !important;
 }
+
 .ms_none{
 display:none;
 }
+
 .mcico{margin-right:10px;display:none;}
+
 .colco {
-   
     color: #fff;
 }
+
 .mm1 .dropdown-menu>li>a {
     padding: 5px 15px;
     color: #474747;
 }
+
 .mm1 a:hover{color:#fff !important;}
+
 .mm2 .dropdown-menu>li>a {
     padding:9.7px 15px;
     color: #474747;
 }
+
 .mm2 a:hover{color:#fff !important;}
 
 
@@ -174,9 +184,7 @@ display:none;
     padding:9.7px 15px;
     color: #474747;
     display: block;
-
 }
-
 
 .mm2  .msdropa {
   padding: 7px 15px;
@@ -207,7 +215,7 @@ display:none;
    width: 18px;
   height: 17px;
   left: 19px;
-  top: 79px;
+  top: 59px;
   position: relative;
   border: 1px solid #A9A9A9;
 }
@@ -215,23 +223,83 @@ display:none;
      width: 18px;
   height: 17px;
   left: 140px;
-  top: 42px;
+  top: 22px;
   position: relative;
   border: 1px solid #A9A9A9;
 }
 #displayclass1{
       position: relative;
   left: -412px;
-  top: 97px;
+  top: 78px;
 }
 #displayclass2{
     position: relative;
   left: -292px;
-  top: 60px;
+  top: 41px;
 }
 
-.nav-head {
-  position: relative;
-  top: 583px;
+.data1{min-width: 245px !important;
+       max-width: 245px !important;
+}
+.data2{min-width: 55px !important;
+       max-width: 55px !important;
+}
+.data3{min-width: 65px !important;
+       max-width: 65px !important;
+}
+.data4{min-width: 62px !important;
+       max-width: 62px !important;
+}
+.data5{min-width: 57px !important;
+       max-width: 57px !important;
+}
+.data6{min-width: 57px !important;
+       max-width: 57px !important;
+}
+.data7{min-width: 58px !important;
+       max-width: 58px !important;
+}
+.data8{min-width: 45px !important;
+       max-width: 45px !important;
+}
+.data9{min-width: 45px !important;
+       max-width: 45px !important;
+}
+.data10{min-width: 45px !important;
+       max-width: 45px !important;
+}
+.data11{min-width: 52px !important;
+       max-width: 52px !important;
+}
+.data12{min-width: 38px !important;
+       max-width: 38px !important;
+}
+.data13{min-width: 45px !important;
+       max-width: 45px !important;
+}
+.data14{min-width: 45px !important;
+       max-width: 45px !important;
+}
+.data15{min-width: 52px !important;
+       max-width: 52px !important;
+}
+th.tooltip {outline:none; }
+th.tooltip strong {line-height:30px;}
+th.tooltip:hover {text-decoration:none;} 
+th.tooltip span {
+    z-index:10;display:none; padding:14px 20px;
+    margin-top:-30px; margin-left:28px;
+    width:300px; line-height:16px;
+}
+th.tooltip:hover span{
+    display:inline; position:absolute; color:#111;
+    border:1px solid #DCA; background:#fffAF0;}
+.callout {z-index:20;position:absolute;top:30px;border:0;left:-12px;}
+    
+/*CSS3 extras*/
+th.tooltip span
+{
+    border-radius:4px;
+    box-shadow: 5px 5px 8px #CCC;
 }
 
