@@ -1726,7 +1726,6 @@ def picasso_home(request):
 @login_required
 def export_feedback(request):
     if request.method == 'POST':
-        import ipdb;ipdb.set_trace()
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
         from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
