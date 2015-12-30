@@ -26,4 +26,6 @@ urlpatterns = patterns(
     url(r'^reports-new$', views.reports_new),
     url(r'^get_selected_new_reports$', views.get_selected_new_reports),
     url(r'^get_selected_view_type$', views.get_selected_report_view),
+    # Meeting page URL
+    url(r'^meeting-minutes/$', views.meeting_minutes),
 )

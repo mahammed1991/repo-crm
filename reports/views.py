@@ -1142,3 +1142,8 @@ def download_picasso_report(request):
     DownloadLeads.conver_to_csv(path, leads, selected_fields)
     response = DownloadLeads.get_downloaded_file_response(path)
     return response
+
+
+# Meeting page template rendering view
+def meeting_minutes(request):
+    return render(request, 'reports/meeting_minutes.html', {})
