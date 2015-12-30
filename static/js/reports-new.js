@@ -39,6 +39,13 @@ $(document).ready(function() {
  //        }
  //    });
  //  });
+$('#filter_team').change(function(){
+  $('#get_report').show();
+});
+
+$('#filter_country').change(function(){
+  $('#get_report').show();
+});
 
 $('#program_split').change(function(){
   $('#get_report').show();

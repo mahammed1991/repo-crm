@@ -9,6 +9,12 @@ CSAT Reports
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/reports/csat_reports.css' %}">
 <link href="{% static 'css/reports/jquery.comiseo.daterangepicker.css' %}" rel="stylesheet">
+<style type="text/css">
+  
+  .table > tbody > tr > td{
+    padding: 0px !important;
+  }
+</style>
 {% endblock main_css %}
 
 {% block content %}
@@ -124,7 +130,7 @@ CSAT Reports
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Region</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Program</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Location</a></li>
-                <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Language</a></li> -->
+                <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Language</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Task Type</a></li>
                 <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Lead Owner</a></li>
                 <!-- <li><a href="#" class="msdropa"><span class="glyphicon glyphicon-ok mcico"></span>Platform</a></li> -->
@@ -171,7 +177,7 @@ CSAT Reports
     </div>
     
     <div class="row msc17" >
-                    <div class="input-color" id="displaycolor" style='display:none;'>
+                    <div class="input-color" id="displaycolor" style='display:none;height: 36px;'>
                       <div id="displayclass1">Current Data</div>
                       <div id="color-box1" style="background-color: #FFFFFF;"></div>
                       <div id="displayclass2">Previous Data</div>
@@ -190,7 +196,7 @@ CSAT Reports
             </div>
         </div>      
     </div>
-    
+
 
    <!--  <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
