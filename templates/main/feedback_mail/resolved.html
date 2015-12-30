@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Hi,</p>
+<p>The feedback - <b>{{ feedback.title }}</b> has been resolved by {{ user_info.get_full_name }}({{ user_info.email }}).</p>
+
+<a href="{{ feedback_url }}">Go To Feedback</a>
+<br /><br />
+<p>Thanks,</p>
+<p>{{signature}}</p>
+</body>
+</html>
