@@ -1595,3 +1595,8 @@ def picasso_home(request):
                                                                         'picasso_objective_total': picasso_objective_total,
                                                                         'picasso_top_performer': picasso_top_performer,
                                                                         'no_leads':check_lead_submitter_for_empty(picasso_top_performer)})
+
+
+# Meeting page template rendering view
+def meeting_minutes(request):
+    return render(request, 'main/meeting_minutes.html', {})
