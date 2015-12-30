@@ -178,7 +178,7 @@ def lead_form(request):
 @login_required
 @wpp_user_required
 @csrf_exempt
-def wpp_lead_form(request):
+def wpp_lead_form(request, ref_id=None):
 
     """
     Lead Submission to Salesforce
@@ -209,6 +209,8 @@ def wpp_lead_form(request):
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
                 wpp_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
+            elif key == 'unique_ref_id':
+                wpp_data[value] = get_unique_uuid('Wpp')
             else:
                 wpp_data[value] = request.POST.get(key)
         submit_lead_to_sfdc(sf_api_url, wpp_data)
@@ -221,6 +223,13 @@ def wpp_lead_form(request):
     lead_args = get_basic_lead_data(request)
     lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
+    if ref_id:
+        try:
+            ref_lead = WPPLeads.objects.get(ref_uuid=ref_id)
+            lead_args['ref_lead'] = ref_lead
+            lead_args['focus_out'] = "Disable"
+        except:
+            return redirect('leads.views.wpp_lead_form')
 
     wpp_locations = list()
     for loc in lead_args['locations']:
@@ -274,8 +283,8 @@ def picasso_lead_form(request):
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
                 picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
-            elif key == 'picasso_ref_id':
-                picasso_data[value] = get_unique_uuid()
+            elif key == 'unique_ref_id':
+                picasso_data[value] = get_unique_uuid('Picasso')
             else:
                 picasso_data[value] = request.POST.get(key)
 
@@ -1420,7 +1429,7 @@ def thankyou(request):
     elif str(lead_category) == '6':
         template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com'})
     elif str(lead_category) == '8':
-        template_args.update({'lead_type': 'WPP Nomination Request'})
+        template_args.update({'lead_type': 'WPP Nomination Request', 'nomination': True,})
     else:
         template_args.update({'lead_type': 'Implementation'})
 
