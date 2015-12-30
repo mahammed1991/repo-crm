@@ -13,6 +13,7 @@ from django.db.models import Q
 from reports.models import Region, CallLogAccountManager
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count
 import re
 
 
@@ -49,6 +50,192 @@ def reports(request):
                     'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
     return render(request, 'reports/reports.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
                                                     'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
+
+
+@login_required
+@tag_user_required
+def reports_new(request):
+    """ New Report """
+    report_type = 'default_report'
+    report_timeline = ['this_quarter']
+    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        team_members = get_user_under_manager(request.user.email)
+
+    locations = ReportService.get_all_locations()
+    teams = ReportService.get_all_teams()
+    rgx_teams = Region.objects.all()
+    if '' in teams:
+        teams.remove('')
+        teams.append('Other')
+    code_types = ReportService.get_all_code_type()
+    code_types = [str(codes.encode('utf-8')) for codes in code_types]
+    report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, locations, start_date, end_date, list())
+    if len(report_timeline) > 1:
+        tag = "Week On Week Trends"
+    else:
+        if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+            tag = "Week On Week Trends"
+        elif str(report_timeline[0]) == 'this_quarter':
+            tag = "Month On Month Trends"
+    report_details = {'reports': report_detail, 'code_types': code_types,
+                    'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
+    return render(request, 'reports/reports_new.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
+                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
+
+
+@login_required
+def get_selected_new_reports(request):
+    """ New Report Details
+    """
+    report_detail = dict()
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        region = request.GET.get('region')
+        countries = request.GET.getlist('countries[]')
+        teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
+        ldap_id = request.GET.get('ldap_id', None)
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+
+
+        report_details = dict()
+        emails = list()
+        if report_type == 'leadreport_individualRep':
+            if ldap_id:
+                email = User.objects.select_related('email').get(pk=ldap_id)
+                emails = [email]
+            else:
+                emails = request.user.email
+                emails = [email]
+            
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        if report_type == 'leadreport_teamLead':
+            emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            emails.append(emails)
+            
+        teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
+
+        lead_ids = leads
+        # if '' in teams:
+        #     teams.remove('')
+        report_split_detail = dict()
+        # if report_type == 'default_report':
+        #     report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
+        if report_type == 'leadreport_individualRep':
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            team_emails.append(emails)
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+        elif report_type == 'leadreport_programview':
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+            if program_split:
+                report_split_detail['program_report'] = ReportService.get_program_report_by_locations(teams, countries, code_types)
+        elif report_type == 'leadreport_regionview':
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+            if location_split:
+                report_split_detail['region_report'] = ReportService.get_region_report_by_program(countries, teams, code_types)
+        else:
+            pass
+
+        report_details = {'reports': report_detail, 'report_type': report_type, 'report_timeline': report_timeline,
+                          'region': region, 'report_split_detail': report_split_detail}
+
+        return HttpResponse(json.dumps(report_details))
+
+
+def get_selected_report_view(request):
+    report_detail = dict()
+    if request.is_ajax:
+        report_view_type = request.GET.get('report_view_type')
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        region = request.GET.get('region')
+        countries = request.GET.getlist('countries[]')
+        teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
+        ldap_id = request.GET.get('ldap_id', None)
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+
+        
+        report_details = dict()
+        emails = list()
+        if report_type == 'leadreport_individualRep':
+            if ldap_id:
+                email = User.objects.select_related('email').get(pk=ldap_id)
+                emails = [email]
+            else:
+                email = request.user.email
+                emails = [email]
+
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        if report_type == 'leadreport_teamLead':
+            emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            emails.append(emails)
+            
+        teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
+
+        lead_ids = leads
+        report_split_detail= dict()
+        lead_status_summary = list()
+        lead_status_analysis_table_grp = list()
+        pie_chart_dict = dict()
+        timeline_chart_details = list()
+
+        if location_split:
+            report_split_detail['region_report'] = ReportService.get_region_report_by_program(countries, teams, code_types)
+
+        if program_split:
+            report_split_detail['program_report'] = ReportService.get_program_report_by_locations(teams, countries, code_types)
+
+        if report_view_type == 'lead_summary_status':
+            lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
+        elif report_view_type == 'task_type_analysis':
+            for code_type in code_types:
+                lead_status_analysis_grp = {code_type: ''}  
+                leads_per_code_type_grp = Leads.objects.filter(type_1=code_type, id__in=lead_ids).values('lead_status').annotate(dcount=Count('lead_status'))
+                lead_status_analysis_grp[code_type] = ReportService.get_lead_status_analysis(leads_per_code_type_grp)
+                lead_status_analysis_table_grp.append(lead_status_analysis_grp)
+
+            for cod_typ in lead_status_analysis_table_grp:
+                key = cod_typ.keys()[0]
+                value = cod_typ[key]['Total']
+                pie_chart_dict[key] = value
+        elif report_view_type == 'week_on_week_trends':
+            timeline_chart_details = ReportService.get_timeline_chart_details(report_timeline, lead_ids, countries, teams, code_types, emails)
+        else:
+            pass
+
+        if len(report_timeline) > 1:
+            tag = "Week On Week Trends"
+        else:
+            if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+                tag = "Week On Week Trends"
+            elif str(report_timeline[0]) == 'this_quarter':
+                tag = "Month On Month Trends"
+
+        report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type, 
+                        'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
+                        'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
+                        'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
+        return HttpResponse(json.dumps(report_details))
 
 
 @login_required

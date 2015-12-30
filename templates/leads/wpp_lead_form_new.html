@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  PICASSO Build WPP Lead Form
+  WPP Lead Form
 {% endblock title %}
 {% block main_css %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
@@ -25,7 +25,7 @@
   border-bottom: 1px solid #ccc;
   padding-bottom: 12px;
   margin-top: 50px;
-  margin-bottom: 20px;">SUBMIT PICASSO BUILD REQUEST</h1>
+  margin-bottom: 20px;">Submit Website Optimization Request</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST" action="{% url 'leads.views.wpp_lead_form' %}">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=7" name="retURL">
@@ -39,7 +39,7 @@
     <input type="hidden" id="company" name="company" value="">
     <input type="hidden" id="fopt" name="fopt" value="">
     <input type="hidden" id="lopt" name="lopt" value="">
-    <input type="hidden" id="lead_type" name="lead_type" value="Picasso Build Request">
+    <input type="hidden" id="lead_type" name="lead_type" value="">
 
     <div class="row">
     <div  class="col-md-12">
@@ -48,7 +48,7 @@
       <div class="col-md-6">
         <label for="cid">External CID</label>
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Please enter the CID (xxx-xxx-xxxx)" {% if ref_lead.customer_id == "" or ref_lead.customer_id == "None" %} value="" {% else %} value="{{ ref_lead.customer_id }}" {% endif %}>
-          <label>Entering CID will retrieve any applicable Picasso audit submissions</label>
+          <label>Entering CID will retrieve any applicable Nomination submissions</label>
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
@@ -101,7 +101,7 @@
      
       <div class="col-md-6">
         <label for="picasso_pod">POD Name</label>
-        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if ref_lead.pod_name == "" or ref_lead.pod_name == "None" %} value="" {% else %} value="{{ ref_lead.pod_name }}" {% endif %}>
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if ref_lead.url_5 == "" or ref_lead.url_5 == "None" %} value="" {% else %} value="{{ ref_lead.url_5 }}" {% endif %}>
       </div>
       <div class="col-md-6">
                     <label for="picasso_objective">Objective</label></br>
@@ -224,13 +224,14 @@
 {% block main_js %}
 {% include 'leads/timezone.html' %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/picasso_build_lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/wpp_lead_form_new.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
   $(document).ready(function(){
 
-    window.objectives = "{{ref_lead.picasso_objective|safe}}";
+    window.objectives = "{{ref_lead.comment_5|safe}}";
     
+    var focusOut = "{{focus_out|safe}}";
 
     var team = "{{ref_lead.team|safe}}";
     $('#team').val(team);

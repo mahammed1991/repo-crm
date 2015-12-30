@@ -247,10 +247,19 @@ class Notification(models.Model):
     """ Notification information """
 
     text = models.TextField(blank=False)
+
+    region = models.ManyToManyField(Region, blank=True, null=True)
+    target_location = models.ManyToManyField(Location, blank=True, null=True)
     is_visible = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    def region_list(self):
+        return ", ".join(["%s" % (r.name) for r in self.region.all()])
+
+    def location_list(self):
+        return ", ".join(["%s" % (l.location_name) for l in self.target_location.all()])
 
     class Meta:
         db_table = 'notifications'

@@ -1,7 +1,8 @@
 from django.db import models
-from leads.models import Location, Team
+from leads.models import Location, Team, Language
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 
 class LeadSummaryReports(models.Model):
@@ -128,3 +129,27 @@ class CSATReport(models.Model):
 
     class Meta:
         verbose_name_plural = "CSAT Report"
+
+
+class CSATFilterDetails(models.Model):
+    """CSAT Filter details based on rep Details"""
+
+    user = models.OneToOneField(User, related_name='csat_user')
+    lead_owners = models.CharField(max_length=255, null=True)
+    channel = models.CharField(max_length=10, blank=False, choices=(
+        ('PHONE', 'PHONE'),
+        ('EMAIL', 'EMAIL'),
+        ('BOTH', 'BOTH')), default='PHONE')
+    language_category = models.CharField(max_length=11, blank=False, choices=(
+        ('English', 'English'),
+        ('Non English', 'Non English'),
+        ('BOTH', 'BOTH')), default='English')
+    tagteam_location = models.CharField(max_length=10, blank=False, choices=(
+        ('Bangalore', 'Bangalore'),
+        ('Palo Alto', 'Palo Alto')), default='Bangalore')
+    process = models.CharField(max_length=10, blank=False, choices=(
+        ('TAG', 'TAG'),
+        ('SHOPPING', 'SHOPPING'),
+        ('BOTH', 'BOTH')), default='TAG')
+    agent_language = models.ManyToManyField(Language)
+    survey_pin_number = models.CharField(max_length=100, default='')

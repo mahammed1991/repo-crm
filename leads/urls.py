@@ -43,7 +43,13 @@ urlpatterns = patterns(
     url(r'^picasso-lead-summary/$', views.get_picasso_lead_summary),
     # picasso build wpp form
     url(r'^picasso-build-form/$', views.picasso_build_wpp_form),
-    url(r'^get-eligible-picasso-lead/(?P<cid>[\w -]+)$', views.get_eligible_picasso_leads),
-    url(r'^get-eligible-picasso-lead-by-lid/(?P<lid>[\w]+)$', views.get_eligible_picasso_lead_by_lid), #searh_leads
+    url(r'^picasso-build-form/(?P<ref_id>[\w]+)$', views.picasso_build_wpp_form),
+    # url(r'^get-eligible-picasso-lead/(?P<cid>[\w -]+)$', views.get_eligible_picasso_leads),
+    # url(r'^get-eligible-picasso-lead-by-lid/(?P<lid>[\w]+)$', views.get_eligible_picasso_lead_by_lid),
+    url(r'^get-eligible-picasso-lead/$', views.get_eligible_picasso_leads),
+    url(r'^get-eligible-picasso-lead-by-lid/$', views.get_eligible_picasso_lead_by_lid),
     url(r'^searh-leads/$', views.searh_leads),
+    # Wpp Nominations Form
+    url(r'^wpp-nomination-form/$', views.wpp_nomination_form),
+    url(r'^wpp-lead-form/(?P<ref_id>[\w]+)$', views.wpp_lead_form),
 )
