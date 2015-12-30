@@ -697,10 +697,14 @@ def check_lead_submitter_for_empty(topper_dict):
     return no_leads
 
 
-def get_unique_uuid():
+def get_unique_uuid(lead_type):
     unique_rf_id = str(uuid.uuid4())[:13].replace('-', '')
     try:
-        PicassoLeads.objects.get(ref_uuid=unique_rf_id)
-        get_unique_uuid()
+        if lead_type == 'Picasso':
+            PicassoLeads.objects.get(ref_uuid=unique_rf_id)
+            get_unique_uuid('Picasso')
+        else:
+            WPPLeads.objects.get(ref_uuid=unique_rf_id)
+            get_unique_uuid('Wpp')
     except:
         return unique_rf_id

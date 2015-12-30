@@ -45,9 +45,18 @@
 <div id="content" class="clearfix">
     <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
         Thank you for submitting your {{lead_type}} lead..<br /><br />
+        {% if nomination %}
+        You will receive an email confirmation shortly with the eligibility status, proposed treatment type and approximate TAT.
+        <br /><br/>
+        {% else %}
         You will receive an email confirmation shortly with the complete lead details (based on the information you have provided).<br /><br />
+        {% endif %}
         If you need to correct or cancel this lead, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
-        To submit an additional lead, please <a href="{{ return_link }}"><b>click here.</b></a>
+        To submit an additional  {% if nomination %}
+        nomination
+        {% else %}
+        lead
+        {% endif %} , please <a href="{{ return_link }}"><b>click here.</b></a>
     </div>
 </div>
 {% endblock content %}

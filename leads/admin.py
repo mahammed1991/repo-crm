@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, PicassoLeads,
+from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, WPPLeads,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping, PicassoLeads)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
@@ -30,6 +30,33 @@ class LeadsAdmin(admin.ModelAdmin):
         return super(LeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(Leads, LeadsAdmin)
+
+
+class WPPLeadsAdmin(admin.ModelAdmin):
+    list_display = ('google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
+                    'company', 'lead_status', 'team', 'type_1',)
+
+    search_fields = ['customer_id', 'lead_owner_name']
+
+    list_filter = ('type_1', )
+
+    readonly_fields = ['google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
+                       'company', 'lead_status', 'team', 'type_1']
+
+    def get_readonly_fields(self, request, obj=None):
+        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
+
+    def has_add_permission(self, request):
+        return CustomAdmin.get_permission_status(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return CustomAdmin.get_permission_status(request)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = CustomAdmin.get_view_status(request, extra_context)
+        return super(WPPLeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+
+admin.site.register(WPPLeads, WPPLeadsAdmin)
 
 
 class TimezoneAdmin(admin.ModelAdmin):

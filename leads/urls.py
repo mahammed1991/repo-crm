@@ -51,4 +51,5 @@ urlpatterns = patterns(
     url(r'^searh-leads/$', views.searh_leads),
     # Wpp Nominations Form
     url(r'^wpp-nomination-form/$', views.wpp_nomination_form),
+    url(r'^wpp-lead-form/(?P<ref_id>[\w]+)$', views.wpp_lead_form),
 )
