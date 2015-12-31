@@ -258,6 +258,7 @@ $('input[name=cid]').on('focusout', function(){
 function multiple_leads(details){
     $('input:checkbox').parent().removeClass('is-checked')
     $('#team option[value=""]').attr('selected', 'selected');
+    $('#country option[value=""]').attr('selected', 'selected');
     $('#treatment_type option[value=""]').attr('selected', 'selected');
     $('#url').hide();
     $('#multipleUrls').show();
@@ -277,6 +278,7 @@ $('#multipleUrls').change(function(){
   $('input[type="checkbox"]').parent().removeClass('is-checked');
   $('input[type="checkbox"]').val('');
   $('#team option[value=""]').attr('selected', 'selected');
+  $('#country option[value=""]').attr('selected', 'selected');
   $('#treatment_type option[value=""]').attr('selected', 'selected');
   $('#url').hide();
   $('#url').val('');
@@ -311,6 +313,8 @@ $('#multipleUrls').change(function(){
 function populateLeadDetails(response){
     $('input[name=url1], input[id=url]').val(response.details.url);
     $('#team').val(response.details.team);
+    $('#country').val(response.details.country);
+    $("#country").trigger('change');
     $('#treatment_type').val(response.details.treatment_type);
     $('#picasso_pod').val(response.details.pod_name);
     for(i=0;i<=response.details.picasso_objectives.length;i++){
@@ -330,7 +334,9 @@ function clearLeadDetails(){
   //$('input[type=checkbox]').prop('checked', false);
   $('input:checkbox').parent().removeClass('is-checked')
   $('#team option[value=""]').attr('selected', 'selected');
+  $('#country option[value=""]').attr('selected', 'selected');
   $('#treatment_type option[value=""]').attr('selected', 'selected');
+  $("#country").trigger('change');
 }
 
 

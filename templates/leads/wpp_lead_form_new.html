@@ -39,7 +39,7 @@
     <input type="hidden" id="company" name="company" value="">
     <input type="hidden" id="fopt" name="fopt" value="">
     <input type="hidden" id="lopt" name="lopt" value="">
-    <input type="hidden" id="lead_type" name="lead_type" value="">
+    <input type="hidden" id="lead_type" name="lead_type"{% if ref_lead.sf_lead_id == "" or ref_lead.sf_lead_id == "None" %} value="" {% else %} value="{{ ref_lead.sf_lead_id }}" {% endif %}>
 
     <div class="row">
     <div  class="col-md-12">
@@ -235,6 +235,9 @@
 
     var team = "{{ref_lead.team|safe}}";
     $('#team').val(team);
+
+    var country = "{{ref_lead.country|safe}}";
+    $('#country').val(country);
 
     var treatmentType = "{{ref_lead.treatment_type|safe}}";
     $('#treatment_type').val(treatmentType);
