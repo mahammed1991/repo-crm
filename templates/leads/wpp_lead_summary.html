@@ -302,9 +302,14 @@ function setWppLeadSummary(lead_status){
           counter = '<tr class="status-impl impl searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
        sf_lead_id = leads[i].sf_lead_id
-       historyURL = "/leads/lead-history/" + sf_lead_id
+       if (leads[i].code_type == 'WPP'){
+          
+          historyURL = '<td><a href="/leads/lead-history/' + sf_lead_id + '" target="_blank">' + leads[i].cid + '</a></td>'
+       }else{
+          historyURL = '<td class="hidden-xs hidden-sm">' + leads[i].cid + '</td>'
+       }
        other =  '<td class="hidden-xs hidden-sm">' + leads[i].url + '</td>' +
-                '<td><a href="' + historyURL + '" target="_blank">' + leads[i].cid + '</a></td>'+
+                  historyURL + 
                 '<td class="hidden-xs hidden-sm">' + leads[i].google_rep + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].regalix_rep + '</td>'+
                 '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'+

@@ -13,7 +13,8 @@ from main.models import UserDetails
 from leads.models import Timezone, RegalixTeams, Location, TimezoneMapping, Leads, WPPLeads
 from representatives.models import (
     Availability,
-    ScheduleLog
+    ScheduleLog,
+    AvailabilityForTAT
 )
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
@@ -281,7 +282,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
             if today < location.daylight_start:
                 date_difference = location.daylight_start.date() - today.date()
                 if date_difference.days <= 15:
-                    daylight_marquee_msg += 'Daylight Saving starts on %s for %s::' %(location.daylight_start.strftime("%B %d, %Y"), location.location_name)
+                    daylight_marquee_msg += 'Daylight Saving starts on %s for %s::' % (location.daylight_start.strftime("%B %d, %Y"), location.location_name)
 
     diff = divmod((utc_date - plan_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
@@ -1363,46 +1364,87 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
             plan_month=plan_date.month,
             plan_day=plan_date.day,
             plan_year=plan_date.year,
-            # process_type=process_type,
-            # team_id=team_id
         )
 
-    plan_dates = OrderedDict()
+    if request.method == 'POST':
+        # time_zone = 'IST'
+        # selected_tzone = Timezone.objects.get(zone_name=time_zone)
+        for key, value in request.POST.items():
+            if key.startswith('input'):
+                data_in_a_day = int(request.POST.get(key) or 0)
+                keys = key.split('_')  # input_16_6_2014_0_0 / input_16_6_2014_0_30
+                slot_day = int(keys[1])
+                slot_month = int(keys[2])
+                slot_year = int(keys[3])
+                slot_type = keys[4]
+                slot_date = datetime(slot_year, slot_month, slot_day)
+                # utc_date = SalesforceApi.get_utc_date(slot_date, selected_tzone.time_value)
+                if slot_type == 'count':
+                    emp_count = int(data_in_a_day)
+                    try:
+                        tat_record = AvailabilityForTAT.objects.get(date_in_ist=slot_date)
+                        tat_record.availability_count = emp_count
+                        tat_record.save()
+                    except ObjectDoesNotExist:
+                        tat_record = AvailabilityForTAT(date_in_ist=slot_date, availability_count=emp_count)
+                        tat_record.save()
+                else:
+                    audits_per_day = int(data_in_a_day)
+                    try:
+                        tat_record = AvailabilityForTAT.objects.get(date_in_ist=slot_date)
+                        tat_record.audits_per_date = audits_per_day
+                        tat_record.save()
+                    except ObjectDoesNotExist:
+                        tat_record = AvailabilityForTAT(date_in_ist=slot_date, audits_per_date=audits_per_day)
+                        tat_record.save()
 
-    for i in range(1, 7):
+    plan_dates = OrderedDict()
+    for i in range(1, 6):
         plan_dates['day' + str(i)] = plan_date + timedelta(i - 1)
 
-    input_list = list()
-    audit_list = list()
+    counts_list = list()
     for key, _date in plan_dates.items():
-
+        mydict = dict()
         count_key = 'input_'
         count_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
         count_key += '_'
         count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
-        audit_key = count_key
-        count_key += '_' + str(_date.year) + '_' + 'count'
-        audit_key += '_' + str(_date.year) + '_' + 'audit'
+        count_key += '_' + str(_date.year)
+        mydict['input'] = count_key
+        mydict['count'] = 0
+        mydict['audit'] = 0
+        counts_list.append(mydict)
 
-        print count_key
-        input_list.append(count_key)
-        audit_list.append(audit_key)
+    week_start = plan_date
+    week_end = plan_date + timedelta(4)
+    details = AvailabilityForTAT.objects.filter(date_in_ist__gte=week_start, date_in_ist__lte=week_end).order_by('date_in_ist')
+    for detail in details:
+        _date = detail.date_in_ist
+        count_key = 'input_'
+        count_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+        count_key += '_'
+        count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+        count_key += '_' + str(_date.year)
+        for each_dict in counts_list:
+            print each_dict, count_key
+            if each_dict['input'] == count_key:
+                each_dict['count'] = detail.availability_count
+                each_dict['audit'] = detail.audits_per_date
 
     # compute next week and previous week start dates
-    prev_week = plan_date + timedelta(days=-7)
-    next_week = plan_date + timedelta(days=7)
+    prev_week = plan_date + timedelta(days=-6)
+    next_week = plan_date + timedelta(days=8)
 
     return render(
         request,
         'representatives/tat_details.html',
         {'schedule_date': plan_date,
          'dates': plan_dates,
-         'inputs': input_list,
-         'audits': audit_list,
          'prev_week': prev_week,
          'next_week': next_week,
          'plan_month': plan_month,
          'plan_day': plan_day,
          'plan_year': plan_year,
+         'counts_dict': counts_list,
          }
     )
