@@ -63,3 +63,16 @@ class ScheduleLog(models.Model):
     class Meta:
         db_table = 'schedule_log'
         verbose_name_plural = "Schedule Log"
+
+
+class AvailabilityForTAT(models.Model):
+    date_in_ist = models.DateTimeField()
+    availability_count = models.IntegerField(default=0)
+    audits_per_date = models.IntegerField(default=0)
+    process = models.CharField(max_length=100)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        db_table = 'availability_for_tat'
