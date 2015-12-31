@@ -2821,7 +2821,6 @@ def get_eligible_picasso_leads(request):
                 'name': leads.first_name + ' ' + leads.last_name,
                 'email': leads.lead_owner_email,
                 'google_rep_email': leads.google_rep_email,
-                'pod_name': leads.pod_name,
                 'team': team.team_name if team else '',
                 'code_type': leads.type_1,
                 'l_id': leads.sf_lead_id,
@@ -2832,6 +2831,7 @@ def get_eligible_picasso_leads(request):
             # Objectives in Wpp stored in comment_5 field since we are not using this
             lead['details']['picasso_objectives'] = leads.comment_5.split(',')
             lead['details']['pod_name'] = leads.url_5
+            lead['details']['country'] = leads.country
         else:
             lead['details']['pod_name'] = leads.pod_name
             lead['details']['picasso_objectives'] = leads.picasso_objective.split(',')
@@ -2871,6 +2871,7 @@ def get_eligible_picasso_lead_by_lid(request):
             # Objectives in Wpp stored in comment_5 field since we are not using this
             lead['details']['picasso_objectives'] = leads.comment_5.split(',')
             lead['details']['pod_name'] = leads.url_5
+            lead['details']['country'] = leads.country
         else:
             lead['details']['pod_name'] = leads.pod_name
             lead['details']['picasso_objectives'] = leads.picasso_objective.split(',')

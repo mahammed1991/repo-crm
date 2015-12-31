@@ -258,7 +258,10 @@ def create_or_update_leads(records, sf):
             # Storing obectives and pod name in comment5 & url5 fields
             lead.comment_5 = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
             lead.url_5 = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
-            lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+            if type_1 == 'WPP':
+                lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+            else:
+                lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'NA'
             lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
             if rec.get('Eligible_Nominated_for_WPP__c'):
                 if rec.get('Eligible_Nominated_for_WPP__c') == 'Yes':
