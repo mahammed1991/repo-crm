@@ -1412,7 +1412,7 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
         count_key += '_' + str(_date.year)
         mydict['input'] = count_key
         mydict['count'] = 0
-        mydict['audit'] = 0
+        mydict['audit'] = 3
         counts_list.append(mydict)
 
     week_start = plan_date
@@ -1426,7 +1426,6 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
         count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
         count_key += '_' + str(_date.year)
         for each_dict in counts_list:
-            print each_dict, count_key
             if each_dict['input'] == count_key:
                 each_dict['count'] = detail.availability_count
                 each_dict['audit'] = detail.audits_per_date

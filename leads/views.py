@@ -26,7 +26,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
                           )
 from main.models import UserDetails
-from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis,
+from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -280,11 +280,19 @@ def picasso_lead_form(request):
         basic_data['Campaign_ID'] = None
         ret_url = basic_data['retURL']
         picasso_data = basic_data
+
+        estimated_tat = ""
+        tat_dict = get_tat_for_picasso('portal')
+        if tat_dict['estimated_date']:
+            estimated_tat = tat_dict['estimated_date'].date()
+
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
                 picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
             elif key == 'unique_ref_id':
                 picasso_data[value] = get_unique_uuid('Picasso')
+            elif key == 'comment1':
+                picasso_data[value] = estimated_tat
             else:
                 picasso_data[value] = request.POST.get(key)
 
@@ -302,6 +310,9 @@ def picasso_lead_form(request):
     # lead_args['teams'] = Team.objects.filter(is_active=True)
     lead_args['teams'] = Team.objects.filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP']).order_by('team_name')
     lead_args['picasso'] = True
+    tat_dict = get_tat_for_picasso('portal')
+    if tat_dict['estimated_date']:
+        lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
 
     return render(
         request,

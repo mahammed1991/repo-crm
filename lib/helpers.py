@@ -10,12 +10,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from collections import defaultdict
 from main.models import UserDetails
-from leads.models import Leads, WPPLeads, PicassoLeads
+from leads.models import Leads, WPPLeads, PicassoLeads, Timezone
 from django.db.models import Q, Count
 import operator
 from xlrd import XL_CELL_DATE, xldate_as_tuple
 from lib.salesforce import SalesforceApi
-from leads.models import Timezone, PicassoLeads
+from representatives.models import AvailabilityForTAT
 import pytz
 import uuid
 
@@ -708,3 +708,44 @@ def get_unique_uuid(lead_type):
             get_unique_uuid('Wpp')
     except:
         return unique_rf_id
+
+
+def get_tat_for_picasso(source):
+    if source == 'SFDC':
+        sf_connection = SalesforceApi.connect_salesforce()
+        result = sf_connection.query("SELECT count() from LEAD WHERE Code_Type__c = 'Picasso' AND Status = 'In Queue'")
+        no_of_inqueue_leads = result['totalSize'] + 1
+    else:
+        no_of_inqueue_leads = PicassoLeads.objects.filter(lead_status='In Queue').count() + 1
+
+    tz_ist = Timezone.objects.get(zone_name='IST')
+    ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
+    today_in_ist = datetime(ist_today.year, ist_today.month, ist_today.day)
+    availabilities = AvailabilityForTAT.objects.filter(date_in_ist__gte=today_in_ist).order_by('date_in_ist')
+    target_details = dict()
+    lookup_sum = 0
+    no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
+    for availability in availabilities:
+        if availability.availability_count and availability.audits_per_date:
+            lookup_sum += availability.availability_count * availability.audits_per_date
+            if lookup_sum > no_of_inqueue_leads:
+                target_details['estimated_date'] = availability.date_in_ist
+                target_details['lookup_sum'] = lookup_sum
+                target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
+                return target_details
+                break
+
+
+def get_todays_transition_leads():
+    start_date = datetime.utcnow()
+    start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+    end_date = datetime(start_date.year, start_date.month, start_date.day, 23, 59, 59)
+    ist_timezone = 'IST'
+    selected_tzone = Timezone.objects.get(zone_name=ist_timezone)
+    utc_start_date = SalesforceApi.get_utc_date(start_date, selected_tzone.time_value)
+    utc_end_date = SalesforceApi.get_utc_date(end_date, selected_tzone.time_value)
+    today_changed_leads = PicassoLeads.objects.filter(lead_status='Delivered', updated_date__gte=utc_start_date, updated_date__lte=utc_end_date).count()
+    # start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+    # end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+    print today_changed_leads
+    return today_changed_leads

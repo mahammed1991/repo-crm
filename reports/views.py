@@ -1146,4 +1146,9 @@ def download_picasso_report(request):
 
 # Meeting page template rendering view
 def meeting_minutes(request):
-    return render(request, 'reports/meeting_minutes.html', {})
+    if request.method == 'POST':
+        print request
+    regions = Region.objects.all()
+    managers = User.objects.values_list('email', flat=True)
+    managers = [str(m) for m in managers]
+    return render(request, 'reports/meeting_minutes.html', {'regions': regions, 'managers': managers})
