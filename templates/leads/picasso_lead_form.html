@@ -45,6 +45,7 @@
     <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <p style="text-align:center;">The request that you submit now will be audited by <b>{{estimated_tat}}</b></p>
     <div class="std-sub-title">Google Rep Information</div>
     <div class="row">
       <div class="col-md-6">
@@ -89,7 +90,11 @@
          <label for="url" id="url_label_id">Website URL</label>
           <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
         </div>
-      <div class="col-md-6">
+        <div class="col-md-6">
+          <label for="additional_notes">Additional Notes(Optional)</label>
+          <textarea class="form-control" name="additional_notes" id="additional_notes" style="height: 175px;"></textarea>
+        </div>
+      <div class="col-md-6" style="margin-top: -130px;">
         <label for="picasso_objective">Objective</label></br>
         <div class="checkboxvalidation" style="height:95px;">
           <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
@@ -117,14 +122,7 @@
       </div>
      
       
-        <div class="col-md-6">
-          <label for="additional_notes">Additional Notes(Optional)</label>
-          <textarea class="form-control" name="additional_notes" id="additional_notes"></textarea>
-        </div>
-       <div class="col-md-6" style="margin-top:6px">
-          <label for="code1">Expected TAT **</label>
-          <p>You can expect the date of delivery of your lead on {{estimated_tat}}</p>
-        </div>
+        
       </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
