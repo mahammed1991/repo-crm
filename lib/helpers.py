@@ -729,7 +729,7 @@ def get_tat_for_picasso(source):
         if availability.availability_count and availability.audits_per_date:
             lookup_sum += availability.availability_count * availability.audits_per_date
             if lookup_sum > no_of_inqueue_leads:
-                target_details['estimated_date'] = availability.date_in_ist
+                target_details['estimated_date'] = availability.date_in_ist + timedelta(days=2)
                 target_details['lookup_sum'] = lookup_sum
                 target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
                 return target_details
