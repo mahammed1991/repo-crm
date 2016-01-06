@@ -2799,7 +2799,7 @@ def get_eligible_picasso_leads(request):
             cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
         wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
         if lead_type == 'wpp':
-            leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams)
+            leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
         else:
             leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
         if not leads:

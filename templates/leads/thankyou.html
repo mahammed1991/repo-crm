@@ -53,7 +53,7 @@
         {% else %}
         You will receive an email confirmation shortly with the complete lead details (based on the information you have provided).<br /><br />
         {% endif %}
-        If you need to correct or cancel this lead, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
+        If you need to change or cancel this {% if nomination %} nomination {% else %} lead {% endif %}, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
         To submit an additional  {% if nomination %}
         nomination
         {% else %}
