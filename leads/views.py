@@ -282,9 +282,10 @@ def picasso_lead_form(request):
         picasso_data = basic_data
 
         estimated_tat = ""
-        tat_dict = get_tat_for_picasso('portal')
+        tat_dict = get_tat_for_picasso('SFDC')
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
+            request.session['estimated_tat'] = estimated_tat
 
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
@@ -1438,9 +1439,10 @@ def thankyou(request):
     if str(lead_category) == '4':
         template_args.update({'lead_type': 'WPP'})
     elif str(lead_category) == '6':
-        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com'})
+        estimated_tat = request.session.get('estimated_tat')
+        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat})
     elif str(lead_category) == '8':
-        template_args.update({'lead_type': 'WPP Nomination Request', 'nomination': True,})
+        template_args.update({'lead_type': 'WPP Nomination Request', 'nomination': True})
     else:
         template_args.update({'lead_type': 'Implementation'})
 
@@ -2797,7 +2799,7 @@ def get_eligible_picasso_leads(request):
             cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
         wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
         if lead_type == 'wpp':
-            leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams)
+            leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
         else:
             leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
         if not leads:

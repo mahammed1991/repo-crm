@@ -236,13 +236,15 @@
     var team = "{{ref_lead.team|safe}}";
     $('#team').val(team);
 
-    var country = "{{ref_lead.country|safe}}";
-    $('#country').val(country);
+       var country = "{{ref_lead.country|safe}}";
+       if(country){
+          $('#country').val(country);
+       }
 
     var treatmentType = "{{ref_lead.treatment_type|safe}}";
     $('#treatment_type').val(treatmentType);
 
-    $("#country").trigger('change');
+    //$("#country").trigger('change');
 
     function addAdvertiser(index){
     prevIndex = parseInt(index) - 1;
