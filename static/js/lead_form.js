@@ -615,6 +615,18 @@ function validatethis(frm) {
         }
       }
 
+      // For Adwords Conversion Code code type we are validating dynamic conversion value tracking
+      if($('.tag-add-policies').is(':visible')){
+       if($("#add_tracking_yes[type='radio']").is(':checked') || $("#add_tracking_no[type='radio']").is(':checked') ){
+        // Nothoing to do here
+       }
+       else{
+          window.failedFields.push($("#tagAddwordsCheck"));
+          window.is_error = true;
+          $('#tagAddwordsCheck').addClass('error-box');
+        }
+      }
+
     if(window.is_error){
       focusElem = failedFields[0];
       $(focusElem).focus();
@@ -779,6 +791,7 @@ $("#webmaster_name").change(function(){
 
 $('.code_type').change(function(){
 
+  conversionTracking()
   var selectedCodeType = $(this).val();
   selectedId = $(this).attr('id')
   selectedindex = selectedId[selectedId.length-1]
@@ -887,4 +900,19 @@ function uncheckAllBehaviourCheckBoxs(selectedindex){
   $('#cartpage_behaviour'+selectedindex).prop('checked', false);
   $('#checkout_process'+selectedindex).prop('checked', false);
   $('#transaction_behaviour'+selectedindex).prop('checked', false);
+}
+
+function conversionTracking(){
+  var codeTypeValues = Array()
+  for( i=1; i <= 5; i++){
+  if($("#ctype" + i).is(":visible")){
+      codeTypeValues.push($("#ctype"+i).val());
+      }
+   }
+   console.log(codeTypeValues);
+   if(codeTypeValues.indexOf('Adwords Conversion Code') != -1){
+      $('.tag-add-policies').show();
+   }else{
+      $('.tag-add-policies').hide();
+   }
 }

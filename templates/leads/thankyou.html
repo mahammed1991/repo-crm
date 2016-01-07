@@ -48,10 +48,12 @@
         {% if nomination %}
         You will receive an email confirmation shortly with the eligibility status, proposed treatment type and approximate TAT.
         <br /><br/>
+        {% elif picasso %}
+        Your submission for the Mobile Site Request has been successfully received.<br><br> <div style="width: 23%;margin-left: 472px;border-radius: 33px; -moz-border-radius: 33px; -webkit-border-radius: 33px;border: 10px solid #4285F4;text-align: center;font-family: Arial,Helvetica Neue,Helvetica,sans-serif;padding:10px;background-color: #BCD4FC;">The audit will be completed by <br><span style="font-size:20px;color:white;"><b>{{estimated_tat}}</b></span></div> <br /><br/>
         {% else %}
         You will receive an email confirmation shortly with the complete lead details (based on the information you have provided).<br /><br />
         {% endif %}
-        If you need to correct or cancel this lead, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
+        If you need to change or cancel this {% if nomination %} nomination {% else %} lead {% endif %}, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
         To submit an additional  {% if nomination %}
         nomination
         {% else %}
