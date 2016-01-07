@@ -228,7 +228,8 @@ $('input[name=cid]').on('focusout', function(){
                 'method': 'GET',
                 'dataType': 'json',
                 'url': "/leads/get-eligible-picasso-lead/",
-                'data': {'cid': $('input[name=cid]').val(), 'lead_type': 'Picasso'},
+                //'data': {'cid': $('input[name=cid]').val(), 'lead_type': 'Picasso'},
+                'data': {'cid': $('input[name=cid]').val()},
                 success: function(response){
                     if(response['status'] == 'FAILED'){
                         //alert('Lead for Selected CID not available.');
@@ -259,6 +260,7 @@ function multiple_leads(details){
     $('input:checkbox').parent().removeClass('is-checked')
     $('#team option[value=""]').attr('selected', 'selected');
     $('#treatment_type option[value=""]').attr('selected', 'selected');
+    $('#country option[value="0"]').attr('selected', 'selected');
     $('#url').hide();
     $('#multipleUrls').show();
     $('#multipleUrls option').remove()
@@ -277,6 +279,7 @@ $('#multipleUrls').change(function(){
   $('input[type="checkbox"]').parent().removeClass('is-checked');
   $('input[type="checkbox"]').val('');
   $('#team option[value=""]').attr('selected', 'selected');
+  $('#country option[value="0"]').attr('selected', 'selected');
   $('#treatment_type option[value=""]').attr('selected', 'selected');
   $('#url').hide();
   $('#url').val('');
@@ -312,6 +315,10 @@ function populateLeadDetails(response){
     $('input[name=url1], input[id=url]').val(response.details.url);
     $('#team').val(response.details.team);
     $('#treatment_type').val(response.details.treatment_type);
+    if(response.details.country){
+    $('#country').val(response.details.country);
+    }
+    $("#country").trigger('change');
     $('#picasso_pod').val(response.details.pod_name);
     for(i=0;i<=response.details.picasso_objectives.length;i++){
         //$('input[value="'+response.details.picasso_objectives[i]+'"]').prop('checked', true);
@@ -331,6 +338,7 @@ function clearLeadDetails(){
   $('input:checkbox').parent().removeClass('is-checked')
   $('#team option[value=""]').attr('selected', 'selected');
   $('#treatment_type option[value=""]').attr('selected', 'selected');
+  $('#country option[value="0"]').attr('selected', 'selected');
 }
 
 

@@ -425,7 +425,7 @@ class SalesforceLeads(object):
                                  'tag_via_gtm': '00Nd0000007esIr',
                                  'picasso_objective_list[]': '00Nd0000007xSXh',
                                  'picasso_pod': '00Nd0000007xVWc',  # Picasso POD name
-                                 'unique_ref_id': '',  # picasso unique id
+                                 'unique_ref_id': '00Nd00000081spN',  # picasso unique id
                                  }
 
     SANDBOX_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',

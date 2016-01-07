@@ -225,9 +225,8 @@ def wpp_lead_form(request, ref_id=None):
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
     if ref_id:
         try:
-            ref_lead = WPPLeads.objects.get(ref_uuid=ref_id)
+            ref_lead = PicassoLeads.objects.get(ref_uuid=ref_id)
             lead_args['ref_lead'] = ref_lead
-            lead_args['focus_out'] = "Disable"
         except:
             return redirect('leads.views.wpp_lead_form')
 
@@ -245,7 +244,8 @@ def wpp_lead_form(request, ref_id=None):
     return render(
         request,
         # 'leads/wpp_lead_form.html',
-        'leads/wpp_lead_form_new.html',
+        # 'leads/wpp_lead_form_new.html',
+        'leads/picasso_build_wpp_form.html',
         lead_args
     )
 
@@ -286,6 +286,7 @@ def picasso_lead_form(request):
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
             request.session['estimated_tat'] = estimated_tat
+            request.session['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
 
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
@@ -314,6 +315,7 @@ def picasso_lead_form(request):
     tat_dict = get_tat_for_picasso('portal')
     if tat_dict['estimated_date']:
         lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
+        lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
 
     return render(
         request,
@@ -1440,11 +1442,12 @@ def thankyou(request):
         template_args.update({'lead_type': 'WPP'})
     elif str(lead_category) == '6':
         estimated_tat = request.session.get('estimated_tat')
-        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat})
+        no_of_inqueue_leads = request.session.get('no_of_inqueue_leads')
+        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
     elif str(lead_category) == '8':
-        template_args.update({'lead_type': 'WPP Nomination Request', 'nomination': True})
+        template_args.update({'lead_type': 'Picasso Build Nomination Request', 'nomination': True})
     else:
-        template_args.update({'lead_type': 'Implementation'})
+        template_args.update({'lead_type': 'Implementation lead'})
 
     return render(request, 'leads/thankyou.html', template_args)
 
@@ -2017,8 +2020,7 @@ def get_wpp_lead_summary_by_treatment(request):
         start_date = datetime(2015, 01, 01)
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date, end_date)
-        query = {'treatment_type__in': treatment_type_list,
-                 'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
         leads = WPPLeads.objects.filter(**query).order_by('-created_date')
         leads_list = [convert_lead_to_dict(lead) for lead in leads]
     else:
@@ -2029,7 +2031,7 @@ def get_wpp_lead_summary_by_treatment(request):
             email_list = [email]
 
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
-        query = {'lead_status__in': lead_status, 'treatment_type__in': treatment_type_list}
+        query = {'lead_status__in': lead_status}
         status_count = wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None)
         leads = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).order_by('-created_date')
         leads_list = [convert_lead_to_dict(lead) for lead in leads]
@@ -2783,6 +2785,74 @@ def picasso_build_wpp_form(request, ref_id=None):
     )
 
 
+# def get_eligible_picasso_leads(request):
+#     """ Eligible picasso lead as WPP Lead
+#         1. Lead should be build Eligible.
+#         2. Lead's program name should be in WPP programs list.
+
+#     """
+#     if request.is_ajax():
+#         lead = {'status': 'FAILED', 'details': None}
+#         cid = request.GET.get('cid')
+#         lead_type = request.GET.get('lead_type')
+#         if '-' in cid:
+#             cid = cid
+#         elif len(cid) == 10:
+#             cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
+#         wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
+#         if lead_type == 'wpp':
+#             leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
+#         else:
+#             leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
+#         if not leads:
+#             return HttpResponse(json.dumps(lead), content_type='application/json')
+
+#         if len(leads) > 1:
+#             leads = leads
+#             url_list = []
+#             for each_lead in leads:
+#                 details = dict()
+#                 details['lead_details'] = {
+#                     'l_id': each_lead.sf_lead_id,
+#                     'url': each_lead.url_1,
+#                 }
+#                 url_list.append(details)
+#             lead['status'] = "MULTIPLE"
+#             lead['details'] = url_list
+#             return HttpResponse(json.dumps(lead), content_type='application/json')
+
+#         else:
+#             leads = leads[0]
+
+#         try:
+#             team = Team.objects.get(team_name=leads.team)
+#         except ObjectDoesNotExist:
+#             team = None
+
+#         if leads:
+#             lead['status'] = 'SUCCESS'
+
+#             lead['details'] = {
+#                 'name': leads.first_name + ' ' + leads.last_name,
+#                 'email': leads.lead_owner_email,
+#                 'google_rep_email': leads.google_rep_email,
+#                 'team': team.team_name if team else '',
+#                 'code_type': leads.type_1,
+#                 'l_id': leads.sf_lead_id,
+#                 'url': leads.url_1,
+#                 'treatment_type': leads.treatment_type,
+#             }
+#         if lead_type == 'wpp':
+#             # Objectives in Wpp stored in comment_5 field since we are not using this
+#             lead['details']['picasso_objectives'] = leads.comment_5.split(',')
+#             lead['details']['pod_name'] = leads.url_5
+#             lead['details']['country'] = leads.country
+#         else:
+#             lead['details']['pod_name'] = leads.pod_name
+#             lead['details']['picasso_objectives'] = leads.picasso_objective.split(',')
+#     return HttpResponse(json.dumps(lead), content_type='application/json')
+
+
 def get_eligible_picasso_leads(request):
     """ Eligible picasso lead as WPP Lead
         1. Lead should be build Eligible.
@@ -2792,18 +2862,20 @@ def get_eligible_picasso_leads(request):
     if request.is_ajax():
         lead = {'status': 'FAILED', 'details': None}
         cid = request.GET.get('cid')
-        lead_type = request.GET.get('lead_type')
         if '-' in cid:
             cid = cid
         elif len(cid) == 10:
             cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
         wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
-        if lead_type == 'wpp':
-            leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
+        leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
+        if leads:
+            lead_type = 'nomination'
         else:
             leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
-        if not leads:
-            return HttpResponse(json.dumps(lead), content_type='application/json')
+            if leads:
+                lead_type = 'picasso'
+            else:
+                return HttpResponse(json.dumps(lead), content_type='application/json')
 
         if len(leads) > 1:
             leads = leads
@@ -2840,7 +2912,7 @@ def get_eligible_picasso_leads(request):
                 'url': leads.url_1,
                 'treatment_type': leads.treatment_type,
             }
-        if lead_type == 'wpp':
+        if lead_type == 'nomination':
             # Objectives in Wpp stored in comment_5 field since we are not using this
             lead['details']['picasso_objectives'] = leads.comment_5.split(',')
             lead['details']['pod_name'] = leads.url_5
