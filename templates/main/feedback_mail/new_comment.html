@@ -1,6 +1,195 @@
 <!DOCTYPE html>
 <html>
+<head>
+		<style type="text/css">
+			 td{border: 0px solid black; font-size:13px ; color:black;  }
+			 tbody{border:none; background: #f3e4d8;}
+			 /*table{height:25px;}*/
+		</style>
+	</head>
 <body>
+<table class="main-table" border="0" cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+			<tbody>
+				<tr>
+					<table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+			
+				    <tr>
+				        <td align="center" valign="top" width="33%" class="templateColumnContainer">
+				            <table border="0" cellpadding="10" cellspacing="0" width="100%">
+				                <tr>
+				                    <td valign="top" class="leftColumnContent">
+				                        <img src="http://gtrack.regalixdev.com/static/images/tag-logo.png" width="100" height="20">
+				                    </td>
+				                    <td class="centerColumnContent">
+				                         <img src="http://gtrack.regalixdev.com/static/images/google-logo.png" width="100" height="20" style="float:right;" >
+				                    </td>
+				                </tr>
+				               
+				            </table>
+				        </td>
+				</tr>
+				<tr>
+				<table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:16px;text-align:left;padding:2px 15px;color:#ff661a"> 
+							Hi,
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+				<tr>
+				<table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:16px;text-align:left;padding:2px 25px;color:#ff661a"> 
+							A new Comment has been added for Feedback- <b>{{feedback.title}}</b> 
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			    <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:16px;text-align:center;padding:5px 5px;color:#4d2600"> 
+							-:Feedback Details are below:-
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			    <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Feedback By: {{ feedback.user.get_full_name }} ({{ feedback.user.email}})
+							
+						</td>
+					</tr>
+			    </table>
+			    <tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Feedback To: {{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }}
+							 ({{ feedback.lead_owner.email }})
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     <tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							CID: {{ feedback.cid }}
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			    <tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Name of the Advertiser: {{ feedback.advertiser_name }}
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     <tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Feedback Type: {{ feedback.feedback_type }}
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     </tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Language: {{ feedback.language }}
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     <tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Location: {{ feedback.location.location_name }}
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     
+			     <tr>
+			     <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300;height:auto;"> 
+							Description:</br>
+							{{ feedback.description }}
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:16px;text-align:center;padding:2px 25px;color:#4d2600"> 
+							-:Comment Details:-
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			     <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:28px"> 
+							Comment By:{{comment.comment_by}}
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			    <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 15px;color:#663300; height:auto;"> 
+							Comment:</br>
+							{{comment.comment}}
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			    <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:center;padding:0px 25px;color:#663300"> 
+							<button ><a style="text-decoration:none;" href="{{ feedback_url }}">Go To Feedback</a></button>
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			    <tr>
+			    <table border="0 px " cellpadding="0" cellspacing="0" width="800" height="35" style="border-collapse: collapse;mso-table-lspace:   0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; margin: 0px auto; background:#dfbf9f; color:#ffffff; font-family: Arial, Helvetica, sans-serif;">
+					<tr>
+						<td  style="font-size:13px;text-align:left;padding:0px 25px;color:#663300;"> 
+							Thanks,</br>
+							{{signature}}
+							
+						</td>
+					</tr>
+			    </table>
+			    </tr>
+			</tbody>
+<table>
+</body>
+</html> 
+<!-- <body>
 <p>Hi,</p>
 <p>A new Comment has been added for Feedback- <b>{{feedback.title}}</b> </p>
 <p>Feedback Details are below:</p>
@@ -22,5 +211,4 @@
 <br /><br />
 <p>Thanks,</p>
 <p>{{signature}}</p>
-</body>
-</html>
+</body> -->
