@@ -84,7 +84,7 @@
         <ul class="nav navbar-nav navbar-right">
           <li class="submit-lead-btn">
             {% if "WPP" in request.session.groups %}
-              <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.priority_check' %}"'>Check Regalix Priority</button>
+              <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_nomination_form' %}"'>Nominate Advertiser Website</button>
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>

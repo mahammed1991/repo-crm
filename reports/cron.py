@@ -263,10 +263,10 @@ def create_or_update_leads(records, sf):
             else:
                 lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'NA'
             lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
-            if rec.get('Eligible_Nominated_for_WPP__c'):
-                if rec.get('Eligible_Nominated_for_WPP__c') == 'Yes':
+            if rec.get('PICASSO_build_eligible__c'):
+                if rec.get('PICASSO_build_eligible__c') == 'Yes':
                     lead.is_nominated = True
-                elif rec.get('Eligible_Nominated_for_WPP__c') == 'No':
+                elif rec.get('PICASSO_build_eligible__c') == 'No':
                     lead.is_nominated = False
         else:
             try:

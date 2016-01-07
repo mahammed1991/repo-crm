@@ -1148,6 +1148,11 @@ $(document).on('change', '#country', function() {
 
     } else {
 
+      if(['UK/I'].indexOf(location) != -1){
+         $('#appointment_check_tag').show();
+        $('#appointment_check_shopping').show();
+      }
+
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx == -1) {
             window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");
@@ -1200,15 +1205,14 @@ function clearAndHideFields(){
 }
 
 function mandatoryAppointmentForLanguages(language){
-  $('#appointment_check_tag').show();
-  $('#appointment_check_shopping').show();
+  $('#appointment_check_tag').hide();
+  $('#appointment_check_shopping').hide();
       
   if(['French', 'German', 'Italian'].indexOf(language) != -1){
       $('#appointment_check_tag').hide();
        $('#appointment_check_shopping').hide();
 
   }
-    
 }
 
 </script>
