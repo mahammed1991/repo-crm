@@ -225,7 +225,7 @@ def wpp_lead_form(request, ref_id=None):
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
     if ref_id:
         try:
-            ref_lead = PicassoLeads.objects.get(ref_uuid=ref_id)
+            ref_lead = WPPLeads.objects.get(ref_uuid=ref_id)
             lead_args['ref_lead'] = ref_lead
         except:
             return redirect('leads.views.wpp_lead_form')
@@ -243,9 +243,7 @@ def wpp_lead_form(request, ref_id=None):
     lead_args.update({'wpp_loc': wpp_loc})
     return render(
         request,
-        # 'leads/wpp_lead_form.html',
-        # 'leads/wpp_lead_form_new.html',
-        'leads/picasso_build_wpp_form.html',
+        'leads/wpp_lead_form.html',
         lead_args
     )
 
@@ -285,8 +283,8 @@ def picasso_lead_form(request):
         tat_dict = get_tat_for_picasso('SFDC')
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
-            request.session['estimated_tat'] = estimated_tat
-            request.session['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+            request.session[str(request.user.email)+'estimated_tat'] = estimated_tat
+            request.session[str(request.user.email)+'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
 
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
@@ -1429,7 +1427,7 @@ def thankyou(request):
         '4': reverse('leads.views.wpp_lead_form'),
         '5': reverse('leads.views.agent_bulk_upload'),
         '6': reverse('leads.views.picasso_lead_form'),
-        '7': reverse('leads.views.picasso_build_wpp_form'),
+        # '7': reverse('leads.views.picasso_build_wpp_form'),
         '8': reverse('leads.views.wpp_nomination_form'),
     }
 
@@ -1441,8 +1439,8 @@ def thankyou(request):
     if str(lead_category) == '4':
         template_args.update({'lead_type': 'WPP'})
     elif str(lead_category) == '6':
-        estimated_tat = request.session.get('estimated_tat')
-        no_of_inqueue_leads = request.session.get('no_of_inqueue_leads')
+        estimated_tat = request.session.get(str(request.user.email)+'estimated_tat')
+        no_of_inqueue_leads = request.session.get(str(request.user.email)+'no_of_inqueue_leads')
         template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
     elif str(lead_category) == '8':
         template_args.update({'lead_type': 'Picasso Build Nomination Request', 'nomination': True})
@@ -1464,7 +1462,7 @@ def lead_error(request):
         '4': reverse('leads.views.wpp_lead_form'),
         '5': reverse('leads.views.agent_bulk_upload'),
         '6': reverse('leads.views.picasso_lead_form'),
-        '7': reverse('leads.views.picasso_build_wpp_form'),
+        # '7': reverse('leads.views.picasso_build_wpp_form'),
         '8': reverse('leads.views.wpp_nomination_form'),
     }
 
