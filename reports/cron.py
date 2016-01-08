@@ -131,6 +131,8 @@ def get_deleted_leads():
             ids = tuple(ids)
             logging.info("Deleted Lead Id's %s, Total = %s" % (ids, len(ids)))
             Leads.objects.filter(sf_lead_id__in=ids).delete()
+            WPPLeads.objects.filter(sf_lead_id__in=ids).delete()
+            PicassoLeads.objects.filter(sf_lead_id__in=ids).delete()
             logging.info("Deleted Successfully")
         # start_date, end_date = get_quarter_date_slots(datetime.utcnow())
         # start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)

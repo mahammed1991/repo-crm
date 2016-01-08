@@ -292,7 +292,7 @@ $('#multipleUrls').change(function(){
           'url': "/leads/get-eligible-picasso-lead-by-lid/",
           'dataType': "json",
           'type': 'GET',
-          'data': {'lid': lid, 'lead_type':'Picasso'},
+          'data': {'lid': lid},
           success: function(response) {
              if(response['status'] == 'FAILED'){
                 alert('Lead for Selected CID not available.');

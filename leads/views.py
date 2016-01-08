@@ -2783,74 +2783,6 @@ def picasso_build_wpp_form(request, ref_id=None):
     )
 
 
-# def get_eligible_picasso_leads(request):
-#     """ Eligible picasso lead as WPP Lead
-#         1. Lead should be build Eligible.
-#         2. Lead's program name should be in WPP programs list.
-
-#     """
-#     if request.is_ajax():
-#         lead = {'status': 'FAILED', 'details': None}
-#         cid = request.GET.get('cid')
-#         lead_type = request.GET.get('lead_type')
-#         if '-' in cid:
-#             cid = cid
-#         elif len(cid) == 10:
-#             cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
-#         wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
-#         if lead_type == 'wpp':
-#             leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
-#         else:
-#             leads = PicassoLeads.objects.filter(customer_id=cid, team__in=wpp_teams, is_build_eligible=True)
-#         if not leads:
-#             return HttpResponse(json.dumps(lead), content_type='application/json')
-
-#         if len(leads) > 1:
-#             leads = leads
-#             url_list = []
-#             for each_lead in leads:
-#                 details = dict()
-#                 details['lead_details'] = {
-#                     'l_id': each_lead.sf_lead_id,
-#                     'url': each_lead.url_1,
-#                 }
-#                 url_list.append(details)
-#             lead['status'] = "MULTIPLE"
-#             lead['details'] = url_list
-#             return HttpResponse(json.dumps(lead), content_type='application/json')
-
-#         else:
-#             leads = leads[0]
-
-#         try:
-#             team = Team.objects.get(team_name=leads.team)
-#         except ObjectDoesNotExist:
-#             team = None
-
-#         if leads:
-#             lead['status'] = 'SUCCESS'
-
-#             lead['details'] = {
-#                 'name': leads.first_name + ' ' + leads.last_name,
-#                 'email': leads.lead_owner_email,
-#                 'google_rep_email': leads.google_rep_email,
-#                 'team': team.team_name if team else '',
-#                 'code_type': leads.type_1,
-#                 'l_id': leads.sf_lead_id,
-#                 'url': leads.url_1,
-#                 'treatment_type': leads.treatment_type,
-#             }
-#         if lead_type == 'wpp':
-#             # Objectives in Wpp stored in comment_5 field since we are not using this
-#             lead['details']['picasso_objectives'] = leads.comment_5.split(',')
-#             lead['details']['pod_name'] = leads.url_5
-#             lead['details']['country'] = leads.country
-#         else:
-#             lead['details']['pod_name'] = leads.pod_name
-#             lead['details']['picasso_objectives'] = leads.picasso_objective.split(',')
-#     return HttpResponse(json.dumps(lead), content_type='application/json')
-
-
 def get_eligible_picasso_leads(request):
     """ Eligible picasso lead as WPP Lead
         1. Lead should be build Eligible.
@@ -2926,11 +2858,16 @@ def get_eligible_picasso_lead_by_lid(request):
     if request.is_ajax():
         lead = {'status': 'FAILED', 'details': None}
         lid = request.GET.get('lid')
-        lead_type = request.GET.get('lead_type')
-        if lead_type == 'wpp':
-            leads = WPPLeads.objects.get(sf_lead_id=lid)
+
+        leads = WPPLeads.objects.filter(sf_lead_id=lid)
+        if leads:
+            leads = leads[0]
+            lead_type = 'nomination'
         else:
-            leads = PicassoLeads.objects.get(sf_lead_id=lid)
+            leads = PicassoLeads.objects.filter(sf_lead_id=lid)
+            if leads:
+                leads = leads[0]
+                lead_type = 'picasso'
 
         try:
             team = Team.objects.get(team_name=leads.team)
@@ -2950,7 +2887,7 @@ def get_eligible_picasso_lead_by_lid(request):
             'treatment_type': leads.treatment_type,
 
         }
-        if lead_type == 'wpp':
+        if lead_type == 'nomination':
             # Objectives in Wpp stored in comment_5 field since we are not using this
             lead['details']['picasso_objectives'] = leads.comment_5.split(',')
             lead['details']['pod_name'] = leads.url_5
