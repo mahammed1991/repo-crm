@@ -145,6 +145,7 @@ class ContectList(models.Model):
     profile_photo = models.ImageField(upload_to=get_profile_photo, blank=True, max_length=100)
     extn = models.CharField(max_length=100, blank=True, null=True)
     supporting_hours = models.CharField(max_length=100, blank=True, null=True)
+    is_active = models.IntegerField(default=1)
 
     created_date = models.DateTimeField(auto_now_add=True, default=datetime.utcnow())
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.utcnow())

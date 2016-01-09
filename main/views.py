@@ -844,7 +844,7 @@ def comment_feedback(request, id):
 
 def get_contacts(request):
     """ Get team contacts information """
-    contact_list = ContectList.objects.filter()
+    contact_list = ContectList.objects.filter(is_active=True)
     keyorder = {k: v for v, k in enumerate(['The implementation team', 'Training/ SME/ Tech', 'QUALITY', 'MIS / WFM', 'OPERATIONS', 'MANAGEMENT'])}
     your_team = {'The implementation team': list(), 'Training/ SME/ Tech': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS / WFM': list()}
     other_team = {'The implementation team': list(), 'Training/ SME/ Tech': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS / WFM': list()}
@@ -1718,7 +1718,10 @@ def picasso_home(request):
     query['created_date__lte'] = end_date
     objectives = ['Engage with your Content', 'Become a Fan', 'Buy Online', 'Form Entry', 'Call your Business']
     if request.user.groups.filter(name='SUPERUSER'):
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        end_date = datetime.utcnow()
+        start_date = datetime(2015, 01, 01)
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         picasso_lead_status = get_count_of_each_lead_status_by_rep(list(), 'picasso', start_date=start_date, end_date=end_date)
         picasso_objective_counts = PicassoLeads.objects.filter(**query).values('picasso_objective').annotate(count=Count('pk'))
     else:

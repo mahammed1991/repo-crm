@@ -33,8 +33,8 @@ admin.site.register(Leads, LeadsAdmin)
 
 
 class WPPLeadsAdmin(admin.ModelAdmin):
-    list_display = ('google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
-                    'company', 'lead_status', 'team', 'type_1',)
+    list_display = ('google_rep_name', 'lead_owner_name', 'first_name', 'last_name',
+                    'company', 'lead_status', 'team', 'customer_id', 'ref_uuid', )
 
     search_fields = ['customer_id', 'lead_owner_name']
 
