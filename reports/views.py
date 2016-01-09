@@ -1293,22 +1293,33 @@ def meeting_minutes(request):
     last_meeting_link = {}
     other_subject = {}
 
-
     link_to_last_data = MeetingMinutes.objects.all().last()
-    link_to_last_program = link_to_last_data.program
-    link_to_last_program_type = link_to_last_data.program_type
-    link_to_last_subject_timeline = link_to_last_data.subject_timeline
-    link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
-    link_to_last_id = link_to_last_data.id
-
-
+    link_to_last_program = ''
+    link_to_last_program_type = ''
+    link_to_last_subject_timeline = ''
+    link_to_last_date = ''
+    link_to_last_id = ''
+    if link_to_last_data:
+        link_to_last_program = link_to_last_data.program
+        link_to_last_program_type = link_to_last_data.program_type
+        link_to_last_subject_timeline = link_to_last_data.subject_timeline
+        link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
+        link_to_last_id = link_to_last_data.id
 
     # send mail
-    return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link, 'tenantive_agenda_dict': tenantive_agenda_dict, 'link_to_last_id': link_to_last_id, 'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline, 'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program, 'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location, 'link_region': link_region, 'new_subject_timeline': new_subject_timeline, 'action_plan_dict': action_plan_dict, 'key_points_dict': key_points_dict, 'all_locations': all_locations, 'region_locations': region_locations, 'regions': regions, 'last_meeting': last_meeting, 'locations': locations, 'managers': managers, 'regalix_email': regalix_email, 'google_email': google_email, 'programs': programs})
+    return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
+                                                            'tenantive_agenda_dict': tenantive_agenda_dict, 'link_to_last_id': link_to_last_id,
+                                                            'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline,
+                                                            'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program,
+                                                            'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location,
+                                                            'link_region': link_region, 'new_subject_timeline': new_subject_timeline, 'action_plan_dict': action_plan_dict,
+                                                            'key_points_dict': key_points_dict, 'all_locations': all_locations, 'region_locations': region_locations,
+                                                            'regions': regions, 'last_meeting': last_meeting, 'locations': locations, 'managers': managers,
+                                                            'regalix_email': regalix_email, 'google_email': google_email, 'programs': programs})
 
 
 def link_last_meeting(request, last_id):
-        
+
     region_locations = dict()
     all_locations = dict()
     programs = dict()
