@@ -25,3 +25,4 @@ gspread==0.2.5                  # Read the Google spread sheet
 pyOpenSSL==0.15.1
 oauth2client==1.5.0             # Oauth for google spreadsheet
 cryptography==1.0
+django-jsonfield2==15.6.8
