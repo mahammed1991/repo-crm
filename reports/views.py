@@ -3,17 +3,21 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location, PicassoLeads, Leads
+from leads.models import Location, PicassoLeads, Leads, Team, Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
-from reports.models import Region, CallLogAccountManager
+from reports.models import Region, CallLogAccountManager, MeetingMinutes
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count
+from collections import OrderedDict
+from lib.helpers import (send_mail)
+from django.template.loader import get_template
+from django.template import Context
 import re
 
 
@@ -1146,9 +1150,198 @@ def download_picasso_report(request):
 
 # Meeting page template rendering view
 def meeting_minutes(request):
+    regalix_email = list()
+    google_email = list()
+    key_points_dict = dict()
+    action_plan_dict = dict()
+    tenantive_agenda_dict = dict()
+    
     if request.method == 'POST':
-        print request
-    regions = Region.objects.all()
+        key_points = OrderedDict()
+        action_plans = OrderedDict()
+        meeting_minutes = MeetingMinutes()
+        meeting_minutes.subject_timeline = request.POST.get('subject')
+        meeting_minutes.other_subject = request.POST.get('other_subject')
+        # meeting_minutes.subject_type = request.POST.get('subject')
+        meeting_minutes.other_subject = request.POST.get('other_subject')
+        meeting_date = request.POST.get('meeting_date')
+        meeting_time = request.POST.get('meeting_time')
+        meeting_datetime = meeting_date + ' ' + meeting_time
+        meeting_minutes.meeting_time_in_ist = datetime.strptime(meeting_datetime, '%d.%m.%Y %I:%M %p')
+        meeting_minutes.google_poc = User.objects.get(email=str(request.POST.get('google_poc')))
+        meeting_minutes.regalix_poc = User.objects.get(email=str(request.POST.get('regalix_poc')))
+        meeting_minutes.google_team = Team.objects.get(team_name=str(request.POST.get('google_team')))
+        meeting_minutes.region = request.POST.get('region')
+        meeting_minutes.location = request.POST.get('location')
+        meeting_minutes.program = request.POST.get('program')
+        meeting_minutes.program_type = request.POST.get('program_type')
+        next_meeting_date = request.POST.get('next_meeting_date')
+        next_meeting_time = request.POST.get('next_meeting_time')
+        next_meeting_datetime = next_meeting_date + ' ' + next_meeting_time
+        meeting_minutes.next_meeting_datetime = datetime.strptime(next_meeting_datetime, '%d.%m.%Y %I:%M %p')
+        total_keypoints_count = request.POST.get('no_of_keypoints')
+        total_actionplan_count = request.POST.get('no_of_actionplans')
+        total_tenantive_agenda = request.POST.get('no_of_tenantive_agenda')
+
+        
+        key_points_topic = list()
+        key_points_highlight = list()
+        for i in range(1, int(total_keypoints_count)+1):
+            key_points_topic.append(request.POST['topic_'+str(i)])
+            key_points_highlight.append(request.POST['highlight_'+str(i)])
+            key_points['topic_'+str(i)] = request.POST['topic_'+str(i)] 
+            key_points['highlight_'+str(i)] = request.POST['highlight_'+str(i)] 
+
+        action_plans_items = list()
+        action_plans_owner = list()
+        action_plans_date = list()
+        for i in range(1, int(total_actionplan_count)+1):
+            action_plans_items.append(request.POST['action_item_'+str(i)])
+            action_plans_owner.append(request.POST['owner_'+str(i)])
+            action_plans_date.append(request.POST['action_date_'+str(i)])
+            action_plans['action_item_'+str(i)] = request.POST['action_item_'+str(i)] 
+            action_plans['owner_'+str(i)] = request.POST['owner_'+str(i)]
+            action_plans['action_date_'+str(i)] = request.POST['action_date_'+str(i)]
+
+        tenantive_agenda_list = list()
+        for i in range(1, int(total_tenantive_agenda)+1):
+            tenantive_agenda_list.append(request.POST['agenda_text_'+str(i)])
+            tenantive_agenda_dict['agenda_text_'+str(i)] = request.POST['agenda_text_'+str(i)]
+
+        meeting_minutes.key_points = json.dumps(key_points)
+        meeting_minutes.tenantive_agenda = json.dumps(tenantive_agenda_dict)
+        meeting_minutes.action_plan = json.dumps(action_plans)
+        meeting_minutes.save()
+        
+        attendees_id_list = list()
+        attendees = request.POST.get('attendees').replace(', ', ',')
+        attendees_list = attendees.split(',')
+        attendees_list.pop(-1)
+        get_attendees_list = User.objects.filter(email__in=attendees_list).values_list('id', flat=True)
+        meeting_minutes.attendees.add(*get_attendees_list)
+        meeting_minutes.save()
+
+        mail_list = list()
+        for attendee in attendees_list:
+            mail_list.append(str(attendee))
+        mail_list.append(str(request.POST.get('google_poc')))
+        mail_list.append(str(request.POST.get('regalix_poc')))
+
+        mail_subject = "Meeting Minutes"
+        mail_body = get_template('reports/meeting_minute_email.html').render(
+            Context({
+                'subject_timeline': meeting_minutes.subject_timeline,
+                'meeting_date': meeting_minutes.meeting_time_in_ist.date(),
+                'meeting_time': meeting_minutes.meeting_time_in_ist.time(),
+                'google_team': meeting_minutes.google_team,
+                'key_points_topic': key_points_topic,
+                'key_points_highlight': key_points_highlight,
+                'region': meeting_minutes.region,
+                'location': meeting_minutes.location,
+                # 'program': meeting_minutes.program,
+                # 'program_type': meeting_minutes.program_type,
+
+                'action_plans_items': action_plans_items,
+                'action_plans_owner': action_plans_owner,
+                'action_plans_date': action_plans_date,
+
+                'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
+                'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
+                'tenantive_agenda': tenantive_agenda_list,
+
+
+            })
+        )
+        mail_from = 'basavaraju@regalix-inc.com'
+        mail_to = mail_list
+        bcc = set([])
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
     managers = User.objects.values_list('email', flat=True)
+    for manager in managers:
+        if 'google.com' in manager:
+            google_email.append(str(manager))
+        else:
+            regalix_email.append(str(manager))
+
+    programs = Team.objects.exclude(is_active=False).values_list('team_name', flat=True)
+    locations = Location.objects.filter(is_active=True)
+    programs = [str(p) for p in programs]
     managers = [str(m) for m in managers]
-    return render(request, 'reports/meeting_minutes.html', {'regions': regions, 'managers': managers})
+    regions = Region.objects.all()
+    all_regions = list()
+    region_locations = dict()
+    all_locations = list()
+    for loc in locations:
+        is_daylight_savings = False
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        all_locations.append(l)
+    for rgn in regions:
+        for loc in rgn.location.all():
+            region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+        region_dict = dict()
+        region_dict['id'] = int(rgn.id)
+        region_dict['name'] = str(rgn.name)
+        all_regions.append(region_dict)
+    last_meeting = {}
+    new_subject_timeline = 0
+    link_region = 0
+    link_location = 0
+    link_program = ''
+    link_program_type = ''
+    last_meeting_link = {}
+    other_subject = {}
+
+
+    link_to_last_data = MeetingMinutes.objects.all().last()
+    link_to_last_program = link_to_last_data.program
+    link_to_last_program_type = link_to_last_data.program_type
+    link_to_last_subject_timeline = link_to_last_data.subject_timeline
+    link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
+    link_to_last_id = link_to_last_data.id
+
+
+
+    # send mail
+    return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link, 'tenantive_agenda_dict': tenantive_agenda_dict, 'link_to_last_id': link_to_last_id, 'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline, 'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program, 'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location, 'link_region': link_region, 'new_subject_timeline': new_subject_timeline, 'action_plan_dict': action_plan_dict, 'key_points_dict': key_points_dict, 'all_locations': all_locations, 'region_locations': region_locations, 'regions': regions, 'last_meeting': last_meeting, 'locations': locations, 'managers': managers, 'regalix_email': regalix_email, 'google_email': google_email, 'programs': programs})
+
+
+def link_last_meeting(request, last_id):
+        
+    region_locations = dict()
+    all_locations = dict()
+    programs = dict()
+    google_email = dict()
+    regalix_email = dict()
+    attendees_list = list()
+    last_meeting = MeetingMinutes.objects.get(id=last_id)
+    new_subject_timeline = 1
+    meeting_date = last_meeting.meeting_time_in_ist.date()
+    last_meeting_link = datetime.strftime(meeting_date, '%d.%m.%Y')
+    meeting_time = last_meeting.meeting_time_in_ist.time()
+    next_meeting_date = last_meeting.next_meeting_datetime.date()
+    next_meeting_time = last_meeting.next_meeting_datetime.time()
+    subject_timeline = last_meeting.subject_timeline
+    attendees = last_meeting.attendees.values('email')
+    other_subject = last_meeting.other_subject
+    link_region = last_meeting.region
+    link_location = last_meeting.location
+    link_program = last_meeting.program
+    link_program_type = last_meeting.program_type
+
+
+    for attendee in attendees:
+        attendees_list.append(str(attendee['email']))
+    attendees_email_list = ' ,  '.join(attendees_list)
+
+    key_order_agenda = {k:v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5'])}
+    tenantive_agenda_dict = OrderedDict(sorted(last_meeting.tenantive_agenda.items(), key=lambda i: key_order_agenda.get(i[0])))
+
+    key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5'])}
+    action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
+
+    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5'])}    
+    key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
+
+    return render(request,'reports/meeting_minutes.html',{'last_meeting_link': json.dumps(last_meeting_link), 'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 'link_program_type': json.dumps(link_program_type), 'link_program': json.dumps(link_program), 'link_location': json.dumps(link_location), 'link_region': json.dumps(link_region), 'other_subject': json.dumps(other_subject), 'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict), 'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list, 'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting, 'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date, 'next_meeting_time': next_meeting_time})

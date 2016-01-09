@@ -41,8 +41,36 @@ Export Feedback
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript">
-	$('#datepickerFrom').datepicker();
-	$('#datepickerTo').datepicker();
+$(function() {
+    $("#datepickerFrom").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() + 1);
+            $("#datepickerTo").datepicker("option", "minDate", dt);
+        }
+    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
     function validatethis(frm) {
         window.is_error = false;
 
@@ -61,12 +89,8 @@ Export Feedback
         }else{
           $(frm.datepickerTo).removeClass('error-box');
         }
-        if(frm.datepickerTo.value && frm.datepickerFrom.value){
-            if(frm.datepickerTo.value <= frm.datepickerFrom.value){
-                window.is_error = true;
-                alert('End Date should be greater than Start Date');
-            }
-        }
+
+
         if(window.is_error){
           return false;
         }else{

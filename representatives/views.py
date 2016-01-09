@@ -864,8 +864,8 @@ def export_appointments_with_schedule_appointments(request):
         to_date = request.POST.get('date_to')
         process_type = request.POST.getlist('selectedProcessType')
         regalix_team = request.POST.getlist('selectedTeams')
-        from_date = datetime.strptime(from_date, "%d/%m/%Y %H:%M")
-        to_date = datetime.strptime(to_date, "%d/%m/%Y %H:%M")
+        from_date = datetime.strptime(from_date, "%Y/%m/%d %H:%M")
+        to_date = datetime.strptime(to_date, "%Y/%m/%d %H:%M")
         to_date = datetime(to_date.year, to_date.month, to_date.day, to_date.hour, to_date.minute, 59)
 
         time_zone = 'IST'

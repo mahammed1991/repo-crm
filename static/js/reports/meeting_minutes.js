@@ -1,4 +1,4 @@
-function validatethis(frm) {
+function validatethis() {
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -32,6 +32,12 @@ function validatethis(frm) {
 
     regionElem = document.getElementById('region');
     validateFiled(regionElem);
+
+    locationElem = document.getElementById('country');
+    validateFiled(locationElem);
+
+    programElem = document.getElementById('program');
+    validateFiled(programElem);
 
     attendeesElem = document.getElementById('attendees');
     validateFiled(attendeesElem);
@@ -74,10 +80,28 @@ function validatethis(frm) {
 
   function validateFiled(elem){
   // Validate Form Field
-  if ($(elem).val().trim() == "" || $(elem).val() == "0" || !$(elem).val()) {
+  if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
   $(elem).addClass('error-box');
   window.failedFields.push(elem);
   window.is_error = true;
   return false;
   }
 }
+
+function setLocationsForRegion(newLocations, countryIds){
+    $("#country option").remove()
+    $("#country").append('<option value="0">Location</option>');
+    if(countryIds && countryIds.length > 0){
+        for(i=0; i<newLocations.length; i++){
+          if(countryIds.indexOf(newLocations[i]['id']) != -1){
+           $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+         }
+        }
+    }else{
+        for(i=0; i<newLocations.length; i++){
+          $("#country").append('<option value="' + newLocations[i]['name'] + '" location_id="' + newLocations[i]['id']+ '">'+ newLocations[i]['name'] +'</option>');
+        }
+    }
+    
+   $("#country").val('0');
+  }

@@ -85,14 +85,41 @@ Manage Appointments
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
 <script type="text/javascript">
-  $('#datetimepickerFrom').datetimepicker({
-    format:'d/m/Y H:i',
-    step:30
-  });
-  $('#datetimepickerTo').datetimepicker({
-    format:'d/m/Y H:i',
-    step:30
-  });
+$(function(){
+ $('#datetimepickerFrom').datetimepicker({
+  format:'Y/m/d H:i',
+  onShow:function( ct ){
+   this.setOptions({
+    maxDate:$('#datetimepickerTo').val()?$('#datetimepickerTo').val():false
+   })
+  },
+ });
+ $('#datetimepickerTo').datetimepicker({
+  format:'Y/m/d H:i',
+  onShow:function( ct ){
+   this.setOptions({
+    minDate:$('#datetimepickerFrom').val().split(' ')[0]?$('#datetimepickerFrom').val().split(' ')[0]:false
+   })
+  },
+ });
+});
+// $(function(){
+//     $('#datetimepickerFrom').datetimepicker({
+//     format:'d/m/Y H:i',
+//     step:30,
+    
+//   });
+//   $('#datetimepickerTo').datetimepicker({
+//     format:'d/m/Y H:i',
+//     step:30,
+//      onShow:function( ct ){
+//        this.setOptions({
+//         minDate:$('#datetimepickerFrom').val()?$('#datetimepickerFrom').val():false
+//        })
+//     },
+//   });
+// });
+  
   $('#processTypeBtn').click(function(){
     if($('#selectedProcessType').value == ""){
       $().hide();
@@ -288,14 +315,13 @@ Manage Appointments
                     alert('End Time should be greater than Start Time');
                 }
             }
-            if(frm.datetimepickerTo.value.split(' ')[0] < frm.datetimepickerFrom.value.split(' ')[0]){
-                window.is_error = true;
-                alert('End Date should be greater than Start Date');
-            }
-            else if(frm.datetimepickerTo.value < frm.datetimepickerFrom.value){
-                window.is_error = true;
-                alert('End Date should be greater than Start Date');
-            }
+            // if(frm.datetimepickerTo.value.split(' ')[0] < frm.datetimepickerFrom.value.split(' ')[0]){
+            //     if(frm.datetimepickerTo.value.split(' ')[0].split('/')[2] < frm.datetimepickerFrom.value.split(' ')[0].split('/')[2]){
+            //     alert('End date should be greater than Start date');
+            // }
+            //     window.is_error = true;
+            //     alert('End Date should be greater than Start Date');
+            // }
         }
 
         if(window.is_error){

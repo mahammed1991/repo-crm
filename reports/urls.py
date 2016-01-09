@@ -28,4 +28,5 @@ urlpatterns = patterns(
     url(r'^get_selected_view_type$', views.get_selected_report_view),
     # Meeting page URL
     url(r'^meeting-minutes/$', views.meeting_minutes),
+    url(r'^link-last-meeting/(?P<last_id>\d+)/$', views.link_last_meeting),
 )

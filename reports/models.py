@@ -3,6 +3,7 @@ from leads.models import Location, Team, Language
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from jsonfield2 import JSONField
 
 
 class LeadSummaryReports(models.Model):
@@ -153,3 +154,30 @@ class CSATFilterDetails(models.Model):
         ('BOTH', 'BOTH')), default='TAG')
     agent_language = models.ManyToManyField(Language)
     survey_pin_number = models.CharField(max_length=100, default='')
+
+
+class MeetingMinutes(models.Model):
+    """ Minutes of Meeting Data has to be stored """
+    subject_timeline = models.CharField(max_length=255, null=True)
+    subject_type = models.CharField(max_length=255, null=True)
+    other_subject = models.CharField(max_length=255, null=True)
+    meeting_time_in_ist = models.DateTimeField(blank=True)
+    google_poc = models.ForeignKey(User, related_name='google_poc', blank=True)
+    regalix_poc = models.ForeignKey(User, related_name='regalix_poc', blank=True)
+    google_team = models.ForeignKey(Team, null=False, blank=False)
+    attendees = models.ManyToManyField(User, )
+    key_points = JSONField(default={})
+    action_plan = JSONField(default={})
+    next_meeting_datetime = models.DateTimeField(blank=True)
+    tenantive_agenda = JSONField(default={})
+    region = models.CharField(max_length=255, null=True)
+    location = models.CharField(max_length=255, null=True)
+    program = models.CharField(max_length=255, null=True)
+    program_type = models.CharField(max_length=255, null=True)
+
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Meeting Minutes"
