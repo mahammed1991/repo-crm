@@ -844,7 +844,7 @@ def comment_feedback(request, id):
 
 def get_contacts(request):
     """ Get team contacts information """
-    contact_list = ContectList.objects.filter()
+    contact_list = ContectList.objects.filter(is_active=True)
     keyorder = {k: v for v, k in enumerate(['The implementation team', 'Training/ SME/ Tech', 'QUALITY', 'MIS / WFM', 'OPERATIONS', 'MANAGEMENT'])}
     your_team = {'The implementation team': list(), 'Training/ SME/ Tech': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS / WFM': list()}
     other_team = {'The implementation team': list(), 'Training/ SME/ Tech': list(), 'MANAGEMENT': list(), 'OPERATIONS': list(), 'QUALITY': list(), 'MIS / WFM': list()}
