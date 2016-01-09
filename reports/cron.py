@@ -131,6 +131,8 @@ def get_deleted_leads():
             ids = tuple(ids)
             logging.info("Deleted Lead Id's %s, Total = %s" % (ids, len(ids)))
             Leads.objects.filter(sf_lead_id__in=ids).delete()
+            WPPLeads.objects.filter(sf_lead_id__in=ids).delete()
+            PicassoLeads.objects.filter(sf_lead_id__in=ids).delete()
             logging.info("Deleted Successfully")
         # start_date, end_date = get_quarter_date_slots(datetime.utcnow())
         # start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
@@ -263,10 +265,10 @@ def create_or_update_leads(records, sf):
             else:
                 lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'NA'
             lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
-            if rec.get('Eligible_Nominated_for_WPP__c'):
-                if rec.get('Eligible_Nominated_for_WPP__c') == 'Yes':
+            if rec.get('PICASSO_build_eligible__c'):
+                if rec.get('PICASSO_build_eligible__c') == 'Yes':
                     lead.is_nominated = True
-                elif rec.get('Eligible_Nominated_for_WPP__c') == 'No':
+                elif rec.get('PICASSO_build_eligible__c') == 'No':
                     lead.is_nominated = False
         else:
             try:

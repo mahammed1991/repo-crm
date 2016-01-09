@@ -712,11 +712,20 @@ def get_unique_uuid(lead_type):
 
 def get_tat_for_picasso(source):
     if source == 'SFDC':
-        sf_connection = SalesforceApi.connect_salesforce()
-        result = sf_connection.query("SELECT count() from LEAD WHERE Code_Type__c = 'Picasso' AND Status = 'In Queue'")
+        end_date = datetime.now(pytz.UTC)   # end date in utc today
+        start_date = datetime(2016, 01, 01, 0, 0, 0, tzinfo=pytz.utc)
+        start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+        end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+        sf = SalesforceApi.connect_salesforce()
+        code_type = 'Picasso'
+        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
+        sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)
+        result = sf.query_all(sql_query_picasso)
         no_of_inqueue_leads = result['totalSize'] + 1
     else:
-        no_of_inqueue_leads = PicassoLeads.objects.filter(lead_status='In Queue').count() + 1
+        start_date = datetime().now()
+        start_date = datetime(start_date.year, 1, 1, 0, 0)
+        no_of_inqueue_leads = PicassoLeads.objects.filter(lead_status='In Queue', created_date__gte=start_date).count() + 1
 
     tz_ist = Timezone.objects.get(zone_name='IST')
     ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
@@ -729,7 +738,13 @@ def get_tat_for_picasso(source):
         if availability.availability_count and availability.audits_per_date:
             lookup_sum += availability.availability_count * availability.audits_per_date
             if lookup_sum > no_of_inqueue_leads:
-                target_details['estimated_date'] = availability.date_in_ist
+                estimated_date = availability.date_in_ist + timedelta(days=2)
+                if estimated_date.weekday() == 5:
+                    target_details['estimated_date'] = estimated_date + timedelta(days=1)
+                elif estimated_date.weekday() == 6:
+                    target_details['estimated_date'] = estimated_date + timedelta(days=2)
+                else:
+                    target_details['estimated_date'] = estimated_date
                 target_details['lookup_sum'] = lookup_sum
                 target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
                 return target_details
@@ -744,8 +759,5 @@ def get_todays_transition_leads():
     selected_tzone = Timezone.objects.get(zone_name=ist_timezone)
     utc_start_date = SalesforceApi.get_utc_date(start_date, selected_tzone.time_value)
     utc_end_date = SalesforceApi.get_utc_date(end_date, selected_tzone.time_value)
-    today_changed_leads = PicassoLeads.objects.filter(lead_status='Delivered', updated_date__gte=utc_start_date, updated_date__lte=utc_end_date).count()
-    # start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
-    # end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-    print today_changed_leads
+    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered', 'Audited'], updated_date__gte=utc_start_date, updated_date__lte=utc_end_date).count()
     return today_changed_leads

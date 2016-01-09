@@ -26,7 +26,7 @@
     border-bottom: 1px solid #ccc;
     padding-bottom: 12px;
     margin-top: 50px;
-    margin-bottom: 20px;">WPP NOMINATION REQUEST</h1>
+    margin-bottom: 20px;">PICASSO BUILD NOMINATION REQUEST</h1>
  
     <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST" action="{% url 'leads.views.wpp_lead_form' %}">
         <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=8" name="retURL">

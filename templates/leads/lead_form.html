@@ -977,6 +977,10 @@
                <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm">
               Do you want to install this Tag via Google Tag Manager?
             </label>
+            <label id="tagAddwordsCheck" class="tag-add-policies" style="display:none;">
+              Should dynamic conversion value be tracked? &nbsp;
+              <input type="radio" id="add_tracking_yes" name="add_tracking" value=""> Yes <input type="radio" id="add_tracking_no" name="add_tracking"> No
+            </label>
             <label class="shopping-policy" style="display:none;">
               <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
               Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
@@ -1144,6 +1148,11 @@ $(document).on('change', '#country', function() {
 
     } else {
 
+      if(['UK/I'].indexOf(location) != -1){
+         $('#appointment_check_tag').show();
+        $('#appointment_check_shopping').show();
+      }
+
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx == -1) {
             window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");
@@ -1196,15 +1205,14 @@ function clearAndHideFields(){
 }
 
 function mandatoryAppointmentForLanguages(language){
-  $('#appointment_check_tag').show();
-  $('#appointment_check_shopping').show();
+  $('#appointment_check_tag').hide();
+  $('#appointment_check_shopping').hide();
       
   if(['French', 'German', 'Italian'].indexOf(language) != -1){
       $('#appointment_check_tag').hide();
        $('#appointment_check_shopping').hide();
 
   }
-    
 }
 
 </script>

@@ -323,7 +323,12 @@ function setWppLeadSummary(lead_status){
       }else{
         commnet = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
+      if(leads[i].treatment_type){
       treatmentType = '<td class="hidden-xs hidden-sm">' + leads[i].treatment_type + '</td>'
+        
+      } else{
+        treatmentType = '<td class="hidden-xs hidden-sm">N/A</td>'
+      }
 
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
       action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat(' + leads[i].lead_id +') id="lead_id-' + leads[i].lead_id +'"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid(' + leads[i].lead_id +')></i></a></td>'
