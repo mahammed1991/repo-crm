@@ -979,7 +979,7 @@
             </label>
             <label id="tagAddwordsCheck" class="tag-add-policies" style="display:none;">
               Should dynamic conversion value be tracked? &nbsp;
-              <input type="radio" id="add_tracking_yes" name="add_tracking" value=""> Yes <input type="radio" id="add_tracking_no" name="add_tracking"> No
+              <input type="radio" id="add_tracking_yes" name="dynamic_conversion_tracking" class="dynamic-value"> Yes <input type="radio" id="add_tracking_no" name="dynamic_conversion_tracking" class="dynamic-value"> No
             </label>
             <label class="shopping-policy" style="display:none;">
               <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
@@ -1108,6 +1108,17 @@ $("input:radio[name=webmasterCheck]").click(function() {
     $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Webmaster">Webmaster</option>');
 
 });
+
+
+  $(".dynamic-value" ).click(function(){
+    if($('#add_tracking_yes').is(':checked')){
+      $('#add_tracking_yes').val('Yes')
+      $('#add_tracking_no').val('No')
+    }else{
+      $('#add_tracking_yes').val('No')
+      $('#add_tracking_no').val('Yes')
+    }
+  });
 
 $(document).on('change', '.call_extension', function() {
     if ($('.call_extension').is(':checked')) {

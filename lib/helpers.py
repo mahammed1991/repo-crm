@@ -723,7 +723,7 @@ def get_tat_for_picasso(source):
         result = sf.query_all(sql_query_picasso)
         no_of_inqueue_leads = result['totalSize'] + 1
     else:
-        start_date = datetime().now()
+        start_date = datetime.today()
         start_date = datetime(start_date.year, 1, 1, 0, 0)
         no_of_inqueue_leads = PicassoLeads.objects.filter(lead_status='In Queue', created_date__gte=start_date).count() + 1
 

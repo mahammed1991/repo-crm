@@ -75,7 +75,6 @@ def lead_form(request):
             # error_url = basic_data['errorURL']
 
             tag_data = basic_data
-
             for key, value in tag_leads.items():
                 tag_data[value] = request.POST.get(key)
 
@@ -2750,37 +2749,6 @@ def convert_picasso_lead_to_dict(model):
     lead['pod_name'] = model.pod_name
     lead['picasso_objective'] = model.picasso_objective
     return lead
-
-
-@login_required
-def picasso_build_wpp_form(request, ref_id=None):
-    # Get all location, teams codetypes
-    lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.filter(belongs_to__in=['WPP', 'BOTH'], is_active=True)
-    lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
-
-    wpp_locations = list()
-    for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
-            wpp_locations.append(loc)
-    lead_args.update({'wpp_locations': wpp_locations})
-    wpp_loc = list()
-    regalix_team = RegalixTeams.objects.filter(process_type='WPP', is_active=True)
-    for tm in regalix_team:
-        for loc in tm.location.all():
-            wpp_loc.append(loc)
-    lead_args.update({'wpp_loc': wpp_loc})
-    if ref_id:
-        try:
-            ref_lead = PicassoLeads.objects.get(ref_uuid=ref_id)
-            lead_args['ref_lead'] = ref_lead
-        except:
-            return redirect('leads.views.picasso_build_wpp_form')
-    return render(
-        request,
-        'leads/picasso_build_wpp_form.html',
-        lead_args
-    )
 
 
 def get_eligible_picasso_leads(request):
