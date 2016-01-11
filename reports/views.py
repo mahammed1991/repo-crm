@@ -1,0 +1,1367 @@
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+import json
+from datetime import datetime
+from leads.models import Location, PicassoLeads, Leads, Team, Location
+from report_services import ReportService, DownloadLeads, TrendsReportServices
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range
+from django.conf import settings
+from reports.models import LeadSummaryReports
+from main.models import UserDetails, WPPMasterList
+from django.db.models import Q
+from reports.models import Region, CallLogAccountManager, MeetingMinutes
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count
+from collections import OrderedDict
+from lib.helpers import (send_mail)
+from django.template.loader import get_template
+from django.template import Context
+import re
+
+
+@login_required
+@tag_user_required
+def reports(request):
+    """ New Report """
+    report_type = 'default_report'
+    report_timeline = ['today']
+    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        members = get_user_under_manager(request.user.email)
+        team_members.append(request.user)
+    for member in members:
+        team_members.append(member)
+
+    locations = ReportService.get_all_locations()
+    teams = ReportService.get_all_teams()
+    rgx_teams = Region.objects.all()
+    if '' in teams:
+        teams.remove('')
+        teams.append('Other')
+    code_types = ReportService.get_all_code_type()
+    code_types = [str(codes.encode('utf-8')) for codes in code_types]
+    report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, locations, start_date, end_date, list())
+    if len(report_timeline) > 1:
+        tag = "Week On Week Trends"
+    else:
+        if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+            tag = "Week On Week Trends"
+        elif str(report_timeline[0]) == 'this_quarter':
+            tag = "Month On Month Trends"
+    report_details = {'reports': report_detail, 'code_types': code_types,
+                    'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
+    return render(request, 'reports/reports.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
+                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
+
+
+@login_required
+@tag_user_required
+def reports_new(request):
+    """ New Report """
+    report_type = 'default_report'
+    report_timeline = ['this_quarter']
+    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        members = get_user_under_manager(request.user.email)
+        team_members.append(request.user)
+    for member in members:
+        team_members.append(member)
+    locations = ReportService.get_all_locations()
+    teams = ReportService.get_all_teams()
+    rgx_teams = Region.objects.all()
+    if '' in teams:
+        teams.remove('')
+        teams.append('Other')
+    code_types = ReportService.get_all_code_type()
+    code_types = [str(codes.encode('utf-8')) for codes in code_types]
+    report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, locations, start_date, end_date, list())
+    if len(report_timeline) > 1:
+        tag = "Week On Week Trends"
+    else:
+        if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+            tag = "Week On Week Trends"
+        elif str(report_timeline[0]) == 'this_quarter':
+            tag = "Month On Month Trends"
+    report_details = {'reports': report_detail, 'code_types': code_types,
+                    'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
+    return render(request, 'reports/reports_new.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
+                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
+
+
+@login_required
+def get_selected_new_reports(request):
+    """ New Report Details
+    """
+    report_detail = dict()
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        region = request.GET.get('region')
+        countries = request.GET.getlist('countries[]')
+        teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
+        ldap_id = request.GET.get('ldap_id', None)
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+
+        report_details = dict()
+        emails = list()
+        if report_type == 'leadreport_individualRep':
+            if ldap_id:
+                email = User.objects.select_related('email').get(pk=ldap_id)
+                emails = [email]
+            else:
+                emails = request.user.email
+                emails = [email]
+            
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        if report_type == 'leadreport_teamLead':
+            emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            
+        teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
+
+        lead_ids = leads
+        # if '' in teams:
+        #     teams.remove('')
+        report_split_detail = dict()
+        # if report_type == 'default_report':
+        #     report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
+        if report_type == 'leadreport_individualRep':
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+        elif report_type == 'leadreport_programview':
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+            if program_split:
+                report_split_detail['program_report'] = ReportService.get_program_report_by_locations(teams, countries, code_types)
+        elif report_type == 'leadreport_regionview':
+            report_detail = ReportService.get_leads_status_summary(lead_ids)
+            if location_split:
+                report_split_detail['region_report'] = ReportService.get_region_report_by_program(countries, teams, code_types)
+        else:
+            pass
+
+        report_details = {'reports': report_detail, 'report_type': report_type, 'report_timeline': report_timeline,
+                          'region': region, 'report_split_detail': report_split_detail}
+
+        return HttpResponse(json.dumps(report_details))
+
+
+def get_selected_report_view(request):
+    report_detail = dict()
+    if request.is_ajax:
+        report_view_type = request.GET.get('report_view_type')
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        region = request.GET.get('region')
+        countries = request.GET.getlist('countries[]')
+        teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
+        ldap_id = request.GET.get('ldap_id', None)
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+
+        
+        report_details = dict()
+        emails = list()
+        if report_type == 'leadreport_individualRep':
+            if ldap_id:
+                email = User.objects.select_related('email').get(pk=ldap_id)
+                emails = [email]
+            else:
+                email = request.user.email
+                emails = [email]
+
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        if report_type == 'leadreport_teamLead':
+            emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            emails.append(emails)
+            
+        teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
+
+        lead_ids = leads
+        report_split_detail= dict()
+        lead_status_summary = list()
+        lead_status_analysis_table_grp = list()
+        pie_chart_dict = dict()
+        timeline_chart_details = list()
+
+        if location_split:
+            report_split_detail['region_report'] = ReportService.get_region_report_by_program(countries, teams, code_types)
+
+        if program_split:
+            report_split_detail['program_report'] = ReportService.get_program_report_by_locations(teams, countries, code_types)
+
+        if report_view_type == 'lead_summary_status':
+            lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
+        elif report_view_type == 'task_type_analysis':
+            for code_type in code_types:
+                lead_status_analysis_grp = {code_type: ''}  
+                leads_per_code_type_grp = Leads.objects.filter(type_1=code_type, id__in=lead_ids).values('lead_status').annotate(dcount=Count('lead_status'))
+                lead_status_analysis_grp[code_type] = ReportService.get_lead_status_analysis(leads_per_code_type_grp)
+                lead_status_analysis_table_grp.append(lead_status_analysis_grp)
+
+            for cod_typ in lead_status_analysis_table_grp:
+                key = cod_typ.keys()[0]
+                value = cod_typ[key]['Total']
+                pie_chart_dict[key] = value
+        elif report_view_type == 'week_on_week_trends':
+            timeline_chart_details = ReportService.get_timeline_chart_details(report_timeline, lead_ids, countries, teams, code_types, emails)
+        else:
+            pass
+
+        if len(report_timeline) > 1:
+            tag = "Week On Week Trends"
+        else:
+            if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+                tag = "Week On Week Trends"
+            elif str(report_timeline[0]) == 'this_quarter':
+                tag = "Month On Month Trends"
+
+        report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type, 
+                        'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
+                        'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
+                        'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
+        return HttpResponse(json.dumps(report_details))
+
+
+@login_required
+def get_current_quarter_report(request):
+    ''' Get Reports of Current Quarter '''
+    # by default should be current Quarter
+    start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+    code_types = ReportService.get_all_code_type()
+    code_types = [str(codes.encode('utf-8')) for codes in code_types if 'www.' not in codes and 'http:' not in codes and 'https:' not in codes]
+    lead_status = [l for l in settings.LEAD_STATUS]
+
+    if 'In Queue' in lead_status:
+            lead_status.append('Appointment Set (GS)')
+    if 'In Progress' in lead_status:
+        lead_status.extend(['Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Rework Required'])
+
+    # ##################### cron job reports for Current Quarter start here ######################
+    # Get summary report by code types and lead_status
+    c_types = ['total', 'total_tag', 'Google Shopping Migration', 'Google Shopping Setup']
+    report_details = LeadSummaryReports.objects.filter(code_type__in=c_types)
+    report_detail = dict()
+    for rep in report_details:
+        report_detail[rep.code_type] = dict()
+        report_detail[rep.code_type]['total_leads'] = int(rep.total_leads)
+        report_detail[rep.code_type]['wins'] = float(rep.win)
+        report_detail[rep.code_type]['Implemented'] = int(rep.implemented)
+        report_detail[rep.code_type]['In Queue'] = rep.in_queue
+        report_detail[rep.code_type]['tat_implemented'] = int(rep.tat_implemented)
+        report_detail[rep.code_type]['tat_first_contacted'] = int(rep.tat_first_contacted)
+    # ##################### cron job reports for Current Quarter ends here ######################
+
+    # Get summary report by code types and lead_status
+    # report_detail = ReportService.get_summary_by_code_types_and_status(
+    #    'tag', code_types, lead_status, start_date, end_date, teams=list(), locations=list())
+
+    quarter = ReportService.get_current_quarter(datetime.utcnow())
+    start_month = datetime.strftime(start_date, '%b')
+    end_month = datetime.strftime(end_date, '%b')
+    report_title = "LEADS %s SUMMARY - %s to %s %s" % (quarter, start_month.upper(), end_month.upper(), datetime.utcnow().year)
+
+    return HttpResponse(json.dumps({'reports': report_detail, 'code_types': code_types, 'report_title': report_title}))
+
+
+@login_required
+def get_new_reports(request):
+    """ New Report Details
+    """
+    report_detail = dict()
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        region = request.GET.get('region')
+        countries = request.GET.getlist('countries[]')
+        teams = request.GET.getlist('team[]')
+        team_members = request.GET.getlist('team_members[]')
+        ldap_id = request.GET.get('ldap_id', None)
+        program_split = request.GET.get('program_split', None)
+        location_split = request.GET.get('location_split', None)
+
+        # Get teams
+        if 'all' in teams:
+            if len(teams) > 1:
+                teams.remove('all')
+            else:
+                teams = ReportService.get_all_teams()
+        else:
+            if not teams:
+                teams = ReportService.get_all_teams()
+            else:
+                teams = teams
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        final_countries = list()
+
+        if region:
+            if region == 'all':
+                final_countries = ReportService.get_all_locations()
+            else:
+                if 'all' in countries:
+                    if len(countries) > 1:
+                        countries.remove('all')
+                        final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                    else:
+                        final_countries = ReportService.get_all_locations()
+                else:
+                    final_countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+        else:
+            final_countries = ReportService.get_all_locations()
+
+        countries = final_countries
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+
+        code_types = list(Leads.objects.exclude(type_1__in=['', 'WPP']).filter(created_date__gte=start_date, created_date__lte=end_date).values_list(
+            'type_1', flat=True).distinct().order_by('type_1'))
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+        report_details = dict()
+        if ldap_id:
+            email = User.objects.select_related('email').get(pk=ldap_id)
+        else:
+            email = request.user.email
+
+        # if '' in teams:
+        #     teams.remove('')
+
+        # if report_type == 'default_report':
+        #     report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
+        if report_type == 'leadreport_individualRep':
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, [email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, team_emails)
+        elif report_type == 'leadreport_programview':
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
+            if program_split:
+                report_detail['program_report'] = ReportService.get_program_report_by_locations(teams, countries, code_types)
+        elif report_type == 'leadreport_regionview':
+            report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
+            if location_split:
+                report_detail['region_report'] = ReportService.get_region_report_by_program(countries, teams, code_types)
+        else:
+            pass
+
+        if len(report_timeline) > 1:
+            tag = "Week On Week Trends"
+        else:
+            if str(report_timeline[0]) in ['today', 'this_week', 'last_week', 'this_month', 'last_month']:
+                tag = "Week On Week Trends"
+            elif str(report_timeline[0]) == 'this_quarter':
+                tag = "Month On Month Trends"
+
+        report_details = {'reports': report_detail, 'code_types': code_types,
+                          'report_type': report_type, 'report_timeline': report_timeline,
+                          'region': region, 'team': teams, 'tag': tag}
+
+        return HttpResponse(json.dumps(report_details))
+
+
+@csrf_exempt
+@login_required
+def get_download_report(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('download_report_type')
+        report_timeline = request.POST.get('download_report_timeline')
+        region = request.POST.get('download_region')
+        countries = request.POST.get('download_countries')
+        teams = request.POST.get('download_team')
+        team_members = request.POST.get('download_team_members')
+        selected_fields = request.POST.get('download_selectedFields')
+        ldap_id = request.POST.get('form_ldap_id')
+        report_timeline = report_timeline.split(',') if report_timeline else []
+        countries = countries.split(',') if countries else []
+        teams = teams.split(',') if teams else []
+        team_members = team_members.split(',') if team_members else []
+        selected_fields = selected_fields.split(',') if selected_fields else []
+        # Get teams
+        if 'all' in teams:
+            if len(teams) > 1:
+                teams.remove('all')
+            else:
+                teams = ReportService.get_all_teams()
+        else:
+            teams = teams
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+
+        if region == 'all':
+            countries = ReportService.get_all_locations()
+        else:
+            if 'all' in countries:
+                if len(countries) > 1:
+                    countries.remove('all')
+                    countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+                else:
+                    countries = ReportService.get_all_locations()
+            else:
+                countries = list(Location.objects.values_list('location_name', flat=True).filter(id__in=countries).distinct().order_by('location_name'))
+
+        code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types]
+
+        if report_type != 'historical_report':
+            if report_timeline:
+                if report_timeline > 1:
+                    report_timeline = [dt.replace('-', ',') for dt in report_timeline]
+                    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+                    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+                else:
+                    start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+                    end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+        else:
+            start_date = re.search(r'\d{4}-\d{2}-\d{2}', report_timeline[0]).group()
+            end_date = re.search(r'\d{4}-\d{2}-\d{2}', report_timeline[1]).group()
+
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            # start_date = start_date + datetime.timedelta(days=1)
+
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            # end_date = end_date + datetime.timedelta(days=1)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        if ldap_id:
+            email = User.objects.select_related('email').get(pk=ldap_id)
+        else:
+            email = request.user.email
+
+        if report_type == 'default_report':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        elif report_type == 'leadreport_individualRep':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, [email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, team_emails)
+        elif report_type == 'leadreport_programview':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        elif report_type == 'leadreport_regionview':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        elif report_type == 'historical_report':
+            leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
+        else:
+            pass
+
+        path = DownloadLeads.download_lead_report(leads, start_date, end_date, selected_fields)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+
+@login_required
+@wpp_user_required
+def wpp_master_list(request):
+    wpp_master_list = WPPMasterList.objects.all()
+    return render(request, 'reports/wpp_master_list.html', {'wpp_master_list': wpp_master_list})
+
+
+@login_required
+@wpp_user_required
+def wpp_reports(request):
+    """ WPP Reports """
+
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        members = get_user_under_manager(request.user.email)
+        team_members.append(request.user)
+    for member in members:
+        team_members.append(member)
+    return render(request, 'reports/wpp_reports.html', {'manager': manager, 'team_members': team_members})
+
+
+def get_wpp_reports(request):
+    """ New Report Details
+    """
+    wpp_report_detail = dict()
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        team_members = request.GET.getlist('team_members[]')
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        wpp_report_details = dict()
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+        if report_type == 'default_report':
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
+        elif report_type == 'leadreport_individualRep':
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, team_emails)
+        elif report_type == 'leadreport_superUser':
+            wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
+        else:
+            pass
+
+        wpp_report_detail['treatment_type_header'] = [sts for sts in settings.WPP_LEAD_STATUS]
+        wpp_report_detail['treatment_type_header'].append('TAT')
+        wpp_report_detail['treatment_type_header'].append('TOTAL')
+
+        status_list = [status for status in settings.WPP_LEAD_STATUS]
+        status_list.append('TOTAL')
+        bar_chart_data = [['Lead Status']]
+        for status in status_list:
+            status_row = [status]
+            for treatment_type in wpp_report_detail['wpp_treatment_type_analysis']:
+                status_row.append(wpp_report_detail['wpp_treatment_type_analysis'][treatment_type][status])
+            bar_chart_data.append(status_row)
+        bar_chart_data[0].extend(wpp_report_detail['wpp_treatment_type_analysis'].keys())
+
+        wpp_report_detail['bar_chart_data'] = bar_chart_data
+        wpp_report_details = {'reports': wpp_report_detail,
+                              'report_type': report_type, 'report_timeline': report_timeline}
+
+        return HttpResponse(json.dumps(wpp_report_details))
+
+
+@login_required
+def get_user_name(request):
+    if request.is_ajax():
+        query = request.GET.get('term', '')
+        if ' ' in query:
+            query = query.split(' ')[0]
+        qs = User.objects.all()
+        users = qs.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))
+        results = []
+        for user in users:
+            user_json = {}
+            user_json['id'] = user.id
+            user_json['label'] = user.first_name + " " + user.last_name
+            user_json['value'] = user.first_name + " " + user.last_name
+            user_json['username'] = user.username
+            try:
+                user_details = UserDetails.objects.get(user_id=user.id)
+                user_json['manager'] = user_details.user_manager_name if user_details.user_manager_name else None
+                user_json['team'] = user_details.team.team_name if user_details.team else None
+                user_json['region'] = user_details.location.location_name if user_details.location else None
+            except UserDetails.DoesNotExist:
+                user_json['manager'] = None
+                user_json['team'] = None
+                user_json['region'] = None
+            results.append(user_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@login_required
+def get_countries(request):
+    if request.is_ajax():
+        region_id = request.GET.get('team_id')
+        regn = Region.objects.get(pk=region_id)
+        locations = regn.location.all()
+        countries = list()
+        for location in locations:
+            countries.append({"id": location.id, "name": location.location_name})
+        return HttpResponse(json.dumps(countries))
+
+
+@login_required
+def get_reports(request):
+    ''' Get report by Filter '''
+    if request.is_ajax():
+        # Get type of report
+        # report_type = request.GET.get('report_type', None)
+        report_type = "lead_report"
+
+        # Get process filters
+        # Get Lead Status
+        lead_status = request.GET.getlist('lead_status[]')
+        if 'all' in lead_status:
+            if len(lead_status) > 1:
+                lead_status.remove('all')
+            else:
+                # get all lead status
+                lead_status = [l for l in settings.LEAD_STATUS]
+
+        if 'In Queue' in lead_status:
+            lead_status.append('Appointment Set (GS)')
+        if 'In Progress' in lead_status:
+            lead_status.extend(['Pending QC - DEAD LEAD', 'Pending QC - WIN', 'Rework Required'])
+
+        # Get Code Types
+        code_types = request.GET.getlist('code_types[]')
+        if 'all' in code_types:
+            if len(code_types) > 1:
+                code_types.remove('all')
+            else:
+                # get all code types
+                code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types if 'www.' not in codes and 'http:' not in codes and 'https:' not in codes]
+
+        # Get timeline filters
+        quarterly = request.GET.get('quarterly', None)
+        monthly = request.GET.get('monthly', None)
+        weekly = request.GET.get('weekly', None)
+        date_range = request.GET.getlist('date_range[]')
+        # Get other filters
+        location = request.GET.getlist('location[]')
+        team = request.GET.getlist('team[]')
+
+        # Get locations
+        if 'all' in location:
+            if len(location) > 1:
+                location.remove('all')
+            else:
+                location = ReportService.get_all_locations()
+        locations = [str(loc) for loc in location]
+
+        # Get teams
+        if 'all' in team:
+            if len(team) > 1:
+                team.remove('all')
+            else:
+                team = ReportService.get_all_teams()
+        teams = [str(t) for t in team]
+
+        # split by location or team
+        program_split = request.GET.get('team_split', None)
+        location_split = request.GET.get('location_split', None)
+        status_split = request.GET.get('status_split', None)
+        code_split = request.GET.get('code_split', None)
+
+        # Getting TAT report
+        report_stage = request.GET.get('stage', None)
+
+        # Get date range by timeline filter
+        timeline = dict()
+        if quarterly or monthly or weekly or date_range:
+            timeline['quarterly'] = request.GET.get('quarterly', None)
+            timeline['monthly'] = request.GET.get('monthly', None)
+            timeline['weekly'] = request.GET.get('weekly', None)
+            timeline['date_range'] = request.GET.getlist('date_range[]')
+            start_date, end_date = ReportService.get_date_range_by_timeline(timeline)
+        else:
+            # by default should be current Quarter
+            start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+            timeline['quarterly'] = ReportService.get_current_quarter(datetime.utcnow())
+
+        report_summary = dict()
+        # Get summary report by code types and lead_status only if Implemented in lead status
+        if 'Implemented' in lead_status and ReportService.is_all_status_exist(lead_status):
+            report_summary = ReportService.get_summary_by_code_types_and_status(
+                'all', code_types, lead_status, start_date, end_date, teams, locations)
+
+        # Report Details
+        final_report = list()
+        total = dict()
+        year = datetime.utcnow().year
+        month = ''
+        report = list()
+        total = dict()
+        leads = list()
+        if not program_split and not location_split and teams and locations:
+            leads = ReportService.get_leads_by_teams_and_locations(teams, locations, lead_status, code_types, start_date, end_date)
+            if leads:
+                # Get reports based on report type, (LEAD or TAT REPORTS)
+                if report_type == 'lead_report':
+                    report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+            else:
+                report = list()
+                total = dict()
+            final_report.append({'report': report, 'total': total, 'team': teams, 'location': locations})
+            report_filter = "both"
+        elif teams and locations:
+            if len(teams) == 1 and len(locations) == 1:
+                team = teams[0]
+                location = locations[0]
+                leads = ReportService.get_leads_by_team_and_location(
+                    team, location, lead_status, code_types, start_date, end_date)
+                if leads:
+                    # Get reports based on report type, (LEAD or TAT REPORTS)
+                    if report_type == 'lead_report':
+                        report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                else:
+                    report = list()
+                    total = dict()
+                final_report.append({'team': team if team else 'Other', 'location': location, 'report': report, 'total': total})
+                report_filter = "both"
+            elif len(teams) == 1 and len(locations) > 1:
+                # Check if location wise split or not
+                if location_split:
+                    for location in locations:
+                        leads = ReportService.get_leads_by_team_and_location(
+                            teams[0], location, lead_status, code_types, start_date, end_date)
+                        if leads:
+                            # Get reports based on report type, (LEAD or TAT REPORTS)
+                            if report_type == 'lead_report':
+                                report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                        else:
+                            report = list()
+                            total = dict()
+                        final_report.append({'team': team if team else 'Other', 'location': location, 'report': report, 'total': total})
+                    report_filter = "location"
+                else:
+                    leads = ReportService.get_leads_by_teams_and_locations(teams, locations, lead_status, code_types, start_date, end_date)
+                    if leads:
+                        # Get reports based on report type, (LEAD or TAT REPORTS)
+                        if report_type == 'lead_report':
+                            report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                    else:
+                        report = list()
+                        total = dict()
+                    final_report.append({'report': report, 'total': total, 'team': team, 'location': locations})
+                    report_filter = "both"
+            elif len(locations) == 1 and len(teams) > 1:
+                if program_split:
+                    for team in teams:
+                        leads = ReportService.get_leads_by_team_and_location(
+                            team, locations[0], lead_status, code_types, start_date, end_date)
+                        if leads:
+                            # Get reports based on report type, (LEAD or TAT REPORTS)
+                            if report_type == 'lead_report':
+                                report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                        else:
+                            report = list()
+                            total = dict()
+                        final_report.append({'team': team if team else 'Other', 'location': location, 'report': report, 'total': total})
+                    report_filter = "team"
+                else:
+                    leads = ReportService.get_leads_by_teams_and_locations(teams, locations, lead_status, code_types, start_date, end_date)
+                    if leads:
+                        # Get reports based on report type, (LEAD or TAT REPORTS)
+                        if report_type == 'lead_report':
+                            report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                    else:
+                        report = list()
+                        total = dict()
+                    final_report.append({'report': report, 'total': total, 'team': teams, 'location': locations})
+                    report_filter = "both"
+            elif program_split and location_split:
+                for team in teams:
+                    for location in locations:
+                        leads = ReportService.get_leads_by_team_and_location(
+                            team, location, lead_status, code_types, start_date, end_date)
+                        if leads:
+                            # Get reports based on report type, (LEAD or TAT REPORTS)
+                            if report_type == 'lead_report':
+                                report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                        else:
+                            report = list()
+                            total = dict()
+                        final_report.append({'team': team, 'location': location, 'report': report, 'total': total})
+                report_filter = 'both_split'
+            elif program_split:
+                for team in teams:
+                    leads = ReportService.get_leads_by_teams_and_locations(
+                        [team], locations, lead_status, code_types, start_date, end_date)
+                    if leads:
+                        # Get reports based on report type, (LEAD or TAT REPORTS)
+                        if report_type == 'lead_report':
+                            report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                    else:
+                        report = list()
+                        total = dict()
+                    final_report.append({'team': team, 'location': locations, 'report': report, 'total': total})
+                report_filter = "team_split"
+            else:
+                # report type is location
+                for location in locations:
+                    leads = ReportService.get_leads_by_teams_and_locations(
+                        teams, [location], lead_status, code_types, start_date, end_date)
+                    if leads:
+                        # Get reports based on report type, (LEAD or TAT REPORTS)
+                        if report_type == 'lead_report':
+                            report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                    else:
+                        report = list()
+                        total = dict()
+                    final_report.append({'location': location, 'team': teams, 'report': report, 'total': total})
+                report_filter = "location_split"
+        elif locations and not teams:
+            if not location_split:
+                leads = ReportService.get_leads_by_locations(
+                    locations, lead_status, code_types, start_date, end_date)
+                if leads:
+                    # Get reports based on report type, (LEAD or TAT REPORTS)
+                    if report_type == 'lead_report':
+                        report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                else:
+                    report = list()
+                    total = dict()
+                final_report.append({'location': location, 'report': report, 'total': total})
+                report_filter = 'normal'
+            else:
+                for location in locations:
+                    leads = ReportService.get_leads_by_location(
+                        location, lead_status, code_types, start_date, end_date)
+                    if leads:
+                        # Get reports based on report type, (LEAD or TAT REPORTS)
+                        if report_type == 'lead_report':
+                            report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                    else:
+                        report = list()
+                        total = dict()
+                    final_report.append({'location': location, 'report': report, 'total': total})
+                report_filter = 'location'
+        elif teams and not locations:
+            if not program_split:
+                leads = ReportService.get_leads_by_teams(
+                    teams, lead_status, code_types, start_date, end_date)
+
+                if leads:
+                    # Get reports based on report type, (LEAD or TAT REPORTS)
+                    if report_type == 'lead_report':
+                        report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                else:
+                    report = list()
+                    total = dict()
+                final_report.append({'team': team if team else 'Other', 'report': report, 'total': total})
+                report_filter = 'normal'
+            else:
+                for team in teams:
+                    leads = ReportService.get_leads_by_team(
+                        team, lead_status, code_types, start_date, end_date)
+                    if leads:
+                        # Get reports based on report type, (LEAD or TAT REPORTS)
+                        if report_type == 'lead_report':
+                            report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+                    else:
+                        report = list()
+                        total = dict()
+                    final_report.append({'team': team if team else 'Other', 'report': report, 'total': total})
+                report_filter = 'team'
+        else:
+            leads = ReportService.get_leads_by_status_and_code_types(lead_status, code_types, start_date, end_date)
+            if leads:
+                # Get reports based on report type, (LEAD or TAT REPORTS)
+                if report_type == 'lead_report':
+                    report, total = ReportService.get_leads_reports(leads, lead_status, code_types)
+            else:
+                report = list()
+                total = dict()
+            final_report.append({'report': report, 'total': total})
+            report_filter = "normal"
+
+        # get year and month if reports by perticular month
+        if 'monthly' in timeline:
+            year = start_date.year
+            month = datetime.strftime(start_date, '%B')
+
+        start_date = datetime.strftime(start_date, '%b/%d/%Y') if start_date else ''
+        end_date = datetime.strftime(end_date, '%b/%d/%Y') if end_date else ''
+        if not report_summary:
+            report_summary = ''
+
+        mimetype = 'application/json'
+        return HttpResponse(json.dumps({'reports': final_report, 'lead_status': lead_status, 'year': year, 'month': month,
+                                        'code_types': code_types, 'report_filter': report_filter, 'locations': locations, 'teams': teams,
+                                        'start_date': start_date, 'end_date': end_date, 'stage': report_stage, 'leads': settings.LEAD_STATUS,
+                                        'timeline': timeline, 'report_type': report_type, 'status_split': status_split, 'code_split': code_split,
+                                        'report_summary': report_summary}), mimetype)
+
+
+# Download leads to csv
+@login_required
+def download_leads(request):
+    """ Download leads from Database """
+    if request.method == 'POST':
+        from_date = request.POST.get('from')
+        to_date = request.POST.get('to')
+        fields_type = request.POST.get('fields_type')
+        path = DownloadLeads.download_lead_data(from_date, to_date, fields_type)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+    return render(request, 'reports/download_leads.html')
+
+
+# Trends Reports
+@login_required
+def get_trends_reports(request):
+    if request.is_ajax():
+        team = request.GET.getlist('teams[]')
+        code_types = request.GET.getlist('code_types[]')
+        timeline = str(request.GET.get('timeLine'))
+        report_type = str(request.GET.get('report_type'))
+        reports = list()
+        if 'all' in code_types:
+            if len(code_types) > 1:
+                code_types.remove('all')
+            else:
+                # get all code types
+                code_types = ReportService.get_all_code_type()
+        code_types = [str(codes.encode('utf-8')) for codes in code_types if 'www.' not in codes and 'http:' not in codes and 'https:' not in codes]
+        # Get teams
+        if 'all' in team:
+            if len(team) > 1:
+                team.remove('all')
+            else:
+                team = ReportService.get_all_teams()
+        teams = [str(t) for t in team]
+        if (report_type == 'trend_report_program_wise'):
+            reports = TrendsReportServices.get_trends_report_program_wise(teams, code_types, timeline)
+        elif(report_type == 'trends_report_for_win_and_total'):
+            reports = TrendsReportServices.get_for_win_total_and_conversionratio(teams, code_types, timeline)
+    # creating this tableReports for draw table
+
+    table_reports = list()
+    for i in range(len(reports[0])):
+        table_reports.append([row[i] for row in reports])
+    mimetype = 'application/json'
+    return HttpResponse(json.dumps({'reports': reports, 'tableReports': table_reports,
+                                    'timeline': timeline, 'teams': teams, 'code_types': code_types, 'report_type': report_type}), mimetype)
+
+
+@login_required
+def download_timezones_by_location(request):
+    """ List all Timezones by Locations """
+    location_list = list()
+    locations = Location.objects.all().order_by('location_name')
+    path = "/tmp/location_list.csv"
+    fields = ['Location Name', 'Zone Name', 'Time Value']
+
+    for location in locations:
+        for timezone in location.time_zone.all():
+            location_list.append({'Location Name': location.location_name,
+                                  'Zone Name': timezone.zone_name, 'Time Value': timezone.time_value})
+    DownloadLeads.conver_to_csv(path, location_list, fields)
+    response = DownloadLeads.get_downloaded_file_response(path)
+    return response
+
+
+@login_required
+@wpp_user_required
+def call_audit_sheet(request):
+    """ CALL AUDIT SHEET """
+
+    return render(request, 'reports/call_audit_sheet.html')
+
+
+@login_required
+def google_doc(request):
+
+    users = CallLogAccountManager.objects.values_list('username', flat=True).distinct().order_by('username')
+    users = [str(user) for user in users]
+    call_logs = CallLogAccountManager.objects.all()
+    events = logs_to_events(call_logs)
+    return render(request, 'reports/calendar_view.html', {'events': events, 'users': users})
+
+
+def user_events(request):
+    users = CallLogAccountManager.objects.values_list('username', flat=True).distinct().order_by('username')
+    users = [str(user) for user in users]
+    if request.is_ajax():
+        user = str(request.GET.get('user'))
+        if user != 'all':
+            user_logs = CallLogAccountManager.objects.filter(username=user)
+        else:
+            user_logs = CallLogAccountManager.objects.all()
+        events = logs_to_events(user_logs)
+    return HttpResponse(json.dumps({'events': events, 'users': users}))
+
+
+@login_required
+def csat_reports(request):
+    if request.is_ajax():
+        report_type = str(request.GET.get('report_type'))
+        timeline = request.GET.getlist('timeline[]')
+        comparison = request.GET.get('comparison', None)
+        selected_filters = request.GET.getlist('filter[]')
+        survey_for_unmapped = None
+        if 'survey_channel_phone' in selected_filters:
+            channel = 'PHONE'
+        elif 'survey_channel_email' in selected_filters:
+            channel = 'EMAIL'
+        else:
+            channel = 'Combined'
+
+        if 'process_tag' in selected_filters:
+            process = 'Tag'
+        elif 'process_shopping' in selected_filters:
+            process = 'Shopping'
+        else:
+            process = 'Combined'
+
+        if 'survey_category_unmapped' in selected_filters:
+            if timeline:
+                current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                current_timeline_end = datetime(current_timeline_end.year, current_timeline_end.month, current_timeline_end.day, 23, 59, 59)
+            survey_for_unmapped = ReportService.get_unmapped_survey(selected_filters, report_type, current_timeline_start, current_timeline_end)
+
+        if comparison == 'yes':
+            if timeline:
+                if timeline[0] == 'this_week':
+                    current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                    previous_timeline_start, previous_timeline_end = ReportService.get_date_range_by_timeline(['last_week'])
+                elif timeline[0] == 'this_month':
+                    current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                    previous_timeline_start, previous_timeline_end = ReportService.get_date_range_by_timeline(['last_month'])
+                elif timeline[0] == 'this_quarter':
+                    current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                    previous_timeline_start, previous_timeline_end = prev_quarter_date_range(datetime.now())
+
+            current_timeline_end = datetime(current_timeline_end.year, current_timeline_end.month, current_timeline_end.day, 23, 59, 59)
+            previous_timeline_end = datetime(previous_timeline_end.year, previous_timeline_end.month, previous_timeline_end.day, 23, 59, 59)
+
+            current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
+            previous_report_data = ReportService.get_csat_report(selected_filters, report_type, previous_timeline_start, previous_timeline_end)
+            current_report_data, previous_report_data = ReportService.get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison)
+        else:
+            if timeline:
+                current_timeline_start, current_timeline_end = ReportService.get_date_range_by_timeline(timeline)
+                current_timeline_end = datetime(current_timeline_end.year, current_timeline_end.month, current_timeline_end.day, 23, 59, 59)
+
+            current_report_data = ReportService.get_csat_report(selected_filters, report_type, current_timeline_start, current_timeline_end)
+            previous_report_data = ''
+            current_report_data, previous_report_data = ReportService.get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison)
+
+        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'process': process, 'channel':channel, 'comparison': comparison, 'survey_for_unmapped': survey_for_unmapped}))
+    return render(request, 'reports/csat_reports.html')
+
+
+@login_required
+def picasso_reports(request):
+    if request.is_ajax():
+        report_type = request.GET.get('report_type', None)
+        report_timeline = request.GET.getlist('report_timeline[]')
+        team_members = request.GET.getlist('team_members[]')
+
+        if report_timeline:
+            start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+            end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+        picasso_report_details = dict()
+
+        # Get teams
+        if 'all' in team_members:
+            if len(team_members) > 1:
+                team_members.remove('all')
+            else:
+                team_members = team_members
+        if report_type == 'default_report':
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, list())
+        elif report_type == 'leadreport_individualRep':
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, [request.user.email])
+        elif report_type == 'leadreport_teamLead':
+            team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, team_emails)
+        elif report_type == 'leadreport_superUser':
+            picasso_report_detail = ReportService.get_picasso_report_details_for_filters(start_date, end_date, list())
+        else:
+            pass
+
+        picasso_report_detail['program_type_header'] = [sts for sts in settings.PICASSO_LEAD_STATUS]
+        picasso_report_detail['program_type_header'].append('TOTAL')
+
+        status_list = [status for status in settings.PICASSO_LEAD_STATUS]
+        status_list.append('TOTAL')
+
+        bar_chart_data = [['Lead Status']]
+        for status in status_list:
+            status_row = [status]
+            for treatment_type in picasso_report_detail['picasso_program_type_analysis']:
+                status_row.append(picasso_report_detail['picasso_program_type_analysis'][treatment_type][status])
+            bar_chart_data.append(status_row)
+        bar_chart_data[0].extend(picasso_report_detail['picasso_program_type_analysis'].keys())
+
+        picasso_report_detail['bar_chart_data'] = bar_chart_data
+        picasso_report_details = {'reports': picasso_report_detail,
+                                  'report_type': report_type, 'report_timeline': report_timeline}
+
+        return HttpResponse(json.dumps(picasso_report_details))
+    manager = is_manager(request.user.email)
+    team_members = list()
+    if manager:
+        team_members = get_user_under_manager(request.user.email)
+    return render(request, 'reports/picasso_reports.html', {'picasso': True, 'manager': manager, 'team_members': team_members})
+
+
+def download_picasso_report(request):
+    report_type = request.POST.get('download_report_type', None)
+    report_timeline = request.POST.getlist('download_report_timeline')
+    team_members = request.POST.getlist('download_team_members[]')
+
+    if report_timeline:
+        start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
+        end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+
+    # Get teams
+    if 'all' in team_members:
+        if len(team_members) > 1:
+            team_members.remove('all')
+        else:
+            team_members = team_members
+    if report_type == 'default_report':
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
+    elif report_type == 'leadreport_individualRep':
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, google_rep_email__in=[request.user.email])
+    elif report_type == 'leadreport_teamLead':
+        team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
+        team_emails.append(request.user.email)
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date, google_rep_email__in=team_emails)
+    elif report_type == 'leadreport_superUser':
+        leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
+
+    selected_fields = ['Google Account Manager', 'Email', 'Team', 'Customer ID', 'Internal CID', 'POD Name', 'Company / Account', 'Objectives', 'Recommondation', 'URL', 'Lead Status', 'Lead ID', 'Goal', 'Lead Owner','First Name', 'Last Name' ]
+    filename = "leads-%s-to-%s" % (datetime.strftime(start_date, "%d-%b-%Y"), datetime.strftime(end_date, "%d-%b-%Y"))
+    leads = DownloadLeads.get_leads_for_picasso_report(leads, start_date, end_date, selected_fields)
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, leads, selected_fields)
+    response = DownloadLeads.get_downloaded_file_response(path)
+    return response
+
+
+# Meeting page template rendering view
+def meeting_minutes(request):
+    regalix_email = list()
+    google_email = list()
+    key_points_dict = dict()
+    action_plan_dict = dict()
+    tenantive_agenda_dict = dict()
+    
+    if request.method == 'POST':
+        key_points = OrderedDict()
+        action_plans = OrderedDict()
+        meeting_minutes = MeetingMinutes()
+        meeting_minutes.subject_timeline = request.POST.get('subject')
+        meeting_minutes.other_subject = request.POST.get('other_subject')
+        # meeting_minutes.subject_type = request.POST.get('subject')
+        # meeting_minutes.other_subject = request.POST.get('other_subject')
+        meeting_date = request.POST.get('meeting_date')
+        meeting_time = request.POST.get('meeting_time')
+        meeting_datetime = meeting_date + ' ' + meeting_time
+        meeting_minutes.meeting_time_in_ist = datetime.strptime(meeting_datetime, '%d.%m.%Y %I:%M %p')
+        meeting_minutes.google_poc = User.objects.get(email=str(request.POST.get('google_poc')))
+        meeting_minutes.regalix_poc = User.objects.get(email=str(request.POST.get('regalix_poc')))
+        meeting_minutes.google_team = Team.objects.get(team_name=str(request.POST.get('google_team')))
+        meeting_minutes.region = request.POST.get('region')
+        meeting_minutes.location = request.POST.get('location')
+        meeting_minutes.program = request.POST.get('program')
+        meeting_minutes.program_type = request.POST.get('program_type')
+        next_meeting_date = request.POST.get('next_meeting_date')
+        next_meeting_time = request.POST.get('next_meeting_time')
+        next_meeting_datetime = next_meeting_date + ' ' + next_meeting_time
+        meeting_minutes.next_meeting_datetime = datetime.strptime(next_meeting_datetime, '%d.%m.%Y %I:%M %p')
+        total_keypoints_count = request.POST.get('no_of_keypoints')
+        total_actionplan_count = request.POST.get('no_of_actionplans')
+        total_tenantive_agenda = request.POST.get('no_of_tenantive_agenda')
+
+        
+        key_points_topic = list()
+        key_points_highlight = list()
+        for i in range(1, int(total_keypoints_count)+1):
+            key_points_topic.append(request.POST['topic_'+str(i)])
+            key_points_highlight.append(request.POST['highlight_'+str(i)])
+            key_points['topic_'+str(i)] = request.POST['topic_'+str(i)] 
+            key_points['highlight_'+str(i)] = request.POST['highlight_'+str(i)] 
+
+        action_plans_items = list()
+        action_plans_owner = list()
+        action_plans_date = list()
+        for i in range(1, int(total_actionplan_count)+1):
+            action_plans_items.append(request.POST['action_item_'+str(i)])
+            action_plans_owner.append(request.POST['owner_'+str(i)])
+            action_plans_date.append(request.POST['action_date_'+str(i)])
+            action_plans['action_item_'+str(i)] = request.POST['action_item_'+str(i)] 
+            action_plans['owner_'+str(i)] = request.POST['owner_'+str(i)]
+            action_plans['action_date_'+str(i)] = request.POST['action_date_'+str(i)]
+
+        tenantive_agenda_list = list()
+        for i in range(1, int(total_tenantive_agenda)+1):
+            tenantive_agenda_list.append(request.POST['agenda_text_'+str(i)])
+            tenantive_agenda_dict['agenda_text_'+str(i)] = request.POST['agenda_text_'+str(i)]
+
+        meeting_minutes.key_points = json.dumps(key_points)
+        meeting_minutes.tenantive_agenda = json.dumps(tenantive_agenda_dict)
+        meeting_minutes.action_plan = json.dumps(action_plans)
+        meeting_minutes.save()
+        
+        attendees_id_list = list()
+        attendees = request.POST.get('attendees').replace(', ', ',')
+        attendees_list = attendees.split(',')
+        attendees_list.pop(-1)
+        get_attendees_list = User.objects.filter(email__in=attendees_list).values_list('id', flat=True)
+        meeting_minutes.attendees.add(*get_attendees_list)
+        meeting_minutes.save()
+
+        mail_list = list()
+        for attendee in attendees_list:
+            mail_list.append(str(attendee))
+        # mail_list.append(str(request.POST.get('google_poc')))
+        mail_list.append(str(request.POST.get('regalix_poc')))
+
+        link_to_last_data_for_email = MeetingMinutes.objects.all().last()
+        if link_to_last_data_for_email:
+            link_for_last_meeting_email = link_to_last_data_for_email.id
+
+        mail_subject = "Meeting Minutes"
+        mail_body = get_template('reports/minute_meeting_email_template.html').render(
+            Context({
+                'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
+                'subject_timeline': meeting_minutes.subject_timeline,
+                'meeting_date': meeting_minutes.meeting_time_in_ist.date(),
+                'meeting_time': meeting_minutes.meeting_time_in_ist.time(),
+                'google_poc': meeting_minutes.google_poc,
+                'google_team': meeting_minutes.google_team,
+                'key_points_topic': key_points_topic,
+                'key_points_highlight': key_points_highlight,
+                'region': meeting_minutes.region,
+                'location': meeting_minutes.location,
+
+                'program': meeting_minutes.program,
+                'program_type': meeting_minutes.program_type,
+                'other_subject': meeting_minutes.other_subject,
+
+                'action_plans_items': action_plans_items,
+                'action_plans_owner': action_plans_owner,
+                'action_plans_date': action_plans_date,
+
+                'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
+                'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
+                'tenantive_agenda': tenantive_agenda_list,
+            })
+        )
+        mail_from = 'google@regalix-inc.com'
+        mail_to = mail_list
+        bcc = set([])
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    managers = User.objects.values_list('email', flat=True)
+    for manager in managers:
+        if 'google.com' in manager:
+            google_email.append(str(manager))
+        else:
+            regalix_email.append(str(manager))
+
+    programs = Team.objects.exclude(is_active=False).values_list('team_name', flat=True)
+    locations = Location.objects.filter(is_active=True)
+    programs = [str(p) for p in programs]
+    managers = [str(m) for m in managers]
+    regions = Region.objects.all()
+    all_regions = list()
+    region_locations = dict()
+    all_locations = list()
+    for loc in locations:
+        is_daylight_savings = False
+        l = {'id': int(loc.id), 'name': str(loc.location_name)}
+        all_locations.append(l)
+    for rgn in regions:
+        for loc in rgn.location.all():
+            region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+        region_dict = dict()
+        region_dict['id'] = int(rgn.id)
+        region_dict['name'] = str(rgn.name)
+        all_regions.append(region_dict)
+    last_meeting = {}
+    new_subject_timeline = 0
+    link_region = 0
+    link_location = 0
+    link_program = ''
+    link_program_type = ''
+    last_meeting_link = {}
+    other_subject = {}
+
+    link_to_last_data = MeetingMinutes.objects.all().last()
+    link_to_last_program = ''
+    link_to_last_program_type = ''
+    link_to_last_subject_timeline = ''
+    link_to_last_date = ''
+    link_to_last_id = ''
+    if link_to_last_data:
+        link_to_last_program = link_to_last_data.program
+        link_to_last_program_type = link_to_last_data.program_type
+        link_to_last_subject_timeline = link_to_last_data.subject_timeline
+        link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
+        link_to_last_id = link_to_last_data.id
+
+    # send mail
+    return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
+                                                            'tenantive_agenda_dict': tenantive_agenda_dict, 'link_to_last_id': link_to_last_id,
+                                                            'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline,
+                                                            'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program,
+                                                            'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location,
+                                                            'link_region': link_region, 'new_subject_timeline': new_subject_timeline, 'action_plan_dict': action_plan_dict,
+                                                            'key_points_dict': key_points_dict, 'all_locations': all_locations, 'region_locations': region_locations,
+                                                            'regions': regions, 'last_meeting': last_meeting, 'locations': locations, 'managers': managers,
+                                                            'regalix_email': regalix_email, 'google_email': google_email, 'programs': programs})
+
+
+def link_last_meeting(request, last_id):
+
+
+    region_locations = dict()
+    all_locations = dict()
+    programs = dict()
+    google_email = dict()
+    regalix_email = dict()
+    attendees_list = list()
+    last_meeting = MeetingMinutes.objects.get(id=last_id)
+    new_subject_timeline = 1
+    meeting_date = last_meeting.meeting_time_in_ist.date()
+    last_meeting_link = datetime.strftime(meeting_date, '%d.%m.%Y')
+    meeting_time = last_meeting.meeting_time_in_ist.time()
+    next_meeting_date = last_meeting.next_meeting_datetime.date()
+    next_meeting_time = last_meeting.next_meeting_datetime.time()
+    subject_timeline = last_meeting.subject_timeline
+    attendees = last_meeting.attendees.values('email')
+    other_subject = last_meeting.other_subject
+    link_region = last_meeting.region
+    link_location = last_meeting.location
+    link_program = last_meeting.program
+    link_program_type = last_meeting.program_type
+
+
+    for attendee in attendees:
+        attendees_list.append(str(attendee['email']))
+    attendees_email_list = ' ,  '.join(attendees_list)
+
+    key_order_agenda = {k:v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5'])}
+    tenantive_agenda_dict = OrderedDict(sorted(last_meeting.tenantive_agenda.items(), key=lambda i: key_order_agenda.get(i[0])))
+
+    key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5'])}
+    action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
+
+    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5'])}    
+    key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
+
+    return render(request,'reports/meeting_minutes.html',{'last_meeting_link': json.dumps(last_meeting_link), 'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 'link_program_type': json.dumps(link_program_type), 'link_program': json.dumps(link_program), 'link_location': json.dumps(link_location), 'link_region': json.dumps(link_region), 'other_subject': json.dumps(other_subject), 'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict), 'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list, 'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting, 'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date, 'next_meeting_time': next_meeting_time})
