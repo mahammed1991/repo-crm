@@ -1445,5 +1445,6 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
          'plan_day': plan_day,
          'plan_year': plan_year,
          'counts_dict': counts_list,
+         'picasso': True,
          }
     )

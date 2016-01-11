@@ -32,7 +32,10 @@ def reports(request):
     manager = is_manager(request.user.email)
     team_members = list()
     if manager:
-        team_members = get_user_under_manager(request.user.email)
+        members = get_user_under_manager(request.user.email)
+        team_members.append(request.user)
+    for member in members:
+        team_members.append(member)
 
     locations = ReportService.get_all_locations()
     teams = ReportService.get_all_teams()
@@ -67,8 +70,10 @@ def reports_new(request):
     manager = is_manager(request.user.email)
     team_members = list()
     if manager:
-        team_members = get_user_under_manager(request.user.email)
-
+        members = get_user_under_manager(request.user.email)
+        team_members.append(request.user)
+    for member in members:
+        team_members.append(member)
     locations = ReportService.get_all_locations()
     teams = ReportService.get_all_teams()
     rgx_teams = Region.objects.all()
@@ -107,7 +112,6 @@ def get_selected_new_reports(request):
         program_split = request.GET.get('program_split', None)
         location_split = request.GET.get('location_split', None)
 
-
         report_details = dict()
         emails = list()
         if report_type == 'leadreport_individualRep':
@@ -126,7 +130,6 @@ def get_selected_new_reports(request):
 
         if report_type == 'leadreport_teamLead':
             emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            emails.append(emails)
             
         teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
 
@@ -140,7 +143,6 @@ def get_selected_new_reports(request):
             report_detail = ReportService.get_leads_status_summary(lead_ids)
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            team_emails.append(emails)
             report_detail = ReportService.get_leads_status_summary(lead_ids)
         elif report_type == 'leadreport_programview':
             report_detail = ReportService.get_leads_status_summary(lead_ids)
@@ -361,7 +363,6 @@ def get_new_reports(request):
             report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, [email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            team_emails.append(email)
             report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
             report_detail = ReportService.get_report_details_for_filters(report_timeline, code_types, teams, countries, start_date, end_date, list())
@@ -468,7 +469,6 @@ def get_download_report(request):
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, [email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            team_emails.append(email)
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, team_emails)
         elif report_type == 'leadreport_programview':
             leads = DownloadLeads.get_leads_by_report_type(code_types, teams, countries, start_date, end_date, list())
@@ -499,7 +499,10 @@ def wpp_reports(request):
     manager = is_manager(request.user.email)
     team_members = list()
     if manager:
-        team_members = get_user_under_manager(request.user.email)
+        members = get_user_under_manager(request.user.email)
+        team_members.append(request.user)
+    for member in members:
+        team_members.append(member)
     return render(request, 'reports/wpp_reports.html', {'manager': manager, 'team_members': team_members})
 
 
@@ -530,7 +533,6 @@ def get_wpp_reports(request):
             wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, [request.user.email])
         elif report_type == 'leadreport_teamLead':
             team_emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            team_emails.append(request.user.email)
             wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, team_emails)
         elif report_type == 'leadreport_superUser':
             wpp_report_detail = ReportService.get_wpp_report_details_for_filters(start_date, end_date, list())
@@ -1163,7 +1165,7 @@ def meeting_minutes(request):
         meeting_minutes.subject_timeline = request.POST.get('subject')
         meeting_minutes.other_subject = request.POST.get('other_subject')
         # meeting_minutes.subject_type = request.POST.get('subject')
-        meeting_minutes.other_subject = request.POST.get('other_subject')
+        # meeting_minutes.other_subject = request.POST.get('other_subject')
         meeting_date = request.POST.get('meeting_date')
         meeting_time = request.POST.get('meeting_time')
         meeting_datetime = meeting_date + ' ' + meeting_time
@@ -1224,22 +1226,30 @@ def meeting_minutes(request):
         mail_list = list()
         for attendee in attendees_list:
             mail_list.append(str(attendee))
-        mail_list.append(str(request.POST.get('google_poc')))
+        # mail_list.append(str(request.POST.get('google_poc')))
         mail_list.append(str(request.POST.get('regalix_poc')))
 
+        link_to_last_data_for_email = MeetingMinutes.objects.all().last()
+        if link_to_last_data_for_email:
+            link_for_last_meeting_email = link_to_last_data_for_email.id
+
         mail_subject = "Meeting Minutes"
-        mail_body = get_template('reports/meeting_minute_email.html').render(
+        mail_body = get_template('reports/minute_meeting_email_template.html').render(
             Context({
+                'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
                 'subject_timeline': meeting_minutes.subject_timeline,
                 'meeting_date': meeting_minutes.meeting_time_in_ist.date(),
                 'meeting_time': meeting_minutes.meeting_time_in_ist.time(),
+                'google_poc': meeting_minutes.google_poc,
                 'google_team': meeting_minutes.google_team,
                 'key_points_topic': key_points_topic,
                 'key_points_highlight': key_points_highlight,
                 'region': meeting_minutes.region,
                 'location': meeting_minutes.location,
-                # 'program': meeting_minutes.program,
-                # 'program_type': meeting_minutes.program_type,
+
+                'program': meeting_minutes.program,
+                'program_type': meeting_minutes.program_type,
+                'other_subject': meeting_minutes.other_subject,
 
                 'action_plans_items': action_plans_items,
                 'action_plans_owner': action_plans_owner,
@@ -1248,11 +1258,9 @@ def meeting_minutes(request):
                 'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
                 'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
                 'tenantive_agenda': tenantive_agenda_list,
-
-
             })
         )
-        mail_from = 'basavaraju@regalix-inc.com'
+        mail_from = 'google@regalix-inc.com'
         mail_to = mail_list
         bcc = set([])
         attachments = list()
@@ -1319,6 +1327,7 @@ def meeting_minutes(request):
 
 
 def link_last_meeting(request, last_id):
+
 
     region_locations = dict()
     all_locations = dict()

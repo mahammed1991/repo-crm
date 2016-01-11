@@ -55,6 +55,10 @@ $('#location_split').change(function(){
   $('#get_report').show();
 });
 
+$('#members_checks').change(function(){
+  $('#get_report').show();
+});
+
 
   $(document).on('click', '.checkbox_select_all', function(e) {
       is_checked = $(this).is(":checked");
