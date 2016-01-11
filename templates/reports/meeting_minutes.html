@@ -232,7 +232,7 @@
   </div>
   <div class="container-fluid end">
     <!-- <input type="checkbox" id="allow_ics" ></input><p>Allow option to send Calendar Invite </p> -->
-    <button class="btn std-btn" id="submit">Submit</button>
+    <button class="btn std-btn" id="submit" {% if submit_disabled == False %} style="display:none;" {% else %} style="" {% endif %}>Submit</button>
   </div>
 </form>
 </section>
