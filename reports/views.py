@@ -1350,6 +1350,8 @@ def link_last_meeting(request, last_id):
     link_program = last_meeting.program
     link_program_type = last_meeting.program_type
 
+    submit_disabled = False
+
 
     for attendee in attendees:
         attendees_list.append(str(attendee['email']))
@@ -1364,4 +1366,16 @@ def link_last_meeting(request, last_id):
     key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5'])}    
     key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
 
-    return render(request,'reports/meeting_minutes.html',{'last_meeting_link': json.dumps(last_meeting_link), 'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 'link_program_type': json.dumps(link_program_type), 'link_program': json.dumps(link_program), 'link_location': json.dumps(link_location), 'link_region': json.dumps(link_region), 'other_subject': json.dumps(other_subject), 'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict), 'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list, 'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting, 'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date, 'next_meeting_time': next_meeting_time})
+    return render(request,'reports/meeting_minutes.html',{'submit_disabled': submit_disabled, 
+                                                        'last_meeting_link': json.dumps(last_meeting_link), 
+                                                        'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 
+                                                        'link_program_type': json.dumps(link_program_type), 
+                                                        'link_program': json.dumps(link_program), 'link_location': json.dumps(link_location), 
+                                                        'link_region': json.dumps(link_region), 'other_subject': json.dumps(other_subject), 
+                                                        'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 
+                                                        'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 
+                                                        'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict), 
+                                                        'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list, 
+                                                        'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting, 
+                                                        'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date, 
+                                                        'next_meeting_time': next_meeting_time})
