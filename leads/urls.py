@@ -42,10 +42,6 @@ urlpatterns = patterns(
     url(r'^picasso-lead-form/$', views.picasso_lead_form),
     url(r'^picasso-lead-summary/$', views.get_picasso_lead_summary),
     # picasso build wpp form
-    # url(r'^picasso-build-form/$', views.picasso_build_wpp_form),
-    # url(r'^picasso-build-form/(?P<ref_id>[\w]+)$', views.picasso_build_wpp_form),
-    # url(r'^get-eligible-picasso-lead/(?P<cid>[\w -]+)$', views.get_eligible_picasso_leads),
-    # url(r'^get-eligible-picasso-lead-by-lid/(?P<lid>[\w]+)$', views.get_eligible_picasso_lead_by_lid),
     url(r'^get-eligible-picasso-lead/$', views.get_eligible_picasso_leads),
     url(r'^get-eligible-picasso-lead-by-lid/$', views.get_eligible_picasso_lead_by_lid),
     url(r'^searh-leads/$', views.searh_leads),
