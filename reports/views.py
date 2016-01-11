@@ -1371,7 +1371,7 @@ def link_last_meeting(request, last_id):
                                                         'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 
                                                         'link_program_type': json.dumps(link_program_type), 
                                                         'link_program': json.dumps(link_program), 'link_location': json.dumps(link_location), 
-                                                        'link_region': json.dumps(link_region), 'other_subject': json.dumps(other_subject), 
+                                                        'link_region': json.dumps(link_region), 'other_subject': other_subject, 
                                                         'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 
                                                         'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 
                                                         'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict), 
