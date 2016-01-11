@@ -1260,7 +1260,7 @@ def meeting_minutes(request):
                 'tenantive_agenda': tenantive_agenda_list,
             })
         )
-        mail_from = 'google@regalix-inc.com'
+        mail_from = 'implementation-support@google.com'
         mail_to = mail_list
         bcc = set([])
         attachments = list()
