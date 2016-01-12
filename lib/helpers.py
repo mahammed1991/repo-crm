@@ -740,9 +740,9 @@ def get_tat_for_picasso(source):
             if lookup_sum > no_of_inqueue_leads:
                 estimated_date = availability.date_in_ist + timedelta(days=2)
                 if estimated_date.weekday() == 5:
-                    target_details['estimated_date'] = estimated_date + timedelta(days=1)
-                elif estimated_date.weekday() == 6:
                     target_details['estimated_date'] = estimated_date + timedelta(days=2)
+                elif estimated_date.weekday() == 6:
+                    target_details['estimated_date'] = estimated_date + timedelta(days=1)
                 else:
                     target_details['estimated_date'] = estimated_date
                 target_details['lookup_sum'] = lookup_sum
@@ -759,5 +759,7 @@ def get_todays_transition_leads():
     selected_tzone = Timezone.objects.get(zone_name=ist_timezone)
     utc_start_date = SalesforceApi.get_utc_date(start_date, selected_tzone.time_value)
     utc_end_date = SalesforceApi.get_utc_date(end_date, selected_tzone.time_value)
-    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered', 'Audited'], updated_date__gte=utc_start_date, updated_date__lte=utc_end_date).count()
+    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered', 'Audited'],
+                                                      updated_date__gte=utc_start_date,
+                                                      updated_date__lte=utc_end_date).count()
     return today_changed_leads
