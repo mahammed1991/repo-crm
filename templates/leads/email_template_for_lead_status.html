@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<table style="width:50%">
+	<tr style="padding: 20px 20px 10px 10px; color: #45555f; font-family: Tahoma,Helvetica;font-size: 12px; line-height: 18px; vertical-align: top; border-bottom: 1px solid #3369e8;">
+      <td>
+
+       <img src="http://info.regalix.com/rs/713-ASE-384/images/regalix-logo-2015.png" align="left" border="0" width="150" height="21" alt="Regalix" style="text-align: center; vertical-align: middle; padding-top: 10px"/>
+       <img src="http://info.regalix.com/rs/713-ASE-384/images/Google_2015_logo.png" align="right" border="0" width="135" height="46" alt="Google" style="text-align: center; vertical-align: middle"/>
+       <div style="color: #336699; font-size: 23px; font-family: Cambria; font-weight: bold; line-height: 26px;">
+       <div style="color: #336699; font-size: 23px; font-family: Cambria; font-weight: bold; line-height: 26px;">
+        </div>
+      </td>
+      </tr>
+
+</table>
+<h3>Leads count for status Pending QC - WIN & Implemented on {{specific_date}}</h3>
+<table border="1" style="width:50%">
+
+	<tr>
+		<th>Process</th>
+		<th>Americas</th>
+		<th>APAC</th>
+		<th>EMEA</th>
+		<th>Not Assigned</th>
+	</tr>
+	<tr>
+		<td>TAG</td>
+		{% for key, value in final_dict.items %}
+			{% if key == 'TAG' %}
+				{% for val in value %}
+					{% for key, value in val.items %}
+						<td>{{value}}</td>					
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		{% endfor %}
+		<td></td>
+	</tr>
+	<tr>
+		<td>SHOPPING</td>
+		{% for key, value in final_dict.items %}
+			{% if key == 'SHOPPING' %}
+				{% for val in value %}
+					{% for key, value in val.items %}
+						<td>{{value}}</td>					
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		{% endfor %}
+		<td></td>
+	</tr>
+</table>
+</body>
+</html>
