@@ -760,7 +760,7 @@ def export_appointments(request):
             # get all appointments for selected dates in given range
 
             slots_data = Availability.objects.filter(
-                date_in_utc__range=(from_date, to_date),
+                date_in_utc__range=(from_utc_date, to_utc_date),
                 team__id=rglx_team.id,
                 team__process_type=process_type
             ).order_by('team')
@@ -768,16 +768,12 @@ def export_appointments(request):
             result = list()
             team_name = rglx_team.team_name
             for i in range(0, 24):
-                for j in range(00, 60):
+                for j in ['00', '30']:
                     mydict = {}
                     if len(str(i)) == 1:
                         indx = '0%s' % (i)
                     else:
                         indx = str(i)
-                    if len(str(j)) == 1:
-                        j = '0%s' % (j)
-                    else:
-                        j = str(j)
                     hour = "%s:%s" % (indx, j)
                     for ele in collumn_attr:
                         if ele == 'Team':
@@ -1445,5 +1441,6 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
          'plan_day': plan_day,
          'plan_year': plan_year,
          'counts_dict': counts_list,
+         'picasso': True,
          }
     )

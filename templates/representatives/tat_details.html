@@ -6,16 +6,34 @@
 {% block title %}
 Rep and Audit Details
 {% endblock title %}
+ 
+ {% block main_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+    <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;margin-top: 200.5px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    .table-container{ min-height:300px;}
+  </style>
+ {% endblock main_css %}
 
-{% block main_css %}
-  <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
-{% endblock main_css %}
-
-{% block content %}
+ {% block content %}
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
 <!-- content-region -->
 <section class="content-region inner-page">
     <div class="container-fluid">
-      <h1>Rep and Audit Details for Picasso</h1>
+      <h1 style="font-size: 24px;
+      font-family: 'robotoblack';
+      text-transform: uppercase;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 12px;
+      margin-top: 50px;
+      margin-bottom: 20px;">Rep and Audit Details for Picasso</h1>
       {% if  daylight_marquee_msg %}
                       <div class="performer">
                             <div class="performer-info" style="text-align:center; margin-bottom:8px; color:red;">
@@ -71,19 +89,6 @@ Rep and Audit Details
                             <td class="cubg" ><input type="text" name="{{dict.input}}_audit" class="css3" value="{{dict.audit}}"/></td>
                         {% endfor %}
                     </tr>
-                    <!-- <tr style="background-color: rgb(166, 166, 104);">
-                        <td class="cubg2">Total</td>
-                        {% for slot in total_slots %}
-                            <td class="cubg2">
-                                <table class="table ttb" cellspacing="2">
-                                    <tr>
-                                        <td class="cubg3">{{slot.booked}}</td>
-                                        <td class="cubg4">{{slot.available}}</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        {% endfor %}
-                    </tr> -->
                     
 
                 </table>
@@ -106,6 +111,7 @@ Rep and Audit Details
 
 {% block main_js %}
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
 
         // Validate the slots entry

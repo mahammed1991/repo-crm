@@ -181,9 +181,10 @@ def implemented_leads_count_report():
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
+    specific_time = specific_date.time()
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
-    mail_subject = "Leads count based on Regions"
+    mail_subject = "Wins Count Regionwise @ "+specific_date+"-"+specific_time+""
     mail_body = get_template('leads/email_template_for_lead_status.html').render(
         Context({
             'final_dict': final_dict,
