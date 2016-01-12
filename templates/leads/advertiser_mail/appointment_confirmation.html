@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Hi,</p>
+
+<p>WPP lead details:</p>
+<p><b>Full Name: </b> {{lead_details.first_name}}, {{lead_details.last_name}}</p>
+{% for key, value in lead_details.items %}
+	{% if key != 'cid_std' %}
+		<p><b>{{key}}</b>: {{value}}</p>
+	{% endif %}
+{% endfor %}
+
+<br />
+<br />
+<p>Thanks,</p>
+<p>WPP Team</p>
+</body>
+</html>
