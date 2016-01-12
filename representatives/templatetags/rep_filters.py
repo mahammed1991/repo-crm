@@ -23,9 +23,16 @@ def get_dict_val(dictionary, key):
 
 @register.filter
 def get_range(value, start=0):
+    print range(start, value)
     return range(start, value)
 
 
 @register.filter
 def either(value1, value2):
     return value1 or value2
+
+
+@register.filter
+def get_range_specific(value, end_val):
+    print range(value, int(end_val))
+    return range(value, int(end_val))
