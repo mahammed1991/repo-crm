@@ -1916,7 +1916,6 @@ def create_icalendar_file(advirtiser_details):
 
 
 def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
-    mail_subject = "WPP Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
 
     mail_body = get_template('leads/advertiser_mail/appointment_confirmation.html').render(
         Context({
@@ -1927,16 +1926,28 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
 
     bcc = set()
 
-    mail_to = set([
-        # str(advertiser_details['email']),
-        'asarkar@regalix-inc.com',
-        'skumar@regalix-inc.com',
-        'sprasad@regalix-inc.com',
-        'abraham@regalix-inc.com',
-        'gedward@regalix-inc.com',
-        'gshylendra@regalix-inc.com'
+    if advertiser_details['code_type'] == 'WPP':
+        mail_subject = "WPP Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
+        mail_to = set([
+            # str(advertiser_details['email']),
+            'asarkar@regalix-inc.com',
+            'skumar@regalix-inc.com',
+            'sprasad@regalix-inc.com',
+            'abraham@regalix-inc.com',
+            'gedward@regalix-inc.com',
+            'gshylendra@regalix-inc.com'
 
-    ])
+        ])
+    else:
+        mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
+        mail_to = set([
+            # str(advertiser_details['email']),
+            'skumar@regalix-inc.com',
+            'sprasad@regalix-inc.com',
+            'gedward@regalix-inc.com',
+            'vreguri@regalix-inc.com',
+
+        ])
 
     mail_from = "implementation-support@google.com"
     attachments = list()
