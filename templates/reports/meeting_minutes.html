@@ -1,0 +1,357 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Meeting Minutes
+{% endblock title %}
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+  <link rel="stylesheet" href="{% static 'css/reports/meeting_minutes.css' %}" >
+  
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+<form method="POST" action=""id="meeting_form">
+{% csrf_token %}
+<input type="hidden" name="no_of_keypoints" value="">
+<input type="hidden" name="no_of_actionplans" value="">
+
+      <div class="container-fluid">
+        <h1> Meeting Minutes</h1>
+      </div>
+      <div class="container-fluid">
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Subject</label>
+            </div>
+           <div class="col-md-4">
+              <select class="form-control bgicon" id="subject" title="subject" name="subject">
+                <option value="">Choose</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Biweekly">Biweekly</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly Connect">Quarterly Connect</option>
+                <option value="Ad-Hoc">Ad-Hoc</option>Others
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="others" name="other_subject" style="">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Date</label>
+            </div>
+           <div class="col-md-4">
+                <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" />
+            </div>
+            <div class="col-md-2">
+              <label for="">Time</label>
+            </div>
+           <div class="col-md-4">
+              <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Google PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="google_poc" name="google_poc">
+            </div>
+            <div class="col-md-2">
+              <label for="">Regalix PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="regalix_poc" name="regalix_poc">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="">Google Team</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="google_team" name="google_team">
+            </div>
+            <div class="col-md-2">
+              <label for="">Region</label>
+            </div>
+            <div class="col-md-4">
+               <select class="form-control bgicon" id="region" title="Program Region" name="region">
+                  <option value="0">Region</option>
+                  {% for rgn in regions %}
+                    <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+                  {% endfor %}
+                </select>
+            </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="">Attendees</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="attendees" name="attendees">
+        </div>
+      </div>
+
+     <div class="std-sub-title" style="text-align:center">Key Points Discussed</div>
+  </div>
+  <div class="container-fluid">
+      <table id="keyPoint">
+        <thead >
+          <tr>
+            <td id="no">No.</td>
+            <td id="topic" style="text-align:center" >Topic</td>
+            <td id="higlights" style="text-align:center">Highlights</td>
+          </tr>
+        </thead>
+        <tbody class="add-task">
+          <tr id="key_point_1" class="key-points">
+            <td><input type='text' value="1" readonly min="1" max="1" id="no_1"></td>
+            <td><input type='text' id="topic_1" name="topic_1"></td>
+            <td><textarea type='text' id="highlight_1" name="highlight_1"></textarea></td>
+          </tr>
+          <tr id="key_point_2" style="display:none;" class="key-points">
+            <td><input type='text' value="2" readonly id="no_2"></td>
+            <td><input type='text' id="topic_2" name="topic_2"></td>
+            <td><textarea type='text' id="highlight_2" name="highlight_2"></textarea></td>
+          </tr>
+          <tr id="key_point_3" style="display:none;" class="key-points">
+            <td><input type='text' value="3" readonly id="no_3"></td>
+            <td><input type='text' id="topic_3" name="topic_3"></td>
+            <td><textarea type='text' id="highlight_3" name="highlight_3"></textarea></td>
+          </tr>
+          <tr id="key_point_4" style="display:none;" class="key-points">
+            <td><input type='text' value="4" readonly id="no_4"></td>
+            <td><input type='text' id="topic_4" name="topic_4"></td>
+            <td><textarea type='text' id="highlight_4" name="highlight_4"></textarea></td>
+          </tr>
+          <tr id="key_point_5" style="display:none;" class="key-points">
+            <td><input type='text' value="5" readonly id="no_5"></td>
+            <td><input type='text' id="topic_5" name="topic_5"></td>
+            <td><textarea type='text' id="highlight_5" name="highlight_5"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeTask_2" class="btn std-btn task-btn remove" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addTask_2" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+  </div>
+  <div class="container-fluid last">
+    <div class="std-sub-title" style="text-align:center">Action Plan</div>
+      <table id="actionPlan">
+        <thead>
+          <tr>
+            <td id="no">No.</td>
+            <td id="action-item">Action Item(s)</td>
+            <td id="owner">Owner</td>
+            <td id="target-date">Target Date</td>
+          </tr>
+        </thead>
+        <tbody class="action-plan">
+          <tr id="action_plan_1" class="action-plans">
+            <td><input type='text' value="1" readonly  id="ano_1"></td>
+            <td><input type='text' id="action_item_1" name="action_item_1"></td>
+            <td><input type='text' id="owner_1" name="owner_2" ></td>
+            <td><input type="text" placeholder="Date" class=" datepickerFrom_b" name="action_date_1" id="action_date_1"/></td>
+          </tr>
+          <tr id="action_plan_2" style="display:none;" class="action-plans">
+            <td><input type='text' value="2" readonly id="ano_2"></td>
+            <td><input type='text' id="action_item_2" name="action_item_2"></td>
+            <td><input type='text' id="owner_2" name="owner_2"></td>
+            <td><input type="text" placeholder="Date" class=" datepickerFrom_b" name="action_date_2" id="action_date_2" /></td>
+          </tr>
+          <tr id="action_plan_3" style="display:none;" class="action-plans">
+            <td><input type='text' value="3" readonly min="3" max="3" id="ano_3"></td>
+            <td><input type='text' id="action_item_3" name="action_item_3"></td>
+            <td><input type='text' id="owner_3" name="owner_3"></td>
+            <td><input type="text" placeholder="Date" class="datepickerFrom_b" name="action_date_3" id="action_date_3" /></td>
+          </tr>
+          <tr id="action_plan_4" style="display:none;" class="action-plans">
+            <td><input type='text' value="4" readonly min="4" max="4" id="ano_4"></td>
+            <td><input type='text' id="action_item_4" name="action_item_4"></td>
+            <td><input type='text' id="owner_4" name="owner_4"></td>
+            <td><input type="text" placeholder="Date" class="datepickerFrom_b" name="action_date_4" id="action_date_4" /></td>
+          </tr>
+          <tr id="action_plan_5" style="display:none;" class="action-plans">
+            <td><input type='text' value="5" readonly min="5" max="5" id="ano_5"></td>
+            <td><input type='text' id="action_item_5" name="action_item_5"></td>
+            <td><input type='text' id="owner_5" name="owner_5"></td>
+            <td><input type="text" placeholder="Date" class=" datepickerFrom_b" name="action_date_5" id="action_date_5" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeAction_2" class="btn std-btn task-btn remove-action" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addAction_2" class="btn std-btn task-btn add-action" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+  </div>
+  <div class="container-fluid last">
+    <div class="std-sub-title" style="text-align:center">Next meeting</div>
+      <table id="nextMeeting">
+        <tbody class="date-time">
+          <tr id="" style="">
+            <td id="date">Date : </td>
+            <td><input type='text' id="next_meeting_date" placeholder="Date" class="datepickerFrom_b" name="next_meeting_date"></td>
+            <td id="time">Time : </td>
+            <td><input id="next_meeting_time" class="datetimepickerFrom date-from" placeholder="Time" type="text" name="next_meeting_time"></td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="nextMeeting1">
+        <tbody class="extra">
+          <tr id="" style="">
+            <td id="agenda">Tenantive Agenda : </td>
+            <td><input type='text' id="agenda_text" name="agenda_text"></td>
+            <td id="next">Link to Previous Meeting Minutes : </td>
+            <td> <input type="text" id="prev_meeting_link" name="prev_meeting_link"></td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+  <div class="container-fluid end">
+    <input type="checkbox" id="allow_ics" ></input><p>Allow option to send Calendar Invite </p>
+    <button class="btn std-btn" id="submit">Submit</button>
+  </div>
+</form>
+</section>
+
+
+{% endblock content %}
+
+{% block main_js %}
+  <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+  <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+  <script src="{% static 'js/reports/meeting_minutes.js' %}"></script>
+
+  <script type="text/javascript">
+  $('.datetimepickerFrom').datetimepicker({
+     datepicker : false,
+     format : 'g:i A',
+     step:30,
+  });
+
+  $(".datepickerFrom_a").datetimepicker({
+      timepicker:false,
+      format:'d.m.Y',
+  });
+
+  $(".datepickerFrom_b").datetimepicker({
+    timepicker:false,
+    format:'d.m.Y',
+  });
+
+   $(".remove").hide();
+   $("#others").hide();
+   $(".remove-action").hide();
+
+   $(".add" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id <= 6)
+      {
+        $( "#key_point_" + indx ).removeAttr('style');
+        $('.add').attr('id',"#addTask_" + next_id);
+        $(".remove" ).show();
+        $('.remove').attr('id',"#removeTask_" + next_id);
+      }
+      if(next_id == 6)
+      {
+        $(".add").hide();
+      }
+  });
+
+  $(".bgicon").change(function(){
+        var val = $(".bgicon").val();
+        if(val == "Others")
+        {
+          $("#others").show();
+        }
+        else
+        {
+          $("#others").hide();
+        }
+    });
+
+   $(".remove" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) - 1
+      if(id != "#removeTask_2")
+      {
+        $("#key_point_" + next_id ).attr('style','display:none;');
+        $('.remove').attr('id',"#removeTask_" + next_id);
+        $('.add').attr('id',"#addTask_" + next_id);
+      }
+      id = $(this).attr('id');
+      if(id == "#removeTask_2")
+      {
+        $(".remove").hide();
+      }
+      if(id == "#removeTask_5")
+      {
+        $(".add").show();
+      }
+  });
+
+   $(".add-action" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id <= 6)
+      {
+        $( "#action_plan_" + indx ).removeAttr('style');
+        $('.add-action').attr('id',"#addAction_" + next_id);
+        $(".remove-action" ).show();
+        $('.remove-action').attr('id',"#removeAction_" + next_id);
+      }
+      if(next_id == 6)
+      {
+        $(".add-action").hide();
+      }
+  });
+
+   $(".remove-action" ).click(function() { 
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) - 1
+      if(id != "#removeAction_2")
+      {
+        $("#action_plan_" + next_id ).attr('style','display:none;');
+        $('.remove-action').attr('id',"#removeAction_" + next_id);
+        $('.add-action').attr('id',"#addAction_" + next_id);
+      }
+      id = $(this).attr('id');
+      if(id == "#removeAction_2")
+      {
+        $(".remove-action").hide();
+      }
+       if(id == "#removeAction_5")
+      {
+        $(".add-action").show();
+      }
+  });
+
+
+    $("#attendees").autocomplete({
+      source: {{managers|safe}},
+      select: function(event,ui){
+         $("#attendees").val(ui.item);
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+    });
+
+    $('#submit').on('click', function(){
+      //$('.add-task tr:visible').length
+      $('#meeting_form')
+    })
+
+
+   </script>
+{% endblock main_js %}
+

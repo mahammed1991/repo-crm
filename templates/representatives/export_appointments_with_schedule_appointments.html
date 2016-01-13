@@ -1,0 +1,316 @@
+{% extends 'layouts/main.html' %}
+
+{% load rep_filters %}
+{% load staticfiles %}
+
+{% block title %}
+Manage Appointments
+{% endblock title %}
+
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+  <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+{% endblock main_css %}
+
+{% block content %}
+<!-- content-region -->
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>EXPORT APPOINTMENTS</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="post" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date/Time</label>
+                <input id="datetimepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date/Time">
+            </div>
+            <div class="col-md-2">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date/Time</label>
+                <input id="datetimepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date/Time">
+            </div>
+            <div class="col-md-2 box2">
+                    <div id="processTypesDiv" class="btn-group drpDown" style="width: 130px; margin-left: 89px; margin-top: 26px;">
+                            <button type="button" class="form-control bgicon" id="processTypeBtn" style="width: 215px;">Process Type</button>
+                            <ul class="dropdown-menu process-ul" style="margin-top: -21px;width: 215px;">
+                            {% for item in process_types %}
+                                <li id="{{item}}">
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 box2" style="margin-left: 61px;">
+                  <div id="teamsDiv" class="btn-group drpDown" style="width: 130px; margin-left: 97px; margin-top: 26px;">
+                    <button type="button" class="form-control bgicon" id="teamTypeBtn" style="width: 328px;">Teams</button>
+                    <ul class="dropdown-menu teams-ul" style="overflow: scroll;height: 300px;margin-top: -21px;width: 328px;">
+                            <li idValue='000' id='selectAll' class='selectAll hideItems'>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
+                            </li>
+                            {% for team in default_teams %}
+                                <li idValue='{{team.id}}' id='{{team.process_type}}_{{team.id}}' class='{{team.process_type}} hideItems'>
+                                    <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{team}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 box2 bb hideItems">
+                    <select id="selectedProcessType" name="selectedProcessType" multiple="multiple">                        
+                    </select>
+                    <select id="selectedTeams" name="selectedTeams" multiple="multiple">
+                    </select>
+                </div>
+        </div>
+        
+        <div style="text-align:center;">
+            <input type="submit" value="Export" class="btn std-btn">
+        </div>
+    </form>
+    </div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+<script type="text/javascript">
+  $('#datetimepickerFrom').datetimepicker({
+    format:'d/m/Y H:i',
+    step:30
+  });
+  $('#datetimepickerTo').datetimepicker({
+    format:'d/m/Y H:i',
+    step:30
+  });
+  $('#processTypeBtn').click(function(){
+    if($('#selectedProcessType').value == ""){
+      $().hide();
+    }else{}
+  });
+</script>
+<script type="text/javascript">
+  //Clicking outside process type list hide teams list. 
+    $('body').click(function(evt){
+       if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
+            $('.process-ul').show();
+            if($('#selectedProcessType').val() == null){
+                $('.teams-ul').hide();
+              }else{
+                $('.teams-ul').show();
+              }
+       }else{
+            $('.process-ul, .teams-ul').hide();
+       }
+    });
+
+    // Process Select Button - show Process list.
+      $('#processTypeBtn').on('click', function(){
+        $('.drpDown .process-ul').toggle();
+    });
+    // Call Process Select.
+    $('.process-ul').children().on('click', function(){
+        selectProcessPopulateTeamData(this);
+    });
+
+    // Call Team Select.
+    $('.teams-ul').children().on('click', function(){
+        selectTeams(this.className, this);
+    });
+
+    // Select All Button. 
+    $('#selectAll').on('click', function(){
+
+        // UnSelect all.
+        if($(this).hasClass('all-selected')){
+            $(this).parent().children(':not(.hideItems)').children("a").children("span").removeClass('tickMarkShow');
+            $(this).parent().children(':not(.hideItems)').each(function(){
+                $('#selectedTeams').children("option[value='"+ $(this).attr('idValue')+"']").remove();
+            });
+            $(this).removeClass('all-selected');
+            return;
+        }
+
+        // Select all.
+        $(this).parent().children(':not(.hideItems)').children("a").children("span").addClass('tickMarkShow');
+        $(this).parent().children(':not(.hideItems)').each(function(){
+            var optionElement = "<option class ='"+$(this).attr('class')+"' value='"+ $(this).attr('idValue')+"' selected></option>";
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(this).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        });
+        $(this).addClass('all-selected');
+
+    });
+
+    function selectProcessPopulateTeamData(processElement){
+
+        var processOptionElement = "<option value='"+$(processElement).attr('id')+"' selected></option>";
+        var selectedProcessElement = $(processElement).children("a").children('span');
+
+        // UnSelect Process Items.
+        if(selectedProcessElement.hasClass('tickMarkShow')){
+            selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
+            $('.'+$(processElement).attr('id')).children("a").children('span').removeClass('tickMarkShow'); // UnSelect the Process Element's teams.
+            $('#selectedTeams').children("option[class='"+$(processElement).attr('id')+"']").remove();
+            $('.'+$(processElement).attr('id')).addClass('hideItems');
+
+            $('#selectAll').children("a").children('span').removeClass('tickMarkShow');;
+            $('#selectedProcessType').children("option[value='"+$(processElement).attr('id')+"']").remove();
+
+            // If the selectedTeams list has only selectAll option element then remove 'all-selected' from it.
+            if($('#selectedTeams option[value="000"]:only-child').length){
+                $('#selectAll').removeClass('all-selected');
+            }
+
+            // If selectAll element has Not got the class 'all-selected', then hide it.
+            if(!$('#selectAll').hasClass('all-selected') && !$('#selectedProcessType').children().length){
+                $('#selectAll').addClass('hideItems');
+            }
+
+        }
+
+        // Select Process Items.
+        else{
+            $('.'+$(processElement).attr('id') + ', #selectAll').removeClass('hideItems');
+            selectedProcessElement.addClass('tickMarkShow');
+            $('#selectedProcessType').append(processOptionElement);
+
+            // Remove select all tick.
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
+        }
+
+    }
+
+    function selectTeams(parentElementId, selectedElement){
+        var selectedTeamsElement = $(selectedElement).children("a").children('span');
+        var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('idValue')+"' selected></option>";
+        if(selectedTeamsElement.hasClass('tickMarkShow')){
+            selectedTeamsElement.removeClass('tickMarkShow');
+            $('#selectedTeams').children("option[value='"+ $(selectedElement).attr('idValue')+"']").remove();
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
+        }
+        else{
+            selectedTeamsElement.addClass('tickMarkShow');
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(selectedElement).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var post_result_dict = {{post_result_dict|safe}};
+        for(team in post_result_dict){
+            selectProcessPopulateTeamData('#'+team);
+            var teams = post_result_dict[team];
+            for (item in teams){
+                selectTeams(team, '#'+team+'_'+teams[item]);
+                $('.'+team).removeClass('hideItems');
+            }
+        }
+        window.tagByTeams = {{tag_by_team|safe}};
+        $('select[name=process_type]').trigger('change');
+
+    });
+    
+    $('select[name=process_type]').change(function(){
+            var selected_process = $(this).val();
+            setTeams(selected_process);
+        });
+
+    function setTeams(selected_process){
+        var selectTeams = window.tagByTeams[selected_process];
+
+        $("#team").html();
+        var option = '<option value="all">all</option>';
+        for(var i=0;i<selectTeams.length;i++){
+            option += "<option value='" + selectTeams[i]['id'] + "'>"+ selectTeams[i]['name']+ "</option>"
+        }
+        $('#team').html(option);
+    }
+
+    function validatethis(frm) {
+
+        window.is_error = false;
+
+        if(frm.datetimepickerFrom.value == "0" || frm.datetimepickerFrom.value == ""){
+          $(frm.datetimepickerFrom).addClass('error-box');
+          frm.datetimepickerFrom.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datetimepickerFrom).removeClass('error-box');
+        }
+
+        if(frm.datetimepickerTo.value == "0" || frm.datetimepickerTo.value == ""){
+          $(frm.datetimepickerTo).addClass('error-box');
+          frm.datetimepickerTo.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datetimepickerTo).removeClass('error-box');
+        }
+
+        if(frm.selectedProcessType.value == "0" || frm.selectedProcessType.value == ""){
+          $(frm.processTypeBtn).addClass('error-box');
+          frm.processTypeBtn.focus();
+          window.is_error = true;
+        }else{
+          $(frm.processTypeBtn).removeClass('error-box');
+        }
+
+        if(frm.selectedTeams.value == "0" || frm.selectedTeams.value == ""){
+          $(frm.teamTypeBtn).addClass('error-box');
+          frm.teamTypeBtn.focus();
+          window.is_error = true;
+        }
+        else{
+          $(frm.teamTypeBtn).removeClass('error-box');
+        }
+
+        if(frm.datetimepickerTo.value && frm.datetimepickerFrom.value){
+            if(frm.datetimepickerTo.value.split(' ')[0] == frm.datetimepickerFrom.value.split(' ')[0]){
+                if(frm.datetimepickerTo.value.split(' ')[1] == frm.datetimepickerFrom.value.split(' ')[1]){
+                    window.is_error = true;
+                    alert('End Time should be greater than Start Time');
+                }
+            }
+            if(frm.datetimepickerTo.value.split(' ')[0] < frm.datetimepickerFrom.value.split(' ')[0]){
+                window.is_error = true;
+                alert('End Date should be greater than Start Date');
+            }
+            else if(frm.datetimepickerTo.value < frm.datetimepickerFrom.value){
+                window.is_error = true;
+                alert('End Date should be greater than Start Date');
+            }
+        }
+
+        if(window.is_error){
+          return false;
+        }else{
+          var status = true;
+          
+          if (status) {
+            // $('#preloaderOverlay').show();
+            $('form input[type=submit]');
+          }
+          return status;
+        }
+    }
+
+
+</script>
+{% endblock main_js %}

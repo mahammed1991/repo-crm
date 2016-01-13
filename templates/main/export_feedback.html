@@ -1,0 +1,84 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Export Feedback
+{% endblock title %}
+{% block main_css %}
+
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>EXPORT FEEDBACKS</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="post" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-2">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+        </div>
+        
+        <div style="text-align:center;">
+            <input type="submit" value="Export" class="btn std-btn">
+        </div>
+    </form>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+	$('#datepickerFrom').datepicker();
+	$('#datepickerTo').datepicker();
+    function validatethis(frm) {
+        window.is_error = false;
+
+        if(frm.datepickerFrom.value == "0" || frm.datepickerFrom.value == ""){
+          $(frm.datepickerFrom).addClass('error-box');
+          frm.datepickerFrom.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerFrom).removeClass('error-box');
+        }
+
+        if(frm.datepickerTo.value == "0" || frm.datepickerTo.value == ""){
+          $(frm.datepickerTo).addClass('error-box');
+          frm.datepickerTo.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerTo).removeClass('error-box');
+        }
+        if(frm.datepickerTo.value && frm.datepickerFrom.value){
+            if(frm.datepickerTo.value <= frm.datepickerFrom.value){
+                window.is_error = true;
+                alert('End Date should be greater than Start Date');
+            }
+        }
+        if(window.is_error){
+          return false;
+        }else{
+          var status = true;
+          
+          if (status) {
+            // $('#preloaderOverlay').show();
+            $('form input[type=submit]');
+          }
+          return status;
+        }
+
+    }
+</script>
+{% endblock main_js %}
