@@ -1395,3 +1395,12 @@ def link_last_meeting(request, last_id):
 def meeting_minutes_thankyou(request):
     return_url = reverse('reports.views.meeting_minutes')
     return render(request, 'reports/meeting_minutes_thankyou.html', {'return_url': return_url})
+
+
+@login_required
+def export_meeting_minutes(request):
+    return render(request, 'reports/export_meeting_minutes.html', {})
+
+
+def generate_last_meeting_link(request):
+    return HttpResponse(json.dumps())

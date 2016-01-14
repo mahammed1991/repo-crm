@@ -218,7 +218,7 @@
             <td id="time">Time : </td>
             <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
             <td id="next">Link to Previous Meeting Minutes : </td>
-            <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="../../reports/link-last-meeting/{{link_to_last_id}}" target="_blank">{{link_to_last_program}} {{link_to_last_program_type}} {{link_to_last_subject_timeline}} {{link_to_last_date}}</a></div></td>
+            <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="../../reports/link-last-meeting/{{link_to_last_id}}" target="_blank" id="generate_link">Generate previous meeting link</a></div></td>
           </tr>
         </tbody>
       </table>
