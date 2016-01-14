@@ -1297,7 +1297,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          }
     )
 
-
+@login_required
 def appointments_calendar(request):
     from leads.models import Leads
     from django.db.models import Count
