@@ -117,9 +117,17 @@
               <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
             </ul>
             <div class="table-search" style="margin-left: 01px !important;">
-              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Filter by text" onkeyup="filter(this, 'Leads')"/>
+              <input type="text" class="form-control input-sm" id="wppleadSearch" name="wppleadSearch" placeholder="   Filter by text" />
+              <a href="" id="reset" style="position:relative;top:-35px;left:220px;">Reset</a>
               <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
+              <span id="searchError" style="display:none; color: red;">Search text should be more then 3 characters</span>
             </div>
+            <!-- <div class="table-search" style="margin-left: 01px !important;">
+              <input type="text" class="form-control input-sm" id="leadSearch" name="leadSearch" placeholder="    Search Leads"/>
+               <span class="search-icon"><i class="fa fa-search" style="margin-top:12px;"/></i></span>
+            </div>
+            <span id="searchError" style="display:none; color: red;">Search text should be more then 3 characters</span>
+          </div> -->
             
           </div>
           <div class="col-xs-2 col-md-2">            
@@ -157,6 +165,7 @@
                   
           </tbody>
         </table>
+        <img src="{%static 'images/no_results_found.jpg' %}" alt=" " class="pre-load-img" style="display:none;" />
         <!-- <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/> -->
         </div>
     </div>

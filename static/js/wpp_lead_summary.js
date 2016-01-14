@@ -253,3 +253,80 @@ $('#SubmitFeedback').click(function(){
     }
     
     })
+
+
+/*search functionality for the wpp-leads table*/
+
+$('input[name="wppleadSearch"]').on('keyup', function(){
+    searchLeads($(this).val());
+  });
+
+$('input[name="wppleadSearch"]').on('focusout', function(){
+    $('#searchError').hide();
+  });
+
+
+$('.fa-search').on('click', function(){
+    searchLeads($('#wppleadSearch').val());
+})
+
+$('#wppleadSearch').keypress(function (e) {
+  var key = e.which;
+  if(key == 13)  // the enter key code
+   {
+     searchLeads($('#wppleadSearch').val());
+   }
+});
+
+function searchLeads(searchText){
+  $('#searchError').hide();
+    if((!searchText) || (searchText.length <=3)){
+        //clearLeadDetails();
+        $('#searchError').show();
+
+    }else{
+        $.ajax({
+            'method': 'GET',
+            'dataType': 'json',
+            'data': {'search-text':searchText, 'lead-type': 'WPP'},
+            'url': "/leads/searh-leads/",
+            success: function(response){
+              // console.log(response);
+              $('#searchError').hide();
+              if(response['lead_list'].length != 0){
+                $('.pre-load-img').hide();
+                // $('.services_action').hide();
+                setWppLeadSummary(response['lead_status_dict'])
+                setWppLeadSummaryTable(response['lead_list'])
+              }else{
+                $('.services_action').show();
+                $('#tableBody').html('');
+                $('.pre-load-img').show();
+              }
+            },
+            error:function(xhr, status, error){
+                alert('No Leads found for the search');
+            }
+        })
+    }
+}
+
+treatment_type = $('#treatment_type').val()
+
+$('#reset').click(function(event){
+  event.preventDefault();
+  $.ajax({
+    'method': 'GET',
+    'dataType': 'json',
+    'data': {'treatment_type': treatment_type},
+    'url': "/leads/get-wpp-lead-summary-by-treatment/",
+    success: function(data){
+      $('#wppleadSearch').val('');
+      setWppLeadSummary(data['status_count'])
+      setWppLeadSummaryTable(data['leads_list'])
+    },
+    error:function(xhr, status, error){
+      console.log('failure');
+    }
+  });
+});

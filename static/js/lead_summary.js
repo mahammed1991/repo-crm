@@ -252,6 +252,8 @@ $('#leadSearch').keypress(function (e) {
      searchLeads($('#leadSearch').val());
    }
 });
+
+
 function searchLeads(searchText){
   $('#searchError').hide();
     if((!searchText) || (searchText.length <=3)){
@@ -262,7 +264,7 @@ function searchLeads(searchText){
         $.ajax({
             'method': 'GET',
             'dataType': 'json',
-            'data': {'search-text':searchText},
+            'data': {'search-text':searchText, 'lead-type': 'TAG'},
             'url': "/leads/searh-leads/",
             success: function(response){
               // console.log(response);
