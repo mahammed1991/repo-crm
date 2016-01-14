@@ -168,7 +168,7 @@ class MeetingMinutes(models.Model):
     attendees = models.ManyToManyField(User, )
     key_points = JSONField(default={})
     action_plan = JSONField(default={})
-    next_meeting_datetime = models.DateTimeField(blank=True)
+    next_meeting_datetime = models.DateTimeField(blank=True, null=True)
     tenantive_agenda = JSONField(default={})
     region = models.CharField(max_length=255, null=True)
     location = models.CharField(max_length=255, null=True)

@@ -1707,6 +1707,7 @@ def migrate_table_data(request):
         return render(request, 'main/upload_file.html', template_args)
 
 
+@login_required
 def picasso_home(request):
     user_profile = get_user_profile(request.user)
     query = dict()
@@ -1774,8 +1775,18 @@ def export_feedback(request):
             feedback_dict['Description'] = feedback.description
             feedback_dict['Status'] = feedback.status
             feedback_dict['Lead Owner'] = feedback.lead_owner.username
-            feedback_dict['Google Account Manager'] = feedback.google_account_manager.username
-            feedback_dict['Program'] = feedback.program.team_name
+            try:
+                if feedback.google_account_manager:
+                    feedback_dict['Google Account Manager'] = feedback.google_account_manager.username
+            except ObjectDoesNotExist:
+                feedback_dict['Google Account Manager'] = ''
+
+            try:
+                if feedback.program:
+                    feedback_dict['Program'] = feedback.program.team_name
+            except ObjectDoesNotExist:
+                feedback_dict['Program'] = ''
+
             feedback_dict['Code Type'] = feedback.code_type
             feedback_dict['Created Date'] = datetime.strftime(feedback.created_date, '%m/%d/%Y')
             feedback_dict['Resolved By'] = feedback.resolved_by.username if feedback.resolved_by  else ''

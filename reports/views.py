@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
@@ -18,6 +18,7 @@ from collections import OrderedDict
 from lib.helpers import (send_mail)
 from django.template.loader import get_template
 from django.template import Context
+from django.core.urlresolvers import reverse
 import re
 
 
@@ -1151,6 +1152,7 @@ def download_picasso_report(request):
 
 
 # Meeting page template rendering view
+@login_required
 def meeting_minutes(request):
     regalix_email = list()
     google_email = list()
@@ -1177,10 +1179,12 @@ def meeting_minutes(request):
         meeting_minutes.location = request.POST.get('location')
         meeting_minutes.program = request.POST.get('program')
         meeting_minutes.program_type = request.POST.get('program_type')
-        next_meeting_date = request.POST.get('next_meeting_date')
-        next_meeting_time = request.POST.get('next_meeting_time')
-        next_meeting_datetime = next_meeting_date + ' ' + next_meeting_time
-        meeting_minutes.next_meeting_datetime = datetime.strptime(next_meeting_datetime, '%d.%m.%Y %I:%M %p')
+        next_meeting_date = request.POST.get('next_meeting_date', None)
+        next_meeting_time = request.POST.get('next_meeting_time', None)
+        if next_meeting_date and next_meeting_time:
+            next_meeting_datetime = next_meeting_date + ' ' + next_meeting_time
+            meeting_minutes.next_meeting_datetime = datetime.strptime(next_meeting_datetime, '%d.%m.%Y %I:%M %p')
+            
         total_keypoints_count = request.POST.get('no_of_keypoints')
         total_actionplan_count = request.POST.get('no_of_actionplans')
         total_tenantive_agenda = request.POST.get('no_of_tenantive_agenda')
@@ -1223,6 +1227,7 @@ def meeting_minutes(request):
         meeting_minutes.attendees.add(*get_attendees_list)
         meeting_minutes.save()
 
+
         mail_list = list()
         for attendee in attendees_list:
             mail_list.append(str(attendee))
@@ -1230,11 +1235,13 @@ def meeting_minutes(request):
         mail_list.append(str(request.POST.get('regalix_poc')))
 
         link_to_last_data_for_email = MeetingMinutes.objects.all().last()
+
+
         if link_to_last_data_for_email:
             link_for_last_meeting_email = link_to_last_data_for_email.id
 
         mail_subject = "Meeting Minutes"
-        mail_body = get_template('reports/minute_meeting_email_template.html').render(
+        mail_body = get_template('reports/reports_email_template/minute_meeting_email_template.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
                 'subject_timeline': meeting_minutes.subject_timeline,
@@ -1255,8 +1262,8 @@ def meeting_minutes(request):
                 'action_plans_owner': action_plans_owner,
                 'action_plans_date': action_plans_date,
 
-                'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
-                'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
+                # 'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
+                # 'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
                 'tenantive_agenda': tenantive_agenda_list,
             })
         )
@@ -1265,6 +1272,7 @@ def meeting_minutes(request):
         bcc = set([])
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+        return redirect('reports.views.meeting_minutes_thankyou')
 
     managers = User.objects.values_list('email', flat=True)
     for manager in managers:
@@ -1272,7 +1280,7 @@ def meeting_minutes(request):
             google_email.append(str(manager))
         else:
             regalix_email.append(str(manager))
-
+            
     programs = Team.objects.exclude(is_active=False).values_list('team_name', flat=True)
     locations = Location.objects.filter(is_active=True)
     programs = [str(p) for p in programs]
@@ -1326,22 +1334,24 @@ def meeting_minutes(request):
                                                             'regalix_email': regalix_email, 'google_email': google_email, 'programs': programs})
 
 
+@login_required
 def link_last_meeting(request, last_id):
-
-
     region_locations = dict()
     all_locations = dict()
     programs = dict()
     google_email = dict()
     regalix_email = dict()
     attendees_list = list()
+    next_meeting_date = ''
+    next_meeting_time = ''
     last_meeting = MeetingMinutes.objects.get(id=last_id)
     new_subject_timeline = 1
     meeting_date = last_meeting.meeting_time_in_ist.date()
     last_meeting_link = datetime.strftime(meeting_date, '%d.%m.%Y')
     meeting_time = last_meeting.meeting_time_in_ist.time()
-    next_meeting_date = last_meeting.next_meeting_datetime.date()
-    next_meeting_time = last_meeting.next_meeting_datetime.time()
+    if last_meeting.next_meeting_datetime:
+        next_meeting_date = last_meeting.next_meeting_datetime.date()
+        next_meeting_time = last_meeting.next_meeting_datetime.time()
     subject_timeline = last_meeting.subject_timeline
     attendees = last_meeting.attendees.values('email')
     other_subject = last_meeting.other_subject
@@ -1369,8 +1379,8 @@ def link_last_meeting(request, last_id):
     return render(request,'reports/meeting_minutes.html',{'submit_disabled': submit_disabled, 
                                                         'last_meeting_link': json.dumps(last_meeting_link), 
                                                         'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 
-                                                        'link_program_type': json.dumps(link_program_type), 
-                                                        'link_program': json.dumps(link_program), 'link_location': json.dumps(link_location), 
+                                                        'link_program_type': link_program_type, 
+                                                        'link_program': link_program, 'link_location': json.dumps(link_location), 
                                                         'link_region': json.dumps(link_region), 'other_subject': other_subject, 
                                                         'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 
                                                         'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 
@@ -1379,3 +1389,9 @@ def link_last_meeting(request, last_id):
                                                         'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting, 
                                                         'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date, 
                                                         'next_meeting_time': next_meeting_time})
+
+
+@login_required
+def meeting_minutes_thankyou(request):
+    return_url = reverse('reports.views.meeting_minutes')
+    return render(request, 'reports/meeting_minutes_thankyou.html', {'return_url': return_url})
