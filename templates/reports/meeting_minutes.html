@@ -465,8 +465,11 @@ if(next_meeting_date_last == ''){
   $('.next-meeting-row').show();
   $('.show-date-time').hide();
 }
-  
-  
+
+if(window.location.pathname == '/reports/meeting-minutes/')
+{
+  $('.show-date-time').show();
+}
 
   $('.next-row').change(function(){
     var show_time_date = $('.next-row').is(":checked");
@@ -716,7 +719,7 @@ $('.add').click(function () {
       id = $(this).attr('id');
       indx = id.split('_')[1];
       next_id = parseInt(indx) + 1
-      if(next_id < 6 )
+      if(next_id < 16 )
       {
           $(".remove").show();
           $new_row = $("#key_point_1").clone().attr('id', 'key_point_'+next_id).show();
@@ -734,7 +737,7 @@ $('.add').click(function () {
           $('.remove').attr('id',"#removeTask_" + next_id);
           $('.add').attr('id',"#addTask_" + next_id);
         }
-        if(next_id == 5 )
+        if(next_id == 15 )
         {
           $(".add").hide();
         }
@@ -760,7 +763,7 @@ $('.add').click(function () {
       id = $(this).attr('id');
       indx = id.split('_')[1];
       next_id = parseInt(indx) + 1
-      if(next_id < 6 )
+      if(next_id < 16 )
       {
           $(".remove-action").show();
           $new_row = $("#action_plan_1").clone().attr('id', 'action_plan_'+next_id).show();
@@ -786,7 +789,7 @@ $('.add').click(function () {
             scrollInput:false,
           });
         }
-        if(next_id == 5 )
+        if(next_id == 15 )
         {
           $(".add-action").hide();
         }
@@ -813,7 +816,7 @@ $('.add').click(function () {
       id = $(this).attr('id');
       indx = id.split('_')[1];
       next_id = parseInt(indx) + 1
-      if(next_id < 6 )
+      if(next_id < 16 )
       {
           $(".remove-agenda").show();
           $new_row = $("#tentative_agenda_1").clone().attr('id', 'tentative_agenda_'+next_id).show();
@@ -824,7 +827,7 @@ $('.add').click(function () {
           $('.add-agenda').attr('id',"#addTentativeAgenda_" + next_id);
           $("#agenda_text_"+next_id).val('');
         }
-        if(next_id == 5 )
+        if(next_id == 15 )
         {
           $(".add-agenda").hide();
         }
