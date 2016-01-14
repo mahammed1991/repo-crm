@@ -160,6 +160,7 @@ $('#preview_btn').click(function(){
     $('#preview_attendees').val($('#attendees').val());
 
 
+    /***************************adding action plans*********************************/
     $('.preview-add-task').html('');
     var preview_add_task = $('.key-points');
     var add_tasks = new Array();
@@ -180,6 +181,7 @@ $('#preview_btn').click(function(){
       add_tasks = add_tasks.splice(3);
     }
 
+    /***************************adding action plans*********************************/
     $('.preview-action-plan').html('');
     var preview_add_task = $('.action-plans');
     var add_action_points = new Array();
@@ -202,6 +204,7 @@ $('#preview_btn').click(function(){
       add_action_points = add_action_points.splice(4);
     }
     
+    /***************************adding tenantive agenda*********************************/
     $('.preview-extra').html('');
     var preview_agenda = $('.tenantive_agendas');
     var tentative_agenda = new Array();
@@ -226,4 +229,31 @@ $('#preview_btn').click(function(){
     $('#preview_next_meeting_date').val($('#next_meeting_date').val());
 
     $('#preview_next_meeting_time').val($('#next_meeting_time').val());
+});
+
+$('#generate_link').click(function(event){
+  event.preventDefault();
+  var dataString = {}
+  dataString['program'] = $('#program').val();
+  if($('#program').val() == 'TAG Team'){
+    dataString['program_type'] = $('#program_type').val();
+  }
+  dataString['subject'] = $('#subject').val();
+  if($('#subject').val() == 'New Product Launch' || $('#subject').val() == 'New Program Launch'){
+    dataString['subject_type'] = $('#others').val();
+  }
+  dataString['meeting_date'] = $('#meeting_date').val();
+  $.ajax({
+    url: 'reports/generate-link/'
+    type: 'GET',
+    data: dataString,
+    dataType: 'JSON',
+    success: function(data){
+      
+    },
+    failure: function(jqXHR, textStatus, errorThrown){
+      
+    }
+
+  });
 });
