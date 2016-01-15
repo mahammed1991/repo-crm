@@ -24,7 +24,7 @@ Manage Appointments
     <form method="post" onsubmit="return validatethis(this);">
         {% csrf_token %}
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2"> 
                 <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date/Time</label>
                 <input id="datetimepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date/Time">
             </div>
@@ -32,10 +32,10 @@ Manage Appointments
                 <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date/Time</label>
                 <input id="datetimepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date/Time">
             </div>
-            <div class="col-md-2 box2">
-            <div id="processTypesDiv" class="btn-group drpDown" style="width: 130px; margin-left: 89px; margin-top: 26px;">
-                            <button type="button" class="form-control bgicon" id="processTypeBtn" style="width: 215px;">Process Type</button>
-                            <ul class="dropdown-menu process-ul" style="margin-top: -21px;width: 215px;">
+            <div class="col-md-3 box2">
+            <div id="processTypesDiv" class="btn-group drpDown" style="width: 100%; margin-left:50px;margin-top: 26px;">
+                            <button type="button" class="form-control bgicon" id="processTypeBtn" style="width: 100%;">Process Type</button>
+                            <ul class="dropdown-menu process-ul" style="margin-top: -21px;width: 100%;">
                             {% for item in process_types %}
                                 <li id="{{item}}">
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
@@ -44,10 +44,11 @@ Manage Appointments
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-2 box2" style="margin-left: 61px;">
-                   <div id="teamsDiv" class="btn-group drpDown" style="width: 130px; margin-left: 97px; margin-top: 26px;">
-                <button type="button" class="form-control bgicon" id="teamTypeBtn" style="width: 328px;">Teams</button>
-                <ul class="dropdown-menu teams-ul" style="overflow: scroll;height: 360px;margin-top: -21px;width: 328px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-4 col-sm-2 box2">
+                   <div id="teamsDiv" class="btn-group drpDown" style="width:98%;margin-top: 26px;">
+                   <button type="button" class="form-control bgicon" id="teamTypeBtn" style="width: 98%;">Teams</button>
+                <ul class="dropdown-menu teams-ul" style="overflow: scroll;height: auto; max-height: 300px;margin-top: -21px;width: 98%;"> 
                             <li idValue='000' id='selectAll' class='selectAll hideItems'>
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
                             </li>
@@ -72,6 +73,7 @@ Manage Appointments
         </div>
     </form>
     </div>
+    
 </section>
 <div id="preloaderOverlay" style='display:none;'>
   <div class="preloader">
@@ -101,7 +103,7 @@ Manage Appointments
 </script>
 <script type="text/javascript">
   //Clicking outside process type list hide teams list. 
-    $('body').click(function(evt){
+    $(document).click(function(evt){
        if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
             $('.process-ul').show();
             if($('#selectedProcessType').val() == null){
