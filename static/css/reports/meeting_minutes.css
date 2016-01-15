@@ -61,7 +61,6 @@ h1 {
 
   .remove-action:hover{background: #d04033;}
 
-  .last{margin-bottom: 20px;}
 
   #date,#time{width:60px;padding: 10px;}
 
@@ -134,7 +133,6 @@ h1 {
 
   #preview_sel_date,#preview_time_date{width: 440px;}
 
-  .preview_last{height: 150px;}
 
   .buttons{height: 125px;
            position: relative;
