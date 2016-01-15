@@ -63,13 +63,13 @@
 
       <div class="row">
             <div class="col-md-2">
-              <label for="meeting_date">Date</label>
+              <label for="meeting_date">Date(dd.mm.yyyy)</label>
             </div>
            <div class="col-md-4">
                 <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" {% if meeting_date %} value="{{ meeting_date }}" disabled{% else %} value="" {% endif %}/>
             </div>
             <div class="col-md-2">
-              <label for="meeting_time">Time</label>
+              <label for="meeting_time">Time(hh:mm)</label>
             </div>
            <div class="col-md-4">
               <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time" {% if meeting_time %} value="{{ meeting_time }}" disabled{% else %} value="" {% endif %}>
@@ -189,7 +189,7 @@
             <td id="no">No.</td>
             <td id="action-item">Action Item(s)</td>
             <td id="owner">Owner</td>
-            <td id="target-date">Target Date</td>
+            <td id="target-date">Target Date(dd.mm.yyyy)</td>
           </tr>
         </thead>
         <tbody class="action-plan">
@@ -213,9 +213,9 @@
       <table id="nextMeeting" class="next-meeting-row">
         <tbody class="date-time">
           <tr id="" style="">
-            <td id="date">Date : </td>
+            <td id="date">Date:(dd.mm.yyyy)</td>
             <td><input type='text' id="next_meeting_date" placeholder="Date" class="datepickerFrom_b sel_date" name="next_meeting_date" {% if next_meeting_date %} value="{{ next_meeting_date }}" disabled{% else %} value="" {% endif %}></td>
-            <td id="time">Time : </td>
+            <td id="time">Time:(hh:mm)</td>
             <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
             <td id="next">Link to Previous Meeting Minutes : </td>
             <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="../../reports/link-last-meeting/{{link_to_last_id}}" target="_blank">{{link_to_last_program}} {{link_to_last_program_type}} {{link_to_last_subject_timeline}} {{link_to_last_date}}</a></div></td>

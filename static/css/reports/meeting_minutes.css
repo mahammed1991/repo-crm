@@ -138,5 +138,7 @@ h1 {
            position: relative;
            left: 300px;
   }
-
+#ui-id-1, #ui-id-2, #ui-id-3, #ui-id-4{
+  overflow: scroll;height: auto; max-height: 250px;
+}
 </style>
