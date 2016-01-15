@@ -185,7 +185,7 @@ def implemented_leads_count_report():
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
     mail_subject = "Wins Count Regionwise @ %s - %s " % (specific_date, specific_time)
-    mail_body = get_template('leads/leads_email_templates/email_template_for_lead_status.html').render(
+    mail_body = get_template('leads/email_templates/email_template_for_lead_status.html').render(
         Context({
             'final_dict': final_dict,
             'specific_date': specific_date,
