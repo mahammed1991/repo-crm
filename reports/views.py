@@ -1241,7 +1241,7 @@ def meeting_minutes(request):
             link_for_last_meeting_email = link_to_last_data_for_email.id
 
         mail_subject = "Meeting Minutes"
-        mail_body = get_template('reports/email_template/minute_meeting_email_template.html').render(
+        mail_body = get_template('reports/email_templates/minute_meeting_email_template.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
                 'subject_timeline': meeting_minutes.subject_timeline,
