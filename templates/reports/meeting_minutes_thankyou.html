@@ -1,0 +1,17 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Thank You
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
+        Thank you for submitting your meeting minutes ..<br />
+        You will receive an email confirmation shortly with the complete details (based on the information you have provided).<br /><br />
+        If you need to change or cancel this meeting minutes, please reach out to <b>implementation-support@google.com</b><br /><br />
+        To submit an additional  meeting minutes , please <a href="{{return_url}}">Click here</a>
+    </div>
+</div>
+{% endblock content %}

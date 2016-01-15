@@ -163,8 +163,8 @@ def get_deleted_leads():
 def implemented_leads_count_report():
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
-    specific_date = datetime.today()
-    specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
+    specific_date_time = datetime.today()
+    specific_date = datetime(specific_date_time.year, specific_date_time.month, specific_date_time.day)
     total_count_tag = list()
     total_count_shopping = list()
     final_dict = {'TAG': 0, 'SHOPPING': 0}
@@ -181,11 +181,11 @@ def implemented_leads_count_report():
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
-    specific_time = specific_date.time()
+    specific_time = datetime.strftime(specific_date_time, '%H:%M:%S')
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
-    mail_subject = "Wins Count Regionwise @ "+specific_date+"-"+specific_time+""
-    mail_body = get_template('leads/email_template_for_lead_status.html').render(
+    mail_subject = "Wins Count Regionwise @ %s - %s " % (specific_date, specific_time)
+    mail_body = get_template('leads/email_templates/email_template_for_lead_status.html').render(
         Context({
             'final_dict': final_dict,
             'specific_date': specific_date,

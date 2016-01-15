@@ -2885,10 +2885,14 @@ def searh_leads(request):
     if request.is_ajax:
         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
         search_text = request.GET.get('search-text', None)
+        lead_type = request.GET.get('lead-type', None)
         if search_text:
             fieldnames = ['lead_owner_name', 'lead_owner_email', 'google_rep_name', 'google_rep_email', 'customer_id', 'company', 'team', 'type_1']
             qgroup = reduce(operator.or_, (Q(**{fieldname + '%s' % ('__icontains'): search_text}) for fieldname in fieldnames))
-            leads = Leads.objects.filter(qgroup, created_date__gte=start_date, created_date__lte=end_date)
+            if 'TAG' in lead_type:
+                leads = Leads.objects.filter(qgroup, created_date__gte=start_date, created_date__lte=end_date)
+            else:
+                leads = WPPLeads.objects.filter(qgroup)
 
         lead_ids = [lead.id for lead in leads]
         lead_list = list()
@@ -2899,4 +2903,7 @@ def searh_leads(request):
         mimetype = 'application/json'
         lead_list.sort(key=lambda item: item['rescheduled_appointment_in_ist'], reverse=True)
         return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
-    return render(request, 'leads/lead_summary.html', {})
+    if 'TAG' in lead_type:
+        return render(request, 'leads/lead_summary.html', {})
+    else:
+        return render(request, 'leads/wpp_lead_summary.html', {})
