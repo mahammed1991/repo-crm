@@ -92,7 +92,7 @@ function validatethis() {
   window.is_error = true;
   return false;
   }else{
-    $(elem).addClass('error-box');
+    $(elem).removeClass('error-box');
   }
 }
 
