@@ -91,6 +91,8 @@ function validatethis() {
   window.failedFields.push(elem);
   window.is_error = true;
   return false;
+  }else{
+    $(elem).addClass('error-box');
   }
 }
 
@@ -244,15 +246,15 @@ $('#generate_link').click(function(event){
   }
   dataString['meeting_date'] = $('#meeting_date').val();
   $.ajax({
-    url: 'reports/generate-link/'
+    url: 'reports/generate-link/',
     type: 'GET',
     data: dataString,
     dataType: 'JSON',
     success: function(data){
-      
+
     },
     failure: function(jqXHR, textStatus, errorThrown){
-      
+
     }
 
   });
