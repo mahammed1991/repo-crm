@@ -133,7 +133,7 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="2">
                                     <tr>
-                                        <td class="cubg3">{{slot.booked}}</td>
+                                        <td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{slot.booked}}</td>
                                         <td class="cubg4">{{slot.available}}</td>
                                     </tr>
                                 </table>
@@ -151,9 +151,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" data-placement="top" title="{{team_booked|either:0}}" class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -162,9 +162,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -173,9 +173,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -185,9 +185,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -196,9 +196,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -208,9 +208,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -228,9 +228,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -239,9 +239,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -250,9 +250,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -262,9 +262,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -273,9 +273,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -285,9 +285,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -309,9 +309,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -321,9 +321,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -333,9 +333,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -346,9 +346,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -358,9 +358,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -371,9 +371,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -392,9 +392,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -404,9 +404,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -416,9 +416,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -429,9 +429,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -441,9 +441,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -454,9 +454,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
-                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30' as key_subs %}
-                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                        <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                        {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
+                                        {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -479,9 +479,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -490,9 +490,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -501,9 +501,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -513,9 +513,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -524,9 +524,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -536,9 +536,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -556,9 +556,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -567,9 +567,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -578,9 +578,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -590,9 +590,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -601,9 +601,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -613,9 +613,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -625,7 +625,7 @@ Total Appointments
                         </tr>
                     {% endfor %}
                     <!-- End of next rows -->
-                    {% for i in 1|get_range_specific:'7' %}
+                    {% for i in 1|get_range_specific:'8' %}
                         <tr>
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|concatenate:':00'}} AM</td>
@@ -636,9 +636,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -647,9 +647,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -658,9 +658,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -670,9 +670,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -681,9 +681,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -693,9 +693,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -713,9 +713,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -724,9 +724,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -735,9 +735,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -747,9 +747,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -758,9 +758,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -770,9 +770,9 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="0" cellpadding="0">
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
-                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_mng' as key_subs %}
-                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'disabled' as isdisabled %}
-                                    <tr><td class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3" disabled/></td></tr>
+                                    {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
+                                    {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
+                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -929,6 +929,9 @@ Total Appointments
     }
 
     $(document).ready(function(){
+        
+       $('[rel=tooltip]').tooltip({container: 'body'});
+       $('[data-toggle="tooltip"]').tooltip(); 
         var post_result_dict = {{post_result_dict|safe}};
         for(team in post_result_dict){
             selectProcessPopulateTeamData('#'+team);
