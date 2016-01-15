@@ -1236,13 +1236,13 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             even_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
             even_key += '_'
             even_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
-            even_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes)
+            even_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'cur'
 
             appointments[even_key] = dict()
             appointments[even_key]['value'] = 0
             appointments[even_key]['booked'] = 0
-            appointments[even_key]['disabled'] = True if datetime(
-                _date.year, _date.month, _date.day, hour, minutes) < datetime.utcnow() else False
+            appointments[even_key]['team_count'] = dict()
+            appointments[even_key]['team_booked'] = dict()
 
             # odd hour slot
             minutes = 30
@@ -1250,23 +1250,85 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             odd_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
             odd_key += '_'
             odd_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
-            odd_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes)
+            odd_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'cur'
 
             appointments[odd_key] = dict()
             appointments[odd_key]['value'] = 0
             appointments[odd_key]['booked'] = 0
-            appointments[odd_key]['disabled'] = True if datetime(
-                _date.year, _date.month, _date.day, hour, minutes) < datetime.utcnow() else False
+            appointments[odd_key]['team_count'] = dict()
+            appointments[odd_key]['team_booked'] = dict()
 
-    # calculate slots available vs booked for week
+        # Here for North Americs am creating key_next day slots to show under sameday
+        for hour in range(1, 8):
+            minutes = 0
+            even_key = 'input_'  # input_16_6_2014_0_00
+            even_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+            even_key += '_'
+            even_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+            even_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'next'
+
+            appointments[even_key] = dict()
+            appointments[even_key]['value'] = 0
+            appointments[even_key]['booked'] = 0
+            appointments[even_key]['team_count'] = dict()
+            appointments[even_key]['team_booked'] = dict()
+
+            # odd hour slot
+            minutes = 30
+            odd_key = 'input_'  # input_16_6_2014_0_00
+            odd_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+            odd_key += '_'
+            odd_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+            odd_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'next'
+
+            appointments[odd_key] = dict()
+            appointments[odd_key]['value'] = 0
+            appointments[odd_key]['booked'] = 0
+            appointments[odd_key]['team_count'] = dict()
+            appointments[odd_key]['team_booked'] = dict()
+
+        for hour in range(12, 13):
+            minutes = 0
+            even_key = 'input_'  # input_16_6_2014_0_00
+            even_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+            even_key += '_'
+            even_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+            even_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'next'
+
+            appointments[even_key] = dict()
+            appointments[even_key]['value'] = 0
+            appointments[even_key]['booked'] = 0
+            appointments[even_key]['team_count'] = dict()
+            appointments[even_key]['team_booked'] = dict()
+
+            # odd hour slot
+            minutes = 30
+            odd_key = 'input_'  # input_16_6_2014_0_00
+            odd_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+            odd_key += '_'
+            odd_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+            odd_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'next'
+
+            appointments[odd_key] = dict()
+            appointments[odd_key]['value'] = 0
+            appointments[odd_key]['booked'] = 0
+            appointments[odd_key]['team_count'] = dict()
+            appointments[odd_key]['team_booked'] = dict()
+    import ipdb; ipdb.set_trace()
     for apptmnt in appointments_list:
         apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
         key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-            '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
+            '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
         appointments[key]['value'] += int(apptmnt.availability_count)
         appointments[key]['booked'] += int(apptmnt.booked_count)
+        appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
+        # import ipdb; ipdb.set_trace()
+        if apptmnt.booked_count != 0L:
+            appointments[key]['team_booked'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.booked_count))})
+            print appointments[key]['team_booked']
 
+        # appointments[key]['team_count'] = 8
         total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
         total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.booked_count))
     total_slots = list()
