@@ -1314,7 +1314,6 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             appointments[odd_key]['booked'] = 0
             appointments[odd_key]['team_count'] = dict()
             appointments[odd_key]['team_booked'] = dict()
-    import ipdb; ipdb.set_trace()
     for apptmnt in appointments_list:
         apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
@@ -1326,7 +1325,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         # import ipdb; ipdb.set_trace()
         if apptmnt.booked_count != 0L:
             appointments[key]['team_booked'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.booked_count))})
-            print appointments[key]['team_booked']
+            # print appointments[key]['team_booked']
 
         # appointments[key]['team_count'] = 8
         total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
