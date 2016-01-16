@@ -174,7 +174,7 @@ class MeetingMinutes(models.Model):
     location = models.CharField(max_length=255, null=True)
     program = models.CharField(max_length=255, null=True)
     program_type = models.CharField(max_length=255, null=True)
-
+    ref_uuid = models.CharField(max_length=100, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

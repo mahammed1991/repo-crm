@@ -1102,6 +1102,8 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
              }
         )
 
+    teams_dict = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team')
+    name_id_dict = {team.id: team.team_name for team in teams_dict}
     team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team').values('id')
     time_zone = 'IST'
     post_result_dict = {}
@@ -1314,11 +1316,19 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             appointments[odd_key]['booked'] = 0
             appointments[odd_key]['team_count'] = dict()
             appointments[odd_key]['team_booked'] = dict()
-    for apptmnt in appointments_list:
-        apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
-        key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-            '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
+    north_teams = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
+    for apptmnt in appointments_list:
+        if name_id_dict[apptmnt.team_id] in north_teams:
+            apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+            apptmnt.date_in_utc = apptmnt.date_in_utc - timedelta(days=1)
+            key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
+                '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'next'
+        else:
+            apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
+
+            key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
+                '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
         appointments[key]['value'] += int(apptmnt.availability_count)
         appointments[key]['booked'] += int(apptmnt.booked_count)
         appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
@@ -1357,6 +1367,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'post_result_dict': json.dumps(post_result_dict),
          }
     )
+
 
 @login_required
 def appointments_calendar(request):
