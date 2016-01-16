@@ -45,6 +45,14 @@ function validatethis(frm) {
     validateFiled(urlElem);
 
 
+    podElem = document.getElementById('picasso_pod');
+    validateFiled(podElem);
+
+
+    teamElem = document.getElementById('team');
+    validateFiled(teamElem);
+
+
     // Check If Error in Form
     if(window.is_error){
       focusElem = failedFields[0];

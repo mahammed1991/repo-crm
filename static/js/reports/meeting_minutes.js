@@ -3,7 +3,6 @@ function validatethis() {
     $(".lead-form .form-control").removeClass('error-box');
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var numericExpression = /^[0-9]+$/;
-    window.failedFields = new Array();
     window.is_error = false;
 
     if(window.is_reset == true){

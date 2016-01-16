@@ -27,7 +27,15 @@ Export Feedback
                 <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
                 <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
             </div>
+        <div class="col-md-4" style="float: left;margin-left: 16px;margin-top: 3px;">
+          <select class="form-control bgicon" id="program" title="program" name="program" style="margin: 20px;">
+            <option value="">Program</option>
+            <option value="TAG Team">TAG Team</option>
+            <option value="WPP">WPP</option>
+            <option value="PICASSO">PICASSO</option>
+          </select>
         </div>
+      </div>
         
         <div style="text-align:center;">
             <input type="submit" value="Export" class="btn std-btn">
@@ -90,6 +98,13 @@ $(function() {
           $(frm.datepickerTo).removeClass('error-box');
         }
 
+        if(frm.program.value == "0" || frm.program.value == ""){
+          $(frm.program).addClass('error-box');
+          frm.program.focus();
+          window.is_error = true;
+        }else{
+          $(frm.program).removeClass('error-box');
+        }
 
         if(window.is_error){
           return false;

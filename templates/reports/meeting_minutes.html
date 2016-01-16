@@ -57,7 +57,7 @@
               </select>
             </div>
             <div class="col-md-6">
-              <input type="text" class="form-control" id="others" name="other_subject" style="" {% if other_subject %} value="{{ other_subject }}" disabled{% else %} value="" {% endif %}>
+              <input type="text" class="form-control" id="others" name="other_subject" style="" {% if other_subject %} value="{{ other_subject }}" disabled{% else %} value="" {% endif %} >
             </div>
       </div>
 
@@ -66,13 +66,13 @@
               <label for="meeting_date">Date(dd.mm.yyyy)</label>
             </div>
            <div class="col-md-4">
-                <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" {% if meeting_date %} value="{{ meeting_date }}" disabled{% else %} value="" {% endif %}/>
+                <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" {% if meeting_date %} value="{{ meeting_date }}" disabled{% else %} value="" {% endif %}/ onfocusout="validateEachField(this)">
             </div>
             <div class="col-md-2">
               <label for="meeting_time">Time(hh:mm)</label>
             </div>
            <div class="col-md-4">
-              <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time" {% if meeting_time %} value="{{ meeting_time }}" disabled{% else %} value="" {% endif %}>
+              <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time" {% if meeting_time %} value="{{ meeting_time }}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
             </div>
       </div>
 
@@ -81,13 +81,13 @@
               <label for="google_poc">Google PoC</label>
             </div>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="google_poc" name="google_poc" {% if last_meeting.google_poc %} value="{{last_meeting.google_poc}}" disabled{% else %} value="" {% endif %}>
+              <input type="text" class="form-control" id="google_poc" name="google_poc" {% if last_meeting.google_poc %} value="{{last_meeting.google_poc}}" disabled{% else %} value="" {% endif %}  onfocusout="validateEachField(this)">
             </div>
             <div class="col-md-2">
               <label for="regalix_poc">Regalix PoC</label>
             </div>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="regalix_poc" name="regalix_poc" {% if last_meeting.regalix_poc %} value="{{last_meeting.regalix_poc}}" disabled{% else %} value="" {% endif %}>
+              <input type="text" class="form-control" id="regalix_poc" name="regalix_poc" {% if last_meeting.regalix_poc %} value="{{last_meeting.regalix_poc}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
             </div>
       </div>
 
@@ -96,7 +96,7 @@
               <label for="google_team">Google Team</label>
             </div>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="google_team" name="google_team" {% if last_meeting.google_team %} value="{{last_meeting.google_team}}" disabled{% else %} value="" {% endif %}>
+              <input type="text" class="form-control" id="google_team" name="google_team" {% if last_meeting.google_team %} value="{{last_meeting.google_team}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
             </div>
       </div>
       <div class="row">
@@ -155,7 +155,7 @@
           <label for="attendees">Attendees</label>
         </div>
          <div class="col-md-10">
-          <input type="text" class="form-control" id="attendees" name="attendees" placeholder="Please enter e-mail ids seperated by comma(,)"{% if attendees_email_list %} value="{{attendees_email_list}}" disabled{% else %} value="" {% endif %}>
+          <input type="text" class="form-control" id="attendees" name="attendees" placeholder="Please enter e-mail ids seperated by comma(,)"{% if attendees_email_list %} value="{{attendees_email_list}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
         </div>
       </div>
 
@@ -194,9 +194,9 @@
         </thead>
         <tbody class="action-plan">
           <tr id="action_plan_1" class="action-plans">
-            <td><input class="no" type='text' value="1" readonly  id="ano_1"></td>
-            <td><input class="action-items" type='text' id="action_item_1" name="action_item_1"></td>
-            <td><input class="oweners" type='text' id="owner_1" name="owner_1" ></td>
+            <td><input class="no" type='text' value="1" readonly  id="ano_1" onfocusout="validateEachField(this)"></td>
+            <td><input class="action-items" type='text' id="action_item_1" name="action_item_1" onfocusout="validateEachField(this)"></td>
+            <td><input class="oweners" type='text' id="owner_1" name="owner_1"  onfocusout="validateEachField(this)"></td>
             <td><input type="text" placeholder="Date" class="datepickerFrom_b target-date" name="action_date_1" id="action_date_1"/></td>
           </tr>
         </tbody>
@@ -453,7 +453,7 @@
   <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
   <script src="{% static 'js/reports/meeting_minutes.js' %}"></script>
   <script type="text/javascript">
-
+window.failedFields = new Array();
 other_subject = "{{other_subject|safe}}"
 meeting_time_last = {{last_meeting_link|safe}}
 
@@ -914,6 +914,16 @@ $('.add').click(function () {
         $("#submit").trigger('click');
     });
 
+ function validateEachField(argument) {
+      if (argument.value == "" || argument.value == "0" || !argument.value) {
+      argument.classList.add('error-box')
+      window.failedFields.push(argument);
+      window.is_error = true;
+      return false;
+      }else{
+        argument.classList.remove('error-box')
+      }
+    }
    </script>
 {% endblock main_js %}
 

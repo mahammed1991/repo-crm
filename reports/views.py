@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import Location, PicassoLeads, Leads, Team, Location
+from leads.models import PicassoLeads, Leads, Team, Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from django.conf import settings
 from reports.models import LeadSummaryReports
 from main.models import UserDetails, WPPMasterList
@@ -92,9 +92,9 @@ def reports_new(request):
         elif str(report_timeline[0]) == 'this_quarter':
             tag = "Month On Month Trends"
     report_details = {'reports': report_detail, 'code_types': code_types,
-                    'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
+                      'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
     return render(request, 'reports/reports_new.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
-                                                    'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
+                                                        'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
 
 
 @login_required
@@ -122,7 +122,7 @@ def get_selected_new_reports(request):
             else:
                 emails = request.user.email
                 emails = [email]
-            
+
         if 'all' in team_members:
             if len(team_members) > 1:
                 team_members.remove('all')
@@ -131,7 +131,7 @@ def get_selected_new_reports(request):
 
         if report_type == 'leadreport_teamLead':
             emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
-            
+
         teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
 
         lead_ids = leads
@@ -176,7 +176,6 @@ def get_selected_report_view(request):
         program_split = request.GET.get('program_split', None)
         location_split = request.GET.get('location_split', None)
 
-        
         report_details = dict()
         emails = list()
         if report_type == 'leadreport_individualRep':
@@ -196,11 +195,11 @@ def get_selected_report_view(request):
         if report_type == 'leadreport_teamLead':
             emails = list(User.objects.values_list('email', flat=True).filter(id__in=team_members).distinct().order_by('first_name'))
             emails.append(emails)
-            
+
         teams, team_members, countries, start_date, end_date, code_types, emails, leads = ReportService.get_related_data_for_reports(teams, team_members, region, report_timeline, emails, countries)
 
         lead_ids = leads
-        report_split_detail= dict()
+        report_split_detail = dict()
         lead_status_summary = list()
         lead_status_analysis_table_grp = list()
         pie_chart_dict = dict()
@@ -216,7 +215,7 @@ def get_selected_report_view(request):
             lead_status_summary = ReportService.get_leads_status_summary(lead_ids)
         elif report_view_type == 'task_type_analysis':
             for code_type in code_types:
-                lead_status_analysis_grp = {code_type: ''}  
+                lead_status_analysis_grp = {code_type: ''}
                 leads_per_code_type_grp = Leads.objects.filter(type_1=code_type, id__in=lead_ids).values('lead_status').annotate(dcount=Count('lead_status'))
                 lead_status_analysis_grp[code_type] = ReportService.get_lead_status_analysis(leads_per_code_type_grp)
                 lead_status_analysis_table_grp.append(lead_status_analysis_grp)
@@ -239,9 +238,9 @@ def get_selected_report_view(request):
                 tag = "Month On Month Trends"
 
         report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type, 
-                        'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
-                        'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
-                        'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
+                          'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
+                          'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
+                          'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
         return HttpResponse(json.dumps(report_details))
 
 
@@ -1055,7 +1054,7 @@ def csat_reports(request):
             previous_report_data = ''
             current_report_data, previous_report_data = ReportService.get_csat_compare_result(current_report_data, previous_report_data, report_type, comparison)
 
-        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'process': process, 'channel':channel, 'comparison': comparison, 'survey_for_unmapped': survey_for_unmapped}))
+        return HttpResponse(json.dumps({'report_data': current_report_data, 'previous_report_data': previous_report_data, 'report_type': report_type, 'process': process, 'channel': channel, 'comparison': comparison, 'survey_for_unmapped': survey_for_unmapped}))
     return render(request, 'reports/csat_reports.html')
 
 
@@ -1159,7 +1158,7 @@ def meeting_minutes(request):
     key_points_dict = dict()
     action_plan_dict = dict()
     tenantive_agenda_dict = dict()
-    
+
     if request.method == 'POST':
         key_points = OrderedDict()
         action_plans = OrderedDict()
@@ -1184,49 +1183,48 @@ def meeting_minutes(request):
         if next_meeting_date and next_meeting_time:
             next_meeting_datetime = next_meeting_date + ' ' + next_meeting_time
             meeting_minutes.next_meeting_datetime = datetime.strptime(next_meeting_datetime, '%d.%m.%Y %I:%M %p')
-            
+
         total_keypoints_count = request.POST.get('no_of_keypoints')
         total_actionplan_count = request.POST.get('no_of_actionplans')
         total_tenantive_agenda = request.POST.get('no_of_tenantive_agenda')
 
-        
         key_points_topic = list()
         key_points_highlight = list()
-        for i in range(1, int(total_keypoints_count)+1):
-            key_points_topic.append(request.POST['topic_'+str(i)])
-            key_points_highlight.append(request.POST['highlight_'+str(i)])
-            key_points['topic_'+str(i)] = request.POST['topic_'+str(i)] 
-            key_points['highlight_'+str(i)] = request.POST['highlight_'+str(i)] 
+        for i in range(1, int(total_keypoints_count) + 1):
+            key_points_topic.append(request.POST['topic_' + str(i)])
+            key_points_highlight.append(request.POST['highlight_' + str(i)])
+            key_points['topic_' + str(i)] = request.POST['topic_' + str(i)]
+            key_points['highlight_' + str(i)] = request.POST['highlight_' + str(i)]
 
         action_plans_items = list()
         action_plans_owner = list()
         action_plans_date = list()
-        for i in range(1, int(total_actionplan_count)+1):
-            action_plans_items.append(request.POST['action_item_'+str(i)])
-            action_plans_owner.append(request.POST['owner_'+str(i)])
-            action_plans_date.append(request.POST['action_date_'+str(i)])
-            action_plans['action_item_'+str(i)] = request.POST['action_item_'+str(i)] 
-            action_plans['owner_'+str(i)] = request.POST['owner_'+str(i)]
-            action_plans['action_date_'+str(i)] = request.POST['action_date_'+str(i)]
+        for i in range(1, int(total_actionplan_count) + 1):
+            action_plans_items.append(request.POST['action_item_' + str(i)])
+            action_plans_owner.append(request.POST['owner_' + str(i)])
+            action_plans_date.append(request.POST['action_date_' + str(i)])
+            action_plans['action_item_' + str(i)] = request.POST['action_item_' + str(i)]
+            action_plans['owner_' + str(i)] = request.POST['owner_' + str(i)]
+            action_plans['action_date_' + str(i)] = request.POST['action_date_' + str(i)]
 
         tenantive_agenda_list = list()
-        for i in range(1, int(total_tenantive_agenda)+1):
-            tenantive_agenda_list.append(request.POST['agenda_text_'+str(i)])
-            tenantive_agenda_dict['agenda_text_'+str(i)] = request.POST['agenda_text_'+str(i)]
+        for i in range(1, int(total_tenantive_agenda) + 1):
+            tenantive_agenda_list.append(request.POST['agenda_text_' + str(i)])
+            tenantive_agenda_dict['agenda_text_' + str(i)] = request.POST['agenda_text_' + str(i)]
 
         meeting_minutes.key_points = json.dumps(key_points)
         meeting_minutes.tenantive_agenda = json.dumps(tenantive_agenda_dict)
         meeting_minutes.action_plan = json.dumps(action_plans)
         meeting_minutes.save()
-        
-        attendees_id_list = list()
+
         attendees = request.POST.get('attendees').replace(', ', ',')
         attendees_list = attendees.split(',')
         attendees_list.pop(-1)
         get_attendees_list = User.objects.filter(email__in=attendees_list).values_list('id', flat=True)
         meeting_minutes.attendees.add(*get_attendees_list)
+        unique_id = get_unique_uuid('meeting_minutes')
+        meeting_minutes.ref_uuid = unique_id
         meeting_minutes.save()
-
 
         mail_list = list()
         for attendee in attendees_list:
@@ -1234,6 +1232,7 @@ def meeting_minutes(request):
         mail_list.append(str(request.POST.get('google_poc')))
         mail_list.append(str(request.POST.get('regalix_poc')))
 
+        # get object by unique id stored in unique id generated @1225
         link_to_last_data_for_email = MeetingMinutes.objects.all().last()
 
         attendees_list_last = list()
@@ -1286,7 +1285,7 @@ def meeting_minutes(request):
             google_email.append(str(manager))
         else:
             regalix_email.append(str(manager))
-            
+
     programs = Team.objects.exclude(is_active=False).values_list('team_name', flat=True)
     locations = Location.objects.filter(is_active=True)
     programs = [str(p) for p in programs]
@@ -1296,7 +1295,6 @@ def meeting_minutes(request):
     region_locations = dict()
     all_locations = list()
     for loc in locations:
-        is_daylight_savings = False
         l = {'id': int(loc.id), 'name': str(loc.location_name)}
         all_locations.append(l)
     for rgn in regions:
@@ -1368,33 +1366,32 @@ def link_last_meeting(request, last_id):
 
     submit_disabled = False
 
-
     for attendee in attendees:
         attendees_list.append(str(attendee['email']))
     attendees_email_list = ' ,  '.join(attendees_list)
 
-    key_order_agenda = {k:v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5'])}
+    key_order_agenda = {k: v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5'])}
     tenantive_agenda_dict = OrderedDict(sorted(last_meeting.tenantive_agenda.items(), key=lambda i: key_order_agenda.get(i[0])))
 
-    key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5'])}
+    key_order_action = {k: v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5'])}
     action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
 
-    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5'])}    
+    key_order = {k: v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4', 'topic_5', 'highlight_5'])}    
     key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
 
-    return render(request,'reports/meeting_minutes.html',{'submit_disabled': submit_disabled, 
-                                                        'last_meeting_link': json.dumps(last_meeting_link), 
-                                                        'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict), 
-                                                        'link_program_type': link_program_type, 
-                                                        'link_program': link_program, 'link_location': json.dumps(link_location), 
-                                                        'link_region': json.dumps(link_region), 'other_subject': other_subject, 
-                                                        'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email, 
-                                                        'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations, 
-                                                        'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict), 
-                                                        'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list, 
-                                                        'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting, 
-                                                        'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date, 
-                                                        'next_meeting_time': next_meeting_time})
+    return render(request, 'reports/meeting_minutes.html', {'submit_disabled': submit_disabled,
+                                                            'last_meeting_link': json.dumps(last_meeting_link),
+                                                            'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict),
+                                                            'link_program_type': link_program_type,
+                                                            'link_program': link_program, 'link_location': json.dumps(link_location),
+                                                            'link_region': json.dumps(link_region), 'other_subject': other_subject,
+                                                            'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email,
+                                                            'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations,
+                                                            'region_locations': region_locations, 'action_plan_dict': json.dumps(action_plan_dict),
+                                                            'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list,
+                                                            'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting,
+                                                            'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date,
+                                                            'next_meeting_time': next_meeting_time})
 
 
 @login_required
@@ -1405,6 +1402,10 @@ def meeting_minutes_thankyou(request):
 
 @login_required
 def export_meeting_minutes(request):
+    program = request.POST.get('program')
+    from_date = datetime.strptime(request.POST.getlist('date_from')[0], '%m/%d/%Y')
+    to_date = datetime.strptime(request.POST.getlist('date_to')[0], '%m/%d/%Y')
+
     return render(request, 'reports/export_meeting_minutes.html', {})
 
 

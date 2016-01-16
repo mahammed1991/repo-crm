@@ -11,6 +11,7 @@ from django.conf import settings
 from collections import defaultdict
 from main.models import UserDetails
 from leads.models import Leads, WPPLeads, PicassoLeads, Timezone
+from reports.models import MeetingMinutes
 from django.db.models import Q, Count
 import operator
 from xlrd import XL_CELL_DATE, xldate_as_tuple
@@ -703,9 +704,13 @@ def get_unique_uuid(lead_type):
         if lead_type == 'Picasso':
             PicassoLeads.objects.get(ref_uuid=unique_rf_id)
             get_unique_uuid('Picasso')
-        else:
+        elif lead_type == 'Wpp':
             WPPLeads.objects.get(ref_uuid=unique_rf_id)
             get_unique_uuid('Wpp')
+        else:
+            MeetingMinutes.objects.get(ref_uuid=unique_rf_id)
+            get_unique_uuid('meeting_minutes')
+
     except:
         return unique_rf_id
 
