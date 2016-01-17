@@ -1261,35 +1261,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             appointments[odd_key]['team_booked'] = dict()
 
         # Here for North Americs am creating key_next day slots to show under sameday
-        for hour in range(1, 8):
-            minutes = 0
-            even_key = 'input_'  # input_16_6_2014_0_00
-            even_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
-            even_key += '_'
-            even_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
-            even_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'next'
-
-            appointments[even_key] = dict()
-            appointments[even_key]['value'] = 0
-            appointments[even_key]['booked'] = 0
-            appointments[even_key]['team_count'] = dict()
-            appointments[even_key]['team_booked'] = dict()
-
-            # odd hour slot
-            minutes = 30
-            odd_key = 'input_'  # input_16_6_2014_0_00
-            odd_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
-            odd_key += '_'
-            odd_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
-            odd_key += '_' + str(_date.year) + '_' + str(hour) + '_' + str(minutes) + '_' + 'next'
-
-            appointments[odd_key] = dict()
-            appointments[odd_key]['value'] = 0
-            appointments[odd_key]['booked'] = 0
-            appointments[odd_key]['team_count'] = dict()
-            appointments[odd_key]['team_booked'] = dict()
-
-        for hour in range(12, 13):
+        for hour in range(0, 8):
             minutes = 0
             even_key = 'input_'  # input_16_6_2014_0_00
             even_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
@@ -1319,16 +1291,23 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
 
     north_teams = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
     for apptmnt in appointments_list:
-        if name_id_dict[apptmnt.team_id] in north_teams:
+        if name_id_dict[apptmnt.team_id] in north_teams and apptmnt.availability_count:
             apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
-            apptmnt.date_in_utc = apptmnt.date_in_utc - timedelta(days=1)
-            key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-                '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'next'
+            if int(apptmnt.date_in_utc.hour) < 12:
+                apptmnt.date_in_utc -= timedelta(days=1)
+                key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
+                    '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'next'
+
+            else:
+                key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
+                    '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
+
         else:
             apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
             key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
                 '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
+
         appointments[key]['value'] += int(apptmnt.availability_count)
         appointments[key]['booked'] += int(apptmnt.booked_count)
         appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
