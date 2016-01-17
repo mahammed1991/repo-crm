@@ -1983,6 +1983,7 @@ class DownloadLeads(object):
             row['Lead Status'] = lead.lead_status
             row['Task Type'] = str(lead.type_1.encode('utf-8'))
             row['Team'] = lead.team
+            row['Additional Notes'] = lead.additional_notes
 
             row['Lead ID'] = lead.sf_lead_id
 

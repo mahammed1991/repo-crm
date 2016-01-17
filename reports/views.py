@@ -1141,7 +1141,7 @@ def download_picasso_report(request):
     elif report_type == 'leadreport_superUser':
         leads = PicassoLeads.objects.filter(created_date__gte=start_date, created_date__lte=end_date)
 
-    selected_fields = ['Google Account Manager', 'Email', 'Team', 'Customer ID', 'Internal CID', 'POD Name', 'Company / Account', 'Objectives', 'Recommondation', 'URL', 'Lead Status', 'Lead ID', 'Goal', 'Lead Owner','First Name', 'Last Name' ]
+    selected_fields = ['Google Account Manager', 'Email', 'Team', 'Customer ID', 'Internal CID', 'POD Name', 'Company / Account', 'Objectives', 'Recommondation', 'URL', 'Lead Status', 'Lead ID', 'Goal', 'Lead Owner','First Name', 'Last Name', 'Additional Notes']
     filename = "leads-%s-to-%s" % (datetime.strftime(start_date, "%d-%b-%Y"), datetime.strftime(end_date, "%d-%b-%Y"))
     leads = DownloadLeads.get_leads_for_picasso_report(leads, start_date, end_date, selected_fields)
     path = "/tmp/%s.csv" % (filename)
