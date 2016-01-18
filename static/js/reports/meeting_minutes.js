@@ -214,7 +214,6 @@ $('#preview_btn').click(function(){
     {
         tentative_agenda.push($('#agenda_text_'+i).val());
     }
-    console.log(tentative_agenda);
     var actual_agenda_length = tentative_agenda.length;
 
     for(var j=1;j<=(actual_agenda_length);j++)
@@ -258,3 +257,53 @@ $('#generate_link').click(function(event){
 
   });
 });
+
+
+/*  ----------------------------------------------
+    start file upload and multiple append
+  ----------------------------------------------*/
+  $('.remove-upload').hide();
+
+  $('.add-upload-btn').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 6 )
+      {
+          $(".remove-upload").show();
+          $new_row = $("#file_upload_row_1").clone().attr('id', 'file_upload_row_'+next_id).show();
+          $(".file-info-text", $new_row).attr('id', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('id', 'file_info_'+next_id);
+          $(".file-info-text", $new_row).attr('name', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('name', 'file_info_'+next_id);
+          $new_row.appendTo(".browse-files");
+          $('.remove-upload').attr('id',"removefileUpload_" + next_id);
+          $('.add-upload-btn').attr('id',"addfileUpload_" + next_id);
+          $("#file_info_text_"+next_id).val('');
+        }
+        if(next_id == 5 )
+        {
+          $(".add-upload-btn").hide();
+        }
+  });
+
+  $('.remove-upload').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removefileUpload_"+indx) != "#removefileUpload_1" )
+    {
+        $(".add-upload-btn").show();
+        $("#file_upload_row_"+indx).remove();
+        $('.remove-upload').attr('id',"#removefileUpload_" + (indx-1));
+        $('.add-upload-btn').attr('id',"#addfileUpload_" + (indx-1));
+    }
+    if(("#removefileUpload_"+(indx-1)) == "#removefileUpload_1" )
+    {
+      $('.remove-upload').hide();
+    }
+  });
+
+/*
+  --------------------------------------------------
+  end
+  -------------------------------------------------*/
