@@ -1237,7 +1237,7 @@ def meeting_minutes(request):
 
         attendees_list_last = list()
         if link_to_last_data_for_email:
-            link_for_last_meeting_email = link_to_last_data_for_email.id
+            link_for_last_meeting_email = link_to_last_data_for_email.ref_uuid
             last_link_attendees = link_to_last_data_for_email.attendees.values('email')
         for attendee in last_link_attendees:
             attendees_list_last.append(str(attendee['email']))
@@ -1324,7 +1324,7 @@ def meeting_minutes(request):
         link_to_last_program_type = link_to_last_data.program_type
         link_to_last_subject_timeline = link_to_last_data.subject_timeline
         link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
-        link_to_last_id = link_to_last_data.id
+        link_to_last_id = link_to_last_data.ref_uuid
 
     # send mail
     return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
@@ -1348,7 +1348,10 @@ def link_last_meeting(request, last_id):
     attendees_list = list()
     next_meeting_date = ''
     next_meeting_time = ''
-    last_meeting = MeetingMinutes.objects.get(id=last_id)
+    try:
+        last_meeting = MeetingMinutes.objects.get(ref_uuid=last_id)
+    except MeetingMinutes.DoesNotExist:
+        return redirect('main.views.main_home')
     new_subject_timeline = 1
     meeting_date = last_meeting.meeting_time_in_ist.date()
     last_meeting_link = datetime.strftime(meeting_date, '%d.%m.%Y')
@@ -1370,13 +1373,13 @@ def link_last_meeting(request, last_id):
         attendees_list.append(str(attendee['email']))
     attendees_email_list = ' ,  '.join(attendees_list)
 
-    key_order_agenda = {k: v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5'])}
+    key_order_agenda = {k:v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5', 'agenda_text_6', 'agenda_text_7', 'agenda_text_8', 'agenda_text_9', 'agenda_text_10', 'agenda_text_11', 'agenda_text_12', 'agenda_text_14', 'agenda_text_15'])}
     tenantive_agenda_dict = OrderedDict(sorted(last_meeting.tenantive_agenda.items(), key=lambda i: key_order_agenda.get(i[0])))
 
-    key_order_action = {k: v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5'])}
+    key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 'action_item_15', 'owner_15', 'action_date_15',])}
     action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
 
-    key_order = {k: v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4', 'topic_5', 'highlight_5'])}    
+    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5', 'topic_6', 'highlight_6', 'topic_7', 'highlight_7', 'topic_8', 'highlight_8', 'topic_9', 'highlight_9', 'topic_10', 'highlight_10', 'topic_11', 'highlight_11', 'topic_12', 'highlight_12', 'topic_13', 'highlight_13', 'topic_14', 'highlight_14', 'topic_15', 'highlight_15',])}    
     key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
 
     return render(request, 'reports/meeting_minutes.html', {'submit_disabled': submit_disabled,

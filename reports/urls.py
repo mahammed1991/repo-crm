@@ -28,7 +28,7 @@ urlpatterns = patterns(
     url(r'^get_selected_view_type$', views.get_selected_report_view),
     # Meeting page URL
     url(r'^meeting-minutes/$', views.meeting_minutes),
-    url(r'^link-last-meeting/(?P<last_id>\d+)/$', views.link_last_meeting),
+    url(r'^link-last-meeting/(?P<last_id>\w+)/$', views.link_last_meeting),
     url(r'^thankyou/$', views.meeting_minutes_thankyou),
     url(r'^generate-link/$', views.generate_last_meeting_link),
     # Export meeting minutes

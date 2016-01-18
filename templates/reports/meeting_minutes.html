@@ -45,7 +45,7 @@
               <label for="subject">Subject Timeline</label>
             </div>
            <div class="col-md-4">
-              <select class="form-control bgicon" id="subject" title="subject" name="subject">
+              <select class="form-control bgicon" id="subject" title="subject" name="subject" onfocusout="validateEachField(this)">
                 <option value="">Choose</option>
                 <option value="Weekly">Weekly Connect</option>
                 <option value="Biweekly Connect">Biweekly Connect</option>
@@ -57,7 +57,7 @@
               </select>
             </div>
             <div class="col-md-6">
-              <input type="text" class="form-control" id="others" name="other_subject" style="" {% if other_subject %} value="{{ other_subject }}" disabled{% else %} value="" {% endif %} >
+              <input type="text" class="form-control" id="others" name="other_subject" style="" {% if other_subject %} value="{{ other_subject }}" disabled{% else %} value="" {% endif %}>
             </div>
       </div>
 
@@ -66,13 +66,13 @@
               <label for="meeting_date">Date(dd.mm.yyyy)</label>
             </div>
            <div class="col-md-4">
-                <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" {% if meeting_date %} value="{{ meeting_date }}" disabled{% else %} value="" {% endif %}/ onfocusout="validateEachField(this)">
+           <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" {% if meeting_date %} value="{{ meeting_date }}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)"/>
             </div>
             <div class="col-md-2">
               <label for="meeting_time">Time(hh:mm)</label>
             </div>
            <div class="col-md-4">
-              <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time" {% if meeting_time %} value="{{ meeting_time }}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+           <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time in IST" {% if meeting_time %} value="{{ meeting_time }}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
             </div>
       </div>
 
@@ -81,7 +81,7 @@
               <label for="google_poc">Google PoC</label>
             </div>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="google_poc" name="google_poc" {% if last_meeting.google_poc %} value="{{last_meeting.google_poc}}" disabled{% else %} value="" {% endif %}  onfocusout="validateEachField(this)">
+              <input type="text" class="form-control" id="google_poc" name="google_poc" {% if last_meeting.google_poc %} value="{{last_meeting.google_poc}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
             </div>
             <div class="col-md-2">
               <label for="regalix_poc">Regalix PoC</label>
@@ -104,7 +104,7 @@
               <label for="region">Region</label>
             </div>
             <div class="col-md-4">
-              <select class="form-control bgicon" id="region" title="Program Region" name="region">
+              <select class="form-control bgicon" id="region" title="Program Region" name="region" onfocusout="validateEachField(this)">
                 <option value="0">Region</option>
                 {% for rgn in regions %}
                   <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
@@ -115,7 +115,7 @@
           <label for="country">Location</label>
         </div>
         <div class="col-md-4">
-           <select class="form-control bgicon" id="country" title="Program Location" name="location">
+           <select class="form-control bgicon" id="country" title="Program Location" name="location" onfocusout="validateEachField(this)">
               <option value="0">Location</option>
               {% for loc in locations %}
                 <option value="{{loc.location_name}}" location_id="{{loc.id}}">{{loc.location_name}}</option>
@@ -129,7 +129,7 @@
           <label for="program">Program</label>
         </div>
         <div class="col-md-4">
-          <select class="form-control bgicon" id="program" title="program" name="program">
+          <select class="form-control bgicon" id="program" title="program" name="program" onfocusout="validateEachField(this)">
             <option value="">Program</option>
             <option value="TAG Team">TAG Team</option>
             <option value="WPP">WPP</option>
@@ -140,7 +140,7 @@
           <label for="program_type">Program Type</label>
         </div>
         <div class="col-md-4 program_type" style="display:none;">
-          <select class="form-control bgicon" id="program_type" title="program_type" name="program_type">
+          <select class="form-control bgicon" id="program_type" title="program_type" name="program_type" onfocusout="validateEachField(this)">
             <option value="">Program</option>
             <option value="Tag">Tag</option>
             <option value="RLSA">RLSA</option>
@@ -172,9 +172,9 @@
         </thead>
         <tbody class="add-task">
           <tr id="key_point_1" class="key-points">
-            <td><input class="no" type='text' value="1" readonly  id="no_1"></td>
-            <td><input class="topic" type='text' id="topic_1" name="topic_1"></td>
-            <td><textarea class="highlight" type='text' id="highlight_1" name="highlight_1"></textarea></td>
+            <td><input class="no" type='text' value="1" readonly  id="no_1" onfocusout="validateEachField(this)"></td>
+            <td><input class="topic" type='text' id="topic_1" name="topic_1" onfocusout="validateEachField(this)"></td>
+            <td><textarea class="highlight" type='text' id="highlight_1" name="highlight_1" onfocusout="validateEachField(this)"></textarea></td>
           </tr>
         </tbody>
       </table>
@@ -194,9 +194,9 @@
         </thead>
         <tbody class="action-plan">
           <tr id="action_plan_1" class="action-plans">
-            <td><input class="no" type='text' value="1" readonly  id="ano_1" onfocusout="validateEachField(this)"></td>
-            <td><input class="action-items" type='text' id="action_item_1" name="action_item_1" onfocusout="validateEachField(this)"></td>
-            <td><input class="oweners" type='text' id="owner_1" name="owner_1"  onfocusout="validateEachField(this)"></td>
+            <td><input class="no" type='text' value="1" readonly  id="ano_1"></td>
+            <td><input class="action-items" type='text' id="action_item_1" name="action_item_1"></td>
+            <td><input class="oweners" type='text' id="owner_1" name="owner_1" ></td>
             <td><input type="text" placeholder="Date" class="datepickerFrom_b target-date" name="action_date_1" id="action_date_1"/></td>
           </tr>
         </tbody>
@@ -216,7 +216,7 @@
             <td id="date">Date:(dd.mm.yyyy)</td>
             <td><input type='text' id="next_meeting_date" placeholder="Date" class="datepickerFrom_b sel_date" name="next_meeting_date" {% if next_meeting_date %} value="{{ next_meeting_date }}" disabled{% else %} value="" {% endif %}></td>
             <td id="time">Time:(hh:mm)</td>
-            <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
+            <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time in IST" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
             <td id="next">Link to Previous Meeting Minutes : </td>
             <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="../../reports/link-last-meeting/{{link_to_last_id}}" target="_blank">{{link_to_last_program}} {{link_to_last_program_type}} {{link_to_last_subject_timeline}} {{link_to_last_date}}</a></div></td>
           </tr>
@@ -233,9 +233,33 @@
       <a id="removeTentativeAgenda_1" class="btn std-btn task-btn remove-agenda" style=""><i class="fa fa-minus-circle"></i>Remove</a>
       <a id="addTentativeAgenda_1" class="btn std-btn task-btn add-agenda" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
   </div>
+   <div class="container-fluid file-upload-section" style="margin-top:20px;">
+       <div class="std-sub-title " style="text-align:center">Browse file </div>
+          <div class="container-fluid browse-files">
+            <div class="row col-md-12 file-append" id="file_upload_row_1">
+                <div class="col-md-2">
+                    <label for="file_upload_link">Links :</label>
+                </div>
+              <div class="col-md-4">
+                  <input type="text" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" >
+              </div>
+              <div class="col-md-1"></div>
+              <div class="col-md-2">
+                  <label for="file_upload_link">File Upload:</label>
+              </div>
+              <div class="col-md-3">
+                  <input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style="">
+              </div>
+          </div>
+      </div>
+
+       <a id="removefileUpload_1" class="btn std-btn task-btn remove-upload" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+
+    </div>
   <div class="container-fluid end">
     <!-- <input type="checkbox" id="allow_ics" ></input><p>Allow option to send Calendar Invite </p> -->
-    <button type="button" class="btn std-btn" id="preview_btn" onclick="return validatethis(this);">Preview</button>
+    <button type="button" class="btn std-btn" id="preview_btn" {% if submit_disabled == False %} style="display:none;" {% else %} style="" {% endif %} onclick="return validatethis(this);">Preview</button>
     <button class="btn std-btn" id="submit" style="display:none;">Submit</button>
 
   </div>
@@ -441,6 +465,12 @@
        <button class="btn std-btn" id="preview-edit" data-dismiss="modal">Edit</button>
      </div>
       </div>
+      <div id="preloaderOverlay" style='display:none;'>
+        <div class="preloader">
+        <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+        
+        </div>
+      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -454,6 +484,9 @@
   <script src="{% static 'js/reports/meeting_minutes.js' %}"></script>
   <script type="text/javascript">
 window.failedFields = new Array();
+$('.modal').modal({backdrop: 'static', keyboard: false})
+$(".modal").modal('hide');
+
 other_subject = "{{other_subject|safe}}"
 meeting_time_last = {{last_meeting_link|safe}}
 
@@ -912,9 +945,10 @@ $('.add').click(function () {
 
     $("#preview-submit").click(function(e){
         $("#submit").trigger('click');
+        $('#preloaderOverlay').show();
     });
 
- function validateEachField(argument) {
+    function validateEachField(argument) {
       if (argument.value == "" || argument.value == "0" || !argument.value) {
       argument.classList.add('error-box')
       window.failedFields.push(argument);
@@ -924,6 +958,7 @@ $('.add').click(function () {
         argument.classList.remove('error-box')
       }
     }
+
    </script>
 {% endblock main_js %}
 
