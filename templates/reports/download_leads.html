@@ -1,0 +1,78 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Reports
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" media="all" type="text/css" href="{% static 'css/jquery-ui.css' %}" />
+{% endblock main_css %}
+
+{% block content %}
+
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend">
+                <p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Download Lead Data</p>
+            </legend>
+            <div id="class_content">
+                <form method="post" action="{% url 'reports.views.download_leads' %}">
+	                {% csrf_token %}
+                        <label for="from" class="date">From: </label>
+						<input type="text" id="from" name="from">
+						<label for="to" class="date">To: </label>
+						<input type="text" id="to" name="to">
+						<select name="fields_type" id="fields_type">
+							<option value="REPORT">REPORT</option>
+							<option value="ALL">ALL</option>
+						</select>
+                        <input type="submit" value="Download Leads">
+	            </form>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<style type="text/css">
+#class_content{
+	margin: 0 auto;
+	padding: 15px;
+	width: 660px;
+}
+.ui-datepicker {
+  font-size: 11px !important;
+}
+</style>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	/* ===================== Date Picker function Starts Here ============= */
+	  $(function() {
+	    $("#from").datepicker({
+	      defaultDate : "+1w",
+	      changeMonth : true,
+	      numberOfMonths : 1,
+	      dateFormat: "M dd, yy",
+	      onClose : function(selectedDate) {
+	        $("#to").datepicker("option", "minDate", selectedDate);
+	      }
+	    });
+	    $("#to").datepicker({
+	      defaultDate : "+1w",
+	      changeMonth : true,
+	      numberOfMonths : 1,
+	      dateFormat: "M dd, yy",
+	      onClose : function(selectedDate) {
+	        $("#from").datepicker("option", "maxDate", selectedDate);
+	      }
+	    });
+	  });
+	/* ===================== Date Picker function Ends Here ============= */
+	});
+</script>
+{% endblock main_js %}
