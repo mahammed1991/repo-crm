@@ -1431,14 +1431,17 @@ def meeting_minutes_thankyou(request):
 @login_required
 def export_meeting_minutes(request):
     if request.method == 'POST':
-        collattr = ['Meeting Date', 'Subject Timeline', 'Link']
+        excel_header = ['Meeting Date', 'Subject Timeline', 'Link']
         meeting_date_from = request.POST.get('date_from')
         meeting_date_to = request.POST.get('date_to')
         program = request.POST.get('program')
         meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
         meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
-        meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
-                                                        program=program)
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                        program__in=program)
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
         final_meeting_list = list()
         for meeting_minute in meeting_minutes:
             meeting_minute_dict = dict()
@@ -1452,7 +1455,7 @@ def export_meeting_minutes(request):
             final_meeting_list.append(meeting_minute_dict)
 
         filename = "meeting-minutes"
-        path = write_appointments_to_csv(final_meeting_list, collattr, filename)
+        path = write_appointments_to_csv(final_meeting_list, excel_header, filename)
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
 
@@ -1472,8 +1475,11 @@ def get_meeting_minutes(request):
         program = request.GET.get('program')
         meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
         meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
-        meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
-                                                        program=program)
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                            program__in=program)
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
         final_meeting_list = list()
         for meeting_minute in meeting_minutes:
             meeting_minute_dict = dict()
