@@ -229,6 +229,22 @@ $('#preview_btn').click(function(){
     $('#preview_next_meeting_date').val($('#next_meeting_date').val());
 
     $('#preview_next_meeting_time').val($('#next_meeting_time').val());
+
+    $('.attach-link-file').html('');
+    var preview_attachments = $('.file-append');
+    var attachments = new Array();
+
+    for(var i=1; i<= preview_attachments.length; i++){
+      attachments.push($('#file_info_text_'+i).val());
+    }
+
+    var attachments_length = preview_attachments.length;
+
+    for(var j=1; j<=(attachments_length);j++){
+      $('.attach-link-file').append('<tr id="attachment_link'+j+'" class="attachment-link-file"></tr>');
+      $('#attachment_link'+j).append('<td id="preview_file_info_text_'+j+'" class="preview-attach">'+attachments[0]+'</td>');
+      attachments = attachments.splice(1);
+    }
 });
 
 $('#generate_link').click(function(event){

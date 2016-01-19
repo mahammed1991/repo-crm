@@ -1215,6 +1215,19 @@ def meeting_minutes(request):
         meeting_minutes.key_points = json.dumps(key_points)
         meeting_minutes.tenantive_agenda = json.dumps(tenantive_agenda_dict)
         meeting_minutes.action_plan = json.dumps(action_plans)
+
+        meeting_minutes.attachment_1 = request.FILES.get('file_info_1')
+        meeting_minutes.attachment_2 = request.FILES.get('file_info_2')
+        meeting_minutes.attachment_3 = request.FILES.get('file_info_3')
+        meeting_minutes.attachment_4 = request.FILES.get('file_info_4')
+        meeting_minutes.attachment_5 = request.FILES.get('file_info_5')
+
+        meeting_minutes.attached_link_1 = request.POST.get('file_info_text_1')
+        meeting_minutes.attached_link_2 = request.POST.get('file_info_text_2')
+        meeting_minutes.attached_link_3 = request.POST.get('file_info_text_3')
+        meeting_minutes.attached_link_4 = request.POST.get('file_info_text_4')
+        meeting_minutes.attached_link_5 = request.POST.get('file_info_text_5')
+
         meeting_minutes.save()
 
         attendees = request.POST.get('attendees').replace(', ', ',')
@@ -1367,6 +1380,18 @@ def link_last_meeting(request, last_id):
     link_program = last_meeting.program
     link_program_type = last_meeting.program_type
 
+    attach_link_1 = last_meeting.attached_link_1
+    attach_link_2 = last_meeting.attached_link_2
+    attach_link_3 = last_meeting.attached_link_3
+    attach_link_4 = last_meeting.attached_link_4
+    attach_link_5 = last_meeting.attached_link_5
+
+    attach_file_1 = last_meeting.attachment_1.name
+    attach_file_2 = last_meeting.attachment_2.name
+    attach_file_3 = last_meeting.attachment_3.name
+    attach_file_4 = last_meeting.attachment_4.name
+    attach_file_5 = last_meeting.attachment_5.name
+
     submit_disabled = False
 
     for attendee in attendees:
@@ -1394,7 +1419,7 @@ def link_last_meeting(request, last_id):
                                                             'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list,
                                                             'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting,
                                                             'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date,
-                                                            'next_meeting_time': next_meeting_time})
+                                                            'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5})
 
 
 @login_required
@@ -1405,12 +1430,59 @@ def meeting_minutes_thankyou(request):
 
 @login_required
 def export_meeting_minutes(request):
-    program = request.POST.get('program')
-    from_date = datetime.strptime(request.POST.getlist('date_from')[0], '%m/%d/%Y')
-    to_date = datetime.strptime(request.POST.getlist('date_to')[0], '%m/%d/%Y')
+    if request.method == 'POST':
+        collattr = ['Meeting Date', 'Subject Timeline', 'Link']
+        meeting_date_from = request.POST.get('date_from')
+        meeting_date_to = request.POST.get('date_to')
+        program = request.POST.get('program')
+        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+        meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                        program=program)
+        final_meeting_list = list()
+        for meeting_minute in meeting_minutes:
+            meeting_minute_dict = dict()
+            meeting_date = meeting_minute.meeting_time_in_ist.date()
+            meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            meeting_minute_dict['Subject Timeline'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline
+            if meeting_minute.ref_uuid:
+                meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
+            else:
+                meeting_minute_dict['Link'] = ''
+            final_meeting_list.append(meeting_minute_dict)
+
+        filename = "meeting-minutes"
+        path = write_appointments_to_csv(final_meeting_list, collattr, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
 
     return render(request, 'reports/export_meeting_minutes.html', {})
 
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
 
-def generate_last_meeting_link(request):
-    return HttpResponse(json.dumps())
+
+def get_meeting_minutes(request):
+    if request.is_ajax():
+        meeting_date_from = request.GET.get('meeting_date_from')
+        meeting_date_to = request.GET.get('meeting_date_to')
+        program = request.GET.get('program')
+        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+        meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                        program=program)
+        final_meeting_list = list()
+        for meeting_minute in meeting_minutes:
+            meeting_minute_dict = dict()
+            meeting_date = meeting_minute.meeting_time_in_ist.date()
+            meeting_minute_dict['link_meeting_date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            meeting_minute_dict['program'] = meeting_minute.program
+            meeting_minute_dict['program_type'] = meeting_minute.program_type
+            meeting_minute_dict['subject_timeline'] = meeting_minute.subject_timeline
+            meeting_minute_dict['other_subject'] = meeting_minute.other_subject
+            meeting_minute_dict['ref_uuid'] = meeting_minute.ref_uuid
+            final_meeting_list.append(meeting_minute_dict)
+    return HttpResponse(json.dumps(final_meeting_list))

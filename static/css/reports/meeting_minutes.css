@@ -20,11 +20,11 @@ h1 {
 
   table{margin-bottom: 20px;}
 
-  #actionPlan thead tr td, #keyPoint thead tr td{border: 1px solid #D1D1D1;
+  #actionPlan thead tr td, #keyPoint thead tr td , #attach thead tr td, #attach-link-file thead tr td{border: 1px solid #D1D1D1;
               padding: 10px;
   }
 
-  #actionPlan tbody tr td, #keyPoint tbody tr td,#nextMeeting tbody tr td, #nextMeeting1 tbody tr td{border: 1px solid #D1D1D1;
+  #actionPlan tbody tr td, #keyPoint tbody tr td,#nextMeeting tbody tr td, #nextMeeting1 tbody tr td, #attach tbody tr td, #attach-link-file tbody tr td{border: 1px solid #D1D1D1;
   }
 
   .add-task td input,.action-plan td input {padding: 10px;
@@ -155,4 +155,12 @@ h1 {
   .filestyle{padding-top: 14px;}
 
   .browse-files{margin-bottom: 10px;}
+
+  .attach_1, .attach_2{
+    padding: 0px 135px;
+  }
+
+  .preview-attach{
+    padding-left: 57px;
+  }
 </style>

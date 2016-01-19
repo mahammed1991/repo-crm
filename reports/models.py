@@ -1,4 +1,6 @@
+import os
 from django.db import models
+from uuid import uuid4
 from leads.models import Location, Team, Language
 from datetime import datetime
 from django.core.exceptions import ValidationError
@@ -158,6 +160,12 @@ class CSATFilterDetails(models.Model):
 
 class MeetingMinutes(models.Model):
     """ Minutes of Meeting Data has to be stored """
+    def get_file_path(instance, filename):
+        """ Dynamic file path """
+        ext = filename.split('.')[-1]
+        filename = "%s.%s" % (uuid4(), ext)
+        return os.path.join('meeting_minutes/', filename)
+
     subject_timeline = models.CharField(max_length=255, null=True)
     subject_type = models.CharField(max_length=255, null=True)
     other_subject = models.CharField(max_length=255, null=True)
@@ -175,6 +183,18 @@ class MeetingMinutes(models.Model):
     program = models.CharField(max_length=255, null=True)
     program_type = models.CharField(max_length=255, null=True)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
+
+    attachment_1 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    attachment_2 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    attachment_3 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    attachment_4 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    attachment_5 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+
+    attached_link_1 = models.CharField(max_length=255, null=True, blank=True)
+    attached_link_2 = models.CharField(max_length=255, null=True, blank=True)
+    attached_link_3 = models.CharField(max_length=255, null=True, blank=True)
+    attached_link_4 = models.CharField(max_length=255, null=True, blank=True)
+    attached_link_5 = models.CharField(max_length=255, null=True, blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
