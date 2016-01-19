@@ -214,7 +214,6 @@ $('#preview_btn').click(function(){
     {
         tentative_agenda.push($('#agenda_text_'+i).val());
     }
-    console.log(tentative_agenda);
     var actual_agenda_length = tentative_agenda.length;
 
     for(var j=1;j<=(actual_agenda_length);j++)
@@ -230,6 +229,22 @@ $('#preview_btn').click(function(){
     $('#preview_next_meeting_date').val($('#next_meeting_date').val());
 
     $('#preview_next_meeting_time').val($('#next_meeting_time').val());
+
+    $('.attach-link-file').html('');
+    var preview_attachments = $('.file-append');
+    var attachments = new Array();
+
+    for(var i=1; i<= preview_attachments.length; i++){
+      attachments.push($('#file_info_text_'+i).val());
+    }
+
+    var attachments_length = preview_attachments.length;
+
+    for(var j=1; j<=(attachments_length);j++){
+      $('.attach-link-file').append('<tr id="attachment_link'+j+'" class="attachment-link-file"></tr>');
+      $('#attachment_link'+j).append('<td id="preview_file_info_text_'+j+'" class="preview-attach">'+attachments[0]+'</td>');
+      attachments = attachments.splice(1);
+    }
 });
 
 $('#generate_link').click(function(event){
@@ -258,3 +273,53 @@ $('#generate_link').click(function(event){
 
   });
 });
+
+
+/*  ----------------------------------------------
+    start file upload and multiple append
+  ----------------------------------------------*/
+  $('.remove-upload').hide();
+
+  $('.add-upload-btn').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 6 )
+      {
+          $(".remove-upload").show();
+          $new_row = $("#file_upload_row_1").clone().attr('id', 'file_upload_row_'+next_id).show();
+          $(".file-info-text", $new_row).attr('id', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('id', 'file_info_'+next_id);
+          $(".file-info-text", $new_row).attr('name', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('name', 'file_info_'+next_id);
+          $new_row.appendTo(".browse-files");
+          $('.remove-upload').attr('id',"removefileUpload_" + next_id);
+          $('.add-upload-btn').attr('id',"addfileUpload_" + next_id);
+          $("#file_info_text_"+next_id).val('');
+        }
+        if(next_id == 5 )
+        {
+          $(".add-upload-btn").hide();
+        }
+  });
+
+  $('.remove-upload').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removefileUpload_"+indx) != "#removefileUpload_1" )
+    {
+        $(".add-upload-btn").show();
+        $("#file_upload_row_"+indx).remove();
+        $('.remove-upload').attr('id',"#removefileUpload_" + (indx-1));
+        $('.add-upload-btn').attr('id',"#addfileUpload_" + (indx-1));
+    }
+    if(("#removefileUpload_"+(indx-1)) == "#removefileUpload_1" )
+    {
+      $('.remove-upload').hide();
+    }
+  });
+
+/*
+  --------------------------------------------------
+  end
+  -------------------------------------------------*/
