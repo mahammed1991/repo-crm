@@ -299,6 +299,7 @@ class SalesforceLeads(object):
                              'picasso_objective_list[]': '00Nd0000007xSXh',
                              'picasso_pod': '00Nd0000007xVWc',  # Picasso POD name
                              'unique_ref_id': '00N7A000000HAhN',  # picasso unique id
+                             'picasso_tat': '00N7A000000I6pe',  # picasso TAT
                              }
 
     PRODUCTION_TAG_LEADS_ARGS = {'first_name': 'first_name',
@@ -426,6 +427,7 @@ class SalesforceLeads(object):
                                  'picasso_objective_list[]': '00Nd0000007xSXh',
                                  'picasso_pod': '00Nd0000007xVWc',  # Picasso POD name
                                  'unique_ref_id': '00Nd00000081spN',  # picasso unique id
+                                 'picasso_tat': '00Nd00000081yHV',  # picasso TAT
                                  }
 
     SANDBOX_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',

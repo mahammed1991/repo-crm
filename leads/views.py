@@ -282,16 +282,16 @@ def picasso_lead_form(request):
         tat_dict = get_tat_for_picasso('SFDC')
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
-            request.session[str(request.user.email)+'estimated_tat'] = estimated_tat
-            request.session[str(request.user.email)+'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+            request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
+            request.session[str(request.user.email) + 'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
 
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
                 picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
             elif key == 'unique_ref_id':
                 picasso_data[value] = get_unique_uuid('Picasso')
-            elif key == 'comment1':
-                picasso_data[value] = estimated_tat
+            elif key == 'picasso_tat':
+                picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
             else:
                 picasso_data[value] = request.POST.get(key)
 

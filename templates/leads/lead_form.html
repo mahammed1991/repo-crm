@@ -1150,19 +1150,28 @@ $(document).on('change', '#country', function() {
     $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
     $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption("Select Task Type", ""));
 
-  if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
 
-        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
-        if (rlsaIndx != -1) {
-            window.code_types.splice(rlsaIndx, 1);
+        if (['Vietnam'].indexOf(location) != -1) {
+            $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
+            window.code_types = []
+            window.code_types = ['Select Task Type', 'Adwords Conversion Code', 'AdWords Remarketing', 'Analytics', 'Analytics Destination Tracking']
+
+        } else {
+
+            rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+            if (rlsaIndx != -1) {
+                window.code_types.splice(rlsaIndx, 1);
+            }
         }
+
 
     } else {
 
-      if(['UK/I'].indexOf(location) != -1){
-         $('#appointment_check_tag').show();
-        $('#appointment_check_shopping').show();
-      }
+        if (['UK/I'].indexOf(location) != -1) {
+            $('#appointment_check_tag').show();
+            $('#appointment_check_shopping').show();
+        }
 
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx == -1) {
@@ -1216,8 +1225,8 @@ function clearAndHideFields(){
 }
 
 function mandatoryAppointmentForLanguages(language){
-  $('#appointment_check_tag').hide();
-  $('#appointment_check_shopping').hide();
+  $('#appointment_check_tag').show();
+  $('#appointment_check_shopping').show();
       
   if(['French', 'German', 'Italian'].indexOf(language) != -1){
       $('#appointment_check_tag').hide();

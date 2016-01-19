@@ -631,6 +631,7 @@ class PicassoLeads(models.Model):
     treatment_type = models.CharField(max_length=100, blank=True, null=True)
     is_build_eligible = models.BooleanField(default=False)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
+    estimated_tat = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"
