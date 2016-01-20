@@ -1349,11 +1349,10 @@ def meeting_minutes(request):
         link_to_last_program_type = link_to_last_data.program_type
         link_to_last_subject_timeline = link_to_last_data.subject_timeline
         link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
-        link_to_last_id = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_to_last_data.ref_uuid)
 
     # send mail
     return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
-                                                            'tenantive_agenda_dict': tenantive_agenda_dict, 'link_to_last_id': link_to_last_id,
+                                                            'tenantive_agenda_dict': tenantive_agenda_dict,
                                                             'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline,
                                                             'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program,
                                                             'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location,

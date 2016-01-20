@@ -250,13 +250,13 @@ $('#preview_btn').click(function(){
 });
 
 $('#subject').change(function(){
-  $('#new_link').hide();
+  $('.new_link').hide();
   $('#nodatafound').hide();
   $('#generate_link').show();
 });
 
 $('#program').change(function(){
-  $('#new_link').hide();
+  $('.new_link').hide();
   $('#nodatafound').hide();
   $('#generate_link').show();
 });
@@ -310,7 +310,7 @@ function generate_link(data){
   if(data == "No Data"){
     $('#nodatafound').show();
   }else{
-    $('#prev_meeting_link').append('<a id="new_link" target="_blank" href='+data+' style="margin-left: 20%;">Click Again to access link</a>');
+    $('#prev_meeting_link').append('<a class="new_link" target="_blank" href='+data+' style="margin-left: 20%;">Click Again to access link</a>');
   }
 }
 
