@@ -1158,7 +1158,7 @@ $(document).on('change', '#country', function() {
             window.code_types = ['Select Task Type', 'Adwords Conversion Code', 'AdWords Remarketing', 'Analytics', 'Analytics Destination Tracking']
 
         } else {
-
+            window.code_types = {{code_types|safe}};
             rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
             if (rlsaIndx != -1) {
                 window.code_types.splice(rlsaIndx, 1);
