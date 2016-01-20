@@ -134,6 +134,7 @@
             <option value="TAG Team">TAG Team</option>
             <option value="WPP">WPP</option>
             <option value="PICASSO">PICASSO</option>
+            <option value="PICASSO Build">PICASSO Build</option>
           </select>
         </div>
         <div class="col-md-2 program_type" style="display:none;">
@@ -159,6 +160,15 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-md-2">
+          <label for="attendees">BCC</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="bcc" name="bcc" placeholder="Please enter e-mail ids seperated by comma(,)"{% if bcc_email_list %} value="{{bcc_email_list}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+        </div>
+      </div>
+
      <div class="std-sub-title" style="text-align:center">Key Points Discussed</div>
   </div>
   <div class="container-fluid">
@@ -181,7 +191,7 @@
       <a id="removeTask_1" class="btn std-btn task-btn remove" style=""><i class="fa fa-minus-circle"></i>Remove</a>
       <a id="addTask_1" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"  ></i>Add</a>
   </div>
-  <div class="container-fluid last">
+  <div class="container-fluid last" style="margin-bottom: 20px;">
     <div class="std-sub-title" style="text-align:center">Action Plan</div>
       <table id="actionPlan">
         <thead>
@@ -204,7 +214,7 @@
       <a id="removeAction_1" class="btn std-btn task-btn remove-action" style=""><i class="fa fa-minus-circle"></i>Remove</a>
       <a id="addAction_1" class="btn std-btn task-btn add-action" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
   </div>
-  <div class="container-fluid last next-meeting-section">
+  <div class="container-fluid last next-meeting-section" style="margin-bottom: 20px;">
     <div class="std-sub-title" style="text-align:center">Next meeting</div>
       <div class="col-md-12 show-date-time">
           <input class="next-row" type='checkbox'> &nbsp;&nbsp;Want to Setup Next Meeting ?
@@ -218,7 +228,7 @@
             <td id="time">Time:(HH:MM)</td>
             <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time in IST" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
             <td id="next">Link to Previous Meeting Minutes : </td>
-            <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="../../reports/link-last-meeting/{{link_to_last_id}}" target="_blank">{{link_to_last_program}} {{link_to_last_program_type}} {{link_to_last_subject_timeline}} {{link_to_last_date}}</a></div></td>
+            <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="" id="generate_link" target="_blank" style="margin-left: 38%;">Click Here</a><span id="nodatafound" style="display:none;margin-left: 25%;">No Data Found!</span></div></td>
           </tr>
         </tbody>
       </table>
@@ -420,6 +430,7 @@
             <option value="TAG Team">TAG Team</option>
             <option value="WPP">WPP</option>
             <option value="PICASSO">PICASSO</option>
+            <option value="PICASSO Build">PICASSO Build</option>
           </select>
         </div>
         <div class="col-md-2 preview_program_type" style="display:none;">
@@ -442,6 +453,15 @@
         </div>
          <div class="col-md-10">
           <input type="text" class="form-control" id="preview_attendees" name="preview_attendees" placeholder="Please enter e-mail ids seperated by comma(,)"disabled>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="attendees">BCC</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="preview_bcc" name="preview_bcc" placeholder="Please enter e-mail ids seperated by comma(,)"disabled>
         </div>
       </div>
 
@@ -623,7 +643,7 @@ if(window.location.pathname == '/reports/meeting-minutes/')
       }
       var link_program_type = "{{link_program_type|safe}}"
       
-      var link_location = {{link_location|safe}}
+      var link_location = "{{link_location|safe}}"
       var link_region = {{link_region|safe}}
 
       if(link_program){
@@ -634,7 +654,7 @@ if(window.location.pathname == '/reports/meeting-minutes/')
           $('#selected_project').text(link_program_type+' -')
           $('#program_type').prop('disabled', true);
         }
-        if(link_program == 'TAG Team' || link_program == 'WPP' || link_program == 'PICASSO'){
+        if(link_program == 'TAG Team' || link_program == 'WPP' || link_program == 'PICASSO' || link_program == 'PICASSO Build'){
           $('#program').val(link_program);
           $('#program').prop('disabled', true);
         }
@@ -645,9 +665,8 @@ if(window.location.pathname == '/reports/meeting-minutes/')
         $('#region').val(link_region);
         $('#region').prop('disabled', true);
       }
-      if(link_location){
-        $('#country').append("<option value="+link_location+">"+link_location+"</option>")
-        $('#country').val(link_location);
+      if(link_location != '0'){
+        $('#country').append("<option>"+link_location+"</option>")
         $('#country').val(link_location);
         $('#country').prop('disabled', true);
       }
@@ -938,6 +957,35 @@ $('.add').click(function () {
         return split( term ).pop();
       }
       $('#attendees').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+      });
+    });
+
+    $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#bcc').autocomplete({
         minLength: 0,
         source: function( request, response ) {
           response( $.ui.autocomplete.filter(

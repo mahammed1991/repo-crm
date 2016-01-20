@@ -160,6 +160,8 @@ $('#preview_btn').click(function(){
 
     $('#preview_attendees').val($('#attendees').val());
 
+    $('#preview_bcc').val($('#bcc').val());
+
 
     /***************************adding action plans*********************************/
     $('.preview-add-task').html('');
@@ -247,32 +249,70 @@ $('#preview_btn').click(function(){
     }
 });
 
+$('#subject').change(function(){
+  $('#new_link').hide();
+  $('#nodatafound').hide();
+  $('#generate_link').show();
+});
+
+$('#program').change(function(){
+  $('#new_link').hide();
+  $('#nodatafound').hide();
+  $('#generate_link').show();
+});
+
 $('#generate_link').click(function(event){
   event.preventDefault();
+  window.has_error = false;
   var dataString = {}
-  dataString['program'] = $('#program').val();
-  if($('#program').val() == 'TAG Team'){
-    dataString['program_type'] = $('#program_type').val();
-  }
-  dataString['subject'] = $('#subject').val();
-  if($('#subject').val() == 'New Product Launch' || $('#subject').val() == 'New Program Launch'){
-    dataString['subject_type'] = $('#others').val();
-  }
-  dataString['meeting_date'] = $('#meeting_date').val();
-  $.ajax({
-    url: 'reports/generate-link/',
-    type: 'GET',
-    data: dataString,
-    dataType: 'JSON',
-    success: function(data){
-
-    },
-    failure: function(jqXHR, textStatus, errorThrown){
-
+  if($('#program').val() == '' || $('#program').val() == '0'){
+    alert('Please select progarm');
+    window.has_error = true;
+  }else{
+    dataString['program'] = $('#program').val();
+    if($('#program').val() == 'TAG Team'){
+      dataString['program_type'] = $('#program_type').val();
     }
+  }
+  if($('#subject').val() == '' || $('#subject').val() == '0'){
+    alert('Please select subject timeline');
+    window.has_error = true;
+  }else{
+    dataString['subject'] = $('#subject').val();
+  }
 
-  });
+  if(window.has_error){
+        return false;
+      }else{
+        var status = true;
+        if (status) {
+          $.ajax({
+            url: '/reports/generate-link',
+            type: 'GET',
+            data: dataString,
+            dataType: 'JSON',
+            success: function(data){
+              generate_link(data);
+            },
+            failure: function(jqXHR, textStatus, errorThrown){
+              $('#generate_link').show();
+              alert('No data!');
+            }
+
+          });
+        }
+        return status;
+      }
 });
+
+function generate_link(data){
+  $('#generate_link').hide();
+  if(data == "No Data"){
+    $('#nodatafound').show();
+  }else{
+    $('#prev_meeting_link').append('<a id="new_link" target="_blank" href='+data+' style="margin-left: 20%;">Click Again to access link</a>');
+  }
+}
 
 
 /*  ----------------------------------------------
