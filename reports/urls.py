@@ -33,4 +33,5 @@ urlpatterns = patterns(
     # Export meeting minutes
     url(r'^export-meeting-minutes/$', views.export_meeting_minutes),
     url(r'^get-meeting-minutes/$', views.get_meeting_minutes),
+    url(r'^generate-link/$', views.generate_link),
 )
