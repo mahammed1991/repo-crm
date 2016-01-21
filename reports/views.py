@@ -1215,6 +1215,19 @@ def meeting_minutes(request):
         meeting_minutes.key_points = json.dumps(key_points)
         meeting_minutes.tenantive_agenda = json.dumps(tenantive_agenda_dict)
         meeting_minutes.action_plan = json.dumps(action_plans)
+
+        meeting_minutes.attachment_1 = request.FILES.get('file_info_1')
+        meeting_minutes.attachment_2 = request.FILES.get('file_info_2')
+        meeting_minutes.attachment_3 = request.FILES.get('file_info_3')
+        meeting_minutes.attachment_4 = request.FILES.get('file_info_4')
+        meeting_minutes.attachment_5 = request.FILES.get('file_info_5')
+
+        meeting_minutes.attached_link_1 = request.POST.get('file_info_text_1')
+        meeting_minutes.attached_link_2 = request.POST.get('file_info_text_2')
+        meeting_minutes.attached_link_3 = request.POST.get('file_info_text_3')
+        meeting_minutes.attached_link_4 = request.POST.get('file_info_text_4')
+        meeting_minutes.attached_link_5 = request.POST.get('file_info_text_5')
+
         meeting_minutes.save()
 
         attendees = request.POST.get('attendees').replace(', ', ',')
@@ -1222,6 +1235,14 @@ def meeting_minutes(request):
         attendees_list.pop(-1)
         get_attendees_list = User.objects.filter(email__in=attendees_list).values_list('id', flat=True)
         meeting_minutes.attendees.add(*get_attendees_list)
+
+        bcc = request.POST.get('bcc').replace(', ', ',')
+        bcc_list = bcc.split(',')
+        bcc_list.pop(-1)
+        get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
+        meeting_minutes.bcc.add(*get_bcc_list)
+
+
         unique_id = get_unique_uuid('meeting_minutes')
         meeting_minutes.ref_uuid = unique_id
         meeting_minutes.save()
@@ -1232,12 +1253,16 @@ def meeting_minutes(request):
         mail_list.append(str(request.POST.get('google_poc')))
         mail_list.append(str(request.POST.get('regalix_poc')))
 
+        bcc_email_list = list()
+        for each_bcc in bcc_list:
+            bcc_email_list.append(str(each_bcc))
+
         # get object by unique id stored in unique id generated @1225
         link_to_last_data_for_email = MeetingMinutes.objects.all().last()
 
         attendees_list_last = list()
         if link_to_last_data_for_email:
-            link_for_last_meeting_email = link_to_last_data_for_email.id
+            link_for_last_meeting_email = link_to_last_data_for_email.ref_uuid
             last_link_attendees = link_to_last_data_for_email.attendees.values('email')
         for attendee in last_link_attendees:
             attendees_list_last.append(str(attendee['email']))
@@ -1274,7 +1299,7 @@ def meeting_minutes(request):
         )
         mail_from = 'implementation-support@google.com'
         mail_to = mail_list
-        bcc = set([])
+        bcc = set(bcc_email_list)
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
         return redirect('reports.views.meeting_minutes_thankyou')
@@ -1324,11 +1349,10 @@ def meeting_minutes(request):
         link_to_last_program_type = link_to_last_data.program_type
         link_to_last_subject_timeline = link_to_last_data.subject_timeline
         link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
-        link_to_last_id = link_to_last_data.id
 
     # send mail
     return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
-                                                            'tenantive_agenda_dict': tenantive_agenda_dict, 'link_to_last_id': link_to_last_id,
+                                                            'tenantive_agenda_dict': tenantive_agenda_dict,
                                                             'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline,
                                                             'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program,
                                                             'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location,
@@ -1346,9 +1370,13 @@ def link_last_meeting(request, last_id):
     google_email = dict()
     regalix_email = dict()
     attendees_list = list()
+    bcc_list = list()
     next_meeting_date = ''
     next_meeting_time = ''
-    last_meeting = MeetingMinutes.objects.get(id=last_id)
+    try:
+        last_meeting = MeetingMinutes.objects.get(ref_uuid=last_id)
+    except MeetingMinutes.DoesNotExist:
+        return redirect('main.views.main_home')
     new_subject_timeline = 1
     meeting_date = last_meeting.meeting_time_in_ist.date()
     last_meeting_link = datetime.strftime(meeting_date, '%d.%m.%Y')
@@ -1358,11 +1386,24 @@ def link_last_meeting(request, last_id):
         next_meeting_time = last_meeting.next_meeting_datetime.time()
     subject_timeline = last_meeting.subject_timeline
     attendees = last_meeting.attendees.values('email')
+    bcc = last_meeting.bcc.values('email')
     other_subject = last_meeting.other_subject
     link_region = last_meeting.region
     link_location = last_meeting.location
     link_program = last_meeting.program
     link_program_type = last_meeting.program_type
+
+    attach_link_1 = last_meeting.attached_link_1
+    attach_link_2 = last_meeting.attached_link_2
+    attach_link_3 = last_meeting.attached_link_3
+    attach_link_4 = last_meeting.attached_link_4
+    attach_link_5 = last_meeting.attached_link_5
+
+    attach_file_1 = last_meeting.attachment_1.name
+    attach_file_2 = last_meeting.attachment_2.name
+    attach_file_3 = last_meeting.attachment_3.name
+    attach_file_4 = last_meeting.attachment_4.name
+    attach_file_5 = last_meeting.attachment_5.name
 
     submit_disabled = False
 
@@ -1370,20 +1411,24 @@ def link_last_meeting(request, last_id):
         attendees_list.append(str(attendee['email']))
     attendees_email_list = ' ,  '.join(attendees_list)
 
-    key_order_agenda = {k: v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5'])}
+    for each_bcc in bcc:
+        bcc_list.append(str(each_bcc['email']))
+    bcc_email_list = ' ,  '.join(bcc_list)
+
+    key_order_agenda = {k:v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5', 'agenda_text_6', 'agenda_text_7', 'agenda_text_8', 'agenda_text_9', 'agenda_text_10', 'agenda_text_11', 'agenda_text_12', 'agenda_text_14', 'agenda_text_15'])}
     tenantive_agenda_dict = OrderedDict(sorted(last_meeting.tenantive_agenda.items(), key=lambda i: key_order_agenda.get(i[0])))
 
-    key_order_action = {k: v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5'])}
+    key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 'action_item_15', 'owner_15', 'action_date_15',])}
     action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
 
-    key_order = {k: v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4', 'topic_5', 'highlight_5'])}    
+    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5', 'topic_6', 'highlight_6', 'topic_7', 'highlight_7', 'topic_8', 'highlight_8', 'topic_9', 'highlight_9', 'topic_10', 'highlight_10', 'topic_11', 'highlight_11', 'topic_12', 'highlight_12', 'topic_13', 'highlight_13', 'topic_14', 'highlight_14', 'topic_15', 'highlight_15',])}    
     key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
 
     return render(request, 'reports/meeting_minutes.html', {'submit_disabled': submit_disabled,
                                                             'last_meeting_link': json.dumps(last_meeting_link),
                                                             'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict),
                                                             'link_program_type': link_program_type,
-                                                            'link_program': link_program, 'link_location': json.dumps(link_location),
+                                                            'link_program': link_program, 'link_location': link_location,
                                                             'link_region': json.dumps(link_region), 'other_subject': other_subject,
                                                             'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email,
                                                             'new_subject_timeline': new_subject_timeline, 'all_locations': all_locations,
@@ -1391,7 +1436,10 @@ def link_last_meeting(request, last_id):
                                                             'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list,
                                                             'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting,
                                                             'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date,
-                                                            'next_meeting_time': next_meeting_time})
+                                                            'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
+                                                            'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
+                                                            'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
+                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list})
 
 
 @login_required
@@ -1402,12 +1450,83 @@ def meeting_minutes_thankyou(request):
 
 @login_required
 def export_meeting_minutes(request):
-    program = request.POST.get('program')
-    from_date = datetime.strptime(request.POST.getlist('date_from')[0], '%m/%d/%Y')
-    to_date = datetime.strptime(request.POST.getlist('date_to')[0], '%m/%d/%Y')
+    if request.method == 'POST':
+        excel_header = ['Meeting Date', 'Subject Timeline', 'Link']
+        meeting_date_from = request.POST.get('date_from')
+        meeting_date_to = request.POST.get('date_to')
+        program = request.POST.get('program')
+        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                        program=program)
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+        final_meeting_list = list()
+        for meeting_minute in meeting_minutes:
+            meeting_minute_dict = dict()
+            meeting_date = meeting_minute.meeting_time_in_ist.date()
+            meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            meeting_minute_dict['Subject Timeline'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
+            if meeting_minute.ref_uuid:
+                meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
+            else:
+                meeting_minute_dict['Link'] = ''
+            final_meeting_list.append(meeting_minute_dict)
+
+        filename = "meeting-minutes"
+        path = write_appointments_to_csv(final_meeting_list, excel_header, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
 
     return render(request, 'reports/export_meeting_minutes.html', {})
 
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
 
-def generate_last_meeting_link(request):
-    return HttpResponse(json.dumps())
+
+def get_meeting_minutes(request):
+    if request.is_ajax():
+        meeting_date_from = request.GET.get('meeting_date_from')
+        meeting_date_to = request.GET.get('meeting_date_to')
+        program = request.GET.get('program')
+        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                            program=program)
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+        final_meeting_list = list()
+        for meeting_minute in meeting_minutes:
+            meeting_minute_dict = dict()
+            meeting_date = meeting_minute.meeting_time_in_ist.date()
+            meeting_minute_dict['link_meeting_date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            meeting_minute_dict['program'] = meeting_minute.program
+            meeting_minute_dict['program_type'] = meeting_minute.program_type
+            meeting_minute_dict['subject_timeline'] = meeting_minute.subject_timeline
+            meeting_minute_dict['other_subject'] = meeting_minute.other_subject
+            meeting_minute_dict['ref_uuid'] = meeting_minute.ref_uuid
+            final_meeting_list.append(meeting_minute_dict)
+    return HttpResponse(json.dumps(final_meeting_list))
+
+
+def generate_link(request):
+    if request.is_ajax():
+        # import ipdb;ipdb.set_trace()
+        subject_timeline = request.GET.get('subject')
+        program = request.GET.get('program')
+        program_type = request.GET.get('program_type')
+        if program_type:
+            meeting_minutes = MeetingMinutes.objects.filter(subject_timeline=subject_timeline, program=program, program_type=program_type).last()
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(subject_timeline=subject_timeline, program=program).last()
+
+        if meeting_minutes:
+            link_last_meeting = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minutes.ref_uuid)
+        else:
+            link_last_meeting = 'No Data'
+    return HttpResponse(json.dumps(link_last_meeting))
