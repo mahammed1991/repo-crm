@@ -96,7 +96,7 @@ def lead_form(request):
                 campaign_ids_key = 'campaign_ids' + i
                 create_new_bid_modifiers_key = 'create_new_bid_modifiers' + i
                 overwrite_existing_bid_modifiers_key = 'overwrite_existing_bid_modifiers' + i
-                rsla_policies_key = 'rsla_policies' + i
+                # rsla_policies_key = 'rsla_policies' + i
 
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
@@ -114,7 +114,7 @@ def lead_form(request):
                 tag_data[tag_leads[campaign_ids_key]] = request.POST.get(campaign_ids_key)
                 tag_data[tag_leads[create_new_bid_modifiers_key]] = request.POST.get(create_new_bid_modifiers_key)
                 tag_data[tag_leads[overwrite_existing_bid_modifiers_key]] = request.POST.get(overwrite_existing_bid_modifiers_key)
-                tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
+                # tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
