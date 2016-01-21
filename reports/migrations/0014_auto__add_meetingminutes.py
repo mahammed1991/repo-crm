@@ -15,13 +15,29 @@ class Migration(SchemaMigration):
             ('subject_type', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
             ('other_subject', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
             ('meeting_time_in_ist', self.gf('django.db.models.fields.DateTimeField')(blank=True)),
-            ('google_poc', self.gf('django.db.models.fields.related.ForeignKey')(related_name='google_poc', blank=True, to=orm['auth.User'])),
-            ('regalix_poc', self.gf('django.db.models.fields.related.ForeignKey')(related_name='regalix_poc', blank=True, to=orm['auth.User'])),
-            ('google_team', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['leads.Team'])),
+            ('google_poc', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('regalix_poc', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('google_team', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('meeting_audience', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
             ('key_points', self.gf('jsonfield2.fields.JSONField')(default={})),
             ('action_plan', self.gf('jsonfield2.fields.JSONField')(default={})),
-            ('next_meeting_datetime', self.gf('django.db.models.fields.DateTimeField')(blank=True)),
-            ('tenantive_agenda', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
+            ('next_meeting_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('tenantive_agenda', self.gf('jsonfield2.fields.JSONField')(default={})),
+            ('region', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
+            ('location', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
+            ('program', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
+            ('program_type', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
+            ('ref_uuid', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('attachment_1', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('attachment_2', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('attachment_3', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('attachment_4', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('attachment_5', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('attached_link_1', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('attached_link_2', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('attached_link_3', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('attached_link_4', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('attached_link_5', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
             ('created_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('modified_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
         ))
@@ -36,6 +52,15 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['meetingminutes_id', 'user_id'])
 
+        # Adding M2M table for field bcc on 'MeetingMinutes'
+        m2m_table_name = db.shorten_name(u'reports_meetingminutes_bcc')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('meetingminutes', models.ForeignKey(orm[u'reports.meetingminutes'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['meetingminutes_id', 'user_id'])
+
 
     def backwards(self, orm):
         # Deleting model 'MeetingMinutes'
@@ -43,6 +68,9 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field attendees on 'MeetingMinutes'
         db.delete_table(db.shorten_name(u'reports_meetingminutes_attendees'))
+
+        # Removing M2M table for field bcc on 'MeetingMinutes'
+        db.delete_table(db.shorten_name(u'reports_meetingminutes_bcc'))
 
 
     models = {
@@ -196,20 +224,37 @@ class Migration(SchemaMigration):
         u'reports.meetingminutes': {
             'Meta': {'object_name': 'MeetingMinutes'},
             'action_plan': ('jsonfield2.fields.JSONField', [], {'default': '{}'}),
-            'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
+            'attached_link_1': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'attached_link_2': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'attached_link_3': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'attached_link_4': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'attached_link_5': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'attachment_1': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'attachment_2': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'attachment_3': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'attachment_4': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'attachment_5': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'attendees'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
+            'bcc': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'bcc'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
             'created_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'google_poc': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'google_poc'", 'blank': 'True', 'to': u"orm['auth.User']"}),
-            'google_team': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['leads.Team']"}),
+            'google_poc': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'google_team': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'key_points': ('jsonfield2.fields.JSONField', [], {'default': '{}'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
+            'meeting_audience': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'meeting_time_in_ist': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
             'modified_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
-            'next_meeting_datetime': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
+            'next_meeting_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'other_subject': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
-            'regalix_poc': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'regalix_poc'", 'blank': 'True', 'to': u"orm['auth.User']"}),
+            'program': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
+            'program_type': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
+            'ref_uuid': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'regalix_poc': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'region': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
             'subject_timeline': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
             'subject_type': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
-            'tenantive_agenda': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'})
+            'tenantive_agenda': ('jsonfield2.fields.JSONField', [], {'default': '{}'})
         },
         u'reports.quartertargetleads': {
             'Meta': {'ordering': "['target_leads']", 'unique_together': "(('program', 'location', 'quarter', 'year'),)", 'object_name': 'QuarterTargetLeads', 'db_table': "'quarter_target_leads'"},
