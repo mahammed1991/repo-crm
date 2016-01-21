@@ -4,6 +4,7 @@ function validatethis() {
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var numericExpression = /^[0-9]+$/;
     window.is_error = false;
+    window.failedFields = new Array();
 
     if(window.is_reset == true){
       window.is_reset = false;
@@ -40,6 +41,14 @@ function validatethis() {
 
     attendeesElem = document.getElementById('attendees');
     validateFiled(attendeesElem);
+
+    if(document.getElementById('internal_meeting').checked == false && document.getElementById('external_meeting').checked == false){
+      $('.meeting_audience').addClass('error-box');
+      window.is_error = true;
+    }else{
+      $('.meeting_audience').removeClass('error-box');
+      window.is_error = false;
+    }
 
     for( i=1; i <= $(".key-points").length; i++){
       if($("#key_point_" + i).is(":visible")){
@@ -120,6 +129,18 @@ $('#preview_btn').click(function(){
     $('#preview_selected_subject').text($('#selected_subject').text());
     $('#preview_selected_product_name').text($('#selected_product_name').text());
     $('#preview_selected_date').text($('#selected_date').text());
+
+    if($('#internal_meeting').prop("checked")){
+      $('#preview_internal_meeting').prop('checked', true);
+    }else{
+      $('#preview_internal_meeting').prop('checked', false);
+    }
+
+    if($('#external_meeting').prop("checked")){
+      $('#preview_external_meeting').prop('checked', true);
+    }else{
+      $('#preview_external_meeting').prop('checked', false);
+    }
 
     $('#preview_subject').val($('#subject').val());
     $('#preview_subject').prop('disabled', true);
@@ -247,6 +268,9 @@ $('#preview_btn').click(function(){
       $('#attachment_link'+j).append('<td id="preview_file_info_text_'+j+'" class="preview-attach">'+attachments[0]+'</td>');
       attachments = attachments.splice(1);
     }
+
+    $('#preview_internal_meeting').prop('disabled', true);
+    $('#preview_external_meeting').prop('disabled', true);
 });
 
 $('#subject').change(function(){
@@ -363,3 +387,30 @@ function generate_link(data){
   --------------------------------------------------
   end
   -------------------------------------------------*/
+
+$('#internal_meeting').click(function(){
+  if($('#internal_meeting').prop("checked")){
+    var not_available = 'NA';
+    $('#google_poc').val(not_available);
+    $('#google_team').val(not_available);
+    $('#region').val('APAC');
+    $('#country').val('India');
+  }else{
+    $('#google_poc').val('');
+    $('#google_team').val('');
+    $('#region option').eq(0).prop('selected', true);
+    $('#country option').eq(0).prop('selected', true);
+    $('#region').prop('disabled', false);
+    $('#country').prop('disabled', false);
+  }
+
+});
+
+$('#external_meeting').click(function(){
+  $('#region').prop('disabled', false);
+  $('#country').prop('disabled', false);
+  $('#google_poc').val('');
+  $('#google_team').val('');
+  $('#region option').eq(0).prop('selected', true);
+  $('#country option').eq(0).prop('selected', true);
+});

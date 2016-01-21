@@ -241,6 +241,7 @@ def get_selected_report_view(request):
                           'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
                           'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
                           'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
+
         return HttpResponse(json.dumps(report_details))
 
 
@@ -1171,9 +1172,12 @@ def meeting_minutes(request):
         meeting_time = request.POST.get('meeting_time')
         meeting_datetime = meeting_date + ' ' + meeting_time
         meeting_minutes.meeting_time_in_ist = datetime.strptime(meeting_datetime, '%d.%m.%Y %I:%M %p')
-        meeting_minutes.google_poc = User.objects.get(email=str(request.POST.get('google_poc')))
-        meeting_minutes.regalix_poc = User.objects.get(email=str(request.POST.get('regalix_poc')))
-        meeting_minutes.google_team = Team.objects.get(team_name=str(request.POST.get('google_team')))
+        meeting_minutes.google_poc = request.POST.get('google_poc')
+        meeting_minutes.regalix_poc = request.POST.get('regalix_poc')
+        meeting_minutes.google_team = request.POST.get('google_team')
+
+        meeting_minutes.meeting_audience = request.POST.get('meeting_audience')
+
         meeting_minutes.region = request.POST.get('region')
         meeting_minutes.location = request.POST.get('location')
         meeting_minutes.program = request.POST.get('program')
@@ -1393,20 +1397,32 @@ def link_last_meeting(request, last_id):
     link_program = last_meeting.program
     link_program_type = last_meeting.program_type
 
+    meeting_audience = last_meeting.meeting_audience
+
     attach_link_1 = last_meeting.attached_link_1
     attach_link_2 = last_meeting.attached_link_2
     attach_link_3 = last_meeting.attached_link_3
     attach_link_4 = last_meeting.attached_link_4
     attach_link_5 = last_meeting.attached_link_5
 
-    attach_file_1 = last_meeting.attachment_1.name
-    attach_file_2 = last_meeting.attachment_2.name
-    attach_file_3 = last_meeting.attachment_3.name
-    attach_file_4 = last_meeting.attachment_4.name
-    attach_file_5 = last_meeting.attachment_5.name
+    attach_file_1 = ''
+    attach_file_2 = ''
+    attach_file_3 = ''
+    attach_file_4 = ''
+    attach_file_5 = ''
+    if last_meeting.attachment_1:
+        attach_file_1 = last_meeting.attachment_1.name
+    if last_meeting.attachment_2:
+        attach_file_2 = last_meeting.attachment_2.name
+    if last_meeting.attachment_3:
+        attach_file_3 = last_meeting.attachment_3.name
+    if last_meeting.attachment_4:
+        attach_file_4 = last_meeting.attachment_4.name
+    if last_meeting.attachment_5:
+        attach_file_5 = last_meeting.attachment_5.name
 
+    media_url = settings.MEDIA_ROOT
     submit_disabled = False
-
     for attendee in attendees:
         attendees_list.append(str(attendee['email']))
     attendees_email_list = ' ,  '.join(attendees_list)
@@ -1439,7 +1455,7 @@ def link_last_meeting(request, last_id):
                                                             'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
                                                             'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
                                                             'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
-                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list})
+                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience})
 
 
 @login_required
@@ -1516,7 +1532,6 @@ def get_meeting_minutes(request):
 
 def generate_link(request):
     if request.is_ajax():
-        # import ipdb;ipdb.set_trace()
         subject_timeline = request.GET.get('subject')
         program = request.GET.get('program')
         program_type = request.GET.get('program_type')
