@@ -170,9 +170,12 @@ class MeetingMinutes(models.Model):
     subject_type = models.CharField(max_length=255, null=True)
     other_subject = models.CharField(max_length=255, null=True)
     meeting_time_in_ist = models.DateTimeField(blank=True)
-    google_poc = models.ForeignKey(User, related_name='google_poc', blank=True)
-    regalix_poc = models.ForeignKey(User, related_name='regalix_poc', blank=True)
-    google_team = models.ForeignKey(Team, null=False, blank=False)
+
+    google_poc = models.CharField(max_length=255, null=True, blank=True)
+    regalix_poc = models.CharField(max_length=255, null=True, blank=True)
+    google_team = models.CharField(max_length=255, null=True, blank=True)
+
+    meeting_audience = models.CharField(max_length=255, null=True, blank=True)
     attendees = models.ManyToManyField(User, related_name="attendees")
     bcc = models.ManyToManyField(User, related_name="bcc")
     key_points = JSONField(default={})

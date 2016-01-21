@@ -40,9 +40,23 @@
         </div>
       </div>
 
+      <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-2" style="margin-top: -12px;">
+              <label for="internal_meeting">Meeting Audience</label>
+            </div>
+            <!-- <div class="container-fluid meeting_audience" style="width: 496px;margin-right: 353px;"> -->
+              <div class="col-md-4 meeting_audience">
+                <input type="radio" id="internal_meeting" name="meeting_audience" value="internal_meeting">                  Internal Meeting</input>
+              </div>
+              <div class="col-md-4 meeting_audience">
+                <input type="radio" id="external_meeting" name="meeting_audience" value="external_meeting">                   External Meeting</input>
+              </div>
+            <!-- </div> -->
+      </div>
+
       <div class="row">
             <div class="col-md-2">
-              <label for="subject">Subject Timeline</label>
+              <label for="subject">Nature of Meeting</label>
             </div>
            <div class="col-md-4">
               <select class="form-control bgicon" id="subject" title="subject" name="subject" onfocusout="validateEachField(this)">
@@ -183,7 +197,7 @@
         <tbody class="add-task">
           <tr id="key_point_1" class="key-points">
             <td><input class="no" type='text' value="1" readonly  id="no_1" onfocusout="validateEachField(this)"></td>
-            <td><input class="topic" type='text' id="topic_1" name="topic_1" onfocusout="validateEachField(this)"></td>
+            <td><textarea class="topic" type='text' id="topic_1" name="topic_1" onfocusout="validateEachField(this)"></textarea></td>
             <td><textarea class="highlight" type='text' id="highlight_1" name="highlight_1" onfocusout="validateEachField(this)"></textarea></td>
           </tr>
         </tbody>
@@ -205,8 +219,8 @@
         <tbody class="action-plan">
           <tr id="action_plan_1" class="action-plans">
             <td><input class="no" type='text' value="1" readonly  id="ano_1"></td>
-            <td><input class="action-items" type='text' id="action_item_1" name="action_item_1"></td>
-            <td><input class="oweners" type='text' id="owner_1" name="owner_1" ></td>
+            <td><textarea class="action-items" type='text' id="action_item_1" name="action_item_1"></textarea></td>
+            <td><textarea class="oweners" type='text' id="owner_1" name="owner_1" ></textarea></td>
             <td><input type="text" placeholder="Date" class="datepickerFrom_b target-date" name="action_date_1" id="action_date_1"/></td>
           </tr>
         </tbody>
@@ -279,23 +293,23 @@
         <tbody class="attachments-links-files">
           <tr id="attachments_1" class="attachments">
             <td class="attach_1"><div><a target="_blank" {% if attach_link_1 %} href="{{attach_link_1}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_1}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}>{{attach_file_1}}</div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}">{{attach_file_1}}</a></div></td>
           </tr>
           <tr id="attachments_2" class="attachments">
             <td class="attach_1"><div><a target="_blank" {% if attach_link_2 %} href="{{attach_link_2}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_2}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}>{{attach_file_2}}</div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}">{{attach_file_2}}</a></div></td>
           </tr>
           <tr id="attachments_3" class="attachments">
             <td class="attach_1"><div><a target="_blank" {% if attach_link_3 %} href="{{attach_link_3}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_3}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}>{{attach_file_3}}</div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}">{{attach_file_3}}</a></div></td>
           </tr>
           <tr id="attachments_4" class="attachments">
             <td class="attach_1"><div><a target="_blank" {% if attach_link_4 %} href="{{attach_link_4}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_4}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}>{{attach_file_4}}</div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}">{{attach_file_4}}</a></div></td>
           </tr>
           <tr id="attachments_5" class="attachments">
             <td class="attach_1"><div><a target="_blank" {% if attach_link_5 %} href="{{attach_link_5}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_5}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}>{{attach_file_5}}</div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}">{{attach_file_5}}</a></div></td>
           </tr>
         </tbody>
       </table>
@@ -303,7 +317,7 @@
   <div class="container-fluid end">
     <!-- <input type="checkbox" id="allow_ics" ></input><p>Allow option to send Calendar Invite </p> -->
     <button type="button" class="btn std-btn" id="preview_btn" {% if submit_disabled == False %} style="display:none;" {% else %} style="" {% endif %} onclick="return validatethis(this);">Preview</button>
-    <button class="btn std-btn" id="submit" style="display:none;">Submit</button>
+    <button class="btn std-btn" id="submit" style="display:none;" onclick="return validatethis(this);">Submit</button>
 
   </div>
 </form>
@@ -336,9 +350,21 @@
         </div>
       </div>
 
+      <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-2" style="margin-top: -12px;">
+              <label for="internal_meeting">Meeting Audience</label>
+            </div>
+            <div class="col-md-4">
+              <input type="radio" id="preview_internal_meeting" name="preview_audience_meeting">                  Internal Meeting</input>
+            </div>
+            <div class="col-md-4">
+              <input type="radio" id="preview_external_meeting" name="preview_audience_meeting">                   External Meeting</input>
+            </div>
+      </div>
+
       <div class="row">
             <div class="col-md-2">
-              <label for="subject">Subject Timeline</label>
+              <label for="subject">Nature of Meeting</label>
             </div>
            <div class="col-md-4">
               <select class="form-control bgicon" id="preview_subject" title="subject" name="preview_subject">
@@ -549,13 +575,24 @@
   <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
   <script src="{% static 'js/reports/meeting_minutes.js' %}"></script>
   <script type="text/javascript">
-window.failedFields = new Array();
+window.focusoutfailedFields = new Array();
 $('.modal').modal({backdrop: 'static', keyboard: false})
 $(".modal").modal('hide');
 
 other_subject = "{{other_subject|safe}}"
 meeting_time_last = {{last_meeting_link|safe}}
 
+meeting_audience = "{{meeting_audience|safe}}"
+
+if(meeting_audience == 'internal_meeting'){
+  $('#internal_meeting').prop('checked', true);
+  $("#internal_meeting").attr("disabled", true);
+}
+
+if(meeting_audience == 'external_meeting'){
+  $('#external_meeting').prop('checked', true);
+  $("#external_meeting").attr("disabled", true);
+}
 next_meeting_date_last = "{{next_meeting_date|safe}}"
 if(next_meeting_date_last == ''){
   $('.next-meeting-row').show();
@@ -948,6 +985,8 @@ $('.add').click(function () {
     }
   });
 
+
+
     $(function(){
       var managers_email = {{managers|safe}}
       function split( val ) {
@@ -1045,7 +1084,7 @@ $('.add').click(function () {
     function validateEachField(argument) {
       if (argument.value == "" || argument.value == "0" || !argument.value) {
       argument.classList.add('error-box')
-      window.failedFields.push(argument);
+      window.focusoutfailedFields.push(argument);
       window.is_error = true;
       return false;
       }else{
