@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Meeting Minutes Email Template</title>
+</head>
+<body>
+	<!-- START TEMPLATE HTML - EDIT THIS SECTION -->
+
+  <table style="width: 100%;" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+
+      <td style="vertical-align: top;" align="center" valign="top">
+        <table style="text-align: left;" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="vertical-align: top; padding-top: 10px;">
+              <table style="width: 600px;" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color: #ffffff; vertical-align: top;">
+                  </td>
+
+                  </tr>
+
+                  <tr>
+                    <td style="vertical-align: top; background-color: #FFFFFF">
+
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+                        <tr>
+                          <td style="padding: 20px 20px 10px 10px; color: #45555f; font-family: Tahoma,Helvetica;font-size: 12px; line-height: 18px; vertical-align: top; border-bottom: 1px solid #3369e8;">
+                          {% if 'TAG Team' in program %}
+                           <img src="http://gtrack.regalix.com/static/images/tag-logo.png" align="left" border="0" width="132" height="26" alt="Regalix" style="text-align: center; vertical-align: middle; padding-top: 10px"/>
+                           {% else %}
+                           <img src="http://gtrack.regalix.com/static/images/GTrack-logo.png" align="left" border="0" width="83" height="38" alt="Regalix" style="text-align: center; vertical-align: middle; padding-top: 10px"/>
+                           {% endif %}
+                           <div style="color: #336699; font-size: 23px; font-family: Cambria; font-weight: bold; line-height: 26px;">
+                           <div style="color: #336699; font-size: 23px; font-family: Cambria; font-weight: bold; line-height: 26px;">
+                            </div>
+                          </td></tr>
+
+                        <tr>
+                          <td style="padding: 10px; color: #6f6f6f; font-family: Calibri;font-size: 14px; line-height: 18px; vertical-align: top;">
+                             Hello Team,<br/>
+                             <p>Here are the Minutes of the Meeting that took place between {{google_poc}} from {{google_team}} and {{regalix_poc}}, {{attendees}} on {{meeting_date}} at {{meeting_time}}</p> 
+                            <p>The minutes can be accessed at this link <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a></p>
+
+                            <p>Thanks,</p>
+                            <p>Portal Team</p>
+
+                              <br />
+						 </div>
+						  <div style="background:#fafafa; color: #999999; font-size: 12px; font-family: Calibri; height:26px;">
+                              <div class="mktEditable" id="Footer" align="center" style="padding:3px;">&nbsp;&nbsp;Copyright &#64; 2016 Regalix Inc. All rights reserved.</div></div>
+
+                          </td>
+                        </tr>
+
+                      </table>
+
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                      
+                          <td style="border-collapse:collapse;"></td>
+
+                          <td style="width: 100%; line-height: 0px;"><br /></td>
+
+                          <td></td>
+          
+                        </tr>
+
+                      </table>
+
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="padding: 20px; vertical-align: top;">
+
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        
+
+                      </table>
+
+                    </td>
+
+                  </tr>
+                </table>
+              </td>
+            </tr>
+         
+          </table>
+
+        </td>
+      </tr>
+    </table>
+
+</body>
+</html>
