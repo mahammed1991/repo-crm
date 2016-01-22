@@ -1927,7 +1927,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
     bcc = set()
 
     if advertiser_details['code_type'] == 'WPP':
-        mail_subject = "WPP Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
+        mail_subject = "WPP Customer ID: %s PICASSO Build(WPP) Implementation Lead" % (advertiser_details['cid_std'])
         mail_to = set([
             # str(advertiser_details['email']),
             'asarkar@regalix-inc.com',
@@ -1935,8 +1935,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'sprasad@regalix-inc.com',
             'abraham@regalix-inc.com',
             'gedward@regalix-inc.com',
-            'gshylendra@regalix-inc.com'
-
+            'anusha.panchikala@regalix-inc.com',
         ])
     else:
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
