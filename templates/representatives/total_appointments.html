@@ -9,6 +9,52 @@ Total Appointments
 
 {% block main_css %}
   <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+  <style>
+ 
+    .new_row_display{
+            width:100%;
+            position:relative;
+            margin-left:20px;
+            margin-right:20px;
+            margin-top:20px;
+    }
+    .common_td{
+            position:relative;
+            background:#f8f8f8;
+    }
+     
+    .m_inner_div{
+            background:#fff;
+            padding-top:5px;
+            padding-bottom:5px;
+            margin-bottom:5px;
+            border-bottom: 1px solid #ccc;
+    }
+    .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #f00;
+            position: absolute;
+            display: none;
+            bottom: -10px;
+            display:none;
+            left: 0;
+            right:0;
+            width:5px;
+            text-align:center;
+            margin:auto;
+        }
+.common_td:hover .arrow-down{
+display:block;
+
+}
+.vva {
+    float: right;
+    font-size: 15px;
+}
+</style>
 {% endblock main_css %}
 
 {% block content %}
@@ -74,7 +120,7 @@ Total Appointments
                 <div class="col-md-2 box2" style="margin-left: 61px;">
                     <div id="teamsDiv" class="btn-group drpDown" style="width: 130px;">
                         <button type="button" class="form-control bgicon" id="teamTypeBtn" style="width: 328px;">Teams</button>
-                        <ul class="dropdown-menu teams-ul" style="overflow: scroll;height:auto;max-height:300px;margin-top: -21px;width: 328px;overflow-x: hidden;">
+                        <ul class="dropdown-menu teams-ul" style="overflow: scroll;height:auto;max-height:300px;margin-top: -21px;width: 328px;">
                             <li idValue='000' id='selectAll' class='selectAll hideItems'>
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
                             </li>
@@ -133,7 +179,7 @@ Total Appointments
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="2">
                                     <tr>
-                                        <td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{slot.booked}}</td>
+                                        <td  class="cubg3 common_td">{{slot.booked}}</td>
                                         <td class="cubg4">{{slot.available}}</td>
                                     </tr>
                                 </table>
@@ -141,7 +187,7 @@ Total Appointments
                         {% endfor %}
                     </tr>
                    {% for i in 3|get_range_specific:'12' %}
-                        <tr>
+                        <tr class="first_{{forloop.counter}}">
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|concatenate:':00'}} AM</td>
                             {% else %}
@@ -153,7 +199,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" data-placement="top" title="{{team_booked|either:0}}" class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td class="cubg3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -164,7 +210,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td class="cubg3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -175,7 +221,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -187,7 +233,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -198,7 +244,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -210,7 +256,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -218,7 +264,7 @@ Total Appointments
                             </td>
                             {% endwith %}
                         </tr>
-                        <tr>
+                        <tr class="first1_{{forloop.counter}}">
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|concatenate:':30'}} AM</td>
                             {% else %}
@@ -230,7 +276,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -241,7 +287,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -252,7 +298,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}' class="css3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -264,7 +310,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -275,7 +321,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -287,7 +333,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_cur' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.first1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -299,7 +345,7 @@ Total Appointments
 
                     <!-- ################## PM #######################################-->
                     {% for i in 12|get_range %}
-                        <tr>
+                    <tr class="second_{{forloop.counter}}">
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|add:12|concatenate:':00'}} PM</td>
                             {% else %}
@@ -311,7 +357,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -323,7 +369,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -335,7 +381,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -348,7 +394,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -360,7 +406,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -373,7 +419,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_0_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -382,7 +428,7 @@ Total Appointments
                             </td>
                             {% endwith %}
                         </tr>
-                        <tr>
+                        <tr class="second1_{{forloop.counter}}">
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|add:12|concatenate:':30'}} PM</td>
                             {% else %}
@@ -394,7 +440,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -406,7 +452,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -418,7 +464,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -431,7 +477,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -443,7 +489,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -456,7 +502,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day and i|add:12 as next_loop %}
                                         {% with input|concatenate:next_day|concatenate:next_loop|concatenate:'_30_cur' as key_subs %}
                                         {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                        <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                        <tr><td  class="cubg3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.second1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                         {% endwith %}
                                         {% endwith %}
                                         {% endwith %}
@@ -469,7 +515,7 @@ Total Appointments
 
                     <!-- End of next rows -->
                     {% for i in 0|get_range_specific:'8' %}
-                        <tr>
+                       <tr class="third_{{forloop.counter}}">
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|concatenate:':00'}} AM</td>
                             {% else %}
@@ -481,7 +527,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -492,7 +538,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -503,7 +549,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -515,7 +561,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -526,7 +572,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -538,7 +584,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_0_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -546,7 +592,7 @@ Total Appointments
                             </td>
                             {% endwith %}
                         </tr>
-                        <tr>
+                        <tr class="third1_{{forloop.counter}}">
                             {% if forloop.first %}
                                 <td class="cubg2">{{i|concatenate:':30'}} AM</td>
                             {% else %}
@@ -558,7 +604,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day1'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -569,7 +615,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day2'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -580,7 +626,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day3'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -592,7 +638,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day4'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -603,7 +649,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day5'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', '{{team_booked|either:0}}');">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', {{team_count|safe}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -615,7 +661,7 @@ Total Appointments
                                     {% with dates|get_dict_val:'day6'|date:"d_m_Y_" as next_day %}
                                     {% with input|concatenate:next_day|concatenate:i|concatenate:'_30_next' as key_subs %}
                                     {% with appointments|get_dict_val:key_subs|get_dict_val:'booked' as booked_count and appointments|get_dict_val:key_subs|get_dict_val:'value' as av_count and appointments|get_dict_val:key_subs|get_dict_val:'team_count' as team_count and appointments|get_dict_val:key_subs|get_dict_val:'team_booked' as team_booked %}
-                                    <tr><td data-toggle="tooltip" title='{{team_booked|either:0}}' class="cubg3">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  data-toggle="tooltip" title='{{team_count}}' class="css3" /></td></tr>
+                                    <tr><td  class="cubg3 common_td">{{booked_count|either:0}}</td><td class="cubg4"><input type="text" name="{{key_subs}}" value='{{av_count}}'  class="css3 common_td" onclick="mytooltip('.third1_{{forloop.counter}}', {{team_count}});" /></td></tr>
                                     {% endwith %}
                                     {% endwith %}
                                     {% endwith %}
@@ -831,4 +877,40 @@ Total Appointments
     });
 
 </script>
+<script>
+    function mytooltip(value1, value2){
+        debugger;
+        var html_rows = '';
+        var html_data = '';
+        var count = 0;
+        var val_obj = value2;
+        for(var i in val_obj){
+            if (val_obj.hasOwnProperty(i)) {
+                count++;
+            }
+        }
+        if (count != 0){
+
+        $('.new_row_display').remove();
+            html_rows = "<tr class='new_row_display'><td colspan='100%' style='background:#E40404;padding-bottom: 0px !important;padding-top: 0px !important;'><div class='col-xs-12'><i class='fa fa-times vva'></i></div>"
+        for(key in val_obj){
+            html_data +=  "<div class='col-xs-12 col-sm-4 m_inner_div'>"+key+" ("+val_obj[key]+")</div>"
+        }
+        html_rows += html_data;
+        html_rows += "</td></tr>"
+
+        $(value1).closest('tr').after(html_rows);
+        }else{
+            $('.new_row_display').hide();
+            //no need to disply anything
+        }
+    }
+    function mytooltip2(value1){
+    $('.new_row_display').remove();
+    }
+
+    $(document).on('click','.vva', function(){
+        $('.new_row_display').remove();
+    });
+    </script>
 {% endblock main_js %}

@@ -1301,7 +1301,12 @@ def meeting_minutes(request):
                 'tenantive_agenda': tenantive_agenda_list,
             })
         )
-        mail_from = 'implementation-support@google.com'
+        if meeting_minutes.program == 'TAG Team':
+            mail_from = 'Google Implementation Team'
+        elif meeting_minutes.program == 'WPP':
+            mail_from = 'PICASSO Build Team'
+        else:
+            mail_from = 'PICASSO Team'
         mail_to = mail_list
         bcc = set(bcc_email_list)
         attachments = list()

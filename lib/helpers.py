@@ -738,11 +738,11 @@ def get_tat_for_picasso(source):
     availabilities = AvailabilityForTAT.objects.filter(date_in_ist__gte=today_in_ist).order_by('date_in_ist')
     target_details = dict()
     lookup_sum = 0
-    no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
+    total_no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
     for availability in availabilities:
         if availability.availability_count and availability.audits_per_date:
             lookup_sum += availability.availability_count * availability.audits_per_date
-            if lookup_sum > no_of_inqueue_leads:
+            if lookup_sum > total_no_of_inqueue_leads:
                 estimated_date = availability.date_in_ist + timedelta(days=2)
                 if estimated_date.weekday() == 5:
                     target_details['estimated_date'] = estimated_date + timedelta(days=2)

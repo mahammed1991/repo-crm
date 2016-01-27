@@ -111,7 +111,8 @@ h1 {
 
   .p-agenda{padding: 0px 15px;}
   .p-agenda-item{
-    padding: 0px 395px;
+      width: 816px;
+    padding-left: 365px;
   }
 
   .md1, .md2{
@@ -162,7 +163,7 @@ h1 {
   .browse-files{margin-bottom: 10px;}
 
   .attach_1, .attach_2{
-    padding: 0px 135px;
+    padding: 5px 135px;
   }
 
   .preview-attach{

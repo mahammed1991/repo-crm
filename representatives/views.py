@@ -1313,7 +1313,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
         # import ipdb; ipdb.set_trace()
         if apptmnt.booked_count != 0L:
-            appointments[key]['team_booked'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.booked_count))})
+            appointments[key]['team_booked'].update({str(apptmnt.team.team_name): "%s" % (int(apptmnt.booked_count))})
             # print appointments[key]['team_booked']
 
         # appointments[key]['team_count'] = 8

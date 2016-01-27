@@ -44,9 +44,14 @@
                             <p>The minutes can be accessed at this link <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a></p>
 
                             <p>Thanks,</p>
-                            <p>Portal Team</p>
-
-                              <br />
+                            {% if 'TAG Team' in program %}
+                            <p>Google Implementation Team</p>
+                            {% elif 'WPP' in program %}
+                            <p>PICASSO Build Team</p>
+                            {% else %}
+                            <p>PICASSO Team</p>
+                            {% endif %}
+                            <br />
 						 </div>
 						  <div style="background:#fafafa; color: #999999; font-size: 12px; font-family: Calibri; height:26px;">
                               <div class="mktEditable" id="Footer" align="center" style="padding:3px;">&nbsp;&nbsp;Copyright &#64; 2016 Regalix Inc. All rights reserved.</div></div>
