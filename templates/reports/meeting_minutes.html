@@ -284,7 +284,7 @@
     </div>
     <div class="container-fluid" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
       <div class="std-sub-title " style="text-align:center">Attachments</div>
-      <table id="attach">
+      <table id="attach" style="width: 100%;">
         <thead>
           <tr>
             <td id="action-item">Attached Links</td>
@@ -292,25 +292,25 @@
           </tr>
         </thead>
         <tbody class="attachments-links-files">
-          <tr id="attachments_1" class="attachments">
+          <tr id="attachments_1" class="attachments" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_1 %} href="{{attach_link_1}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_1}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}">{{attach_file_1}}</a></div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}" target="_blank">Attachment 1</a></div></td>
           </tr>
-          <tr id="attachments_2" class="attachments">
+          <tr id="attachments_2" class="attachments" {% if attach_link_2 %} style="" {% else %} style="display:none;" {% endif %}>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_2 %} href="{{attach_link_2}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_2}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}">{{attach_file_2}}</a></div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}" target="_blank">Attachment 2</a></div></td>
           </tr>
-          <tr id="attachments_3" class="attachments">
+          <tr id="attachments_3" class="attachments" {% if attach_link_3 %} style="" {% else %} style="display:none;" {% endif %}>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_3 %} href="{{attach_link_3}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_3}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}">{{attach_file_3}}</a></div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}" target="_blank">Attachment 3</a></div></td>
           </tr>
-          <tr id="attachments_4" class="attachments">
+          <tr id="attachments_4" class="attachments" {% if attach_link_4 %} style="" {% else %} style="display:none;" {% endif %}>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_4 %} href="{{attach_link_4}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_4}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}">{{attach_file_4}}</a></div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}" target="_blank">Attachment 4</a></div></td>
           </tr>
-          <tr id="attachments_5" class="attachments">
+          <tr id="attachments_5" class="attachments" {% if attach_link_5 %} style="" {% else %} style="display:none;" {% endif %}>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_5 %} href="{{attach_link_5}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_5}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}">{{attach_file_5}}</a></div></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}" target="_blank">Attachment 5</a></div></td>
           </tr>
         </tbody>
       </table>
@@ -589,11 +589,13 @@ meeting_audience = "{{meeting_audience|safe}}"
 if(meeting_audience == 'internal_meeting'){
   $('#internal_meeting').prop('checked', true);
   $("#internal_meeting").attr("disabled", true);
+  $("#external_meeting").attr("disabled", true);
 }
 
 if(meeting_audience == 'external_meeting'){
   $('#external_meeting').prop('checked', true);
   $("#external_meeting").attr("disabled", true);
+  $("#internal_meeting").attr("disabled", true);
 }
 next_meeting_date_last = "{{next_meeting_date|safe}}"
 if(next_meeting_date_last == ''){
