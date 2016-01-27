@@ -1,0 +1,618 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  TagTeam - Program Kick-off Document
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+<link rel="stylesheet" href="{% static 'css/reports/kick_off.css' %}" >
+<style type="text/css">  </style>
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+	<form method="POST" action="" id="" onsubmit="" name="kick_off_program">
+			<div class="container-fluid">
+        		<h1>TagTeam - Program Kick-off Document</h1>
+      		</div>
+
+        <div class="container-fluid">	
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Program Name</label>
+                    </div>
+                   <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="" name="program_name" id="" />
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Google PoC</label>
+                    </div>
+                   <div class="col-md-4">
+                      <input id="google_poc" class="form-control" type="text" name="google_poc" placeholder="<example: abc@google.com>">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Market(s)/Region(s): </label>
+                    </div>
+                    <div class="col-md-4">
+                      <div id="teamsDiv" class="btn-group drpDown" style="width: 98%;">
+                       <div id="regionTypesDiv" class="btn-group drpDown" style="width: 100%;">
+                            <button type="button" class="form-control bgicon" id="regionTypeBtn" style="width: 102.5%;">Regions</button>
+                            <ul class="dropdown-menu region-ul" style="margin-top: -21px;width: 102.5%;">
+                            {% for item in regions %}
+                                <li id="{{item}}">
+                                    <a href="#" class="smallReg"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;&nbsp;&nbsp;{{item.name}}</a>
+                                </li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Google PoC Email:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="google_poc_email" name="google_poc_email" placeholder="<example: abc@google.com>">
+                    </div>
+              </div>
+
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Target Locations: </label>
+                    </div>
+                    <div class="col-md-4 target-locations-main">
+                      <button type="button" class="form-control bgicon" id="locationTypeBtn" style="width: 100%;">Locations</button>
+                            <ul class="dropdown-menu location-ul" style="margin-top:-21px;margin-left:15px;width:91%;;max-height:200px;">
+                            {% for item in locations %}
+                                <li id="{{item.location_name}}">
+                                    <a href="#" class="smallLoc"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item.location_name}}</a>
+                                </li>
+                            {%endfor%}
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Google PoC Location:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="google_poc_location" name="google_poc_location" placeholder="">
+                    </div>
+              </div>
+
+              <div class="row">
+                    <div class="col-md-2">
+                      <label  for="">Advertiser Type:</label>
+                    </div>
+                    <div class="col-md-4" >
+                     <select class="form-control bgicon" id="advertiser_type" name="advertiser_type" style="text-align:center;padding-left:40%;" >
+                        <option  value="0">Choose</option>
+                        <option value="Tag">Tag</option>
+                        <option value="RLSA">RLSA</option>
+                        <option value="Shopping">Shopping</option>
+                      </select>
+                    </div>
+                     <div class="col-md-2">
+                      <label for="">Program Start Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="" />
+                    </div>
+              </div>
+
+              <div class="row">
+                    <div class="col-md-2">
+                         <label for="">Support Required with Code Types?: </label>
+                    </div>
+                     <div class="col-md-4">
+                          <div id="code_type" class="btn-group drpDown" style="width: 98%;">
+                               <div id="code_type_opt" class="btn-group drpDown" style="width: 100%;">
+                                    <button type="button" class="form-control bgicon" id="codeTypeBtn" style="width: 102.5%;">Code Type</button>
+                                    <ul class="dropdown-menu code-type-ul" style="margin-top: -21px;width: 102.5%;">
+                                    {% for item in code_types_name %}
+                                        <li id="{{item.id}}">
+                                            <a href="#" class="codeTypeOpt"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;&nbsp;&nbsp;{{item.code_type}}</a>
+                                        </li>
+                                    {%endfor%}
+                                </ul>
+                            </div>
+                          </div>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Program End Date:  </label>
+                    </div>
+                    <div class="col-md-4">
+                       <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="" name="program_end_date">
+                    </div>
+              </div>
+
+              <div class="">
+                  <div class="row">
+                        <div class="col-md-2">
+                          <label for="">Estimated Lead Volumes:</label>
+                        </div>
+                         <div class="col-md-5">
+                          <input type="number" min="0" class="form-control" id="estimated_lead_no" name="estimated_lead_no" placeholder="Lead Volumes in Numbers">
+                        </div>
+                        <div class="col-md-5">
+                          <select class="form-control bgicon" id="subject" title="subject" name="subject" style="padding-left:45%;">
+                                <option value="">Choose</option>
+                                <option value="Weekly">Day</option>
+                                <option value="Biweekly Connect">Week</option>
+                                <option value="Monthly Connect">Month</option>
+                            </select>
+                        </div>
+                  </div>
+             </div> 
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Program Overview and Objectives:</label>
+                </div>
+                 <div class="col-md-10 program_over">
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview"></textarea>
+                </div>
+              </div>
+
+              <div class="succes_mat_main">
+                  <div class="succes-matrics">
+                   <div id="succes_row_1">
+                          <div class="row">
+                                <div class="col-md-2">
+                                  <label for="">Success Metrics:</label>
+                                </div>
+                                
+                                <div class="col-md-3 s">
+                                  <textarea style="" type="text" class="form-control succes-mat-onebox" id="succes_metrices_one_1" name="succes_metrices_one_1"></textarea>
+                                </div>
+                                 <div class="col-md-3 s s-two">
+                                   <textarea style=" " type="text" class="form-control succes-mat-twobox" id="succes_metrices_two_1" name="succes_metrices_two_1"></textarea>
+                                </div>
+                                 <div class="col-md-3 s s-three">
+                                   <textarea style=" " type="text" class="form-control  succes-mat-threebox" id="succes_metrices_three_1" name="succes_metrices_three_1"></textarea>
+                                </div>
+                          </div>
+                  </div>
+                </div>
+                  <div class="row">
+                     <div class="col-md-3 pull-right succes-btn">
+                          <a id="addSuccesMat_1" class="btn std-btn task-btn add-succes" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+                          <a id="removeSuccesMat_1" class="btn std-btn task-btn remove-succes" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+                    </div>
+                  </div>
+            </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Expectations:</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  <textarea type="text" class="form-control" id="" name="workflow_changes_if_any"></textarea> 
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Explain Workflow :</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  <textarea type="text" class="form-control" id="explain_workflow" name="explain_workflow"></textarea> 
+                </div>
+              </div>   
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for=""> Win Criteria:</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  <textarea type="text" class="form-control" id="win_criteria" name="win_criteria"></textarea> 
+                </div>
+              </div> 
+
+              <div class="lead_subbmission_via_portal">
+                   <div class="row" style="margin-top:10px;">
+                    <div class="col-md-2">
+                      <label for="">Lead Submission Mode:</label>
+                    </div>
+                    <div class="col-md-1" ></div>
+                    <div class="col-md-2" style="padding-top:10px;">
+                        <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission"> Portal.
+                    </div>
+                    <div class="col-md-2" style="padding-top:10px;">
+                        <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission">Others.
+                    </div>
+                    <div class="col-md-5" id="lead_sub_other">
+                        <input  class="form-control" type='text'  name="">
+                    </div>
+                  </div>
+              </div>
+
+               <div class="real_time_support">
+                      <div class="row">
+                            <div class="col-md-2" >
+                              <label for="">Real-time Support Required:</label>
+                            </div>
+                           <div class="col-md-1" ></div>
+                         <div class="col-md-2" style="padding-top:10px;">
+                             <input class="" type='checkbox' id="" name="real_time_chat"> chat
+                        </div>
+                        <div class="col-md-2" style="padding-top:10px;">
+                             <input class="" type='checkbox' id="" name="real_time_live_trans"> Live Transfer 
+                        </div>
+                      </div>
+              </div>
+
+               <div class="row">
+                    <div class="col-md-3 set-text-align-fit ">
+                      <label for="">Google PoC Report<br> Requirements <br>( Frequency):</label>
+                    </div>
+                    <div class="col-md-4">
+                  <select class="form-control bgicon" id="subject" title="subject" name="subject">
+                    <option value="">Choose</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="bi-weekly">Bi-Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+
+
+             
+
+        <div class="">
+          <div class="row">
+                <div class="col-md-3 set-text-align-fit">
+                  <label for="">TagTeam / Google PoC <br>Connect Details (Week,<br> Time, Frequency):</label>
+                </div>
+
+                <div class="col-md-2">
+                   <select class="form-control bgicon" id="subject" title="subject" name="subject">
+                        <option value="">Choose Day</option>
+                        <option value="Sunday">Sunday</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="saturday">saturday</option>
+                  </select>
+                </div>
+
+                <div class="col-md-2">
+                    <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="tag_meeting_time" placeholder="Time">
+                </div>
+        
+          </div>
+        </div>
+
+
+         <div class="">
+              <div class="row">
+                    <div class="col-md-2" >
+                      <label for="">Comments, if any</label>
+                    </div>
+                     <div class="col-md-10 comment" >
+                         <textarea type="text" class="form-control" id="comments" name="comments"></textarea> 
+                    </div>
+              </div>
+        </div>
+
+       <div class="row">
+            <div class="col-md-2 set-text-align-fit">
+                 <label for="">Option to provide URLs / Upload project related documents </label>
+            </div>
+             <div class="col-md-10 data_upload">
+                  <textarea type="text" class="form-control" id="url_upload" name="url_upload"></textarea> 
+            </div>
+      </div>
+    </div>
+
+      
+
+     
+
+    <div class="tagteam_details" >
+          <div class="container-fluid">
+                <h1>TagTeam Details</h1>
+          </div>
+          <div class="container-fluid">	
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Primary PoC:</label>
+                    </div>
+                   <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="" name="primery_poc" id="primery_poc" />
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Secondary PoC: </label>
+                    </div>
+                   <div class="col-md-4">
+                      <input class="form-control" type="text" name="secondary_poc" id="secondary_poc" placeholder="">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">QA: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="" name="qa">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">QC:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="" name="qc">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Trainer: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="" name="trainer">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Reps:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="reps" name="reps" placeholder="abc@google.com, abc@regalix-inc.com">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="" name="k_o_meeting_date">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Time:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input id="kickoff_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="kickoff_meeting_time" placeholder="Time">
+                    </div>
+              </div>
+          <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Training Start-Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                     <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_start_date" name="training_start_date">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Training End-Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_end_date" name="training_end_date">
+                    </div>
+          </div>
+            <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Go-live Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                    <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="go_live_date" name="go_live_date">
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+             </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row"  style="margin-top:30px;">
+          <div class="col-md-12">
+              <input class="show-testimony" type='checkbox' id="" name="add_testimony"> Do you want to add Testimony?                
+          </div>
+      </div>
+     </div>
+
+
+    <div class="testimony container-fluid">
+          <div class=" testimony_row">
+                <h1>Testimony Tracker</h1>
+          </div>
+          <div class="testimonies ">
+            <div id="testimony_1">
+                <div class="row">
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received From (Name & Ldap): </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control testimony-reciecved-from" id="testimony_reciecved_from_name_1" name="testimony_reciecved_from_name_1">
+                    </div>
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received Date (DD/MM/YY):</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control testimony-reciecved-date" placeholder="Date" id="testimony_reciecved_date_1" name="testimony_reciecved_date_1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received for (Name & Ldap):</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control testimony-reciecved-for-name" id="testimony_reciecved_for_name_1" name="testimony_reciecved_for_name_1">
+                    </div>
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received for Account (CID):</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control testimony-reciecved-cid" id="testimony_reciecved_cid_1" name="testimony_reciecved_cid_1">
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="">Testimony :</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control testimony-text" id="testimony_text_1" name="testimony_text_1">
+                        </div>
+                   </div>
+                <hr>
+            </div>
+          </div>
+          <a id="addTestimony_1" class="btn std-btn task-btn add-testimony" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+          <a id="removeTestimony_1" class="btn std-btn task-btn remove-testimony" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+    </div>
+
+      <div class="container-fluid end">
+        <button class="btn std-btn" name="submit_kick_off" id="submit_kick_off">Submit</button>
+      </div>
+</form>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+
+<script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/reports/kick_off.js' %}"></script> 
+
+<script type="text/javascript">
+
+$('.testimony').hide();
+$(".remove-testimony").hide();  
+$('.remove-succes').hide();
+
+$(".datepickerFrom_a").datetimepicker({
+      timepicker:false,
+      format:'d.m.Y',
+      scrollInput:false,
+  });
+
+  $('.datetimepickerFrom').datetimepicker({
+     datepicker : false,
+     format : 'g:i A',
+     step:30,
+     scrollInput:false,
+  });
+
+   $(function(){
+      var managers_email = {{google_email|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#google_poc_email').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+   $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#reps').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+   $(function(){
+      var managers_email = {{google_email|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#google_poc').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+$("#lead_sub_other").hide();
+function check(){
+    $("#lead_sub_other").show();
+}
+function uncheck(){
+     $(':input','#lead_sub_other').val('');
+     $("#lead_sub_other").hide();
+};
+
+ $(document).ready(function(){
+    window.regionWiseLocations = {{region_based_locations|safe}}
+    window.locations = {{all_locations|safe}}
+    console.log(window.regionWiseLocations);
+ });
+
+
+$(document).click(function(evt){
+       if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
+          $('.location-ul').show();
+       }else{
+          $('.location-ul').hide();
+       }
+
+       if(evt.target.classList.contains('smallReg') || evt.target.id == 'regionTypeBtn'){
+          $('.region-ul').show();
+       }else{
+          $('.region-ul').hide();
+       }
+});
+
+$(document).click(function(evt){
+       if(evt.target.classList.contains('codeTypeOpt') || evt.target.id == 'codeTypeBtn'){
+          $('.code-type-ul').show();
+       }else{
+          $('.code-type-ul').hide();
+       }
+});
+ </script>
+
+{% endblock main_js %}
