@@ -1579,7 +1579,6 @@ def program_kick_off(request):
         for item in regn.location.values('location_name'):
             location_list_values.append(item['location_name'])
         region_based_locations[regn.name] = location_list_values
-    print region_based_locations
     return render(request, 'reports/kick_off.html', {'regions': regions,
                                                      'google_email': google_email,
                                                      'managers': all_mail,
