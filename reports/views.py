@@ -1421,7 +1421,8 @@ def link_last_meeting(request, last_id):
     if last_meeting.attachment_5:
         attach_file_5 = last_meeting.attachment_5.name
 
-    media_url = settings.MEDIA_ROOT
+    media_url = settings.MEDIA_URL
+    
     submit_disabled = False
     for attendee in attendees:
         attendees_list.append(str(attendee['email']))
