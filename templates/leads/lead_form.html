@@ -11,7 +11,20 @@
     .shopping-policies .subitems li{
       list-style: none;
     }
-  </style>
+   html {
+    overflow: hidden;
+    height: 100%;
+    width:100%;
+    }
+    body {
+    overflow: auto;
+    height: 100%;
+    width:100%;
+    }
+    .modal-open {
+    overflow: hidden; 
+    }
+</style>
 {% endblock main_css %}
 {% block content %}
 <section class="content-region inner-page">
@@ -1119,6 +1132,7 @@
 $("input:radio[name=web_access]").click(function() {
     /*var value = $(this).val();*/
     $("#notification").modal('show');
+    $('body').removeClass('modal-open');
     $('#tag_primary_role, #shop_primary_role').empty()
     $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Owner">Owner</option><option value="Marketing">Marketing</option>');
 

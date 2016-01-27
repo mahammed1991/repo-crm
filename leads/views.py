@@ -1936,6 +1936,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'abraham@regalix-inc.com',
             'gedward@regalix-inc.com',
             'anusha.panchikala@regalix-inc.com',
+            'michelle.fernandes@regalix-inc.com',
         ])
     else:
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
