@@ -883,7 +883,6 @@ display:block;
     function mytooltip(value1, value2){
         var html_rows = '';
         var html_data = '';
-        debugger;
         var count = 0;
         var val_obj = value2;
         for(var i in val_obj){
@@ -910,8 +909,10 @@ display:block;
         if(value2 == 0){
             $('.new_row_display').hide();
             $('.arrow-down').css('display','none');
-        }else{
+        }else if(count != 0){
             $('.new_row_display').show();
+        }else{
+            $('.new_row_display').hide();
         }
     }
     function mytooltip2(value1){
