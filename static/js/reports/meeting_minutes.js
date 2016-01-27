@@ -393,11 +393,17 @@ $('#internal_meeting').click(function(){
     var not_available = 'NA';
     $('#google_poc').val(not_available);
     $('#google_team').val(not_available);
+    $('#google_poc').prop('readonly', true);
+    $('#google_team').prop('readonly', true);
     $('#region').val('APAC');
     $('#country').val('India');
+    $('#region').prop('readonly', true);
+    $('#country').prop('readonly', true);
   }else{
     $('#google_poc').val('');
     $('#google_team').val('');
+    $('#google_poc').prop('readonly', false);
+    $('#google_team').prop('readonly', false);
     $('#region option').eq(0).prop('selected', true);
     $('#country option').eq(0).prop('selected', true);
     $('#region').prop('disabled', false);
@@ -407,6 +413,8 @@ $('#internal_meeting').click(function(){
 });
 
 $('#external_meeting').click(function(){
+  $('#google_poc').prop('readonly', false);
+  $('#google_team').prop('readonly', false);
   $('#region').prop('disabled', false);
   $('#country').prop('disabled', false);
   $('#google_poc').val('');
