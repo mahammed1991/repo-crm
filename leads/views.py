@@ -498,7 +498,7 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -603,7 +603,7 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -694,7 +694,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -812,7 +812,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -1317,7 +1317,7 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('campaign_ids' + str(indx))] = post_data.get('campaign_ids' + str(cindx))
         tag_data[tag_leads.get('create_new_bid_modifiers' + str(indx))] = post_data.get('create_new_bid_modifiers' + str(cindx))
         tag_data[tag_leads.get('overwrite_existing_bid_modifiers' + str(indx))] = post_data.get('overwrite_existing_bid_modifiers' + str(cindx))
-        tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
+        # tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
 
         # elif indx == 2:
         #     # Code Type 2 Details

@@ -1019,6 +1019,27 @@
             </ol>         
           </div>
     </div>
+    <!-- Notification dropdown for Web Access -->
+          <div class="modal fade" id="notification" role="dialog">
+            <div class="modal-dialog " style="width:510px;">
+              <!-- Modal content-->
+              <div class="modal-content" style="width:510px;">
+                <div class="modal-header" style="background:red !important;">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title"> Notification</h4>
+                </div>
+                <div class="modal-body" style="height:200px !important;width:510px; !important">
+                  <p>Make sure your advertiser has administrative access to the website. This means, they have either FTP or admin panel credentials and can make code changes to their website. If they don't, they can invite their webmaster to join our call. If the webmaster is unavailable, you'll need to reschedule the call.
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+    <!-- End of Notification dropdown for Web Access -->
 
     <div class="btns text-center" style="display:none;" id="submit_buttons">
         <div class="btn-group">
@@ -1097,6 +1118,7 @@
 
 $("input:radio[name=web_access]").click(function() {
     /*var value = $(this).val();*/
+    $("#notification").modal('show');
     $('#tag_primary_role, #shop_primary_role').empty()
     $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Owner">Owner</option><option value="Marketing">Marketing</option>');
 
@@ -1234,6 +1256,5 @@ function mandatoryAppointmentForLanguages(language){
 
   }
 }
-
 </script>
 {% endblock main_js %}
