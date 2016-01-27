@@ -11,7 +11,20 @@
     .shopping-policies .subitems li{
       list-style: none;
     }
-  </style>
+   html {
+    overflow: hidden;
+    height: 100%;
+    width:100%;
+    }
+    body {
+    overflow: auto;
+    height: 100%;
+    width:100%;
+    }
+    .modal-open {
+    overflow: hidden; 
+    }
+</style>
 {% endblock main_css %}
 {% block content %}
 <section class="content-region inner-page">
@@ -290,7 +303,7 @@
                     </div>
                      <div class="col-md-12 checkbox" >
                         <label>
-                          <input id="rsla_policies1" type="checkbox" name="rsla_policies1" value="0" class="rlsa_bulk headsup-policies">
+                          <input id="rsla_policies1" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
                               Have you ensured that the website meets the RLSA policies specified  
                               <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
                         </label>
@@ -441,7 +454,7 @@
                     </div>
                      <div class="col-md-12 checkbox" >
                         <label>
-                          <input id="rsla_policies2" type="checkbox" name="rsla_policies2" value="0" class="rlsa_bulk headsup-policies">
+                          <input id="rsla_policies2" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
                               Have you ensured that the website meets the RLSA policies specified  
                               <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
                         </label>
@@ -585,7 +598,7 @@
                     </div>
                      <div class="col-md-12 checkbox" >
                         <label>
-                          <input id="rsla_policies3" type="checkbox" name="rsla_policies3" value="0" class="rlsa_bulk headsup-policies">
+                          <input id="rsla_policies3" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
                               Have you ensured that the website meets the RLSA policies specified  
                               <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
                         </label>
@@ -728,7 +741,7 @@
                     </div>
                      <div class="col-md-12 checkbox" >
                         <label>
-                          <input id="rsla_policies4" type="checkbox" name="rsla_policies4" value="0" class="rlsa_bulk headsup-policies">
+                          <input id="rsla_policies4" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
                               Have you ensured that the website meets the RLSA policies specified  
                               <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
                         </label>
@@ -871,7 +884,7 @@
                     </div>
                      <div class="col-md-12 checkbox" >
                         <label>
-                          <input id="rsla_policies5" type="checkbox" name="rsla_policies5" value="0" class="rlsa_bulk headsup-policies">
+                          <input id="rsla_policies5" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
                               Have you ensured that the website meets the RLSA policies specified  
                               <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
                         </label>
@@ -1019,6 +1032,27 @@
             </ol>         
           </div>
     </div>
+    <!-- Notification dropdown for Web Access -->
+          <div class="modal fade" id="notification" role="dialog">
+            <div class="modal-dialog " style="width:510px;">
+              <!-- Modal content-->
+              <div class="modal-content" style="width:510px;">
+                <div class="modal-header" style="background:red !important;">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title"> Notification</h4>
+                </div>
+                <div class="modal-body" style="height:200px !important;width:510px; !important">
+                  <p>Make sure your advertiser has administrative access to the website. This means, they have either FTP or admin panel credentials and can make code changes to their website. If they don't, they can invite their webmaster to join our call. If the webmaster is unavailable, you'll need to reschedule the call.
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+    <!-- End of Notification dropdown for Web Access -->
 
     <div class="btns text-center" style="display:none;" id="submit_buttons">
         <div class="btn-group">
@@ -1097,6 +1131,8 @@
 
 $("input:radio[name=web_access]").click(function() {
     /*var value = $(this).val();*/
+    $("#notification").modal('show');
+    $('body').removeClass('modal-open');
     $('#tag_primary_role, #shop_primary_role').empty()
     $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Owner">Owner</option><option value="Marketing">Marketing</option>');
 
@@ -1150,19 +1186,28 @@ $(document).on('change', '#country', function() {
     $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
     $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption("Select Task Type", ""));
 
-  if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
 
-        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
-        if (rlsaIndx != -1) {
-            window.code_types.splice(rlsaIndx, 1);
+        if (['Vietnam'].indexOf(location) != -1) {
+            $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
+            window.code_types = []
+            window.code_types = ['Select Task Type', 'Adwords Conversion Code', 'AdWords Remarketing', 'Analytics', 'Analytics Destination Tracking']
+
+        } else {
+            window.code_types = {{code_types|safe}};
+            rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+            if (rlsaIndx != -1) {
+                window.code_types.splice(rlsaIndx, 1);
+            }
         }
+
 
     } else {
 
-      if(['UK/I'].indexOf(location) != -1){
-         $('#appointment_check_tag').show();
-        $('#appointment_check_shopping').show();
-      }
+        if (['UK/I'].indexOf(location) != -1) {
+            $('#appointment_check_tag').show();
+            $('#appointment_check_shopping').show();
+        }
 
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx == -1) {
@@ -1216,8 +1261,8 @@ function clearAndHideFields(){
 }
 
 function mandatoryAppointmentForLanguages(language){
-  $('#appointment_check_tag').hide();
-  $('#appointment_check_shopping').hide();
+  $('#appointment_check_tag').show();
+  $('#appointment_check_shopping').show();
       
   if(['French', 'German', 'Italian'].indexOf(language) != -1){
       $('#appointment_check_tag').hide();
@@ -1225,6 +1270,5 @@ function mandatoryAppointmentForLanguages(language){
 
   }
 }
-
 </script>
 {% endblock main_js %}

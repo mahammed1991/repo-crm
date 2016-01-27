@@ -50,7 +50,6 @@
     <div class="row">
       <div class="col-md-6">
         <label for="gref">Google Rep Name</label>
-        <!-- <input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /> -->
         <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
         <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
         <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
@@ -73,19 +72,10 @@
         <label for="cid">Customer ID</label>
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
       </div>
-      <!-- <div class="col-md-6">
-        <label for="internal_cid1">Internal Customer ID</label>
-        <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="Internal Customer ID">
-      </div> -->
       <div class="col-md-6">
         <label for="picasso_pod">POD Name</label>
         <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2">
       </div>
-      <!-- <div class="col-md-6">
-        <label for="last_name">Company Name</label>
-        <input type="text" class="form-control" id="last_name" maxlength="255" name="last_name" placeholder="Company Name">
-      </div> -->
-
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
           <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">

@@ -96,7 +96,7 @@ def lead_form(request):
                 campaign_ids_key = 'campaign_ids' + i
                 create_new_bid_modifiers_key = 'create_new_bid_modifiers' + i
                 overwrite_existing_bid_modifiers_key = 'overwrite_existing_bid_modifiers' + i
-                rsla_policies_key = 'rsla_policies' + i
+                # rsla_policies_key = 'rsla_policies' + i
 
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
@@ -114,7 +114,7 @@ def lead_form(request):
                 tag_data[tag_leads[campaign_ids_key]] = request.POST.get(campaign_ids_key)
                 tag_data[tag_leads[create_new_bid_modifiers_key]] = request.POST.get(create_new_bid_modifiers_key)
                 tag_data[tag_leads[overwrite_existing_bid_modifiers_key]] = request.POST.get(overwrite_existing_bid_modifiers_key)
-                tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
+                # tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
@@ -282,16 +282,16 @@ def picasso_lead_form(request):
         tat_dict = get_tat_for_picasso('SFDC')
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
-            request.session[str(request.user.email)+'estimated_tat'] = estimated_tat
-            request.session[str(request.user.email)+'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+            request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
+            request.session[str(request.user.email) + 'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
 
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
                 picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
             elif key == 'unique_ref_id':
                 picasso_data[value] = get_unique_uuid('Picasso')
-            elif key == 'comment1':
-                picasso_data[value] = estimated_tat
+            elif key == 'picasso_tat':
+                picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
             else:
                 picasso_data[value] = request.POST.get(key)
 
@@ -498,7 +498,7 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -603,7 +603,7 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -694,7 +694,7 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -812,7 +812,7 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
             tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
             tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
-            tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
             tag_data[tag_leads['rbid1']] = request.POST.get('rbid' + indx)
@@ -1317,7 +1317,7 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('campaign_ids' + str(indx))] = post_data.get('campaign_ids' + str(cindx))
         tag_data[tag_leads.get('create_new_bid_modifiers' + str(indx))] = post_data.get('create_new_bid_modifiers' + str(cindx))
         tag_data[tag_leads.get('overwrite_existing_bid_modifiers' + str(indx))] = post_data.get('overwrite_existing_bid_modifiers' + str(cindx))
-        tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
+        # tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
 
         # elif indx == 2:
         #     # Code Type 2 Details
@@ -1927,7 +1927,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
     bcc = set()
 
     if advertiser_details['code_type'] == 'WPP':
-        mail_subject = "WPP Customer ID: %s Authorization Email for Google Code Installation" % (advertiser_details['cid_std'])
+        mail_subject = "WPP Customer ID: %s PICASSO Build(WPP) Implementation Lead" % (advertiser_details['cid_std'])
         mail_to = set([
             # str(advertiser_details['email']),
             'asarkar@regalix-inc.com',
@@ -1935,8 +1935,8 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'sprasad@regalix-inc.com',
             'abraham@regalix-inc.com',
             'gedward@regalix-inc.com',
-            'gshylendra@regalix-inc.com'
-
+            'anusha.panchikala@regalix-inc.com',
+            'michelle.fernandes@regalix-inc.com',
         ])
     else:
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])

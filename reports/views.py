@@ -1358,12 +1358,39 @@ def link_last_meeting(request, last_id):
         next_meeting_time = last_meeting.next_meeting_datetime.time()
     subject_timeline = last_meeting.subject_timeline
     attendees = last_meeting.attendees.values('email')
+    bcc = last_meeting.bcc.values('email')
     other_subject = last_meeting.other_subject
     link_region = last_meeting.region
     link_location = last_meeting.location
     link_program = last_meeting.program
     link_program_type = last_meeting.program_type
 
+    meeting_audience = last_meeting.meeting_audience
+
+    attach_link_1 = last_meeting.attached_link_1
+    attach_link_2 = last_meeting.attached_link_2
+    attach_link_3 = last_meeting.attached_link_3
+    attach_link_4 = last_meeting.attached_link_4
+    attach_link_5 = last_meeting.attached_link_5
+
+    attach_file_1 = ''
+    attach_file_2 = ''
+    attach_file_3 = ''
+    attach_file_4 = ''
+    attach_file_5 = ''
+    if last_meeting.attachment_1:
+        attach_file_1 = last_meeting.attachment_1.name
+    if last_meeting.attachment_2:
+        attach_file_2 = last_meeting.attachment_2.name
+    if last_meeting.attachment_3:
+        attach_file_3 = last_meeting.attachment_3.name
+    if last_meeting.attachment_4:
+        attach_file_4 = last_meeting.attachment_4.name
+    if last_meeting.attachment_5:
+        attach_file_5 = last_meeting.attachment_5.name
+
+    media_url = settings.MEDIA_URL
+    
     submit_disabled = False
 
     for attendee in attendees:
@@ -1408,10 +1435,38 @@ def export_meeting_minutes(request):
 
     return render(request, 'reports/export_meeting_minutes.html', {})
 
+def write_appointments_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
 
 def generate_last_meeting_link(request):
     return HttpResponse(json.dumps())
 
+def get_meeting_minutes(request):
+    if request.is_ajax():
+        meeting_date_from = request.GET.get('meeting_date_from')
+        meeting_date_to = request.GET.get('meeting_date_to')
+        program = request.GET.get('program')
+        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                            program=program)
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+        final_meeting_list = list()
+        for meeting_minute in meeting_minutes:
+            meeting_minute_dict = dict()
+            meeting_date = meeting_minute.meeting_time_in_ist.date()
+            meeting_minute_dict['link_meeting_date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            meeting_minute_dict['program'] = meeting_minute.program
+            meeting_minute_dict['program_type'] = meeting_minute.program_type
+            meeting_minute_dict['subject_timeline'] = meeting_minute.subject_timeline
+            meeting_minute_dict['other_subject'] = meeting_minute.other_subject
+            meeting_minute_dict['ref_uuid'] = meeting_minute.ref_uuid
+            final_meeting_list.append(meeting_minute_dict)
+    return HttpResponse(json.dumps(final_meeting_list))
 
 def program_kick_off(request):
     google_email = list()
@@ -1447,3 +1502,19 @@ def program_kick_off(request):
                                                      'region_locations': region_locations,
                                                      'all_locations': all_locations,
                                                      'region_based_locations': json.dumps(region_based_locations)})
+
+def generate_link(request):
+    if request.is_ajax():
+        subject_timeline = request.GET.get('subject')
+        program = request.GET.get('program')
+        program_type = request.GET.get('program_type')
+        if program_type:
+            meeting_minutes = MeetingMinutes.objects.filter(subject_timeline=subject_timeline, program=program, program_type=program_type).last()
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(subject_timeline=subject_timeline, program=program).last()
+
+        if meeting_minutes:
+            link_last_meeting = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minutes.ref_uuid)
+        else:
+            link_last_meeting = 'No Data'
+    return HttpResponse(json.dumps(link_last_meeting))

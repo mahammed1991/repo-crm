@@ -672,6 +672,11 @@ def create_or_update_picasso_leads(records, sf):
         date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
         lead.date_of_installation = date_of_installation
 
+        # estimated TAT for Lead
+        estimated_tat = rec.get('Picasso_TAT__c')
+        estimated_tat = SalesforceApi.salesforce_date_to_datetime_format(estimated_tat)
+        lead.estimated_tat = estimated_tat
+
         lead.regalix_comment = unicode(rec.get('All_Regalix_Comments__c')).encode('unicode_escape')
         lead.google_comment = unicode(rec.get('Google_Comment__c')).encode('unicode_escape')
 

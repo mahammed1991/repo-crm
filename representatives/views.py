@@ -1308,17 +1308,18 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
                 '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
 
-        appointments[key]['value'] += int(apptmnt.availability_count)
-        appointments[key]['booked'] += int(apptmnt.booked_count)
-        appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
-        # import ipdb; ipdb.set_trace()
-        if apptmnt.booked_count != 0L:
-            appointments[key]['team_booked'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.booked_count))})
-            # print appointments[key]['team_booked']
+        if key in appointments:
+            appointments[key]['value'] += int(apptmnt.availability_count)
+            appointments[key]['booked'] += int(apptmnt.booked_count)
+            appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
+            # import ipdb; ipdb.set_trace()
+            if apptmnt.booked_count != 0L:
+                appointments[key]['team_booked'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.booked_count))})
+                # print appointments[key]['team_booked']
 
-        # appointments[key]['team_count'] = 8
-        total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
-        total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.booked_count))
+            # appointments[key]['team_count'] = 8
+            total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
+            total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.booked_count))
     total_slots = list()
     for key, value in sorted(total_available.iteritems()):
         total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})
