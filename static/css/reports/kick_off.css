@@ -1,0 +1,99 @@
+form label {
+    font-size: 13px;
+    color: #999;
+    padding: 12px;
+}
+
+#submit_kick_off {
+    margin: auto 40%;
+    margin-bottom: 20px;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+   margin: 0; 
+}
+
+.set-text-align{ margin-top:-8px;}
+
+.set-text-align-fit{ margin-top:-20px;}
+
+.code-type-ul {max-height: 150px;overflow:scroll;}
+              
+.multi-select-locations .dropdown-toggle,.multi-select .dropdown-toggle, .multi-select-codetype .dropdown-toggle{
+  height:50px;
+  font-size: 14px;
+  border-radius: 0px;
+  padding: 10px;  
+}
+
+.dropdown-menu{width:200px;}
+
+.dropdown-menu .inner{width:auto;}
+
+.s-two { margin-left:21.5px;}
+
+.s-three{ margin-left: 21.5px;}
+
+.s textarea{height:51px;width:258px;}
+
+#program_overview > textarea {height: 51px;}
+
+.comment textarea {height: 51px;}
+
+.data_upload textarea {height: 51px;}
+
+.expectations textarea { height:51px } 
+
+.program_over textarea{height:51px;}
+
+.multi-select-codetype .open{max-height: 100px !important;}
+
+.multi-select-codetype .dropdown-menu .inner { max-width:334px !important;}
+
+.add-testimony{background: #109d59;}
+
+.add-testimony:hover{background: #109d59;}
+
+.remove-testimony{background: #d04033;margin-right: 10px;}
+
+.remove-testimony:hover{background: #d04033;}
+
+.add-succes{background: #109d59;}
+
+.add-succes:hover{background: #109d59;}
+
+.remove-succes{background: #d04033;margin-right: 10px;}
+
+.remove-succes:hover{background: #d04033;}
+
+.succes-btn{padding: 10px;}
+
+.dropdown-menu .inner { font-size:13px !important; max-height: 110px !important;}
+
+.bootstrap-select.btn-group .dropdown-toggle .filter-option { font-size:13px !important; }
+
+#teamcheck{ padding: 10px 10px; }
+
+.process{ margin-right: 5px; margin-left: -8px; }
+
+.hideItems{ display: none; }
+
+.drpDown ul{
+	position: absolute;
+	z-index: 10;
+	display: none;
+	padding: 0;  
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15); 
+	border-radius: 4px; 
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+.drpDown ul li{ list-style-type: none; border-bottom: 1px solid #dbdbdb; }
+.tickMark{ opacity: 0; }
+
+.tickMarkShow{ opacity: 1; }
+
+.hiddenCheckbox{ display: none; }

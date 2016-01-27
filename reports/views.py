@@ -1546,3 +1546,39 @@ def generate_link(request):
         else:
             link_last_meeting = 'No Data'
     return HttpResponse(json.dumps(link_last_meeting))
+
+
+def program_kick_off(request):
+    google_email = list()
+    all_mail = list()
+    managers = User.objects.values_list('email', flat=True)
+    for manager in managers:
+        if 'google.com' in manager:
+            google_email.append(str(manager))
+        all_mail.append(str(manager))
+    regions = Region.objects.all()
+    locations = Location.objects.filter(is_active=True)
+    region_locations = dict()
+    all_locations = list()
+    for loc in locations:
+            l = {'id': int(loc.id), 'name': str(loc.location_name)}
+            all_locations.append(l)
+    for rgn in regions:
+            for loc in rgn.location.all():
+                region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+    code_types_name = LeadSummaryReports.objects.all()
+    region_based_locations = dict()
+    for regn in regions:
+        location_list_values = list()
+        for item in regn.location.values('location_name'):
+            location_list_values.append(item['location_name'])
+        region_based_locations[regn.name] = location_list_values
+    print region_based_locations
+    return render(request, 'reports/kick_off.html', {'regions': regions,
+                                                     'google_email': google_email,
+                                                     'managers': all_mail,
+                                                     'code_types_name': code_types_name,
+                                                     'locations': locations,
+                                                     'region_locations': region_locations,
+                                                     'all_locations': all_locations,
+                                                     'region_based_locations': json.dumps(region_based_locations)})
