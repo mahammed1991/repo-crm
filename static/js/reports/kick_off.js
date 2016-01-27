@@ -172,14 +172,6 @@ $('.code-type-ul').children().on('click', function(){
         var elements = $('.code-type-ul li a .tickMarkShow');
         if(elements.length > 0)
         {
-            /*for (var i=0;i<elements.length;i++)
-            {
-                var element_id = $(elements[i]).parent().parent().attr('id');
-                for (var j=0;j<window.regionWiseLocations[element_id].length;j++)
-                {
-                    
-                }
-            }*/
             $('.code-type-ul').children().on('click', function(){
                 selectCodetype(this.className, this);
             });

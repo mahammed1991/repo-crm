@@ -8,7 +8,6 @@
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
 <link rel="stylesheet" href="{% static 'css/reports/kick_off.css' %}" >
-<!-- <link rel="stylesheet" href="{% static 'css/reports/bootstrap-select.min.css' %}" > -->
 <style type="text/css">  </style>
 {% endblock main_css %}
 
@@ -106,12 +105,6 @@
                          <label for="">Support Required with Code Types?: </label>
                     </div>
                      <div class="col-md-4">
-                          <!-- <select style="" class="form-control selectpicker multi-select-codetype bgicon" multiple id="code_type" title="Code Types" name="code_type">
-                            {% for item in code_types_name %}
-                                <span><option value="{{item.code_type}}"  code_type_id="{{item.id}}">{{item.code_type}}</option></span>
-                            {% endfor %}
-                         </select> -->
-
                           <div id="code_type" class="btn-group drpDown" style="width: 98%;">
                                <div id="code_type_opt" class="btn-group drpDown" style="width: 100%;">
                                     <button type="button" class="form-control bgicon" id="codeTypeBtn" style="width: 102.5%;">Code Type</button>
@@ -479,7 +472,6 @@
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
 <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
 <script src="{% static 'js/reports/kick_off.js' %}"></script> 
-<!-- <script src="{% static 'js/reports/bootstrap-select.min.js' %}"></script> -->
 
 <script type="text/javascript">
 
@@ -524,7 +516,6 @@ $(".datepickerFrom_a").datetimepicker({
           manager_email.push( ui.item.value );
           manager_email.push("");
           this.value = manager_email.join(", ");
-         //$('#user_manager_name').val(window.user_details[ui.item.value]);
       }
       });
     });
@@ -553,7 +544,6 @@ $(".datepickerFrom_a").datetimepicker({
           manager_email.push( ui.item.value );
           manager_email.push("");
           this.value = manager_email.join(", ");
-         //$('#user_manager_name').val(window.user_details[ui.item.value]);
       }
       });
     });
@@ -582,7 +572,6 @@ $(".datepickerFrom_a").datetimepicker({
           manager_email.push( ui.item.value );
           manager_email.push("");
           this.value = manager_email.join(", ");
-         //$('#user_manager_name').val(window.user_details[ui.item.value]);
       }
       });
     });
