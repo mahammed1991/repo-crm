@@ -279,7 +279,7 @@ def picasso_lead_form(request):
         picasso_data = basic_data
 
         estimated_tat = ""
-        tat_dict = get_tat_for_picasso('SFDC')
+        tat_dict = get_tat_for_picasso('portal')
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
             request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
@@ -1942,10 +1942,12 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
         mail_to = set([
             # str(advertiser_details['email']),
+            'asarkar@regalix-inc.com',
             'skumar@regalix-inc.com',
             'sprasad@regalix-inc.com',
             'gedward@regalix-inc.com',
             'vreguri@regalix-inc.com',
+            'asarkar@regalix-inc.com',
 
         ])
 
