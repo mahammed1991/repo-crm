@@ -205,3 +205,29 @@ class MeetingMinutes(models.Model):
 
     class Meta:
         verbose_name_plural = "Meeting Minutes"
+
+
+class LeadsReport(models.Model):
+    """Reports and analysis of leads"""
+
+    google_rep_name = models.CharField(max_length=255)
+    google_rep_email = models.CharField(max_length=255)
+    lead_owner_name = models.CharField(max_length=255, null=False)  # regalix rep
+    lead_owner_email = models.CharField(max_length=255, null=False)
+    customer_id = models.CharField(max_length=50)
+    lead_status = models.CharField(max_length=50)
+    lead_sub_status = models.CharField(max_length=100, null=True)
+    code_type = models.CharField(max_length=150)
+    program = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
+    region = models.CharField(max_length=255)
+    tat = models.IntegerField(default=0)
+    sf_lead_id = models.CharField(max_length=50, unique=True)
+    language = models.CharField(max_length=50, blank=True, null=True)
+    date_of_installation = models.DateTimeField(blank=True, null=True)
+
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Leads Report"
