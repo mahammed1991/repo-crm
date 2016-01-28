@@ -395,10 +395,12 @@ $('#internal_meeting').click(function(){
     $('#google_team').val(not_available);
     $('#google_poc').prop('readonly', true);
     $('#google_team').prop('readonly', true);
+    $('[name=internal_region]').val('APAC');
+    $('[name=internal_location]').val('India');
     $('#region').val('APAC');
     $('#country').val('India');
-    $('#region').prop('readonly', true);
-    $('#country').prop('readonly', true);
+    $('#region').prop('disabled', true);
+    $('#country').prop('disabled', true);
   }else{
     $('#google_poc').val('');
     $('#google_team').val('');
@@ -406,6 +408,8 @@ $('#internal_meeting').click(function(){
     $('#google_team').prop('readonly', false);
     $('#region option').eq(0).prop('selected', true);
     $('#country option').eq(0).prop('selected', true);
+    $('[name=internal_region]').val('');
+    $('[name=internal_location]').val('');
     $('#region').prop('disabled', false);
     $('#country').prop('disabled', false);
   }
@@ -413,6 +417,8 @@ $('#internal_meeting').click(function(){
 });
 
 $('#external_meeting').click(function(){
+  $('[name=internal_region]').val('');
+  $('[name=internal_location]').val('');
   $('#google_poc').prop('readonly', false);
   $('#google_team').prop('readonly', false);
   $('#region').prop('disabled', false);

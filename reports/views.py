@@ -1177,9 +1177,14 @@ def meeting_minutes(request):
         meeting_minutes.google_team = request.POST.get('google_team')
 
         meeting_minutes.meeting_audience = request.POST.get('meeting_audience')
+        
+        if request.POST.get('meeting_audience') == 'internal_meeting':
+            meeting_minutes.region = request.POST.get('internal_region')
+            meeting_minutes.location = request.POST.get('internal_location')
+        else:
+            meeting_minutes.region = request.POST.get('region')
+            meeting_minutes.location = request.POST.get('location')
 
-        meeting_minutes.region = request.POST.get('region')
-        meeting_minutes.location = request.POST.get('location')
         meeting_minutes.program = request.POST.get('program')
         meeting_minutes.program_type = request.POST.get('program_type')
         next_meeting_date = request.POST.get('next_meeting_date', None)
@@ -1287,7 +1292,7 @@ def meeting_minutes(request):
                 'key_points_highlight': key_points_highlight,
                 'region': meeting_minutes.region,
                 'location': meeting_minutes.location,
-
+                'internal_meeting': meeting_minutes.meeting_audience,
                 'program': meeting_minutes.program,
                 'program_type': meeting_minutes.program_type,
                 'other_subject': meeting_minutes.other_subject,

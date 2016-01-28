@@ -7,22 +7,6 @@
 {% block main_css %}
   <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
   <link rel="stylesheet" href="{% static 'css/reports/meeting_minutes.css' %}" >
-  <style type="text/css">
-  
-   html {
-    overflow: hidden;
-    height: 100%;
-    width:100%;
-    }
-    body {
-    overflow: auto;
-    height: 100%;
-    width:100%;
-    }
-    .modal-open {
-    overflow: hidden;
-    }
-</style>
 {% endblock main_css %}
 
 {% block content %}
@@ -32,6 +16,8 @@
 <input type="hidden" name="no_of_keypoints" value="">
 <input type="hidden" name="no_of_actionplans" value="">
 <input type="hidden" name="no_of_tenantive_agenda" value="">
+<input type="hidden" name="internal_region" value="">
+<input type="hidden" name="internal_location" value="">
 
       <div class="container-fluid">
         <h1> Meeting Minutes</h1>
