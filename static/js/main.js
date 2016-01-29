@@ -107,11 +107,11 @@ $(document).ready(function() {
 
 });
 // Olark Hide For WPP Domain Starts Here
-    var wpp_index = window.location.href.indexOf('wpp')
+    /*var wpp_index = window.location.href.indexOf('wpp')
     if (wpp_index === -1) {
         olark('api.box.show');
     } else {
         olark('api.box.hide');
-    }
+    }*/
 
 // Olark Hide For WPP Domain Ends Here
