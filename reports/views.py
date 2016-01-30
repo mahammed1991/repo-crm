@@ -35,8 +35,8 @@ def reports(request):
     if manager:
         members = get_user_under_manager(request.user.email)
         team_members.append(request.user)
-    for member in members:
-        team_members.append(member)
+        for member in members:
+            team_members.append(member)
 
     locations = ReportService.get_all_locations()
     teams = ReportService.get_all_teams()
@@ -55,7 +55,7 @@ def reports(request):
         elif str(report_timeline[0]) == 'this_quarter':
             tag = "Month On Month Trends"
     report_details = {'reports': report_detail, 'code_types': code_types,
-                    'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
+                      'report_type': report_type, 'report_timeline': report_timeline, 'team': teams, 'tag': tag}
     return render(request, 'reports/reports.html', {'locations': locations, 'manager': manager, 'team_members': team_members,
                                                     'teams': teams, 'rgx_teams': rgx_teams, 'code_types': code_types, 'report_details': json.dumps(report_details)})
 
@@ -73,8 +73,8 @@ def reports_new(request):
     if manager:
         members = get_user_under_manager(request.user.email)
         team_members.append(request.user)
-    for member in members:
-        team_members.append(member)
+        for member in members:
+            team_members.append(member)
     locations = ReportService.get_all_locations()
     teams = ReportService.get_all_teams()
     rgx_teams = Region.objects.all()
