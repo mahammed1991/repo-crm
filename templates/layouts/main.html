@@ -52,6 +52,16 @@
             
             <!--begin prepolute of fields -->
 
+              <script type="text/javascript">
+                olark('api.visitor.updateEmailAddress', {
+                        emailAddress: '{{request.user}}'
+                });
+                olark('api.visitor.updateFullName', {
+                    fullName: '{{request.user.first_name}}'
+                });
+            </script>
+
+            {%  olark_group_script request.user %}
 
             <!-- end prepolute of fields -->
             
