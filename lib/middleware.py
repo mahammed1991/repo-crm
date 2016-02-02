@@ -6,7 +6,6 @@ from social.exceptions import AuthForbidden
 from django.shortcuts import redirect
 from main.models import UserDetails
 from leads.models import Location
-from django.contrib.auth.models import Group
 
 
 class SetProfilePicture(object):
@@ -17,12 +16,6 @@ class SetProfilePicture(object):
             request.session['groups'] = list()
             for group in request.user.groups.all():
                 request.session['groups'].append(str(group.name))
-
-            if 'wpp' in request.get_host() and 'WPP' not in request.session['groups']:
-                request.session['groups'].append('TAG-AND-WPP')
-                if 'WPP - WHITELIST' not in request.session['groups']:
-                    request.user.groups.add(Group.objects.get(name='WPP - WHITELIST'))
-                    request.user.save()
 
             if 'TAG-AND-WPP' in request.session['groups']:
                 if 'WPP' in request.session['groups']:
