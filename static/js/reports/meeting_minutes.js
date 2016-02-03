@@ -146,7 +146,7 @@ $('#preview_btn').click(function(){
     $('#preview_subject').prop('disabled', true);
 
     var subject_val = $("#preview_subject").val();
-    if(subject_val == "Others" || subject_val == "New Program Launch" || subject_val == "New Product Launch")
+    if(subject_val == "Others" || subject_val == "New Program Launch" || subject_val == "New Product Launch" || subject_val == 'Ad-hoc')
     {
       $("#preview_others").show();
       $('#preview_others').val($('#others').val());
@@ -258,6 +258,7 @@ $('#preview_btn').click(function(){
     var attachments = new Array();
 
     for(var i=1; i<= preview_attachments.length; i++){
+      attachments.push($('#file_name_link_'+i).val());
       attachments.push($('#file_info_text_'+i).val());
     }
 
@@ -265,8 +266,9 @@ $('#preview_btn').click(function(){
 
     for(var j=1; j<=(attachments_length);j++){
       $('.attach-link-file').append('<tr id="attachment_link'+j+'" class="attachment-link-file"></tr>');
-      $('#attachment_link'+j).append('<td id="preview_file_info_text_'+j+'" class="preview-attach">'+attachments[0]+'</td>');
-      attachments = attachments.splice(1);
+      $('#attachment_link'+j).append('<td id="preview_file_info_name_'+j+'" class="preview-attach">'+attachments[0]+'</td>');
+      $('#attachment_link'+j).append('<td id="preview_file_info_text_'+j+'" class="preview-attach">'+attachments[1]+'</td>');
+      attachments = attachments.splice(2);
     }
 
     $('#preview_internal_meeting').prop('disabled', true);
@@ -352,14 +354,20 @@ function generate_link(data){
       {
           $(".remove-upload").show();
           $new_row = $("#file_upload_row_1").clone().attr('id', 'file_upload_row_'+next_id).show();
+          $(".file-name-link", $new_row).attr('id', 'file_name_link_'+next_id);
+          $(".file-name-attach", $new_row).attr('id', 'file_name_attach_'+next_id);
           $(".file-info-text", $new_row).attr('id', 'file_info_text_'+next_id);
           $(".file-info", $new_row).attr('id', 'file_info_'+next_id);
           $(".file-info-text", $new_row).attr('name', 'file_info_text_'+next_id);
           $(".file-info", $new_row).attr('name', 'file_info_'+next_id);
+          $(".file-name-link", $new_row).attr('name', 'file_name_link_'+next_id);
+          $(".file-name-attach", $new_row).attr('name', 'file_name_attach_'+next_id);
           $new_row.appendTo(".browse-files");
           $('.remove-upload').attr('id',"removefileUpload_" + next_id);
           $('.add-upload-btn').attr('id',"addfileUpload_" + next_id);
           $("#file_info_text_"+next_id).val('');
+          $("#file_name_link_"+next_id).val('');
+          $("#file_name_attach_"+next_id).val('');
         }
         if(next_id == 5 )
         {

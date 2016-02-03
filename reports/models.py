@@ -178,8 +178,12 @@ class MeetingMinutes(models.Model):
     meeting_audience = models.CharField(max_length=255, null=True, blank=True)
     attendees = models.ManyToManyField(User, related_name="attendees")
     bcc = models.ManyToManyField(User, related_name="bcc")
+
     key_points = JSONField(default={})
     action_plan = JSONField(default={})
+    link_file_name = JSONField(default={})
+    attach_file_name = JSONField(default={})
+    
     next_meeting_datetime = models.DateTimeField(blank=True, null=True)
     tenantive_agenda = JSONField(default={})
     region = models.CharField(max_length=255, null=True)
@@ -187,6 +191,7 @@ class MeetingMinutes(models.Model):
     program = models.CharField(max_length=255, null=True)
     program_type = models.CharField(max_length=255, null=True)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
+    meeting_status = models.CharField(max_length=255, blank=True, null=True, default='open')
 
     attachment_1 = models.FileField(upload_to=get_file_path, blank=True, null=True)
     attachment_2 = models.FileField(upload_to=get_file_path, blank=True, null=True)
