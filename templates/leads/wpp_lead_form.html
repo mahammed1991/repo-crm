@@ -219,6 +219,28 @@
   <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
   </div>
 </div>
+
+ <!-- Notification dropdown for Whitelisted Ldaps -->
+    <div class="modal fade" id="notification" role="dialog">
+      <div class="modal-dialog " style="width:510px;">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:510px;">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"> Notification</h4>
+          </div>
+          <div class="modal-body" style="height:200px !important;width:510px; !important">
+            <p>We do not recognize your ldap as being approved to submit leads. Website performance optimization support is restricted to certain programs and markets. You may submit a lead but we will not begin work until you are whitelisted.
+            To be whitelisted, please click the button below to submit a request. Please include in the email body your program, market, and pod name as well as any additional information you think is relevant.
+            </p>
+          </div>
+          <div class="modal-footer" style="text-align:center !important">
+            <button type="button" class="btn btn-default" style="align:center" id="whitelist_request">Request</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Notification dropdown for Whitelisted Ldaps -->
 {% endblock content %}
 
 {% block main_js %}
@@ -230,6 +252,12 @@
   $(document).ready(function(){
 
     window.objectives = "{{ref_lead.picasso_objective|safe}}";
+
+    var whitelist = "{{whitelisted_user|safe}}";
+
+    if(whitelist){
+      $("#notification").modal('show');
+    }
     
 
     var team = "{{ref_lead.team|safe}}";
@@ -369,5 +397,21 @@ $(document).on('change', '.advertiser-role', function(e) {
 
 });
 
+$('#whitelist_request').on('click', function(){
+  $.ajax({
+          'url': "/leads/wpp-whitelist-request/",
+          'dataType': "json",
+          'type': 'GET',
+          success: function(response) {
+            if (response['status'] == 'success'){
+              $("#notification").modal('hide');
+              $('#preloaderOverlay2').hide();
+            }
+          },
+          error: function(errorThrown) {
+          }
+      }); 
+
+});
 </script>
 {% endblock main_js %}
