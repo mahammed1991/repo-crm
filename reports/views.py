@@ -1159,6 +1159,8 @@ def meeting_minutes(request):
     key_points_dict = dict()
     action_plan_dict = dict()
     tenantive_agenda_dict = dict()
+    link_file_name_dict = dict()
+    attach_file_name_dict = dict()
 
     if request.method == 'POST':
         key_points = OrderedDict()
@@ -1196,6 +1198,8 @@ def meeting_minutes(request):
         total_keypoints_count = request.POST.get('no_of_keypoints')
         total_actionplan_count = request.POST.get('no_of_actionplans')
         total_tenantive_agenda = request.POST.get('no_of_tenantive_agenda')
+        total_link_file_name = request.POST.get('no_of_file_name_link')
+        total_attach_file_name = request.POST.get('no_of_file_name_attach')
 
         key_points_topic = list()
         key_points_highlight = list()
@@ -1221,9 +1225,21 @@ def meeting_minutes(request):
             tenantive_agenda_list.append(request.POST['agenda_text_' + str(i)])
             tenantive_agenda_dict['agenda_text_' + str(i)] = request.POST['agenda_text_' + str(i)]
 
+        link_file_name_list = list()
+        for i in range(1, int(total_link_file_name) + 1):
+            link_file_name_list.append(request.POST['file_name_link_'+str(i)])
+            link_file_name_dict['file_name_link_'+str(i)] = request.POST['file_name_link_'+str(i)]
+
+        attach_file_name_list = list()
+        for i in range(1, int(total_attach_file_name) + 1):
+            attach_file_name_list.append(request.POST['file_name_attach_'+str(i)])
+            attach_file_name_dict['file_name_attach_'+str(i)] = request.POST['file_name_attach_'+str(i)]
+
         meeting_minutes.key_points = json.dumps(key_points)
         meeting_minutes.tenantive_agenda = json.dumps(tenantive_agenda_dict)
         meeting_minutes.action_plan = json.dumps(action_plans)
+        meeting_minutes.link_file_name = json.dumps(link_file_name_dict)
+        meeting_minutes.attach_file_name = json.dumps(attach_file_name_dict)
 
         meeting_minutes.attachment_1 = request.FILES.get('file_info_1')
         meeting_minutes.attachment_2 = request.FILES.get('file_info_2')
@@ -1364,7 +1380,6 @@ def meeting_minutes(request):
         link_to_last_subject_timeline = link_to_last_data.subject_timeline
         link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
 
-    # send mail
     return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
                                                             'tenantive_agenda_dict': tenantive_agenda_dict,
                                                             'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline,
@@ -1431,6 +1446,41 @@ def link_last_meeting(request, last_id):
     if last_meeting.attachment_5:
         attach_file_5 = last_meeting.attachment_5.name
 
+    attach_file_name_1 = ''
+    attach_file_name_2 = ''
+    attach_file_name_3 = ''
+    attach_file_name_4 = ''
+    attach_file_name_5 = ''
+    key_order_attach_file_name = {k:v for v, k in enumerate(['file_name_attach_1', 'file_name_attach_2', 'file_name_attach_3', 'file_name_attach_4', 'file_name_attach_5'])}
+    attach_file_name_dict = OrderedDict(sorted(last_meeting.attach_file_name.items(), key=lambda i: key_order_attach_file_name.get(i[0])))
+    if 'file_name_attach_1' in last_meeting.attach_file_name:
+        attach_file_name_1 = attach_file_name_dict['file_name_attach_1']
+    if 'file_name_attach_2' in last_meeting.attach_file_name:
+        attach_file_name_2 = attach_file_name_dict['file_name_attach_2']
+    if 'file_name_attach_3' in last_meeting.attach_file_name:
+        attach_file_name_3 = attach_file_name_dict['file_name_attach_3']
+    if 'file_name_attach_4' in last_meeting.attach_file_name:
+        attach_file_name_4 = attach_file_name_dict['file_name_attach_4']
+    if 'file_name_attach_5' in last_meeting.attach_file_name:
+        attach_file_name_5 = attach_file_name_dict['file_name_attach_5']
+
+    link_file_name_1 = ''
+    link_file_name_2 = ''
+    link_file_name_3 = ''
+    link_file_name_4 = ''
+    link_file_name_5 = ''
+    key_order_link_file_name = {k:v for v, k in enumerate(['file_name_link_1', 'file_name_link_2', 'file_name_link_3', 'file_name_link_4', 'file_name_link_5'])}
+    link_file_name_dict = OrderedDict(sorted(last_meeting.link_file_name.items(), key=lambda i: key_order_link_file_name.get(i[0])))
+    if 'file_name_link_1' in last_meeting.link_file_name:
+        link_file_name_1 = link_file_name_dict['file_name_link_1']
+    if 'file_name_link_2' in last_meeting.link_file_name:
+        link_file_name_2 = link_file_name_dict['file_name_link_2']
+    if 'file_name_link_3' in last_meeting.link_file_name:
+        link_file_name_3 = link_file_name_dict['file_name_link_3']
+    if 'file_name_link_4' in last_meeting.link_file_name:
+        link_file_name_4 = link_file_name_dict['file_name_link_4']
+    if 'file_name_link_5' in last_meeting.link_file_name:
+        link_file_name_5 = link_file_name_dict['file_name_link_5']
     media_url = settings.MEDIA_URL
     
     submit_disabled = False
@@ -1466,7 +1516,10 @@ def link_last_meeting(request, last_id):
                                                             'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
                                                             'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
                                                             'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
-                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience})
+                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience, 
+                                                            'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4, 
+                                                            'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
+                                                            'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5})
 
 
 @login_required
@@ -1478,36 +1531,52 @@ def meeting_minutes_thankyou(request):
 @login_required
 def export_meeting_minutes(request):
     if request.method == 'POST':
-        excel_header = ['Meeting Date', 'Subject Timeline', 'Link']
-        meeting_date_from = request.POST.get('date_from')
-        meeting_date_to = request.POST.get('date_to')
-        program = request.POST.get('program')
-        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
-        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
-        if program != 'all':
-            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
-                                                        program=program)
+        if request.POST.get('referenace_id'):
+            update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('referenace_id'))
+            update_status.meeting_status = request.POST.get('status')
+            update_status.save()
         else:
-            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
-        final_meeting_list = list()
-        for meeting_minute in meeting_minutes:
-            meeting_minute_dict = dict()
-            meeting_date = meeting_minute.meeting_time_in_ist.date()
-            meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-            meeting_minute_dict['Subject Timeline'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
-            if meeting_minute.ref_uuid:
-                meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
+            excel_header = ['Meeting Date', 'Subject Timeline', 'Link']
+            meeting_date_from = request.POST.get('date_from')
+            meeting_date_to = request.POST.get('date_to')
+            program = request.POST.get('program')
+            meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+            meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+            if program != 'all':
+                meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                            program=program)
             else:
-                meeting_minute_dict['Link'] = ''
-            final_meeting_list.append(meeting_minute_dict)
+                meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+            final_meeting_list = list()
+            for meeting_minute in meeting_minutes:
+                meeting_minute_dict = dict()
+                meeting_date = meeting_minute.meeting_time_in_ist.date()
+                meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+                meeting_minute_dict['Subject Timeline'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
+                if meeting_minute.ref_uuid:
+                    meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
+                else:
+                    meeting_minute_dict['Link'] = ''
+                final_meeting_list.append(meeting_minute_dict)
 
-        filename = "meeting-minutes"
-        path = write_appointments_to_csv(final_meeting_list, excel_header, filename)
-        response = DownloadLeads.get_downloaded_file_response(path)
-        return response
+            filename = "meeting-minutes"
+            path = write_appointments_to_csv(final_meeting_list, excel_header, filename)
+            response = DownloadLeads.get_downloaded_file_response(path)
+            return response
 
-
-    return render(request, 'reports/export_meeting_minutes.html', {})
+    all_records_list = list()
+    all_meeting_records = MeetingMinutes.objects.all()
+    for each_record in all_meeting_records:
+        each_record_dict = dict()
+        meeting_date = each_record.meeting_time_in_ist.date()
+        each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+        each_record_dict['Subject Timeline'] = each_record.program + ' ' + each_record.program_type + ' ' + each_record.subject_timeline + ' ' + each_record.other_subject
+        key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 'action_item_15', 'owner_15', 'action_date_15',])}
+        each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_record.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
+        each_record_dict['reference_num'] = each_record.ref_uuid
+        each_record_dict['meeting_minutes_status'] = each_record.meeting_status
+        all_records_list.append(each_record_dict)
+    return render(request, 'reports/export_meeting_minutes.html', {'all_records_list': json.dumps(all_records_list)})
 
 def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
