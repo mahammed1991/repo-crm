@@ -114,8 +114,11 @@ def current_domain(request):
         elif 'wpp' in request.get_host() and 'WPP' in request.session['groups']:
             change_url = 0
         elif 'wpp' in request.get_host() and 'WPP' not in request.session['groups']:
-            current_domain = request.get_host().replace('wpp.', 'gtrack.')
-            change_url = 1
+            # current_domain = request.get_host().replace('wpp.', 'gtrack.')
+            request.user.groups.add(Group.objects.get(name='WPP - WHITELIST'))
+            request.session['groups'].append('WPP - WHITELIST')
+            request.user.save()
+            change_url = 0
 
     return HttpResponse(json.dumps({'current_domain': current_domain,
                                     'change_url': change_url,

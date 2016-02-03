@@ -7,18 +7,21 @@ register = template.Library()
 
 @register.simple_tag
 def olark_group_script(user):
-    if user.email:
-        chat_group = OlarkChatGroup.objects.filter(google_rep__in=[user])
-        if len(chat_group) > 0:
-            return chat_group[0].olark_script
-
-        if user.profile.team and user.profile.location:
-
-            chat_group = OlarkChatGroup.objects.filter(programs__in=[user.profile.team], target_location__in=[user.profile.location])
+    try:
+        if user.email:
+            chat_group = OlarkChatGroup.objects.filter(google_rep__in=[user])
             if len(chat_group) > 0:
                 return chat_group[0].olark_script
 
-    return "<script>olark('api.box.hide');</script>"
+            if user.profile.team and user.profile.location:
+
+                chat_group = OlarkChatGroup.objects.filter(programs__in=[user.profile.team], target_location__in=[user.profile.location])
+                if len(chat_group) > 0:
+                    return chat_group[0].olark_script
+        else:
+            return "<script>olark('api.box.hide');</script>"
+    except Exception:
+        return "<script>olark('api.box.hide');</script>"
 
 
 @register.filter(name='has_group')
