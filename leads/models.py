@@ -398,6 +398,7 @@ class CodeType(models.Model):
     """ Code Types list """
 
     name = models.CharField(max_length=100, unique=True)
+    avg_setup_time = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
