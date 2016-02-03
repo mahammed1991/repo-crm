@@ -67,6 +67,9 @@ Meeting Minutes Summary
             <input type="submit" value="Download" class="btn std-btn">
         </div>
     </form>
+      <div class="container-fluid">
+        <table class="display_meeting_minutes" style="width:100%;margin-top: 44px;margin-bottom: 35px;"></table>
+      </div>
     <form method="post">
     {% csrf_token %}
       <div class="container-fluid">
@@ -90,9 +93,6 @@ Meeting Minutes Summary
       <input type="hidden" name="referenace_id" value="">
       <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;">
     </form>
-      <div class="container-fluid">
-        <table class="display_meeting_minutes" style="width:100%;margin-top: 44px;margin-bottom: 35px;"></table>
-      </div>
     </div>
 </section>
 
@@ -108,15 +108,6 @@ Meeting Minutes Summary
   }
   function display_all_record_table(all_meeting_records){
     $('.display_all_meeting_minutes').html('');
-    /*header = '<tr>'+
-             '<th class="headlinks-default">Meeting Date</th>'+
-             '<th class="headlinks-default">Subject Timeline</th>'+
-             '<th class="headlinks-default">Action Item(s)</th>'+
-             '<th class="headlinks-default">Owner</th>'+
-             '<th class="headlinks-default">Target Date</th>'+
-             '<th class="headlinks-default">Status</th>'+
-             '<th class="headlinks-default">Action</th>'
-             '</tr>'*/
     row = ''
     for(var i=0; i<all_meeting_records.length;i++){
     var count = 0;
@@ -180,8 +171,12 @@ Meeting Minutes Summary
   }
 
   $('input[name=status]').change(function(){
-    $('#submit_status').show();
-    $('input[name="referenace_id"]').val($(this).attr('class'));
+    if($(this).prop('checked')){
+      $('#submit_status').show();
+      $('input[name="referenace_id"]').val($(this).attr('class'));
+    }else{
+      $('#submit_status').hide();
+    }
 
   });
 </script>

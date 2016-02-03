@@ -179,13 +179,13 @@ class MeetingMinutes(models.Model):
     attendees = models.ManyToManyField(User, related_name="attendees")
     bcc = models.ManyToManyField(User, related_name="bcc")
 
-    key_points = JSONField(default={})
-    action_plan = JSONField(default={})
-    link_file_name = JSONField(default={})
-    attach_file_name = JSONField(default={})
+    key_points = JSONField(default={}, blank=True)
+    action_plan = JSONField(default={}, blank=True)
+    tenantive_agenda = JSONField(default={}, blank=True)
+    link_file_name = JSONField(default={}, blank=True)
+    attach_file_name = JSONField(default={}, blank=True)
     
     next_meeting_datetime = models.DateTimeField(blank=True, null=True)
-    tenantive_agenda = JSONField(default={})
     region = models.CharField(max_length=255, null=True)
     location = models.CharField(max_length=255, null=True)
     program = models.CharField(max_length=255, null=True)
