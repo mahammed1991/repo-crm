@@ -8,27 +8,29 @@
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
 <link rel="stylesheet" href="{% static 'css/reports/kick_off.css' %}" >
-<!-- <link rel="stylesheet" href="{% static 'css/reports/bootstrap-select.min.css' %}" > -->
 <style type="text/css">  </style>
 {% endblock main_css %}
 
 {% block content %}
 <section class="content-region inner-page">
-	<form method="POST" action="" id="" onsubmit="" name="kick_off_program">
-			<div class="container-fluid">
+
+<form method="POST" name="kick_off_program" onsubmit="return validatethis(this);">
+	<!-- <form method="POST" name="kick_off_program" onsubmit=""> -->
+  {% csrf_token %}
+			<div class="container-fluid custom-container-fluid">
         		<h1>TagTeam - Program Kick-off Document</h1>
       		</div>
 
         <div class="container-fluid">	
               <div class="row">
                     <div class="col-md-2">
-                      <label for="">Program Name</label>
+                      <label for="">Program Name:</label>
                     </div>
                    <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="" name="program_name" id="" />
+                        <input type="text" class="form-control" placeholder="" name="program_name" id="program_name" />
                     </div>
-                    <div class="col-md-2">
-                      <label for="">Google PoC</label>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Google PoC:</label>
                     </div>
                    <div class="col-md-4">
                       <input id="google_poc" class="form-control" type="text" name="google_poc" placeholder="<example: abc@google.com>">
@@ -39,41 +41,52 @@
                       <label for="">Market(s)/Region(s): </label>
                     </div>
                     <div class="col-md-4">
-                      <div id="teamsDiv" class="btn-group drpDown" style="width: 98%;">
+                      <div id="teamsDiv" class="btn-group drpDown" style="width: 98%;" name="region-ul-list">
                        <div id="regionTypesDiv" class="btn-group drpDown" style="width: 100%;">
-                            <button type="button" class="form-control bgicon" id="regionTypeBtn" style="width: 102.5%;">Regions</button>
-                            <ul class="dropdown-menu region-ul" style="margin-top: -21px;width: 102.5%;">
+                            <button type="button" class="form-control bgicon" id="regionTypeBtn" style="width: 102.5%; text-align:left;">Regions</button>
+                            <ul class="dropdown-menu region-ul" name="region-ul-list" style="margin-top: -21px;width: 102.5%;">
                             {% for item in regions %}
                                 <li id="{{item}}">
-                                    <a href="#" class="smallReg"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;&nbsp;&nbsp;{{item.name}}</a>
+                                    <a href="#" class="smallReg"><input type="checkbox" class="hiddenCheckbox"/><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item.name}}</a>
                                 </li>
                             {%endfor%}
                         </ul>
                     </div>
                       </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 display-inline">
                       <label for="">Google PoC Email:</label>
                     </div>
                     <div class="col-md-4">
                       <input type="text" class="form-control" id="google_poc_email" name="google_poc_email" placeholder="<example: abc@google.com>">
                     </div>
               </div>
+              <!-- hide  dodetype and region and region selected location  elements to send datatbase -->
+               <div class="col-md-2 box2 bb hideItems">
+                    <select id="regionTypeList" name="regionTypeList" multiple="multiple">                        
+                    </select>
+                    <select id="locationTypeList" name="locationTypeList" multiple="multiple">                        
+                    </select>
+                    <select id="codeTypeList" name="codeTypeList" multiple="multiple">                        
+                    </select>
+                </div>
+              <!-- End of hide dodetype region and region selected location elements to send datatbase -->
 
               <div class="row">
                     <div class="col-md-2">
                       <label for="">Target Locations: </label>
                     </div>
                     <div class="col-md-4 target-locations-main">
-                      <button type="button" class="form-control bgicon" id="locationTypeBtn" style="width: 100%;">Locations</button>
+                      <button type="button" class="form-control bgicon" id="locationTypeBtn" style="width:100%;text-align:left">Locations</button>
                             <ul class="dropdown-menu location-ul" style="margin-top:-21px;margin-left:15px;width:91%;;max-height:200px;">
-                            {% for item in locations %}
+                            </ul>
+                          <!--   {% for item in locations %}
                                 <li id="{{item.location_name}}">
-                                    <a href="#" class="smallLoc"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item.location_name}}</a>
+                                    <a href="#" class="smallLoc"><input type="checkbox" class="hiddenCheckbox"/>&bsp;&nbsp;{{item.location_name}}<span class='glyphicon glyphicon-ok tickMark'></span></a>
                                 </li>
-                            {%endfor%}
+                            {%endfor%} -->
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 display-inline">
                       <label for="">Google PoC Location:</label>
                     </div>
                     <div class="col-md-4">
@@ -85,24 +98,24 @@
                     <div class="col-md-2">
                       <label  for="">Advertiser Type:</label>
                     </div>
-                    <div class="col-md-4" >
-                     <select class="form-control bgicon" id="advertiser_type" name="advertiser_type" style="text-align:center;padding-left:40%;" >
-                        <option  value="0">Choose</option>
+                    <div class="col-md-4">
+                     <select class="form-control bgicon add-type" id="advertiser_type" name="advertiser_type" style="" >"
+                        <option value="choose" style="" id=""  >Choose</option>
                         <option value="Tag">Tag</option>
                         <option value="RLSA">RLSA</option>
                         <option value="Shopping">Shopping</option>
                       </select>
                     </div>
-                     <div class="col-md-2">
+                     <div class="col-md-2 display-inline">
                       <label for="">Program Start Date:</label>
                     </div>
                     <div class="col-md-4">
-                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="" />
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="program_start_date" />
                     </div>
               </div>
 
               <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-2 set-text-align-light" >
                          <label for="">Support Required with Code Types?: </label>
                     </div>
                      <div class="col-md-4">
@@ -111,39 +124,41 @@
                                 <span><option value="{{item.code_type}}"  code_type_id="{{item.id}}">{{item.code_type}}</option></span>
                             {% endfor %}
                          </select> -->
-
                           <div id="code_type" class="btn-group drpDown" style="width: 98%;">
                                <div id="code_type_opt" class="btn-group drpDown" style="width: 100%;">
-                                    <button type="button" class="form-control bgicon" id="codeTypeBtn" style="width: 102.5%;">Code Type</button>
+                                    <button type="button" class="form-control bgicon" id="codeTypeBtn" style="width:102.5%;text-align:left;">Code Type</button>
                                     <ul class="dropdown-menu code-type-ul" style="margin-top: -21px;width: 102.5%;">
                                     {% for item in code_types_name %}
-                                        <li id="{{item.id}}">
-                                            <a href="#" class="codeTypeOpt"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;&nbsp;&nbsp;{{item.code_type}}</a>
+                                        <li id="{{item.id}}" val="{{item}}">
+                                            <a href="#" class="codeTypeOpt"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>{{item}}</a>
                                         </li>
                                     {%endfor%}
                                 </ul>
                             </div>
                           </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 display-inline">
                       <label for="">Program End Date:  </label>
                     </div>
                     <div class="col-md-4">
-                       <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="" name="program_end_date">
+                       <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="program_end_date" name="program_end_date">
                     </div>
               </div>
 
               <div class="">
                   <div class="row">
-                        <div class="col-md-2">
-                          <label for="">Estimated Lead Volumes:</label>
+                        <div class="col-md-2 ">
+
+                          <label class="est-lead" for="">Estimated Lead Volume:</label>
                         </div>
-                         <div class="col-md-5">
+                         <div class="col-md-4">
                           <input type="number" min="0" class="form-control" id="estimated_lead_no" name="estimated_lead_no" placeholder="Lead Volumes in Numbers">
                         </div>
-                        <div class="col-md-5">
-                          <select class="form-control bgicon" id="subject" title="subject" name="subject" style="padding-left:45%;">
-                                <option value="">Choose</option>
+                        <div class="col-md-1"> </div>
+                        <div class="col-md-1"> </div>
+                        <div class="col-md-4">
+                          <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject-estimated-day" style="">
+                                <option value="choose">Choose</option>
                                 <option value="Weekly">Day</option>
                                 <option value="Biweekly Connect">Week</option>
                                 <option value="Monthly Connect">Month</option>
@@ -153,7 +168,7 @@
              </div> 
 
               <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-2 ">
                   <label for="">Program Overview and Objectives:</label>
                 </div>
                  <div class="col-md-10 program_over">
@@ -172,6 +187,7 @@
                                 <div class="col-md-3 s">
                                   <textarea style="" type="text" class="form-control succes-mat-onebox" id="succes_metrices_one_1" name="succes_metrices_one_1"></textarea>
                                 </div>
+
                                  <div class="col-md-3 s s-two">
                                    <textarea style=" " type="text" class="form-control succes-mat-twobox" id="succes_metrices_two_1" name="succes_metrices_two_1"></textarea>
                                 </div>
@@ -194,7 +210,7 @@
                   <label for="">Expectations:</label>
                 </div>
                  <div class="col-md-10 expectations">
-                  <textarea type="text" class="form-control" id="" name="workflow_changes_if_any"></textarea> 
+                  <textarea type="text" class="form-control" id="workflow_changes_if_any" name="workflow_changes_if_any"></textarea> 
                 </div>
               </div>
 
@@ -217,83 +233,67 @@
               </div> 
 
               <div class="lead_subbmission_via_portal">
-                   <div class="row" style="margin-top:10px;">
-                    <div class="col-md-2">
+                   <div class="row " style="">
+                    <div class="col-md-2 ">
                       <label for="">Lead Submission Mode:</label>
                     </div>
                     <div class="col-md-1" ></div>
-                    <div class="col-md-2" style="padding-top:10px;">
-                        <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission"> Portal.
+                    <div class="">
+                          <div class="col-md-2 radio-validate" style="padding-top:8px;">
+                              <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission"> Portal.
+                          </div>
+                          <div class="col-md-2 radio-validate" style="padding-top:10px;">
+                              <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission">Others.
+                          </div>
                     </div>
-                    <div class="col-md-2" style="padding-top:10px;">
-                        <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission">Others.
-                    </div>
-                    <div class="col-md-5" id="lead_sub_other">
-                        <input  class="form-control" type='text'  name="">
+                    <div class="col-md-5" >
+                        <input  class="form-control" type='text' id="lead_sub_other"  name="lead_sub_other">
                     </div>
                   </div>
               </div>
-
-               <div class="real_time_support">
-                      <div class="row">
-                            <div class="col-md-2" >
+               <div class="real_time_support set-top-bottom">
+                      <div class="row set-top-bottom">
+                            <div class="col-md-2 set-text-align">
                               <label for="">Real-time Support Required:</label>
                             </div>
-                           <div class="col-md-1" ></div>
-                         <div class="col-md-2" style="padding-top:10px;">
-                             <input class="" type='checkbox' id="" name="real_time_chat"> chat
+                           <div class="col-md-1 " ></div>
+                         <div class="col-md-2 real-chat" style="padding-top:8px;">
+                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat"> chat
                         </div>
-                        <div class="col-md-2" style="padding-top:10px;">
-                             <input class="" type='checkbox' id="" name="real_time_live_trans"> Live Transfer 
+                        <div class="col-md-2 live-trans" style="padding-top:10px;">
+                             <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans"> Live Transfer 
                         </div>
                       </div>
               </div>
-
                <div class="row">
-                    <div class="col-md-3 set-text-align-fit ">
-                      <label for="">Google PoC Report<br> Requirements <br>( Frequency):</label>
+                    <div class="col-md-2 tagteam-connect ">
+                        <label for="">TagTeam/Google PoC Connect Details:</label>
                     </div>
                     <div class="col-md-4">
-                  <select class="form-control bgicon" id="subject" title="subject" name="subject">
-                    <option value="">Choose</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="bi-weekly">Bi-Weekly</option>
-                    <option value="Monthly">Monthly</option>
-                  </select>
-                </div>
+                        <select class="form-control bgicon" id="connect" title="Connect" name="connect" onfocusout="">
+                          <option value="choose">Choose</option>
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="bi-weekly">Bi-Weekly</option>
+                          <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                  <div class="col-md-3">
+                       <select class="form-control bgicon" id="tagteam-connect-day" title="Connect day" name="tagteam-connect-day" onfocusout="">
+                            <option value="choose">Choose Day</option>
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="saturday">saturday</option>
+                       </select>
+                  </div>
+                  <div class="col-md-3">
+                      <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="tag_meeting_time" placeholder="Time">
+                  </div>
               </div>
-
-
-             
-
-        <div class="">
-          <div class="row">
-                <div class="col-md-3 set-text-align-fit">
-                  <label for="">TagTeam / Google PoC <br>Connect Details (Week,<br> Time, Frequency):</label>
-                </div>
-
-                <div class="col-md-2">
-                   <select class="form-control bgicon" id="subject" title="subject" name="subject">
-                        <option value="">Choose Day</option>
-                        <option value="Sunday">Sunday</option>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="saturday">saturday</option>
-                  </select>
-                </div>
-
-                <div class="col-md-2">
-                    <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="tag_meeting_time" placeholder="Time">
-                </div>
-        
-          </div>
-        </div>
-
-
          <div class="">
               <div class="row">
                     <div class="col-md-2" >
@@ -304,171 +304,35 @@
                     </div>
               </div>
         </div>
+        <div class="file-upload">
+         <div class="file-load-main">
+             <div class="row" id="file_upload_row_1">
+                        <div class="file-append">
+                            <div class="col-md-2">
+                                <label for="file_upload_link">Upload project related documents</label>
+                            </div>
+                          <div class="col-md-4">
 
-       <div class="row">
-            <div class="col-md-2 set-text-align-fit">
-                 <label for="">Option to provide URLs / Upload project related documents </label>
-            </div>
-             <div class="col-md-10 data_upload">
-                  <textarea type="text" class="form-control" id="url_upload" name="url_upload"></textarea> 
-            </div>
-      </div>
-    </div>
-
-      
-
-     
-
-    <div class="tagteam_details" >
-          <div class="container-fluid">
-                <h1>TagTeam Details</h1>
-          </div>
-          <div class="container-fluid">	
-              <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Primary PoC:</label>
-                    </div>
-                   <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="" name="primery_poc" id="primery_poc" />
-                    </div>
-                    <div class="col-md-2">
-                      <label for="">Secondary PoC: </label>
-                    </div>
-                   <div class="col-md-4">
-                      <input class="form-control" type="text" name="secondary_poc" id="secondary_poc" placeholder="">
-                    </div>
-              </div>
-              <div class="row">
-                    <div class="col-md-2">
-                      <label for="">QA: </label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="" name="qa">
-                    </div>
-                    <div class="col-md-2">
-                      <label for="">QC:</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="" name="qc">
-                    </div>
-              </div>
-              <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Trainer: </label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="" name="trainer">
-                    </div>
-                    <div class="col-md-2">
-                      <label for="">Reps:</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control" id="reps" name="reps" placeholder="abc@google.com, abc@regalix-inc.com">
-                    </div>
-              </div>
-              <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Kick-off Meeting Date: </label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="" name="k_o_meeting_date">
-                    </div>
-                    <div class="col-md-2">
-                      <label for="">Kick-off Meeting Time:</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input id="kickoff_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="kickoff_meeting_time" placeholder="Time">
-                    </div>
-              </div>
-          <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Training Start-Date: </label>
-                    </div>
-                    <div class="col-md-4">
-                     <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_start_date" name="training_start_date">
-                    </div>
-                    <div class="col-md-2">
-                      <label for="">Training End-Date:</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_end_date" name="training_end_date">
-                    </div>
-          </div>
-            <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Go-live Date: </label>
-                    </div>
-                    <div class="col-md-4">
-                    <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="go_live_date" name="go_live_date">
-                    </div>
-                    <div class="col-md-2">
-                    </div>
-                    <div class="col-md-4">
-                    </div>
+                              <input type="text" placeholder="Enter URL:" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" >
+                          </div>
+                          <div class="col-md-1"></div>
+                          <div class="col-md-2 ">
+                             <label class="set-lable-position" for="file_upload_link" >Upload File:</label>
+                          </div>
+                          <div class="col-md-3">
+                            <span><input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style=""></span>
+                          </div>
+                      </div>
              </div>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-      <div class="row"  style="margin-top:30px;">
-          <div class="col-md-12">
-              <input class="show-testimony" type='checkbox' id="" name="add_testimony"> Do you want to add Testimony?                
           </div>
-      </div>
-     </div>
-
-
-    <div class="testimony container-fluid">
-          <div class=" testimony_row">
-                <h1>Testimony Tracker</h1>
+            <a id="removefileUpload_1" class="btn std-btn task-btn remove-upload" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+            <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
           </div>
-          <div class="testimonies ">
-            <div id="testimony_1">
-                <div class="row">
-                    <div class="col-md-2 set-text-align-fit">
-                      <label for="">Testimony Received From (Name & Ldap): </label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control testimony-reciecved-from" id="testimony_reciecved_from_name_1" name="testimony_reciecved_from_name_1">
-                    </div>
-                    <div class="col-md-2 set-text-align-fit">
-                      <label for="">Testimony Received Date (DD/MM/YY):</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="datepickerFrom_a form-control testimony-reciecved-date" placeholder="Date" id="testimony_reciecved_date_1" name="testimony_reciecved_date_1">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 set-text-align-fit">
-                      <label for="">Testimony Received for (Name & Ldap):</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control testimony-reciecved-for-name" id="testimony_reciecved_for_name_1" name="testimony_reciecved_for_name_1">
-                    </div>
-                    <div class="col-md-2 set-text-align-fit">
-                      <label for="">Testimony Received for Account (CID):</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" class="form-control testimony-reciecved-cid" id="testimony_reciecved_cid_1" name="testimony_reciecved_cid_1">
-                    </div>
-                </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label for="">Testimony :</label>
-                        </div>
-                        <div class="col-md-10">
-                            <input type="text" class="form-control testimony-text" id="testimony_text_1" name="testimony_text_1">
-                        </div>
-                   </div>
-                <hr>
-            </div>
-          </div>
-          <a id="addTestimony_1" class="btn std-btn task-btn add-testimony" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
-          <a id="removeTestimony_1" class="btn std-btn task-btn remove-testimony" style=""><i class="fa fa-minus-circle"></i>Remove</a>
     </div>
 
       <div class="container-fluid end">
-        <button class="btn std-btn" name="submit_kick_off" id="submit_kick_off">Submit</button>
+      <!-- <input type="submit" class="btn std-btn" tittle="SUBMIT" name="submit_kick_off" id="submit_kick_off"> -->
+        <button type="submit" class="btn std-btn" name="submit_kick_off" id="submit_kick_off" >Submit</button>
       </div>
 </form>
 </section>
@@ -479,7 +343,6 @@
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
 <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
 <script src="{% static 'js/reports/kick_off.js' %}"></script> 
-<!-- <script src="{% static 'js/reports/bootstrap-select.min.js' %}"></script> -->
 
 <script type="text/javascript">
 
@@ -587,6 +450,7 @@ $(".datepickerFrom_a").datetimepicker({
       });
     });
 
+
 $("#lead_sub_other").hide();
 function check(){
     $("#lead_sub_other").show();
@@ -599,7 +463,6 @@ function uncheck(){
  $(document).ready(function(){
     window.regionWiseLocations = {{region_based_locations|safe}}
     window.locations = {{all_locations|safe}}
-    console.log(window.regionWiseLocations);
  });
 
 
@@ -624,6 +487,56 @@ $(document).click(function(evt){
           $('.code-type-ul').hide();
        }
 });
+
+
+/* ----------------------------------------------
+    start file upload and multiple append
+  ----------------------------------------------*/
+  $('.remove-upload').hide();
+
+  $('.add-upload-btn').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 6 )
+      {
+          $(".remove-upload").show();
+          $new_row = $("#file_upload_row_1").clone().attr('id', 'file_upload_row_'+next_id).show();
+          $(".file-info-text", $new_row).attr('id', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('id', 'file_info_'+next_id);
+          $(".file-info-text", $new_row).attr('name', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('name', 'file_info_'+next_id);
+          $new_row.appendTo(".file-load-main");
+          $('.remove-upload').attr('id',"removefileUpload_" + next_id);
+          $('.add-upload-btn').attr('id',"addfileUpload_" + next_id);
+          $("#file_info_text_"+next_id).val('');
+        }
+        if(next_id == 5 )
+        {
+          $(".add-upload-btn").hide();
+        }
+  });
+
+  $('.remove-upload').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removefileUpload_"+indx) != "#removefileUpload_1" )
+    {
+        $(".add-upload-btn").show();
+        $("#file_upload_row_"+indx).remove();
+        $('.remove-upload').attr('id',"#removefileUpload_" + (indx-1));
+        $('.add-upload-btn').attr('id',"#addfileUpload_" + (indx-1));
+    }
+    if(("#removefileUpload_"+(indx-1)) == "#removefileUpload_1" )
+    {
+      $('.remove-upload').hide();
+    }
+  });
+
+/*--------------------------------------------------
+  end file upload and multiple append
+  -------------------------------------------------*/
+
  </script>
 
 {% endblock main_js %}
