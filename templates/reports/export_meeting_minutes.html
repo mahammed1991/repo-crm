@@ -1,0 +1,333 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Meeting Minutes Summary
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+      .display_meeting_minutes{border: 1px solid black;}
+
+      .display_meeting_minutes tr th{border: 1px solid black;}
+
+      .display_meeting_minutes tr td{border: 1px solid black;}
+
+      .links{
+        padding: 0 20px;
+      }
+      .headlinks-default{
+        border: 1px solid #ccc;
+      }
+
+      .table{
+        border-top: 1px solid #ccc;
+      }
+
+      .headlinks{
+        padding: 14px 53px;
+        background: #D1D1D1;
+      }
+
+  </style>
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>Meeting Minutes Summary</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="post" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-2">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+        <div class="col-md-4" style="float: left;margin-left: 16px;margin-top: 3px;">
+          <select class="form-control bgicon" id="program" title="program" name="program" style="margin: 20px;">
+            <option value="">Program</option>
+            <option value="all">All</option>
+            <option value="TAG Team">TAG Team</option>
+            <option value="WPP">WPP</option>
+            <option value="PICASSO">PICASSO</option>
+            <option value="PICASSO Build">PICASSO Build</option>
+          </select>
+        </div>
+      </div>
+        
+        <div style="text-align:center;">
+            <input type="button" class="btn std-btn" value="View" id="get_meeting_minutes">
+            <input type="submit" value="Download" class="btn std-btn">
+        </div>
+    </form>
+    <form method="post">
+    {% csrf_token %}
+      <div class="container-fluid">
+        <table class="table" style="margin-top: 44px;margin-bottom: 35px;">
+          <thead>
+             <tr>
+               <th class="headlinks-default" style="min-width:100px;">Meeting Date</th>
+               <th class="headlinks-default" style="min-width:300px;">Subject Timeline</th>
+               <th class="headlinks-default">Action Item(s)</th>
+               <th class="headlinks-default">Owner</th>
+               <th class="headlinks-default" id="td_date">Target Date</th>
+               <th class="headlinks-default">Status</th>
+               <th class="headlinks-default">Action</th>
+             </tr>
+          </thead>
+          <tbody class="display_all_meeting_minutes" >
+            
+          </tbody>
+        </table>
+      </div>
+      <input type="hidden" name="referenace_id" value="">
+      <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;">
+    </form>
+      <div class="container-fluid">
+        <table class="display_meeting_minutes" style="width:100%;margin-top: 44px;margin-bottom: 35px;"></table>
+      </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+  var all_meeting_records = {{all_records_list|safe}}
+
+  if(all_meeting_records){
+    display_all_record_table(all_meeting_records);
+  }
+  function display_all_record_table(all_meeting_records){
+    $('.display_all_meeting_minutes').html('');
+    /*header = '<tr>'+
+             '<th class="headlinks-default">Meeting Date</th>'+
+             '<th class="headlinks-default">Subject Timeline</th>'+
+             '<th class="headlinks-default">Action Item(s)</th>'+
+             '<th class="headlinks-default">Owner</th>'+
+             '<th class="headlinks-default">Target Date</th>'+
+             '<th class="headlinks-default">Status</th>'+
+             '<th class="headlinks-default">Action</th>'
+             '</tr>'*/
+    row = ''
+    for(var i=0; i<all_meeting_records.length;i++){
+    var count = 0;
+    var action_item = [];
+    var owners = [];
+    var target_date = [];
+      for (var j in all_meeting_records[i]['action_plan_dict']) {
+         if (all_meeting_records[i]['action_plan_dict'].hasOwnProperty(j)) 
+          {
+            count++;
+          }
+      }
+      if(count > 3){
+        for(var j = 1;j<16;j++){
+          if(all_meeting_records[i]['action_plan_dict']['action_item_'+j]){
+            action_item.push(all_meeting_records[i]['action_plan_dict']['action_item_'+j])
+          }
+          if(all_meeting_records[i]['action_plan_dict']['owner_'+j]){
+            owners.push(all_meeting_records[i]['action_plan_dict']['owner_'+j])
+          }
+          if(all_meeting_records[i]['action_plan_dict']['action_date_'+j]){
+            target_date.push(all_meeting_records[i]['action_plan_dict']['action_date_'+j])
+          }
+        }
+      }
+      if(count == 3){
+        row += '<tr>'+
+             '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
+             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['action_item_1']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['owner_1']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['action_date_1']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>' 
+             if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="text" id="status_close" value="Closed" style="background:white;border: 0px;text-align:center;"disabled></td>'
+             }else{
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" name="status" style="text-align:center;margin-right:5px;" value="close">Close</input></td>'
+             }
+             '</tr>'
+             row += row_end
+      }else{
+
+      row += '<tr>'+
+             '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
+             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
+             '<td class="links-default">'+action_item.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default">'+owners.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default" id="td_date">'+target_date.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>' 
+             if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="text" id="status_close" value="Closed" style="background:white;border: 0px;text-align:center;"disabled></td>'
+             }else{
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="close">Close</input></td>'
+             }
+             '</tr>'
+             row += row_end
+      }
+    }
+    $('.display_all_meeting_minutes').append(row);
+
+  }
+
+  $('input[name=status]').change(function(){
+    $('#submit_status').show();
+    $('input[name="referenace_id"]').val($(this).attr('class'));
+
+  });
+</script>
+<script type="text/javascript">
+$(function() {
+    $("#datepickerFrom").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() + 1);
+            $("#datepickerTo").datepicker("option", "minDate", dt);
+        }
+    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+    function validatethis(frm) {
+        window.is_error = false;
+
+        if(frm.datepickerFrom.value == "0" || frm.datepickerFrom.value == ""){
+          $(frm.datepickerFrom).addClass('error-box');
+          frm.datepickerFrom.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerFrom).removeClass('error-box');
+        }
+
+        if(frm.datepickerTo.value == "0" || frm.datepickerTo.value == ""){
+          $(frm.datepickerTo).addClass('error-box');
+          frm.datepickerTo.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerTo).removeClass('error-box');
+        }
+
+        if(frm.program.value == "0" || frm.program.value == ""){
+          $(frm.program).addClass('error-box');
+          frm.program.focus();
+          window.is_error = true;
+        }else{
+          $(frm.program).removeClass('error-box');
+        }
+
+        if(window.is_error){
+          return false;
+        }else{
+          var status = true;
+          
+          if (status) {
+            // $('#preloaderOverlay').show();
+            $('form input[type=submit]');
+          }
+          return status;
+        }
+
+    }
+
+    $('#get_meeting_minutes').click(function(){
+
+      window.has_error = false;
+
+      if($('#datepickerFrom').val() == '' || $('#datepickerFrom').val() == '0'){
+        $('#datepickerFrom').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#datepickerFrom').removeClass('error-box');
+      }
+
+      if($('#datepickerTo').val() == '' || $('#datepickerTo').val() == '0'){
+        $('#datepickerTo').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#datepickerTo').removeClass('error-box');
+      }
+
+      if($('#program').val() == '' || $('#program').val() == '0'){
+        $('#program').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#program').removeClass('error-box');
+      }
+
+      if(window.has_error){
+        return false;
+      }else{
+        var status = true;
+        if (status) {
+            dataString = {}
+            dataString['meeting_date_from'] = $("#datepickerFrom").val();
+            dataString['meeting_date_to'] = $("#datepickerTo").val();
+            dataString['program'] = $('#program').val();
+            $.ajax({
+              url:'/reports/get-meeting-minutes',
+              type: 'GET',
+              dataType: 'JSON',
+              data: dataString,
+              success: function(data){
+                create_table(data);
+              },
+              failure: function(jqXHR, textStatus, errorThrown){
+
+              }
+            });
+          }
+          return status;
+      }
+
+      
+    });
+
+    function create_table(data){
+      $('.display_meeting_minutes').html('');
+      header = '<tr>'+
+        '<th class="headlinks">No.</th>'+
+        '<th class="headlinks">Meeting Date</th>'+
+        '<th class="headlinks">Subject Timeline</th>'+
+        '</tr>'
+      row = ''
+      var j=1
+        for(var i=0;i<data.length;i++){
+          row += '<tr>' +
+            '<td class="links">'+j+'</td>'+
+            '<td class="links">'+data[i]['link_meeting_date']+'</td>' +
+            '<td class="links"><a target="_blank" href="../../reports/link-last-meeting/'+data[i]['ref_uuid']+'">'+data[i]["program"] + ' ' + data[i]["program_type"] + ' ' + data[i]["subject_timeline"] +' '+ data[i]["other_subject"] +' '+ data[i]["link_meeting_date"]+'</a></td>' +
+            '</tr>'
+            j++;
+        }
+        $('.display_meeting_minutes').append(header+row);
+    }
+</script>
+{% endblock main_js %}
