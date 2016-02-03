@@ -30,7 +30,7 @@ from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from reports.report_services import ReportService, DownloadLeads
 from django.db.models import Q
 from random import randint
@@ -222,6 +222,11 @@ def wpp_lead_form(request, ref_id=None):
     lead_args = get_basic_lead_data(request)
     lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
+
+    white_list = Group.objects.get(name='WPP - WHITELIST')
+    if white_list in request.user.groups.all():
+        lead_args['whitelisted_user'] = 'Yes'
+
     if ref_id:
         try:
             ref_lead = WPPLeads.objects.get(ref_uuid=ref_id)
@@ -279,7 +284,7 @@ def picasso_lead_form(request):
         picasso_data = basic_data
 
         estimated_tat = ""
-        tat_dict = get_tat_for_picasso('SFDC')
+        tat_dict = get_tat_for_picasso('portal')
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
             request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
@@ -1942,10 +1947,12 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
         mail_to = set([
             # str(advertiser_details['email']),
+            'asarkar@regalix-inc.com',
             'skumar@regalix-inc.com',
             'sprasad@regalix-inc.com',
             'gedward@regalix-inc.com',
             'vreguri@regalix-inc.com',
+            'asarkar@regalix-inc.com',
 
         ])
 
@@ -2907,3 +2914,22 @@ def searh_leads(request):
         return render(request, 'leads/lead_summary.html', {})
     else:
         return render(request, 'leads/wpp_lead_summary.html', {})
+
+
+def wpp_whitelist_request(request):
+    if request.is_ajax():
+        user = UserDetails.objects.get(user=request.user)
+        mail_subject = "[Website Opt] Please whitelist for website performance optimization submissions"
+        mail_body = get_template('leads/email_templates/whitelist_request_template.html').render(
+            Context({
+                'program': user.team,
+                'market': user.location,
+                'ldap': request.user.email,
+            })
+        )
+        mail_from = 'Picasso Build Request Team'
+        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
+        bcc = set([])
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+        return HttpResponse(json.dumps({'status': 'success'}), content_type='application/json')

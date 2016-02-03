@@ -101,10 +101,13 @@ File Upload
                   {% if upload_target == 'normal_master_list' %}
 
                         Totally you are trying to upload {{total_record}} records...<br /><br />
-                        {{template_args.number_of_saved_records}} records successfully saved.<br /><br />
+                        {{number_of_saved_records}} records successfully saved.<br /><br />
                         Please click here to upload the data again <a href="{% url 'main.views.upload_file_handling' %}"><b>Upload Here</b></a><br /><br />
-                        {{template_args.number_of_unsaved_records}} records not saved.<br /><br />
+                        {{number_of_unsaved_records}} records not saved.<br /><br />
+                        {% if number_of_unsaved_records == 0 %}
+                        {% else %}
                          Please click here to download the failed record details <a href="{% url 'main.views.download_failed_records' %}"><b>Download Here</b></a><br /><br />
+                        {% endif %}
 
                          New Programs : {% for pr in new_programs %} {{pr}}, {% endfor %} <br />
                          New Locations : {% for lc in new_locations %} {{lc}}, {% endfor %} <br />

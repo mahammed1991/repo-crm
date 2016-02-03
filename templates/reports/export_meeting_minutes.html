@@ -16,6 +16,13 @@ Meeting Minutes Summary
       .links{
         padding: 0 20px;
       }
+      .headlinks-default{
+        border: 1px solid #ccc;
+      }
+
+      .table{
+        border-top: 1px solid #ccc;
+      }
 
       .headlinks{
         padding: 14px 53px;
@@ -63,6 +70,29 @@ Meeting Minutes Summary
       <div class="container-fluid">
         <table class="display_meeting_minutes" style="width:100%;margin-top: 44px;margin-bottom: 35px;"></table>
       </div>
+    <form method="post">
+    {% csrf_token %}
+      <div class="container-fluid">
+        <table class="table" style="margin-top: 44px;margin-bottom: 35px;">
+          <thead>
+             <tr>
+               <th class="headlinks-default" style="min-width:100px;">Meeting Date</th>
+               <th class="headlinks-default" style="min-width:300px;">Subject Timeline</th>
+               <th class="headlinks-default">Action Item(s)</th>
+               <th class="headlinks-default">Owner</th>
+               <th class="headlinks-default" id="td_date">Target Date</th>
+               <th class="headlinks-default">Status</th>
+               <th class="headlinks-default">Action</th>
+             </tr>
+          </thead>
+          <tbody class="display_all_meeting_minutes" >
+            
+          </tbody>
+        </table>
+      </div>
+      <input type="hidden" name="referenace_id" value="">
+      <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;">
+    </form>
     </div>
 </section>
 
@@ -70,6 +100,86 @@ Meeting Minutes Summary
 
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+  var all_meeting_records = {{all_records_list|safe}}
+
+  if(all_meeting_records){
+    display_all_record_table(all_meeting_records);
+  }
+  function display_all_record_table(all_meeting_records){
+    $('.display_all_meeting_minutes').html('');
+    row = ''
+    for(var i=0; i<all_meeting_records.length;i++){
+    var count = 0;
+    var action_item = [];
+    var owners = [];
+    var target_date = [];
+      for (var j in all_meeting_records[i]['action_plan_dict']) {
+         if (all_meeting_records[i]['action_plan_dict'].hasOwnProperty(j)) 
+          {
+            count++;
+          }
+      }
+      if(count > 3){
+        for(var j = 1;j<16;j++){
+          if(all_meeting_records[i]['action_plan_dict']['action_item_'+j]){
+            action_item.push(all_meeting_records[i]['action_plan_dict']['action_item_'+j])
+          }
+          if(all_meeting_records[i]['action_plan_dict']['owner_'+j]){
+            owners.push(all_meeting_records[i]['action_plan_dict']['owner_'+j])
+          }
+          if(all_meeting_records[i]['action_plan_dict']['action_date_'+j]){
+            target_date.push(all_meeting_records[i]['action_plan_dict']['action_date_'+j])
+          }
+        }
+      }
+      if(count == 3){
+        row += '<tr>'+
+             '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
+             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['action_item_1']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['owner_1']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['action_date_1']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>' 
+             if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="text" id="status_close" value="Closed" style="background:white;border: 0px;text-align:center;"disabled></td>'
+             }else{
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" name="status" style="text-align:center;margin-right:5px;" value="close">Close</input></td>'
+             }
+             '</tr>'
+             row += row_end
+      }else{
+
+      row += '<tr>'+
+             '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
+             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
+             '<td class="links-default">'+action_item.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default">'+owners.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default" id="td_date">'+target_date.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>' 
+             if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="text" id="status_close" value="Closed" style="background:white;border: 0px;text-align:center;"disabled></td>'
+             }else{
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="close">Close</input></td>'
+             }
+             '</tr>'
+             row += row_end
+      }
+    }
+    $('.display_all_meeting_minutes').append(row);
+
+  }
+
+  $('input[name=status]').change(function(){
+    if($(this).prop('checked')){
+      $('#submit_status').show();
+      $('input[name="referenace_id"]').val($(this).attr('class'));
+    }else{
+      $('#submit_status').hide();
+    }
+
+  });
+</script>
 <script type="text/javascript">
 $(function() {
     $("#datepickerFrom").datepicker({

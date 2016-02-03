@@ -102,6 +102,7 @@ class UserDetails(models.Model):
     rep_location = models.CharField(max_length=255, default=None, blank=True, null=True)
     region = models.ForeignKey(Region, blank=True, null=True, default=None)
     profile_photo_url = models.CharField(max_length=255, default=None, blank=True, null=True)
+    pod_name = models.CharField(max_length=255, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

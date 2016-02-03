@@ -65,7 +65,7 @@ def main_home(request):
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
 
-    if 'WPP' not in request.session['groups']:
+    if 'wpp' not in request.get_host():
 
         lead_status = settings.LEAD_STATUS
         if request.user.groups.filter(name='SUPERUSER'):
@@ -461,6 +461,7 @@ def edit_profile_info(request):
         user_details.phone = request.POST.get('user_phone', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
+        user_details.pod_name = request.POST.get('pod_name', None)
 
         if '@google.com' in request.user.email:
             user_details.team_id = request.POST.get('user_team', None)
@@ -1232,6 +1233,7 @@ def migrate_user_data(request):
         google_manager_email = str(google_manager) + '@google.com' if google_manager else ''
         region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
+        podname = sheet.cell(r_i, get_col_index(sheet, 'podname')).value
         if valid_string(program) and valid_string(country):
             try:
                 user = User.objects.get(email=google_rep_email)
@@ -1248,6 +1250,7 @@ def migrate_user_data(request):
                 user_details = UserDetails()
                 user_details.user_id = user.id
 
+            user_details.pod_name = podname
             user_details.user_manager_email = google_manager_email
             user_details.user_manager_name = user_dict.get(google_manager_email, '')
             try:
@@ -1293,6 +1296,7 @@ def migrate_user_data(request):
             failed_rows.append(failed_rec)
 
     path = "/tmp/Unsaved_Records.csv"
+
     if os.path.exists(path):
         os.remove(path)
     if os.path.exists(excel_file_path):
@@ -1394,7 +1398,7 @@ def upload_file_handling(request):
                         return render(request, 'main/upload_file.html', template_args)
 
             elif upload_target == 'normal_master_list':
-                default_headers = ['manager', 'username', 'market served', 'program', 'region']
+                default_headers = ['manager', 'username', 'market served', 'program', 'region', 'podname']
                 for element in default_headers:
                     if element not in uploaded_headers:
                         template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})

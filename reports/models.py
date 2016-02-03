@@ -178,15 +178,20 @@ class MeetingMinutes(models.Model):
     meeting_audience = models.CharField(max_length=255, null=True, blank=True)
     attendees = models.ManyToManyField(User, related_name="attendees")
     bcc = models.ManyToManyField(User, related_name="bcc")
-    key_points = JSONField(default={})
-    action_plan = JSONField(default={})
+
+    key_points = JSONField(default={}, blank=True)
+    action_plan = JSONField(default={}, blank=True)
+    tenantive_agenda = JSONField(default={}, blank=True)
+    link_file_name = JSONField(default={}, blank=True)
+    attach_file_name = JSONField(default={}, blank=True)
+    
     next_meeting_datetime = models.DateTimeField(blank=True, null=True)
-    tenantive_agenda = JSONField(default={})
     region = models.CharField(max_length=255, null=True)
     location = models.CharField(max_length=255, null=True)
     program = models.CharField(max_length=255, null=True)
     program_type = models.CharField(max_length=255, null=True)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
+    meeting_status = models.CharField(max_length=255, blank=True, null=True, default='open')
 
     attachment_1 = models.FileField(upload_to=get_file_path, blank=True, null=True)
     attachment_2 = models.FileField(upload_to=get_file_path, blank=True, null=True)
@@ -205,3 +210,29 @@ class MeetingMinutes(models.Model):
 
     class Meta:
         verbose_name_plural = "Meeting Minutes"
+
+
+class LeadsReport(models.Model):
+    """Reports and analysis of leads"""
+
+    google_rep_name = models.CharField(max_length=255)
+    google_rep_email = models.CharField(max_length=255)
+    lead_owner_name = models.CharField(max_length=255, null=False)  # regalix rep
+    lead_owner_email = models.CharField(max_length=255, null=False)
+    customer_id = models.CharField(max_length=50)
+    lead_status = models.CharField(max_length=50)
+    lead_sub_status = models.CharField(max_length=100, null=True)
+    code_type = models.CharField(max_length=150)
+    program = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
+    region = models.CharField(max_length=255)
+    tat = models.IntegerField(default=0)
+    sf_lead_id = models.CharField(max_length=50, unique=True)
+    language = models.CharField(max_length=50, blank=True, null=True)
+    date_of_installation = models.DateTimeField(blank=True, null=True)
+
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Leads Report"
