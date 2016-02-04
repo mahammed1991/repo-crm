@@ -112,8 +112,11 @@ LOGIN_ERROR_URL = '/auth/error'
 
 # Social auth settings
 # APP settings
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '855376402860-njnoqqla4f83p7i81qvitf6glgfbjon3.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'W3fAmF16WNykkbzJ6Of1Z9X6'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '855376402860-njnoqqla4f83p7i81qvitf6glgfbjon3.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'W3fAmF16WNykkbzJ6Of1Z9X6'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1026913627216-omck698m2pln0qemhqq00rkfh9lcgtko.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'Eal4hjeb7vlcvGy_rFAGnx1N'
 
 # Social Auth error handling
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = LOGIN_URL
