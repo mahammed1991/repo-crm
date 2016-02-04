@@ -118,9 +118,11 @@
               {% endif %}
               <input type="hidden" value="{{request.session.redirect_domain}}" id="redirect_domain">
               {% if "TAG-AND-WPP" in request.session.groups %}
-                <li><a href="#" id="getRedirectDomain" onclick="getRedirectDomain();">{{request.session.redirect_domain}} Portal </a></li>
-              {% else %}
-                <a href="#" id="getRedirectDomain" onclick="getRedirectDomain();" style="display:none;">{{request.session.redirect_domain}} Portal </a>
+                {% if "wpp" in request.META.HTTP_HOST %}
+                <li><a id="tag_portal" onclick="getRedirectDomain()">TAG Portal </a></li>
+                {% else %}
+                <li><a id="wpp_portal" onclick="getRedirectDomain()">WPP Portal </a></li>
+                {% endif %}
               {% endif %}
               <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
             </ul>
@@ -150,5 +152,6 @@
               }
             });
   }
+
   </script>
 

@@ -78,33 +78,6 @@ $(document).ready(function() {
 
     }
 
-
-    var redirectDomain = $("#redirect_domain").val();
-    if (redirectDomain == '') {
-        getCurrentDomain();
-    } else if ((redirectDomain == 'TAG' && window.location.href.indexOf('gtrack') != -1) || redirectDomain == 'WPP' && window.location.href.indexOf('wpp') != -1) {
-        $("#getRedirectDomain").trigger('click');
-    }
-
-    function getCurrentDomain() {
-        // Swap Domain name
-        $.ajax({
-            url: "/auth/current_domain",
-            dataType: "json",
-            type: 'GET',
-            data: {},
-            success: function(data) {
-                if (data['change_url']) {
-                    // window.location.assign(data['current_domain']);
-                    location.replace(data['url_scheme'] + '://' + data['current_domain']);
-                }
-            },
-            error: function(errorThrown) {
-                console.log('failure');
-            }
-        });
-    }
-
 });
 // Olark Hide For WPP Domain Starts Here
     var wpp_index = window.location.href.indexOf('wpp')
@@ -113,5 +86,4 @@ $(document).ready(function() {
     } else {
         olark('api.box.hide');
     }
-
 // Olark Hide For WPP Domain Ends Here
