@@ -12,6 +12,14 @@ window.cancel_clicked = false;
         return res;  
     }
 
+    function picassovalidate(frm) {
+        var res = picassovalidateFields(frm)
+        if(!res){
+           $("#preloaderOverlay").hide();
+        }
+        return res;  
+    }
+
     function validateFields(frm){
         window.is_error = false;
         $(".error-box").removeClass('error-box');
@@ -25,6 +33,27 @@ window.cancel_clicked = false;
         validateField(frm.description);
         validateField(frm.feedbackType);
         validateField(frm.language);
+        validateField(frm.program);
+        validateField(frm.description);
+        
+        if(window.is_error){
+            return false;
+        }else{
+            return true;    
+        }
+        
+    }
+
+    function picassovalidateFields(frm){
+        window.is_error = false;
+        $(".error-box").removeClass('error-box');
+        if (window.cancel_clicked){
+          return false;
+        }
+        validateField(frm.enter_cid);
+        validateField(frm.title);
+        validateField(frm.description);
+        validateField(frm.feedbackType);
         validateField(frm.program);
         validateField(frm.description);
         
@@ -95,6 +124,43 @@ window.cancel_clicked = false;
         }
     });
 
+$('input[name=enter_cid]').on('focusout', function(){
+    debugger;
+        if(!$(this).val()){
+            $('input[name=enter_cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+        }else{
+            $.ajax({
+                'method': 'GET',
+                'dataType': 'json',
+                'url': "/leads/get-lead/" + $('input[name=enter_cid]').val() +'/'+ $('input[name=feedback_type]').val(),
+                success: function(response){
+                    if(response['status'] == 'FAILED'){
+                        alert('Lead for Selected CID not available.');
+                        $('input[name=enter_cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner]' ).val('')
+                    }
+                    else if(response['status'] == 'MULTIPLE'){
+                        alert("Getting multiple leads on this " + $('input[name=enter_cid]').val() + " customer id, please choose advertiser name");
+                        multiple_leads_picasso(response['details']);
+                    }
+                    else{
+                        $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
+                        $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                        $('input[name=code_type], input[id=code_type]').val(response.details.code_type);
+                        $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
+                        setSelectValue('advProgram', response.details.team_id);
+                        setSelectValue('googleAcManager', response.details.google_rep_email);
+                        $("#advertiserNamesPicasso").append("<option value=" + response.details.l_id + ">"+ response.details.l_id +"</option>")
+                        
+                    }
+                },
+                error:function(xhr, status, error){
+                    alert('Something went wrong!. Please check CID');
+                    $('input[name=enter_cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                }
+            })
+        }
+    });
+
 function multiple_leads(details){
     $('#feedbackCID').hide();
     $('#advertiserNames').show();
@@ -105,6 +171,18 @@ function multiple_leads(details){
         html += rec
     }
     $('#advertiserNames').append(html);
+}
+
+function multiple_leads_picasso(details){
+    $('#feedbackCID').hide();
+    $('#advertiserNamesPicasso').show();
+    var html = '<option value>Select Advertiser</option>'
+    for(var i=0; i<details.length; i++){
+        var obj = details[i];
+        var rec = '<option value='+ obj['l_id']+'>'+ obj['name'] +'</option>';
+        html += rec
+    }
+    $('#advertiserNamesPicasso').append(html);
 }
 
 $('#advertiserNames').change(function(){
@@ -129,6 +207,37 @@ $('#advertiserNames').change(function(){
                 setSelectValue('googleAcManager', response.details.google_rep_email);
                 setLanguages(response.details.languages_list);
                 $("#advertiserNames").append("<option value=" + response.details.l_id + ">"+ response.details.l_id +"</option>")
+
+            }
+          },
+          error: function(errorThrown) {
+              alert('Something went wrong!. Please check CID');
+                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+          }
+    }); 
+  }
+});
+
+$('#advertiserNamesPicasso').change(function(){
+    var lid = $(this).val();
+    if(lid){
+        $.ajax({
+          url: "/leads/get-lead-by-lid/"+ lid + '/' + $('input[name=feedback_type]').val(),
+          dataType: "json",
+          type: 'GET',
+          success: function(response) {
+             if(response['status'] == 'FAILED'){
+                alert('Lead for Selected CID not available.');
+                $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner], input[name=code_type]').val('')
+                }
+            else{
+                $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
+                $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                $('input[name=code_type], input[id=code_type]').val(response.details.code_type);
+                $('input[name=google_acManager_name], input[id=googleAcManager]').val(response.details.google_rep_email);
+                setSelectValue('advProgram', response.details.team_id);
+                setSelectValue('googleAcManager', response.details.google_rep_email);
+                $("#advertiserNamesPicasso").append("<option value=" + response.details.l_id + ">"+ response.details.l_id +"</option>")
 
             }
           },

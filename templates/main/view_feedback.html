@@ -6,7 +6,50 @@
 Manage Help
 {% endblock title %}
 
+{% block main_css %}
+
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+    .table-container, .display_footer{ min-height:300px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    h1 {
+    font-size: 24px;
+    font-family: 'robotoblack';
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-family: 'robotoblack';
+    font-size: 21px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+    #no_data{
+        margin-left: 448px;
+    }
+    a {
+    color: #2763c9;
+    }
+  </style>
+ 
+{% endblock main_css %}
+
 {% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
 <!-- content-region -->
 <section class="content-region inner-page-wide">
   <div class="container-fluid">
@@ -67,6 +110,8 @@ Manage Help
                 <div class="value">{{feedback.feedback_type}}</div>
             </div>
             </div>
+            {% if picasso %}
+            {% else %}
             <div class="col-md-4">
             <div class="feedback-info-row">
                 <label>Location</label>
@@ -79,6 +124,7 @@ Manage Help
                 <div class="value">{{feedback.language}}</div>
             </div>
             </div>
+            {% endif %}
             <div class="col-md-4">
             <div class="feedback-info-row">
                 <label>Created Date</label>
@@ -179,6 +225,7 @@ Manage Help
 {% endblock content %}
 
 {% block main_js %}
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
   <script type="text/javascript">
     function validate(elem){
         id = $(elem).attr("id");

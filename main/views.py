@@ -257,12 +257,13 @@ def main_home(request):
 
 def get_feedbacks(user, feedback_type):
     """ List Feedbacks by user """
-
     if user.groups.filter(name='FEEDBACK'):
         if feedback_type == 'WPP':
             feedbacks = Feedback.objects.filter(code_type='WPP').order_by('-created_date')
+        elif feedback_type == 'PICASSO':
+            feedbacks = Feedback.objects.filter(code_type='PICASSO').order_by('-created_date')
         else:
-            feedbacks = Feedback.objects.exclude(code_type='WPP').filter().order_by('-created_date')
+            feedbacks = Feedback.objects.exclude(code_type__in=['WPP', 'PICASSO']).filter().order_by('-created_date')
     else:
         if feedback_type == 'WPP':
             feedbacks = Feedback.objects.filter(code_type='WPP')
@@ -272,8 +273,16 @@ def get_feedbacks(user, feedback_type):
                 | Q(lead_owner__email=user.email)
                 | Q(lead_owner__profile__user_manager_email=user.email)
             ).order_by('-created_date')
+        elif feedback_type == 'PICASSO':
+            feedbacks = Feedback.objects.filter(code_type='PICASSO')
+            feedbacks = feedbacks.filter(
+                Q(user__email=user.email)
+                | Q(user__profile__user_manager_email=user.email)
+                | Q(lead_owner__email=user.email)
+                | Q(lead_owner__profile__user_manager_email=user.email)
+            ).order_by('-created_date')
         else:
-            feedbacks = Feedback.objects.exclude(code_type='WPP').filter(
+            feedbacks = Feedback.objects.exclude(code_type__in=['WPP', 'PICASSO']).filter(
                 Q(user__email=user.email)
                 | Q(user__profile__user_manager_email=user.email)
                 | Q(lead_owner__email=user.email)
@@ -546,7 +555,16 @@ def view_feedback(request, id):
     can_resolve = True
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
-    return render(request, 'main/view_feedback.html', {'feedback': feedback,
+
+    if feedback.code_type == 'PICASSO':
+        return render(request, 'main/view_feedback.html', {'feedback': feedback,
+                                                       'comments': normal_comments,
+                                                       'can_resolve': can_resolve,
+                                                       'resolved_count': resolved_count,
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'picasso': True})
+    else:
+        return render(request, 'main/view_feedback.html', {'feedback': feedback,
                                                        'comments': normal_comments,
                                                        'can_resolve': can_resolve,
                                                        'resolved_count': resolved_count,
@@ -583,16 +601,37 @@ def list_feedback_wpp(request):
 
 @login_required
 @manager_info_required
+def list_feedback_picasso(request):
+    """ List all PICASSO feedbacks"""
+
+    feedbacks, feedback_list = get_feedbacks(request.user, 'PICASSO')
+
+    return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'feedback_list': feedback_list, 'type': 'PICASSO', 'picasso': True
+                                                       })
+
+
+@login_required
+@manager_info_required
 def create_feedback(request, lead_id=None):
     """ Create feed back """
     if request.method == 'POST':
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.POST['title']
-        feedback_details.cid = request.POST['cid']
+        if request.POST['code_type'] == 'PICASSO':
+            feedback_details.cid = request.POST['enter_cid']
+        else:
+            feedback_details.cid = request.POST['cid']
         feedback_details.advertiser_name = request.POST['advertiser']
-        language = Language.objects.get(id=request.POST['language'])
-        feedback_details.language = language.language_name
+        if request.POST.get('language'):
+            language = Language.objects.get(id=request.POST['language'])
+            feedback_details.language = language.language_name
+        else:
+            feedback_details.language = '-'
+
+        # picasso has no location, so we are saving India as default for picasso because location is foriegn key in feedback
         feedback_location = Location.objects.get(location_name=request.POST['location'])
         feedback_details.location = feedback_location
 
@@ -628,7 +667,10 @@ def create_feedback(request, lead_id=None):
 
         if request.POST['code_type'] == 'WPP':
             return redirect('main.views.list_feedback_wpp')
-        return redirect('main.views.list_feedback')
+        elif request.POST['code_type'] == 'PICASSO':
+            return redirect('main.views.list_feedback_picasso')
+        else:
+            return redirect('main.views.list_feedback')
 
     # Feedback Form
     feedback_type = request.GET.get('type')
@@ -649,6 +691,9 @@ def create_feedback(request, lead_id=None):
         return render(request, 'main/feedback_mail/wpp_feedback_form.html', {'locations': locations,
                                                                              'programs': programs, 'lead': lead, 'languages': languages,
                                                                              'feedback_type': feedback_type})
+    elif feedback_type == "PICASSO":
+        programs = Team.objects.filter(belongs_to__in=['PICASSO', 'BOTH'], is_active=True)
+        return render(request, 'main/feedback_mail/picasso_feedback_form.html', {'picasso': True, 'programs': programs, 'feedback_type': feedback_type, 'lead': lead})
     else:
         programs = Team.objects.filter(is_active=True)
         locations = Location.objects.all()
