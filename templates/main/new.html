@@ -1,0 +1,56 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Help
+{% endblock title %}
+{% block content %}
+
+<section class="content-region feedback-page">
+    <div class="container-fluid">
+    	<h1>Feedback Summary</h1>
+	    <div class="feedback-type">Treatment Type:
+            <select id="feedback_type" class="bgicon" style="height: 38px;">
+               	<option value="normal">Normal Feedback</option>
+               	<option value="wpp_feedback">WPP Feedback</option>
+          	</select>
+	    </div>
+
+
+
+    </div>
+</section>
+
+
+{% endblock content %}
+{% block main_js %}
+<script type="text/javascript">
+$(document).change(function(){
+	if($('#feedback_type').val() == 'normal'){
+		get_feedback('normal')
+	}
+	if($('#feedback_type').val() == 'wpp_feedback'){
+		get_feedback('wpp_feedback')
+	}
+
+});
+
+
+function get_feedback(input_args){
+	$.ajax({
+			url:'main/get-feedback-by-type',
+			dataType: "json",
+			type: 'GET',
+			data: {'feedback_type': input_args},
+			success: function(data){
+
+			},
+			error:function(errorThrown){
+
+			}
+	});
+}
+
+</script>
+{% endblock main_js %}
