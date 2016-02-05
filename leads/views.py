@@ -2962,6 +2962,7 @@ def wpp_whitelist_request(request):
                 'program': user.team,
                 'market': user.location,
                 'ldap': request.user.email,
+                'pod_name': user.pod_name,
             })
         )
         mail_from = 'Picasso Build Request Team'
