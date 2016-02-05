@@ -125,7 +125,6 @@ window.cancel_clicked = false;
     });
 
 $('input[name=enter_cid]').on('focusout', function(){
-    debugger;
         if(!$(this).val()){
             $('input[name=enter_cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
         }else{
