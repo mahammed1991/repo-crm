@@ -1114,7 +1114,7 @@ def get_notifications(request):
     # Notifications list
     user = UserDetails.objects.get(user=request.user)
     notification = list()
-    if 'WPP' not in request.session['groups']:
+    if 'WPP' not in request.session['groups'] and 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
             notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')

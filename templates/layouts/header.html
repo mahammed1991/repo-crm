@@ -4,7 +4,7 @@
       <div class="container-fluid"> 
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-          <a class="navbar-brand" href="{% url 'main.views.home' %}" {% if "WPP" in request.session.groups %} style="padding-top: 8px;" {% endif %}>
+          <a class="navbar-brand" href="{% url 'main.views.home' %}" {% if "wpp" in request.META.HTTP_HOST %} style="padding-top: 8px;" {% endif %}>
            {% if "wpp" in request.META.HTTP_HOST %}
             <img src="{% static 'images/GTrack-logo.png' %}" alt="Gtrack Team"/>
           {% else %}
