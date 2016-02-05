@@ -223,8 +223,8 @@ def wpp_lead_form(request, ref_id=None):
     lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
 
-    white_list = Group.objects.get(name='WPP - WHITELIST')
-    if white_list in request.user.groups.all():
+    user_groups = [group.name for group in request.user.groups.all()]
+    if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
         lead_args['whitelisted_user'] = 'Yes'
 
     if ref_id:
