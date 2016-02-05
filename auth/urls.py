@@ -9,5 +9,4 @@ urlpatterns = patterns(
     url(r'^error$', views.auth_error),
     url(r'^post_login/$', 'auth.views.post_login'),
     url(r'^redirect_domain/$', 'auth.views.redirect_domain'),
-    url(r'^current_domain/$', 'auth.views.current_domain'),
 )
