@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
@@ -82,44 +82,11 @@ def redirect_domain(request):
         for WPP: wpp.regalix.com
     """
     redirect_domain = ''
-    try:
-        grp = Group.objects.get(name='WPP')
-    except ObjectDoesNotExist:
-        grp = None
-    if request.session['redirect_domain'] == 'TAG':
-        request.user.groups.remove(grp.id) if grp else request.user.groups
-        redirect_domain = settings.TAG_URL
-    if request.session['redirect_domain'] == 'WPP':
-        request.user.groups.add(grp.id) if grp else request.user.groups
-        redirect_domain = settings.WPP_URL
+    if 'wpp' in request.get_host():
+        redirect_domain = request.get_host().replace('wpp', 'gtrack')
+    else:
+        redirect_domain = request.get_host().replace('gtrack', 'wpp')
+
+    redirect_domain = request.META['wsgi.url_scheme'] + '://' + redirect_domain
 
     return HttpResponse(json.dumps(redirect_domain))
-
-
-@login_required
-def current_domain(request):
-    """ Redirect or Swap the domain TAG to WPP and vicevarsa
-        for Tag: gtrack.regalix.com
-        for WPP: wpp.regalix.com
-    """
-    change_url = 0
-    current_domain = request.get_host()
-
-    if request.session['redirect_domain'] == '':
-        if 'gtrack' in request.get_host() and 'WPP' not in request.session['groups']:
-            change_url = 0
-        elif 'gtrack' in request.get_host() and 'WPP' in request.session['groups']:
-            current_domain = request.get_host().replace('gtrack.', 'wpp.')
-            change_url = 1
-        elif 'wpp' in request.get_host() and 'WPP' in request.session['groups']:
-            change_url = 0
-        elif 'wpp' in request.get_host() and 'WPP' not in request.session['groups']:
-            # current_domain = request.get_host().replace('wpp.', 'gtrack.')
-            request.user.groups.add(Group.objects.get(name='WPP - WHITELIST'))
-            request.session['groups'].append('WPP - WHITELIST')
-            request.user.save()
-            change_url = 0
-
-    return HttpResponse(json.dumps({'current_domain': current_domain,
-                                    'change_url': change_url,
-                                    'url_scheme': request.META['wsgi.url_scheme']}))

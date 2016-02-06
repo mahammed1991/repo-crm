@@ -223,8 +223,8 @@ def wpp_lead_form(request, ref_id=None):
     lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
 
-    white_list = Group.objects.get(name='WPP - WHITELIST')
-    if white_list in request.user.groups.all():
+    user_groups = [group.name for group in request.user.groups.all()]
+    if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
         lead_args['whitelisted_user'] = 'Yes'
 
     if ref_id:
@@ -318,7 +318,7 @@ def picasso_lead_form(request):
     if tat_dict['estimated_date']:
         lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
         lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
-
+    lead_args['user_pod_name'] = UserDetails.objects.get(user=request.user.id)
     return render(
         request,
         'leads/picasso_lead_form.html',
@@ -350,6 +350,7 @@ def wpp_nomination_form(request):
         for loc in tm.location.all():
             wpp_loc.append(loc)
     lead_args.update({'wpp_loc': wpp_loc})
+    lead_args['user_pod_name'] = UserDetails.objects.get(user=request.user.id)
     return render(
         request,
         'leads/wpp_nomination_form.html',
@@ -1738,6 +1739,8 @@ def get_lead(request, cid, feedback_type):
     lead = {'status': 'FAILED', 'details': None}
     if feedback_type == 'NORMAL':
         leads = Leads.objects.filter(customer_id=cid)
+    elif feedback_type == 'PICASSO':
+        leads = PicassoLeads.objects.filter(customer_id=cid)
     else:
         leads = WPPLeads.objects.filter(customer_id=cid)
     if not leads:
@@ -1746,9 +1749,14 @@ def get_lead(request, cid, feedback_type):
     if len(leads) > 1:
         leads = leads
         adv_list = []
-        for each_lead in leads:
-            details = {'name': each_lead.first_name + ' ' + each_lead.last_name, 'l_id': each_lead.sf_lead_id}
-            adv_list.append(details)
+        if feedback_type == 'PICASSO':
+            for each_lead in leads:
+                details = {'name': each_lead.company, 'l_id': each_lead.sf_lead_id}
+                adv_list.append(details)
+        else:
+            for each_lead in leads:
+                details = {'name': each_lead.first_name + ' ' + each_lead.last_name, 'l_id': each_lead.sf_lead_id}
+                adv_list.append(details)
         lead['status'] = "MULTIPLE"
         lead['details'] = adv_list
         return HttpResponse(json.dumps(lead), content_type='application/json')
@@ -1776,8 +1784,9 @@ def get_lead(request, cid, feedback_type):
     if leads:
         lead['status'] = 'SUCCESS'
 
-        lead['details'] = {
-            'name': leads.first_name + ' ' + leads.last_name,
+        if feedback_type == 'PICASSO':
+            lead['details'] = {
+            'name': leads.company,
             'email': leads.lead_owner_email,
             'google_rep_email': leads.google_rep_email,
             'loc': location.location_name if location else 0,
@@ -1786,8 +1795,19 @@ def get_lead(request, cid, feedback_type):
             'languages_list': languages_list,
             'code_type': leads.type_1,
             'l_id': leads.sf_lead_id,
-
-        }
+            }
+        else:
+            lead['details'] = {
+                'name': leads.first_name + ' ' + leads.last_name,
+                'email': leads.lead_owner_email,
+                'google_rep_email': leads.google_rep_email,
+                'loc': location.location_name if location else 0,
+                'team': team.team_name if team else '',
+                'team_id': team.id if team else 0,
+                'languages_list': languages_list,
+                'code_type': leads.type_1,
+                'l_id': leads.sf_lead_id,
+            }
     return HttpResponse(json.dumps(lead), content_type='application/json')
 
 
@@ -1796,6 +1816,8 @@ def get_lead_by_lid(request, lid, feedback_type):
     lead = {'status': 'FAILED', 'details': None}
     if feedback_type == 'NORMAL':
         leads = Leads.objects.get(sf_lead_id=lid)
+    elif feedback_type == 'PICASSO':
+        leads = PicassoLeads.objects.get(sf_lead_id=lid)
     else:
         leads = WPPLeads.objects.get(sf_lead_id=lid)
     try:
@@ -1818,8 +1840,9 @@ def get_lead_by_lid(request, lid, feedback_type):
     if leads:
         lead['status'] = 'SUCCESS'
 
-        lead['details'] = {
-            'name': leads.first_name + ' ' + leads.last_name,
+        if feedback_type == 'PICASSO':
+            lead['details'] = {
+            'name': leads.company,
             'email': leads.lead_owner_email,
             'google_rep_email': leads.google_rep_email,
             'loc': location.location_name if location else 0,
@@ -1830,6 +1853,20 @@ def get_lead_by_lid(request, lid, feedback_type):
             'l_id': leads.sf_lead_id,
 
         }
+        else:
+            lead['details'] = {
+            'name': leads.first_name + ' ' + leads.last_name,
+            'email': leads.lead_owner_email,
+            'google_rep_email': leads.google_rep_email,
+            'loc': location.location_name if location else 0,
+            'team': team.team_name if team else '',
+            'team_id': team.id if team else 0,
+            'languages_list': languages_list,
+            'code_type': leads.type_1,
+            'l_id': leads.sf_lead_id,
+
+            }
+        
     return HttpResponse(json.dumps(lead), content_type='application/json')
 
 
@@ -2925,6 +2962,7 @@ def wpp_whitelist_request(request):
                 'program': user.team,
                 'market': user.location,
                 'ldap': request.user.email,
+                'pod_name': user.pod_name,
             })
         )
         mail_from = 'Picasso Build Request Team'

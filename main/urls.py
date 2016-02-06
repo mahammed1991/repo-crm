@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'^user/migrate-user-data$', views.migrate_user_data),
     url(r'^user/failed-records$', views.download_failed_records),
     url(r'^feedback/list/wpp$', views.list_feedback_wpp),
+    url(r'^feedback/list/picasso$', views.list_feedback_picasso),
     url(r'^reps/details-download$', views.rep_details_download),
     url(r'^reps/details-upload$', views.rep_details_upload),
     url(r'^upload/file-handling$', views.upload_file_handling),

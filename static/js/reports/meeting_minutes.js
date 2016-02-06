@@ -239,6 +239,12 @@ $('#preview_btn').click(function(){
     }
     var actual_agenda_length = tentative_agenda.length;
 
+    if($('#agenda_text_1').val() == ''){
+      $('.preview_last').hide();
+    }else{
+      $('.preview_last').show();
+    }
+
     for(var j=1;j<=(actual_agenda_length);j++)
     {
       $('.preview-extra').append('<tr id="preview_tentative_agenda'+j+'" class="preview-action-points"></tr>');

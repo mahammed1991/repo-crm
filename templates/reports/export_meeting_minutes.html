@@ -292,7 +292,11 @@ $(function() {
               dataType: 'JSON',
               data: dataString,
               success: function(data){
-                create_table(data);
+                if(data.length > 0){
+                  create_table(data);
+                }else{
+                  defaultTable(data);
+                }
               },
               failure: function(jqXHR, textStatus, errorThrown){
 
@@ -304,6 +308,22 @@ $(function() {
 
       
     });
+
+    function defaultTable(data){
+      $('.display_meeting_minutes').html('');
+      header = '<tr>'+
+        '<th class="headlinks">No.</th>'+
+        '<th class="headlinks">Meeting Date</th>'+
+        '<th class="headlinks">Subject Timeline</th>'+
+        '</tr>'
+      row = ''
+      row += '<tr>' +
+            '<td class="links">No data found</td>' +
+            '<td class="links">No data found</td>' +
+            '<td class="links">No data found</td>' +
+            '</tr>'
+      $('.display_meeting_minutes').append(header+row);
+    }
 
     function create_table(data){
       $('.display_meeting_minutes').html('');
