@@ -431,6 +431,7 @@ def edit_profile_info(request):
     regions = Region.objects.all()
     all_regions = list()
     region_locations = dict()
+    podname = UserDetails.objects.get(user_id=request.user.id)
     for rgn in regions:
         for loc in rgn.location.all():
             region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
@@ -486,7 +487,7 @@ def edit_profile_info(request):
         if next_url == 'home':
             return redirect('main.views.home')
     api_key = settings.API_KEY
-    return render(request, 'main/edit_profile_info.html', {'locations': locations, 'managers': managers, 'regions': regions, 'api_key': api_key,
+    return render(request, 'main/edit_profile_info.html', {'podname': podname, 'locations': locations, 'managers': managers, 'regions': regions, 'api_key': api_key,
                                                            'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details})
 
 
@@ -1789,13 +1790,16 @@ def picasso_home(request):
 
     current_date = datetime.utcnow()
     picasso_top_performer = get_top_performer_list(current_date, 'PICASSO')
-    return render(request, 'main/picasso_index.html', {'picasso': True, 'user_profile': user_profile,
-                                                                        'title': title,
-                                                                        'picasso_lead_status': picasso_lead_status,
-                                                                        'picasso_objective_dict': picasso_objective_dict,
-                                                                        'picasso_objective_total': picasso_objective_total,
-                                                                        'picasso_top_performer': picasso_top_performer,
-                                                                        'no_leads': check_lead_submitter_for_empty(picasso_top_performer)})
+
+    feedback_list = dict()
+    feedbacks, feedback_list = get_feedbacks(request.user, 'PICASSO')
+    return render(request, 'main/picasso_index.html', {'feedback_list': feedback_list, 'picasso': True, 'user_profile': user_profile,
+                                                        'title': title,
+                                                        'picasso_lead_status': picasso_lead_status,
+                                                        'picasso_objective_dict': picasso_objective_dict,
+                                                        'picasso_objective_total': picasso_objective_total,
+                                                        'picasso_top_performer': picasso_top_performer,
+                                                        'no_leads': check_lead_submitter_for_empty(picasso_top_performer)})
 
 
 @login_required

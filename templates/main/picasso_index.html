@@ -131,10 +131,36 @@
                     </div>
             <!-- End Picasso Reports section -->
           </li>
+          <li class="feedback">
+                    <div class="slide-wrap" id="tag_feedback">
+                        <h1>Feedback Summary</h1>             
+                           <div class="row">
+                                <div class="col-md-3">
+                                    <div class="fdk-status resolved">{{feedback_list.resolved}}</div>
+                                    <span>Resolved</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status inpro">{{feedback_list.in_progress}}</div>
+                                    <span>In Progress</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status new">{{feedback_list.new}}</div>
+                                    <span>New</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="fdk-status total">{{feedback_list.total}}</div>
+                                    <span>Total</span>
+                                </div>
+                            </div>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.list_feedback_picasso' %}"'>Feedback Status</button>
+                        <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}?type=PICASSO"'>Add a Feedback</button>   
+                    </div>
+                  </li>
         </ul>
         <div id="bx-pager">
                 <a data-slide-index="0" href=""><span></span><i class="fa fa-code"></i>Leads</a>
                 <a data-slide-index="1" href=""><span></span><i class="fa fa-file-text"></i>Reports</a>
+                <a data-slide-index="2" href=""><span></span><i class="fa fa-quote-left"></i>Feedback</a>
        </div>
       </div>
     </div>
