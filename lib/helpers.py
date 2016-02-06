@@ -606,7 +606,7 @@ def month_on_month_leads_details(reps, start_date, end_date):
 def create_new_user(email):
     """ Create New User """
     username = email.split('@')[0]
-    user = User.objects.create_user(email, email)
+    user = User.objects.create_user(username, email)
     user.first_name = username
     user.save()
     return user

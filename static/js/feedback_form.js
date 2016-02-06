@@ -227,7 +227,7 @@ $('#advertiserNamesPicasso').change(function(){
           success: function(response) {
              if(response['status'] == 'FAILED'){
                 alert('Lead for Selected CID not available.');
-                $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner], input[name=code_type]').val('')
+                $('input[name=enter_cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner], input[id=lead_owner], input[name=code_type]').val('')
                 }
             else{
                 $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
@@ -242,7 +242,7 @@ $('#advertiserNamesPicasso').change(function(){
           },
           error: function(errorThrown) {
               alert('Something went wrong!. Please check CID');
-                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                    $('input[name=enter_cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
           }
     }); 
   }
