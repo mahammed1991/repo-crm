@@ -34,5 +34,9 @@ urlpatterns = patterns(
     url(r'^export-meeting-minutes/$', views.export_meeting_minutes),
     url(r'^get-meeting-minutes/$', views.get_meeting_minutes),
     url(r'^generate-link/$', views.generate_link),
+
+    # kick-off-program
     url(r'^program-kick-off/$', views.program_kick_off),
+    url(r'^thankyou-kickoff-program/$', views.kickoff_thankyou),
+    url(r'^kickoff-export/$', views.kickoff_export),
 )
