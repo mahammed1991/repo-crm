@@ -557,7 +557,7 @@ def view_feedback(request, id):
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
 
-    if feedback.code_type == 'PICASSO':
+    if feedback.code_type in ['PICASSO', 'Picasso']:
         return render(request, 'main/view_feedback.html', {'feedback': feedback,
                                                        'comments': normal_comments,
                                                        'can_resolve': can_resolve,
