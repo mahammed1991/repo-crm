@@ -620,7 +620,7 @@ def create_feedback(request, lead_id=None):
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.POST['title']
-        if request.POST['code_type'] == 'PICASSO':
+        if request.POST['code_type'] in ['PICASSO', 'Picasso']:
             feedback_details.cid = request.POST['enter_cid']
         else:
             feedback_details.cid = request.POST['cid']
@@ -667,7 +667,7 @@ def create_feedback(request, lead_id=None):
 
         if request.POST['code_type'] == 'WPP':
             return redirect('main.views.list_feedback_wpp')
-        elif request.POST['code_type'] == 'PICASSO':
+        elif request.POST['code_type'] in ['PICASSO', 'Picasso']:
             return redirect('main.views.list_feedback_picasso')
         else:
             return redirect('main.views.list_feedback')
