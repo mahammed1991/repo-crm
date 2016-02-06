@@ -1293,7 +1293,7 @@ def meeting_minutes(request):
             attendees_list_last.append(str(attendee['email']))
             attendees_email_list = ' ,  '.join(attendees_list)
 
-        mail_subject = "Meeting Minutes: %s - %s - %s - %s - %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
+        mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
         mail_body = get_template('reports/email_templates/minute_meeting_email_template.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),

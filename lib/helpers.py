@@ -127,7 +127,7 @@ def wpp_user_required(func):
     def _decorator(request, *args, **kwargs):
         # provide wpp access to only google wpp users
         user_groups = [str(grp['name']) for grp in request.user.groups.values('name')]
-        if 'WPP' in user_groups or 'TAG-AND-WPP' in user_groups:
+        if 'WPP' in user_groups or 'TAG-AND-WPP' in user_groups or 'wpp' in request.META['HTTP_HOST']:
             response = func(request, *args, **kwargs)
             # maybe do something after the view_func call
             return response
