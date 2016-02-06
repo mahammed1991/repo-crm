@@ -51,13 +51,16 @@
   start bootsrap selector plugg in fetching multiple selected values id's
   ------------------------------------------------------------------------*/
     $('.region-ul').children().on('click', function(){
+        /*
+        $(".location-ul").html('');*/
         selectProcessRegionData(this);
     });
 //adding locations based on region selected
     $('#locationTypeBtn').on('click', function(){
+        var loc_elements = $('.location-ul li a .tickMarkShow');
+        var elements = $('.region-ul li a .tickMarkShow');
         $(".location-ul").html('');
         $("#locationTypeList").empty();
-        var elements = $('.region-ul li a .tickMarkShow');
         if(elements.length > 0)
         {
             for (var i=0;i<elements.length;i++)
@@ -70,10 +73,21 @@
                                                  '<input type="checkbox" class="hiddenCheckbox"/>'+
                                                  '<span class="glyphicon glyphicon-ok tickMark">'+
                                                  '</span>&nbsp;'+ window.regionWiseLocations[element_id][j]+'</a></li>');
-                    $('#locationTypeList').append('');
+                    /*$('#locationTypeList').append('');*/
                 }
                 $(".location-ul").css('height','auto');
                 $(".location-ul").css('overflow','scroll');
+            }
+            var final_elements = $(".location-ul li");
+            for(var k=0;k<loc_elements.length;k++)
+            {
+              for(var i=0;i<final_elements.length;i++)
+              {
+                if($(loc_elements[k]).parent().parent().attr('id') == $(final_elements[i]).attr('id'))
+                {
+                  $(final_elements[i]).children().children("span").addClass("tickMarkShow");
+                }
+              }
             }
             $('.location-ul').children().on('click', function(){
                 selectTeams(this.className, this);
@@ -81,13 +95,14 @@
         }
         else
         {
-            $(".location-ul").append('<li id=""><a href="#" class="smallLoc"></span>&nbsp;Please Select Region</a></li>')
+          $(".location-ul").html('');
+          $(".location-ul").append('<li id=""><a href="#" class="smallLoc"></span>&nbsp;Please Select Region</a></li>')
         }
     });
  // checking & unchecking also adding removing selected regions to empty selector oprtins
     function selectProcessRegionData(regionElement){
        if($(regionElement).attr('id')){
-        var regionSpacereplace = $(regionElement).attr('id').replace(" ", "_");
+        var regionSpacereplace = $(regionElement).attr('id').replace(" ", "");
        }
         var OptionElement = "<option class='"+regionSpacereplace+"' value='"+ regionSpacereplace+"' selected></option>";
         $( "#regionTypeList" ).append( OptionElement ); 
@@ -103,18 +118,20 @@
     // checking & unchecking also adding removing selected locations to to empty selector data base
     function selectTeams(parentElementId, selectedElement){
        if($(selectedElement).attr('id')){
-        var locationSpacereplace = $(selectedElement).attr('id').replace(" ", "_");
        }
+        var locationSpacereplace = $(selectedElement).attr('id').replace(/[^\w\s]/gi, "");
         var selectedTeamsElement = $(selectedElement).children("a").children('span');
-        var optionElement = "<option class ='"+parentElementId+"' id='"+ $(selectedElement).attr('id')+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
-        
+        var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
+        var optionElementToDatabase = "<option class ='"+parentElementId+"' id='removing"+locationSpacereplace+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
+        $( "#locationTypeList" ).append(optionElementToDatabase);
+        /*console.log(optionElementToDatabase);*/
         if(selectedTeamsElement.hasClass('tickMarkShow')){
             selectedTeamsElement.removeClass('tickMarkShow');
-            $('#locationTypeList  #'+locationSpacereplace+' ').remove();
+            $(' #removing'+locationSpacereplace+' ').remove();
         }
         else{
+          console.log(optionElementToDatabase);
             selectedTeamsElement.addClass('tickMarkShow');
-            $( "#locationTypeList" ).append("<option class ='' id='"+locationSpacereplace+"' value='"+ locationSpacereplace+"' selected> </option>");
         }
     }
 /* -------------------------------------------------------------------------------------------------------------------------

@@ -14,8 +14,13 @@
 {% block content %}
 <section class="content-region inner-page">
 
-<form method="POST" name="kick_off_program" onsubmit="return validatethis(this);">
-	<!-- <form method="POST" name="kick_off_program" onsubmit=""> -->
+<form method="POST" name="kick_off_program" onsubmit="return validatethis(this);" enctype="multipart/form-data">
+	
+
+<input type="hidden" name="count_of_success_matrix" value="">
+<input type="hidden" name="count_url_file_name" value="">
+
+
   {% csrf_token %}
 			<div class="container-fluid custom-container-fluid">
         		<h1>TagTeam - Program Kick-off Document</h1>
@@ -65,7 +70,7 @@
                <div class="col-md-2 box2 bb hideItems">
                     <select id="regionTypeList" name="regionTypeList" multiple="multiple">                        
                     </select>
-                    <select id="locationTypeList" name="locationTypeList" multiple="multiple">                        
+                    <select class="removelocation" id="locationTypeList" name="locationTypeList" multiple="multiple">                        
                     </select>
                     <select id="codeTypeList" name="codeTypeList" multiple="multiple">                        
                     </select>
@@ -269,7 +274,7 @@
                     <div class="col-md-2 tagteam-connect ">
                         <label for="">TagTeam/Google PoC Connect Details:</label>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 ">
                         <select class="form-control bgicon" id="connect" title="Connect" name="connect" onfocusout="">
                           <option value="choose">Choose</option>
                           <option value="daily">Daily</option>
@@ -279,7 +284,7 @@
                         </select>
                     </div>
                   <div class="col-md-3">
-                       <select class="form-control bgicon" id="tagteam-connect-day" title="Connect day" name="tagteam-connect-day" onfocusout="">
+                       <select class="form-control bgicon conect-width" id="tagteam-connect-day" title="Connect day" name="tagteam-connect-day" onfocusout="">
                             <option value="choose">Choose Day</option>
                             <option value="Sunday">Sunday</option>
                             <option value="Monday">Monday</option>
@@ -290,8 +295,8 @@
                             <option value="saturday">saturday</option>
                        </select>
                   </div>
-                  <div class="col-md-3">
-                      <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="tag_meeting_time" placeholder="Time">
+                  <div class="col-md-3 ">
+                      <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from conect-width" type="text" name="tag_meeting_time" placeholder="Time">
                   </div>
               </div>
          <div class="">
@@ -306,28 +311,35 @@
         </div>
         <div class="file-upload">
          <div class="file-load-main">
+
+                              <div class="row container-fluid">
+                                    <label for="file_upload_link">Upload project related documents</label>
+                                </div>
+
              <div class="row" id="file_upload_row_1">
                         <div class="file-append">
-                            <div class="col-md-2">
-                                <label for="file_upload_link">Upload project related documents</label>
-                            </div>
-                          <div class="col-md-4">
-
-                              <input type="text" placeholder="Enter URL:" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" >
-                          </div>
-                          <div class="col-md-1"></div>
-                          <div class="col-md-2 ">
-                             <label class="set-lable-position" for="file_upload_link" >Upload File:</label>
-                          </div>
-                          <div class="col-md-3">
-                            <span><input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style=""></span>
-                          </div>
+                                
+                                <div class="col-md-3">
+                                      <input type="text" class="form-control file-name-link" id="file_name_link_1" name="file_name_link_1" placeholder="File Name" >
+                                </div>
+                              <div class="col-md-3">
+                                      <input type="text" placeholder="Enter URL:" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" >
+                              </div>
+                              <div class="col-md-3 ">
+                                     <input type="text" class="form-control file-name-attach" id="file_name_attach_1" name="file_name_attach_1" placeholder="File Name" style="">
+                              </div>
+                              <div class="col-md-3">
+                                    <span><input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style=""></span>
+                              </div>
                       </div>
              </div>
           </div>
             <a id="removefileUpload_1" class="btn std-btn task-btn remove-upload" style=""><i class="fa fa-minus-circle"></i>Remove</a>
             <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
           </div>
+
+
+
     </div>
 
       <div class="container-fluid end">
@@ -463,11 +475,17 @@ function uncheck(){
  $(document).ready(function(){
     window.regionWiseLocations = {{region_based_locations|safe}}
     window.locations = {{all_locations|safe}}
+    console.log(window.regionWiseLocations);
  });
 
 
 $(document).click(function(evt){
-       if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
+      // debugger;
+      /* if(evt.target.id != 'locationTypeBtn' && evt.target.className != 'smallLoc'){
+          $('.location-ul').hide();
+       }*/
+
+        if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
           $('.location-ul').show();
        }else{
           $('.location-ul').hide();
@@ -478,17 +496,19 @@ $(document).click(function(evt){
        }else{
           $('.region-ul').hide();
        }
-});
 
-$(document).click(function(evt){
        if(evt.target.classList.contains('codeTypeOpt') || evt.target.id == 'codeTypeBtn'){
           $('.code-type-ul').show();
        }else{
           $('.code-type-ul').hide();
        }
+       /// debugger;
 });
 
-
+/*$('#locationTypeBtn').on('click', function(){
+  $('.location-ul').show();
+});
+*/
 /* ----------------------------------------------
     start file upload and multiple append
   ----------------------------------------------*/
@@ -502,14 +522,20 @@ $(document).click(function(evt){
       {
           $(".remove-upload").show();
           $new_row = $("#file_upload_row_1").clone().attr('id', 'file_upload_row_'+next_id).show();
+          $(".file-name-link", $new_row).attr('id', 'file_name_link_'+next_id);
+          $(".file-name-attach", $new_row).attr('id', 'file_name_attach_'+next_id);
           $(".file-info-text", $new_row).attr('id', 'file_info_text_'+next_id);
           $(".file-info", $new_row).attr('id', 'file_info_'+next_id);
           $(".file-info-text", $new_row).attr('name', 'file_info_text_'+next_id);
           $(".file-info", $new_row).attr('name', 'file_info_'+next_id);
+          $(".file-name-link", $new_row).attr('name', 'file_name_link_'+next_id);
+          $(".file-name-attach", $new_row).attr('name', 'file_name_attach_'+next_id);
           $new_row.appendTo(".file-load-main");
           $('.remove-upload').attr('id',"removefileUpload_" + next_id);
           $('.add-upload-btn').attr('id',"addfileUpload_" + next_id);
           $("#file_info_text_"+next_id).val('');
+          $("#file_name_link_"+next_id).val('');
+          $("#file_name_attach_"+next_id).val('');
         }
         if(next_id == 5 )
         {
@@ -536,6 +562,11 @@ $(document).click(function(evt){
 /*--------------------------------------------------
   end file upload and multiple append
   -------------------------------------------------*/
+
+$('#submit_kick_off').on('click', function(){
+  $('input[name=count_of_success_matrix]').val($('.succes-mat-onebox').length);
+  $('input[name=count_url_file_name]').val($('.file-name-link').length);
+})
 
  </script>
 
