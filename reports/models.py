@@ -178,15 +178,20 @@ class MeetingMinutes(models.Model):
     meeting_audience = models.CharField(max_length=255, null=True, blank=True)
     attendees = models.ManyToManyField(User, related_name="attendees")
     bcc = models.ManyToManyField(User, related_name="bcc")
-    key_points = JSONField(default={})
-    action_plan = JSONField(default={})
+
+    key_points = JSONField(default={}, blank=True)
+    action_plan = JSONField(default={}, blank=True)
+    tenantive_agenda = JSONField(default={}, blank=True)
+    link_file_name = JSONField(default={}, blank=True)
+    attach_file_name = JSONField(default={}, blank=True)
+    
     next_meeting_datetime = models.DateTimeField(blank=True, null=True)
-    tenantive_agenda = JSONField(default={})
     region = models.CharField(max_length=255, null=True)
     location = models.CharField(max_length=255, null=True)
     program = models.CharField(max_length=255, null=True)
     program_type = models.CharField(max_length=255, null=True)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
+    meeting_status = models.CharField(max_length=255, blank=True, null=True, default='open')
 
     attachment_1 = models.FileField(upload_to=get_file_path, blank=True, null=True)
     attachment_2 = models.FileField(upload_to=get_file_path, blank=True, null=True)
@@ -205,3 +210,93 @@ class MeetingMinutes(models.Model):
 
     class Meta:
         verbose_name_plural = "Meeting Minutes"
+
+
+class LeadsReport(models.Model):
+    """Reports and analysis of leads"""
+
+    google_rep_name = models.CharField(max_length=255)
+    google_rep_email = models.CharField(max_length=255)
+    lead_owner_name = models.CharField(max_length=255, null=False)  # regalix rep
+    lead_owner_email = models.CharField(max_length=255, null=False)
+    customer_id = models.CharField(max_length=50)
+    lead_status = models.CharField(max_length=50)
+    lead_sub_status = models.CharField(max_length=100, null=True)
+    code_type = models.CharField(max_length=150)
+    program = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
+    region = models.CharField(max_length=255)
+    tat = models.IntegerField(default=0)
+    sf_lead_id = models.CharField(max_length=50, unique=True)
+    language = models.CharField(max_length=50, blank=True, null=True)
+    date_of_installation = models.DateTimeField(blank=True, null=True)
+
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Leads Report"
+
+
+class KickOffProgram(models.Model):
+    """ Storing Data from kick of page """
+    def get_file_path(instance, filename):
+        """ Dynamic file path """
+        ext = filename.split('.')[-1]
+        filename = "%s.%s" % (uuid4(), ext)
+        return os.path.join('kick_off_documents/', filename)
+
+    program_name = models.CharField(max_length=255, null=True, blank=True)
+
+    google_poc = models.ManyToManyField(User, related_name='google_poc')
+    google_poc_email = models.ManyToManyField(User, related_name='google_poc_email')
+
+    region = models.ManyToManyField(Region)
+    target_locations = models.ManyToManyField(Location)
+
+    google_poc_locations = models.CharField(max_length=255, null=True, blank=True)
+
+    advertiser_type = models.CharField(max_length=255, null=True, blank=True)
+    codetypeslist = models.TextField(null=True, blank=True)
+
+    programe_start_date = models.DateTimeField(blank=True)
+    programe_end_date = models.DateTimeField(blank=True)
+
+    estimated_lead_volume = models.CharField(max_length=255, null=True, blank=True)
+
+    program_overview_objective = models.TextField(null=True, blank=True)
+
+    succes_matrix = JSONField(default={}, blank=True)
+
+    expectations = models.TextField(null=True, blank=True)
+    explain_workflow = models.TextField(null=True, blank=True)
+    win_criteria = models.TextField(null=True, blank=True)
+
+    lead_sub_mode = models.CharField(max_length=255, null=True, blank=True)
+    lead_subbmission_other_val = models.CharField(max_length=255, null=True, blank=True)
+
+    real_time_support_chat = models.CharField(max_length=255, null=True, blank=True)
+    real_time_support_live_trans = models.CharField(max_length=255, null=True, blank=True)
+
+    tag_team_connect_detail = models.CharField(max_length=255, null=True, blank=True)
+
+    comments = models.TextField(null=True, blank=True)
+
+    file_url_name = JSONField(default={}, blank=True)
+
+    attached_url_link_1 = models.CharField(max_length=255, null=True, blank=True)
+    attached_url_link_2 = models.CharField(max_length=255, null=True, blank=True)
+    attached_url_link_3 = models.CharField(max_length=255, null=True, blank=True)
+    attached_url_link_4 = models.CharField(max_length=255, null=True, blank=True)
+    attached_url_link_5 = models.CharField(max_length=255, null=True, blank=True)
+
+    file_upload_name = JSONField(default={}, blank=True)
+
+    upload_file_attachment_1 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    upload_file_attachment_2 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    upload_file_attachment_3 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    upload_file_attachment_4 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    upload_file_attachment_5 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Kick Off Program"

@@ -9,10 +9,11 @@
   <link rel="stylesheet" href="{% static 'css/reports/meeting_minutes.css' %}" >
   <style type="text/css">
   
-   html {
+    html {
     overflow: hidden;
     height: 100%;
     width:100%;
+    padding-bottom: 0px !important;
     }
     body {
     overflow: auto;
@@ -20,7 +21,10 @@
     width:100%;
     }
     .modal-open {
-    overflow: hidden;
+    overflow: hidden; 
+    }
+    .footer{
+      position:relative ! important;
     }
 </style>
 {% endblock main_css %}
@@ -32,6 +36,10 @@
 <input type="hidden" name="no_of_keypoints" value="">
 <input type="hidden" name="no_of_actionplans" value="">
 <input type="hidden" name="no_of_tenantive_agenda" value="">
+<input type="hidden" name="internal_region" value="">
+<input type="hidden" name="internal_location" value="">
+<input type="hidden" name="no_of_file_name_link" value="">
+<input type="hidden" name="no_of_file_name_attach" value="">
 
       <div class="container-fluid">
         <h1> Meeting Minutes</h1>
@@ -59,14 +67,12 @@
             <div class="col-md-2" style="margin-top: -12px;">
               <label for="internal_meeting">Meeting Audience</label>
             </div>
-            <!-- <div class="container-fluid meeting_audience" style="width: 496px;margin-right: 353px;"> -->
               <div class="col-md-4 meeting_audience">
                 <input type="radio" id="internal_meeting" name="meeting_audience" value="internal_meeting">                  Internal Meeting</input>
               </div>
               <div class="col-md-4 meeting_audience">
                 <input type="radio" id="external_meeting" name="meeting_audience" value="external_meeting">                   External Meeting</input>
               </div>
-            <!-- </div> -->
       </div>
 
       <div class="row">
@@ -190,16 +196,16 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" {% if bcc_email_list %} value="{{bcc_email_list}}" style="display:none;" disabled{% else %} value="" style="" {% endif %}>
         <div class="col-md-2">
           <label for="attendees">BCC</label>
         </div>
          <div class="col-md-10">
-          <input type="text" class="form-control" id="bcc" name="bcc" placeholder="Please enter e-mail ids seperated by comma(,)"{% if bcc_email_list %} value="{{bcc_email_list}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+          <input type="text" class="form-control" id="bcc" name="bcc" placeholder="Please enter e-mail ids seperated by comma(,)" onfocusout="validateEachField(this)">
         </div>
       </div>
 
-     <div class="std-sub-title" style="text-align:center">Key Points Discussed</div>
+     <div class="std-sub-title" style="text-align:center;background: #D83F34;">Key Points Discussed</div>
   </div>
   <div class="container-fluid">
       <table id="keyPoint">
@@ -222,7 +228,7 @@
       <a id="addTask_1" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"  ></i>Add</a>
   </div>
   <div class="container-fluid last" style="margin-bottom: 20px;">
-    <div class="std-sub-title" style="text-align:center">Action Plan</div>
+    <div class="std-sub-title" style="text-align:center;background: #FED200;">Action Plan</div>
       <table id="actionPlan">
         <thead>
           <tr>
@@ -245,7 +251,7 @@
       <a id="addAction_1" class="btn std-btn task-btn add-action" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
   </div>
   <div class="container-fluid last next-meeting-section" style="margin-bottom: 20px;">
-    <div class="std-sub-title" style="text-align:center">Next meeting</div>
+    <div class="std-sub-title" style="text-align:center;background: #15A95E;">Next meeting</div>
       <div class="col-md-12 show-date-time">
           <input class="next-row" type='checkbox'> &nbsp;&nbsp;Want to Setup Next Meeting ?
       </div>
@@ -253,16 +259,16 @@
       <table id="nextMeeting" class="next-meeting-row">
         <tbody class="date-time">
           <tr id="" style="">
-            <td id="date">Date:(DD.MM.YYYY)</td>
+            <td id="date" style="width: 148px;padding-left: 10px;">Date:(DD.MM.YYYY)</td>
             <td><input type='text' id="next_meeting_date" placeholder="Date" class="datepickerFrom_b sel_date" name="next_meeting_date" {% if next_meeting_date %} value="{{ next_meeting_date }}" disabled{% else %} value="" {% endif %}></td>
-            <td id="time">Time:(HH:MM)</td>
+            <td id="time" style="width: 76px;padding-left: 10px;">Time:(HH:MM)</td>
             <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time in IST" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
             <td id="next">Link to Previous Meeting Minutes : </td>
             <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="" id="generate_link" target="_blank" style="margin-left: 38%;">Click Here</a><span id="nodatafound" style="display:none;margin-left: 25%;">No Data Found!</span></div></td>
           </tr>
         </tbody>
       </table>
-      <table id="nextMeeting1">
+      <table id="nextMeeting1" class="next-meeting-row-tenantive" style="display: none;">
         <tbody class="extra">
           <tr id="tentative_agenda_1" style="" class="tenantive_agendas">
             <td id="agenda">Tenantive Agenda : </td>
@@ -271,24 +277,23 @@
         </tbody>
       </table>
       <a id="removeTentativeAgenda_1" class="btn std-btn task-btn remove-agenda" style=""><i class="fa fa-minus-circle"></i>Remove</a>
-      <a id="addTentativeAgenda_1" class="btn std-btn task-btn add-agenda" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+      <a id="addTentativeAgenda_1" class="btn std-btn task-btn add-agenda" style="margin-right:10px;display:none;"><i class="fa fa-plus-circle"></i>Add</a>
   </div>
    <div class="container-fluid file-upload-section" {% if attach_link_1 %} style="display:none;" {% else %} style="" {% endif %}>
-       <div class="std-sub-title " style="text-align:center">Attachments</div>
+       <div class="std-sub-title " style="text-align:center;background: #4D7DBE;">Attachments</div>
           <div class="container-fluid browse-files">
             <div class="row col-md-12 file-append" id="file_upload_row_1">
                 <div class="col-md-2">
-                    <label for="file_upload_link">Enter URL:</label>
+                    <input type="text" class="form-control file-name-link" id="file_name_link_1" name="file_name_link_1" placeholder="File Name" style="width:200px;">
                 </div>
-              <div class="col-md-4">
-                  <input type="text" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" >
-              </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-2">
-                  <label for="file_upload_link">Upload File:</label>
-              </div>
               <div class="col-md-3">
-                  <input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style="">
+                  <input type="text" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" placeholder="Enter URL" style="width: 255px;margin-left: 60px;">
+              </div>
+              <div class="col-md-2">
+                  <input type="text" class="form-control file-name-attach" id="file_name_attach_1" name="file_name_attach_1" placeholder="File Name" style="width: 265px;margin-left: 100px;">
+              </div>
+              <div class="col-md-3" style="margin-left: 151px;">
+                  <input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style="    margin-left: 68px;">
               </div>
           </div>
       </div>
@@ -298,34 +303,46 @@
 
     </div>
     <div class="container-fluid" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
-      <div class="std-sub-title " style="text-align:center">Attachments</div>
-      <table id="attach">
+      <div class="std-sub-title " style="text-align:center;background: #4D7DBE;">Attachments</div>
+      <table id="attach" style="width: 100%;">
         <thead>
           <tr>
+            <td id="action-item">File Name</td>
             <td id="action-item">Attached Links</td>
+            <td id="action-item">File Name</td>
             <td id="action-item">Attached Files</td>
           </tr>
         </thead>
         <tbody class="attachments-links-files">
-          <tr id="attachments_1" class="attachments">
+          <tr id="attachments_1" class="attachments" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_1 %} value="{{link_file_name_1}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_1 %} href="{{attach_link_1}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_1}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}">{{attach_file_1}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_1 %} value="{{attach_file_name_1}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}" target="_blank">Attachment 1</a></div></td>
           </tr>
-          <tr id="attachments_2" class="attachments">
+          <tr id="attachments_2" class="attachments" {% if attach_link_2 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_2 %} value="{{link_file_name_2}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_2 %} href="{{attach_link_2}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_2}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}">{{attach_file_2}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_2 %} value="{{attach_file_name_2}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}" target="_blank">Attachment 2</a></div></td>
           </tr>
-          <tr id="attachments_3" class="attachments">
+          <tr id="attachments_3" class="attachments" {% if attach_link_3 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_3 %} value="{{link_file_name_3}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_3 %} href="{{attach_link_3}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_3}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}">{{attach_file_3}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_3 %} value="{{attach_file_name_3}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}" target="_blank">Attachment 3</a></div></td>
           </tr>
-          <tr id="attachments_4" class="attachments">
+          <tr id="attachments_4" class="attachments" {% if attach_link_4 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_4 %} value="{{link_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
             <td class="attach_1"><div><a target="_blank" {% if attach_link_4 %} href="{{attach_link_4}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_4}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}">{{attach_file_4}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_4 %} value="{{attach_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}" target="_blank">Attachment 4</a></div></td>
           </tr>
-          <tr id="attachments_5" class="attachments">
+          <tr id="attachments_5" class="attachments" {% if attach_link_5 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_4 %} value="{{link_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>  
             <td class="attach_1"><div><a target="_blank" {% if attach_link_5 %} href="{{attach_link_5}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_5}}</a></div></td>
-            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}">{{attach_file_5}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_5 %} value="{{attach_file_name_5}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}" target="_blank">Attachment 5</a></div></td>
           </tr>
         </tbody>
       </table>
@@ -543,14 +560,14 @@
       <table id="nextMeeting" class="next-meeting-row">
         <tbody class="date-time">
           <tr id="" style="">
-            <td id="date">Date : </td>
+            <td id="date1">Date : </td>
             <td id="preview_sel_date"><input type='text' id="preview_next_meeting_date" placeholder="Date" class="datepickerFrom_b sel_date" name="preview_next_meeting_date" disabled></td>
-            <td id="time">Time : </td>
+            <td id="time1">Time : </td>
             <td id="preview_time_date"><input id="preview_next_meeting_time" class="datetimepickerFrom date-from sel_time preview_sel_" placeholder="Time" type="text" name="preview_next_meeting_time" disabled></td>
           </tr>
         </tbody>
       </table>
-      <table id="nextMeeting1">
+      <table id="nextMeeting1" class="next-meeting-row-tenantive" style="display: none;">
         <tbody class="preview-extra">
         </tbody>
       </table>
@@ -560,7 +577,8 @@
       <table id="attach-link-file" width="100%">
         <thead>
           <tr>
-            <td id="action-item">Enter URL</td>
+            <th class="action-item-preview">File Name</th>
+            <th class="action-item-preview">Enter URL</th>
           </tr>
         </thead>
         <tbody class="attach-link-file">
@@ -604,18 +622,21 @@ meeting_audience = "{{meeting_audience|safe}}"
 if(meeting_audience == 'internal_meeting'){
   $('#internal_meeting').prop('checked', true);
   $("#internal_meeting").attr("disabled", true);
+  $("#external_meeting").attr("disabled", true);
 }
 
 if(meeting_audience == 'external_meeting'){
   $('#external_meeting').prop('checked', true);
   $("#external_meeting").attr("disabled", true);
+  $("#internal_meeting").attr("disabled", true);
 }
 next_meeting_date_last = "{{next_meeting_date|safe}}"
 if(next_meeting_date_last == ''){
-  $('.next-meeting-row').show();
   $('.show-date-time').hide();
   $('.next-meeting-row').hide();
+  $('.next-meeting-row-tenantive').hide();
 }else{
+  $('.next-meeting-row-tenantive').show();
   $('.next-meeting-row').show();
   $('.show-date-time').hide();
 }
@@ -629,20 +650,23 @@ if(window.location.pathname == '/reports/meeting-minutes/')
     var show_time_date = $('.next-row').is(":checked");
     if(show_time_date)
     {
+      $('.next-meeting-row-tenantive').show();
+      $(".add-agenda").show();
       $('.next-meeting-row').show();
     }
     else
     {
+      $('.next-meeting-row-tenantive').hide();
+      $(".add-agenda").hide();
       $('.next-meeting-row').hide();
     }
   });
 
   $('#subject').change(function(){
-    if(this.value == 'New Product Launch' || this.value == 'New Program Launch'){
-      $('#selected_subject').text(this.value+' -');
+    $('#selected_subject').text(this.value+' -');
+    if(this.value == 'New Product Launch' || this.value == 'New Program Launch' || this.value == 'Ad-hoc' || this.value == 'Others'){
        $('#selected_product_name').text("");
     }else{
-      $('#selected_subject').text("");
       $('#selected_product_name').text("");
     }
   });
@@ -676,7 +700,7 @@ if(window.location.pathname == '/reports/meeting-minutes/')
 
      var last_meeting_subject_timeline = "{{last_meeting.subject_timeline|safe}}"
       if(last_meeting_subject_timeline){
-        if(last_meeting_subject_timeline == "Others" || last_meeting_subject_timeline == "New Program Launch" || last_meeting_subject_timeline == "New Product Launch")
+        if(last_meeting_subject_timeline == "Others" || last_meeting_subject_timeline == "New Program Launch" || last_meeting_subject_timeline == "New Product Launch" || last_meeting_subject_timeline == "Ad-hoc")
         {
           $("#others").show();
         }
@@ -740,6 +764,17 @@ if(window.location.pathname == '/reports/meeting-minutes/')
     var key_points = {{key_points_dict|safe}}
     var action_plan = {{action_plan_dict|safe}}
     var tentative_agendas = {{tenantive_agenda_dict|safe}}
+
+    if('agenda_text_1' in tentative_agendas){
+      $('.next-meeting-section').show();
+    }else{
+      $('.next-meeting-section').hide();
+    }
+
+    if(window.location.pathname == '/reports/meeting-minutes/')
+    {
+      $('.next-meeting-section').show();
+    }
 
     for(var key in tentative_agendas){
       if(key == 'agenda_text_1'){
@@ -856,7 +891,7 @@ if(window.location.pathname == '/reports/meeting-minutes/')
 
   $("#subject").change(function(){
         var val = $("#subject").val();
-        if(val == "Others" || val == "New Program Launch" || val == "New Product Launch")
+        if(val == "Others" || val == "New Program Launch" || val == "New Product Launch" || val == "Ad-hoc")
         {
           $("#others").show();
           $("#others").val("");
@@ -1069,6 +1104,8 @@ $('.add').click(function () {
       $('input[name="no_of_keypoints"]').val($('.add-task tr:visible').length);
       $('input[name="no_of_actionplans"]').val($('.action-plan tr:visible').length);
       $('input[name="no_of_tenantive_agenda"]').val($('.extra tr:visible').length);
+      $('input[name="no_of_file_name_link"]').val($('.file-name-link').length);
+      $('input[name="no_of_file_name_attach"]').val($('.file-name-attach').length);
     });
 
 

@@ -16,7 +16,7 @@ from datetime import datetime
 from lib.helpers import (send_mail)
 from django.template.loader import get_template
 from django.template import Context
-from reports.models import Region
+from reports.models import Region, LeadsReport
 
 logging.basicConfig(filename='/tmp/cronjob.log',
                     filemode='a',
@@ -192,7 +192,7 @@ def implemented_leads_count_report():
         })
     )
     mail_from = 'basavaraju@regalix-inc.com'
-    mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
+    mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'asantosh@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -432,13 +432,15 @@ def create_or_update_leads(records, sf):
                 tat = ReportService.get_tat_by_implemented(
                     lead.date_of_installation, lead.appointment_date, lead.created_date)
         else:
-            if lead.type_1 == 'WPP':
+            if lead.type_1 in ['WPP', 'WPP - Nomination']:
                 tat = ReportService.get_tat_by_implemented(
                     lead.date_of_installation, lead.appointment_date, lead.created_date)
             else:
                 tat = ReportService.get_tat_by_first_contacted_on(
                     lead.first_contacted_on, lead.appointment_date, lead.created_date)
         lead.tat = tat
+        # to store values in leads report model
+        update_leads_reports(lead)
         try:
             lead.save()
             if is_new_lead:
@@ -720,51 +722,91 @@ def create_or_update_picasso_leads(records, sf):
     logging.info("Exist Picasso lead failed to update: %s" % (exist_lead_failed))
 
 
-@kronos.register('*/10 * * * *')
-def get_call_log_response_from_spreadsheet():
-    """ Get Current Quarter updated Leads from SFDC """
+# @kronos.register('*/10 * * * *')
+# def get_call_log_response_from_spreadsheet():
+#     """ Get Current Quarter updated Leads from SFDC """
 
-    json_file = settings.MEDIA_ROOT + '/gtrack-test-0e3eb2372302.json'
+#     json_file = settings.MEDIA_ROOT + '/gtrack-test-0e3eb2372302.json'
 
-    json_key = json.load(open(json_file))
-    scope = ['https://spreadsheets.google.com/feeds']
+#     json_key = json.load(open(json_file))
+#     scope = ['https://spreadsheets.google.com/feeds']
 
-    credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
+#     credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
 
-    gc = gspread.authorize(credentials)
+#     gc = gspread.authorize(credentials)
 
-    sheet_url = settings.SPREADSHEET_URL
+#     sheet_url = settings.SPREADSHEET_URL
 
-    worksheet = gc.open_by_url(sheet_url).sheet1
+#     worksheet = gc.open_by_url(sheet_url).sheet1
 
-    db_total_records = CallLogAccountManager.objects.all().count()
-    sheet_total_records = worksheet.row_count
+#     db_total_records = CallLogAccountManager.objects.all().count()
+#     sheet_total_records = worksheet.row_count
 
-    spreadsheet_records = list()
-    if db_total_records == 0:
-        for i in range(2, sheet_total_records + 1):
-            spreadsheet_records.append(worksheet.row_values(i))
-    else:
-        sheet_row_start = CallLogAccountManager.objects.all().order_by('-id')[0].sheet_row_count
-        for i in range(sheet_row_start + 1, sheet_total_records + 1):
-            spreadsheet_records.append(worksheet.row_values(i))
+#     spreadsheet_records = list()
+#     if db_total_records == 0:
+#         for i in range(2, sheet_total_records + 1):
+#             spreadsheet_records.append(worksheet.row_values(i))
+#     else:
+#         sheet_row_start = CallLogAccountManager.objects.all().order_by('-id')[0].sheet_row_count
+#         for i in range(sheet_row_start + 1, sheet_total_records + 1):
+#             spreadsheet_records.append(worksheet.row_values(i))
 
-    objects_list = list()
-    for record in spreadsheet_records:
-        if record[6]:
-            log_details = CallLogAccountManager()
-            log_details.username = record[8]  # record['Username']
-            log_details.seller_name = record[1]  # record['Seller Name']
-            log_details.seller_id = record[2]  # record['Seller ID']
-            log_details.phone_number = record[3]  # record['Phone Number']
-            log_details.alternate_number = record[4]  # record['Alternate Number']
-            meeting_time_in_cst = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
+#     objects_list = list()
+#     for record in spreadsheet_records:
+#         if record[6]:
+#             log_details = CallLogAccountManager()
+#             log_details.username = record[8]  # record['Username']
+#             log_details.seller_name = record[1]  # record['Seller Name']
+#             log_details.seller_id = record[2]  # record['Seller ID']
+#             log_details.phone_number = record[3]  # record['Phone Number']
+#             log_details.alternate_number = record[4]  # record['Alternate Number']
+#             meeting_time_in_cst = datetime.strptime(record[6], "%m/%d/%Y %H:%M:%S")
 
-            log_details.meeting_time = meeting_time_in_cst  # record['Meeting Time']
-            log_details.call_status = record[5]  # record['Call Status']
-            log_details.log_time_stamp = datetime.strptime(record[0], "%m/%d/%Y %H:%M:%S")  # record['Timestamp']
-            log_details.sheet_row_count = sheet_total_records
-            objects_list.append(log_details)
+#             log_details.meeting_time = meeting_time_in_cst  # record['Meeting Time']
+#             log_details.call_status = record[5]  # record['Call Status']
+#             log_details.log_time_stamp = datetime.strptime(record[0], "%m/%d/%Y %H:%M:%S")  # record['Timestamp']
+#             log_details.sheet_row_count = sheet_total_records
+#             objects_list.append(log_details)
 
-    # # total records - 1 saved
-    CallLogAccountManager.objects.bulk_create(objects_list)
+#     # # total records - 1 saved
+#     CallLogAccountManager.objects.bulk_create(objects_list)
+
+
+def update_leads_reports(lead):
+
+    """ Create a new leads or update existing lead to generate reports """
+    try:
+        report_lead = LeadsReport.objects.get(sf_lead_id=lead.sf_lead_id)
+    except ObjectDoesNotExist:
+        report_lead = LeadsReport()
+
+    report_lead.google_rep_name = lead.google_rep_name
+    report_lead.google_rep_email = lead.google_rep_name
+    report_lead.lead_owner_name = lead.lead_owner_name
+    report_lead.lead_owner_email = lead.lead_owner_email
+    report_lead.customer_id = lead.customer_id
+    report_lead.program = lead.team
+    report_lead.location = lead.country
+    report_lead.tat = lead.tat
+    report_lead.sf_lead_id = lead.sf_lead_id
+    report_lead.language = lead.language
+    report_lead.date_of_installation = lead.date_of_installation
+    if lead.type_1 not in ['WPP', 'WPP - Nomination']:
+        if lead.type_1 in settings.CODE_TYPE_MAPPING:
+            report_lead.code_type = settings.CODE_TYPE_MAPPING[lead.type_1]
+        else:
+            report_lead.code_type = lead.type_1
+
+        if lead.lead_status in settings.LEAD_STATUS_MAPPING:
+            report_lead.lead_status = settings.LEAD_STATUS_MAPPING[lead.lead_status]
+        elif lead.lead_status == 'Rework Required' and lead.lead_sub_status != 'RR - Inactive':
+            report_lead.lead_status = 'Implemented'
+        else:
+            report_lead.lead_status = lead.lead_status
+
+    report_lead.created_date = lead.created_date
+
+    try:
+        report_lead.save()
+    except Exception as e:
+        print e

@@ -53,6 +53,12 @@ h1 {
     text-align: center;
   }
 
+  .action-item-preview{
+    width:350px;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+
   #owner, #target-date{
     width:275px;
     text-align: center;
@@ -67,8 +73,7 @@ h1 {
   .remove-action:hover{background: #d04033;}
 
 
-  #date,#time{width:60px;padding: 10px;}
-
+  .flat{padding-left: 10px;}
   .date-time td input{width: 100%;padding: 11px;border: none;}
 /*.date-time td input{width: 100%;height:auto; padding: 11px;border: none;}*/
     
@@ -111,7 +116,8 @@ h1 {
 
   .p-agenda{padding: 0px 15px;}
   .p-agenda-item{
-    padding: 0px 395px;
+      width: 816px;
+    padding-left: 365px;
   }
 
   .md1, .md2{
@@ -155,14 +161,20 @@ h1 {
 
   .add-upload-btn:hover{background: #109d59;}
 
-  .file-info-text{width:300px;}
-
   .filestyle{padding-top: 14px;}
 
   .browse-files{margin-bottom: 10px;}
 
+  .file-name-link1, .file-name-attach1{
+    background: white;
+    border: 0px;
+    padding-left: 10px;
+  }
+
+  #date1,#time1{width:60px;padding: 10px;}
+
   .attach_1, .attach_2{
-    padding: 0px 135px;
+    padding-left: 10px;
   }
 
   .preview-attach{

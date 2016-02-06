@@ -1,13 +1,4 @@
-form label {
-    font-size: 13px;
-    color: #999;
-    padding: 12px;
-}
-
-#submit_kick_off {
-    margin: auto 40%;
-    margin-bottom: 20px;
-}
+form label { font-size: 13px; color: #999; padding-top: 5px; }
 
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
@@ -15,22 +6,26 @@ input[type=number]::-webkit-outer-spin-button {
    margin: 0; 
 }
 
-.set-text-align{ margin-top:-8px;}
+#submit_kick_off { margin: auto 40%; margin-bottom: 20px; }
 
-.set-text-align-fit{ margin-top:-20px;}
+.add-upload-btn{background: #109d59;}
 
-.code-type-ul {max-height: 150px;overflow:scroll;}
+.add-upload-btn:hover{background: #109d59;}
+
+.remove-upload{background: #d04033;}
+
+.remove-upload:hover{background: #d04033;}
+
+.set-lable-position{padding-top: 15px; padding-left: 51px;}
+
+.file-info{margin-top:12px;}
+
+.tagteam-connect{margin-top: 6px;} 
+
+.set-top-bottom{ padding-bottom: 5px; padding-top: 5px; }
               
 .multi-select-locations .dropdown-toggle,.multi-select .dropdown-toggle, .multi-select-codetype .dropdown-toggle{
-  height:50px;
-  font-size: 14px;
-  border-radius: 0px;
-  padding: 10px;  
-}
-
-.dropdown-menu{width:200px;}
-
-.dropdown-menu .inner{width:auto;}
+                                 height:50px;  font-size: 14px; border-radius: 0px; padding: 10px; }
 
 .s-two { margin-left:21.5px;}
 
@@ -91,9 +86,29 @@ input[type=number]::-webkit-outer-spin-button {
 	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
-.drpDown ul li{ list-style-type: none; border-bottom: 1px solid #dbdbdb; }
+
+.drpDown ul li{ list-style-type: none;  }
+
 .tickMark{ opacity: 0; }
 
 .tickMarkShow{ opacity: 1; }
 
 .hiddenCheckbox{ display: none; }
+
+.dropdown-menu li {
+    border-bottom: 0px solid #dbdbdb !important;
+    border-left: 0px solid #dbdbdb ! important;
+    border-right: 0px solid #dbdbdb ! important;
+}
+
+.dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }
+
+.code-type-ul{ font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
+
+.region-ul , .location-ul{ font-size: 13px; }
+
+.est-lead{ width:100%; font-size: 12.57px; }
+
+/*.hideItems{
+	display: none;
+}*/
