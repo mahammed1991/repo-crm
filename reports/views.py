@@ -7,7 +7,7 @@ from leads.models import PicassoLeads, Leads, Team, Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from django.conf import settings
-from reports.models import LeadSummaryReports
+from reports.models import LeadSummaryReports, KickOffProgram
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
 from reports.models import Region, CallLogAccountManager, MeetingMinutes
@@ -25,7 +25,7 @@ import re
 @login_required
 @tag_user_required
 def reports(request):
-    """ New Report """
+    """New Report"""
     report_type = 'default_report'
     report_timeline = ['today']
     start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
@@ -63,7 +63,7 @@ def reports(request):
 @login_required
 @tag_user_required
 def reports_new(request):
-    """ New Report """
+    """New Report"""
     report_type = 'default_report'
     report_timeline = ['this_quarter']
     start_date, end_date = ReportService.get_date_range_by_timeline(report_timeline)
@@ -1293,7 +1293,7 @@ def meeting_minutes(request):
             attendees_list_last.append(str(attendee['email']))
             attendees_email_list = ' ,  '.join(attendees_list)
 
-        mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
+        mail_subject = "Meeting Minutes: %s - %s - %s - %s - %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
         mail_body = get_template('reports/email_templates/minute_meeting_email_template.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
@@ -1622,6 +1622,103 @@ def generate_link(request):
 
 @login_required
 def program_kick_off(request):
+    if request.method == 'POST':
+        kickoffprogram = KickOffProgram()
+
+        kickoffprogram.program_name = request.POST.get('program_name')
+        kickoffprogram.google_poc_locations = request.POST.get('google_poc_location')
+        kickoffprogram.advertiser_type = request.POST.get('advertiser_type')
+        kickoffprogram.codetypeslist = request.POST.get('codeTypeList')
+
+        program_start_date = request.POST.get('program_start_date')
+        kickoffprogram.programe_start_date = datetime.strptime(program_start_date, '%d.%m.%Y')
+
+        programe_end_date = request.POST.get('program_end_date')
+        kickoffprogram.programe_end_date = datetime.strptime(programe_end_date, '%d.%m.%Y')
+
+        estimated_lead_no = request.POST.get('estimated_lead_no')
+        estimated_lead_finish_period = request.POST.get('estimated_lead_no')
+        kickoffprogram.estimated_lead_volume = estimated_lead_no + ' ' + estimated_lead_finish_period
+
+        kickoffprogram.program_overview_objective = request.POST.get('program_overview')
+        kickoffprogram.subject_estimated_day = request.POST.get('subject-estimated-day')
+        kickoffprogram.expectations = request.POST.get('workflow_changes_if_any')
+        kickoffprogram.explain_workflow = request.POST.get('explain_workflow')
+        kickoffprogram.win_criteria = request.POST.get('win_criteria')
+
+        tag_team_connect_method = request.POST.get('connect')
+        tag_team_connect_day = request.POST.get('tagteam-connect-day')
+        tag_team_connect_time = request.POST.get('tag_meeting_time')
+        kickoffprogram.tag_team_connect_detail = tag_team_connect_method + tag_team_connect_day + str(tag_team_connect_time)
+
+        kickoffprogram.project_related_url = request.POST.get('file_info_text_1')
+        kickoffprogram.code_type_list = request.POST.getlist('codeTypeList')
+
+        kickoffprogram.lead_sub_mode = request.POST.get('lead_submission')
+        if request.POST.get('lead_submission') == "others":
+            kickoffprogram.lead_subbmission_other_val = request.POST.get('lead_sub_other')
+
+        kickoffprogram.real_time_support_chat = request.POST.get('real_time_chat')
+        kickoffprogram.real_time_support_live_trans = request.POST.get('real_time_live_trans')
+
+        kickoffprogram.comments = request.POST.get('comments')
+
+        count_of_succes_matrix = request.POST.get('count_of_success_matrix')
+        succes_matrics_dict = dict()
+        for i in range(1, int(count_of_succes_matrix) + 1):
+            succes_matrics_dict['succes_metrices_one_' + str(i)] = request.POST.get('succes_metrices_one_' + str(i))
+            succes_matrics_dict['succes_metrices_two_' + str(i)] = request.POST.get('succes_metrices_two_' + str(i))
+            succes_matrics_dict['succes_metrices_three_' + str(i)] = request.POST.get('succes_metrices_three_' + str(i))
+        kickoffprogram.succes_matrix = json.dumps(succes_matrics_dict)
+
+        link_file_name_dict = dict()
+        count_of_file_url_name = request.POST.get('count_url_file_name')
+        for i in range(1, int(count_of_file_url_name) + 1):
+            link_file_name_dict['file_name_link_' + str(i)] = request.POST.get('file_name_link_' + str(i))
+        kickoffprogram.file_url_name = json.dumps(link_file_name_dict)
+
+        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_1')
+        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_2')
+        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_3')
+        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_4')
+        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_5')
+
+        attach_file_name = dict()
+        for i in range(1, int(count_of_file_url_name) + 1):
+            attach_file_name['file_name_attach_'+str(i)] = request.POST.get('file_name_attach_' + str(i))
+        kickoffprogram.file_upload_name = json.dumps(attach_file_name)
+
+        kickoffprogram.upload_file_attachment_1 = request.FILES.get('file_info_1')
+        kickoffprogram.upload_file_attachment_2 = request.FILES.get('file_info_2')
+        kickoffprogram.upload_file_attachment_3 = request.FILES.get('file_info_3')
+        kickoffprogram.upload_file_attachment_4 = request.FILES.get('file_info_4')
+        kickoffprogram.upload_file_attachment_5 = request.FILES.get('file_info_5')
+
+        kickoffprogram.save()
+
+        regions_multiselect = request.POST.get('regionTypeList')
+        get_regions = Region.objects.filter(name__in=regions_multiselect).values_list('id', flat=True)
+        kickoffprogram.region.add(*get_regions)
+
+        location_multiselect = request.POST.get('locationTypeList')
+        get_location = Location.objects.filter(location_name__in=location_multiselect).values_list('id', flat=True)
+        kickoffprogram.target_locations.add(*get_location)
+
+        google_poc = request.POST.get('google_poc').replace(', ', ',')
+        google_poc_list = google_poc.split(',')
+        google_poc_list.pop(-1)
+        get_google_poc_list = User.objects.filter(email__in=google_poc_list).values_list('id', flat=True)
+        kickoffprogram.google_poc.add(*get_google_poc_list)
+
+        google_poc_email = request.POST.get('google_poc_email').replace(', ', ',')
+        google_poc_email_list = google_poc_email.split(',')
+        google_poc_email_list.pop(-1)
+        get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
+        kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
+
+        kickoffprogram.save()
+        return redirect('reports.views.kickoff_thankyou')
+
     google_email = list()
     all_mail = list()
     managers = User.objects.values_list('email', flat=True)
@@ -1639,7 +1736,7 @@ def program_kick_off(request):
     for rgn in regions:
             for loc in rgn.location.all():
                 region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
-    code_types_name = LeadSummaryReports.objects.all()
+    code_types_name = ReportService.get_all_code_type()
     region_based_locations = dict()
     for regn in regions:
         location_list_values = list()
@@ -1654,3 +1751,13 @@ def program_kick_off(request):
                                                      'region_locations': region_locations,
                                                      'all_locations': all_locations,
                                                      'region_based_locations': json.dumps(region_based_locations)})
+
+
+@login_required
+def kickoff_thankyou(request):
+    return_url = reverse('reports.views.program_kick_off')
+    return render(request, 'reports/kickoff_thankyou.html', {'return_url': return_url})
+
+
+def kickoff_export(request):
+    return render(request, 'reports/kick_off_export.html', {})

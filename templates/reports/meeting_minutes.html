@@ -7,6 +7,26 @@
 {% block main_css %}
   <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
   <link rel="stylesheet" href="{% static 'css/reports/meeting_minutes.css' %}" >
+  <style type="text/css">
+  
+    html {
+    overflow: hidden;
+    height: 100%;
+    width:100%;
+    padding-bottom: 0px !important;
+    }
+    body {
+    overflow: auto;
+    height: 100%;
+    width:100%;
+    }
+    .modal-open {
+    overflow: hidden; 
+    }
+    .footer{
+      position:relative ! important;
+    }
+</style>
 {% endblock main_css %}
 
 {% block content %}
