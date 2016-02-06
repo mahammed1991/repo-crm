@@ -112,8 +112,11 @@ LOGIN_ERROR_URL = '/auth/error'
 
 # Social auth settings
 # APP settings
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '855376402860-njnoqqla4f83p7i81qvitf6glgfbjon3.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'W3fAmF16WNykkbzJ6Of1Z9X6'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '855376402860-njnoqqla4f83p7i81qvitf6glgfbjon3.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'W3fAmF16WNykkbzJ6Of1Z9X6'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1026913627216-omck698m2pln0qemhqq00rkfh9lcgtko.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'Eal4hjeb7vlcvGy_rFAGnx1N'
 
 # Social Auth error handling
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = LOGIN_URL
@@ -321,4 +324,44 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     AB_Testing__c, GCSS_Status__c, Language__c, All_Regalix_Comments__c, Picasso_Objective__c, Internal_CID_1__c, POD_Name__c, Picasso_Lead_Stage__c,\
     PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c"
 
-SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/16crEI36EeBDGuOx0GBusJ8gloH6zWsJNErf5opeavzE/edit#gid=782277640'
+# SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/16crEI36EeBDGuOx0GBusJ8gloH6zWsJNErf5opeavzE/edit#gid=782277640'
+
+CODE_TYPE_MAPPING = {'AdWords Conversion Tracking': 'Adwords Conversion Code',
+                     'Adwords Conversion Code': 'Adwords Conversion Code',
+                     'Adwords Remarketing': 'Adwords Remarketing Code',
+                     'Analytics': 'Analytics',
+                     'Analytics Cross Domain Tracking': 'Cross Domain Tracking',
+                     'Analytics Destination Tracking': 'Analytics Destination Tracking',
+                     'Analytics E-Commerce Tracking': 'Analytics E-Commerce Tracking',
+                     'Analytics Enhanced E-Commerce Tracking': 'Analytics Enhanced E-Commerce Tracking',
+                     'Analytics Event Tracking': 'Analytics Event Tracking',
+                     'Conversion Code': 'Adwords Conversion Code',
+                     'Cross Domain Tracking': 'Cross Domain Tracking',
+                     'Dynamic Remarketing': 'Dynamic Remarketing - Retail',
+                     'Dynamic Remarketing - Extension (non retail)': 'Dynamic Remarketing - Extension (non retail)',
+                     'Dynamic Remarketing - Retail': 'Dynamic Remarketing - Retail',
+                     'GA Conversion Tracking': 'GA Conversion Tracking',
+                     'GA Destination Tracking': 'Analytics Destination Tracking',
+                     'GA E-Commerce Tracking': 'Analytics E-Commerce Tracking',
+                     'GA Event Tracking': 'Analytics Event Tracking',
+                     'GA Remarketing': 'Google Analytics Remarketing',
+                     'Google Analytics Dynamic Remarketing  (Retail)': 'Google Analytics Dynamic Remarketing  (Retail)',
+                     'Google Analytics Remarketing Tracking': 'Google Analytics Remarketing',
+                     'Google Forwarding Numbers Conversion code': 'Website Call Conversion',
+                     'Google Shopping Migration': 'Google Shopping Migration',
+                     'Google Shopping Setup': 'Google Shopping Setup',
+                     'Google Tag Manager': 'Google Tag Manager',
+                     'Mobile Conversion Tracking': 'SDK Conversion Tracking',
+                     'Remarketing': 'Adwords Remarketing Code',
+                     'SDK Conversion Tracking': 'SDK Conversion Tracking',
+                     'WCC Beta': 'WCC Beta',
+                     'Website Call Conversion': 'Website Call Conversion'}
+
+LEAD_STATUS_MAPPING = {'Attempting Contact': 'Attempting Contact',
+                       'Implemented': 'Implemented',
+                       'In Active': 'In Active',
+                       'In Progress': 'In Progress',
+                       'In Queue': 'In Queue',
+                       'ON CALL': 'In Queue',
+                       'Pending QC - In Active': 'In Active',
+                       'Pending QC - WIN': 'Implemented'}

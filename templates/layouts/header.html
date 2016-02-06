@@ -4,8 +4,8 @@
       <div class="container-fluid"> 
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-          <a class="navbar-brand" href="{% url 'main.views.home' %}" {% if "WPP" in request.session.groups %} style="padding-top: 8px;" {% endif %}>
-           {% if "WPP" in request.session.groups %}
+          <a class="navbar-brand" href="{% url 'main.views.home' %}" {% if "wpp" in request.META.HTTP_HOST %} style="padding-top: 8px;" {% endif %}>
+           {% if "wpp" in request.META.HTTP_HOST %}
             <img src="{% static 'images/GTrack-logo.png' %}" alt="Gtrack Team"/>
           {% else %}
             <img src="{% static 'images/tag-logo.png' %}" alt="Tag Team"/>
@@ -19,7 +19,7 @@
           <ul class="nav navbar-nav main-nav">
             <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
-              {% if "WPP" in request.session.groups %}
+              {% if "wpp" in request.META.HTTP_HOST %}
                   <li><a href="{% url 'leads.views.wpp_lead_form' %}">Submit  Lead</a></li>
                   <li><a href="{% url 'leads.views.get_wpp_lead_summary' %}"> Lead Status</a></li>
               {% else %}
@@ -32,7 +32,7 @@
             <!-- <li><a href="{% url 'reports.views.reports' %}">Reports</a></li> -->
             <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Reports <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
-              {% if "WPP" in request.session.groups %}
+              {% if "wpp" in request.META.HTTP_HOST %}
                 <li><a href="{% url 'reports.views.wpp_reports' %}"> Reports</a></li>
                 <li><a href="{% url 'reports.views.wpp_master_list' %}"> Master List</a></li>
               {% else %}
@@ -52,7 +52,7 @@
               </ul>
             </li> -->
 
-              {% if "WPP" in request.session.groups %}
+              {% if "wpp" in request.META.HTTP_HOST %}
                 <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Team<i class="fa fa-angle-down"></i></a>
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="#">Meet the Team</a></li>
@@ -83,7 +83,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="submit-lead-btn">
-            {% if "WPP" in request.session.groups %}
+            {% if "wpp" in request.META.HTTP_HOST %}
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_nomination_form' %}"'>Nominate Advertiser Website</button>
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
@@ -118,9 +118,11 @@
               {% endif %}
               <input type="hidden" value="{{request.session.redirect_domain}}" id="redirect_domain">
               {% if "TAG-AND-WPP" in request.session.groups %}
-                <li><a href="#" id="getRedirectDomain" onclick="getRedirectDomain();">{{request.session.redirect_domain}} Portal </a></li>
-              {% else %}
-                <a href="#" id="getRedirectDomain" onclick="getRedirectDomain();" style="display:none;">{{request.session.redirect_domain}} Portal </a>
+                {% if "wpp" in request.META.HTTP_HOST %}
+                <li><a id="tag_portal" onclick="getRedirectDomain()">TAG Portal </a></li>
+                {% else %}
+                <li><a id="wpp_portal" onclick="getRedirectDomain()">WPP Portal </a></li>
+                {% endif %}
               {% endif %}
               <li><a href="{% url 'auth.views.user_logout' %}">Sign out</a></li>
             </ul>
@@ -150,5 +152,6 @@
               }
             });
   }
+
   </script>
 

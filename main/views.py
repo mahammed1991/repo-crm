@@ -65,7 +65,7 @@ def main_home(request):
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
     title = "Activity Summary for %s - %s to %s %s" % (current_quarter, datetime.strftime(start_date, '%b'), datetime.strftime(end_date, '%b'), datetime.strftime(start_date, '%Y'))
 
-    if 'WPP' not in request.session['groups']:
+    if 'wpp' not in request.get_host():
 
         lead_status = settings.LEAD_STATUS
         if request.user.groups.filter(name='SUPERUSER'):
@@ -257,12 +257,13 @@ def main_home(request):
 
 def get_feedbacks(user, feedback_type):
     """ List Feedbacks by user """
-
     if user.groups.filter(name='FEEDBACK'):
         if feedback_type == 'WPP':
             feedbacks = Feedback.objects.filter(code_type='WPP').order_by('-created_date')
+        elif feedback_type == 'PICASSO':
+            feedbacks = Feedback.objects.filter(code_type='PICASSO').order_by('-created_date')
         else:
-            feedbacks = Feedback.objects.exclude(code_type='WPP').filter().order_by('-created_date')
+            feedbacks = Feedback.objects.exclude(code_type__in=['WPP', 'PICASSO']).filter().order_by('-created_date')
     else:
         if feedback_type == 'WPP':
             feedbacks = Feedback.objects.filter(code_type='WPP')
@@ -272,8 +273,16 @@ def get_feedbacks(user, feedback_type):
                 | Q(lead_owner__email=user.email)
                 | Q(lead_owner__profile__user_manager_email=user.email)
             ).order_by('-created_date')
+        elif feedback_type == 'PICASSO':
+            feedbacks = Feedback.objects.filter(code_type='PICASSO')
+            feedbacks = feedbacks.filter(
+                Q(user__email=user.email)
+                | Q(user__profile__user_manager_email=user.email)
+                | Q(lead_owner__email=user.email)
+                | Q(lead_owner__profile__user_manager_email=user.email)
+            ).order_by('-created_date')
         else:
-            feedbacks = Feedback.objects.exclude(code_type='WPP').filter(
+            feedbacks = Feedback.objects.exclude(code_type__in=['WPP', 'PICASSO']).filter(
                 Q(user__email=user.email)
                 | Q(user__profile__user_manager_email=user.email)
                 | Q(lead_owner__email=user.email)
@@ -461,6 +470,7 @@ def edit_profile_info(request):
         user_details.phone = request.POST.get('user_phone', None)
         user_details.user_manager_name = request.POST.get('user_manager_name', None)
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
+        user_details.pod_name = request.POST.get('pod_name', None)
 
         if '@google.com' in request.user.email:
             user_details.team_id = request.POST.get('user_team', None)
@@ -545,7 +555,16 @@ def view_feedback(request, id):
     can_resolve = True
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
-    return render(request, 'main/view_feedback.html', {'feedback': feedback,
+
+    if feedback.code_type == 'PICASSO':
+        return render(request, 'main/view_feedback.html', {'feedback': feedback,
+                                                       'comments': normal_comments,
+                                                       'can_resolve': can_resolve,
+                                                       'resolved_count': resolved_count,
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'picasso': True})
+    else:
+        return render(request, 'main/view_feedback.html', {'feedback': feedback,
                                                        'comments': normal_comments,
                                                        'can_resolve': can_resolve,
                                                        'resolved_count': resolved_count,
@@ -582,16 +601,37 @@ def list_feedback_wpp(request):
 
 @login_required
 @manager_info_required
+def list_feedback_picasso(request):
+    """ List all PICASSO feedbacks"""
+
+    feedbacks, feedback_list = get_feedbacks(request.user, 'PICASSO')
+
+    return render(request, 'main/list_feedback.html', {'feedbacks': feedbacks,
+                                                       'media_url': settings.MEDIA_URL + 'feedback/',
+                                                       'feedback_list': feedback_list, 'type': 'PICASSO', 'picasso': True
+                                                       })
+
+
+@login_required
+@manager_info_required
 def create_feedback(request, lead_id=None):
     """ Create feed back """
     if request.method == 'POST':
         feedback_details = Feedback()
         feedback_details.user = request.user
         feedback_details.title = request.POST['title']
-        feedback_details.cid = request.POST['cid']
+        if request.POST['code_type'] == 'PICASSO':
+            feedback_details.cid = request.POST['enter_cid']
+        else:
+            feedback_details.cid = request.POST['cid']
         feedback_details.advertiser_name = request.POST['advertiser']
-        language = Language.objects.get(id=request.POST['language'])
-        feedback_details.language = language.language_name
+        if request.POST.get('language'):
+            language = Language.objects.get(id=request.POST['language'])
+            feedback_details.language = language.language_name
+        else:
+            feedback_details.language = '-'
+
+        # picasso has no location, so we are saving India as default for picasso because location is foriegn key in feedback
         feedback_location = Location.objects.get(location_name=request.POST['location'])
         feedback_details.location = feedback_location
 
@@ -627,7 +667,10 @@ def create_feedback(request, lead_id=None):
 
         if request.POST['code_type'] == 'WPP':
             return redirect('main.views.list_feedback_wpp')
-        return redirect('main.views.list_feedback')
+        elif request.POST['code_type'] == 'PICASSO':
+            return redirect('main.views.list_feedback_picasso')
+        else:
+            return redirect('main.views.list_feedback')
 
     # Feedback Form
     feedback_type = request.GET.get('type')
@@ -648,6 +691,9 @@ def create_feedback(request, lead_id=None):
         return render(request, 'main/feedback_mail/wpp_feedback_form.html', {'locations': locations,
                                                                              'programs': programs, 'lead': lead, 'languages': languages,
                                                                              'feedback_type': feedback_type})
+    elif feedback_type == "PICASSO":
+        programs = Team.objects.filter(belongs_to__in=['PICASSO', 'BOTH'], is_active=True)
+        return render(request, 'main/feedback_mail/picasso_feedback_form.html', {'picasso': True, 'programs': programs, 'feedback_type': feedback_type, 'lead': lead})
     else:
         programs = Team.objects.filter(is_active=True)
         locations = Location.objects.all()
@@ -1068,7 +1114,7 @@ def get_notifications(request):
     # Notifications list
     user = UserDetails.objects.get(user=request.user)
     notification = list()
-    if 'WPP' not in request.session['groups']:
+    if 'WPP' not in request.session['groups'] and 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
             notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
@@ -1232,6 +1278,7 @@ def migrate_user_data(request):
         google_manager_email = str(google_manager) + '@google.com' if google_manager else ''
         region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
+        podname = sheet.cell(r_i, get_col_index(sheet, 'podname')).value
         if valid_string(program) and valid_string(country):
             try:
                 user = User.objects.get(email=google_rep_email)
@@ -1248,6 +1295,7 @@ def migrate_user_data(request):
                 user_details = UserDetails()
                 user_details.user_id = user.id
 
+            user_details.pod_name = podname
             user_details.user_manager_email = google_manager_email
             user_details.user_manager_name = user_dict.get(google_manager_email, '')
             try:
@@ -1293,6 +1341,7 @@ def migrate_user_data(request):
             failed_rows.append(failed_rec)
 
     path = "/tmp/Unsaved_Records.csv"
+
     if os.path.exists(path):
         os.remove(path)
     if os.path.exists(excel_file_path):
@@ -1394,7 +1443,7 @@ def upload_file_handling(request):
                         return render(request, 'main/upload_file.html', template_args)
 
             elif upload_target == 'normal_master_list':
-                default_headers = ['manager', 'username', 'market served', 'program', 'region']
+                default_headers = ['manager', 'username', 'market served', 'program', 'region', 'podname']
                 for element in default_headers:
                     if element not in uploaded_headers:
                         template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
