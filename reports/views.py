@@ -1187,8 +1187,6 @@ def meeting_minutes(request):
             meeting_minutes.region = request.POST.get('region')
             meeting_minutes.location = request.POST.get('location')
 
-        meeting_minutes.region = request.POST.get('region')
-        meeting_minutes.location = request.POST.get('location')
         meeting_minutes.program = request.POST.get('program')
         meeting_minutes.program_type = request.POST.get('program_type')
         next_meeting_date = request.POST.get('next_meeting_date', None)
@@ -1295,7 +1293,7 @@ def meeting_minutes(request):
             attendees_list_last.append(str(attendee['email']))
             attendees_email_list = ' ,  '.join(attendees_list)
 
-        mail_subject = "Meeting Minutes: %s - %s - %s - %s - %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
+        mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
         mail_body = get_template('reports/email_templates/minute_meeting_email_template.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
@@ -1370,23 +1368,9 @@ def meeting_minutes(request):
     last_meeting_link = {}
     other_subject = {}
 
-    link_to_last_data = MeetingMinutes.objects.all().last()
-    link_to_last_program = ''
-    link_to_last_program_type = ''
-    link_to_last_subject_timeline = ''
-    link_to_last_date = ''
-    link_to_last_id = ''
-    if link_to_last_data:
-        link_to_last_program = link_to_last_data.program
-        link_to_last_program_type = link_to_last_data.program_type
-        link_to_last_subject_timeline = link_to_last_data.subject_timeline
-        link_to_last_date = link_to_last_data.meeting_time_in_ist.date()
-
     # send mail
     return render(request, 'reports/meeting_minutes.html', {'other_subject': other_subject, 'last_meeting_link': last_meeting_link,
                                                             'tenantive_agenda_dict': tenantive_agenda_dict,
-                                                            'link_to_last_date': link_to_last_date, 'link_to_last_subject_timeline': link_to_last_subject_timeline,
-                                                            'link_to_last_program_type': link_to_last_program_type, 'link_to_last_program': link_to_last_program,
                                                             'link_program_type': link_program_type, 'link_program': link_program, 'link_location': link_location,
                                                             'link_region': link_region, 'new_subject_timeline': new_subject_timeline, 'action_plan_dict': action_plan_dict,
                                                             'key_points_dict': key_points_dict, 'all_locations': all_locations, 'region_locations': region_locations,
@@ -1567,8 +1551,26 @@ def export_meeting_minutes(request):
             response = DownloadLeads.get_downloaded_file_response(path)
             return response
 
-
-    return render(request, 'reports/export_meeting_minutes.html', {})
+    all_records_list = list()
+    all_meeting_records = MeetingMinutes.objects.all()
+    for each_record in all_meeting_records:
+        each_record_dict = dict()
+        meeting_date = each_record.meeting_time_in_ist.date()
+        each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+        each_record_dict['Subject Timeline'] = each_record.program + ' ' + each_record.program_type + ' ' + each_record.subject_timeline + ' ' + each_record.other_subject
+        key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 
+                                                       'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4', 
+                                                       'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 
+                                                       'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 
+                                                       'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 
+                                                       'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 
+                                                       'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 
+                                                       'action_item_15', 'owner_15', 'action_date_15',])}
+        each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_record.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
+        each_record_dict['reference_num'] = each_record.ref_uuid
+        each_record_dict['meeting_minutes_status'] = each_record.meeting_status
+        all_records_list.append(each_record_dict)
+    return render(request, 'reports/export_meeting_minutes.html', {'all_records_list': json.dumps(all_records_list)})
 
 def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
