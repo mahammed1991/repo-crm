@@ -34,6 +34,7 @@
       /* this line for uncheck other check box*/ 
       $("#tag_contact_person_name, #shop_contact_person_name").val(''); 
       $("#web_access").prop("checked", false);
+      $('#webaccess-inline').hide();
 
       $( "#webmaster" ).animate({
       height: "toggle"

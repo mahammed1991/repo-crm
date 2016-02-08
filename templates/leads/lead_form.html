@@ -139,16 +139,19 @@
             </label>
       </div>
       <div id="webmaster" class="row" style="display:none;">
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="webmaster_name" name="webmaster_name" placeholder="Webmaster Name">
-          <input type="hidden" class="form-control" id="lopt" name="lopt">
-        </div>
-        <div class="col-md-4">
-          <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Email">
-        </div>
-        <div class="col-md-4">
-           <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
-        </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="webmaster_name" name="webmaster_name" placeholder="Webmaster Name">
+              <input type="hidden" class="form-control" id="lopt" name="lopt">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Email">
+            </div>
+            <div class="col-md-4">
+               <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
+            </div>
+      </div>
+      <div id="webaccess-inline" class="row" style="display:none;padding-left: 20px;">
+          <span>Please make sure that the advertiser or the webmaster has the access to make code changes to the website</span>
       </div>
       </div>
 
@@ -1028,8 +1031,9 @@
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title"> Notification</h4>
                 </div>
-                <div class="modal-body" style="height:200px !important;width:510px; !important">
-                  <p>Make sure your advertiser has administrative access to the website. This means, they have either FTP or admin panel credentials and can make code changes to their website. If they don't, they can invite their webmaster to join our call. If the webmaster is unavailable, you'll need to reschedule the call.
+                <div class="modal-body" style="height:100px !important;width:510px; !important">
+                  <p>
+                       Please make sure that the advertiser or the webmaster has the access to make code changes to the website
                   </p>
                 </div>
                 <div class="modal-footer">
@@ -1118,7 +1122,18 @@
 
 $("input:radio[name=web_access]").click(function() {
     /*var value = $(this).val();*/
-    $("#notification").modal('show');
+    
+    var formTeam = $('#team').val();
+    var formCountry = $('#country').val();
+    if(((formTeam.indexOf('ETO') != -1)||(['UMM'].indexOf(formTeam) != -1)) && (['AU/NZ', 'UK/I'].indexOf(formCountry) != -1)){
+        $("#notification").modal('show');
+    }else {
+        $( "#webaccess-inline" ).animate({
+        height: "toggle"
+        }, 300, function() {
+        });
+    }
+
     $('body').removeClass('modal-open');
     $('#tag_primary_role, #shop_primary_role').empty()
     $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Owner">Owner</option><option value="Marketing">Marketing</option>');
@@ -1195,7 +1210,7 @@ $(document).on('change', '#country', function() {
             $('#appointment_check_tag').show();
             $('#appointment_check_shopping').show();
         }
-
+        window.code_types = {{code_types|safe}};
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx == -1) {
             window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");

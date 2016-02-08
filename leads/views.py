@@ -236,7 +236,7 @@ def wpp_lead_form(request, ref_id=None):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
     wpp_loc = list()
@@ -341,7 +341,7 @@ def wpp_nomination_form(request):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
     wpp_loc = list()
