@@ -1,0 +1,153 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  PICASSO Lead Form
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    .table-container{ min-height:300px;}
+  </style>
+{% endblock main_css %}
+{% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
+
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1 style="font-size: 24px;
+  font-family: 'robotoblack';
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+  margin-top: 50px;
+  margin-bottom: 20px;">SUBMIT PICASSO MOBILE SITE AUDIT REQUEST</h1>
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=6" name="errorURL">
+    <input type="hidden" name="oid" value="00DZ000000MipUa">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+    <input type="hidden" id="picasso_lead_status" name="picasso_lead_status" value="In Queue">
+    <input type="hidden" id="ctype1" name="ctype1" value="PICASSO">
+    <input type="hidden" id="company" name="company" value="">
+    <input type="hidden" id="country" name="country" value=".">
+    <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
+
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">This submission would be approximately number {{no_of_inqueue_leads}} in the queue with an expected delivery date by <b>{{estimated_tat}}</b> </p>
+    <div class="std-sub-title">Google Rep Information</div>
+    <div class="row">
+      <div class="col-md-6">
+        <label for="gref">Google Rep Name</label>
+        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+        <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+        <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+        <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+
+      </div>
+      <div class="col-md-6">
+        <label for="team">Program name</label>
+        <select class="form-control bgicon" id="team" title="Program Name" name="team">
+          <option value="">Select Program</option>
+          {% for program in teams %}
+            <option value="{{program.team_name}}">{{program.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Details</div>
+      <div class="row">
+        <div class="col-md-6">
+        <label for="cid">Customer ID</label>
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+      </div>
+      <div class="col-md-6">
+        <label for="picasso_pod">POD Name</label>
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user_pod_name.pod_name %} value="{{user_pod_name.pod_name}}" {% else %} value="" {% endif %}>
+      </div>
+      <div class="col-md-6">
+         <label for="url" id="url_label_id">Website URL</label>
+          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
+        </div>
+        <div class="col-md-6">
+          <label for="additional_notes">Additional Notes(Optional)</label>
+          <textarea class="form-control" name="additional_notes" id="additional_notes" style="height: 175px;"></textarea>
+        </div>
+      <div class="col-md-6" style="margin-top: -130px;">
+        <label for="picasso_objective">Objective</label></br>
+        <div class="checkboxvalidation" style="height:95px;">
+          <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
+          </label>
+          <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry (Generate Leads)</span></br>
+          </label>
+            <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
+          </label>
+          <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
+          </label>
+          <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
+          </label>
+           <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
+          </label>
+           <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
+          </label>
+        </div>
+      </div>
+     
+      
+        
+      </div>
+    <div class="btns text-center" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
+            <button class="grey mdl-button2 mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div>
+  </form>
+</div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    olark('api.box.hide');
+
+     // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs
+  $(document).on('change', '.mdl-checkbox__input', function() {
+        id = $(this).attr('id');
+        if($('#'+id).is(':checked')){
+          //Placing data attr as Value
+          $('#'+id).val($('#'+id).attr('data'));
+        }else{
+          $('#'+id).val(''); // if checkbox is unchecked then clearing its value
+        }
+    });
+});
+</script>
+{% endblock main_js %}
