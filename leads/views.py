@@ -214,6 +214,11 @@ def wpp_lead_form(request, ref_id=None):
                 wpp_data[value] = request.POST.get(key)
         submit_lead_to_sfdc(sf_api_url, wpp_data)
         advirtiser_details = get_advertiser_details(sf_api_url, wpp_data)
+        user_groups = [group.name for group in request.user.groups.all()]
+        if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
+            advirtiser_details['whitelisted_user'] = 'Yes'
+        else:
+            advirtiser_details['whitelisted_user'] = 'No'
         send_calendar_invite_to_advertiser(advirtiser_details, False)
 
         return redirect(ret_url)
