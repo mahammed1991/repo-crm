@@ -30,7 +30,7 @@ from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
 from django.db.models import Q
 from random import randint
@@ -318,7 +318,6 @@ def picasso_lead_form(request):
     if tat_dict['estimated_date']:
         lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
         lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
-    lead_args['user_pod_name'] = UserDetails.objects.get(user=request.user.id)
     return render(
         request,
         'leads/picasso_lead_form.html',
@@ -350,7 +349,6 @@ def wpp_nomination_form(request):
         for loc in tm.location.all():
             wpp_loc.append(loc)
     lead_args.update({'wpp_loc': wpp_loc})
-    lead_args['user_pod_name'] = UserDetails.objects.get(user=request.user.id)
     return render(
         request,
         'leads/wpp_nomination_form.html',
@@ -2956,6 +2954,7 @@ def searh_leads(request):
 def wpp_whitelist_request(request):
     if request.is_ajax():
         user = UserDetails.objects.get(user=request.user)
+        notes = request.GET.get('notes')
         mail_subject = "[Website Opt] Please whitelist for website performance optimization submissions"
         mail_body = get_template('leads/email_templates/whitelist_request_template.html').render(
             Context({
@@ -2963,10 +2962,12 @@ def wpp_whitelist_request(request):
                 'market': user.location,
                 'ldap': request.user.email,
                 'pod_name': user.pod_name,
+                'notes': notes,
+                'signature': request.user.first_name,
             })
         )
         mail_from = 'Picasso Build Request Team'
-        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
+        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'skumar@regalix-inc.com', 'sprasad@regalix-inc.com']
         bcc = set([])
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)

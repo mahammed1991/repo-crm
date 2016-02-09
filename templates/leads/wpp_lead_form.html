@@ -101,7 +101,7 @@
      
       <div class="col-md-6">
         <label for="picasso_pod">POD Name</label>
-        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if ref_lead.pod_name == "" or ref_lead.pod_name == "None" %} value="" {% else %} value="{{ ref_lead.pod_name }}" {% endif %}>
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name == "" or user.profile.pod_name == "None" %} value="" {% else %} value="{{ user.profile.pod_name }}" {% endif %}>
       </div>
       <div class="col-md-6">
                     <label for="picasso_objective">Objective</label></br>
@@ -230,13 +230,19 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title"> Notification</h4>
           </div>
-          <div class="modal-body" style="height:200px !important;width:510px; !important">
-            <p>We do not recognize your ldap as being approved to submit leads. Website performance optimization support is restricted to certain programs and markets. You may submit a lead but we will not begin work until you are whitelisted.
-            To be whitelisted, please click the button below to submit a request. Please include in the email body your program, market, and pod name as well as any additional information you think is relevant.
+          <div class="modal-body" style="height:320px !important;width:510px; !important">
+            <p>We do not recognize your LDAP as being approved to submit leads. PICASSO build support is restricted to certain programs and markets. You may submit a lead but we will not begin work until you are whitelisted.
+            To be whitelisted, please click the button below to submit a request. Please include any additional information you think is relevant.
             </p>
+            <div class="row">
+              <div class="col-md-12">
+                  <label for="whitelist_additional_notes">Additional Notes</label>
+                  <textarea class="form-control" placeholder="Additional Notes(Optional)" id="whitelist_additional_notes"></textarea>
+                </div>
+            </div>
           </div>
           <div class="modal-footer" style="text-align:center !important">
-            <button type="button" class="btn btn-default" style="align:center" id="whitelist_request">Request</button>
+            <button type="button" class="btn btn-default" style="align:center" id="whitelist_request">Request Access</button>
           </div>
         </div>
       </div>
@@ -403,6 +409,7 @@ $('#whitelist_request').on('click', function(){
           'url': "/leads/wpp-whitelist-request/",
           'dataType': "json",
           'type': 'GET',
+          'data': {'notes': $('#whitelist_additional_notes').val()},
           success: function(response) {
             if (response['status'] == 'success'){
               $("#notification").modal('hide');
