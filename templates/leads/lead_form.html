@@ -11,6 +11,9 @@
     .shopping-policies .subitems li{
       list-style: none;
     }
+    .avg_time{
+      font-size: 15px; border-width: 0px 0px 0px 6px; border-style: solid; border-color: rgb(10, 157, 88); color: rgb(10, 157, 88); padding:4px;padding-left: 10px; margin-bottom: 18px; font-family: Roboto, Arial, sans-serif; background: rgb(230, 245, 238); margin-left: 20px;
+    }
 </style>
 {% endblock main_css %}
 {% block content %}
@@ -302,6 +305,7 @@
                     <div class="row">&nbsp;</div>
               </div>
               <!-- RLSA Bulk Implementation 1 End-->
+              <div class="col-md-12 avg_time" id="code_type_avg_time_1" style="display:none;"></div>
               <a id="addTask_2" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
           </div>
         </div>
@@ -453,6 +457,7 @@
                     <div class="row">&nbsp;</div>
               </div>
               <!-- RLSA Bulk Implementation 2 End-->
+              <div class="col-md-12 avg_time" id="code_type_avg_time_2" style="display:none;"></div>
             <a id="addTask_3" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
           </div>
         </div>
@@ -597,6 +602,7 @@
                     <div class="row">&nbsp;</div>
               </div>
               <!-- RLSA Bulk Implementation 3 End-->
+              <div class="col-md-12 avg_time" id="code_type_avg_time_3" style="display:none;"></div>
             <a id="addTask_4" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
           </div>
         </div>
@@ -740,6 +746,7 @@
                     <div class="row">&nbsp;</div>
               </div>
               <!-- RLSA Bulk Implementation 4 End-->
+              <div class="col-md-12 avg_time" id="code_type_avg_time_4" style="display:none;"></div>
             <a id="addTask_5" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
           </div>
         </div>
@@ -883,6 +890,7 @@
                     <div class="row">&nbsp;</div>
               </div>
               <!-- RLSA Bulk Implementation 5 End-->
+              <div class="col-md-12 avg_time" id="code_type_avg_time_5" style="display:none;"></div>
           </div>
         </div>
 
@@ -1076,6 +1084,9 @@
     window.is_loc_changed = false;
 
     window.code_types = {{code_types|safe}};
+
+    window.code_type_with_avg_time = {{code_type_with_avg_time|safe}};
+    
     $(window).bind("load", function() {
     $('#language').trigger('change');
     $('#country').trigger('change');
@@ -1230,6 +1241,16 @@ $(document).on('change', '#language', function(){
   mandatoryAppointmentForLanguages(language);
 });
 
+$(document).on('change', '[id*="ctype"]', function(){
+  var code_type = $(this).val();
+  get_avg_time(code_type,this.id);
+});
+
+function get_avg_time(code_type,id){
+  id=id.replace("ctype",'')
+  $('#code_type_avg_time_'+id).html("This Code Type takes an average of <strong>"+window.code_type_with_avg_time[code_type]+"</strong> to implement");
+  $('#code_type_avg_time_'+id).show();
+}
 
 function clearAndHideFields(){
   for(var selectedindex=1; selectedindex<6;selectedindex++){
