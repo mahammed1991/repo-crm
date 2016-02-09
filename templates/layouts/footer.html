@@ -1,4 +1,5 @@
 {% load static %}
+<a href="" class="report-a-bug" title="Report a Bug" data-toggle="modal" data-target="#feedbackModal" onclick='hideOlark();'></a>
 <footer class="footer">
     <div class="container-fluid">
         <ul>
@@ -8,3 +9,72 @@
         </ul>
     </div>
 </footer>
+
+<!-- feedback modal -->
+        <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showOlark()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Report a Bug</h4>
+              </div>
+              <div class="modal-body" id="feedback-body">
+                <form onsubmit='return portalFeedbackValidation(this);' action="{% url 'main.views.create_portal_feedback' %}" method='POST' enctype="multipart/form-data" id="portalFeedback">
+                    {% csrf_token %}
+                   <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                     <select class="form-control" id="feedbackType" name="type">
+                        <option value="Feedback Type">Bug Found</option>
+                        <option value="UI / Design Related"> UI / Design Related</option>
+                        <option value="not_able_to_submit_lead"> Not able to submit lead</option>
+                        <option value="UX / Experience Related">UX / Experience Related</option>
+                        <option value="Incorrect Data / Information">Incorrect Data / Information</option>
+                    </select>
+                    <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
+                    
+                      <!--<input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" /> 
+                      <div style="padding-left: 21%;">
+                        <input type="file" id="attachmentfile" style="display:none" name="attachmentfile">
+                        <a href="#"><img src="{% static 'images/browse.png' %}" w id="img1" style="padding-left: 9%;width: 65%;margin: auto;" /></a>
+                      </div>
+                      -->
+                      <div style="width:100%;">  
+                      <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%;"/> 
+                      <input type="file" id="attachmentfile" name="attachmentfile" style="display: none" onChange="Handlechange();" />
+                      <input type="text" id="filename" readonly="true" style="width:58%;" />
+                      
+
+                      </div>                     
+                                          
+                    <!-- <i class="fa fa-paperclip" name="attachmentfile"></i> -->
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+
+                  <div class="btn-group">
+                      <button class="btn std-btn" id='SubmitFeedback' style="border-radius:2px;">Submit</button>
+                  </div>
+                </div>
+               </form>
+            </div>
+          </div>
+        </div>
+        <!-- feedback modal ends -->
+
+{% block main_js %}
+<script type="text/javascript">
+	function hideOlark(){
+	  olark('api.box.hide');
+	}
+  function HandleBrowseClick()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    fileinput.click();
+}
+
+function Handlechange()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+}
+</script>
+{% endblock main_js%}
