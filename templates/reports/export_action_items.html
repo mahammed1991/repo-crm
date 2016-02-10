@@ -106,6 +106,24 @@ Action Items Meeting Minutes
 	meeting_date_to = '{{meetings_date_to|safe}}'
 	program = '{{program|safe}}'
 
+	if(meeting_date_from){
+		$('#datepickerFrom').val(meeting_date_from);
+	}else{
+		$('#datepickerFrom').val('');
+	}
+
+	if(meeting_date_to){
+		$('#datepickerTo').val(meeting_date_to);
+	}else{
+		$('#datepickerTo').val('');
+	}
+
+	if(program){
+		$('#program').val(program);
+	}else{
+		$('#program').val('');
+	}
+
 	if(all_meeting_records){
     display_all_record_table(all_meeting_records);
   }
