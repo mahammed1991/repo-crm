@@ -2411,6 +2411,7 @@ def get_basic_lead_data(request):
     locations = Location.objects.filter(is_active=True)
     new_locations = list()
     all_locations = list()
+    all_code_types_with_avg_time = dict()
     time_zone_for_region = dict()
     language_for_location = dict()
     for loc in locations:
@@ -2447,6 +2448,9 @@ def get_basic_lead_data(request):
 
     code_types = CodeType.objects.filter(is_active=True).values_list('name', flat=True)
     code_types = [str(ctype) for ctype in code_types]
+    all_code_types = CodeType.objects.filter(is_active=True)
+    for each_code_type in all_code_types:
+        all_code_types_with_avg_time[str(each_code_type.name)] = str(each_code_type.avg_setup_time)
     programs = ReportService.get_all_teams()
     programs = [str(pgm) for pgm in programs]
 
@@ -2471,6 +2475,7 @@ def get_basic_lead_data(request):
     lead_args['programs'] = programs
     lead_args['regions'] = all_regions
     lead_args['region_locations'] = region_locations
+    lead_args['code_type_with_avg_time'] = all_code_types_with_avg_time
 
     return lead_args
 

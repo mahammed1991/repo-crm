@@ -177,6 +177,8 @@
       $( ".remove" ).hide();
       id = $(this).attr('id');
       indx = id.split('_')[1];
+      $('#code_type_avg_time_'+indx).html('');
+      $('#code_type_avg_time_'+indx).hide('');
       next_id = parseInt(indx) + 1
       prev_id = parseInt(indx) - 1
       $("#ctype" + indx).val('');
