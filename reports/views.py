@@ -1561,10 +1561,10 @@ def export_action_items(request):
         program = request.POST.get('program')
         meeting_date_from = datetime.strptime(meetings_date_from, '%m/%d/%Y')
         meeting_date_to = datetime.strptime(meetings_date_to, '%m/%d/%Y')
-        if request.POST.get('referenace_id'):
+        if request.POST.get('reference_id'):
             attendees_list = list()
             bcc_list = list()
-            update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('referenace_id'))
+            update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('reference_id'))
             update_status.meeting_status = request.POST.get('status')
             update_status.save()
             attendees = update_status.attendees.values('email')
@@ -1577,7 +1577,7 @@ def export_action_items(request):
                 bcc_list.append(str(each_bcc['email']))
             bcc_email_list = ' ,  '.join(bcc_list)
             mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (update_status.program, update_status.program_type, update_status.subject_timeline, update_status.other_subject, update_status.meeting_time_in_ist.date())
-            mail_body = get_template('reports/email_templates/minute_meeting_status_email_template.html').render(
+            mail_body = get_template('reports/email_templates/minute_meeting_status.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.ref_uuid),
                 'subject_timeline': update_status.subject_timeline,

@@ -92,7 +92,7 @@ Action Items Meeting Minutes
           </tbody>
         </table>
       </div>
-      <input type="hidden" name="referenace_id" value="">
+      <input type="hidden" name="reference_id" value="">
       <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;">
     </form>
     </div>
@@ -196,7 +196,7 @@ Action Items Meeting Minutes
   $('input[name=status]').change(function(){
     if($(this).prop('checked')){
       $('#submit_status').show();
-      $('input[name="referenace_id"]').val($(this).attr('class'));
+      $('input[name="reference_id"]').val($(this).attr('class'));
       $('#datepickerFrom1').val(meeting_date_from);
       $('#datepickerTo1').val(meeting_date_to);
       $('#program1').val(program);
