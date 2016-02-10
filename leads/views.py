@@ -317,7 +317,7 @@ def picasso_lead_form(request):
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
     # lead_args['teams'] = Team.objects.filter(is_active=True)
-    lead_args['teams'] = Team.objects.filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP']).order_by('team_name')
+    lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
     lead_args['picasso'] = True
     tat_dict = get_tat_for_picasso('portal')
     if tat_dict['estimated_date']:
@@ -2972,7 +2972,7 @@ def wpp_whitelist_request(request):
             })
         )
         mail_from = 'Picasso Build Request Team'
-        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'skumar@regalix-inc.com', 'sprasad@regalix-inc.com']
+        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'skumar@regalix-inc.com', 'sprasad@regalix-inc.com', 'spenz@google.com']
         bcc = set([])
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
