@@ -87,7 +87,7 @@ function validatethis() {
       $(focusElem).focus();
       return false;
     }else{
-      $(".modal").modal('show');
+      $(".meeting-preview").modal('show');
       return true;
     }  
   }
