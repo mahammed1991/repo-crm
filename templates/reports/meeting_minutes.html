@@ -356,7 +356,7 @@
 </form>
 </section>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+<div class="modal fade meeting-preview" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
   <div class="modal-dialog md1" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -611,8 +611,8 @@
   <script src="{% static 'js/reports/meeting_minutes.js' %}"></script>
   <script type="text/javascript">
 window.focusoutfailedFields = new Array();
-$('.modal').modal({backdrop: 'static', keyboard: false})
-$(".modal").modal('hide');
+$('.meeting-preview').modal({backdrop: 'static', keyboard: false})
+$(".meeting-preview").modal('hide');
 
 other_subject = "{{other_subject|safe}}"
 meeting_time_last = {{last_meeting_link|safe}}
