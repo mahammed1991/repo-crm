@@ -76,5 +76,21 @@ function Handlechange()
     var textinput = document.getElementById("filename");
     textinput.value = fileinput.value;
 }
+function portalFeedbackValidation(frm){
+    $(".error-box").removeClass('error-box');
+    var feedbackType = $('#feedbackType').val();
+    var comments = $('#comments').val();
+   if(feedbackType === 'Feedback Type'){
+      $('#feedbackType').addClass('error-box');
+      return false;
+    }else if(comments === ''){
+      $('#comments').addClass('error-box');
+      return false;
+    }else{
+      alert('Portal feedback created')
+      return true;
+    }
+    
+    }
 </script>
 {% endblock main_js%}
