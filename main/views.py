@@ -1147,7 +1147,7 @@ def create_portal_feedback(request):
         feedback_details.save()
         feedback_details = notify_portal_feedback_activity(request, feedback_details)
 
-        return redirect('main.views.main_home')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return redirect('main.views.main_home')
 
 
