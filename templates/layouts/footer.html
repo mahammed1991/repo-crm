@@ -1,5 +1,5 @@
 {% load static %}
-<a href="" class="report-a-bug" title="Report a Bug" data-toggle="modal" data-target="#feedbackModal" onclick='hideOlark();'></a>
+<a href="#" class="report-a-bug" title="Report a Bug" data-toggle="modal" data-target="#feedbackModal" onclick='hideOlark();' data-backdrop="static" data-keyboard="false"></a>
 <footer class="footer">
     <div class="container-fluid">
         <ul>
@@ -15,11 +15,11 @@
           <div class="modal-dialog ping-snippet">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="showOlark()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close" onclick="showOlark()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
                 <h4 class="modal-title" id="myModalLabel">Report a Bug</h4>
               </div>
               <div class="modal-body" id="feedback-body">
-                <form onsubmit='return portalFeedbackValidation(this);' action="{% url 'main.views.create_portal_feedback' %}" method='POST' enctype="multipart/form-data" id="portalFeedback">
+                <form method='POST' enctype="multipart/form-data" id="portalFeedback">
                     {% csrf_token %}
                    <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
                      <select class="form-control" id="feedbackType" name="type">
@@ -29,6 +29,11 @@
                         <option value="UX / Experience Related">UX / Experience Related</option>
                         <option value="Incorrect Data / Information">Incorrect Data / Information</option>
                     </select>
+                   <div id="preloaderOverlay" class="footeroverlay" style='display:none;margin-left: -16px;'>
+                      <div class="preloader">
+                      <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+                      </div>
+                    </div>
                     <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
                     
                       <!--<input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" /> 
@@ -60,7 +65,12 @@
         <!-- feedback modal ends -->
 
 {% block main_js %}
+<script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script> 
 <script type="text/javascript">
+function showOlark(){
+  olark('api.box.show');
+}
 	function hideOlark(){
 	  olark('api.box.hide');
 	}
@@ -76,8 +86,11 @@ function Handlechange()
     var textinput = document.getElementById("filename");
     textinput.value = fileinput.value;
 }
-function portalFeedbackValidation(frm){
-    $(".error-box").removeClass('error-box');
+
+
+$('#portalFeedback').submit(function(event){
+  event.preventDefault();
+  $(".error-box").removeClass('error-box');
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
    if(feedbackType === 'Feedback Type'){
@@ -87,10 +100,32 @@ function portalFeedbackValidation(frm){
       $('#comments').addClass('error-box');
       return false;
     }else{
-      alert('Portal feedback created')
-      return true;
+      var formData = new FormData($('#portalFeedback')[0]);
+        $('.footeroverlay').show();
+        $.ajax({
+            url: '/main/report-a-bug/',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $('.footeroverlay').hide();
+                $('.close-modal').trigger('click');
+                $("#feedbackType").val("Feedback Type");
+                $("#comments").val("");
+                $("#attachmentfile").val("");
+                $("#filename").val("");
+                showOlark();
+            },
+            error: function (error) {
+                $('.footeroverlay').hide();
+                console.log(error);
+            }
+        });
+
     }
-    
-    }
-</script>
+    return false;
+});
+ </script>
 {% endblock main_js%}

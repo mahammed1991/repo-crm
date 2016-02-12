@@ -1150,6 +1150,22 @@ def create_portal_feedback(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return redirect('main.views.main_home')
 
+def report_a_bug(request):
+    if request.is_ajax():
+        feedback_details = PortalFeedback()
+        feedback_details.user = request.user
+        feedback_details.feedback_type = str(request.POST['type'])
+        feedback_details.description = str(request.POST['comment'])
+        if request.FILES:
+            feedback_details.attachment = request.FILES['attachmentfile']
+
+        feedback_details.save()
+        feedback_details = notify_portal_feedback_activity(request, feedback_details)
+        return HttpResponse("success")
+    else:
+        return HttpResponse("error")
+
+
 
 def notify_portal_feedback_activity(request, feedback):
     mail_subject = feedback.feedback_type + " Portal Feedback"
