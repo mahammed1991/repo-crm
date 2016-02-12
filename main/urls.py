@@ -35,5 +35,6 @@ urlpatterns = patterns(
     url(r'^upload/migrate-data$', views.migrate_table_data),
     url(r'^picasso/$', views.picasso_home),
     url(r'^export-feedback/$', views.export_feedback),
+    url(r'^report-a-bug/$', views.report_a_bug),
 
 )
