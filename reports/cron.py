@@ -192,7 +192,7 @@ def implemented_leads_count_report():
         })
     )
     mail_from = 'basavaraju@regalix-inc.com'
-    mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'asantosh@regalix-inc.com']
+    mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'asantosh@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
