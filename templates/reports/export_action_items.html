@@ -6,7 +6,11 @@
 Action Items Meeting Minutes
 {% endblock title %}
 {% block main_css %}
-
+  <style type="text/css">
+  .headlinks-default{
+    border-right: 1px solid #ccc;
+  }
+  </style>
 {% endblock main_css %}
 {% block content %}
 
@@ -79,10 +83,10 @@ Action Items Meeting Minutes
           <thead>
              <tr>
                <th class="headlinks-default" style="min-width:100px;">Meeting Date</th>
-               <th class="headlinks-default" style="min-width:300px;">Subject Timeline</th>
+               <th class="headlinks-default" style="min-width:300px;">Subject Line</th>
                <th class="headlinks-default">Action Item(s)</th>
                <th class="headlinks-default">Owner</th>
-               <th class="headlinks-default" id="td_date">Target Date</th>
+               <th class="headlinks-default" id="td_date">Deadline</th>
                <th class="headlinks-default">Status</th>
                <th class="headlinks-default">Action</th>
              </tr>

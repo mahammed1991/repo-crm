@@ -154,7 +154,7 @@
             </div>
       </div>
       <div id="webaccess-inline" class="row" style="display:none;padding-left: 20px;">
-          <span>Please make sure that the advertiser or the webmaster has the access to make code changes to the website</span>
+          <span>Note that many advertisers have access to make content changes on their website but NOT code changes.  Please make sure your advertiser understands this difference and has the access to make code changes.</span>
       </div>
       </div>
 
@@ -916,8 +916,11 @@
 
     </div>
     <div id="shoppingInfo">
-      <div class="std-sub-title">Shopping Campaign Info</div>
-      <div class="row">
+      <div class="std-sub-title">Shopping Campaign Info
+        <input type="radio" class="shopping_campaign" id="Shopping_Campaign_Setup" value="Shopping_Campaign_Setup" style="margin-left: 187px;">Shopping Campaign Setup
+        <input type="radio" class="shopping_campaign" id="Shopping_Trobleshoot" value="Shopping_Trobleshoot" style="margin-left: 137px;">Shopping Troubleshooting
+      </div>
+      <div class="row shoppingInfo">
         <div class="col-md-4">
         <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
         <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
@@ -942,6 +945,28 @@
           <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
             Do you want to use same timeslot for Shopping?
         </div> -->
+
+      </div>
+      <div id="shopping_trobleshooting" style="display:none;">
+        <div class="row">
+          <div class="col-md-4">
+            <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
+              <option value="">Select Issues</option>
+              <option value="GTIN_Issues">GTIN Issues</option>
+              <option value="Error_Rectification_on_Feed">Error Rectification on Feed</option>
+              <option value="Campaing_Management">Campaing Management</option>
+              <option value="Adding_Products_to_Feed">Adding Products to Feed</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <input type="text" class="form-control" id="shopping_trobleshooting_url" placeholder="URL">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <textarea class="form-control" rows="10" cols="117" id="issues_description" name="issues_description" placeholder="Trobleshooting Issues Description"></textarea>
+          </div>
+        </div>
       </div>
 
     <div class="appointment">
@@ -1039,9 +1064,9 @@
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title"> Notification</h4>
                 </div>
-                <div class="modal-body" style="height:100px !important;width:510px; !important">
+                <div class="modal-body" style="height:130px !important;width:510px; !important">
                   <p>
-                       Please make sure that the advertiser or the webmaster has the access to make code changes to the website
+                       Note that many advertisers have access to make content changes on their website but NOT code changes.  Please make sure your advertiser understands this difference and has the access to make code changes.
                   </p>
                 </div>
                 <div class="modal-footer">
@@ -1202,11 +1227,13 @@ $(document).on('change', '#country', function() {
     if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
 
         if (['Vietnam'].indexOf(location) != -1) {
+            $('#shoppingSetup').attr('disabled', true);
             $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
             window.code_types = []
             window.code_types = ['Select Task Type', 'Adwords Conversion Code', 'AdWords Remarketing', 'Analytics', 'Analytics Destination Tracking']
 
         } else {
+            $('#shoppingSetup').attr('disabled', false);
             window.code_types = {{code_types|safe}};
             rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
             if (rlsaIndx != -1) {
@@ -1221,6 +1248,7 @@ $(document).on('change', '#country', function() {
             $('#appointment_check_tag').show();
             $('#appointment_check_shopping').show();
         }
+        $('#shoppingSetup').attr('disabled', false);
         window.code_types = {{code_types|safe}};
         rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
         if (rlsaIndx == -1) {

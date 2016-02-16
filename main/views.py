@@ -1183,8 +1183,8 @@ def notify_portal_feedback_activity(request, feedback):
 
     mail_to = set([
         'tkhan@regalix.com',
-        'ram@regalix-inc.com',
-        'rajuk@regalix-inc.com',
+        'g-crew@regalix-inc.com',
+        'portalsupport@regalix-inc.com',
         'sprasad@regalix-inc.com'
     ])
 

@@ -149,7 +149,12 @@ def lead_form(request):
                 first_name, last_name = split_fullname(full_name)
                 setup_data['first_name'] = first_name  # Primary Contact First Name
                 setup_data['last_name'] = last_name  # Primary Contact Last Name
-            setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
+            if request.POST.get('shopping_campaign_issues'):
+                setup_data[shop_leads['ctype1']] = 'Google Shopping Troubleshooting'
+                setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
+            else:
+                setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
+                setup_data[shop_leads['comment1']] = request.POST.get('description')
             submit_lead_to_sfdc(sf_api_url, setup_data)
 
         return redirect(ret_url)
