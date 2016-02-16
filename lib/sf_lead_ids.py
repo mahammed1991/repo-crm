@@ -441,6 +441,8 @@ class SalesforceLeads(object):
                              'rbidmodifier': '00Nd00000077TA8',  # Recommended Mobile Bid Modifier
                              'shopping_url': '00Nd0000005WYhE',  # Shopping URL
                              'is_shopping_policies': '00Nd0000007esIw',  # Shopping policies
+                             'shopping_campaing_issues': '00N7A000000Siv6',  # Field which store issue type
+                             'issues_discription': '00N7A000000SivB',  # Issues Description for shopping troubleshoot issue
                              }
     PRODUCTION_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',
                                 'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date

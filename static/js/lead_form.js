@@ -112,7 +112,7 @@
     });
     
     $("#shoppingSetup" ).click(function() {
-
+      $('#Shopping_Campaign_Setup').attr('checked', true);
       if($(this).children().is(':visible')){
         if($( "#tagImplementation .check-icon" ).is(":visible")){
           $("#submit_buttons").show();
@@ -152,6 +152,44 @@
       });
     });
 
+    /*Shopping Comapaign changes code starts here*/
+
+    $('#Shopping_Campaign_Setup').click(function(){
+      $('#description').val('');
+      $('#shopping_url').val('');
+      $('#Shopping_Trobleshoot').prop('checked', false);
+      $('#shopping_campaing_issues, #issues_description').val();
+      $( "#shopping_trobleshooting" ).hide();
+      $( ".shoppingInfo" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+
+    $('#Shopping_Trobleshoot').click(function(){
+      $('#issues_description').val('');
+      $('#rbid, #rbidmodifier, #rbudget, #shopping_url, #mc_id, #description').val('');
+      $('#Shopping_Campaign_Setup').prop('checked', false);
+      $('#shopping_trobleshooting_url').val('');
+      $('#mcIdCheck').prop('checked', true);
+      $( ".shoppingInfo" ).hide();
+      $( "#shopping_trobleshooting" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+    });
+
+    $('#shopping_trobleshooting_url').focusout(function(){
+      if($('#Shopping_Trobleshoot').prop('checked', true)){
+        $('#shopping_url').val($('#shopping_trobleshooting_url').val());
+      }else if($('#Shopping_Campaign_Setup').prop('checked', true)){
+        $('#shopping_url').val('');
+      }else{
+        $('#shopping_url').val('');
+      }
+    });
+
+    /*Shopping Comapaign changes code starts here*/
 
     $(".add" ).click(function() { 
       $( ".add" ).hide();
@@ -504,24 +542,39 @@ function validatethis(frm) {
     // Check If Shopping related lead fields
     if ($('#shoppingSetupBtn').is(':visible')) {
         
-      rbidElem = document.getElementById('rbid');
-      validateFiled(rbidElem);
+       if($('.shoppingInfo').is(':visible')){
+        
+            rbidElem = document.getElementById('rbid');
+            validateFiled(rbidElem);
 
-      rbidmodifierElem = document.getElementById('rbidmodifier');
-      validateFiledAllowZero(rbidmodifierElem);
+            rbidmodifierElem = document.getElementById('rbidmodifier');
+            validateFiledAllowZero(rbidmodifierElem);
 
-      rbudgetElem = document.getElementById('rbudget');
-      validateFiled(rbudgetElem);
+            rbudgetElem = document.getElementById('rbudget');
+            validateFiled(rbudgetElem);
 
-      shoppingElem = document.getElementById('shopping_url');
-      validateFiled(shoppingElem);
-      
-      // MC-ID Validation
-      MCIDElem = document.getElementById('mcIdCheck');
-      if(MCIDElem.checked == true){
-          MCElem = document.getElementById('mc_id');
-          validateFiled(MCElem);
-      }
+            shoppingElem = document.getElementById('shopping_url');
+            validateFiled(shoppingElem);
+            
+            // MC-ID Validation
+            MCIDElem = document.getElementById('mcIdCheck');
+            if(MCIDElem.checked == true){
+                MCElem = document.getElementById('mc_id');
+                validateFiled(MCElem);
+            }
+        }
+
+        if($('#shopping_trobleshooting').is(':visible')){
+
+          shoppingCampaingIssuesElem = document.getElementById('shopping_campaign_issues');
+          validateFiled(shoppingCampaingIssuesElem);
+
+          issuesDiscriptionEle = document.getElementById('issues_description');
+          validateFiled(issuesDiscriptionEle);
+
+          shoppingElem = document.getElementById('shopping_trobleshooting_url');
+          validateFiled(shoppingElem);
+        }
 
     // Hava an appointment 
     if (document.getElementById("appointmentCheck2").checked == true) {

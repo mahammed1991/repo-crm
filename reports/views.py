@@ -1201,21 +1201,17 @@ def meeting_minutes(request):
         total_link_file_name = request.POST.get('no_of_file_name_link')
         total_attach_file_name = request.POST.get('no_of_file_name_attach')
 
-        key_points_topic = list()
-        key_points_highlight = list()
         for i in range(1, int(total_keypoints_count) + 1):
-            key_points_topic.append(request.POST['topic_' + str(i)])
-            key_points_highlight.append(request.POST['highlight_' + str(i)])
             key_points['topic_' + str(i)] = request.POST['topic_' + str(i)]
             key_points['highlight_' + str(i)] = request.POST['highlight_' + str(i)]
 
-        action_plans_items = list()
-        action_plans_owner = list()
-        action_plans_date = list()
+        action_plans_items_list = list()
         for i in range(1, int(total_actionplan_count) + 1):
-            action_plans_items.append(request.POST['action_item_' + str(i)])
-            action_plans_owner.append(request.POST['owner_' + str(i)])
-            action_plans_date.append(request.POST['action_date_' + str(i)])
+            action_plans_items = dict()
+            action_plans_items['action_item_name'] = request.POST['action_item_' + str(i)]
+            action_plans_items['action_item_owner'] = request.POST['owner_' + str(i)]
+            action_plans_items['action_item_date'] = request.POST['action_date_' + str(i)]
+            action_plans_items_list.append(action_plans_items)
             action_plans['action_item_' + str(i)] = request.POST['action_item_' + str(i)]
             action_plans['owner_' + str(i)] = request.POST['owner_' + str(i)]
             action_plans['action_date_' + str(i)] = request.POST['action_date_' + str(i)]
@@ -1294,7 +1290,7 @@ def meeting_minutes(request):
             attendees_email_list = ' ,  '.join(attendees_list)
 
         mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
-        mail_body = get_template('reports/email_templates/minute_meeting_email_template.html').render(
+        mail_body = get_template('reports/email_templates/minute_meeting_objectives.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
                 'subject_timeline': meeting_minutes.subject_timeline,
@@ -1304,8 +1300,6 @@ def meeting_minutes(request):
                 'regalix_poc': meeting_minutes.regalix_poc,
                 'google_team': meeting_minutes.google_team,
                 'attendees': attendees_email_list,
-                'key_points_topic': key_points_topic,
-                'key_points_highlight': key_points_highlight,
                 'region': meeting_minutes.region,
                 'location': meeting_minutes.location,
                 'internal_meeting': meeting_minutes.meeting_audience,
@@ -1313,9 +1307,7 @@ def meeting_minutes(request):
                 'program_type': meeting_minutes.program_type,
                 'other_subject': meeting_minutes.other_subject,
 
-                'action_plans_items': action_plans_items,
-                'action_plans_owner': action_plans_owner,
-                'action_plans_date': action_plans_date,
+                'action_plans_items': action_plans_items_list,
 
                 # 'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
                 # 'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
@@ -1519,7 +1511,7 @@ def meeting_minutes_thankyou(request):
 @login_required
 def export_meeting_minutes(request):
     if request.method == 'POST':
-        excel_header = ['Meeting Date', 'Subject Timeline', 'Link']
+        excel_header = ['Meeting Date', 'Subject Line', 'Link']
         meeting_date_from = request.POST.get('date_from')
         meeting_date_to = request.POST.get('date_to')
         program = request.POST.get('program')
@@ -1535,7 +1527,7 @@ def export_meeting_minutes(request):
             meeting_minute_dict = dict()
             meeting_date = meeting_minute.meeting_time_in_ist.date()
             meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-            meeting_minute_dict['Subject Timeline'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
+            meeting_minute_dict['Subject Line'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
             if meeting_minute.ref_uuid:
                 meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
             else:
@@ -1563,6 +1555,7 @@ def export_action_items(request):
         meeting_date_to = datetime.strptime(meetings_date_to, '%m/%d/%Y')
         if request.POST.get('reference_id'):
             attendees_list = list()
+            attendees_email_list= list()
             bcc_list = list()
             update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('reference_id'))
             update_status.meeting_status = request.POST.get('status')
@@ -1572,6 +1565,9 @@ def export_action_items(request):
             for attendee in attendees:
                 attendees_list.append(str(attendee['email']))
             attendees_email_list = ' ,  '.join(attendees_list)
+
+            attendees_list.append(str(update_status.google_poc))
+            attendees_list.append(str(update_status.regalix_poc))
 
             for each_bcc in bcc:
                 bcc_list.append(str(each_bcc['email']))
@@ -1602,7 +1598,7 @@ def export_action_items(request):
                 mail_from = 'PICASSO Build Team'
             else:
                 mail_from = 'PICASSO Team'
-            mail_to = attendees_email_list
+            mail_to = attendees_list
             bcc = set(bcc_email_list)
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
