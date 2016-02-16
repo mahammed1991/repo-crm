@@ -185,14 +185,14 @@ def implemented_leads_count_report():
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
     mail_subject = "Wins Count Regionwise @ %s - %s " % (specific_date, specific_time)
-    mail_body = get_template('leads/email_templates/email_template_for_lead_status.html').render(
+    mail_body = get_template('leads/email_templates/lead_status_summary.html').render(
         Context({
             'final_dict': final_dict,
             'specific_date': specific_date,
         })
     )
     mail_from = 'basavaraju@regalix-inc.com'
-    mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'asantosh@regalix-inc.com']
+    mail_to = ['basavaraju@regalix-inc.com', 'asantosh@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)

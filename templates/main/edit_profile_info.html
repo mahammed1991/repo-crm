@@ -36,7 +36,7 @@
       <div class="profile-section editable">
         {% if 'google' in request.user.email %}
           <label>Team</label>
-           <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team">
+           <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team" disabled>
               <option value="0">Select Team</option>
               {% for team in teams %}
               <option value="{{team.id}}">{{team.team_name}}</option>
@@ -47,11 +47,11 @@
         <input type="text" class="form-control non-edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} disabled>
 
         <label>Manager Name </label>
-        <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %}>
+        <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} disabled>
 
         <label for="country">Google Rep Location</label>
           <input type="text" class="form-control non-edit allow-edit" id="rep_location" name="rep_location" 
-          value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off">
+          value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off" disabled>
 
           <div class="rep_cur_loc" style="display:none;position: relative;">
           <label for="current_location">Your Current Location</label>
@@ -65,7 +65,7 @@
     <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
           {% if 'google' in request.user.email %}
             <label>Region </label>
-            <select class="form-control non-edit allow-edit" id="region" title="Program Region" name="region">
+            <select class="form-control non-edit allow-edit" id="region" title="Program Region" name="region" disabled>
               <option value="0">Region</option>
               {% for rgn in regions %}
                 <option value="{{rgn.id}}">{{rgn.name}}</option>
@@ -79,6 +79,8 @@
               <option value="{{loc.id}}">{{loc.location_name}}</option>
               {% endfor %}
           </select>
+            <label> POD Name </label>
+            <input type="text" class="form-control non-edit allow-edit" name="pod_name" id="pod_name" placeholder="POD Name" {% if podname.pod_name %} value="{{podname.pod_name}}" {% else %} value="" {% endif %} disabled>
         {% endif %}
         <div class="error-msg" style="display:none;margin-bottom:5px;color:red;">Please enter a valid regalix or google Email ID</div>
       </div>

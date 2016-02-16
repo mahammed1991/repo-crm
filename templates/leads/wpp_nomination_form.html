@@ -76,7 +76,7 @@
             </div>
             <div class="col-md-6">
               <label for="picasso_pod">POD Name</label>
-              <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" value="{{user_pod_name.pod_name}}">
+              <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
             </div>
             <div class="col-md-6" >
               <label for="country"> Market Served</label>

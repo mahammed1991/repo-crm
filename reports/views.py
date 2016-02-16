@@ -1201,21 +1201,17 @@ def meeting_minutes(request):
         total_link_file_name = request.POST.get('no_of_file_name_link')
         total_attach_file_name = request.POST.get('no_of_file_name_attach')
 
-        key_points_topic = list()
-        key_points_highlight = list()
         for i in range(1, int(total_keypoints_count) + 1):
-            key_points_topic.append(request.POST['topic_' + str(i)])
-            key_points_highlight.append(request.POST['highlight_' + str(i)])
             key_points['topic_' + str(i)] = request.POST['topic_' + str(i)]
             key_points['highlight_' + str(i)] = request.POST['highlight_' + str(i)]
 
-        action_plans_items = list()
-        action_plans_owner = list()
-        action_plans_date = list()
+        action_plans_items_list = list()
         for i in range(1, int(total_actionplan_count) + 1):
-            action_plans_items.append(request.POST['action_item_' + str(i)])
-            action_plans_owner.append(request.POST['owner_' + str(i)])
-            action_plans_date.append(request.POST['action_date_' + str(i)])
+            action_plans_items = dict()
+            action_plans_items['action_item_name'] = request.POST['action_item_' + str(i)]
+            action_plans_items['action_item_owner'] = request.POST['owner_' + str(i)]
+            action_plans_items['action_item_date'] = request.POST['action_date_' + str(i)]
+            action_plans_items_list.append(action_plans_items)
             action_plans['action_item_' + str(i)] = request.POST['action_item_' + str(i)]
             action_plans['owner_' + str(i)] = request.POST['owner_' + str(i)]
             action_plans['action_date_' + str(i)] = request.POST['action_date_' + str(i)]
@@ -1294,7 +1290,7 @@ def meeting_minutes(request):
             attendees_email_list = ' ,  '.join(attendees_list)
 
         mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
-        mail_body = get_template('reports/email_templates/minute_meeting_email_template.html').render(
+        mail_body = get_template('reports/email_templates/minute_meeting_objectives.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
                 'subject_timeline': meeting_minutes.subject_timeline,
@@ -1304,8 +1300,6 @@ def meeting_minutes(request):
                 'regalix_poc': meeting_minutes.regalix_poc,
                 'google_team': meeting_minutes.google_team,
                 'attendees': attendees_email_list,
-                'key_points_topic': key_points_topic,
-                'key_points_highlight': key_points_highlight,
                 'region': meeting_minutes.region,
                 'location': meeting_minutes.location,
                 'internal_meeting': meeting_minutes.meeting_audience,
@@ -1313,9 +1307,7 @@ def meeting_minutes(request):
                 'program_type': meeting_minutes.program_type,
                 'other_subject': meeting_minutes.other_subject,
 
-                'action_plans_items': action_plans_items,
-                'action_plans_owner': action_plans_owner,
-                'action_plans_date': action_plans_date,
+                'action_plans_items': action_plans_items_list,
 
                 # 'next_meeting_time': meeting_minutes.next_meeting_datetime.time(),
                 # 'next_meeting_date': meeting_minutes.next_meeting_datetime.date(),
@@ -1433,6 +1425,7 @@ def link_last_meeting(request, last_id):
     if last_meeting.attachment_5:
         attach_file_5 = last_meeting.attachment_5.name
 
+
     attach_file_name_1 = ''
     attach_file_name_2 = ''
     attach_file_name_3 = ''
@@ -1518,64 +1511,128 @@ def meeting_minutes_thankyou(request):
 @login_required
 def export_meeting_minutes(request):
     if request.method == 'POST':
-        if request.POST.get('referenace_id'):
-            update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('referenace_id'))
-            update_status.meeting_status = request.POST.get('status')
-            update_status.save()
+        excel_header = ['Meeting Date', 'Subject Line', 'Link']
+        meeting_date_from = request.POST.get('date_from')
+        meeting_date_to = request.POST.get('date_to')
+        program = request.POST.get('program')
+        meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                        program=program)
         else:
-            excel_header = ['Meeting Date', 'Subject Timeline', 'Link']
-            meeting_date_from = request.POST.get('date_from')
-            meeting_date_to = request.POST.get('date_to')
-            program = request.POST.get('program')
-            meeting_date_from = datetime.strptime(meeting_date_from, '%m/%d/%Y')
-            meeting_date_to = datetime.strptime(meeting_date_to, '%m/%d/%Y')
-            if program != 'all':
-                meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
-                                                            program=program)
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+        final_meeting_list = list()
+        for meeting_minute in meeting_minutes:
+            meeting_minute_dict = dict()
+            meeting_date = meeting_minute.meeting_time_in_ist.date()
+            meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            meeting_minute_dict['Subject Line'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
+            if meeting_minute.ref_uuid:
+                meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
             else:
-                meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
-            final_meeting_list = list()
-            for meeting_minute in meeting_minutes:
-                meeting_minute_dict = dict()
-                meeting_date = meeting_minute.meeting_time_in_ist.date()
-                meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-                meeting_minute_dict['Subject Timeline'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
-                if meeting_minute.ref_uuid:
-                    meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
-                else:
-                    meeting_minute_dict['Link'] = ''
-                final_meeting_list.append(meeting_minute_dict)
+                meeting_minute_dict['Link'] = ''
+            final_meeting_list.append(meeting_minute_dict)
 
-            filename = "meeting-minutes"
-            path = write_appointments_to_csv(final_meeting_list, excel_header, filename)
-            response = DownloadLeads.get_downloaded_file_response(path)
-            return response
-
-    all_records_list = list()
-    all_meeting_records = MeetingMinutes.objects.all()
-    for each_record in all_meeting_records:
-        each_record_dict = dict()
-        meeting_date = each_record.meeting_time_in_ist.date()
-        each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-        each_record_dict['Subject Timeline'] = each_record.program + ' ' + each_record.program_type + ' ' + each_record.subject_timeline + ' ' + each_record.other_subject
-        key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 
-                                                       'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4', 
-                                                       'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 
-                                                       'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 
-                                                       'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 
-                                                       'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 
-                                                       'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 
-                                                       'action_item_15', 'owner_15', 'action_date_15',])}
-        each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_record.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
-        each_record_dict['reference_num'] = each_record.ref_uuid
-        each_record_dict['meeting_minutes_status'] = each_record.meeting_status
-        all_records_list.append(each_record_dict)
-    return render(request, 'reports/export_meeting_minutes.html', {'all_records_list': json.dumps(all_records_list)})
+        filename = "meeting-minutes"
+        path = write_appointments_to_csv(final_meeting_list, excel_header, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+    return render(request, 'reports/export_meeting_minutes.html', {})
 
 def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+
+def export_action_items(request):
+    if request.method == 'POST':
+        meetings_date_from = request.POST.get('date_from')
+        meetings_date_to = request.POST.get('date_to')
+        program = request.POST.get('program')
+        meeting_date_from = datetime.strptime(meetings_date_from, '%m/%d/%Y')
+        meeting_date_to = datetime.strptime(meetings_date_to, '%m/%d/%Y')
+        if request.POST.get('reference_id'):
+            attendees_list = list()
+            attendees_email_list= list()
+            bcc_list = list()
+            update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('reference_id'))
+            update_status.meeting_status = request.POST.get('status')
+            update_status.save()
+            attendees = update_status.attendees.values('email')
+            bcc = update_status.bcc.values('email')
+            for attendee in attendees:
+                attendees_list.append(str(attendee['email']))
+            attendees_email_list = ' ,  '.join(attendees_list)
+
+            attendees_list.append(str(update_status.google_poc))
+            attendees_list.append(str(update_status.regalix_poc))
+
+            for each_bcc in bcc:
+                bcc_list.append(str(each_bcc['email']))
+            bcc_email_list = ' ,  '.join(bcc_list)
+            mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (update_status.program, update_status.program_type, update_status.subject_timeline, update_status.other_subject, update_status.meeting_time_in_ist.date())
+            mail_body = get_template('reports/email_templates/minute_meeting_status.html').render(
+            Context({
+                'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.ref_uuid),
+                'subject_timeline': update_status.subject_timeline,
+                'meeting_date': update_status.meeting_time_in_ist.date(),
+                'meeting_time': update_status.meeting_time_in_ist.time(),
+                'google_poc': update_status.google_poc,
+                'regalix_poc': update_status.regalix_poc,
+                'google_team': update_status.google_team,
+                'attendees': attendees_email_list,
+                'region': update_status.region,
+                'status': update_status.meeting_status,
+                'location': update_status.location,
+                'internal_meeting': update_status.meeting_audience,
+                'program': update_status.program,
+                'program_type': update_status.program_type,
+                'other_subject': update_status.other_subject,
+                })
+            )
+            if update_status.program == 'TAG Team':
+                mail_from = 'Google Implementation Team'
+            elif update_status.program == 'WPP':
+                mail_from = 'PICASSO Build Team'
+            else:
+                mail_from = 'PICASSO Team'
+            mail_to = attendees_list
+            bcc = set(bcc_email_list)
+            attachments = list()
+            send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+        if program != 'all':
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+                                                            program=program)
+        else:
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+
+        all_records_list = list()
+        for each_meeting_minutes in meeting_minutes:
+            each_record_dict = dict()
+            meeting_date = each_meeting_minutes.meeting_time_in_ist.date()
+            each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+            each_record_dict['Subject Timeline'] = each_meeting_minutes.program + ' ' + each_meeting_minutes.program_type + ' ' + each_meeting_minutes.subject_timeline + ' ' + each_meeting_minutes.other_subject
+            key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 
+                                                           'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4', 
+                                                           'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 
+                                                           'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 
+                                                           'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 
+                                                           'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 
+                                                           'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 
+                                                           'action_item_15', 'owner_15', 'action_date_15',])}
+            each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_meeting_minutes.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
+            each_record_dict['reference_num'] = each_meeting_minutes.ref_uuid
+            each_record_dict['meeting_minutes_status'] = each_meeting_minutes.meeting_status
+            all_records_list.append(each_record_dict)
+        return render(request, 'reports/export_action_items.html', {'all_records_list': json.dumps(all_records_list), 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
+    meetings_date_from = ''
+    meetings_date_to = ''
+    program = ''
+    all_records_list = ''
+    return render(request, 'reports/export_action_items.html', {'all_records_list': all_records_list, 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
 
 
 def get_meeting_minutes(request):

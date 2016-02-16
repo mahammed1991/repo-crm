@@ -30,7 +30,7 @@ from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
 from django.db.models import Q
 from random import randint
@@ -149,7 +149,12 @@ def lead_form(request):
                 first_name, last_name = split_fullname(full_name)
                 setup_data['first_name'] = first_name  # Primary Contact First Name
                 setup_data['last_name'] = last_name  # Primary Contact Last Name
-            setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
+            if request.POST.get('shopping_campaign_issues'):
+                setup_data[shop_leads['ctype1']] = 'Google Shopping Troubleshooting'
+                setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
+            else:
+                setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
+                setup_data[shop_leads['comment1']] = request.POST.get('description')
             submit_lead_to_sfdc(sf_api_url, setup_data)
 
         return redirect(ret_url)
@@ -214,6 +219,11 @@ def wpp_lead_form(request, ref_id=None):
                 wpp_data[value] = request.POST.get(key)
         submit_lead_to_sfdc(sf_api_url, wpp_data)
         advirtiser_details = get_advertiser_details(sf_api_url, wpp_data)
+        user_groups = [group.name for group in request.user.groups.all()]
+        if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
+            advirtiser_details['whitelisted_user'] = 'Yes'
+        else:
+            advirtiser_details['whitelisted_user'] = 'No'
         send_calendar_invite_to_advertiser(advirtiser_details, False)
 
         return redirect(ret_url)
@@ -236,7 +246,7 @@ def wpp_lead_form(request, ref_id=None):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
     wpp_loc = list()
@@ -312,13 +322,12 @@ def picasso_lead_form(request):
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
     # lead_args['teams'] = Team.objects.filter(is_active=True)
-    lead_args['teams'] = Team.objects.filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP']).order_by('team_name')
+    lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
     lead_args['picasso'] = True
     tat_dict = get_tat_for_picasso('portal')
     if tat_dict['estimated_date']:
         lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
         lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
-    lead_args['user_pod_name'] = UserDetails.objects.get(user=request.user.id)
     return render(
         request,
         'leads/picasso_lead_form.html',
@@ -341,7 +350,7 @@ def wpp_nomination_form(request):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
     wpp_loc = list()
@@ -350,7 +359,6 @@ def wpp_nomination_form(request):
         for loc in tm.location.all():
             wpp_loc.append(loc)
     lead_args.update({'wpp_loc': wpp_loc})
-    lead_args['user_pod_name'] = UserDetails.objects.get(user=request.user.id)
     return render(
         request,
         'leads/wpp_nomination_form.html',
@@ -2408,6 +2416,7 @@ def get_basic_lead_data(request):
     locations = Location.objects.filter(is_active=True)
     new_locations = list()
     all_locations = list()
+    all_code_types_with_avg_time = dict()
     time_zone_for_region = dict()
     language_for_location = dict()
     for loc in locations:
@@ -2444,6 +2453,9 @@ def get_basic_lead_data(request):
 
     code_types = CodeType.objects.filter(is_active=True).values_list('name', flat=True)
     code_types = [str(ctype) for ctype in code_types]
+    all_code_types = CodeType.objects.filter(is_active=True)
+    for each_code_type in all_code_types:
+        all_code_types_with_avg_time[str(each_code_type.name)] = str(each_code_type.avg_setup_time)
     programs = ReportService.get_all_teams()
     programs = [str(pgm) for pgm in programs]
 
@@ -2468,6 +2480,7 @@ def get_basic_lead_data(request):
     lead_args['programs'] = programs
     lead_args['regions'] = all_regions
     lead_args['region_locations'] = region_locations
+    lead_args['code_type_with_avg_time'] = all_code_types_with_avg_time
 
     return lead_args
 
@@ -2956,6 +2969,7 @@ def searh_leads(request):
 def wpp_whitelist_request(request):
     if request.is_ajax():
         user = UserDetails.objects.get(user=request.user)
+        notes = request.GET.get('notes')
         mail_subject = "[Website Opt] Please whitelist for website performance optimization submissions"
         mail_body = get_template('leads/email_templates/whitelist_request_template.html').render(
             Context({
@@ -2963,10 +2977,12 @@ def wpp_whitelist_request(request):
                 'market': user.location,
                 'ldap': request.user.email,
                 'pod_name': user.pod_name,
+                'notes': notes,
+                'signature': request.user.first_name,
             })
         )
         mail_from = 'Picasso Build Request Team'
-        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com']
+        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'skumar@regalix-inc.com', 'sprasad@regalix-inc.com', 'spenz@google.com']
         bcc = set([])
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)

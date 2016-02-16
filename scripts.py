@@ -45,7 +45,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings-staging"
 # import gspread
 # from oauth2client.client import SignedJwtAssertionCredentials
 # from reports.models import CallLogAccountManager
-# from datetime import datetime
 
 # json_file = settings.MEDIA_ROOT + '/gtrack-test-0e3eb2372302.json'
 
@@ -93,4 +92,5 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings-staging"
 
 # # # total records - 1 saved
 # CallLogAccountManager.objects.bulk_create(objects_list)
+
 

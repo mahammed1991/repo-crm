@@ -87,3 +87,68 @@ $(document).ready(function() {
         olark('api.box.hide');
     }
 // Olark Hide For WPP Domain Ends Here
+
+
+
+// Report a bug javascript
+function showOlark(){
+  olark('api.box.show');
+}
+    function hideOlark(){
+      olark('api.box.hide');
+    }
+  function HandleBrowseClick()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    fileinput.click();
+}
+
+function Handlechange()
+{
+    var fileinput = document.getElementById("attachmentfile");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+}
+
+
+$('#portalFeedback').submit(function(event){
+  event.preventDefault();
+  $(".error-box").removeClass('error-box');
+    var feedbackType = $('#feedbackType').val();
+    var comments = $('#comments').val();
+   if(feedbackType === 'Feedback Type'){
+      $('#feedbackType').addClass('error-box');
+      return false;
+    }else if(comments === ''){
+      $('#comments').addClass('error-box');
+      return false;
+    }else{
+      var formData = new FormData($('#portalFeedback')[0]);
+        $('.footeroverlay').show();
+        $.ajax({
+            url: '/main/report-a-bug/',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $('.footeroverlay').hide();
+                $('.close-modal').trigger('click');
+                $("#feedbackType").val("Feedback Type");
+                $("#comments").val("");
+                $("#attachmentfile").val("");
+                $("#filename").val("");
+                showOlark();
+            },
+            error: function (error) {
+                $('.footeroverlay').hide();
+                console.log(error);
+            }
+        });
+
+    }
+    return false;
+});
+
+// Report a bug javascript ends
