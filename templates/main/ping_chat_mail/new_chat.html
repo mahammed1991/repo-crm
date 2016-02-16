@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+{% if 'google' in sender_email %}
+	<p>Hi {{rgx_rep}},</p><br/>
+	<p>Status update request from <b>{{google_rep}}</b> for CID: <b> {{cid}}</b>  </p><br/>
+{% elif regalix in sender_email %}
+	<p>Hi {{google_rep}},</p><br/>
+	<p>Status update request from <b>{{rgx_rep}}, {{rgx_rep_mgr}}</b> for CID: <b> {{cid}}</b>  </p><br/>
+{% endif %}
+
+
+<p>{{message}}</p><br/>
+
+<a href="{{ message_url }}">Go To Chat history</a>
+<br /><br />
+
+<p>Thanks,</p><br/>
+<p>{{sender_name}}</p>
+</body>
+</html>

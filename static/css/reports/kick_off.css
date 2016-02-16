@@ -1,0 +1,141 @@
+form label { font-size: 13px; color: #999; padding-top: 5px; }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+   margin: 0; 
+}
+
+#submit_kick_off { margin: auto 40%; margin-bottom: 20px; }
+
+.add-upload-btn{background: #109d59;}
+
+.add-upload-btn:hover{background: #109d59;}
+
+.remove-upload{background: #d04033;}
+
+.remove-upload:hover{background: #d04033;}
+
+.set-lable-position{padding-top: 15px; padding-left: 51px;}
+
+.file-info{margin-top:12px;}
+
+.tagteam-connect{margin-top: 6px;} 
+
+.set-top-bottom{ padding-bottom: 5px; padding-top: 5px; }
+              
+.multi-select-locations .dropdown-toggle,.multi-select .dropdown-toggle, .multi-select-codetype .dropdown-toggle{
+                                 height:50px;  font-size: 14px; border-radius: 0px; padding: 10px; }
+
+.s-two { margin-left:21.5px;}
+
+.s-three{ margin-left: 21.5px;}
+
+.s textarea{height:51px;width:258px;}
+
+#program_overview > textarea {height: 51px;}
+
+.comment textarea {height: 51px;}
+
+.data_upload textarea {height: 51px;}
+
+.expectations textarea { height:51px } 
+
+.program_over textarea{height:51px;}
+
+.multi-select-codetype .open{max-height: 100px !important;}
+
+.multi-select-codetype .dropdown-menu .inner { max-width:334px !important;}
+
+.add-testimony{background: #109d59;}
+
+.add-testimony:hover{background: #109d59;}
+
+.remove-testimony{background: #d04033;margin-right: 10px;}
+
+.remove-testimony:hover{background: #d04033;}
+
+.add-succes{background: #109d59;}
+
+.add-succes:hover{background: #109d59;}
+
+.remove-succes{background: #d04033;margin-right: 10px;}
+
+.remove-succes:hover{background: #d04033;}
+
+.succes-btn{padding: 10px;}
+
+.dropdown-menu .inner { font-size:13px !important; max-height: 110px !important;}
+
+.bootstrap-select.btn-group .dropdown-toggle .filter-option { font-size:13px !important; }
+
+#teamcheck{ padding: 10px 10px; }
+
+.process{ margin-right: 5px; margin-left: -8px; }
+
+.hideItems{ display: none; }
+
+.drpDown ul{
+	position: absolute;
+	z-index: 10;
+	display: none;
+	padding: 0;  
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15); 
+	border-radius: 4px; 
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.drpDown ul li{ list-style-type: none;  }
+
+.tickMark{ opacity: 0; }
+
+.tickMarkShow{ opacity: 1; }
+
+.hiddenCheckbox{ display: none; }
+
+/*#teamsDiv .dropdown-menu li {
+    border-bottom: 0px solid #dbdbdb !important;
+    border-left: 0px solid #dbdbdb ! important;
+    border-right: 0px solid #dbdbdb ! important; 
+}*/
+
+/*#locationTypeBtn .dropdown-menu li {
+    border-bottom: 0px solid #dbdbdb !important;
+    border-left: 0px solid #dbdbdb ! important;
+    border-right: 0px solid #dbdbdb ! important; 
+}*/
+
+/* #teamsDiv .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
+
+/* #locationTypeBtn .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
+
+.code-type-ul{ font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
+
+.region-ul , .location-ul{ font-size: 13px; }
+
+.est-lead{ width:100%; font-size: 12.57px; }
+
+/* START  ***kick_off_export_detail.html important css****   */
+
+ .file-name-link1, .file-name-attach1{
+    background: white;
+    border: 0px;
+    padding-left: 10px;
+  }
+  .attach_1, .attach_2{
+    padding-left: 10px;
+  }
+  #action-item{
+    width:350px;
+    text-align: center;
+  }
+#attach tbody tr td, #attach-link-file tbody tr td{border: 1px solid #D1D1D1;}
+#attach thead tr td, #attach-link-file thead tr td{border: 1px solid #D1D1D1;padding: 10px;}
+
+#success-matrix label { padding-top: 5px !important; }
+
+.ui-autocomplete{height:150px; overflow:scroll; }
+
+/* END ***kick_off_export_detail.html important css*** */

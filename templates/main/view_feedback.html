@@ -1,0 +1,259 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Help
+{% endblock title %}
+
+{% block main_css %}
+
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+    .table-container, .display_footer{ min-height:300px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    h1 {
+    font-size: 24px;
+    font-family: 'robotoblack';
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-family: 'robotoblack';
+    font-size: 21px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+    #no_data{
+        margin-left: 448px;
+    }
+    a {
+    color: #2763c9;
+    }
+  </style>
+ 
+{% endblock main_css %}
+
+{% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
+<!-- content-region -->
+<section class="content-region inner-page-wide">
+  <div class="container-fluid">
+  <h1>Feedback Details</h1>  
+  <div class="feedback-details-section">
+    <div class="std-sub-title">Feedback Info</div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Title</label>
+                <div class="value">{{feedback.title}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Feedback ID</label>
+                <div class="value" id='feedbackId'>Goog-{{feedback.id}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>CID</label>
+                <div class="value">{{feedback.cid}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Advertiser Name</label>
+                <div class="value">{{feedback.advertiser_name}}</div>
+            </div>
+        </div>    
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Google Acc. Manager</label>
+                <div class="value">{{feedback.google_account_manager.first_name}} {{feedback.google_account_manager.last_name}}</div>
+            </div></div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Email</label>
+                <div class="value">{{feedback.google_account_manager.email}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Lead Owner</label>
+                <div class="value">{{feedback.lead_owner.first_name}} {{feedback.lead_owner.last_name}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Lead Owner Email</label>
+                <div class="value">{{feedback.lead_owner.email}}</div>
+            </div>
+        </div>    
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Feedback Type</label>
+                <div class="value">{{feedback.feedback_type}}</div>
+            </div>
+            </div>
+            {% if picasso %}
+            {% else %}
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Location</label>
+                <div class="value">{{feedback.location.location_name}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Language</label>
+                <div class="value">{{feedback.language}}</div>
+            </div>
+            </div>
+            {% endif %}
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Created Date</label>
+                <div class="value">{{feedback.created_date | date:"D, M d Y, f A" }}</div>
+            </div>
+        </div>
+    </div>    
+  </div>
+  <div class="feedback-details-section">
+      <div class="std-sub-title">Feedback Description</div>
+      <p>{{feedback.description}}</p>
+  </div>
+  <div class="feedback-details-section">
+    {% if feedback.status == 'RESOLVED' %}
+        <div class="feedback-status resolved">Resolved</div>
+    {% endif %}
+
+    {% if feedback.status == 'IN PROGRESS' %}
+        <div class="feedback-status inprogress">In Progress</div>
+    {% endif %}
+
+    <div class="feedback-comments">
+
+        <!-- commnet start here -->
+             {% if comments %}
+
+                    {% for c in comments %}
+                        {% if 'regalix' in c.comment_by.email %}
+                            <div class="feedback-comment regalix">
+                                <p>{{c.comment}}</p>
+                                
+                                 {% if c.feedback_status == 'RESOLVED' %}
+                                    <p></p>
+                                   <p class="feedback-auth"> Resolved By:- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% else %}
+                                    <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% endif %}
+                            </div>
+                        
+                         {% elif 'google' in c.comment_by.email %}
+                            <div class="feedback-comment google">
+                                <p>{{c.comment}}</p>
+                                {% if c.feedback_status == 'RESOLVED' %}
+                                    <p></p>
+                                    <p class="feedback-auth"> Resolved By:- <span> {{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% else %}
+                                    <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                         
+                    {% endfor %}
+            {% endif %}
+        <!--normal comments ends here  -->
+    </div>
+    
+     {% if feedback.status != 'RESOLVED' %}
+        <form action="{% url 'main.views.comment_feedback' feedback.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name='feedback' value="{{feedback.id}}">
+            <input type="hidden" name='feedback_action' value="" id='feedback_action'>
+            <textarea class="form-control feedback-commet-box" placeholder="Comments" name='comment' id='feedback_comment'></textarea>
+            <div class="btn-row">
+                <button class="btn std-btn" onclick="return validate(this);" id='AddComments'>Comment</button>
+                 {% if feedback.status != 'RESOLVED' and can_resolve %}
+                    <button class="btn std-btn" onclick="return validate(this);" id='Resolved'>Resolved</button>
+                {% endif %}
+            </div>
+        </form>
+    {% endif %}
+
+    {% if feedback.status == 'RESOLVED' and resolved_count < 3 %}
+        <form action="{% url 'main.views.reopen_feedback' feedback.id %}"  method="POST" onsubmit="return validateropen(this);">
+            {% csrf_token %}
+              <input type="hidden" name='feedback' value="{{feedback.id}}">
+              <textarea class="form-control feedback-commet-box" placeholder="Comments" name='reopencomment' id='reopencomment'></textarea>
+              <div class="btn-row">
+                <button class="btn std-btn">Reopen</button>
+              </div>
+        </form>
+    {% elif feedback.status == 'RESOLVED' and resolved_count == 3 %}
+            <div class="btn-row">
+                <button class="btn std-btn" id='finalreopenalert'>Reopen</button>
+              </div>
+    {% endif %}
+    
+  
+  </div>
+  </div>
+        <div id="preloaderOverlay" style='display:none;'>
+            <div class="preloader">
+            <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+            
+            </div>
+        </div>
+</section>
+<!-- content-region ends --> 
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+  <script type="text/javascript">
+    function validate(elem){
+        id = $(elem).attr("id");
+        if(id == 'AddComments'){
+            $("#feedback_action").val('AddComments');
+        }else{
+            $("#feedback_action").val('Resolved');
+        }
+        
+        $(".error-box").removeClass('error-box');
+        if($('#feedback_comment').val() == ''){
+            $('#feedback_comment').addClass('error-box')
+            return false
+        }
+        $('#preloaderOverlay').show();
+    }
+    function validateropen(frm){
+        $(".error-box").removeClass('error-box');
+        if(frm.reopencomment.value == ''){
+            $('#reopencomment').addClass('error-box')
+            return false
+        }
+        $('#preloaderOverlay').show();
+    }
+    $('#finalreopenalert').click(function(){
+        alert('This feedback has been re-opened thrice. If the issue is still not resolved, please reach out to implementation-support@google.com OR google@regalix-inc.com');
+    })
+
+   
+</script>
+{% endblock main_js %}
