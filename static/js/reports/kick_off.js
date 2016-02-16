@@ -1,6 +1,4 @@
- /*---------------------------------------------------------
- Success Metrics multiple add code start here 
- ----------------------------------------------------------*/
+ /* Success Metrics multiple add code start here */
  $('.add-succes').click(function () {
       id = $(this).attr('id');
       indx = id.split('_')[1];
@@ -43,19 +41,13 @@
       $('.remove-succes').hide();
     }
   });
-/*----------------------------------------------------------------------
-          Success Metrics multiple add code Ends here
------------------------------------------------------------------------- */
+/*Success Metrics multiple add code Ends here */
 
- /*------------------------------------------------------------------------
-  start bootsrap selector plugg in fetching multiple selected values id's
-  ------------------------------------------------------------------------*/
+ /* start bootsrap selector plugg in fetching multiple selected values id's */
     $('.region-ul').children().on('click', function(){
-        /*
-        $(".location-ul").html('');*/
         selectProcessRegionData(this);
     });
-//adding locations based on region selected
+    //adding locations based on region selected
     $('#locationTypeBtn').on('click', function(){
         var loc_elements = $('.location-ul li a .tickMarkShow');
         var elements = $('.region-ul li a .tickMarkShow');
@@ -73,7 +65,6 @@
                                                  '<input type="checkbox" class="hiddenCheckbox"/>'+
                                                  '<span class="glyphicon glyphicon-ok tickMark">'+
                                                  '</span>&nbsp;'+ window.regionWiseLocations[element_id][j]+'</a></li>');
-                    /*$('#locationTypeList').append('');*/
                 }
                 $(".location-ul").css('height','auto');
                 $(".location-ul").css('overflow','scroll');
@@ -130,17 +121,13 @@
             $(' #removing'+locationSpacereplace+' ').remove();
         }
         else{
-          console.log(optionElementToDatabase);
+        /*  console.log(optionElementToDatabase);*/
             selectedTeamsElement.addClass('tickMarkShow');
         }
     }
-/* -------------------------------------------------------------------------------------------------------------------------
-end of regions selection and location selection codes
-----------------------------------------------------------------------------------------------------------------------------*/
+/* end of regions selection and location selection codes */
 
-/*--------------------------------------------------------------------------------------------------------------------------------------
-To select multiple code type selector plugg in fetching multiple selected values id and also checking and unchecking codetype selected
- ---------------------------------------------------------------------------------------------------------------------------------------*/
+/* To select multiple code type selector plugg in fetching multiple selected values id and also checking and unchecking codetype selected */
 $('.code-type-ul').children().on('click', function(){
         selectProcessPopulateCodeType(this);
     });
@@ -150,7 +137,7 @@ $('.code-type-ul').children().on('click', function(){
         /*console.log(codeTypereplace);*/
        }
         var OptionElement = "<option id='"+codeTypereplace+"' value='"+codeTypereplace+"' selected></option>";
-        console.log(OptionElement);
+        /*console.log(OptionElement);*/
         var selectedProcessElement = $(codeTypeElement).children("a").children('span');
         // UnSelect Process Items.
         if(selectedProcessElement.hasClass('tickMarkShow')){
@@ -162,15 +149,11 @@ $('.code-type-ul').children().on('click', function(){
             $( "#codeTypeList" ).append(OptionElement);
         }
     }
-      /*-----------------------------------------------------------------------------
-      end of multiple code type selector plugg in fetching multiple selected values id 
-      ----------------------------------------------------------------------------- */
+/* end of multiple code type selector plugg in fetching multiple selected values id  */
 
-
-/*--------------------------------------------------
- validating all feilds of kick-off-programm  page
- ---------------------------------------------------*/
+/* validating all feilds of kick-off-programm  page */
 function validatethis() {
+    debugger;
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -180,70 +163,100 @@ function validatethis() {
     if(window.is_reset == true){
       window.is_reset = false;
       return false;
+    }else if(window.is_error){
+      return false;
     }
 // Program Name and all field Validation
-    programName = document.getElementById('program_name');
-    validateField(programName);
+  programName = document.getElementById('program_name');
+  validateField(programName);
+  
+  googlePocElem = document.getElementById('google_poc'); 
+  validateField(googlePocElem);
+  
+  validateRegionField();
+   
+  googlePocEmail = document.getElementById('google_poc_email');
+  validateField(googlePocEmail);
+   
+  validateLocationField();
+  
+  googlePoc = document.getElementById('google_poc_location'); 
+  validateField(googlePoc);
 
-    googlePocElem = document.getElementById('google_poc'); 
-    validateField(googlePocElem);
+  advertizerType();
 
-    googlePocEmail = document.getElementById('google_poc_email');
-    validateField(googlePocEmail);
+  programStartDate = $('#program_start_date');
+  checkDate(programStartDate);
 
-    googlePoc = document.getElementById('google_poc_location'); 
-    validateField(googlePoc);
+  codeType();
 
-    succesElementOne = document.getElementsByClassName('succes-mat-onebox');
-    validateField(succesElementOne);
+  programEndDate = $('#program_end_date');
+  checkDate(programEndDate);
+  
+  estimatedleadNomber = document.getElementById('estimated_lead_no');
+  validateField(estimatedleadNomber);
 
-    succesElementTwo = document.getElementsByClassName('succes-mat-twobox');
-    validateField(succesElementTwo);
+  subjectEstimatedDay();
+  
+  progOverView = document.getElementById('program_overview');
+  validateField(progOverView);
 
-    succesElementThree = document.getElementsByClassName('succes-mat-threebox');
-    validateField(succesElementThree);
+  succesElementOne = document.getElementsByClassName('succes-mat-onebox');
+  validateField(succesElementOne);
+  
+  succesElementTwo = document.getElementsByClassName('succes-mat-twobox');
+  validateField(succesElementTwo);
+      
+  succesElementThree = document.getElementsByClassName('succes-mat-threebox');
+  validateField(succesElementThree);
+    
+  expectations = document.getElementById('expectations'); 
+  validateField(expectations);
+  
+  explainWorkFlow = document.getElementById('explain_workflow');
+  validateField(explainWorkFlow);
 
-    workFlow = document.getElementById('workflow_changes_if_any'); 
-    validateField(workFlow);
+  winCriteriaq = document.getElementById('win_criteria');
+  validateField(winCriteriaq);
+ 
+  leadSubbmission();
 
-    estimatedleadNomber = document.getElementById('estimated_lead_no');
-    validateField(estimatedleadNomber);
+  checkChat();
 
-    connectElem = document.getElementById('Connect');
-    validateField(connectElem);
+  validateConnectDayType();
 
-    programStartDate = document.getElementById('program_start_date');
-    validateField(programStartDate);
+  validateConnectDay();
 
-    programEndDate = document.getElementById('program_end_date');
-    validateField(programEndDate);
-
-    progOverView = document.getElementById('program_overview');
-    validateField(progOverView);
-
-    explainWorkFlow = document.getElementById('explain_workflow');
-    validateField(explainWorkFlow);
-
-    winCriteriaq = document.getElementById('win_criteria');
-    validateField(winCriteriaq);
-
-    validateRegionField();
-    validateLocationField();
-    checkChat();
-    checkDay();
-    subjectEstimatedDay();
-    advertizerTpye();
-    codeType();
-    leadSubbmission();
+  tag_meeting_time = document.getElementById('tag_meeting_time');
+  validateField(tag_meeting_time);
+   
     // Check If Error in Form
-    if(window.is_error){
-      focusElem = failedFields[0];
-      $(focusElem).focus();
+      if(window.is_error || window.failedFields > 0 ){
+        focusElem = failedFields[0];
+        $(focusElem).focus();
+        return false;
+      }else if (window.is_error == false && window.failedFields == 0 ){
+        return true;
+      }  
+      else{
+        return false;
+      }
+    }
+
+function checkDate(elem){
+  if($(elem).val() == ""){
+      $(elem).addClass('error-box');
+      window.failedFields.push($(elem));
+      window.is_error = true;
       return false;
-    }else{
-      return true;
-    }  
   }
+  else
+  {
+    $(elem).removeClass('error-box');
+     window.is_error = false;
+     return true;
+  } 
+}
 
 function leadSubbmission(){
   if(document.getElementById('lead_submission_portal').checked == false && document.getElementById('lead_submission_other').checked == false){
@@ -255,21 +268,23 @@ function leadSubbmission(){
         $('#lead_sub_other').addClass('error-box');
          $('#lead_submission_other').addClass('error-box');
         window.is_error = true;
+        return false;
     }
-     
     else{
       $('.radio-validate').removeClass('error-box');
-        window.is_error = false;
-        return false;
+       $('#lead_sub_other').removeClass('error-box');
+         $('#lead_submission_other').removeClass('error-box');
+         return true;
       }
 }
 
 function codeType(){
-var codeElement = $('.code-type-ul li a .tickMarkShow');
-      if(codeElement.length==0)
+      var codeElement = $('.code-type-ul li a .tickMarkShow');
+      if(codeElement.length == 0)
         {
           $('#codeTypeBtn').addClass('error-box');
           window.failedFields.push($('#code_type_opt'));
+          window.failedFields.push($('#code_type'));
           window.is_error = true;
           return false;
         }
@@ -277,23 +292,21 @@ var codeElement = $('.code-type-ul li a .tickMarkShow');
         {
           $("#codeTypeBtn").removeClass('error-box');
            window.is_error = false;
-          return true;
+           return true;
         } 
 }
-
-function advertizerTpye(){
-  if (document.getElementById('advertiser_type').value == "choose"){
-    $('.add-type').addClass('error-box');
+function advertizerType(){
+    if (document.getElementById('advertiser_type').value == "choose"){
+        $('.add-type').addClass('error-box');
         window.is_error = true;
         return false;
-          }
-            else{
+    }
+   else{
        $('.add-type').removeClass('error-box');
-        window.is_error = false;
-        return true;
-         }
+       window.is_error = false;
+       return true;
+    }
 }
-
 function checkChat(){
    if(document.getElementById('real_time_live_trans').checked == false && document.getElementById('real_time_chat').checked == false){
       $('.real-chat').addClass('error-box');
@@ -308,7 +321,6 @@ function checkChat(){
         return true;
           }
 }
-
 function subjectEstimatedDay(){
   if(document.getElementById('subject-estimated-day').value == "choose"){
     $('#subject-estimated-day').addClass('error-box'); 
@@ -321,48 +333,14 @@ function subjectEstimatedDay(){
         return true;
         }
 }
-
-function checkDay(){
-  if(document.getElementById('tagteam-connect-day').value == "choose" || document.getElementById('connect').value == "choose" ||document.getElementById('tag_meeting_time').value == "" ){
-    $('#tagteam-connect-day').addClass('error-box'); 
-    $('#tag_meeting_time').addClass('error-box');
-    $('#connect').addClass('error-box'); 
-     
-      window.is_error = true;
-        return false;
-  }
-  else if(document.getElementById('tagteam-connect-day').value != "choose" && document.getElementById('connect').value != "choose" && document.getElementById('tag_meeting_time').value != "" ) {
-    $('#tag_meeting_time').removeClass('error-box');
-    $('#tagteam-connect-day').removeClass('error-box');
-    $('#connect').removeClass('error-box');
-        window.is_error = false;
-        return true;
-  }
-  else{
-    window.is_error = false;
-    return true;
-      }
-}
-
-  // Validate Form Field
-  function validateField(elem){
-  if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
-  $(elem).addClass('error-box');
-  window.failedFields.push(elem);
-  window.is_error = true;
-  return false;
-  }else{
-    $(elem).removeClass('error-box');
-      }
-}
-
  // Validate Region Field
  function validateRegionField(){
   regionElements = $('.region-ul li a .tickMarkShow');
   if(regionElements.length==0)
   {
     $('#regionTypeBtn').addClass('error-box');
-    window.failedFields.push($('#regionTypeBtn'));
+    window.failedFields.push($('#regionTypeBtn')); 
+    window.failedFields.push($('#regionTypesDiv'));
     window.is_error = true;
     return false;
   }
@@ -373,25 +351,64 @@ function checkDay(){
     return true;
   }
 }
-
 // Validate Location Field
 function validateLocationField(){
   locationElements = $('.location-ul li a .tickMarkShow');
   if(locationElements.length==0)
   {
-    $('#locationTypeBtn').addClass('error-box');
+    $('#locationTypeBtn').addClass('error-box'); 
     window.failedFields.push($('#locationTypeBtn'));
+    window.failedFields.push($('.target-locations-main'));
     window.is_error = true;
     return false;
   }
   else
   {
     $("#locationTypeBtn").removeClass('error-box');
+    window.is_error = false;
     return true;
   }
 }
-/*----------------------------------------------------
-      End of validation of kick off program page
-----------------------------------------------------*/
 
+function validateConnectDayType(){
+  var valofday = document.getElementById('connect').value;
+  if (valofday == 'choose'){
+    $('#connect').addClass('error-box');
+    window.failedFields.push($('#connect'));
+    window.is_error = true;
+    return false;
+  }
+  else{
+    $('#connect').removeClass('error-box');
+    return true;
+  }
+}
 
+function validateConnectDay(){
+  var valofday = document.getElementById('tagteam-connect-day').value;
+  if (valofday == 'choose'){
+    $('#tagteam-connect-day').addClass('error-box');
+    window.failedFields.push($('#tagteam-connect-day'));
+    window.is_error = true;
+    return false;
+  }
+  else{
+    $('#tagteam-connect-day').removeClass('error-box');
+    return true;
+  }
+}
+
+// Validate Form Field
+function validateField(elem) {
+  console.log($(elem).val());
+  if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val() ) {
+      $(elem).addClass('error-box');
+      window.failedFields.push(elem);
+      window.is_error = true;
+      return false;
+  } else {
+      $(elem).removeClass('error-box');
+      return true;
+  }
+}
+/*End of validation of kick off program page*/

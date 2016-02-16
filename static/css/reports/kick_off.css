@@ -95,13 +95,21 @@ input[type=number]::-webkit-outer-spin-button {
 
 .hiddenCheckbox{ display: none; }
 
-.dropdown-menu li {
+/*#teamsDiv .dropdown-menu li {
     border-bottom: 0px solid #dbdbdb !important;
     border-left: 0px solid #dbdbdb ! important;
-    border-right: 0px solid #dbdbdb ! important;
-}
+    border-right: 0px solid #dbdbdb ! important; 
+}*/
 
-.dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }
+/*#locationTypeBtn .dropdown-menu li {
+    border-bottom: 0px solid #dbdbdb !important;
+    border-left: 0px solid #dbdbdb ! important;
+    border-right: 0px solid #dbdbdb ! important; 
+}*/
+
+/* #teamsDiv .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
+
+/* #locationTypeBtn .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
 
 .code-type-ul{ font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
 
@@ -109,6 +117,25 @@ input[type=number]::-webkit-outer-spin-button {
 
 .est-lead{ width:100%; font-size: 12.57px; }
 
-/*.hideItems{
-	display: none;
-}*/
+/* START  ***kick_off_export_detail.html important css****   */
+
+ .file-name-link1, .file-name-attach1{
+    background: white;
+    border: 0px;
+    padding-left: 10px;
+  }
+  .attach_1, .attach_2{
+    padding-left: 10px;
+  }
+  #action-item{
+    width:350px;
+    text-align: center;
+  }
+#attach tbody tr td, #attach-link-file tbody tr td{border: 1px solid #D1D1D1;}
+#attach thead tr td, #attach-link-file thead tr td{border: 1px solid #D1D1D1;padding: 10px;}
+
+#success-matrix label { padding-top: 5px !important; }
+
+.ui-autocomplete{height:150px; overflow:scroll; }
+
+/* END ***kick_off_export_detail.html important css*** */

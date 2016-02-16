@@ -298,5 +298,8 @@ class KickOffProgram(models.Model):
     upload_file_attachment_4 = models.FileField(upload_to=get_file_path, blank=True, null=True)
     upload_file_attachment_5 = models.FileField(upload_to=get_file_path, blank=True, null=True)
 
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
     class Meta:
         verbose_name_plural = "Kick Off Program"

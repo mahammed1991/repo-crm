@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails
+from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails, KickOffProgram
 from reports.forms import RegionForm
 
 
@@ -30,3 +30,4 @@ class CSATFilterDetailsAdmin(admin.ModelAdmin):
     filter_horizontal = ('agent_language',)
 
 admin.site.register(CSATFilterDetails, CSATFilterDetailsAdmin)
+admin.site.register(KickOffProgram)
