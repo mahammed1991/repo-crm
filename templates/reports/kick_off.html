@@ -14,7 +14,8 @@
 {% block content %}
 <section class="content-region inner-page">
 
-<form method="POST" name="kick_off_program" onsubmit="return validatethis(this);" enctype="multipart/form-data">
+<form method="POST" id="kickoff-form" name="kick_off_program" onsubmit="return validatethis(this);" enctype="multipart/form-data">
+
 	
 
 <input type="hidden" name="count_of_success_matrix" value="">
@@ -32,7 +33,7 @@
                       <label for="">Program Name:</label>
                     </div>
                    <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="" name="program_name" id="program_name" />
+                        <input type="text" class="form-control" placeholder="" name="program_name" id="program_name"/>
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Google PoC:</label>
@@ -115,7 +116,7 @@
                       <label for="">Program Start Date:</label>
                     </div>
                     <div class="col-md-4">
-                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="program_start_date" />
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="program_start_date"  />
                     </div>
               </div>
 
@@ -146,7 +147,7 @@
                       <label for="">Program End Date:  </label>
                     </div>
                     <div class="col-md-4">
-                       <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="program_end_date" name="program_end_date">
+                       <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="program_end_date" name="program_end_date" >
                     </div>
               </div>
 
@@ -157,7 +158,7 @@
                           <label class="est-lead" for="">Estimated Lead Volume:</label>
                         </div>
                          <div class="col-md-4">
-                          <input type="number" min="0" class="form-control" id="estimated_lead_no" name="estimated_lead_no" placeholder="Lead Volumes in Numbers">
+                          <input type="number" min="0" class="form-control estimated_lead_number" id="estimated_lead_no" name="estimated_lead_no" placeholder="Lead Volumes in Numbers">
                         </div>
                         <div class="col-md-1"> </div>
                         <div class="col-md-1"> </div>
@@ -165,8 +166,8 @@
                           <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject-estimated-day" style="">
                                 <option value="choose">Choose</option>
                                 <option value="Weekly">Day</option>
-                                <option value="Biweekly Connect">Week</option>
-                                <option value="Monthly Connect">Month</option>
+                                <option value="Biweekly">Week</option>
+                                <option value="Monthly">Month</option>
                             </select>
                         </div>
                   </div>
@@ -215,7 +216,7 @@
                   <label for="">Expectations:</label>
                 </div>
                  <div class="col-md-10 expectations">
-                  <textarea type="text" class="form-control" id="workflow_changes_if_any" name="workflow_changes_if_any"></textarea> 
+                  <textarea type="text" class="form-control" id="expectations" name="expectations"></textarea> 
                 </div>
               </div>
 
@@ -247,7 +248,7 @@
                           <div class="col-md-2 radio-validate" style="padding-top:8px;">
                               <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission"> Portal.
                           </div>
-                          <div class="col-md-2 radio-validate" style="padding-top:10px;">
+                          <div class="col-md-2 radio-validate" style="padding-top:8px;">
                               <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission">Others.
                           </div>
                     </div>
@@ -265,7 +266,7 @@
                          <div class="col-md-2 real-chat" style="padding-top:8px;">
                              <input class="" type='checkbox' id="real_time_chat" name="real_time_chat"> chat
                         </div>
-                        <div class="col-md-2 live-trans" style="padding-top:10px;">
+                        <div class="col-md-2 live-trans" style="padding-top:8px;">
                              <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans"> Live Transfer 
                         </div>
                       </div>
@@ -475,7 +476,6 @@ function uncheck(){
  $(document).ready(function(){
     window.regionWiseLocations = {{region_based_locations|safe}}
     window.locations = {{all_locations|safe}}
-    console.log(window.regionWiseLocations);
  });
 
 
