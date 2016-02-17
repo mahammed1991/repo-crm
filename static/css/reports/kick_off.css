@@ -110,6 +110,9 @@ input[type=number]::-webkit-outer-spin-button {
 /* #teamsDiv .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
 
 /* #locationTypeBtn .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
+.region-ul { font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
+
+.location-ul { font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
 
 .code-type-ul{ font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
 

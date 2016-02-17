@@ -67,7 +67,7 @@
                                                  '</span>&nbsp;'+ window.regionWiseLocations[element_id][j]+'</a></li>');
                 }
                 $(".location-ul").css('height','auto');
-                $(".location-ul").css('overflow','scroll');
+                $(".location-ul").css('overflow-x','hidden');
             }
             var final_elements = $(".location-ul li");
             for(var k=0;k<loc_elements.length;k++)
