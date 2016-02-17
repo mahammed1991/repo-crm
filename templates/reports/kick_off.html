@@ -430,7 +430,6 @@ $(".datepickerFrom_a").datetimepicker({
           manager_email.push( ui.item.value );
           manager_email.push("");
           this.value = manager_email.join(", ");
-         //$('#user_manager_name').val(window.user_details[ui.item.value]);
       }
       });
     });
@@ -459,7 +458,6 @@ $(".datepickerFrom_a").datetimepicker({
           manager_email.push( ui.item.value );
           manager_email.push("");
           this.value = manager_email.join(", ");
-         //$('#user_manager_name').val(window.user_details[ui.item.value]);
       }
       });
     });
@@ -481,10 +479,6 @@ function uncheck(){
 
 
 $(document).click(function(evt){
-      // debugger;
-      /* if(evt.target.id != 'locationTypeBtn' && evt.target.className != 'smallLoc'){
-          $('.location-ul').hide();
-       }*/
 
         if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
           $('.location-ul').show();
@@ -503,13 +497,8 @@ $(document).click(function(evt){
        }else{
           $('.code-type-ul').hide();
        }
-       /// debugger;
 });
 
-/*$('#locationTypeBtn').on('click', function(){
-  $('.location-ul').show();
-});
-*/
 /* ----------------------------------------------
     start file upload and multiple append
   ----------------------------------------------*/

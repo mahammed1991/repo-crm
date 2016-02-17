@@ -115,13 +115,11 @@
         var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
         var optionElementToDatabase = "<option class ='"+parentElementId+"' id='removing"+locationSpacereplace+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
         $( "#locationTypeList" ).append(optionElementToDatabase);
-        /*console.log(optionElementToDatabase);*/
         if(selectedTeamsElement.hasClass('tickMarkShow')){
             selectedTeamsElement.removeClass('tickMarkShow');
             $(' #removing'+locationSpacereplace+' ').remove();
         }
         else{
-        /*  console.log(optionElementToDatabase);*/
             selectedTeamsElement.addClass('tickMarkShow');
         }
     }
@@ -134,10 +132,9 @@ $('.code-type-ul').children().on('click', function(){
     function selectProcessPopulateCodeType(codeTypeElement){
        if($(codeTypeElement).attr('val')){
         var codeTypereplace = $(codeTypeElement).attr('val').replace(/ /g, "_");
-        /*console.log(codeTypereplace);*/
        }
         var OptionElement = "<option id='"+codeTypereplace+"' value='"+codeTypereplace+"' selected></option>";
-        /*console.log(OptionElement);*/
+
         var selectedProcessElement = $(codeTypeElement).children("a").children('span');
         // UnSelect Process Items.
         if(selectedProcessElement.hasClass('tickMarkShow')){

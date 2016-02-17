@@ -1882,7 +1882,10 @@ def get_kickoff_program(request):
 
 
 def kickoff_export_detail(request, program_id):
-    get_kickoff_record = KickOffProgram.objects.get(id=program_id)
+    try:
+        get_kickoff_record = KickOffProgram.objects.get(id=program_id)
+    except KickOffProgram.DoesNotExist:
+        return redirect('reports.views.kickoff_export')
 
     if get_kickoff_record:
         # getting manyToMany feild goole poc email fetching
@@ -1917,39 +1920,6 @@ def kickoff_export_detail(request, program_id):
         get_codetype_list = get_kickoff_record.codetypeslist
         final_type_codelist_with_quotes = str(get_codetype_list[1:-1])
         final_type_codelist = final_type_codelist_with_quotes
-
-    # # getting manyToMany feild goole poc email fetching
-    # if get_kickoff_record:
-    #     google_pocs = get_kickoff_record.google_poc.values('email')
-    #     google_poc_list = list()
-    # for mailids in google_pocs:
-    #     google_poc_list.append(str(mailids['email']))
-    # googlepoc_email_list = ','.join(google_poc_list)
-
-    # # getting ManyToMany feild goole poc email second email ids fetching
-    # if get_kickoff_record:
-    #     google_email_pocs = get_kickoff_record.google_poc_email.values('email')
-    #     google_poc_email_list = list()
-    # for google_email_mail_ids in google_email_pocs:
-    #     google_poc_email_list.append(str(google_email_mail_ids['email']))
-    # google_poc_email_list = ','.join(google_poc_email_list)
-
-    # #getting all regions from the manyToMany feild
-    # if get_kickoff_record:
-    #     region_list = list()
-    #     get_region_list = get_kickoff_record.region.values('name')
-    # for region in get_region_list:
-    #     for key, val in region.iteritems():
-    #         region_list.append(val)
-    # region_list = ','.join(region_list)
-
-    # if get_kickoff_record:
-    #     target_location_list = list()
-    #     get_target_location = get_kickoff_record.target_locations.values('location_name')
-    # for location in get_target_location:
-    #     for key, val in location.iteritems():
-    #         target_location_list.append(val)
-    # target_location_list = ','.join(target_location_list)
 
     start_date = get_kickoff_record.programe_start_date
     start_date_converted = datetime.strftime(start_date, '%d.%m.%Y')
@@ -2054,7 +2024,6 @@ def kickoff_export_detail(request, program_id):
     google_email = list()
     for manager in managers:
         google_email.append(str(manager))
-    google_email.append(str(manager))
 
     return render(request,'reports/kick_off_export_detail.html', {'get_kickoff_record': get_kickoff_record,
                                                                   'googlepoc_list': googlepoc_email_list,
