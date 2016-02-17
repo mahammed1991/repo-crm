@@ -95,21 +95,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 .hiddenCheckbox{ display: none; }
 
-/*#teamsDiv .dropdown-menu li {
-    border-bottom: 0px solid #dbdbdb !important;
-    border-left: 0px solid #dbdbdb ! important;
-    border-right: 0px solid #dbdbdb ! important; 
-}*/
-
-/*#locationTypeBtn .dropdown-menu li {
-    border-bottom: 0px solid #dbdbdb !important;
-    border-left: 0px solid #dbdbdb ! important;
-    border-right: 0px solid #dbdbdb ! important; 
-}*/
-
-/* #teamsDiv .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
-
-/* #locationTypeBtn .dropdown-menu>li>a { padding: 5px 2px ! important; color: #474747; }*/
 .region-ul { font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
 
 .location-ul { font-size: 12px !important; max-height: 150px; overflow-x: hidden; overflow-y : auto; }
