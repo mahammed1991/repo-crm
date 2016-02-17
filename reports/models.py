@@ -205,6 +205,8 @@ class MeetingMinutes(models.Model):
     attached_link_4 = models.CharField(max_length=255, null=True, blank=True)
     attached_link_5 = models.CharField(max_length=255, null=True, blank=True)
 
+    status_changed_by = models.CharField(max_length=255, null=True, blank=True)
+
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
