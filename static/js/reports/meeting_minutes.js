@@ -126,6 +126,7 @@ $('#preview_btn').click(function(){
   
     $('#preview_selected_program').text($('#selected_program').text());
     $('#preview_selected_project').text($('#selected_project').text());
+    $('#preview_selected_google_team').text($('#selected_google_team').text());
     $('#preview_selected_subject').text($('#selected_subject').text());
     $('#preview_selected_product_name').text($('#selected_product_name').text());
     $('#preview_selected_date').text($('#selected_date').text());
@@ -181,7 +182,13 @@ $('#preview_btn').click(function(){
 
     $('#preview_attendees').val($('#attendees').val());
 
-    $('#preview_bcc').val($('#bcc').val());
+    if($('#bcc').val() == ''){
+      $('.preview_bcc').hide();
+    }else{
+      $('.preview_bcc').show();
+      $('#preview_bcc').val($('#bcc').val());
+    }
+
 
 
     /***************************adding action plans*********************************/
@@ -262,6 +269,12 @@ $('#preview_btn').click(function(){
     $('.attach-link-file').html('');
     var preview_attachments = $('.file-append');
     var attachments = new Array();
+
+    if($('#file_name_link_1').val() == '' && $('#file_info_text_1').val() == ''){
+      $('.preview_file_attach_links').hide();
+    }else{
+      $('.preview_file_attach_links').show();
+    }
 
     for(var i=1; i<= preview_attachments.length; i++){
       attachments.push($('#file_name_link_'+i).val());

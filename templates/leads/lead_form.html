@@ -917,8 +917,13 @@
     </div>
     <div id="shoppingInfo">
       <div class="std-sub-title">Shopping Campaign Info
-        <input type="radio" class="shopping_campaign" id="Shopping_Campaign_Setup" value="Shopping_Campaign_Setup" style="margin-left: 187px;">Shopping Campaign Setup
-        <input type="radio" class="shopping_campaign" id="Shopping_Trobleshoot" value="Shopping_Trobleshoot" style="margin-left: 137px;">Shopping Troubleshooting
+      </div>
+      <div class="row shopping_campaign" style="padding-left: 20px;padding-bottom: 20px;">
+        <div class="form-heading">Please select the required type</div>
+        <div>
+          <input type="radio" id="Shopping_Campaign_Setup" value="Shopping_Campaign_Setup">Shopping Campaign Setup
+          <input type="radio" id="Shopping_Trobleshoot" value="Shopping_Trobleshoot" style="margin-left:40px;">Shopping Troubleshooting
+        </div>
       </div>
       <div class="row shoppingInfo">
         <div class="col-md-4">
@@ -952,10 +957,11 @@
           <div class="col-md-4">
             <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
               <option value="">Select Issues</option>
-              <option value="GTIN_Issues">GTIN Issues</option>
-              <option value="Error_Rectification_on_Feed">Error Rectification on Feed</option>
-              <option value="Campaing_Management">Campaing Management</option>
-              <option value="Adding_Products_to_Feed">Adding Products to Feed</option>
+              <option value="GTIN Issues">GTIN Issues</option>
+              <option value="Error Rectification on Feed">Error Rectification on Feed</option>
+              <option value="Campaing Management">Campaing Management</option>
+              <option value="Adding Products to Feed">Adding Products to Feed</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div class="col-md-4">

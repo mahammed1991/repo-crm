@@ -83,12 +83,13 @@ Action Items Meeting Minutes
           <thead>
              <tr>
                <th class="headlinks-default" style="min-width:100px;">Meeting Date</th>
-               <th class="headlinks-default" style="min-width:300px;">Subject Line</th>
-               <th class="headlinks-default">Action Item(s)</th>
-               <th class="headlinks-default">Owner</th>
+               <th class="headlinks-default" style="min-width:200px;">Subject Line</th>
+               <th class="headlinks-default" style="min-width:250px;">Action Item(s)</th>
+               <th class="headlinks-default" style="min-width:100px;">Owner</th>
                <th class="headlinks-default" id="td_date">Deadline</th>
                <th class="headlinks-default">Status</th>
                <th class="headlinks-default">Action</th>
+               <th class="headlinks-default">Action changed by</th>
              </tr>
           </thead>
           <tbody class="display_all_meeting_minutes" >
@@ -172,8 +173,10 @@ Action Items Meeting Minutes
                }else{
                 row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" name="status" style="text-align:center;margin-right:5px;" value="close">Close</input></td>'
                }
+              row_end_status = '<td class="links-default">'+all_meeting_records[i]['status_changed_by']+'</td>'
              '</tr>'
              row += row_end
+             row += row_end_status
       }else{
 
       row += '<tr>'+
@@ -189,8 +192,10 @@ Action Items Meeting Minutes
                }else{
                 row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="close">Close</input></td>'
                }
+              row_end_status = '<td class="links-default">'+all_meeting_records[i]['status_changed_by']+'</td>'
              '</tr>'
              row += row_end
+             row += row_end_status
       }
     }
     $('.display_all_meeting_minutes').append(row);
