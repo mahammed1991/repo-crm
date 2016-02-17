@@ -901,10 +901,10 @@ def export_appointments_with_schedule_appointments(request):
                 schedule_data = Leads.objects.exclude(rescheduled_appointment_in_ist=None).filter(
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
                     country__in=rglx_team.location.values_list('location_name'),
-                    type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+                    type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
             elif process_type == 'TAG':
                 schedule_data = Leads.objects.exclude(rescheduled_appointment_in_ist=None)
-                schedule_data = schedule_data.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Migration']).filter(
+                schedule_data = schedule_data.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']).filter(
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
                     country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
             else:
