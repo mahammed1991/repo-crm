@@ -1709,8 +1709,8 @@ def program_kick_off(request):
         kickoffprogram.explain_workflow = request.POST.get('explain_workflow')
         kickoffprogram.win_criteria = request.POST.get('win_criteria')
 
-        tag_team_connect_method = request.POST.get('connect') + '/'
-        tag_team_connect_day = request.POST.get('tagteam-connect-day') + '/'
+        tag_team_connect_method = request.POST.get('connect') + '_'
+        tag_team_connect_day = request.POST.get('tagteam-connect-day') + '_'
         tag_team_connect_time = request.POST.get('tag_meeting_time')
         kickoffprogram.tag_team_connect_detail = tag_team_connect_method + tag_team_connect_day + str(tag_team_connect_time)
 
@@ -1746,8 +1746,6 @@ def program_kick_off(request):
         kickoffprogram.attached_url_link_4 = request.POST.get('file_info_text_4')
         kickoffprogram.attached_url_link_5 = request.POST.get('file_info_text_5')
 
-        kickoffprogram.save()
-
         attach_file_name = dict()
         for i in range(1, int(count_of_file_url_name) + 1):
             attach_file_name['file_name_attach_'+str(i)] = request.POST.get('file_name_attach_' + str(i))
@@ -1761,15 +1759,13 @@ def program_kick_off(request):
 
         kickoffprogram.save()
 
-        regions_multiselect = request.POST.getlist('regionTypeList')
-        get_regions = Region.objects.filter(name__in=regions_multiselect).values_list('id', flat=True)
-        kickoffprogram.region.add(*get_regions)
-
         location_multiselect = request.POST.getlist('locationTypeList')
         get_location = Location.objects.filter(location_name__in=location_multiselect).values_list('id', flat=True)
         kickoffprogram.target_locations.add(*get_location)
 
-        kickoffprogram.save()
+        regions_multiselect = request.POST.getlist('regionTypeList')
+        get_regions = Region.objects.filter(name__in=regions_multiselect).values_list('id', flat=True)
+        kickoffprogram.region.add(*get_regions)
 
         google_poc = request.POST.get('google_poc').replace(', ', ',')
         google_poc_list = google_poc.split(',')
@@ -1783,7 +1779,6 @@ def program_kick_off(request):
         get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
         kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
 
-        kickoffprogram.save()
         return redirect('reports.views.kickoff_thankyou')
 
     google_email = list()
@@ -1923,7 +1918,6 @@ def kickoff_export_detail(request, program_id):
         final_type_codelist_with_quotes = str(get_codetype_list[1:-1])
         final_type_codelist = final_type_codelist_with_quotes
 
-
     # # getting manyToMany feild goole poc email fetching
     # if get_kickoff_record:
     #     google_pocs = get_kickoff_record.google_poc.values('email')
@@ -1988,7 +1982,7 @@ def kickoff_export_detail(request, program_id):
         chat_and_live = False
 
     tag_team_connect_splitting = get_kickoff_record.tag_team_connect_detail
-    tag_team_connect_each_data = re.split('/|, \n', tag_team_connect_splitting)
+    tag_team_connect_each_data = re.split('_|, \n', tag_team_connect_splitting)
     type_of_connect = tag_team_connect_each_data[0]
     type_of_connect_day = tag_team_connect_each_data[1]
     type_of_connect_time = tag_team_connect_each_data[2]
