@@ -1702,7 +1702,6 @@ def program_kick_off(request):
         estimated_lead_no = request.POST.get('estimated_lead_no')
         estimated_lead_finish_period = request.POST.get('subject_estimated_day')
         kickoffprogram.estimated_lead_volume = estimated_lead_no + ' ' + estimated_lead_finish_period
-        print kickoffprogram.estimated_lead_volume
 
         kickoffprogram.program_overview_objective = request.POST.get('program_overview')
         kickoffprogram.subject_estimated_day = request.POST.get('subject-estimated-day')
@@ -1723,9 +1722,7 @@ def program_kick_off(request):
             kickoffprogram.lead_subbmission_other_val = request.POST.get('lead_sub_other')
 
         kickoffprogram.real_time_support_chat = request.POST.get('real_time_chat')
-        print kickoffprogram.real_time_support_chat
         kickoffprogram.real_time_support_live_trans = request.POST.get('real_time_live_trans')
-        print kickoffprogram.real_time_support_live_trans
 
         kickoffprogram.comments = request.POST.get('comments')
 
@@ -1968,7 +1965,6 @@ def kickoff_export_detail(request, program_id):
     extract_estimated_volume = get_kickoff_record.estimated_lead_volume
     estimated_number = int(re.search(r'\d+', extract_estimated_volume).group())
     estimated_volume = ''.join([i for i in extract_estimated_volume if not i.isdigit()])
-    print extract_estimated_volume
 
     lead_mode = get_kickoff_record.lead_sub_mode
     if lead_mode == "portal":
