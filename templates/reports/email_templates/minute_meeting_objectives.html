@@ -34,7 +34,11 @@
                 {% else %}
                 <p>Here are the Minutes of the Meeting that took place between {{google_poc}} from {{google_team}} and {{regalix_poc}}, {{attendees}} on {{meeting_date}} at {{meeting_time}} IST</p> 
                 {% endif %}
+                {% if 'NA' in google_team %}
                 <p>You can find other details of the meeting's minutes at this link: <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a></p>
+                {% else %}
+                <p>You can find other details of the meeting's minutes at this link: <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a></p>
+                {% endif %}
 
                 <p>Please find below the Action Items from this meeting.</p>
                 <p>Thanks,</p>

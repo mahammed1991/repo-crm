@@ -183,10 +183,12 @@ def last_day_of_month(d):
 
 
 def get_week_start_end_days(year, week):
-    d = date(year, 1, 1)
-    d = d - timedelta(d.weekday())
+    day_week = date(year, 1, 1)
+    day_week = day_week - timedelta(day_week.weekday())
     dlt = timedelta(days=(week - 1) * 7)
-    return d + dlt, d + dlt + timedelta(days=6)
+    current_day = day_week + dlt
+    current_week = day_week + dlt + timedelta(days=6)
+    return current_day, current_week
 
 
 def date_range_by_quarter(quarter):
