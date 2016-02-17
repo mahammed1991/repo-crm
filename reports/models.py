@@ -297,6 +297,7 @@ class KickOffProgram(models.Model):
     upload_file_attachment_3 = models.FileField(upload_to=get_file_path, blank=True, null=True)
     upload_file_attachment_4 = models.FileField(upload_to=get_file_path, blank=True, null=True)
     upload_file_attachment_5 = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    program_created_by = models.CharField(max_length=255, null=True, blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

@@ -1757,6 +1757,8 @@ def program_kick_off(request):
         kickoffprogram.upload_file_attachment_4 = request.FILES.get('file_info_4')
         kickoffprogram.upload_file_attachment_5 = request.FILES.get('file_info_5')
 
+        kickoffprogram.program_created_by = request.user.email
+
         kickoffprogram.save()
 
         location_multiselect = request.POST.getlist('locationTypeList')
@@ -1778,6 +1780,16 @@ def program_kick_off(request):
         google_poc_email_list.pop(-1)
         get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
         kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
+
+        latest_program = KickOffProgram.objects.filter(program_created_by=request.user.email).last()
+        acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(latest_program.id)
+        mail_from = request.user.email
+        mail_to = ""
+        mail_subject = "Kickoff program genarated: and Name is %s " % (kickoffprogram.program_name)
+        mail_body = get_template('reports/email_templates/kick_off_form_submission.html').render(Context({'program_name': kickoffprogram.program_name, 'mail_from': mail_from, 'acces_link':acces_link}))
+        bcc = set()
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
         return redirect('reports.views.kickoff_thankyou')
 
@@ -1941,15 +1953,21 @@ def kickoff_export_detail(request, program_id):
         type_chat = True
     else:
         type_chat = False
-    live_trans = get_kickoff_record.real_time_support_chat
+    live_trans = get_kickoff_record.real_time_support_live_trans
     if live_trans == "on":
         type_live = True
     else:
         type_live = False
-    if chat == live_trans == "on":
-        chat_and_live = True
-    else:
-        chat_and_live = False
+    chat = get_kickoff_record.real_time_support_chat
+    live_trans = get_kickoff_record.real_time_support_live_trans
+    chat_and_live = ''
+    if chat == "on":
+        if chat == live_trans:
+            chat_and_live = True
+            type_live = False
+            type_chat = False
+        else:
+            chat_and_live = False
 
     tag_team_connect_splitting = get_kickoff_record.tag_team_connect_detail
     tag_team_connect_each_data = re.split('_|, \n', tag_team_connect_splitting)

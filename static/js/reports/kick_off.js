@@ -295,6 +295,7 @@ function codeType(){
 function advertizerType(){
     if (document.getElementById('advertiser_type').value == "choose"){
         $('.add-type').addClass('error-box');
+        window.failedFields.push($('.add-type'));
         window.is_error = true;
         return false;
     }
