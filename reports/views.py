@@ -1462,7 +1462,7 @@ def link_last_meeting(request, last_id):
     if 'file_name_link_5' in last_meeting.link_file_name:
         link_file_name_5 = link_file_name_dict['file_name_link_5']
     media_url = settings.MEDIA_URL
-    
+
     submit_disabled = False
     for attendee in attendees:
         attendees_list.append(str(attendee['email']))
@@ -1686,7 +1686,12 @@ def program_kick_off(request):
         kickoffprogram.program_name = request.POST.get('program_name')
         kickoffprogram.google_poc_locations = request.POST.get('google_poc_location')
         kickoffprogram.advertiser_type = request.POST.get('advertiser_type')
-        kickoffprogram.codetypeslist = request.POST.get('codeTypeList')
+
+        codetype_list = list()
+        code_type_data = request.POST.getlist('codeTypeList')
+        for data in code_type_data:
+            codetype_list.append(str(data))
+        kickoffprogram.codetypeslist = codetype_list
 
         program_start_date = request.POST.get('program_start_date')
         kickoffprogram.programe_start_date = datetime.strptime(program_start_date, '%d.%m.%Y')
@@ -1695,17 +1700,18 @@ def program_kick_off(request):
         kickoffprogram.programe_end_date = datetime.strptime(programe_end_date, '%d.%m.%Y')
 
         estimated_lead_no = request.POST.get('estimated_lead_no')
-        estimated_lead_finish_period = request.POST.get('estimated_lead_no')
+        estimated_lead_finish_period = request.POST.get('subject_estimated_day')
         kickoffprogram.estimated_lead_volume = estimated_lead_no + ' ' + estimated_lead_finish_period
+        print kickoffprogram.estimated_lead_volume
 
         kickoffprogram.program_overview_objective = request.POST.get('program_overview')
         kickoffprogram.subject_estimated_day = request.POST.get('subject-estimated-day')
-        kickoffprogram.expectations = request.POST.get('workflow_changes_if_any')
+        kickoffprogram.expectations = request.POST.get('expectations')
         kickoffprogram.explain_workflow = request.POST.get('explain_workflow')
         kickoffprogram.win_criteria = request.POST.get('win_criteria')
 
-        tag_team_connect_method = request.POST.get('connect')
-        tag_team_connect_day = request.POST.get('tagteam-connect-day')
+        tag_team_connect_method = request.POST.get('connect') + '/'
+        tag_team_connect_day = request.POST.get('tagteam-connect-day') + '/'
         tag_team_connect_time = request.POST.get('tag_meeting_time')
         kickoffprogram.tag_team_connect_detail = tag_team_connect_method + tag_team_connect_day + str(tag_team_connect_time)
 
@@ -1717,7 +1723,9 @@ def program_kick_off(request):
             kickoffprogram.lead_subbmission_other_val = request.POST.get('lead_sub_other')
 
         kickoffprogram.real_time_support_chat = request.POST.get('real_time_chat')
+        print kickoffprogram.real_time_support_chat
         kickoffprogram.real_time_support_live_trans = request.POST.get('real_time_live_trans')
+        print kickoffprogram.real_time_support_live_trans
 
         kickoffprogram.comments = request.POST.get('comments')
 
@@ -1736,10 +1744,12 @@ def program_kick_off(request):
         kickoffprogram.file_url_name = json.dumps(link_file_name_dict)
 
         kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_1')
-        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_2')
-        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_3')
-        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_4')
-        kickoffprogram.attached_url_link_1 = request.POST.get('file_info_text_5')
+        kickoffprogram.attached_url_link_2 = request.POST.get('file_info_text_2')
+        kickoffprogram.attached_url_link_3 = request.POST.get('file_info_text_3')
+        kickoffprogram.attached_url_link_4 = request.POST.get('file_info_text_4')
+        kickoffprogram.attached_url_link_5 = request.POST.get('file_info_text_5')
+
+        kickoffprogram.save()
 
         attach_file_name = dict()
         for i in range(1, int(count_of_file_url_name) + 1):
@@ -1754,13 +1764,15 @@ def program_kick_off(request):
 
         kickoffprogram.save()
 
-        regions_multiselect = request.POST.get('regionTypeList')
+        regions_multiselect = request.POST.getlist('regionTypeList')
         get_regions = Region.objects.filter(name__in=regions_multiselect).values_list('id', flat=True)
         kickoffprogram.region.add(*get_regions)
 
-        location_multiselect = request.POST.get('locationTypeList')
+        location_multiselect = request.POST.getlist('locationTypeList')
         get_location = Location.objects.filter(location_name__in=location_multiselect).values_list('id', flat=True)
         kickoffprogram.target_locations.add(*get_location)
+
+        kickoffprogram.save()
 
         google_poc = request.POST.get('google_poc').replace(', ', ',')
         google_poc_list = google_poc.split(',')
@@ -1818,4 +1830,265 @@ def kickoff_thankyou(request):
 
 
 def kickoff_export(request):
-    return render(request, 'reports/kick_off_export.html', {})
+    if request.method == 'POST':
+        kickoff_date_from = request.POST.get('date_from')
+        kickoff_date_to = request.POST.get('date_to')
+        kickoff_date_from = datetime.strptime(kickoff_date_from, '%m/%d/%Y')
+        kickoff_date_to = datetime.strptime(kickoff_date_to, '%m/%d/%Y')
+        kick_off_selected = KickOffProgram.objects.filter(created_date__range=[kickoff_date_from, kickoff_date_to])
+        selected_kickoff_list = list()
+        for each_kick_off in kick_off_selected:
+            kickoff_dict = dict()
+            created_date = each_kick_off.created_date
+            start_date_converted = datetime.strftime(created_date, '%d.%m.%Y')
+            kickoff_dict['Created Date'] = start_date_converted
+            kickoff_dict['Program Name'] = each_kick_off.program_name
+            kickoff_dict['Access Link'] = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(each_kick_off.id)
+            selected_kickoff_list.append(kickoff_dict)
+        excel_header = ['Program Name', 'Access Link', 'Created Date']
+        filename = "kick-off-programs"
+        path = write_kickoffprogram_to_csv(selected_kickoff_list, excel_header, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+    all_records_kickoff_list = list()
+    getall_kickoff_records = KickOffProgram.objects.all()
+    count = 0
+    for each_record in getall_kickoff_records:
+        each_record_dict = dict()
+        each_record_dict['program_name'] = each_record.program_name
+        each_record_dict['program_id'] = each_record.id
+        count = count + 1
+        each_record_dict['counter'] = count
+        all_records_kickoff_list.append(each_record_dict)
+    return render(request, 'reports/kick_off_export.html', {'getall_kickoff_records': all_records_kickoff_list})
+
+
+def write_kickoffprogram_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
+
+
+def get_kickoff_program(request):
+    if request.is_ajax():
+        kickoff_date_from = request.GET.get('kickoff_date_from')
+        kickoff_date_to = request.GET.get('kickoff_date_to')
+        kickoff_date_from = datetime.strptime(kickoff_date_from, '%m/%d/%Y')
+        kickoff_date_to = datetime.strptime(kickoff_date_to, '%m/%d/%Y')
+        kick_off_selected = KickOffProgram.objects.filter(created_date__range=[kickoff_date_from, kickoff_date_to])
+        selected_kickoff_list = list()
+        for each_kick_off in kick_off_selected:
+            kickoff_dict = dict()
+            created_date = each_kick_off.created_date
+            start_date_converted = datetime.strftime(created_date, '%d.%m.%Y')
+
+            kickoff_dict['created_date'] = start_date_converted
+            kickoff_dict['program'] = each_kick_off.program_name
+            kickoff_dict['access_id'] = request.META['wsgi.url_scheme'] +'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(each_kick_off.id)
+            selected_kickoff_list.append(kickoff_dict)
+        return HttpResponse(json.dumps(selected_kickoff_list))
+
+
+def kickoff_export_detail(request, program_id):
+    get_kickoff_record = KickOffProgram.objects.get(id=program_id)
+
+    if get_kickoff_record:
+        # getting manyToMany feild goole poc email fetching
+        google_pocs = get_kickoff_record.google_poc.values('email')
+        google_poc_list = list()
+        for mailids in google_pocs:
+            google_poc_list.append(str(mailids['email']))
+        googlepoc_email_list = ','.join(google_poc_list)
+
+        # getting ManyToMany feild goole poc email second email ids fetching
+        google_email_pocs = get_kickoff_record.google_poc_email.values('email')
+        google_poc_email_list = list()
+        for google_email_mail_ids in google_email_pocs:
+            google_poc_email_list.append(str(google_email_mail_ids['email']))
+        google_poc_email_list = ','.join(google_poc_email_list)
+
+        # getting all regions from the manyToMany feild
+        region_list = list()
+        get_region_list = get_kickoff_record.region.values('name')
+        for region in get_region_list:
+            for key, val in region.iteritems():
+                region_list.append(val)
+        region_list = ','.join(region_list)
+
+        target_location_list = list()
+        get_target_location = get_kickoff_record.target_locations.values('location_name')
+        for location in get_target_location:
+            for key, val in location.iteritems():
+                target_location_list.append(val)
+        target_location_list = ','.join(target_location_list)
+
+        get_codetype_list = get_kickoff_record.codetypeslist
+        final_type_codelist_with_quotes = str(get_codetype_list[1:-1])
+        final_type_codelist = final_type_codelist_with_quotes
+
+
+    # # getting manyToMany feild goole poc email fetching
+    # if get_kickoff_record:
+    #     google_pocs = get_kickoff_record.google_poc.values('email')
+    #     google_poc_list = list()
+    # for mailids in google_pocs:
+    #     google_poc_list.append(str(mailids['email']))
+    # googlepoc_email_list = ','.join(google_poc_list)
+
+    # # getting ManyToMany feild goole poc email second email ids fetching
+    # if get_kickoff_record:
+    #     google_email_pocs = get_kickoff_record.google_poc_email.values('email')
+    #     google_poc_email_list = list()
+    # for google_email_mail_ids in google_email_pocs:
+    #     google_poc_email_list.append(str(google_email_mail_ids['email']))
+    # google_poc_email_list = ','.join(google_poc_email_list)
+
+    # #getting all regions from the manyToMany feild
+    # if get_kickoff_record:
+    #     region_list = list()
+    #     get_region_list = get_kickoff_record.region.values('name')
+    # for region in get_region_list:
+    #     for key, val in region.iteritems():
+    #         region_list.append(val)
+    # region_list = ','.join(region_list)
+
+    # if get_kickoff_record:
+    #     target_location_list = list()
+    #     get_target_location = get_kickoff_record.target_locations.values('location_name')
+    # for location in get_target_location:
+    #     for key, val in location.iteritems():
+    #         target_location_list.append(val)
+    # target_location_list = ','.join(target_location_list)
+
+    start_date = get_kickoff_record.programe_start_date
+    start_date_converted = datetime.strftime(start_date, '%d.%m.%Y')
+    end_date = get_kickoff_record.programe_end_date
+    end_date_converted = datetime.strftime(end_date, '%d.%m.%Y')
+
+    extract_estimated_volume = get_kickoff_record.estimated_lead_volume
+    estimated_number = int(re.search(r'\d+', extract_estimated_volume).group())
+    estimated_volume = ''.join([i for i in extract_estimated_volume if not i.isdigit()])
+    print extract_estimated_volume
+
+    lead_mode = get_kickoff_record.lead_sub_mode
+    if lead_mode == "portal":
+        lead_type = True
+    else:
+        lead_type = False
+
+    chat = get_kickoff_record.real_time_support_chat
+    if chat == "on":
+        type_chat = True
+    else:
+        type_chat = False
+    live_trans = get_kickoff_record.real_time_support_chat
+    if live_trans == "on":
+        type_live = True
+    else:
+        type_live = False
+    if chat == live_trans == "on":
+        chat_and_live = True
+    else:
+        chat_and_live = False
+
+    tag_team_connect_splitting = get_kickoff_record.tag_team_connect_detail
+    tag_team_connect_each_data = re.split('/|, \n', tag_team_connect_splitting)
+    type_of_connect = tag_team_connect_each_data[0]
+    type_of_connect_day = tag_team_connect_each_data[1]
+    type_of_connect_time = tag_team_connect_each_data[2]
+
+    key_order_matrix = {k: v for v, k in enumerate(['succes_metrices_one_1', 'succes_metrices_two_1', 'succes_metrices_three_1', 'succes_metrices_one_2', 'succes_metrices_two_2', 'succes_metrices_three_2', 'succes_metrices_one_3', 'succes_metrices_two_3', 'succes_metrices_three_3', 'succes_metrices_one_4', 'succes_metrices_two_4', 'succes_metrices_three_4', 'succes_metrices_one_5', 'succes_metrices_two_5','succes_metrices_three_5'])}
+    success_matrix_dict = OrderedDict(sorted(get_kickoff_record.succes_matrix.items(), key=lambda i: key_order_matrix.get(i[0])))
+
+    attach_link_1 = get_kickoff_record.attached_url_link_1
+    attach_link_2 = get_kickoff_record.attached_url_link_2
+    attach_link_3 = get_kickoff_record.attached_url_link_3
+    attach_link_4 = get_kickoff_record.attached_url_link_4
+    attach_link_5 = get_kickoff_record.attached_url_link_5
+
+    attach_file_1 = ''
+    attach_file_2 = ''
+    attach_file_3 = ''
+    attach_file_4 = ''
+    attach_file_5 = ''
+    if get_kickoff_record.upload_file_attachment_1:
+        attach_file_1 = get_kickoff_record.upload_file_attachment_1.name
+    if get_kickoff_record.upload_file_attachment_2:
+        attach_file_2 = get_kickoff_record.upload_file_attachment_2.name
+    if get_kickoff_record.upload_file_attachment_3:
+        attach_file_3 = get_kickoff_record.upload_file_attachment_3.name
+    if get_kickoff_record.upload_file_attachment_4:
+        attach_file_4 = get_kickoff_record.upload_file_attachment_4.name
+    if get_kickoff_record.upload_file_attachment_5:
+        attach_file_5 = get_kickoff_record.upload_file_attachment_5.name
+
+    attach_file_name_1 = ''
+    attach_file_name_2 = ''
+    attach_file_name_3 = ''
+    attach_file_name_4 = ''
+    attach_file_name_5 = ''
+    key_order_attach_file_name = {k:v for v, k in enumerate(['file_name_attach_1', 'file_name_attach_2', 'file_name_attach_3', 'file_name_attach_4', 'file_name_attach_5'])}
+    attach_file_name_dict = OrderedDict(sorted(get_kickoff_record.file_upload_name.items(), key=lambda i: key_order_attach_file_name.get(i[0])))
+    if 'file_name_attach_1' in get_kickoff_record.file_upload_name:
+        attach_file_name_1 = attach_file_name_dict['file_name_attach_1']
+    if 'file_name_attach_2' in get_kickoff_record.file_upload_name:
+        attach_file_name_2 = attach_file_name_dict['file_name_attach_2']
+    if 'file_name_attach_3' in get_kickoff_record.file_upload_name:
+        attach_file_name_3 = attach_file_name_dict['file_name_attach_3']
+    if 'file_name_attach_4' in get_kickoff_record.file_upload_name:
+        attach_file_name_4 = attach_file_name_dict['file_name_attach_4']
+    if 'file_name_attach_5' in get_kickoff_record.file_upload_name:
+        attach_file_name_5 = attach_file_name_dict['file_name_attach_5']
+
+    link_file_name_1 = ''
+    link_file_name_2 = ''
+    link_file_name_3 = ''
+    link_file_name_4 = ''
+    link_file_name_5 = ''
+    key_order_link_file_name = {k:v for v, k in enumerate(['file_name_link_1', 'file_name_link_2', 'file_name_link_3', 'file_name_link_4', 'file_name_link_5'])}
+    link_file_name_dict = OrderedDict(sorted(get_kickoff_record.file_url_name.items(), key=lambda i: key_order_link_file_name.get(i[0])))
+    if 'file_name_link_1' in get_kickoff_record.file_url_name:
+        link_file_name_1 = link_file_name_dict['file_name_link_1']
+    if 'file_name_link_2' in get_kickoff_record.file_url_name:
+        link_file_name_2 = link_file_name_dict['file_name_link_2']
+    if 'file_name_link_3' in get_kickoff_record.file_url_name:
+        link_file_name_3 = link_file_name_dict['file_name_link_3']
+    if 'file_name_link_4' in get_kickoff_record.file_url_name:
+        link_file_name_4 = link_file_name_dict['file_name_link_4']
+    if 'file_name_link_5' in get_kickoff_record.file_url_name:
+        link_file_name_5 = link_file_name_dict['file_name_link_5']
+    media_url = settings.MEDIA_URL
+
+    # auto populate email in tagteam detail
+    managers = User.objects.values_list('email', flat=True)
+    google_email = list()
+    for manager in managers:
+        google_email.append(str(manager))
+    google_email.append(str(manager))
+
+    return render(request,'reports/kick_off_export_detail.html', {'get_kickoff_record': get_kickoff_record,
+                                                                  'googlepoc_list': googlepoc_email_list,
+                                                                  'google_poc_email_list': google_poc_email_list,
+                                                                  'region_list': region_list,
+                                                                  'start_date_converted': start_date_converted,
+                                                                  'end_date_converted': end_date_converted,
+                                                                  'target_location_list': target_location_list,
+                                                                  'estimated_number': estimated_number,
+                                                                  'estimated_volume': estimated_volume,
+                                                                  'lead_type': lead_type,
+                                                                  'type_chat': type_chat,
+                                                                  'type_live': type_live,
+                                                                  'chat_and_live': chat_and_live,
+                                                                  'type_of_connect': type_of_connect,
+                                                                  'type_of_connect_day': type_of_connect_day,
+                                                                  'type_of_connect_time': type_of_connect_time,
+                                                                  'matrix': json.dumps(success_matrix_dict),
+                                                                  'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
+                                                                  'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
+                                                                  'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
+                                                                  'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'media_url': media_url,
+                                                                  'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4, 
+                                                                  'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
+                                                                  'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5,
+                                                                  'all_mail': google_email,
+                                                                  'final_type_codelist': final_type_codelist})

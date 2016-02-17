@@ -163,10 +163,11 @@
                         <div class="col-md-1"> </div>
                         <div class="col-md-1"> </div>
                         <div class="col-md-4">
-                          <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject-estimated-day" style="">
+                          <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject_estimated_day" style="">
                                 <option value="choose">Choose</option>
-                                <option value="Weekly">Day</option>
-                                <option value="Biweekly">Week</option>
+                                <option value="Weekly">Day</option>Biweekly
+                                <option value="Biweekly">Biweekly</option>
+                                <option value="Week">Week</option>
                                 <option value="Monthly">Month</option>
                             </select>
                         </div>
@@ -469,7 +470,7 @@ function check(){
     $("#lead_sub_other").show();
 }
 function uncheck(){
-     $(':input','#lead_sub_other').val('');
+     $('#lead_sub_other').val('');
      $("#lead_sub_other").hide();
 };
 
