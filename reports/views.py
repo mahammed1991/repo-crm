@@ -261,7 +261,7 @@ def get_current_quarter_report(request):
 
     # ##################### cron job reports for Current Quarter start here ######################
     # Get summary report by code types and lead_status
-    c_types = ['total', 'total_tag', 'Google Shopping Migration', 'Google Shopping Setup']
+    c_types = ['total', 'total_tag', 'Google Shopping Migration', 'Google Shopping Setup', 'Google Shopping Troubleshooting']
     report_details = LeadSummaryReports.objects.filter(code_type__in=c_types)
     report_detail = dict()
     for rep in report_details:
@@ -1289,7 +1289,10 @@ def meeting_minutes(request):
             attendees_list_last.append(str(attendee['email']))
             attendees_email_list = ' ,  '.join(attendees_list)
 
-        mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
+        if meeting_minutes.meeting_audience == 'internal_meeting':
+            mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
+        else:
+            mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.google_team, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
         mail_body = get_template('reports/email_templates/minute_meeting_objectives.html').render(
             Context({
                 'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(link_for_last_meeting_email),
@@ -1400,6 +1403,7 @@ def link_last_meeting(request, last_id):
     link_location = last_meeting.location
     link_program = last_meeting.program
     link_program_type = last_meeting.program_type
+    link_google_team = last_meeting.google_team
 
     meeting_audience = last_meeting.meeting_audience
 
@@ -1484,7 +1488,7 @@ def link_last_meeting(request, last_id):
     return render(request, 'reports/meeting_minutes.html', {'submit_disabled': submit_disabled,
                                                             'last_meeting_link': json.dumps(last_meeting_link),
                                                             'tenantive_agenda_dict': json.dumps(tenantive_agenda_dict),
-                                                            'link_program_type': link_program_type,
+                                                            'link_program_type': link_program_type, 'link_google_team': link_google_team,
                                                             'link_program': link_program, 'link_location': link_location,
                                                             'link_region': json.dumps(link_region), 'other_subject': other_subject,
                                                             'regalix_email': regalix_email, 'programs': programs, 'google_email': google_email,
@@ -1527,7 +1531,10 @@ def export_meeting_minutes(request):
             meeting_minute_dict = dict()
             meeting_date = meeting_minute.meeting_time_in_ist.date()
             meeting_minute_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-            meeting_minute_dict['Subject Line'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
+            if meeting_minute.meeting_audience == 'internal_meeting':
+                meeting_minute_dict['Subject Line'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
+            else:
+                meeting_minute_dict['Subject Line'] = meeting_minute.program + ' ' + meeting_minute.program_type + ' ' + meeting_minute.google_team + ' ' + meeting_minute.subject_timeline + ' ' + meeting_minute.other_subject
             if meeting_minute.ref_uuid:
                 meeting_minute_dict['Link'] = request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(meeting_minute.ref_uuid)
             else:
@@ -1559,6 +1566,7 @@ def export_action_items(request):
             bcc_list = list()
             update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('reference_id'))
             update_status.meeting_status = request.POST.get('status')
+            update_status.status_changed_by = request.user.get_full_name()
             update_status.save()
             attendees = update_status.attendees.values('email')
             bcc = update_status.bcc.values('email')
@@ -1585,6 +1593,7 @@ def export_action_items(request):
                 'attendees': attendees_email_list,
                 'region': update_status.region,
                 'status': update_status.meeting_status,
+                'status_changed_by': update_status.status_changed_by,
                 'location': update_status.location,
                 'internal_meeting': update_status.meeting_audience,
                 'program': update_status.program,
@@ -1626,6 +1635,10 @@ def export_action_items(request):
             each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_meeting_minutes.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
             each_record_dict['reference_num'] = each_meeting_minutes.ref_uuid
             each_record_dict['meeting_minutes_status'] = each_meeting_minutes.meeting_status
+            if each_meeting_minutes.status_changed_by:
+                each_record_dict['status_changed_by'] = each_meeting_minutes.status_changed_by
+            else:
+                each_record_dict['status_changed_by'] = '-'
             all_records_list.append(each_record_dict)
         return render(request, 'reports/export_action_items.html', {'all_records_list': json.dumps(all_records_list), 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
     meetings_date_from = ''
@@ -1654,6 +1667,10 @@ def get_meeting_minutes(request):
             meeting_minute_dict['link_meeting_date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
             meeting_minute_dict['program'] = meeting_minute.program
             meeting_minute_dict['program_type'] = meeting_minute.program_type
+            if meeting_minute.meeting_audience == 'internal_meeting':
+                meeting_minute_dict['google_team'] = ''
+            else:
+                meeting_minute_dict['google_team'] = meeting_minute.google_team
             meeting_minute_dict['subject_timeline'] = meeting_minute.subject_timeline
             meeting_minute_dict['other_subject'] = meeting_minute.other_subject
             meeting_minute_dict['ref_uuid'] = meeting_minute.ref_uuid
