@@ -108,8 +108,8 @@ body {
                          <label for="">Support Required with Code Types?: </label>
                     </div>
                      <div class="col-md-4">  
-                        <input type="text" {% if get_kickoff_record.codetypeslist %}
-                          value={{get_kickoff_record.codetypeslist}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                        <input type="text" {% if final_type_codelist %}
+                          value={{final_type_codelist}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Program End Date:  </label>
