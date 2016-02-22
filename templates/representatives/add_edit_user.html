@@ -1,0 +1,38 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Users
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend"><p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Manage Users</p></legend>
+            <form action="{% if rep_user %}{% url 'representatives.views.add_edit_user' rep_user.id %}{% else %}{% url 'representatives.views.add_edit_user' %}{% endif %}" method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <table>
+                    <tr><th>First Name<th/><td><input type="text" name="first_name" {% if rep_user %}value='{{rep_user.first_name}}'{% endif %}></td></tr>
+                    <tr><th>Last Name<th/><td><input type="text" name="last_name" {% if rep_user %}value='{{rep_user.last_name}}'{% endif %}></td></tr>
+                    <tr><th>Username<th/><td><input type="text" name="username" id="username" {% if rep_user %}value='{{rep_user.email}}'{% endif %}></td></tr>
+                    <tr><th>Refferer role<th/><td>
+                        <select name="ref_role_id" id="ref_role_id" >
+                            <option value='' >- Select -</option>
+                            <option value="1" {% if rep_user and rep_user.profile.role == 1 %}selected{% endif %}>Admin</option>
+                            <option value="2" {% if rep_user and rep_user.profile.role == 2 %}selected{% endif %}>Google Manager</option>
+                            <option value="3" {% if rep_user and rep_user.profile.role == 3 %}selected{% endif %}>Google Representative</option>
+                            <option value="4" {% if rep_user and rep_user.profile.role == 4 %}selected{% endif %}>Implementation Consultant</option>
+                        </select>
+                    </td></tr>
+                    <tr><th>User supporting region<th/><td><input type="text" name="user_supporting_region" id="user_supporting_region" {% if rep_user %}value='{{rep_user.profile.user_supporting_region}}'{% endif %}></td></tr>
+                    <tr><th>User manager name<th/><td><input type="text" name="user_manager_name" id="user_manager_name" {% if rep_user %}value='{{rep_user.profile.user_manager_name}}'{% endif %}></td></tr>
+                    <tr><th>User manager email<th/><td><input type="text" name="user_manager_email" id="user_manager_email" {% if rep_user %}value='{{rep_user.profile.user_manager_email}}'{% endif %}></td></tr>
+                    <tr><th><th/><td style="padding-top:10px;"><input type="submit" class="logbtn" value="Submit" id="submit" name="submit"> <input type="button" class="logbtn" value="Cancel" onclick="window.location.href='{% url 'representatives.views.users' %}'"></td></tr>
+                </table>
+            </form>
+        </fieldset>
+    </div>
+</div>
+{% endblock content %}
