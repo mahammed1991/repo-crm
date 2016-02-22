@@ -177,7 +177,7 @@
       $( "#rlsaSetup .check-icon").animate({opacity: "toggle"}, 200, function(){ 
         if($('.rlsa-policy').is(':visible')){
           //for closing RLSA Fields am making '' as value
-          $('#internal_cid1, #user_list_id1, #rsla_bid_adjustment1, #campaign_ids1').val('');
+          $('#internal_cid1, #user_list_id1, #rsla_bid_adjustment1, #authEmail').val('');
           $('#rlsa-impl-initial2, #rlsa-impl-initial3, #rlsa-impl-initial4, #rlsa-impl-initial5').remove();
           $('#removeRlsa_1').hide();
           $('#add_rlsa1').show();
@@ -189,6 +189,11 @@
           }
           $("#is_rlsa_lead").val('no');
         }else{
+          var cid = $('#cid').val()
+          if(cid){
+          $('#internal_cid1').val($('#cid').val());
+          $('#internal_cid1').attr('readonly', true);
+          }
           $('#removeRlsa_1').hide();
           $('#add_rlsa1').show();
           $(".rlsa-policy").show();
@@ -548,8 +553,8 @@ function validatethis(frm) {
     }
 
     if($("#rlsaSetupBtn").is(":visible")){
-      campaignIds = document.getElementById('campaign_ids1');
-      validateFiled(campaignIds);
+      authEmail = document.getElementById('authEmail');
+      validateFiled(authEmail);
       for( i=1; i <= $(".rlsa-codes").length; i++){
         if($("#rlsa-impl-initial" + i).is(":visible")){
             validateRLSAFields(i);
@@ -989,12 +994,12 @@ $('#region').change(function(){
 });
 
 
-function uncheckAllBehaviourCheckBoxs(selectedindex){
+/*function uncheckAllBehaviourCheckBoxs(selectedindex){
   $('#product_behaviour'+selectedindex).prop('checked', false);
   $('#cartpage_behaviour'+selectedindex).prop('checked', false);
   $('#checkout_process'+selectedindex).prop('checked', false);
   $('#transaction_behaviour'+selectedindex).prop('checked', false);
-}
+}*/
 
 function conversionTracking(){
   var codeTypeValues = Array()
@@ -1073,3 +1078,20 @@ function rlsaInternalCIDPrepopulate(){
   }
 }
 /*Ends Here*/
+ $('#active_campaigns').click(function(){
+  if($('#active_campaigns').is(':checked')){
+    $('#active_campaigns').val($('#active_campaigns').siblings().text());
+    $('#paused_campaigns').val('');
+  }else{
+    $('#active_campaigns').val('');
+  }
+ })
+
+  $('#paused_campaigns').click(function(){
+  if($('#paused_campaigns').is(':checked')){
+    $('#paused_campaigns').val($('#paused_campaigns').siblings().text());
+    $('#active_campaigns').val('');
+  }else{
+    $('#paused_campaigns').val('');
+  }
+ })

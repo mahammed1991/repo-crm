@@ -36,5 +36,6 @@ urlpatterns = patterns(
     url(r'^picasso/$', views.picasso_home),
     url(r'^export-feedback/$', views.export_feedback),
     url(r'^report-a-bug/$', views.report_a_bug),
+    url(r'^resources/rlsa-limitations/$', views.rlsa_limitations),
 
 )

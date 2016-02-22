@@ -1879,3 +1879,6 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+def rlsa_limitations(request):
+    return render(request, 'main/rlsa_limitations.html', {})
