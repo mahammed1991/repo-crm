@@ -4,7 +4,8 @@ function columnChartDraw(columnChart_datatable, title, divselect){
       var options = {
                       title: title,
                       hAxis: {title: 'Lead status'},
-                      vAxis: {title: 'No. of Leads'}
+                      vAxis: {title: 'No. of Leads'},
+                      width: 700,
                     };
 
       var chart = new google.visualization.ColumnChart(document.getElementById(divselect));

@@ -502,8 +502,8 @@ def wpp_reports(request):
     if manager:
         members = get_user_under_manager(request.user.email)
         team_members.append(request.user)
-    for member in members:
-        team_members.append(member)
+        for member in members:
+            team_members.append(member)
     return render(request, 'reports/wpp_reports.html', {'manager': manager, 'team_members': team_members})
 
 
