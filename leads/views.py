@@ -52,12 +52,12 @@ def lead_form(request):
     if request.method == 'POST':
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
             # oid = '00DZ000000MjkJO'
             oid = '00D7A0000008nBH'
         elif settings.SFDC == 'PRODUCTION':
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
             oid = '00Dd0000000fk18'
 
         ret_url = ''
@@ -90,12 +90,12 @@ def lead_form(request):
                 checkout_process_key = 'checkout_process' + i
                 transaction_behaviour_key = 'transaction_behaviour' + i
 
-                user_list_id_key = 'user_list_id' + i
-                rsla_bid_adjustment_key = 'rsla_bid_adjustment' + i
-                rlsa_internal_cid_key = 'internal_cid' + i
-                campaign_ids_key = 'campaign_ids' + i
-                create_new_bid_modifiers_key = 'create_new_bid_modifiers' + i
-                overwrite_existing_bid_modifiers_key = 'overwrite_existing_bid_modifiers' + i
+                # user_list_id_key = 'user_list_id' + i
+                # rsla_bid_adjustment_key = 'rsla_bid_adjustment' + i
+                # rlsa_internal_cid_key = 'internal_cid' + i
+                # campaign_ids_key = 'campaign_ids' + i
+                # create_new_bid_modifiers_key = 'create_new_bid_modifiers' + i
+                # overwrite_existing_bid_modifiers_key = 'overwrite_existing_bid_modifiers' + i
                 # rsla_policies_key = 'rsla_policies' + i
 
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
@@ -108,12 +108,12 @@ def lead_form(request):
                 tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
                 tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
 
-                tag_data[tag_leads[user_list_id_key]] = request.POST.get(user_list_id_key)
-                tag_data[tag_leads[rsla_bid_adjustment_key]] = request.POST.get(rsla_bid_adjustment_key)
-                tag_data[tag_leads[rlsa_internal_cid_key]] = request.POST.get(rlsa_internal_cid_key)
-                tag_data[tag_leads[campaign_ids_key]] = request.POST.get(campaign_ids_key)
-                tag_data[tag_leads[create_new_bid_modifiers_key]] = request.POST.get(create_new_bid_modifiers_key)
-                tag_data[tag_leads[overwrite_existing_bid_modifiers_key]] = request.POST.get(overwrite_existing_bid_modifiers_key)
+                # tag_data[tag_leads[user_list_id_key]] = request.POST.get(user_list_id_key)
+                # tag_data[tag_leads[rsla_bid_adjustment_key]] = request.POST.get(rsla_bid_adjustment_key)
+                # tag_data[tag_leads[rlsa_internal_cid_key]] = request.POST.get(rlsa_internal_cid_key)
+                # tag_data[tag_leads[campaign_ids_key]] = request.POST.get(campaign_ids_key)
+                # tag_data[tag_leads[create_new_bid_modifiers_key]] = request.POST.get(create_new_bid_modifiers_key)
+                # tag_data[tag_leads[overwrite_existing_bid_modifiers_key]] = request.POST.get(overwrite_existing_bid_modifiers_key)
                 # tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
 
             # Split Tag Contact Person Name to First and Last Name
@@ -157,6 +157,33 @@ def lead_form(request):
                 setup_data[shop_leads['comment1']] = request.POST.get('description')
             submit_lead_to_sfdc(sf_api_url, setup_data)
 
+        basic_data = dict()
+        if request.POST.get('is_rlsa_lead') == 'yes':
+            # Get Basic/Common form field data
+            if settings.SFDC == 'STAGE':
+                basic_data = get_common_sandbox_lead_data(request.POST)
+            else:
+                basic_data = get_common_salesforce_lead_data(request.POST)
+            basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+            basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+            basic_data['oid'] = oid
+            ret_url = basic_data['retURL']
+            # error_url = basic_data['errorURL']
+
+            rlsa_data = basic_data
+            for key, value in rlsa_leads.items():
+                rlsa_data[value] = request.POST.get(key)
+            if request.POST.get('tag_contact_person_name'):
+                full_name = request.POST.get('tag_contact_person_name')
+            else:
+                full_name = request.POST.get('advertiser_name')
+            first_name, last_name = split_fullname(full_name)
+            rlsa_data['first_name'] = first_name
+            rlsa_data['last_name'] = last_name
+            rlsa_data['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
+            rlsa_data[tag_leads['comment1']] = request.POST.get('comments')
+            submit_lead_to_sfdc(sf_api_url, rlsa_data)
+
         return redirect(ret_url)
 
     # Check The Rep Status and redirect
@@ -191,11 +218,11 @@ def wpp_lead_form(request, ref_id=None):
     if request.method == 'POST':
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
             oid = '00D7A0000008nBH'
         elif settings.SFDC == 'PRODUCTION':
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
             oid = '00Dd0000000fk18'
 
         ret_url = ''
@@ -273,11 +300,11 @@ def picasso_lead_form(request):
     if request.method == 'POST':
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
             oid = '00D7A0000008nBH'
         elif settings.SFDC == 'PRODUCTION':
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
             oid = '00Dd0000000fk18'
 
         ret_url = ''
@@ -461,11 +488,11 @@ def submit_agency_same_tasks(request, agency_bundle):
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00D7A0000008nBH'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00Dd0000000fk18'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
     same_task_ctype = request.POST.get('same_task_ctype')
     if same_task_ctype != "Google Shopping Setup":
         # Get Tag lead fields
@@ -506,12 +533,12 @@ def submit_agency_same_tasks(request, agency_bundle):
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
-            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
-            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
-            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
-            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
-            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[rlsa_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[rlsa_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[rlsa_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[rlsa_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[rlsa_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[rlsa_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
             # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
@@ -563,11 +590,11 @@ def submit_agency_different_tasks(request, agency_bundle):
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00D7A0000008nBH'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00Dd0000000fk18'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
 
     agency_diff_tag_count = request.POST.get('agency_diff_tag_count')
     agency_diff_shop_count = request.POST.get('agency_diff_shop_count')
@@ -611,12 +638,12 @@ def submit_agency_different_tasks(request, agency_bundle):
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
-            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
-            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
-            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
-            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
-            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[rlsa_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[rlsa_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[rlsa_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[rlsa_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[rlsa_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[rlsa_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
             # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
@@ -650,11 +677,11 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00D7A0000008nBH'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00Dd0000000fk18'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
 
     same_task_cust_type = request.POST.get('same_task_cust_type')
     if same_task_cust_type != "Google Shopping Setup":
@@ -702,12 +729,12 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
-            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
-            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
-            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
-            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
-            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[rlsa_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[rlsa_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[rlsa_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[rlsa_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[rlsa_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[rlsa_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
             # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
@@ -765,11 +792,11 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00D7A0000008nBH'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
     else:
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         oid = '00Dd0000000fk18'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
 
     customer_diff_tag_count = request.POST.get('customer_diff_tag_count')
     customer_diff_shop_count = request.POST.get('customer_diff_shop_count')
@@ -820,12 +847,12 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             tag_data[tag_leads['checkout_process1']] = request.POST.get('checkout_process' + indx)
             tag_data[tag_leads['transaction_behaviour1']] = request.POST.get('transaction_behaviour' + indx)
 
-            tag_data[tag_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
-            tag_data[tag_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
-            tag_data[tag_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
-            tag_data[tag_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
-            tag_data[tag_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
-            tag_data[tag_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            tag_data[rlsa_leads['user_list_id1']] = request.POST.get('user_list_id' + indx)
+            tag_data[rlsa_leads['rsla_bid_adjustment1']] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[rlsa_leads['internal_cid1']] = request.POST.get('internal_cid' + indx)
+            tag_data[rlsa_leads['campaign_ids1']] = request.POST.get('campaign_ids' + indx)
+            tag_data[rlsa_leads['create_new_bid_modifiers1']] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[rlsa_leads['overwrite_existing_bid_modifiers1']] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
             # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
 
             # If Dynamic Remarketing tags
@@ -1022,11 +1049,11 @@ def agent_bulk_upload(request):
         if 'paramcounts' in request.POST:
             if settings.SFDC == 'STAGE':
                 sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-                basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+                basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
                 oid = '00D7A0000008nBH'
             elif settings.SFDC == 'PRODUCTION':
                 sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-                basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+                basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
                 oid = '00Dd0000000fk18'
 
             params_count = request.POST.get('paramcounts')
@@ -1201,10 +1228,10 @@ def bundle_lead_to_salesforce(request):
     error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
     lead_bundle = "%s-%s/%s/%s/%s" % (ctypes, randint(0, 99999), request.user.email.split('@')[0], datetime.utcnow().day, datetime.utcnow().month)
     if settings.SFDC == 'STAGE':
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
         oid = '00D7A0000008nBH'
     elif settings.SFDC == 'PRODUCTION':
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
         oid = '00Dd0000000fk18'
 
     if code_type1 in complex_code_type:
@@ -1286,10 +1313,10 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
     """ Post Tag Lead to Salesforce """
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
     elif settings.SFDC == 'PRODUCTION':
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
 
     tag_data = dict()
     tag_data = basic_data
@@ -1325,12 +1352,12 @@ def post_tag_lead_to_sf(request, post_data, basic_data, code_types):
         tag_data[tag_leads.get('checkout_process' + str(indx))] = post_data.get('checkout_process' + str(cindx))
         tag_data[tag_leads.get('transaction_behaviour' + str(indx))] = post_data.get('transaction_behaviour' + str(cindx))
 
-        tag_data[tag_leads.get('user_list_id' + str(indx))] = post_data.get('user_list_id' + str(cindx))
-        tag_data[tag_leads.get('rsla_bid_adjustment' + str(indx))] = post_data.get('rsla_bid_adjustment' + str(cindx))
-        tag_data[tag_leads.get('internal_cid' + str(indx))] = post_data.get('internal_cid' + str(cindx))
-        tag_data[tag_leads.get('campaign_ids' + str(indx))] = post_data.get('campaign_ids' + str(cindx))
-        tag_data[tag_leads.get('create_new_bid_modifiers' + str(indx))] = post_data.get('create_new_bid_modifiers' + str(cindx))
-        tag_data[tag_leads.get('overwrite_existing_bid_modifiers' + str(indx))] = post_data.get('overwrite_existing_bid_modifiers' + str(cindx))
+        tag_data[rlsa_leads.get('user_list_id' + str(indx))] = post_data.get('user_list_id' + str(cindx))
+        tag_data[rlsa_leads.get('rsla_bid_adjustment' + str(indx))] = post_data.get('rsla_bid_adjustment' + str(cindx))
+        tag_data[rlsa_leads.get('internal_cid' + str(indx))] = post_data.get('internal_cid' + str(cindx))
+        tag_data[rlsa_leads.get('campaign_ids' + str(indx))] = post_data.get('campaign_ids' + str(cindx))
+        tag_data[rlsa_leads.get('create_new_bid_modifiers' + str(indx))] = post_data.get('create_new_bid_modifiers' + str(cindx))
+        tag_data[rlsa_leads.get('overwrite_existing_bid_modifiers' + str(indx))] = post_data.get('overwrite_existing_bid_modifiers' + str(cindx))
         # tag_data[tag_leads.get('rsla_policies' + str(indx))] = post_data.get('rsla_policies' + str(cindx))
 
         # elif indx == 2:
@@ -1368,10 +1395,10 @@ def post_shopping_lead_to_sf(request, post_data, basic_data, indx):
 
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
     elif settings.SFDC == 'PRODUCTION':
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
 
     setup_data = dict()
     setup_data = basic_data
@@ -2490,6 +2517,7 @@ def get_all_sfdc_lead_ids(sfdc_type):
     basic_leads = dict()
     tag_leads = dict()
     shop_leads = dict()
+    rlsa_leads = dict()
     if sfdc_type == 'sandbox':
         for key, value in SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.items():
             basic_leads[key] = value
@@ -2497,6 +2525,8 @@ def get_all_sfdc_lead_ids(sfdc_type):
             tag_leads[key] = value
         for key, value in SalesforceLeads.SANDBOX_SHOPPING_ARGS.items():
             shop_leads[key] = value
+        for key, value in SalesforceLeads.SANDBOX_RLSA_ARGS.items():
+            rlsa_leads[key] = value
     elif sfdc_type == 'production':
         for key, value in SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.items():
             basic_leads[key] = value
@@ -2504,7 +2534,9 @@ def get_all_sfdc_lead_ids(sfdc_type):
             tag_leads[key] = value
         for key, value in SalesforceLeads.PRODUCTION_SHOPPING_ARGS.items():
             shop_leads[key] = value
-    return basic_leads, tag_leads, shop_leads
+        for key, value in SalesforceLeads.PRODUCTION_RLSA_ARGS.items():
+            rlsa_leads[key] = value
+    return basic_leads, tag_leads, shop_leads, rlsa_leads
 
 
 def submit_lead_to_sfdc(sf_api_url, lead_data):
@@ -2594,9 +2626,9 @@ def get_advertiser_details(sf_api_url, lead_data):
     """ Get Agency Details with appointment date """
     agency_details = dict()
     if 'www' in sf_api_url:
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('production')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
     else:
-        basic_leads, tag_leads, shop_leads = get_all_sfdc_lead_ids('sandbox')
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
 
     agency_details['appointment_date'] = lead_data.get(tag_leads.get('tag_datepick'))
     agency_details['customer_id'] = lead_data.get(basic_leads.get('cid'))
