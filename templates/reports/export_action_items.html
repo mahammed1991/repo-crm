@@ -79,17 +79,17 @@ Action Items Meeting Minutes
         </div>
       </div>
       <div class="container-fluid" id="display_all_meeting_minutes" style="display:none">
-        <table class="table" style="margin-top: 44px;margin-bottom: 35px;">
+        <table class="table" style="margin-top: 44px;margin-bottom: 35px;margin-left: -120px;">
           <thead>
              <tr>
-               <th class="headlinks-default" style="min-width:100px;">Meeting Date</th>
+               <th class="headlinks-default" style="min-width:100px;height:48px;">Meeting Date</th>
                <th class="headlinks-default" style="min-width:200px;">Subject Line</th>
                <th class="headlinks-default" style="min-width:250px;">Action Item(s)</th>
-               <th class="headlinks-default" style="min-width:100px;">Owner</th>
-               <th class="headlinks-default" id="td_date">Deadline</th>
-               <th class="headlinks-default">Status</th>
-               <th class="headlinks-default">Action</th>
-               <th class="headlinks-default">Action changed by</th>
+               <th class="headlinks-default" style="min-width:200px;">Owner</th>
+               <th class="headlinks-default" id="td_date" style="min-width:100px;">Deadline</th>
+               <th class="headlinks-default" style="min-width:100px;">Status</th>
+               <th class="headlinks-default" style="min-width:100px;">Action</th>
+               <th class="headlinks-default" style="min-width:110px;">Actioned by</th>
              </tr>
           </thead>
           <tbody class="display_all_meeting_minutes" >
@@ -160,6 +160,9 @@ Action Items Meeting Minutes
           }
         }
       }
+      action_item = action_item.join('`');
+      owners = owners.join('`');
+      target_date = target_date.join('`');
       if(count == 3){
         row += '<tr>'+
              '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
@@ -182,9 +185,9 @@ Action Items Meeting Minutes
       row += '<tr>'+
              '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
              '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
-             '<td class="links-default">'+action_item.toString().split(',').join("<br />")+'</td>' +
-             '<td class="links-default">'+owners.toString().split(',').join("<br />")+'</td>' +
-             '<td class="links-default" id="td_date">'+target_date.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default">'+action_item.toString().split('`').join("<br /><hr>")+'</td>' +
+             '<td class="links-default">'+owners.toString().split('`').join("<br /><hr>")+'</td>' +
+             '<td class="links-default" id="td_date">'+target_date.toString().split('`').join("<br /><hr>")+'</td>' +
              '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>'
 
                if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
