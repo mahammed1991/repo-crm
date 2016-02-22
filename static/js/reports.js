@@ -480,9 +480,9 @@ function displayLeadStatusTable(details) {
             total = '<tr><td class="lbl value" style="background: #15A95E;">Total Leads</td><td class="value" style="background: #15A95E;">' + details[key] + '</td><td class="value" style="background: #15A95E;">in(%)</td></tr>'
         } else if (key == 'TAT') {
             if (details[key] != null) {
-                end = '<tr><td class="lbl"> Average ' + key + '</td><td>' + details[key] + ' days</td><td style="text-align:center;">-</td></tr>'
+                end = '<tr><td class="lbl"> Average ' + key + '</td><td>' + details[key] + ' days</td><td>-</td></tr>'
             } else {
-                end = '<tr><td class="lbl"> Average ' + key + '</td><td>' + 0 + ' days</td><td style="text-align:center;">-</td></tr>'
+                end = '<tr><td class="lbl"> Average ' + key + '</td><td>' + 0 + ' days</td><td>-</td></tr>'
             }
         } else {
               rows += '<tr><td class="lbl">' + key + '</td><td>' + details[key] + '</td><td>'+getPercentage(details[key], details['total_leads'])+'</td></tr>'
