@@ -175,7 +175,6 @@
       });
       //$( "#tagImplementation .check-icon" ).toggle();
       $( "#rlsaSetup .check-icon").animate({opacity: "toggle"}, 200, function(){ 
-        debugger;
         if($('.rlsa-policy').is(':visible')){
           //for closing RLSA Fields am making '' as value
           $('#internal_cid1, #user_list_id1, #rsla_bid_adjustment1, #campaign_ids1').val('');
@@ -285,15 +284,6 @@
       $("#rbid" + indx).val('');
       $("#rbudget" + indx).val('');
       $("#ga_setup" + indx).val('0');
-
-      $("#user_list_id"+ indx).val('');
-      $("#internal_cid"+ indx).val('');
-      $("#rsla_bid_adjustment"+ indx).val('');
-      $("#campaign_ids"+ indx).val('');
-      $("#overwrite_existing_bid_modifiers"+indx).val('');
-      $("#create_new_bid_modifiers"+indx).val('');
-      $("#rsla_policies"+indx).prop('checked', false);
-      $("#rsla_policies"+indx).val(0);
 
       $( "#task_" + indx).animate({
       height: "toggle"
@@ -558,6 +548,8 @@ function validatethis(frm) {
     }
 
     if($("#rlsaSetupBtn").is(":visible")){
+      campaignIds = document.getElementById('campaign_ids1');
+      validateFiled(campaignIds);
       for( i=1; i <= $(".rlsa-codes").length; i++){
         if($("#rlsa-impl-initial" + i).is(":visible")){
             validateRLSAFields(i);
@@ -831,34 +823,6 @@ function validateTaskFields(indx){
 
   urlElem = document.getElementById('url' + indx);
   validateFiled(urlElem)
-/*
-  if($('#rlsa_bulk' + indx).is(":visible")){
-
-    rlsaUserListEle = document.getElementById('user_list_id' + indx);
-    validateFiled(rlsaUserListEle);
-
-    rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
-    validateFiled(rlsaBidAdjustment);
-
-    campaignIds = document.getElementById('campaign_ids' + indx);
-    validateFiled(campaignIds);
-
-    existingBid = document.getElementById('overwrite_existing_bid_modifiers' + indx);
-    validateFiled(existingBid);
-
-    newBid = document.getElementById('create_new_bid_modifiers' + indx);
-    validateFiled(newBid);
-
-    rlsaPolicies = document.getElementById('rsla_policies' + indx);
-    if(!$(rlsaPolicies).is(":checked")){
-       $(rlsaPolicies).parent().addClass('error-box');
-        window.failedFields.push(rlsaPolicies);
-        window.is_error = true;
-        return false;
-    }
-
-
-  }*/
 
   if($('#analyticscode' + indx).is(":visible")){
       var analyticsCodeElem = document.getElementById('analytics_code' + indx)
@@ -892,9 +856,6 @@ function validateRLSAFields(indx){
 
     rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
     validateFiled(rlsaBidAdjustment);
-
-    campaignIds = document.getElementById('campaign_ids' + indx);
-    validateFiled(campaignIds);
 
   }
 }
@@ -949,17 +910,6 @@ $('.code_type').change(function(){
 
   $('#rbid'+selectedindex).val('');
   $('#rbudget'+selectedindex).val('');
-
-  $('#rlsa_bulk'+selectedindex).hide();
-  $("#user_list_id"+ selectedindex).val('');
-  $("#internal_cid"+ selectedindex).val('');
-  $("#rsla_bid_adjustment"+ selectedindex).val('');
-  $("#campaign_ids"+ selectedindex).val('');
-  $("#rsla_policies"+selectedindex).prop('checked', false);
-  $("#rsla_policies"+selectedindex).val(0);
-  $("#overwrite_existing_bid_modifiers"+selectedindex).val('');
-  $("#create_new_bid_modifiers"+selectedindex).val('');
-  $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional)");
 
   uncheckAllBehaviourCheckBoxs(selectedindex);
     
@@ -1108,5 +1058,18 @@ function removeRLSAs(indx){
    $('#add_rlsa'+indx).show();
    $('#removeRlsa_'+indx).hide();
    $('#removeRlsa_'+prevIndex).show();
+}
+
+function rlsaInternalCIDPrepopulate(){
+  if($('#rlsa-impl-initial1').is(":visible")){
+    var cid = $('#cid').val()
+    if(cid){
+    $('#internal_cid1').val($('#cid').val());
+    $('#internal_cid1').attr('readonly', true);
+    }else{
+      $('#internal_cid1').val('');
+    $('#internal_cid1').attr('readonly', false);
+    }
+  }
 }
 /*Ends Here*/
