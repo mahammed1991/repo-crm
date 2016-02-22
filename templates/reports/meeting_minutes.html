@@ -26,6 +26,9 @@
     .footer{
       position:relative ! important;
     }
+    .action-items-header, .key-points-header{
+      background: #ccc;
+    }
 </style>
 {% endblock main_css %}
 
@@ -212,9 +215,9 @@
       <table id="keyPoint">
         <thead >
           <tr>
-            <td id="no">No.</td>
-            <td id="topic" style="text-align:center" >Topic</td>
-            <td id="higlights" style="text-align:center">Highlights</td>
+            <td class="key-points-header" id="no">No.</td>
+            <td class="key-points-header" id="topic" style="text-align:center" >Topic</td>
+            <td class="key-points-header" id="higlights" style="text-align:center">Highlights</td>
           </tr>
         </thead>
         <tbody class="add-task">
@@ -233,10 +236,10 @@
       <table id="actionPlan">
         <thead>
           <tr>
-            <td id="no">No.</td>
-            <td id="action-item">Action Item(s)</td>
-            <td id="owner">Owner</td>
-            <td id="target-date">Target Date(DD.MM.YYYY)</td>
+            <td class="action-items-header" id="no">No.</td>
+            <td class="action-items-header" id="action-item">Action Item(s)</td>
+            <td class="action-items-header" id="owner">Owner</td>
+            <td class="action-items-header" id="target-date">Target Date(DD.MM.YYYY)</td>
           </tr>
         </thead>
         <tbody class="action-plan">
