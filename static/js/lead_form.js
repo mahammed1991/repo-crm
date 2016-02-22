@@ -67,7 +67,7 @@
     $("#tagImplementation" ).click(function() {
       
       if($(this).children().is(':visible')){
-        if($( "#shoppingSetup .check-icon" ).is(":visible")){
+        if($( "#shoppingSetup .check-icon" ).is(":visible") || $('#rlsaSetup .check-icon').is(":visible")){
           $("#submit_buttons").show();
           //$("#heads_up").show();
         }else{
@@ -104,7 +104,7 @@
           }
 
           // Hide Heads Up section
-          if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no'){
+          if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no' && $("#is_rlsa_lead").val() == 'no'){
             $("#heads_up").hide();
           }
 
@@ -114,7 +114,7 @@
     $("#shoppingSetup" ).click(function() {
       $('#Shopping_Campaign_Setup').attr('checked', true);
       if($(this).children().is(':visible')){
-        if($( "#tagImplementation .check-icon" ).is(":visible")){
+        if($( "#tagImplementation .check-icon" ).is(":visible") || $('#rlsaSetup .check-icon').is(":visible")){
           $("#submit_buttons").show();
           //$("#heads_up").show();
         }else{
@@ -145,12 +145,71 @@
           }
 
         // Hide Heads Up section
-        if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no'){
+        if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no' && $("#is_rlsa_lead").val() == 'no'){
           $("#heads_up").hide();
         }
 
       });
     });
+
+ /* start RLSA bulk implimentation code */
+  $("#rlsaSetup" ).click(function() {
+
+      if($(this).children().is(':visible')){
+        if($( "#tagImplementation .check-icon" ).is(":visible") || $( "#shoppingSetup .check-icon" ).is(":visible")){
+          $("#submit_buttons").show();
+          $('#tagCheckBoxs').show();
+          //$("#heads_up").show();
+        }else{
+          $("#submit_buttons").hide();
+          //$("#heads_up").hide();
+        }
+      }else{
+        $("#submit_buttons").show();
+        //$("#heads_up").show();
+      }
+
+      $( "#rlsa-impl-initial1" ).animate({
+      height: "toggle"
+      }, 300, function() {
+      });
+      //$( "#tagImplementation .check-icon" ).toggle();
+      $( "#rlsaSetup .check-icon").animate({opacity: "toggle"}, 200, function(){ 
+        debugger;
+        if($('.rlsa-policy').is(':visible')){
+          //for closing RLSA Fields am making '' as value
+          $('#internal_cid1, #user_list_id1, #rsla_bid_adjustment1, #campaign_ids1').val('');
+          $('#rlsa-impl-initial2, #rlsa-impl-initial3, #rlsa-impl-initial4, #rlsa-impl-initial5').remove();
+          $('#removeRlsa_1').hide();
+          $('#add_rlsa1').show();
+          $(".rlsa-policy").hide();
+          if($( "#tagImplementation .check-icon" ).is(":visible")){
+            $('#tagCheckBoxs').show();
+          }else{
+            $('#tagCheckBoxs').hide();
+          }
+          $("#is_rlsa_lead").val('no');
+        }else{
+          $('#removeRlsa_1').hide();
+          $('#add_rlsa1').show();
+          $(".rlsa-policy").show();
+          $("#heads_up").show();
+          if($( "#tagImplementation .check-icon" ).is(":visible")){
+            $('#tagCheckBoxs').show();
+          }else{
+            $('#tagCheckBoxs').hide();
+          }
+          $('#is_rlsa_lead').val('yes')
+        }
+
+        // Hide Heads Up section
+        if($("#is_tag_lead").val() == 'no' && $("#is_shopping_lead").val() == 'no' && $("#is_rlsa_lead").val() == 'no'){
+          $("#heads_up").hide();
+        }
+
+      });
+    });
+/* end of RLSA bulk implimentation code*/
 
     /*Shopping Comapaign changes code starts here*/
 
@@ -498,6 +557,19 @@ function validatethis(frm) {
 
     }
 
+    if($("#rlsaSetupBtn").is(":visible")){
+      for( i=1; i <= $(".rlsa-codes").length; i++){
+        if($("#rlsa-impl-initial" + i).is(":visible")){
+            validateRLSAFields(i);
+        }
+      }
+
+      if($('.rlsa-policy').is(':visible') && $('#rsla_policies1').is(':checked')==false){
+         $('.rlsa-policy').addClass('error-box');
+          window.is_error = true;
+      }
+    }
+
     // Tag Implementation lead form related Validation
     // validate Tag Implementation fields
     if($("#tagImplementationBtn").is(":visible")){
@@ -759,7 +831,7 @@ function validateTaskFields(indx){
 
   urlElem = document.getElementById('url' + indx);
   validateFiled(urlElem)
-
+/*
   if($('#rlsa_bulk' + indx).is(":visible")){
 
     rlsaUserListEle = document.getElementById('user_list_id' + indx);
@@ -786,7 +858,7 @@ function validateTaskFields(indx){
     }
 
 
-  }
+  }*/
 
   if($('#analyticscode' + indx).is(":visible")){
       var analyticsCodeElem = document.getElementById('analytics_code' + indx)
@@ -811,6 +883,22 @@ function validateTaskFields(indx){
   }
 
 }
+
+function validateRLSAFields(indx){
+  if($('.rlsa-impl-section').is(':visible')){
+
+    rlsaUserListEle = document.getElementById('user_list_id' + indx);
+    validateFiled(rlsaUserListEle);
+
+    rlsaBidAdjustment = document.getElementById('rsla_bid_adjustment' + indx);
+    validateFiled(rlsaBidAdjustment);
+
+    campaignIds = document.getElementById('campaign_ids' + indx);
+    validateFiled(campaignIds);
+
+  }
+}
+
 
 function resetBtn(elem){
   elemId = $(elem).attr('id');
@@ -972,3 +1060,53 @@ function conversionTracking(){
       $('.tag-add-policies').hide();
    }
 }
+
+/*Adding More RLSA Task types*/
+function addMoreRLSAs(indx){
+  nextIndex = indx + 1;
+
+  rlsa = '<div class="rlsa-codes" id="rlsa-impl-initial'+nextIndex+'">' + 
+            '<div class="row">' + 
+                '<div class="col-md-4">' + 
+                     '<input type="text" class="form-control " id="user_list_id'+nextIndex+'" name="user_list_id'+nextIndex+'" placeholder="User List ID/ Audieance ID">' + 
+                '</div>' + 
+                '<div class="col-md-4">' + 
+                    '<input type="text" class="form-control " id="rsla_bid_adjustment'+nextIndex+'" name="rsla_bid_adjustment'+nextIndex+'" placeholder="RLSA BID Adjustment(%)">'+
+                '</div>'+
+                '<div class="col-md-4" >'+
+                   '<p style="height:80px;text-align:left;font-size:13px;line-height:19px;color:#8c8c8c">'+
+                  'Check PitchIQ or <a href="https://goto.google.com/rlsa-bid-dash" target="_blank">go/rlsa-bid-dash</a> for customer  <br> specific recomandations! we recommend at <br>least + 40%'+
+                    '</p>'+
+                '</div>'+
+              '</div>'+
+               '<div class="row">'+
+                  '<div class="col-md-8 row" >'+
+                    '<div class="form-heading" style="font-family:none;margin-left:17px;">&nbsp;</div>'+
+                  '</div>'+
+                  '<div class="col-md-4" >'
+ 
+      add =     '<a id="add_rlsa'+nextIndex+'" class="btn std-btn task-btn" style="margin-right:10px;background:#109d59 !important;" onclick="addMoreRLSAs('+nextIndex+');"><i class="fa fa-plus-circle" ></i>Add RLSA Tasks</a>'
+      remove =  '<a id="removeRlsa_'+nextIndex+'" class="btn std-btn task-btn remove-rlsa" style="display:none" onclick="removeRLSAs('+nextIndex+');"><i class="fa fa-minus-circle"></i>Remove RLSA Task</a>'
+                  '</div>'+
+        '</div>'
+    $('#add_rlsa'+indx).hide();
+    $('#removeRlsa_'+indx).show();
+    prevIndex = indx - 1;
+    $('#removeRlsa_'+ prevIndex).hide();
+    if((indx=>1) &&(indx<4)){
+     $(rlsa+add+remove).insertAfter($('#rlsa-impl-initial'+indx)); 
+    }else{
+      $(rlsa+remove).insertAfter($('#rlsa-impl-initial'+indx)); 
+    }
+
+}
+
+function removeRLSAs(indx){
+   prevIndex = indx - 1;
+   nextIndex = indx + 1
+   $('#rlsa-impl-initial'+nextIndex).remove();
+   $('#add_rlsa'+indx).show();
+   $('#removeRlsa_'+indx).hide();
+   $('#removeRlsa_'+prevIndex).show();
+}
+/*Ends Here*/

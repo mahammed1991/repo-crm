@@ -20,8 +20,9 @@ h1 {
 
   table{margin-bottom: 20px;}
 
-  #actionPlan thead tr td, #keyPoint thead tr td , #attach thead tr td, #attach-link-file thead tr td{border: 2px solid #676767;
+  #actionPlan thead tr td, #keyPoint thead tr td , #attach thead tr td, #attach-link-file thead tr th{border: 2px solid #676767;
     padding: 10px;
+    background: #C1C1C1;
   }
 
   #actionPlan tbody tr td, #keyPoint tbody tr td,#nextMeeting tbody tr td, #nextMeeting1 tbody tr td, #attach tbody tr td, #attach-link-file tbody tr td{border: 1px solid #D1D1D1;
