@@ -160,6 +160,9 @@ Action Items Meeting Minutes
           }
         }
       }
+      action_item = action_item.join('/');
+      owners = owners.join('/');
+      target_date = target_date.join('/');
       if(count == 3){
         row += '<tr>'+
              '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
@@ -182,9 +185,9 @@ Action Items Meeting Minutes
       row += '<tr>'+
              '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
              '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
-             '<td class="links-default">'+action_item.toString().split(',').join("<br />")+'</td>' +
-             '<td class="links-default">'+owners.toString().split(',').join("<br />")+'</td>' +
-             '<td class="links-default" id="td_date">'+target_date.toString().split(',').join("<br />")+'</td>' +
+             '<td class="links-default">'+action_item.toString().split('/').join("<br /><hr>")+'</td>' +
+             '<td class="links-default">'+owners.toString().split('/').join("<br /><hr>")+'</td>' +
+             '<td class="links-default" id="td_date">'+target_date.toString().split('/').join("<br /><hr>")+'</td>' +
              '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>'
 
                if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
