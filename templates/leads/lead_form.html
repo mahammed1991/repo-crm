@@ -175,12 +175,33 @@
      <!-- start RLSA bulk implimentation code -->
        <div class="rlsa-impl-section rlsa-codes" id="rlsa-impl-initial1">
             <div class="std-sub-title row">RLSA BULK implementation info</div>
+            <div class="row" style="padding-left: 35px;">
+              <span style="margin-left: -20px;"><strong>Pre-Submission Checkpoints:</strong>
+              <ul style="margin-left: 25px;">
+              <li style="list-style-type: disc;"><span >Obtain Authorisation from your advertiser using </span><span style=" font-weight: 700;">only</span> <a href="https://docs.google.com/document/d/1qECJ1eYs_G2kewiDyiRCwJRh8877j_xhruGNp95-Rg8/edit" ><span style=" color: rgb(17, 85, 204); text-decoration: underline;">this template</span></a></li>
+              <li style="list-style-type: disc;"><span >E-mail that authorisation e-mail to </span><a href="mailto:implementation-support@google.com" ><span style=" color: rgb(17, 85, 204); font-weight: 700; text-decoration: underline;">implementation-support@google.com</span></a><span> with </span><span style=" font-weight: 700;">[RLSA Authorisation]</span><span> in the subject line</span></li>
+              <li style="list-style-type: disc;"><span >Please ensure that you are aware of the </span><a href="{% url 'main.views.rlsa_limitations' %}" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">TagTeam’s RLSA Support Boundaries</span></a></li>
+              <li style="list-style-type: disc;"><span >Please ensure that the website meets the RLSA policies specified </span><a href="https://support.google.com/adwordspolicy/answer/6258407"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">here</span></a></li></ul>
+              </span>
+            </div>
+             <div class="row" style="margin-bottom: 12px;">
+                 <div class="col-md-12"><strong>
+                    Add RLSA to:</strong>
+                 </div>
+                 <div class="col-md-5" style="margin-left: 20px;">
+                  <input type="radio" name="campaign_ids1" id="active_campaigns" checked ><span>&nbsp;All Active AdGroups of Active Campaigns</span>
+                 </div>
+                 <div class="col-md-6">
+                   <input type="radio" name="campaign_ids1" id="paused_campaigns"><span>&nbsp;All Active and Paused AdGroups of all Active and Paused Campaigns</span>
+                 </div>
+               </div>
+            
               <div class="row">
                 <div class="col-md-4 ">
                     <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="Internal Customer ID (not MCC ID)">
                 </div>
                <div class="col-md-4" >
-                      <input style="height:80px;" type="text-area" class="form-control " id="campaign_ids1" name="campaign_ids1" placeholder="Auth E-mail Cases ID (mandatory)">
+                      <input style="height:80px;" type="text-area" class="form-control " id="authEmail" name="authEmail" placeholder="Auth E-mail Cases ID (mandatory)">
                   </div>
                   <div class="col-md-4" >
                       <input style="height:80px;" type="text-area" class="form-control " id="comments" name="comments" placeholder="Comments">
@@ -204,10 +225,11 @@
                     <div class="form-heading" style="font-family:none;margin-left:17px;">&nbsp;</div>
                   </div>
                   <div class="col-md-4" >
-                   <a id="add_rlsa1" class="btn std-btn task-btn" style="margin-right:10px;background:#109d59 !important;" onclick="addMoreRLSAs(1);"><i class="fa fa-plus-circle" ></i>Add RLSA Tasks</a>
-                   <a id="removeRlsa_1" class="btn std-btn task-btn remove-rlsa" style="display:none" onclick="removeRLSAs(1);"><i class="fa fa-minus-circle"></i>Remove RLSA Task</a>
+                   <a id="add_rlsa1" class="btn std-btn task-btn" style="margin-right:10px;background:#109d59 !important;" onclick="addMoreRLSAs(1);"><i class="fa fa-plus-circle" ></i>Add User List</a>
+                   <a id="removeRlsa_1" class="btn std-btn task-btn remove-rlsa" style="display:none" onclick="removeRLSAs(1);"><i class="fa fa-minus-circle"></i>Remove User List</a>
                   </div>
                </div>
+              
         </div>
 
     <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
@@ -900,6 +922,7 @@
     }
 
     $('#team').trigger('change');
+    $('#active_campaigns').trigger('click');
   
   });
 
@@ -1039,18 +1062,7 @@ function clearAndHideFields(){
     $('#rbid'+selectedindex).val('');
     $('#rbudget'+selectedindex).val('');
 
-    $('#rlsa_bulk'+selectedindex).hide();
-    $("#user_list_id"+ selectedindex).val('');
-    $("#internal_cid"+ selectedindex).val('');
-    $("#rsla_bid_adjustment"+ selectedindex).val('');
-    $("#campaign_ids"+ selectedindex).val('');
-    $("#rsla_policies"+selectedindex).prop('checked', false);
-    $("#rsla_policies"+selectedindex).val(0);
-    $("#overwrite_existing_bid_modifiers"+selectedindex).val('');
-    $("#create_new_bid_modifiers"+selectedindex).val('');
-    $('#comment'+selectedindex).attr("placeholder", "Special Instructions (Optional)");
-
-    uncheckAllBehaviourCheckBoxs(selectedindex);
+    //uncheckAllBehaviourCheckBoxs(selectedindex);
       
     $('#ctype_campaign'+selectedindex).hide();
     $('#gasetup'+selectedindex).hide();
