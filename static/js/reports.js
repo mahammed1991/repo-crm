@@ -477,15 +477,15 @@ function displayLeadStatusTable(details) {
     var rows = ""
     for (var key in details) {
         if (key == 'total_leads') {
-            total = '<tr><td class="lbl" style="background: #15A95E;">Total Leads</td><td class="value" style="background: #15A95E;">' + details[key] + '</td><td class="value" style="background: #15A95E;">CR</td></tr>'
+            total = '<tr><td class="lbl value" style="background: #15A95E;">Total Leads</td><td class="value" style="background: #15A95E;">' + details[key] + '</td><td class="value" style="background: #15A95E;">in(%)</td></tr>'
         } else if (key == 'TAT') {
             if (details[key] != null) {
-                end = '<tr><td class="lbl"> Average ' + key + '</td><td class="value">' + details[key] + ' days</td><td style="text-align:center;">-</td></tr>'
+                end = '<tr><td class="lbl"> Average ' + key + '</td><td>' + details[key] + ' days</td><td style="text-align:center;">-</td></tr>'
             } else {
-                end = '<tr><td class="lbl"> Average ' + key + '</td><td class="value">' + 0 + ' days</td><td style="text-align:center;">-</td></tr>'
+                end = '<tr><td class="lbl"> Average ' + key + '</td><td>' + 0 + ' days</td><td style="text-align:center;">-</td></tr>'
             }
         } else {
-              rows += '<tr><td class="lbl">' + key + '</td><td class="value">' + details[key] + '</td><td class="value">'+getPercentage(details[key], details['total_leads'])+'</td></tr>'
+              rows += '<tr><td class="lbl">' + key + '</td><td>' + details[key] + '</td><td>'+getPercentage(details[key], details['total_leads'])+'</td></tr>'
         }
     }
     $("#lead_status_table").append(total + rows + end);
@@ -532,10 +532,10 @@ function customeTimeLineChartTable(details, s_keys, timeline) {
 
         for (s_keys[i] in week_dict) {
 
-            row += '<td class="value">' + week_dict[s_keys[i]] + '</td>'
+            row += '<td>' + week_dict[s_keys[i]] + '</td>'
 
         }
-        row += '<td class="value">'+getPercentage(week_dict['leads_won'], week_dict['total_leads_submitted'])+'</td>'
+        row += '<td>'+getPercentage(week_dict['leads_won'], week_dict['total_leads_submitted'])+'</td>'
         row += '</tr>'
 
     }
@@ -603,7 +603,7 @@ function draw_and_display_tables(reports) {
 
 function newTable(firstrow, details) {
     $("#code_type_table").empty();
-    header = '<tr style="background: #FED200;"><td>Task Types/Lead Status</td>'
+    header = '<tr class="value" style="background: #FED200;"><td>Task Types/Lead Status</td>'
     for (key in firstrow) {
         header += '<td>' + key + '</td>'
     }
