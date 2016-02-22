@@ -98,7 +98,7 @@
         <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="rlsaInternalCIDPrepopulate()">
       </div>
       <div class="col-md-4">
         <select class="form-control bgicon" id="region" title="Program Region" name="region">
@@ -1023,7 +1023,7 @@ $(document).on('change', '[id*="ctype"]', function(){
 
 function get_avg_time(code_type,id){
   id=id.replace("ctype",'')
-  $('#code_type_avg_time_'+id).html("This Code Type takes an average of <strong>"+window.code_type_with_avg_time[code_type]+"</strong> to implement");
+  $('#code_type_avg_time_'+id).html("This Task Type takes an average of <strong>"+window.code_type_with_avg_time[code_type]+"</strong> to implement");
   $('#code_type_avg_time_'+id).show();
 }
 
