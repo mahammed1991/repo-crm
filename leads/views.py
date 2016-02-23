@@ -182,6 +182,7 @@ def lead_form(request):
             rlsa_data['last_name'] = last_name
             rlsa_data['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
             rlsa_data[tag_leads['comment1']] = request.POST.get('comments')
+            rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
             submit_lead_to_sfdc(sf_api_url, rlsa_data)
 
         return redirect(ret_url)
