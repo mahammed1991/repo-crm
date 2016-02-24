@@ -379,7 +379,10 @@ class Team(models.Model):
         ('TAG', 'TAG'),
         ('WPP', 'WPP'),
         ('PICASSO', 'PICASSO'),
-        ('BOTH', 'BOTH')), default='TAG'
+        ('TAG-WPP', 'TAG-WPP'),
+        ('TAG-PICASSO', 'TAG-PICASSO'),
+        ('WPP-PICASSO', 'WPP-PICASSO'),
+        ('ALL', 'ALL')), default='TAG'
     )
 
     created_date = models.DateTimeField(auto_now_add=True)

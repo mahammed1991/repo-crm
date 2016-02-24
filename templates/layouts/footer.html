@@ -27,7 +27,6 @@
                         <option value="UI / Design Related"> UI / Design Related</option>
                         <option value="not_able_to_submit_lead"> Not able to submit lead</option>
                         <option value="UX / Experience Related">UX / Experience Related</option>
-                        <option value="Incorrect Data / Information">Incorrect Data / Information</option>
                     </select>
                    <div id="preloaderOverlay" class="footeroverlay" style='display:none;margin-left: -16px;'>
                       <div class="preloader">
@@ -36,21 +35,12 @@
                     </div>
                     <textarea class="form-control" placeholder="Comments" id='comments' name="comment"></textarea>
                     
-                      <!--<input type='file' name="attachmentfile" style="width:200px" id="attachmentfile" /> 
-                      <div style="padding-left: 21%;">
-                        <input type="file" id="attachmentfile" style="display:none" name="attachmentfile">
-                        <a href="#"><img src="{% static 'images/browse.png' %}" w id="img1" style="padding-left: 9%;width: 65%;margin: auto;" /></a>
-                      </div>
-                      -->
                       <div style="width:100%;">  
                       <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%;"/> 
                       <input type="file" id="attachmentfile" name="attachmentfile" style="display: none" onChange="Handlechange();" />
                       <input type="text" id="filename" readonly="true" style="width:58%;" />
-                      
-
                       </div>                     
                                           
-                    <!-- <i class="fa fa-paperclip" name="attachmentfile"></i> -->
                 </div>
                 <div class="modal-footer" style="text-align:center;">
 
