@@ -200,11 +200,11 @@
                 <div class="col-md-4 ">
                     <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="Internal Customer ID (not MCC ID)">
                 </div>
-               <div class="col-md-4" >
-                      <input style="height:80px;" type="text-area" class="form-control " id="authEmail" name="authEmail" placeholder="Auth E-mail Cases ID (mandatory)">
+               <div class="col-md-8" >
+                      <input style="height:48px;" type="text-area" class="form-control " id="authEmail" name="authEmail" placeholder="Auth E-mail Cases ID (mandatory if not e-mailed to implementation-support@google.com)">
                   </div>
-                  <div class="col-md-4" >
-                      <input style="height:80px;" type="text-area" class="form-control " id="comments" name="comments" placeholder="Comments">
+                  <div class="col-md-12" >
+                      <input style="height:48px;" type="text-area" class="form-control " id="comments" name="comments" placeholder="Comments">
                   </div >
               </div>
                <div class="row" >
@@ -256,7 +256,7 @@
                 <div class="checkbox">
                   <label class="lbl">
                     <input type="checkbox" value="0" name="is_campaign_created1" id="is_campaign_created1" class="is_campaign_created">
-                    Is the campaign created with a min budget >$30?
+                    Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)
                   </label>
                 </div>
               </div>
@@ -715,7 +715,7 @@
         <div class="row">
           <div class="col-md-4">
             <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
-              <option value="">Select Issues</option>
+              <option value="">Select Issue Type</option>
               <option value="GTIN Issues">GTIN Issues</option>
               <option value="Data feed errors">Data feed errors</option>
               <option value="Creating Product Groups">Creating Product Groups</option>
@@ -778,17 +778,17 @@
               Do you want to install this Tag via Google Tag Manager?
             </label>
             <label id="tagAddwordsCheck" class="tag-add-policies" style="display:none;">
-              Should dynamic conversion value be tracked? &nbsp;
+              Do you want to track Revenue or the order amount through AWCT? &nbsp;
               <input type="radio" id="add_tracking_yes" name="dynamic_conversion_tracking" class="dynamic-value"> Yes <input type="radio" id="add_tracking_no" name="dynamic_conversion_tracking" class="dynamic-value"> No
-            </label>
-            <label class="shopping-policy" style="display:none;">
-              <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
-              Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
             </label>
             <label class="rlsa-policy" style="display:none;">
                <input id="rsla_policies1" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
                   Have you ensured that the website meets the RLSA policies specified  
                 <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
+            </label>
+            <label class="shopping-policy" style="display:none;">
+              <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
+              Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
             </label>
             <ol class="subitems" id="shoppingTerms" style="display:none;">
               <li>This advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
