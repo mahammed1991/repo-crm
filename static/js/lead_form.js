@@ -183,9 +183,12 @@
           $('#add_rlsa1').show();
           $(".rlsa-policy").hide();
           if($( "#tagImplementation .check-icon" ).is(":visible")){
-            $('#tagCheckBoxs').show();
-          }else{
-            $('#tagCheckBoxs').hide();
+            selectedTeam = $('#team').val()
+            if((selectedTeam.indexOf('ETO') != -1) || (selectedTeam.indexOf('UMM') != -1)){
+              $('#tagCheckBoxs').show();
+            }else{
+              $('#tagCheckBoxs').hide();
+            }
           }
           $("#is_rlsa_lead").val('no');
         }else{
@@ -199,9 +202,12 @@
           $(".rlsa-policy").show();
           $("#heads_up").show();
           if($( "#tagImplementation .check-icon" ).is(":visible")){
-            $('#tagCheckBoxs').show();
-          }else{
-            $('#tagCheckBoxs').hide();
+            selectedTeam = $('#team').val()
+            if((selectedTeam.indexOf('ETO') != -1) || (selectedTeam.indexOf('UMM') != -1)){
+              $('#tagCheckBoxs').show();
+            }else{
+              $('#tagCheckBoxs').hide();
+            }
           }
           $('#is_rlsa_lead').val('yes')
         }
@@ -916,7 +922,7 @@ $('.code_type').change(function(){
   $('#rbid'+selectedindex).val('');
   $('#rbudget'+selectedindex).val('');
 
-  uncheckAllBehaviourCheckBoxs(selectedindex);
+  //uncheckAllBehaviourCheckBoxs(selectedindex);
     
   $('#ctype_campaign'+selectedindex).hide();
   $('#gasetup'+selectedindex).hide();
