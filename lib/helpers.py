@@ -746,7 +746,7 @@ def get_tat_for_picasso(source):
         if availability.availability_count and availability.audits_per_date:
             lookup_sum += availability.availability_count * availability.audits_per_date
             if lookup_sum > total_no_of_inqueue_leads:
-                estimated_date = availability.date_in_ist + timedelta(days=2)
+                estimated_date = availability.date_in_ist + timedelta(days=2)  # two days buffer
                 if estimated_date.weekday() == 5:
                     target_details['estimated_date'] = estimated_date + timedelta(days=2)
                 elif estimated_date.weekday() == 6:
@@ -757,7 +757,7 @@ def get_tat_for_picasso(source):
                 target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
                 return target_details
 
-    audits_remaining = total_no_of_inqueue_leads - lookup_sum
+    audits_remaining = total_no_of_inqueue_leads - lookup_sum + 2  # two days buffer
     default_emp = 7
     default_audits_per_emp = 4
     default_audits_per_day = default_emp * default_audits_per_emp
