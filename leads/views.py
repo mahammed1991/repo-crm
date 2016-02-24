@@ -90,14 +90,6 @@ def lead_form(request):
                 checkout_process_key = 'checkout_process' + i
                 transaction_behaviour_key = 'transaction_behaviour' + i
 
-                # user_list_id_key = 'user_list_id' + i
-                # rsla_bid_adjustment_key = 'rsla_bid_adjustment' + i
-                # rlsa_internal_cid_key = 'internal_cid' + i
-                # campaign_ids_key = 'campaign_ids' + i
-                # create_new_bid_modifiers_key = 'create_new_bid_modifiers' + i
-                # overwrite_existing_bid_modifiers_key = 'overwrite_existing_bid_modifiers' + i
-                # rsla_policies_key = 'rsla_policies' + i
-
                 tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
                 tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
                 tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
@@ -107,14 +99,6 @@ def lead_form(request):
                 tag_data[tag_leads[cartpage_behaviour_key]] = request.POST.get(cartpage_behaviour_key)
                 tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
                 tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
-
-                # tag_data[tag_leads[user_list_id_key]] = request.POST.get(user_list_id_key)
-                # tag_data[tag_leads[rsla_bid_adjustment_key]] = request.POST.get(rsla_bid_adjustment_key)
-                # tag_data[tag_leads[rlsa_internal_cid_key]] = request.POST.get(rlsa_internal_cid_key)
-                # tag_data[tag_leads[campaign_ids_key]] = request.POST.get(campaign_ids_key)
-                # tag_data[tag_leads[create_new_bid_modifiers_key]] = request.POST.get(create_new_bid_modifiers_key)
-                # tag_data[tag_leads[overwrite_existing_bid_modifiers_key]] = request.POST.get(overwrite_existing_bid_modifiers_key)
-                # tag_data[tag_leads[rsla_policies_key]] = request.POST.get(rsla_policies_key)
 
             # Split Tag Contact Person Name to First and Last Name
             if request.POST.get('tag_contact_person_name'):
@@ -249,21 +233,21 @@ def wpp_lead_form(request, ref_id=None):
         advirtiser_details = get_advertiser_details(sf_api_url, wpp_data)
         user_groups = [group.name for group in request.user.groups.all()]
         if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
-            advirtiser_details['whitelisted_user'] = 'Yes'
+            advirtiser_details['whitelist_requested_user'] = 'Yes'
         else:
-            advirtiser_details['whitelisted_user'] = 'No'
+            advirtiser_details['whitelist_requested_user'] = 'No'
         send_calendar_invite_to_advertiser(advirtiser_details, False)
 
         return redirect(ret_url)
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
+    lead_args['teams'] = Team.objects.filter(belongs_to__in=['WPP', 'TAG-WPP', 'WPP-PICASSO', 'ALL'], is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
 
     user_groups = [group.name for group in request.user.groups.all()]
     if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
-        lead_args['whitelisted_user'] = 'Yes'
+        lead_args['whitelist_requested_user'] = 'Yes'
 
     if ref_id:
         try:
@@ -349,11 +333,11 @@ def picasso_lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    # lead_args['teams'] = Team.objects.filter(is_active=True)
-    lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
+    lead_args['teams'] = Team.objects.filter(belongs_to__in=['PICASSO', 'TAG-PICASSO', 'WPP-PICASSO', 'ALL'], is_active=True)
+    # lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
     lead_args['picasso'] = True
     tat_dict = get_tat_for_picasso('portal')
-    if tat_dict['estimated_date']:
+    if tat_dict:
         lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
         lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
     return render(
@@ -373,7 +357,7 @@ def wpp_nomination_form(request):
     # Check The Rep Status and redirect
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.exclude(belongs_to__in=['TAG', 'PICASSO']).filter(is_active=True)
+    lead_args['teams'] = Team.objects.filter(belongs_to__in=['WPP', 'TAG-WPP', 'WPP-PICASSO', 'ALL'], is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
 
     wpp_locations = list()
@@ -1480,8 +1464,8 @@ def thankyou(request):
     if str(lead_category) == '4':
         template_args.update({'lead_type': 'WPP'})
     elif str(lead_category) == '6':
-        estimated_tat = request.session.get(str(request.user.email)+'estimated_tat')
-        no_of_inqueue_leads = request.session.get(str(request.user.email)+'no_of_inqueue_leads')
+        estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat')
+        no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads')
         template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
     elif str(lead_category) == '8':
         template_args.update({'lead_type': 'Picasso Build Nomination Request', 'nomination': True})
@@ -1822,15 +1806,15 @@ def get_lead(request, cid, feedback_type):
 
         if feedback_type == 'PICASSO':
             lead['details'] = {
-            'name': leads.company,
-            'email': leads.lead_owner_email,
-            'google_rep_email': leads.google_rep_email,
-            'loc': location.location_name if location else 0,
-            'team': team.team_name if team else '',
-            'team_id': team.id if team else 0,
-            'languages_list': languages_list,
-            'code_type': leads.type_1,
-            'l_id': leads.sf_lead_id,
+                'name': leads.company,
+                'email': leads.lead_owner_email,
+                'google_rep_email': leads.google_rep_email,
+                'loc': location.location_name if location else 0,
+                'team': team.team_name if team else '',
+                'team_id': team.id if team else 0,
+                'languages_list': languages_list,
+                'code_type': leads.type_1,
+                'l_id': leads.sf_lead_id,
             }
         else:
             lead['details'] = {
@@ -2474,10 +2458,10 @@ def get_basic_lead_data(request):
             language_for_location[loc_name].append({'language_name': str(loc.primary_language.language_name), 'id': str(loc.primary_language.id)})
 
     if 'google.com' in request.user.email:
-        tag_teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
+        tag_teams = Team.objects.filter(belongs_to__in=['TAG', 'TAG-WPP', 'TAG-PICASSO', 'ALL'], is_active=True)
         teams = tag_teams.exclude(team_name__in=['Help Center Task', 'Help Centre Follow-ups', 'AdWords Front End (AWFE)', 'Help Centre Tasks - Inbound'])
     else:
-        teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
+        teams = Team.objects.filter(belongs_to__in=['TAG', 'TAG-WPP', 'TAG-PICASSO', 'ALL'], is_active=True)
 
     code_types = CodeType.objects.filter(is_active=True).values_list('name', flat=True)
     code_types = [str(ctype) for ctype in code_types]
@@ -2865,7 +2849,7 @@ def get_eligible_picasso_leads(request):
             cid = cid
         elif len(cid) == 10:
             cid = '%s-%s-%s' % (cid[:3], cid[3:6], cid[6:])
-        wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'BOTH'])]
+        wpp_teams = [team.team_name for team in Team.objects.filter(belongs_to__in=['WPP', 'WPP-PICASSO', 'TAG-WPP', 'ALL'])]
         leads = WPPLeads.objects.filter(customer_id=cid, team__in=wpp_teams, type_1='WPP - Nomination')
         if leads:
             lead_type = 'nomination'
@@ -3015,7 +2999,7 @@ def wpp_whitelist_request(request):
             })
         )
         mail_from = 'Picasso Build Request Team'
-        mail_to = ['basavaraju@regalix-inc.com', 'gtracktesting@gmail.com', 'skumar@regalix-inc.com', 'sprasad@regalix-inc.com', 'spenz@google.com']
+        mail_to = ['skumar@regalix-inc.com', 'sprasad@regalix-inc.com', 'spenz@google.com']
         bcc = set([])
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)

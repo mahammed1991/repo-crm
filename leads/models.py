@@ -375,11 +375,14 @@ class Team(models.Model):
     """ Team/Program information """
     team_name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
-    belongs_to = models.CharField(max_length=10, blank=False, choices=(
+    belongs_to = models.CharField(max_length=50, blank=False, choices=(
         ('TAG', 'TAG'),
         ('WPP', 'WPP'),
         ('PICASSO', 'PICASSO'),
-        ('BOTH', 'BOTH')), default='TAG'
+        ('TAG-WPP', 'TAG-WPP'),
+        ('TAG-PICASSO', 'TAG-PICASSO'),
+        ('WPP-PICASSO', 'WPP-PICASSO'),
+        ('ALL', 'ALL')), default='TAG'
     )
 
     created_date = models.DateTimeField(auto_now_add=True)

@@ -15,6 +15,12 @@ function validatethis() {
     subjectElem = document.getElementById('subject');
     validateFiled(subjectElem);
 
+    subjectOtherelems = ['Ad-hoc', 'New Product Launch', 'New Program Launch', 'Others']
+    if(subjectOtherelems.indexOf($(subjectElem).val()) != -1){
+      otherSubjectElem = document.getElementById('others');
+      validateFiled(otherSubjectElem);
+    }
+
     meetingDateElem = document.getElementById('meeting_date');
     validateFiled(meetingDateElem);
   
@@ -39,6 +45,11 @@ function validatethis() {
     programElem = document.getElementById('program');
     validateFiled(programElem);
 
+    if($(programElem).val() == 'TAG Team'){
+      programTypeElem = document.getElementById('program_type');
+      validateFiled(programTypeElem);
+    }
+
     attendeesElem = document.getElementById('attendees');
     validateFiled(attendeesElem);
 
@@ -47,7 +58,6 @@ function validatethis() {
       window.is_error = true;
     }else{
       $('.meeting_audience').removeClass('error-box');
-      window.is_error = false;
     }
 
     for( i=1; i <= $(".key-points").length; i++){

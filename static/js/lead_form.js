@@ -183,9 +183,12 @@
           $('#add_rlsa1').show();
           $(".rlsa-policy").hide();
           if($( "#tagImplementation .check-icon" ).is(":visible")){
-            $('#tagCheckBoxs').show();
-          }else{
-            $('#tagCheckBoxs').hide();
+            selectedTeam = $('#team').val()
+            if((selectedTeam.indexOf('ETO') != -1) || (selectedTeam.indexOf('UMM') != -1)){
+              $('#tagCheckBoxs').show();
+            }else{
+              $('#tagCheckBoxs').hide();
+            }
           }
           $("#is_rlsa_lead").val('no');
         }else{
@@ -199,9 +202,12 @@
           $(".rlsa-policy").show();
           $("#heads_up").show();
           if($( "#tagImplementation .check-icon" ).is(":visible")){
-            $('#tagCheckBoxs').show();
-          }else{
-            $('#tagCheckBoxs').hide();
+            selectedTeam = $('#team').val()
+            if((selectedTeam.indexOf('ETO') != -1) || (selectedTeam.indexOf('UMM') != -1)){
+              $('#tagCheckBoxs').show();
+            }else{
+              $('#tagCheckBoxs').hide();
+            }
           }
           $('#is_rlsa_lead').val('yes')
         }
@@ -916,7 +922,7 @@ $('.code_type').change(function(){
   $('#rbid'+selectedindex).val('');
   $('#rbudget'+selectedindex).val('');
 
-  uncheckAllBehaviourCheckBoxs(selectedindex);
+  //uncheckAllBehaviourCheckBoxs(selectedindex);
     
   $('#ctype_campaign'+selectedindex).hide();
   $('#gasetup'+selectedindex).hide();
@@ -1040,8 +1046,8 @@ function addMoreRLSAs(indx){
                   '</div>'+
                   '<div class="col-md-4" >'
  
-      add =     '<a id="add_rlsa'+nextIndex+'" class="btn std-btn task-btn" style="margin-right:10px;background:#109d59 !important;" onclick="addMoreRLSAs('+nextIndex+');"><i class="fa fa-plus-circle" ></i>Add RLSA Tasks</a>'
-      remove =  '<a id="removeRlsa_'+nextIndex+'" class="btn std-btn task-btn remove-rlsa" style="display:none" onclick="removeRLSAs('+nextIndex+');"><i class="fa fa-minus-circle"></i>Remove RLSA Task</a>'
+      add =     '<a id="add_rlsa'+nextIndex+'" class="btn std-btn task-btn" style="margin-right:10px;background:#109d59 !important;" onclick="addMoreRLSAs('+nextIndex+');"><i class="fa fa-plus-circle" ></i>Add User List</a>'
+      remove =  '<a id="removeRlsa_'+nextIndex+'" class="btn std-btn task-btn remove-rlsa" style="display:none" onclick="removeRLSAs('+nextIndex+');"><i class="fa fa-minus-circle"></i>Remove User List</a>'
                   '</div>'+
         '</div>'
     $('#add_rlsa'+indx).hide();
