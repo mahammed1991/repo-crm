@@ -1,0 +1,81 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  RLSA LIMITATIONS AND BOUNDARIES (NEW)
+{% endblock title %}
+
+{% block main_css %}
+
+<style type="text/css">  
+li {list-style-type: disc !important;}
+ul{padding-bottom: 15px;}
+</style>
+
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+
+	<div class="container-fluid ">
+        		<h1>RLSA Limitations and Boundaries (New)</h1>
+    </div>
+
+    <div class="container-fluid ">
+    	<ul>
+		<li >
+		    <span>We only help set-up RLSA on enabled AdGroups of enabled Campaigns OR all (enabled and paused) AdGroups of all (enabled and paused) Campaigns.</span>
+		</li>
+		<li >
+		    <span>We can only apply RLSA to all AdGroups of all Campaigns.</span>
+		</li>
+		<li >
+		    <span>We cannot add lists to only particular handpicked AdGroups</span>
+		</li>
+		<li >
+		    <span>We cannot add lists to only of particular handpicked Campaigns.</span>
+		</li>
+		<li >
+		    <span>We will not Pause/Activate any Campaigns/AdGroups.</span>
+		</li>
+		<li >
+		    <span>We can add Remarketing Lists.</span>
+		</li>
+		<li >
+		    <span>We can add Customer Lists.</span>
+		</li>
+		<li >
+		    <span>We can add Remarketing Lists generated in Google Analytics, provided they abide by the RLSA policies.</span>
+		</li>
+		<li >
+		    <span>We will not change the any existing bid modifiers on any existing lists</span>
+		</li>
+		<li >
+		    <span>We will add RLSA on all AdGroups of all Search Campaigns and Shopping Campaigns(if any).</span>
+		</li>
+		<li >
+		    <span>We can work on Search Network with Display Select Campaigns.</span>
+		</li>
+		<li >
+		    <span>We will not be able to add a bid modifier if the Campaign/AdGroup is set to Auto-Bidding.</span>
+		</li>
+		<li >
+		    <span>We will not implement RLSA with Target and Bid as the Targeting Setting.</span>
+		</li>
+		<li >
+		    <span>We will only implement RLSA with Bid Only as the Targeting Setting.</span>
+		</li>
+		<li >
+		    <span>If an AdGroup is set to Target and Bid as the Targeting Setting, then we do not add lists or bid modifiers to that AdGroup.</span>
+		</li>
+	</ul>
+
+     </div>
+
+
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+{% endblock main_js %}

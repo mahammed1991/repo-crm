@@ -1,0 +1,703 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% load custom_tags %}
+
+{% block title %}
+    Website Optimization Reports
+{% endblock title %}
+
+{% block main_css %}
+    <link href="{% static 'css/call_audit_sheet.css' %} " rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="wrapper">
+    <!-- content-region -->
+    <section class="content-region inner-page caa">
+  <div class="container-fluid">
+  <h1>WPP CALL AUDIT SHEET</h1>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+      <form class=" ca_f1">
+        <div class="form-group">
+         <label for="label1">Agent Name</label>
+        <input type="text" class="form-control" id="" value=""  placeholder="">
+        </div>
+        <div class="form-group">
+         <label for="label1">Assessor</label>
+        <input type="text" class="form-control" id="" value="" placeholder="">
+        </div>
+        <div class="form-group">
+         <label for="label1">Customer ID</label>
+        <input type="text" class="form-control" id="" value=""  placeholder="">
+        </div>
+        <div class="form-group">
+         <label for="label1">SFID</label>
+        <input type="text" class="form-control" id="" value="" placeholder="">
+        </div>
+       </form>
+    </div>
+  </div>
+  <div class="row"> 
+    <div class="col-xs-12 col-sm-12 col-md-12 ca_f2 ca_f">
+      <ul class="ca_f02">
+        <li class="ca_f2 ca_f02aa" id="ux1">UX/UI Review</li>
+        <li class="ca_f2" id="ux2">In File  Transfer</li>
+        <li class="ca_f2" id="ux3">Mock Review</li>
+        <li class="ca_f2" id="ux4">Stage Review</li>
+        <li class="ca_f2" id="ux5">Implemented</li>
+        
+      </ul>
+    </div>
+    
+    <div class="col-xs-12 ca_f3 uxx ux1" style="display:block;">
+      <div class="std-sub-title">UX/UI Review</div>
+      <div class="row">
+          <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+          </div>
+         <!-- ************************** --> 
+         <div class="ca_f4">Soft Skills</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Voice Clearity</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Vocabulary</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Sentence Construction</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Tone</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Call Managment</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Opening</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Recorded line script</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Hold Procedure</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Closing</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">UX/UI Principles Mentioned</div>   
+          <div class="col-md-12" id="ca_cap">
+          <div class="form-group ca_cuf">
+             <input type="text" class="form-control" id="" value=""  placeholder="Option"> 
+             
+          </div>
+          <span class="glyphicon glyphicon-plus ca_ico ca_ss"></span><br>
+          <!-- <span class="glyphicon glyphicon-minus ca_rem "></span> -->
+          </div>
+          <div id="add_here" class="ca_f"></div> 
+        </div>
+        <br>
+        <!-- ********************************************  -->
+         <div class="ca_f4 ca_f" >Comment</div>  
+         <div class="col-md-12" style="padding-left:0px;">
+          <textarea class="ca_t" placeholder=""></textarea>
+          </div>
+         <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>
+      </div>
+    </div>
+    <div class="col-xs-12 ca_f3  uxx ux2">
+      <div class="std-sub-title">In File  Transfer</div>
+      <div class="row">
+          <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+          </div>
+          <!-- ************************** --> 
+         <div class="ca_f4">Soft Skills</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Voice Clearity</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Vocabulary</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Sentence Construction</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Tone</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Call Managment</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Opening</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Recorded line script</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Hold Procedure</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Closing</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+          <div class="ca_f4">Process Specific Questions</div>  
+           <div class="col-md-12">
+             
+              <input type="checkbox" name="" value="">  Are you the webmaster? <br>
+              <input type="checkbox" name="" value="">  Do you have the login for your hosting/cPanel/Plesk/SSH?<br>
+              <input type="checkbox" name="" value="">  Does your website use Database? if yes, do you have the database credentials?<br>
+              <input type="checkbox" name="" value="">  Does the agent request advertiser to share the website archive in Google drive?<br>
+              
+           </div>
+       
+         <!-- ********************************************  -->
+          <div class="ca_f4">Comment</div>  
+         <div class="col-md-12">
+          <textarea class="ca_t" placeholder=""></textarea>
+          </div>
+           <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>
+      </div>
+    </div>
+    <div class="col-xs-12 ca_f3  uxx ux3">
+      <div class="std-sub-title">Mock Review</div>
+      <div class="row">
+          <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+          </div>
+         <!-- ************************** --> 
+         <div class="ca_f4">Soft Skills</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Voice Clearity</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Vocabulary</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Sentence Construction</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Tone</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Call Managment</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Opening</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Recorded line script</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Hold Procedure</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Closing</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Process Specific Questions</div>  
+         <div class="col-md-12">
+           
+            <input type="checkbox" name="" value="">  Does the agent share the password protected invision link with advertiser?<br>
+            <input type="checkbox" name="" value="">  Does the agent explain the points discussed during UIUX review with advertiser?<br>
+            <input type="checkbox" name="" value="">  Does the agent drive the advertiser for approval?<br>
+            <input type="checkbox" name="" value="">  Does the agent document the review notes clearly and shared with the design team?
+            
+         </div>
+                 
+          <div class="ca_f4">Comment</div>  
+         <div class="col-md-12">
+          <textarea class="ca_t" placeholder=""></textarea>
+          </div>
+         <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>
+      </div>
+    </div>
+    <div class="col-xs-12 ca_f3  uxx ux4">
+      <div class="std-sub-title">Stage Review</div>
+      <div class="row">
+          <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+          </div>
+         <!-- ************************** --> 
+         <div class="ca_f4">Soft Skills</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Voice Clearity</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Vocabulary</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Sentence Construction</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Tone</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Call Managment</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Opening</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Recorded line script</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Hold Procedure</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Closing</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Process Specific Questions</div>  
+         <div class="col-md-12">
+          <input type="checkbox" name="" value="">  Does the agent share the password protected invision link with customer to review new website mockups?<br>
+            <input type="checkbox" name="" value="">  Does the agent drive the advertiser for approval?<br>
+            <input type="checkbox" name="" value="">  Does the agent document the review notes(if any) clearly and shared with the dev team?<br>
+             
+          
+        </div>  
+          <div class="ca_f4">Comment</div>  
+         <div class="col-md-12">
+          <textarea class="ca_t" placeholder=""></textarea>
+          </div>
+          <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul> 
+      </div>
+    </div>
+    <div class="col-xs-12 ca_f3  uxx ux5">
+      <div class="std-sub-title">A/B Testing</div>
+      <div class="row">
+          <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Appropriate Lead Status">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Next Appointment">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="UI Recommendations">
+          </div>
+           <div class="col-md-3">
+          <input type="text" class="form-control" id="" name="" placeholder="Gcase ID">
+          </div>
+         <!-- ************************** --> 
+         <div class="ca_f4">Soft Skills</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Voice Clearity</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Vocabulary</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Sentence Construction</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Tone</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+         <div class="ca_f4">Call Managment</div>   
+          <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Opening</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Recorded line script</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+            <option value="">Hold Procedure</option>
+            <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+           <div class="col-md-3">
+          <select class="form-control bgicon" id="" title="" name="">
+           <option value="">Closing</option>
+           <option value="" >5</option>
+            <option value="" >4</option>
+            <option value="">3</option>
+            <option value="">2</option>
+            <option value="">1</option>
+          </select>
+          </div>
+         <!-- ********************************************  -->
+
+         <div class="ca_f4">Task Specific Questions</div>  
+         <div class="col-md-12">
+          <input type="checkbox" name="" value="">  Does the agent share the updated archive via Gdrive?<br>
+            <input type="checkbox" name="" value="">  Does the agent follow/share the deployment procedure provided by the development team?<br>
+            <input type="checkbox" name="" value="">  Does the agent guide the advertiser to take a backup of the current site before deploying the new site?<br>
+            <input type="checkbox" name="" value="">  Does the agent test the website after deploying the new archive?<br>
+            <input type="checkbox" name="" value="">  Does the agent get verbal/email confirmation from the advertiser on successful implementation?<br>
+            
+         </div>
+
+         <!-- *************************************************  -->
+         <div class="ca_f4">Comment</div>  
+         <div class="col-md-12">
+          <textarea class="ca_t" placeholder=""></textarea>
+          </div>
+         <ul class="ca_f02" style="text-align:center; margin:auto;"><li class="ca_f2" id="">SUBMIT</li></ul>  
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+</div>
+{% endblock content %}
+
+{% block main_js %}
+
+<script>
+$(document).on('click','.ca_f2',function(){
+var idi = $(this).attr('id');
+var idx = '#'+idi;
+$('.ca_f2').removeClass('ca_f02aa');
+
+idi ='.'+idi;
+$('.uxx').hide();
+$(idi).show(function (){
+$(idx).addClass('ca_f02aa');
+$(idi).css('display', 'block');
+});
+
+})
+</script>
+<!-- For Add and Remove -->
+<script>
+  $(function() {
+       var scntDiv = $('#add_here');
+       $(document).on('click','.ca_ico,.ca_ico2', function() {
+            $('.ca_ico, .ca_ico2,.ca_rem').css('display','none');
+                $('<div class="col-md-12"><div class="form-group ca_cuf"><input type="text" class="form-control" id="" value=""  placeholder="Option"></div><span class="glyphicon glyphicon-plus ca_ico2 cccm"></span><br><span class="glyphicon glyphicon-minus ca_rem "></span> </div>').appendTo(scntDiv);
+                  
+                return false;
+        });
+
+        
+        $(document).on('click','.ca_rem', function() { 
+           
+          $(this).parent().prev().find('.ca_rem').css('display','inline-block');
+          $(this).parent().prev().find('.ca_ico2').css('display','inline-block')
+        
+          
+         
+          //$(this).parent().prev().find('#ca_cap').css('display','inline-block');
+                $(this).parent().fadeOut(function (){$(this).remove()});
+
+        });
+});
+</script>
+{% endblock main_js %}
