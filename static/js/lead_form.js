@@ -347,7 +347,7 @@
       $('label[for="service_segment"]').hide();
       $('#tagCheckBoxs').hide();
     }
-    else if(selectedTeam == 'ETO' || selectedTeam == 'ETO: Agency' || selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+    else if(['ETO', 'ETO: Agency', 'ETO: Inbound', 'ETO: Outbound', 'ETO: CS'].indexOf(selectedTeam) != -1 && $('#tasks').is(':visible')){
       if (window.is_loc_changed){
         setLocations(window.locations);
         window.is_loc_changed = false;
