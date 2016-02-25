@@ -1,0 +1,184 @@
+<style type="text/css">
+  
+h1 {
+      font-size: 24px;
+      font-family: 'robotoblack';
+      text-transform: uppercase;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+  }
+
+  #no{width:100px;}
+
+  #topic{width:450px;}
+
+  .topic{height:61px;}
+
+  #higlights{width:450px;}
+
+  table{margin-bottom: 20px;}
+
+  #actionPlan thead tr td, #keyPoint thead tr td , #attach thead tr td, #attach-link-file thead tr th{border: 2px solid #676767;
+    padding: 10px;
+    background: #C1C1C1;
+  }
+
+  #actionPlan tbody tr td, #keyPoint tbody tr td,#nextMeeting tbody tr td, #nextMeeting1 tbody tr td, #attach tbody tr td, #attach-link-file tbody tr td{border: 1px solid #D1D1D1;
+  }
+
+  .add-task td input,.action-plan td input {padding: 10px;
+        width: 100%;
+        border: none;
+  }
+
+  .add-task td textarea{padding: 10px;
+        width: 100%;
+        border: none;
+  }
+
+  .action-plan td textarea{padding: 10px;
+        width: 100%;
+        border: none;
+  }
+
+  .remove{position: relative;
+          top: -8px;
+  }
+  
+  label{padding: 15px;}
+
+  #action-item{
+    width:350px;
+    text-align: center;
+  }
+
+  .action-item-preview{
+    width:350px;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+
+  #owner, #target-date{
+    width:275px;
+    text-align: center;
+  }
+
+  .add-action{background: #109d59;}
+
+  .add-action:hover{background: #109d59;}
+
+  .remove-action{background: #d04033;}
+
+  .remove-action:hover{background: #d04033;}
+
+
+  .flat{padding-left: 10px;}
+  .date-time td input{width: 100%;padding: 11px;border: none;}
+/*.date-time td input{width: 100%;height:auto; padding: 11px;border: none;}*/
+    
+  #next_meeting_time,#next_meeting_date{width:180px;} 
+
+  #agenda{width:150px;padding: 10px;}
+
+  .add-agenda {background: #109d59;}
+
+  .add-agenda:hover {background: #109d59;}
+
+  .remove-agenda {background: #d04033;}
+  
+  .remove-agenda:hover {background: #d04033;}
+
+  .extra td input{width: 100%;padding: 11px;border: none;}
+
+  #agenda_text_1{width: 820px;}
+
+  #next{padding: 10px;}
+
+  #next td{width:238px;}
+
+  #next_text{width: 244px;}
+
+  #nextMeeting1{position: relative;top: -21px;]}
+
+  #allow_ics{margin: auto 50%;}
+
+   #preview_btn{margin: auto 40%;margin-bottom: 20px;}
+
+  .end p{text-align: center;position: relative;top: -10px;} 
+
+  #prev_meeting_link{width: 248px;}
+
+  .p-no,.p-topic,.p-highlight{padding: 0px 15px;}
+
+  .p-no,.p-action_item,.p-owner,.p-action_date{padding: 0px 15px;}
+
+
+  .p-agenda{padding: 0px 15px;}
+  .p-agenda-item{
+      width: 816px;
+    padding-left: 365px;
+  }
+
+  .md1, .md2{
+    width: 1100px;
+    height: 700px;
+    z-index: 10;
+  }
+
+  .md3{
+    text-align: center;
+  }
+
+  .modal-body{margin-bottom: 100px;}
+
+  .preview_key_point,.preview_action_plan,.preview_last{margin-left: 10px;}
+
+  .preview-action-plan td,.preview_key_point td ,.preview-extra td{padding: 10px;}
+
+  #preview_agenda{width: 150px;padding: 10px;}
+
+  .preview-agenda-item{
+    width: 850px;
+  }
+
+  #preview_sel_date,#preview_time_date{width: 440px;}
+
+
+  .buttons{height: 125px;
+           position: relative;
+           left: 300px;
+  }
+#ui-id-1, #ui-id-2, #ui-id-3, #ui-id-4{
+  overflow: scroll;height: auto; max-height: 250px;
+}
+
+.add-upload-btn{background: #109d59;}
+
+  .remove-upload {background: #d04033;}
+
+  .remove-upload:hover{background: #d04033;}
+
+  .add-upload-btn:hover{background: #109d59;}
+
+  .filestyle{padding-top: 14px;}
+
+  .browse-files{margin-bottom: 10px;}
+
+  .file-name-link1, .file-name-attach1{
+    background: white;
+    border: 0px;
+    padding-left: 10px;
+  }
+
+  #date1,#time1{width:60px;padding: 10px;}
+
+  .attach_1, .attach_2{
+    padding-left: 10px;
+  }
+
+  .preview-attach{
+    padding-left: 57px;
+  }
+</style>
