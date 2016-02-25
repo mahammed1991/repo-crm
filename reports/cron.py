@@ -159,7 +159,7 @@ def get_deleted_leads():
         #     logging.info("%s" % (e))
 
 
-@kronos.register('0 */2 * * *')
+@kronos.register('0 */1 * * *')
 def implemented_leads_count_report():
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
