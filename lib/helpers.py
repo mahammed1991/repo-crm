@@ -779,9 +779,8 @@ def get_todays_transition_leads():
     end_date = datetime(start_date.year, start_date.month, start_date.day, 23, 59, 59)
     ist_timezone = 'IST'
     selected_tzone = Timezone.objects.get(zone_name=ist_timezone)
-    utc_start_date = SalesforceApi.get_utc_date(start_date, selected_tzone.time_value)
-    utc_end_date = SalesforceApi.get_utc_date(end_date, selected_tzone.time_value)
-    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered', 'Audited'],
-                                                      updated_date__gte=utc_start_date,
-                                                      updated_date__lte=utc_end_date).count()
+    ist_today = SalesforceApi.convert_utc_to_timezone(start_date, selected_tzone.time_value)
+    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered'],
+                                                      updated_date__gte=start_date,
+                                                      updated_date__lte=end_date, date_of_installation=ist_today.date()).count()
     return today_changed_leads

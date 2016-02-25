@@ -189,7 +189,6 @@ $('#SubmitFeedback').click(function(){
       $("#preloaderOverlay").hide();
       $('#comments').addClass('error-box');
     }else{
-      $('#closeFeedbcak').trigger('click');
       dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
       $('#preloaderOverlay').show();
       $.ajax({
@@ -200,8 +199,7 @@ $('#SubmitFeedback').click(function(){
           success: function(data) {
             if(data === 'SUCCESS'){
               $('#preloaderOverlay').hide();
-              alert('feedback succesfully created ')
-              $("#preloaderOverlay").hide();
+              alert('feedback succesfully created ');
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);

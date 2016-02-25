@@ -1166,6 +1166,7 @@ def meeting_minutes(request):
         key_points = OrderedDict()
         action_plans = OrderedDict()
         meeting_minutes = MeetingMinutes()
+        meeting_minutes.organized_by = request.user.email
         meeting_minutes.subject_timeline = request.POST.get('subject')
         meeting_minutes.other_subject = request.POST.get('other_subject')
         # meeting_minutes.subject_type = request.POST.get('subject')
@@ -1273,9 +1274,12 @@ def meeting_minutes(request):
         meeting_minutes.save()
 
         mail_list = list()
+        attendees_list_for_email_template = list()
         for attendee in attendees_list:
             mail_list.append(str(attendee))
-        mail_list.append(str(request.POST.get('google_poc')))
+            attendees_list_for_email_template.append(str(attendee))
+        if request.POST.get('google_poc') != 'NA':
+            mail_list.append(str(request.POST.get('google_poc')))
         mail_list.append(str(request.POST.get('regalix_poc')))
 
         bcc_email_list = list()
@@ -1296,7 +1300,7 @@ def meeting_minutes(request):
                 attendees_list_last.append(str(attendee['email']))
                 attendees_email_list = ' ,  '.join(attendees_list)
         else:
-            attendees_email_list = 'NA'
+            attendees_email_list = ' ,  '.join(attendees_list_for_email_template)
 
         if meeting_minutes.meeting_audience == 'internal_meeting':
             mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
@@ -1484,7 +1488,7 @@ def link_last_meeting(request, last_id):
             attendees_list.append(str(attendee['email']))
         attendees_email_list = ' ,  '.join(attendees_list)
     else:
-        attendees_email_list = 'Email id not available'
+        attendees_email_list = 'Attendee Email id not available'
 
     if bcc:
         for each_bcc in bcc:
