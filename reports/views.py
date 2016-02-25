@@ -1251,15 +1251,19 @@ def meeting_minutes(request):
 
         meeting_minutes.save()
 
+        attendees_list = list()
         attendees = request.POST.get('attendees').replace(', ', ',')
         attendees_list = attendees.split(',')
-        attendees_list.pop(-1)
+        if attendees_list[-1] == '':
+            attendees_list.pop(-1)
         get_attendees_list = User.objects.filter(email__in=attendees_list).values_list('id', flat=True)
         meeting_minutes.attendees.add(*get_attendees_list)
 
+        bcc_list = list()
         bcc = request.POST.get('bcc').replace(', ', ',')
         bcc_list = bcc.split(',')
-        bcc_list.pop(-1)
+        if bcc_list[-1] == '':
+            bcc_list.pop(-1)
         get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
         meeting_minutes.bcc.add(*get_bcc_list)
 
@@ -1285,9 +1289,14 @@ def meeting_minutes(request):
         if link_to_last_data_for_email:
             link_for_last_meeting_email = link_to_last_data_for_email.ref_uuid
             last_link_attendees = link_to_last_data_for_email.attendees.values('email')
-        for attendee in last_link_attendees:
-            attendees_list_last.append(str(attendee['email']))
-            attendees_email_list = ' ,  '.join(attendees_list)
+
+
+        if last_link_attendees:
+            for attendee in last_link_attendees:
+                attendees_list_last.append(str(attendee['email']))
+                attendees_email_list = ' ,  '.join(attendees_list)
+        else:
+            attendees_email_list = 'NA'
 
         if meeting_minutes.meeting_audience == 'internal_meeting':
             mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (meeting_minutes.program, meeting_minutes.program_type, meeting_minutes.subject_timeline, meeting_minutes.other_subject, meeting_minutes.meeting_time_in_ist.date())
@@ -1388,6 +1397,7 @@ def link_last_meeting(request, last_id):
         last_meeting = MeetingMinutes.objects.get(ref_uuid=last_id)
     except MeetingMinutes.DoesNotExist:
         return redirect('main.views.main_home')
+
     new_subject_timeline = 1
     meeting_date = last_meeting.meeting_time_in_ist.date()
     last_meeting_link = datetime.strftime(meeting_date, '%d.%m.%Y')
@@ -1468,13 +1478,20 @@ def link_last_meeting(request, last_id):
     media_url = settings.MEDIA_URL
 
     submit_disabled = False
-    for attendee in attendees:
-        attendees_list.append(str(attendee['email']))
-    attendees_email_list = ' ,  '.join(attendees_list)
 
-    for each_bcc in bcc:
-        bcc_list.append(str(each_bcc['email']))
-    bcc_email_list = ' ,  '.join(bcc_list)
+    if attendees:
+        for attendee in attendees:
+            attendees_list.append(str(attendee['email']))
+        attendees_email_list = ' ,  '.join(attendees_list)
+    else:
+        attendees_email_list = 'Email id not available'
+
+    if bcc:
+        for each_bcc in bcc:
+            bcc_list.append(str(each_bcc['email']))
+        bcc_email_list = ' ,  '.join(bcc_list)
+    else:
+        bcc_email_list = 'Email id not available'
 
     key_order_agenda = {k:v for v, k in enumerate(['agenda_text_1', 'agenda_text_2', 'agenda_text_3', 'agenda_text_4', 'agenda_text_5', 'agenda_text_6', 'agenda_text_7', 'agenda_text_8', 'agenda_text_9', 'agenda_text_10', 'agenda_text_11', 'agenda_text_12', 'agenda_text_14', 'agenda_text_15'])}
     tenantive_agenda_dict = OrderedDict(sorted(last_meeting.tenantive_agenda.items(), key=lambda i: key_order_agenda.get(i[0])))
