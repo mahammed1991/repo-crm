@@ -199,7 +199,7 @@ $('#SubmitFeedback').click(function(){
           success: function(data) {
             if(data === 'SUCCESS'){
               $('#preloaderOverlay').hide();
-              alert('feedback succesfully created ');
+              alert('Feedback Succesfully Created ');
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);

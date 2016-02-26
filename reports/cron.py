@@ -671,8 +671,9 @@ def create_or_update_picasso_leads(records, sf):
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
         date_of_installation = rec.get('Delivery_Date__c')
-        date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
-        lead.date_of_installation = date_of_installation
+        if date_of_installation:
+            date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
+            lead.date_of_installation = date_of_installation
 
         # estimated TAT for Lead
         estimated_tat = rec.get('Picasso_TAT__c')
