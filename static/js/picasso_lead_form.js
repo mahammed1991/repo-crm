@@ -31,7 +31,7 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-    if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked") ){
+    if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked") && window.failedFields == 0 ){
       $('.checkboxvalidation').removeClass('error-box');
 
     }else{
@@ -41,8 +41,7 @@ function validatethis(frm) {
     }
 
 
-    urlElem = document.getElementById('url');
-    validateFiled(urlElem);
+     ValidateUrlField();
 
 
     podElem = document.getElementById('picasso_pod');
@@ -74,6 +73,41 @@ function validatethis(frm) {
     return false;
   }
 }
+
+function ValidateUrlField() {
+  var regexp = new RegExp("^http(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?$");
+    var url = document.getElementById("url").value;
+    var Elementurl = document.getElementById("url");
+    if (!regexp.test(url)) {
+      var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&/=]*)?/
+      var regex = new RegExp(expression);
+      var check_one_more = url;
+        if (check_one_more.match(regex) )
+          {   var inValid = /\s/;
+              var value = url;
+              var check = inValid.test(value);
+              if(check){alert("URL contains space"); 
+                        window.failedFields.push(Elementurl);
+                        $("#url").addClass('error-box');
+                        window.is_error = true;
+                        return false;}
+              if(!check){/*alert("valid with no space url");*/
+                          $("#url").removeClass('error-box');
+                          window.is_error = false; 
+                          return check} 
+          }
+        else {  alert("Invalid URL pattern");
+               $("#url").addClass('error-box'); 
+                window.is_error = true;
+                window.failedFields.push(Elementurl);
+                return false;}
+  } else {
+            /*alert("Valid Url!");*/
+            window.is_error = false;
+            $("#url").removeClass('error-box');
+            return true; }
+}
+
 
 function validateEmailField(elem) {
   var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
