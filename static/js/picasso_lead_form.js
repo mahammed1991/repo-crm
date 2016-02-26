@@ -17,7 +17,6 @@ function validatethis(frm) {
       window.is_reset = false;
       return false;
     }
-
     // Google Rep Name Validation
     grefElem = document.getElementById('gref');
     validateFiled(grefElem);
@@ -93,7 +92,6 @@ function ValidateUrlField() {
                         return false;}
               if(!check){/*alert("valid with no space url");*/
                           $("#url").removeClass('error-box');
-                          window.is_error = false; 
                           return check} 
           }
         else {  alert("Invalid URL pattern");
@@ -103,7 +101,6 @@ function ValidateUrlField() {
                 return false;}
   } else {
             /*alert("Valid Url!");*/
-            window.is_error = false;
             $("#url").removeClass('error-box');
             return true; }
 }
