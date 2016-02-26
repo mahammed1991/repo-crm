@@ -173,11 +173,11 @@ def implemented_leads_count_report():
         each_region_tag = {region.name: 0}
         each_region_shopping = {region.name: 0}
         location_list = [loc.location_name for loc in region.location.all()]
-        leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
         each_region_tag[region.name] = leads_count_tag
         total_count_tag.append(each_region_tag)
         final_dict['TAG'] = total_count_tag
-        leads_count_shopping = Leads.objects.filter(type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_shopping = Leads.objects.filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping

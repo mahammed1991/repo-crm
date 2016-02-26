@@ -988,10 +988,10 @@ class ReportService(object):
     @staticmethod
     def get_leads_details_based_on_selected_filters(query, lead_owner_list, selected_filters, report_type):
         if 'process_tag' in selected_filters:
-            shopping_code_types = ['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']
+            shopping_code_types = ['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']
         elif 'process_shopping' in selected_filters:
             shopping_code_types = []
-            query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']
+            query['type_1__in'] = ['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']
         else:
             shopping_code_types = []
 
@@ -1052,7 +1052,7 @@ class ReportService(object):
 
 
         if 'process_tag' in selected_filters:
-            shopping_code_types = ['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']
+            shopping_code_types = ['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']
 
             total_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**region_query).count()
             region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
@@ -1060,7 +1060,7 @@ class ReportService(object):
             implemented_leads = implemented_leads.exclude(lead_sub_status='RR - Inactive').count()
 
         elif 'process_shopping' in selected_filters:
-            region_query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']
+            region_query['type_1__in'] = ['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']
             total_leads = Leads.objects.filter(**region_query).count()
             region_query['lead_status__in'] = ['Implemented', 'Pending QC - WIN', 'Rework Required']
             implemented_leads = Leads.objects.filter(**region_query)
@@ -1545,7 +1545,7 @@ class ReportService(object):
         total_summary = {'Implemented': 0, 'In Queue': 0, 'wins': 0, 'total_leads': 0}
         total_tag_summary = {'Implemented': 0, 'In Queue': 0, 'wins': 0, 'total_leads': 0}
         if summary_type == 'tag':
-            all_code_types = ['Google Shopping Troubleshooting', 'Google Shopping Migration', 'Google Shopping Setup']
+            all_code_types = ['Existing Datafeed Optimization', 'Google Shopping Migration', 'Google Shopping Setup']
         else:
             all_code_types = code_types
 
@@ -1674,7 +1674,7 @@ class ReportService(object):
 
         # Get Total Tag leads summary report
         # List all tag leads
-        c_types = [code for code in code_types if code not in ['Google Shopping Troubleshooting', 'Google Shopping Migration', 'Google Shopping Setup']]
+        c_types = [code for code in code_types if code not in ['Existing Datafeed Optimization', 'Google Shopping Migration', 'Google Shopping Setup']]
         if not teams:
             teams = ReportService.get_all_teams()
         if not locations:

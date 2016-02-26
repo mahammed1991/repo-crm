@@ -134,7 +134,7 @@ def lead_form(request):
                 setup_data['first_name'] = first_name  # Primary Contact First Name
                 setup_data['last_name'] = last_name  # Primary Contact Last Name
             if request.POST.get('shopping_campaign_issues'):
-                setup_data[shop_leads['ctype1']] = 'Google Shopping Troubleshooting'
+                setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
                 setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
             else:
                 setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
@@ -319,6 +319,8 @@ def picasso_lead_form(request):
                 picasso_data[value] = get_unique_uuid('Picasso')
             elif key == 'picasso_tat':
                 picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
+            elif key == 'picasso_auto_number':
+                picasso_data[value] = PicassoLeads.objects.all().count()
             else:
                 picasso_data[value] = request.POST.get(key)
 

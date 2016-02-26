@@ -261,7 +261,7 @@ def get_current_quarter_report(request):
 
     # ##################### cron job reports for Current Quarter start here ######################
     # Get summary report by code types and lead_status
-    c_types = ['total', 'total_tag', 'Google Shopping Migration', 'Google Shopping Setup', 'Google Shopping Troubleshooting']
+    c_types = ['total', 'total_tag', 'Google Shopping Migration', 'Google Shopping Setup', 'Existing Datafeed Optimization']
     report_details = LeadSummaryReports.objects.filter(code_type__in=c_types)
     report_detail = dict()
     for rep in report_details:
