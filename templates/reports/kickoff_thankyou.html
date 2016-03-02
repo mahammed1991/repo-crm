@@ -1,0 +1,20 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Thank You
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content" style="padding-top:15%;padding-bottom:20px;text-align:center;">
+        Thank you for submitting your program details.</br>
+        A confirmation email summarizing 
+        the program details (based on the information you have provided);<br/>along with the Tag team details will be sent to you shortly.
+        If you need to change any information on the onboarding form,<br /> please reach out to
+        <b> implementation-support@google.com</b>
+        To submit , please <a href="{{return_url}}"> Click here</a>
+
+    </div>
+</div>
+{% endblock content %}
