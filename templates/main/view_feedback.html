@@ -154,7 +154,7 @@ Manage Help
                     {% for c in comments %}
                         {% if 'regalix' in c.comment_by.email %}
                             <div class="feedback-comment regalix">
-                                <p>{{c.comment}}</p>
+                                <p>{{c.comment|linebreaks}}</p>
                                 
                                  {% if c.feedback_status == 'RESOLVED' %}
                                     <p></p>
