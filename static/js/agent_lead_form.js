@@ -199,17 +199,9 @@ function setLocations(newLocations){
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
 
-                    // BID ID
-                    bidElem = document.getElementById('rbid' + i);
-                    if($(bidElem).is(":visible")){
-                      validateFiled(bidElem);  
-                    }
-
-                    // URL Budget
-                    budgetElem = document.getElementById('rbudget' + i);
-                    if($(budgetElem).is(":visible")){
-                      validateFiled(budgetElem);  
-                    }
+                    validateDynamicFields($('#is_campaign_created'+i))
+                    validateDynamicFields($('#product_expectations'+i))
+                    validateDynamicFields($('#campaign_implemented'+i))
 
                     analyticsCodeElem = document.getElementById('analytics_code' + i);
                     if($(analyticsCodeElem).is(":visible")){
@@ -358,19 +350,11 @@ function setLocations(newLocations){
                     // URL Validation
                     urlElem = document.getElementById('url' + i);
                     validateFiled(urlElem);
+
+                     validateDynamicFields($('#is_campaign_created'+i))
+                     validateDynamicFields($('#product_expectations'+i))
+                     validateDynamicFields($('#campaign_implemented'+i))
                     
-                    // BID ID
-                    bidElem = document.getElementById('rbid' + i);
-                    if($(bidElem).is(":visible")){
-                      validateFiled(bidElem);  
-                    }
-
-                    // URL Budget
-                    budgetElem = document.getElementById('rbudget' + i);
-                    if($(budgetElem).is(":visible")){
-                      validateFiled(budgetElem);  
-                    }
-
                     // Analytics 
                     analyticsCodeElem = document.getElementById('analytics_code' + i);
                     if($(analyticsCodeElem).is(":visible")){
@@ -510,17 +494,9 @@ function setLocations(newLocations){
                    /* commentElem = document.getElementById('comment' + i);
                     validateFiled(commentElem);*/
 
-                    // BID ID
-                    bidElem = document.getElementById('rbid' + i);
-                    if($(bidElem).is(":visible")){
-                      validateFiled(bidElem);  
-                    }
-
-                    // URL Budget
-                    budgetElem = document.getElementById('rbudget' + i);
-                    if($(budgetElem).is(":visible")){
-                      validateFiled(budgetElem);  
-                    }
+                    validateDynamicFields($('#is_campaign_created'+i))
+                    validateDynamicFields($('#product_expectations'+i))
+                    validateDynamicFields($('#campaign_implemented'+i))
 
                     // Analytics 
                     analyticsCodeElem = document.getElementById('analytics_code' + i);
@@ -603,13 +579,9 @@ function setLocations(newLocations){
                         urlElem = document.getElementById('url' + i);
                         validateFiled(urlElem);
 
-                        // URL Validation
-                        bidElem = document.getElementById('rbid' + i);
-                        validateFiled(bidElem);
-
-                        // URL Validation
-                        budgetElem = document.getElementById('rbudget' + i);
-                        validateFiled(budgetElem);
+                        validateDynamicFields($('#is_campaign_created'+i))
+                        validateDynamicFields($('#product_expectations'+i))
+                        validateDynamicFields($('#campaign_implemented'+i))
 
                         // URL Validation
                         modifierElem = document.getElementById('rbidmodifier' + i);
@@ -939,3 +911,18 @@ $(document).on('change', '.end-customer-same, .agency-same', function() {
       }
     }
 });
+
+function validateDynamicFields(elemId){
+  if (elemId.is(':visible')){
+    if (elemId.is(':checked')){
+      //do nothing
+    } 
+    else {
+       window.failedFields.push(elemId);
+       window.is_error = true;
+       elemId.parent().addClass('error-box');
+       return false;
+    }
+  }
+
+}
