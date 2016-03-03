@@ -1850,17 +1850,17 @@ def export_feedback(request):
             except ObjectDoesNotExist:
                 feedback_dict['Google Account Manager'] = ''
 
-            if feedback.sf_lead_id:
-                program_name = Leads.objects.get(sf_lead_id=feedback.sf_lead_id)
-                feedback_dict['Program'] = program_name.team
+            if feedback.code_type and feedback.program:
+                feedback_dict['Code Type'] = feedback.code_type
+                feedback_dict['Program'] = feedback.program.team_name
             else:
-                feedback_dict['Program'] = ""
-
-            if feedback.sf_lead_id:
-                program_name = Leads.objects.get(sf_lead_id=feedback.sf_lead_id)
-                feedback_dict['Code Type'] = program_name.type_1
-            else:
-                feedback_dict['Code Type'] = ""
+                if feedback.sf_lead_id:
+                    program_name = Leads.objects.get(sf_lead_id=feedback.sf_lead_id)
+                    feedback_dict['Program'] = program_name.team
+                    feedback_dict['Code Type'] = program_name.type_1
+                else:
+                    feedback_dict['Program'] = ""
+                    feedback_dict['Code Type'] = ""
 
             feedback_dict['Created Date'] = datetime.strftime(feedback.created_date, '%m/%d/%Y')
             feedback_dict['Resolved By'] = feedback.resolved_by.username if feedback.resolved_by  else ''
