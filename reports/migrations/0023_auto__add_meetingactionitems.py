@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table(u'reports_meetingactionitems', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('meeting_minutes', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['reports.MeetingMinutes'])),
-            ('action_items', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
+            ('action_items', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('owners', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
             ('target_date', self.gf('django.db.models.fields.DateField')(blank=True)),
             ('status', self.gf('django.db.models.fields.CharField')(default='Open', max_length=255, null=True, blank=True)),
@@ -206,7 +206,7 @@ class Migration(SchemaMigration):
         u'reports.leadsreport': {
             'Meta': {'object_name': 'LeadsReport'},
             'code_type': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 2, 29, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 3, 3, 0, 0)'}),
             'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'date_of_installation': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'google_rep_email': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
@@ -222,7 +222,7 @@ class Migration(SchemaMigration):
             'region': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'sf_lead_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'tat': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 2, 29, 0, 0)', 'auto_now': 'True', 'blank': 'True'})
+            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 3, 3, 0, 0)', 'auto_now': 'True', 'blank': 'True'})
         },
         u'reports.leadsummaryreports': {
             'Meta': {'object_name': 'LeadSummaryReports'},
@@ -242,7 +242,7 @@ class Migration(SchemaMigration):
         },
         u'reports.meetingactionitems': {
             'Meta': {'object_name': 'MeetingActionItems'},
-            'action_items': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'action_items': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'closed_by': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'created_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
