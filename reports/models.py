@@ -311,7 +311,7 @@ class KickOffProgram(models.Model):
 
 class MeetingActionItems(models.Model):
     meeting_minutes = models.ForeignKey(MeetingMinutes)
-    action_items = models.CharField(max_length=500, null=True, blank=True)
+    action_items = models.TextField(null=True, blank=True)
     owners = models.CharField(max_length=255, null=True, blank=True)
     target_date = models.DateField(blank=True)
     status = models.CharField(max_length=255, blank=True, null=True, default='Open')
