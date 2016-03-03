@@ -159,7 +159,7 @@ def get_deleted_leads():
         #     logging.info("%s" % (e))
 
 
-@kronos.register('0 */2 * * *')
+@kronos.register('0 */1 * * *')
 def implemented_leads_count_report():
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
@@ -173,11 +173,11 @@ def implemented_leads_count_report():
         each_region_tag = {region.name: 0}
         each_region_shopping = {region.name: 0}
         location_list = [loc.location_name for loc in region.location.all()]
-        leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
         each_region_tag[region.name] = leads_count_tag
         total_count_tag.append(each_region_tag)
         final_dict['TAG'] = total_count_tag
-        leads_count_shopping = Leads.objects.filter(type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_shopping = Leads.objects.filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
@@ -192,7 +192,7 @@ def implemented_leads_count_report():
         })
     )
     mail_from = 'basavaraju@regalix-inc.com'
-    mail_to = ['basavaraju@regalix-inc.com', 'asantosh@regalix-inc.com', 'g-crew@regalix-inc.com']
+    mail_to = ['g-crew@regalix-inc.com', 'portalsupport@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -670,9 +670,10 @@ def create_or_update_picasso_leads(records, sf):
 
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
-        date_of_installation = rec.get('Date_of_installation__c')
-        date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
-        lead.date_of_installation = date_of_installation
+        date_of_installation = rec.get('Delivery_Date__c')
+        if date_of_installation:
+            date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
+            lead.date_of_installation = date_of_installation
 
         # estimated TAT for Lead
         estimated_tat = rec.get('Picasso_TAT__c')
@@ -781,7 +782,7 @@ def update_leads_reports(lead):
         report_lead = LeadsReport()
 
     report_lead.google_rep_name = lead.google_rep_name
-    report_lead.google_rep_email = lead.google_rep_name
+    report_lead.google_rep_email = lead.google_rep_email
     report_lead.lead_owner_name = lead.lead_owner_name
     report_lead.lead_owner_email = lead.lead_owner_email
     report_lead.customer_id = lead.customer_id

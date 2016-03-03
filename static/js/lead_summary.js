@@ -180,18 +180,17 @@ $('#SubmitFeedback').click(function(){
     var feedbackType = $('#feedbackType').val();
     var comments = $('#comments').val();
     if (feedbackTitle === '' ){
-      $("#preloaderOverlay").hide();
+      $(".lead-summary-feedback").hide();
       $('#feedbackTitle').addClass('error-box');
-    }else if(feedbackType === 'Feedback Type'){
-      $("#preloaderOverlay").hide();
+    }else if(feedbackType === ''){
+      $(".lead-summary-feedback").hide();
       $('#feedbackType').addClass('error-box');
     }else if(comments === ''){
-      $("#preloaderOverlay").hide();
+      $(".lead-summary-feedback").hide();
       $('#comments').addClass('error-box');
     }else{
-      $('#closeFeedbcak').trigger('click');
       dataString = {'title': feedbackTitle, 'type': feedbackType, 'comment': comments, 'lead_id': window.lead_id}
-      $('#preloaderOverlay').show();
+      $('.lead-summary-feedback').show();
       $.ajax({
           url: "/main/create-feedback-from-lead-status",
           data: dataString,
@@ -199,9 +198,8 @@ $('#SubmitFeedback').click(function(){
           dataType: "json",
           success: function(data) {
             if(data === 'SUCCESS'){
-              $('#preloaderOverlay').hide();
-              alert('feedback succesfully created ')
-              $("#preloaderOverlay").hide();
+              $('.lead-summary-feedback').hide();
+              alert('Feedback Succesfully Created ');
               $('#closeFeedbcak').trigger('click');
               $('#feedbackTitle').val('');
               $('#feedbackType').prop('selectedIndex', 0);
@@ -210,7 +208,7 @@ $('#SubmitFeedback').click(function(){
           },
           error: function(jqXHR, textStatus, errorThrown) {
               alert('failure');
-              $("#preloaderOverlay").hide();
+              $(".lead-summary-feedback").hide();
           }
         }); 
     }

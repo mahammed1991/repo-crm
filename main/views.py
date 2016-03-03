@@ -147,16 +147,16 @@ def main_home(request):
                                'implemented_leads': implemented_leads + rr_implemented_leads,
                                'total_win': ReportService.get_conversion_ratio(implemented_leads, total_leads)})
 
-        total_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Troubleshooting', 'Google Shopping Migration',
+        total_tag_leads = Leads.objects.exclude(type_1__in=['Existing Datafeed Optimization', 'Google Shopping Migration',
                                                             'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
                                                                                                         created_date__lte=end_date).count()
 
-        rr_implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Troubleshooting', 'Google Shopping Migration', 'Google Shopping Setup', '', 'WPP'],
+        rr_implemented_tag_leads = Leads.objects.exclude(type_1__in=['Existing Datafeed Optimization', 'Google Shopping Migration', 'Google Shopping Setup', '', 'WPP'],
                                                          lead_sub_status='RR - Inactive').filter(created_date__gte=start_date,
                                                                                                  created_date__lte=end_date,
                                                                                                  lead_status__in=['Rework Required']).count()
 
-        implemented_tag_leads = Leads.objects.exclude(type_1__in=['Google Shopping Troubleshooting', 'Google Shopping Migration',
+        implemented_tag_leads = Leads.objects.exclude(type_1__in=['Existing Datafeed Optimization', 'Google Shopping Migration',
                                                                   'Google Shopping Setup', '', 'WPP']).filter(created_date__gte=start_date,
                                                                                                               created_date__lte=end_date,
                                                                                                               lead_status__in=settings.LEAD_STATUS_DICT['Implemented']).count()
@@ -1522,10 +1522,10 @@ def upload_file_handling(request):
 
 #             # survey date in ist and date_of_installation in pst but month and year will be the same
 #             if process == 'TAG':
-#                 csat_lead = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']).filter(customer_id=cid, date_of_installation__month=survey_date.month, date_of_installation__year=survey_date.year)
+#                 csat_lead = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(customer_id=cid, date_of_installation__month=survey_date.month, date_of_installation__year=survey_date.year)
 #             elif process == 'SHOPPING':
 #                 csat_lead = Leads.objects.filter(customer_id=cid, date_of_installation__month=survey_date.month,
-#                                                  date_of_installation__year=survey_date.year, type_1__in=['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration'])
+#                                                  date_of_installation__year=survey_date.year, type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration'])
 
 #             if csat_lead:
 #                 if len(csat_lead) == 1:
@@ -1600,7 +1600,7 @@ def find_leads(cid, process, survey_date):
     if process == 'TAG':
         query['customer_id'] = cid
         query['date_of_installation'] = survey_date
-        shopping_code_types = ['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']
+        shopping_code_types = ['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']
         day_leads = Leads.objects.exclude(type_1__in=shopping_code_types).filter(**query)
 
         if not day_leads:
@@ -1633,7 +1633,7 @@ def find_leads(cid, process, survey_date):
         else:
             lead = map_leads(day_leads)
     else:
-        query['type_1__in'] = ['Google Shopping Setup', 'Google Shopping Troubleshooting', 'Google Shopping Migration']
+        query['type_1__in'] = ['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']
         query['customer_id'] = cid
         query['date_of_installation'] = survey_date
         day_leads = Leads.objects.filter(**query)

@@ -15,6 +15,12 @@ function validatethis() {
     subjectElem = document.getElementById('subject');
     validateFiled(subjectElem);
 
+    subjectOtherelems = ['Ad-hoc', 'New Product Launch', 'New Program Launch', 'Others']
+    if(subjectOtherelems.indexOf($(subjectElem).val()) != -1){
+      otherSubjectElem = document.getElementById('others');
+      validateFiled(otherSubjectElem);
+    }
+
     meetingDateElem = document.getElementById('meeting_date');
     validateFiled(meetingDateElem);
   
@@ -39,6 +45,11 @@ function validatethis() {
     programElem = document.getElementById('program');
     validateFiled(programElem);
 
+    if($(programElem).val() == 'TAG Team'){
+      programTypeElem = document.getElementById('program_type');
+      validateFiled(programTypeElem);
+    }
+
     attendeesElem = document.getElementById('attendees');
     validateFiled(attendeesElem);
 
@@ -47,7 +58,6 @@ function validatethis() {
       window.is_error = true;
     }else{
       $('.meeting_audience').removeClass('error-box');
-      window.is_error = false;
     }
 
     for( i=1; i <= $(".key-points").length; i++){
@@ -247,9 +257,9 @@ $('#preview_btn').click(function(){
     var actual_agenda_length = tentative_agenda.length;
 
     if($('#agenda_text_1').val() == ''){
-      $('.preview_last').hide();
+      $('.preview-next-meeting-row-tenantive').hide();
     }else{
-      $('.preview_last').show();
+      $('.preview-next-meeting-row-tenantive').show();
     }
 
     for(var j=1;j<=(actual_agenda_length);j++)
@@ -263,6 +273,11 @@ $('#preview_btn').click(function(){
 
 
     $('#preview_next_meeting_date').val($('#next_meeting_date').val());
+    if($('#preview_next_meeting_date').val() == ''){
+      $('.preview_last').hide();
+    }else{
+      $('.preview_last').show();
+    }
 
     $('#preview_next_meeting_time').val($('#next_meeting_time').val());
 
