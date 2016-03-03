@@ -79,7 +79,7 @@ Action Items Meeting Minutes
         </div>
       </div>
       <div class="container-fluid" id="display_all_meeting_minutes" style="display:none">
-        <table class="table" style="margin-top: 44px;margin-bottom: 35px;margin-left: -120px;">
+        <table class="table" style="margin-top: 44px;margin-bottom: 35px;margin-left: -187px;">
           <thead>
              <tr>
                <th class="headlinks-default" style="min-width:100px;height:48px;">Meeting Date</th>
@@ -88,8 +88,10 @@ Action Items Meeting Minutes
                <th class="headlinks-default" style="min-width:200px;">Owner</th>
                <th class="headlinks-default" id="td_date" style="min-width:100px;">Deadline</th>
                <th class="headlinks-default" style="min-width:100px;">Status</th>
-               <th class="headlinks-default" style="min-width:100px;">Action</th>
-               <th class="headlinks-default" style="min-width:110px;">Actioned by</th>
+               <th class="headlinks-default" style="min-width:100px;">Closed By</th>
+               <th class="headlinks-default" style="min-width:110px;">Reopened By</th>
+               <th class="headlinks-default" style="min-width:110px;">Resolved By</th>
+               <th class="headlinks-default" style="min-width:110px;">Action</th>
              </tr>
           </thead>
           <tbody class="display_all_meeting_minutes" >
@@ -137,69 +139,27 @@ Action Items Meeting Minutes
     $('.display_all_meeting_minutes').html('');
     row = ''
     for(var i=0; i<all_meeting_records.length;i++){
-    var count = 0;
-    var action_item = [];
-    var owners = [];
-    var target_date = [];
-      for (var j in all_meeting_records[i]['action_plan_dict']) {
-         if (all_meeting_records[i]['action_plan_dict'].hasOwnProperty(j)) 
-          {
-            count++;
-          }
-      }
-      if(count > 3){
-        for(var j = 1;j<16;j++){
-          if(all_meeting_records[i]['action_plan_dict']['action_item_'+j]){
-            action_item.push(all_meeting_records[i]['action_plan_dict']['action_item_'+j])
-          }
-          if(all_meeting_records[i]['action_plan_dict']['owner_'+j]){
-            owners.push(all_meeting_records[i]['action_plan_dict']['owner_'+j])
-          }
-          if(all_meeting_records[i]['action_plan_dict']['action_date_'+j]){
-            target_date.push(all_meeting_records[i]['action_plan_dict']['action_date_'+j])
-          }
-        }
-      }
-      action_item = action_item.join('`');
-      owners = owners.join('`');
-      target_date = target_date.join('`');
-      if(count == 3){
         row += '<tr>'+
              '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
              '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['action_item_1']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['owner_1']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['action_plan_dict']['action_date_1']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>'
-               if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
-                row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="open">Open</input></td>'
-               }else{
-                row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" name="status" style="text-align:center;margin-right:5px;" value="close">Close</input></td>'
-               }
-              row_end_status = '<td class="links-default">'+all_meeting_records[i]['status_changed_by']+'</td>'
-             '</tr>'
-             row += row_end
-             row += row_end_status
-      }else{
-
-      row += '<tr>'+
-             '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
-             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
-             '<td class="links-default">'+action_item.toString().split('`').join("<br /><hr>")+'</td>' +
-             '<td class="links-default">'+owners.toString().split('`').join("<br /><hr>")+'</td>' +
-             '<td class="links-default" id="td_date">'+target_date.toString().split('`').join("<br /><hr>")+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['meeting_minutes_status']+'</td>'
-
-               if(all_meeting_records[i]['meeting_minutes_status'] == 'close'){
-                row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="open">Open</input></td>'
-               }else{
-                row_end = '<td class="links-default"><input class='+all_meeting_records[i]['reference_num']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="close">Close</input></td>'
-               }
-              row_end_status = '<td class="links-default">'+all_meeting_records[i]['status_changed_by']+'</td>'
-             '</tr>'
-             row += row_end
-             row += row_end_status
-      }
+             '<td class="links-default">'+all_meeting_records[i]['Action Items']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Owners']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Target Date']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Status']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Closed By']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Reopened By']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Resolved By']+'</td>'
+             if(all_meeting_records[i]['Status'] == 'Open'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="Close">Close</input></td>'
+              }else if(all_meeting_records[i]['Status'] == 'Close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Reopened">Reopen</input></td>' 
+             }else if(all_meeting_records[i]['Status'] == 'Reopened'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Resolved">Resolve</input></td>'
+             }else{
+              row_end = '<td class="links-default">Finished</td>'
+             }
+              '</tr>'
+            row += row_end
     }
     $('.display_all_meeting_minutes').append(row);
 

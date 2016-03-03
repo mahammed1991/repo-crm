@@ -307,3 +307,17 @@ class KickOffProgram(models.Model):
 
     class Meta:
         verbose_name_plural = "Kick Off Program"
+
+
+class MeetingActionItems(models.Model):
+    meeting_minutes = models.ForeignKey(MeetingMinutes)
+    action_items = models.CharField(max_length=500, null=True, blank=True)
+    owners = models.CharField(max_length=255, null=True, blank=True)
+    target_date = models.DateField(blank=True)
+    status = models.CharField(max_length=255, blank=True, null=True, default='Open')
+    closed_by = models.CharField(max_length=255, null=True, blank=True)
+    reopened_by = models.CharField(max_length=255, null=True, blank=True)
+    resolved_by = models.CharField(max_length=255, null=True, blank=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

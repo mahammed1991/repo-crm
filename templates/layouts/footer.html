@@ -22,7 +22,7 @@
                 <form method='POST' enctype="multipart/form-data" id="portalFeedback">
                     {% csrf_token %}
                    <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
-                     <select class="form-control" id="bugfeedbackType" name="type">
+                     <select class="form-control bgicon" id="bugfeedbackType" name="type">
                         <option value="Feedback Type">Bug Found</option>
                         <option value="UI / Design Related"> UI / Design Related</option>
                         <option value="Not Able to Submit Lead"> Not able to submit lead</option>

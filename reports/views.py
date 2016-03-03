@@ -10,7 +10,7 @@ from django.conf import settings
 from reports.models import LeadSummaryReports, KickOffProgram
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
-from reports.models import Region, CallLogAccountManager, MeetingMinutes
+from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count
@@ -1273,6 +1273,15 @@ def meeting_minutes(request):
         meeting_minutes.ref_uuid = unique_id
         meeting_minutes.save()
 
+        for i in range(1, int(total_actionplan_count) + 1):
+            meeting_action_items = MeetingActionItems()
+            meeting_action_items.meeting_minutes = meeting_minutes
+            meeting_action_items.action_items = request.POST['action_item_' + str(i)]
+            meeting_action_items.owners = request.POST['owner_' + str(i)]
+            target_date = request.POST['action_date_' + str(i)]
+            meeting_action_items.target_date = datetime.strptime(target_date, '%d.%m.%Y')
+            meeting_action_items.save()
+
         mail_list = list()
         attendees_list_for_email_template = list()
         for attendee in attendees_list:
@@ -1585,46 +1594,61 @@ def export_action_items(request):
             attendees_list = list()
             attendees_email_list= list()
             bcc_list = list()
-            update_status = MeetingMinutes.objects.get(ref_uuid=request.POST.get('reference_id'))
-            update_status.meeting_status = request.POST.get('status')
-            update_status.status_changed_by = request.user.get_full_name()
+            update_status = MeetingActionItems.objects.get(id=request.POST.get('reference_id'))
+            update_status.status = request.POST.get('status')
+            if request.POST.get('status') == 'Close':
+                update_status.closed_by = request.user.get_full_name()
+            elif request.POST.get('status') == 'Reopened':
+                update_status.reopened_by = request.user.get_full_name()
+            else:
+                update_status.resolved_by = request.user.get_full_name()
             update_status.save()
-            attendees = update_status.attendees.values('email')
-            bcc = update_status.bcc.values('email')
+            attendees = update_status.meeting_minutes.attendees.values('email')
+            bcc = update_status.meeting_minutes.bcc.values('email')
             for attendee in attendees:
                 attendees_list.append(str(attendee['email']))
             attendees_email_list = ' ,  '.join(attendees_list)
 
-            attendees_list.append(str(update_status.google_poc))
-            attendees_list.append(str(update_status.regalix_poc))
+            attendees_list.append(str(update_status.meeting_minutes.google_poc))
+            attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
+            if request.POST.get('status') == 'Close':
+                status_changed_by = update_status.closed_by
+            elif request.POST.get('status') == 'Reopened':
+                status_changed_by = update_status.reopened_by
+            else:
+                status_changed_by = update_status.resolved_by
+
 
             for each_bcc in bcc:
                 bcc_list.append(str(each_bcc['email']))
             bcc_email_list = ' ,  '.join(bcc_list)
-            mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (update_status.program, update_status.program_type, update_status.subject_timeline, update_status.other_subject, update_status.meeting_time_in_ist.date())
+            mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (update_status.meeting_minutes.program, update_status.meeting_minutes.program_type, update_status.meeting_minutes.subject_timeline, update_status.meeting_minutes.other_subject, update_status.meeting_minutes.meeting_time_in_ist.date())
             mail_body = get_template('reports/email_templates/minute_meeting_status.html').render(
             Context({
-                'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.ref_uuid),
-                'subject_timeline': update_status.subject_timeline,
-                'meeting_date': update_status.meeting_time_in_ist.date(),
-                'meeting_time': update_status.meeting_time_in_ist.time(),
-                'google_poc': update_status.google_poc,
-                'regalix_poc': update_status.regalix_poc,
-                'google_team': update_status.google_team,
+                'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.meeting_minutes.ref_uuid),
+                'subject_timeline': update_status.meeting_minutes.subject_timeline,
+                'meeting_date': update_status.meeting_minutes.meeting_time_in_ist.date(),
+                'meeting_time': update_status.meeting_minutes.meeting_time_in_ist.time(),
+                'google_poc': update_status.meeting_minutes.google_poc,
+                'regalix_poc': update_status.meeting_minutes.regalix_poc,
+                'google_team': update_status.meeting_minutes.google_team,
                 'attendees': attendees_email_list,
-                'region': update_status.region,
-                'status': update_status.meeting_status,
-                'status_changed_by': update_status.status_changed_by,
-                'location': update_status.location,
-                'internal_meeting': update_status.meeting_audience,
-                'program': update_status.program,
-                'program_type': update_status.program_type,
-                'other_subject': update_status.other_subject,
+                'region': update_status.meeting_minutes.region,
+                'status': update_status.status,
+                'action_item': update_status.action_items,
+                'owner': update_status.owners,
+                'target_date': update_status.target_date,
+                'status_changed_by': status_changed_by,
+                'location': update_status.meeting_minutes.location,
+                'internal_meeting': update_status.meeting_minutes.meeting_audience,
+                'program': update_status.meeting_minutes.program,
+                'program_type': update_status.meeting_minutes.program_type,
+                'other_subject': update_status.meeting_minutes.other_subject,
                 })
             )
-            if update_status.program == 'TAG Team':
+            if update_status.meeting_minutes.program == 'TAG Team':
                 mail_from = 'Google Implementation Team'
-            elif update_status.program == 'WPP':
+            elif update_status.meeting_minutes.program == 'WPP':
                 mail_from = 'PICASSO Build Team'
             else:
                 mail_from = 'PICASSO Team'
@@ -1635,32 +1659,69 @@ def export_action_items(request):
 
         if program != 'all':
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
-                                                            program=program)
+                                                            program=program).values_list('id', flat=True)
         else:
-            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
-
+            meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to)).values_list('id', flat=True)
+                
+        meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes)
         all_records_list = list()
-        for each_meeting_minutes in meeting_minutes:
+        for action_items in meeting_action_items:
             each_record_dict = dict()
-            meeting_date = each_meeting_minutes.meeting_time_in_ist.date()
+            meeting_date = action_items.meeting_minutes.meeting_time_in_ist.date()
+            each_record_dict['Action Item Id'] = action_items.id
             each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-            each_record_dict['Subject Timeline'] = each_meeting_minutes.program + ' ' + each_meeting_minutes.program_type + ' ' + each_meeting_minutes.subject_timeline + ' ' + each_meeting_minutes.other_subject
-            key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 
-                                                           'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4', 
-                                                           'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 
-                                                           'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 
-                                                           'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 
-                                                           'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 
-                                                           'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 
-                                                           'action_item_15', 'owner_15', 'action_date_15',])}
-            each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_meeting_minutes.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
-            each_record_dict['reference_num'] = each_meeting_minutes.ref_uuid
-            each_record_dict['meeting_minutes_status'] = each_meeting_minutes.meeting_status
-            if each_meeting_minutes.status_changed_by:
-                each_record_dict['status_changed_by'] = each_meeting_minutes.status_changed_by
+            each_record_dict['Subject Timeline'] = action_items.meeting_minutes.program + ' ' + action_items.meeting_minutes.program_type + ' ' + action_items.meeting_minutes.subject_timeline + ' ' + action_items.meeting_minutes.other_subject
+            each_record_dict['Action Items'] = action_items.action_items
+            each_record_dict['Owners'] = action_items.owners
+            target_date = action_items.target_date
+            each_record_dict['Target Date'] = datetime.strftime(target_date, '%m/%d/%Y')
+            each_record_dict['Status'] = action_items.status
+
+            if action_items.closed_by:
+                each_record_dict['Closed By'] = action_items.closed_by
             else:
-                each_record_dict['status_changed_by'] = '-'
+                each_record_dict['Closed By'] = '-'
+
+            if action_items.reopened_by:
+                each_record_dict['Reopened By'] = action_items.reopened_by
+            else:
+                each_record_dict['Reopened By'] = '-'
+
+            if action_items.resolved_by:
+                each_record_dict['Resolved By'] = action_items.resolved_by
+            else:
+                each_record_dict['Resolved By'] = '-'
             all_records_list.append(each_record_dict)
+
+        # if program != 'all':
+        #     meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
+        #                                                     program=program)
+        # else:
+        #     meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
+
+        # all_records_list = list()
+        # for each_meeting_minutes in meeting_minutes:
+        #     each_record_dict = dict()
+        #     meeting_date = each_meeting_minutes.meeting_time_in_ist.date()
+        #     each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
+        #     each_record_dict['Subject Timeline'] = each_meeting_minutes.program + ' ' + each_meeting_minutes.program_type + ' ' + each_meeting_minutes.subject_timeline + ' ' + each_meeting_minutes.other_subject
+        #     key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 
+        #                                                    'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4', 
+        #                                                    'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 
+        #                                                    'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 
+        #                                                    'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 
+        #                                                    'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 
+        #                                                    'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 
+        #                                                    'action_item_15', 'owner_15', 'action_date_15',])}
+        #     each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_meeting_minutes.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
+        #     each_record_dict['reference_num'] = each_meeting_minutes.ref_uuid
+        #     each_record_dict['meeting_minutes_status'] = each_meeting_minutes.meeting_status
+        #     if each_meeting_minutes.status_changed_by:
+        #         each_record_dict['status_changed_by'] = each_meeting_minutes.status_changed_by
+        #     else:
+        #         each_record_dict['status_changed_by'] = '-'
+        #     all_records_list.append(each_record_dict)
+        print all_records_list
         return render(request, 'reports/export_action_items.html', {'all_records_list': json.dumps(all_records_list), 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
     meetings_date_from = ''
     meetings_date_to = ''
@@ -1807,12 +1868,14 @@ def program_kick_off(request):
         get_regions = Region.objects.filter(name__in=regions_multiselect).values_list('id', flat=True)
         kickoffprogram.region.add(*get_regions)
 
+        google_poc_list = list()
         google_poc = request.POST.get('google_poc').replace(', ', ',')
         google_poc_list = google_poc.split(',')
         google_poc_list.pop(-1)
         get_google_poc_list = User.objects.filter(email__in=google_poc_list).values_list('id', flat=True)
         kickoffprogram.google_poc.add(*get_google_poc_list)
 
+        google_poc_email_list = list()
         google_poc_email = request.POST.get('google_poc_email').replace(', ', ',')
         google_poc_email_list = google_poc_email.split(',')
         google_poc_email_list.pop(-1)
