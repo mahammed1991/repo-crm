@@ -13,18 +13,14 @@
   .tooltip-wrapper {
     display: inline-block;
 }
-
 body {
     margin-top: 50px;
 }
-
 </style>
 {% block content %}
 <section class="content-region inner-page">
 
-<form method="POST" name="kick_off_program" onsubmit="" enctype="multipart/form-data">
-<!-- <input type="hidden" name="count_of_success_matrix" value="">
-<input type="hidden" name="count_url_file_name" value=""> -->
+<form method="" name="kick_off_program" onsubmit="" enctype="multipart/form-data">
   {% csrf_token %}
       <div class="container-fluid custom-container-fluid">
             <h1>TagTeam - Program Kick-off {{get_kickoff_record.program_name}}</h1>
@@ -35,49 +31,27 @@ body {
                       <label for="">Program Name:</label>
                     </div>
                    <div class="col-md-4">
-                     <input type="text" {% if get_kickoff_record.program_name %} 
-                      value={{get_kickoff_record.program_name}} class="form-control" 
-                       {% endif %}
-                        name="program_name" id="program_name" disabled/>
+                      {% if get_kickoff_record.program_name %}
+                      <textarea style="height:51px;" class="form-control" disabled>{{get_kickoff_record.program_name}}</textarea>
+                      {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Google PoC:</label>
                     </div>
                    <div class="col-md-4">
-                      <input  type="text" {% if googlepoc_list %} value={{googlepoc_list}}
-                       {% endif %} disabled class="form-control" name="google_poc" id="google_poc">
+                       {% if googlepoc_list %}
+                       <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{googlepoc_list}}</textarea>
+                       {% endif %}
+
                     </div>
               </div>
+
               <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Market(s)/Region(s): </label>
+                <div class="col-md-2">
+                      <label for="">Market(s)/Region(s)</br>to be served: </label>
                     </div>
                     <div class="col-md-4">
                      <input type="text" {% if region_list %} value={{region_list}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
-                    </div>
-                    <div class="col-md-2 display-inline">
-                      <label for="">Google PoC Email:</label>
-                    </div>
-                    <div class="col-md-4">
-                      <input type="text" {% if google_poc_email_list %} value={{google_poc_email_list}} {% endif %} class="form-control" id="google_poc_email" name="google_poc_email" disabled>
-                    </div>
-              </div>
-              <!-- hide  dodetype and region and region selected location  elements to send datatbase -->
-              <!--  <div class="col-md-2 box2 bb hideItems">
-                    <select id="regionTypeList" name="regionTypeList" multiple="multiple">                        
-                    </select>
-                    <select class="removelocation" id="locationTypeList" name="locationTypeList" multiple="multiple">                        
-                    </select>
-                    <select id="codeTypeList" name="codeTypeList" multiple="multiple">                        
-                    </select>
-                </div> -->
-              <!-- End of hide dodetype region and region selected location elements to send datatbase -->
-              <div class="row">
-                    <div class="col-md-2">
-                      <label for="">Target Locations: </label>
-                    </div>
-                    <div class="col-md-4 target-locations-main">
-                          <input type="text" {% if target_location_list %} value={{target_location_list}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Google PoC Location:</label>
@@ -89,30 +63,33 @@ body {
 
               <div class="row">
                     <div class="col-md-2">
-                      <label  for="">Advertiser Type:</label>  
+                      <label for="">Location(s) </br>to be served: </label>
                     </div>
-                    <div class="col-md-4">
-                         <input type="text" {% if get_kickoff_record.advertiser_type %} value={{get_kickoff_record.advertiser_type}} {% endif %} class="form-control" name="program_name" id="program_name" disabled/>
+                    <div class="col-md-4 target-locations-main">
+                         {% if target_location_list %}
+                         <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{target_location_list}}
+                         </textarea>
+                         {% endif %}
                     </div>
-                     <div class="col-md-2 display-inline">
-                      <label for="">Program Start Date:</label>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Program Start </br>Date:</label>
                     </div>
                     <div class="col-md-4">
                       <input type="text"{% if start_date_converted %} value={{start_date_converted}} 
                       {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
-
-              <div class="row">
-                    <div class="col-md-2 set-text-align-light" >
-                         <label for="">Support Required with Code Types?: </label>
+              <div class="row" >
+                    <div class="col-md-2">
+                      <label  for="">Support Required with Programs?</label>  
                     </div>
-                     <div class="col-md-4">  
-                        <input type="text" {% if final_type_codelist %}
-                          value={{final_type_codelist}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                    <div class="col-md-4">
+                         {% if get_kickoff_record.advertiser_type %} 
+                         <textarea class="form-control" disabled style="height:51px;overflow:hidden">{{get_kickoff_record.advertiser_type}}</textarea>
+                         {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
-                      <label for="">Program End Date:  </label>
+                      <label for="">Program End </br>Date:  </label>
                     </div>
                     <div class="col-md-4">
                        <input type="text"{% if end_date_converted %} value={{end_date_converted}} 
@@ -120,6 +97,26 @@ body {
                     </div>
               </div>
 
+              <div class="row">
+                    <div class="col-md-2 set-text-align-light" >
+                         <label for="">Support Required with Task Types?: </label>
+                    </div>
+                     <div class="col-md-4">  
+                          {% if final_type_codelist %}
+                         <textarea class="form-control" disabled 
+                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;">{{final_type_codelist}}</textarea>
+                         {% endif %}
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Google PoC Email:</label>
+                    </div>
+                    <div class="col-md-4">
+                      {% if google_poc_email_list %}
+                       <textarea style="height:51px;overflow:hidden;padding-top:5px;" class="form-control" disabled>{{google_poc_email_list}}
+                       </textarea>
+                       {% endif %}
+                    </div>
+              </div>
               <div class="">
                   <div class="row">
                         <div class="col-md-2 ">
@@ -145,8 +142,7 @@ body {
                 </div>
                  <div class="col-md-10 program_over">
                  {% if get_kickoff_record.program_overview_objective %}
-                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
-                  {{get_kickoff_record.program_overview_objective}}</textarea>
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>{{get_kickoff_record.program_overview_objective}}</textarea>
                   {% endif %}
                 </div>
               </div>
@@ -239,7 +235,7 @@ body {
                        
                         {% if type_live %} 
                          <div class="col-md-2 real-chat" style="padding-top:8px;">
-                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat" disabled=""> chat
+                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat" disabled=""> Chat
                         </div>
                         <div class="col-md-2 live-trans" style="padding-top:10px;">
                              <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans" checked disabled=""> Live Transfer 
@@ -249,7 +245,7 @@ body {
                         {% if chat_and_live %}
                          <div class="col-md-2 real-chat" style="padding-top:8px;">
                              <input class="" type='checkbox' id="real_time_chat" name="real_time_chat" 
-                             checked disabled> chat
+                             checked disabled> Chat
                         </div>
                         <div class="col-md-2 live-trans" style="padding-top:10px;">
                              <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans" checked disabled=""> Live Transfer 
@@ -523,7 +519,7 @@ body {
 
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
 <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
-<script src="{% static 'js/reports/kick_off.js' %}"></script> 
+<!-- <script src="{% static 'js/reports/kick_off.js' %}"></script>  -->
 
 <script type="text/javascript">
 /* START  ***kick_off_export_detail succes matrix colom row important javascript****   */
