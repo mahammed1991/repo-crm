@@ -43,7 +43,7 @@
                     <td style="padding:5px;">{{target_date}}</td>
                   </tr>               
                 </table>
-                <br> from the Meeting <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>, is being {{status}} by {{status_changed_by}}.</p> 
+                <br> from the Meeting <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>, is being {{status|lower}} by {{status_changed_by}}.</p> 
 
                 <p>Thanks,<br />
                 {% if 'TAG Team' in program %}
