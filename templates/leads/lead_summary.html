@@ -188,7 +188,7 @@
                       {% else %}
                         <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                       {% endif %}
-                      <td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick='chat({{l.id}})' id="lead_id-{{l.id}}"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick='feedbackBycid({{l.id}})'></i></a></td>
+                      <td ><a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick='feedbackBycid({{l.id}})'></i></a></td>
                       
                     </tr>
                     
@@ -199,12 +199,6 @@
         
         </div>
     </div>
-    <!-- <div id="preloaderOverlay" style='display:none;'>
-        <div class="preloader">
-        <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
-        
-        </div>
-      </div> -->
   </section>
   <!-- content-region ends --> 
 
@@ -212,12 +206,7 @@
   {% block model_popup %}
   <!-- feedback modal -->
         <div class="modal" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <!-- <div id="preloaderOverlay" style='display:none;'>
-            <div class="preloader">
-            <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
-            </div>
-          </div> -->
-          <div class="modal-dialog ping-snippet" id="modal">
+          <div class="modal-dialog ping-snippet" id="modal" style="width:350px;">
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="olarkShow()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
@@ -226,7 +215,7 @@
               <div class="modal-body" id="feedback-body">
                  <input type="text" class="form-control" id="feedbackTitle" placeholder="Feedback Title">
                    <select class="form-control" id="feedbackType">
-                      <option value="Feedback Type">Feedback Type</option>
+                      <option value="">Feedback Type</option>
                       <option value="Incorrect Code Installed / Code Installed Incorrectly">Incorrect Code Installed / Code Installed Incorrectly</option>
                       <option value="Rude / Unprofessional">Rude / Unprofessional</option>
                       <option value="Bad Communication">Bad Communication</option>
@@ -238,10 +227,16 @@
                   </select>
                   <textarea class="form-control" placeholder="Comments" id='comments'></textarea>
                
+                  <div id="preloaderOverlay" class="lead-summary-feedback" style='display:none;margin-left: -15px;'>
+                    <div class="preloader">
+                    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" style="margin-left: 142px;">
+                    <span style="font-style: italic;font-size: 20px;margin-left: -142px;margin-top: 43px;">Please wait....Your feedback is important to us.</span>
+                    </div>
+                  </div>
               </div>
               <div class="modal-footer">
 
-                <div class="btn-group">
+                <div class="btn-group" style="margin-right:50px;">
                     <button class="btn std-btn" id='SubmitFeedback'>Submit</button>
                     <button class="btn std-btn grayed" data-dismiss="modal" id='closeFeedbcak'>Close</button>
                 </div>
@@ -251,24 +246,7 @@
         </div>
         <!-- feedback modal ends -->
       
-      <!-- modal -->
-      <div class="modal" id="pingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog ping-snippet">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="olarkShow()"><i aria-hidden="true" class="fa fa-times-circle"></i></button>
-              <h4 class="modal-title" id="myModalLabel">History</h4>
-            </div>
-            <div class="modal-body" id="chat-body">
-              
-            </div>
-            <div class="modal-footer">
-                <input  type="textarea" class="form-control send-txt" placeholder="Send a messege" id='message' style="margin-bottom:22px;">
-                <button type="button" class="btn send-btn" id='submitmsg'><i class="fa fa-plus"></i></button>
-            </div>
-        </div>
-      </div>
-      <!-- modal ends -->
+      
   {% endblock model_popup %}
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
@@ -313,7 +291,7 @@ if (hour >= 12){
   currentDayTime = weekday[day]+ ', ' + ' ' + hour + ' : ' + min + ' AM'
 }
 
-var myVar=setInterval(function(){chat(window.lead_id)},5000);
+// var myVar=setInterval(function(){chat(window.lead_id)},5000);
 
 function chat(lead_id){
     if(lead_id != 'None'){
@@ -335,6 +313,7 @@ function chat(lead_id){
 function olarkShow(){
   olark('api.box.show');
 }
+
 function setChat(chatmessages){
     $('#chat-body').html('')
     for(i=0; i < chatmessages.length; i +=1){
@@ -560,7 +539,7 @@ function setLeadSummaryTableExtend(leads, start_row, end_row){
       }
       
       status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
-      action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat(' + leads[i].lead_id +') id="lead_id-'+ leads[i].lead_id + '"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid(' + leads[i].lead_id + ')></i></a></td>'
+      action = '<td > <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid(' + leads[i].lead_id + ')></i></a></td>'
       $('#tableBody').append(counter+other+comment+status+action)
     }
     $("#Leads").trigger("update"); 

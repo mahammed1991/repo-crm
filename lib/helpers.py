@@ -741,11 +741,12 @@ def get_tat_for_picasso(source):
     target_details = dict()
     lookup_sum = 0
     total_no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
+    target_details = {'estimated_date': today_in_ist, 'lookup_sum': '', 'no_of_inqueue_leads': 1}
     for availability in availabilities:
         if availability.availability_count and availability.audits_per_date:
             lookup_sum += availability.availability_count * availability.audits_per_date
             if lookup_sum > total_no_of_inqueue_leads:
-                estimated_date = availability.date_in_ist + timedelta(days=2)
+                estimated_date = availability.date_in_ist + timedelta(days=2)  # two days buffer
                 if estimated_date.weekday() == 5:
                     target_details['estimated_date'] = estimated_date + timedelta(days=2)
                 elif estimated_date.weekday() == 6:
@@ -755,7 +756,21 @@ def get_tat_for_picasso(source):
                 target_details['lookup_sum'] = lookup_sum
                 target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
                 return target_details
-                break
+
+    audits_remaining = total_no_of_inqueue_leads - lookup_sum + 2  # two days buffer
+    default_emp = 7
+    default_audits_per_emp = 4
+    default_audits_per_day = default_emp * default_audits_per_emp
+    no_of_days_for_remaining_audits = audits_remaining / default_audits_per_day
+    estimated_date = target_details['estimated_date'] + timedelta(days=no_of_days_for_remaining_audits)
+    if estimated_date.weekday() == 5:
+        target_details['estimated_date'] = estimated_date + timedelta(days=2)
+    elif estimated_date.weekday() == 6:
+        target_details['estimated_date'] = estimated_date + timedelta(days=1)
+    else:
+        target_details['estimated_date'] = estimated_date
+    target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
+    return target_details
 
 
 def get_todays_transition_leads():
@@ -764,9 +779,8 @@ def get_todays_transition_leads():
     end_date = datetime(start_date.year, start_date.month, start_date.day, 23, 59, 59)
     ist_timezone = 'IST'
     selected_tzone = Timezone.objects.get(zone_name=ist_timezone)
-    utc_start_date = SalesforceApi.get_utc_date(start_date, selected_tzone.time_value)
-    utc_end_date = SalesforceApi.get_utc_date(end_date, selected_tzone.time_value)
-    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered', 'Audited'],
-                                                      updated_date__gte=utc_start_date,
-                                                      updated_date__lte=utc_end_date).count()
+    ist_today = SalesforceApi.convert_utc_to_timezone(start_date, selected_tzone.time_value)
+    today_changed_leads = PicassoLeads.objects.filter(lead_status__in=['Delivered'],
+                                                      updated_date__gte=start_date,
+                                                      updated_date__lte=end_date, date_of_installation=ist_today.date()).count()
     return today_changed_leads

@@ -114,13 +114,13 @@ function Handlechange()
 $('#portalFeedback').submit(function(event){
   event.preventDefault();
   $(".error-box").removeClass('error-box');
-    var feedbackType = $('#feedbackType').val();
-    var comments = $('#comments').val();
+    var feedbackType = $('#bugfeedbackType').val();
+    var comments = $('#bugcomments').val();
    if(feedbackType === 'Feedback Type'){
-      $('#feedbackType').addClass('error-box');
+      $('#bugfeedbackType').addClass('error-box');
       return false;
     }else if(comments === ''){
-      $('#comments').addClass('error-box');
+      $('#bugcomments').addClass('error-box');
       return false;
     }else{
       var formData = new FormData($('#portalFeedback')[0]);

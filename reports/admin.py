@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails, KickOffProgram
+from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails, KickOffProgram, MeetingMinutes
 from reports.forms import RegionForm
 
 
@@ -30,4 +30,10 @@ class CSATFilterDetailsAdmin(admin.ModelAdmin):
     filter_horizontal = ('agent_language',)
 
 admin.site.register(CSATFilterDetails, CSATFilterDetailsAdmin)
+
 admin.site.register(KickOffProgram)
+
+class MeetingMinutesAdmin(admin.ModelAdmin):
+	list_display = ('meeting_audience', 'program', 'program_type', 'google_team', 'subject_timeline', 'other_subject', 'meeting_time_in_ist')
+
+admin.site.register(MeetingMinutes, MeetingMinutesAdmin)
