@@ -557,7 +557,8 @@ def get_wpp_reports(request):
         wpp_report_detail['bar_chart_data'] = bar_chart_data
         wpp_report_details = {'reports': wpp_report_detail,
                               'report_type': report_type, 'report_timeline': report_timeline}
-
+        
+        del wpp_report_details['reports']['wpp_lead_status_analysis']['nominated_leads']
         return HttpResponse(json.dumps(wpp_report_details))
 
 
