@@ -1693,35 +1693,6 @@ def export_action_items(request):
                 each_record_dict['Resolved By'] = '-'
             all_records_list.append(each_record_dict)
 
-        # if program != 'all':
-        #     meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
-        #                                                     program=program)
-        # else:
-        #     meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to))
-
-        # all_records_list = list()
-        # for each_meeting_minutes in meeting_minutes:
-        #     each_record_dict = dict()
-        #     meeting_date = each_meeting_minutes.meeting_time_in_ist.date()
-        #     each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
-        #     each_record_dict['Subject Timeline'] = each_meeting_minutes.program + ' ' + each_meeting_minutes.program_type + ' ' + each_meeting_minutes.subject_timeline + ' ' + each_meeting_minutes.other_subject
-        #     key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 
-        #                                                    'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4', 
-        #                                                    'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 
-        #                                                    'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 
-        #                                                    'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 
-        #                                                    'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 
-        #                                                    'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 
-        #                                                    'action_item_15', 'owner_15', 'action_date_15',])}
-        #     each_record_dict['action_plan_dict'] = OrderedDict(sorted(each_meeting_minutes.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
-        #     each_record_dict['reference_num'] = each_meeting_minutes.ref_uuid
-        #     each_record_dict['meeting_minutes_status'] = each_meeting_minutes.meeting_status
-        #     if each_meeting_minutes.status_changed_by:
-        #         each_record_dict['status_changed_by'] = each_meeting_minutes.status_changed_by
-        #     else:
-        #         each_record_dict['status_changed_by'] = '-'
-        #     all_records_list.append(each_record_dict)
-        print all_records_list
         return render(request, 'reports/export_action_items.html', {'all_records_list': json.dumps(all_records_list), 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
     meetings_date_from = ''
     meetings_date_to = ''
