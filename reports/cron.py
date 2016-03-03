@@ -782,7 +782,7 @@ def update_leads_reports(lead):
         report_lead = LeadsReport()
 
     report_lead.google_rep_name = lead.google_rep_name
-    report_lead.google_rep_email = lead.google_rep_name
+    report_lead.google_rep_email = lead.google_rep_email
     report_lead.lead_owner_name = lead.lead_owner_name
     report_lead.lead_owner_email = lead.lead_owner_email
     report_lead.customer_id = lead.customer_id
