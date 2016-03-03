@@ -1830,9 +1830,9 @@ def export_feedback(request):
 
         collattr = ['ID', 'Title', 'CID', 'Advertiser Name', 'Location', 'Language', 'Feedback Type', 'Description', 'Status', 'Lead Owner', 'Google Account Manager', 'Program', 'Code Type', 'Created Date', 'Resolved By', 'Resolved By Date', 'Second Resolved By', 'Second Resolved Date', 'Third Resolved By', 'Third Resolved Date', 'SF Lead ID', 'Comments']
         feedback_list = list()
+
         for feedback in get_feedbacks:
-            get_feedback_comments = FeedbackComment.objects.filter(feedback=feedback.id).values('comment', 'comment_by__username', 'feedback_status')
-            comments = str(get_feedback_comments)
+
             feedback_dict = dict()
             feedback_dict['ID'] = feedback.id
             feedback_dict['Title'] = feedback.title
@@ -1850,13 +1850,18 @@ def export_feedback(request):
             except ObjectDoesNotExist:
                 feedback_dict['Google Account Manager'] = ''
 
-            try:
-                if feedback.program:
-                    feedback_dict['Program'] = feedback.program.team_name
-            except ObjectDoesNotExist:
-                feedback_dict['Program'] = ''
+            if feedback.code_type and feedback.program:
+                feedback_dict['Code Type'] = feedback.code_type
+                feedback_dict['Program'] = feedback.program.team_name
+            else:
+                if feedback.sf_lead_id:
+                    program_name = Leads.objects.get(sf_lead_id=feedback.sf_lead_id)
+                    feedback_dict['Program'] = program_name.team
+                    feedback_dict['Code Type'] = program_name.type_1
+                else:
+                    feedback_dict['Program'] = ""
+                    feedback_dict['Code Type'] = ""
 
-            feedback_dict['Code Type'] = feedback.code_type
             feedback_dict['Created Date'] = datetime.strftime(feedback.created_date, '%m/%d/%Y')
             feedback_dict['Resolved By'] = feedback.resolved_by.username if feedback.resolved_by  else ''
             feedback_dict['Resolved By Date'] = datetime.strftime(feedback.resolved_date, '%m/%d/%Y') if feedback.resolved_date else ''
@@ -1865,7 +1870,15 @@ def export_feedback(request):
             feedback_dict['Third Resolved By'] = feedback.third_resolved_by.username if feedback.third_resolved_by else ''
             feedback_dict['Third Resolved Date'] = datetime.strftime(feedback.third_resolved_date, '%m/%d/%Y') if feedback.third_resolved_date else ''
             feedback_dict['SF Lead ID'] = feedback.sf_lead_id
+
+            get_feedback_comments = FeedbackComment.objects.filter(feedback=feedback.id).values('comment', 'comment_by__username', 'feedback_status')
+            comments = list()
+            for data in get_feedback_comments:
+                for key, val in data.iteritems():
+                    comments.append(key + ":" + val)
+            comments = ', '.join(comments)
             feedback_dict['Comments'] = comments
+
             feedback_list.append(feedback_dict)
 
         filename = "feedbacks"

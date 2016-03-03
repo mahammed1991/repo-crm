@@ -257,9 +257,9 @@ $('#preview_btn').click(function(){
     var actual_agenda_length = tentative_agenda.length;
 
     if($('#agenda_text_1').val() == ''){
-      $('.preview_last').hide();
+      $('.preview-next-meeting-row-tenantive').hide();
     }else{
-      $('.preview_last').show();
+      $('.preview-next-meeting-row-tenantive').show();
     }
 
     for(var j=1;j<=(actual_agenda_length);j++)
@@ -273,6 +273,11 @@ $('#preview_btn').click(function(){
 
 
     $('#preview_next_meeting_date').val($('#next_meeting_date').val());
+    if($('#preview_next_meeting_date').val() == ''){
+      $('.preview_last').hide();
+    }else{
+      $('.preview_last').show();
+    }
 
     $('#preview_next_meeting_time').val($('#next_meeting_time').val());
 

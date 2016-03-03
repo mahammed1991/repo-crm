@@ -148,9 +148,39 @@ $('.code-type-ul').children().on('click', function(){
     }
 /* end of multiple code type selector plugg in fetching multiple selected values id  */
 
+/* To select multiple advertize type selector plugg in fetching multiple selected values id and also checking and unchecking codetype selected */
+$('.advertizer-prg-ul').children().on('click', function(){
+        selectingAdvertizeProgramType(this);
+    });
+    function selectingAdvertizeProgramType(advertizeTypeElement){
+      
+       if($(advertizeTypeElement).attr('id')){
+        var advertizeTypeProgram = $(advertizeTypeElement).attr('id')
+        console.log(advertizeTypeProgram);
+       }
+        var OptionElement = "<option class='"+advertizeTypeProgram+"' value='"+advertizeTypeProgram+"' selected></option>";
+
+        var selectedProcessElement = $(advertizeTypeElement).children("a").children('span');
+        // UnSelect Process Items.
+        if(selectedProcessElement.hasClass('tickMarkShow')){
+            selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
+            $('#advertiser_type  .'+advertizeTypeProgram+' ').remove();
+        }
+        else{
+            selectedProcessElement.addClass('tickMarkShow');
+            $( "#advertiser_type" ).append(OptionElement);
+        }
+    }
+/* end of multiple advertize type selector plugg in fetching multiple selected values id  */
+
+$(function(){
+  $(':input[type=number]').on('mousewheel',function(e){ $(this).blur(); });
+});
+
+
+
 /* validating all feilds of kick-off-programm  page */
 function validatethis() {
-    debugger;
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -233,6 +263,7 @@ function validatethis() {
         $(focusElem).focus();
         return false;
       }else if (window.is_error == false && window.failedFields == 0 ){
+        $('#preloaderOverlay').show();
         return true;
       }  
       else{
@@ -293,14 +324,16 @@ function codeType(){
         } 
 }
 function advertizerType(){
-    if (document.getElementById('advertiser_type').value == "choose"){
+    if (document.getElementById('advertiser_type').value == ""){
         $('.add-type').addClass('error-box');
+        $('#advertizeTypeBtn').addClass('error-box');
         window.failedFields.push($('.add-type'));
         window.is_error = true;
         return false;
     }
    else{
        $('.add-type').removeClass('error-box');
+       $('#advertizeTypeBtn').removeClass('error-box');
        window.is_error = false;
        return true;
     }
@@ -321,6 +354,7 @@ function checkChat(){
 }
 function subjectEstimatedDay(){
   if(document.getElementById('subject-estimated-day').value == "choose"){
+    window.failedFields.push($('#subject-estimated-day')); 
     $('#subject-estimated-day').addClass('error-box'); 
       window.is_error = true;
         return false;
