@@ -3006,3 +3006,22 @@ def wpp_whitelist_request(request):
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
         return HttpResponse(json.dumps({'status': 'success'}), content_type='application/json')
+
+def get_picasso_lead(request):
+    if request.is_ajax():
+        status_dict = dict()
+        cid = request.GET.get('cid')
+        form_url = request.GET.get('url')
+        form_url = form_url.replace('www.','').replace('.com','')
+        picasso_lead = PicassoLeads.objects.filter(customer_id=cid)
+        database_url = picasso_lead[0].url_1.replace('www.','').replace('.com','').replace('http://','').replace('https://','').replace('/', '')
+
+        if form_url == database_url:
+            status_dict['status'] = 'success'
+        else:
+            status_dict['status'] = 'failure'
+
+        if status_dict['status'] == 'success':
+            return HttpResponse(json.dumps(status_dict), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(status_dict), content_type='application/json')
