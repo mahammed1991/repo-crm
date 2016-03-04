@@ -70,7 +70,7 @@
       <div class="row">
         <div class="col-md-6">
         <label for="cid">Customer ID</label>
-        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)">
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
       </div>
       <div class="col-md-6">
         <label for="picasso_pod">POD Name</label>
@@ -78,7 +78,7 @@
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
-          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL">
+          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" onfocusout="checkout()">
         </div>
         <div class="col-md-6">
           <label for="additional_notes">Additional Notes(Optional)</label>
@@ -149,5 +149,49 @@
         }
     });
 });
+
+function getLink(href){
+  var link = document.createElement("a");
+  link.href = href;
+  return link;
+}
+
+
+function checkout(){
+  var cidElem = $('#cid').val().trim();
+  var urlElem = $('#url').val().trim();
+  if(cidElem && urlElem){
+    if(urlElem.indexOf('https://') > -1){
+      var link = getLink(urlElem);
+      var linkhost = link.hostname;
+    }else if(urlElem.indexOf('http://') > -1){
+      var link = getLink(urlElem);
+      var linkhost = link.hostname;
+    }
+    else{
+      var urlElem = 'https://' + urlElem;
+      var link = getLink(urlElem); 
+      var linkhost = link.hostname;
+    }
+    $.ajax({
+      url: "/leads/get-picasso-lead",
+      type: "GET",
+      data: {'cid': cidElem, 'url': linkhost},
+      dataType: 'JSON',
+      success:function(data){
+        if(data['status'] == 'success'){
+          alert('This Lead already exists');
+          $('#formsubmit').prop('disabled', true);
+        }else{
+          $('#formsubmit').prop('disabled', false);
+        }
+      },
+      failure:function(error) {
+        // body...
+      }
+    });
+  }else{
+  }
+}
 </script>
 {% endblock main_js %}

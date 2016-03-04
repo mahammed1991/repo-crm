@@ -920,8 +920,9 @@ $('.code_type').change(function(){
   if (selectedCodeType.indexOf('Analytics') != -1){
     $('#gasetup'+selectedindex).show();
   }
-  else if(selectedCodeType.indexOf('Dynamic') != -1){
-      $('#ctype_campaign'+selectedindex).show();    
+   if(['Google Analytics Dynamic Remarketing (Retail)', 'Google Analytics Dynamic Remarketing (Non-Retail)', 'Dynamic Remarketing - Extension (non retail)', 'Dynamic Remarketing - Retail'].indexOf(selectedCodeType) != -1){
+      $('#ctype_campaign'+selectedindex).show();
+      $('#gasetup'+selectedindex).hide();
   }
   else if(selectedCodeType.indexOf('Website Call Conversion') != -1){
       $('#callextension'+selectedindex).show();
