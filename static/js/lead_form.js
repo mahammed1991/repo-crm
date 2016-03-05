@@ -292,9 +292,12 @@
       $("#url" + indx).val('');
       $("#code" + indx).val('');
       $("#comment" + indx).val('');
-      $("#rbid" + indx).val('');
-      $("#rbudget" + indx).val('');
       $("#ga_setup" + indx).val('0');
+
+      $('#ctype_campaign'+indx).hide();
+      $('#is_campaign_created'+indx).prop('checked', false);
+      $('#product_expectations'+indx).prop('checked', false);
+      $('#campaign_implemented'+indx).prop('checked', false);
 
       $( "#task_" + indx).animate({
       height: "toggle"
@@ -839,24 +842,12 @@ function validateTaskFields(indx){
       var analyticsCodeElem = document.getElementById('analytics_code' + indx)
       validateFiled(analyticsCodeElem)
   }
-
-  // New fields for Dynamic Remarketing Code Types
-  var isCampaign = document.getElementById('is_campaign_created' + indx)
-  if($(isCampaign).is(":visible") && isCampaign.checked == false){
-
-      // rBid validation
-      var rbidElem = document.getElementById('rbid' + indx)
-      validateFiled(rbidElem)
-
-      // rBudget validation
-      var rbudgetElem = document.getElementById('rbudget' + indx)
-      validateFiled(rbudgetElem)
-
-  }else{
-    $("#rbid" + indx).val('');
-    $("#rbudget" + indx).val('');
+  var isCampaign = document.getElementById('ctype_campaign' + indx)
+  if($(isCampaign).is(':visible')){
+    validateDynamicFields($('#is_campaign_created'+indx))
+    validateDynamicFields($('#product_expectations'+indx))
+    validateDynamicFields($('#campaign_implemented'+indx))
   }
-
 }
 
 function validateRLSAFields(indx){
@@ -919,10 +910,9 @@ $('.code_type').change(function(){
   $('#call_extension'+selectedindex).prop('checked', false);
   $('#codebehaviour'+selectedindex).hide();
 
-  $('#rbid'+selectedindex).val('');
-  $('#rbudget'+selectedindex).val('');
-
-  //uncheckAllBehaviourCheckBoxs(selectedindex);
+  $('#is_campaign_created'+selectedindex).prop('checked', false);
+  $('#product_expectations'+selectedindex).prop('checked', false);
+  $('#campaign_implemented'+selectedindex).prop('checked', false);
     
   $('#ctype_campaign'+selectedindex).hide();
   $('#gasetup'+selectedindex).hide();
@@ -956,6 +946,16 @@ $(document).on('click', '.is_campaign_created', function() {
 });
 
 $(document).on('click', '.headsup-policies', function() {
+    thisId = $(this).attr('id');
+    if($(this).is(":checked")){
+        $("#"+ thisId).val(1);
+    }else{
+        $("#"+ thisId).val(0);
+    }
+    
+});
+
+$(document).on('click', '#is_campaign_created', function() {
     thisId = $(this).attr('id');
     if($(this).is(":checked")){
         $("#"+ thisId).val(1);
@@ -1069,6 +1069,21 @@ function removeRLSAs(indx){
    $('#add_rlsa'+indx).show();
    $('#removeRlsa_'+indx).hide();
    $('#removeRlsa_'+prevIndex).show();
+}
+
+function validateDynamicFields(elemId){
+  if (elemId.is(':visible')){
+    if (elemId.is(':checked')){
+      //do nothing
+    } 
+    else {
+       window.failedFields.push(elemId);
+       window.is_error = true;
+       elemId.parent().addClass('error-box');
+       return false;
+    }
+  }
+
 }
 
 function rlsaInternalCIDPrepopulate(){

@@ -1607,19 +1607,16 @@ function createCustomerShopFields(indx){
 function createAgencySameTagForDynamic(indx){
 var next_indx = indx + 1;
   ele = '<div class="row tag" id="same_tag_' + indx + '" > '+
-               '<div class="col-md-4">'+
-               '<div class="checkbox">'+
-                 '<label>'+
-                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
-                    'Is the campaign created with a min budget >$30?'+
-                  '</label>'+
-                '</div></div>'+
-                '<div class="col-md-4">'+
-                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid">'+
-                '</div>'+
-                '<div class="col-md-3">'+
-                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget">'+
-                '</div>'+
+              '<div class="col-md-12"><div class="checkbox"><label>'+
+              '<input type="checkbox" value="0" name="is_campaign_created'+ indx +'" id="is_campaign_created'+ indx +'" class="is_campaign_created">'+
+              'Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)'+
+            '</label><br><label>'+
+              '<input type="checkbox" value="0" id="product_expectations'+ indx +'" class="is_campaign_created">'+
+              'Ensure right expectations are set and advertiser understands the product.'+
+            '</label><br><label>'+
+              '<input type="checkbox" value="0" id="campaign_implemented'+ indx +'" class="is_campaign_created">'+
+              'Ensure the campaign starts running as soon as Tag gets implemented.'+
+            '</label></div></div>'+
               '<div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
@@ -1658,6 +1655,16 @@ function createCusetomerSameTagForDynamic(indx){
 var next_indx = indx + 1;
   ele =  '<div style="margin:auto;" class="row tag" id="same_cust_tag_' + indx + '" > '+
               '<div class="row">'+
+                '<div class="col-md-12"><div class="checkbox"><label>'+
+                '<input type="checkbox" value="0" name="is_campaign_created'+ indx +'" id="is_campaign_created'+ indx +'" class="is_campaign_created">'+
+                'Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)'+
+              '</label><br><label>'+
+                '<input type="checkbox" value="0" id="product_expectations'+ indx +'" class="is_campaign_created">'+
+                'Ensure right expectations are set and advertiser understands the product.'+
+              '</label><br><label>'+
+                '<input type="checkbox" value="0" id="campaign_implemented'+ indx +'" class="is_campaign_created">'+
+                'Ensure the campaign starts running as soon as Tag gets implemented.'+
+              '</label></div></div>'+
               '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
                 '</div>'+
@@ -1666,19 +1673,6 @@ var next_indx = indx + 1;
                 '</div>'+
                 '<div class="col-md-3">'+
                   '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
-                '</div>'+
-              '<div class="col-md-4">'+
-                 '<div class="checkbox">'+
-                 '<label>'+
-                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
-                    'Is the campaign created with a min budget >$30?'+
-                  '</label>'+
-                '</div></div>'+
-                '<div class="col-md-4">'+
-                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid">'+
-                '</div>'+
-                '<div class="col-md-3">'+
-                  '<input type="text" class="form-control bggrey is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="Budget">'+
                 '</div>'+
          '<div class="col-md-1"></div>'+
         '</div>'+
@@ -1721,20 +1715,22 @@ function createAgencyDiffDynamicFields(indx){
   var nextInd = indx + 1;
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
-          '<div class="col-md-4 customwidth">'+
-                '<div class="checkbox">'+
-                 '<label>'+
-                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
-                    'Is the campaign created with a min budget >$30?'+
-                  '</label>'+
-                '</div></div>'+
-          '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
-        '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'
+          '<div class="col-md-12"><div class="checkbox"><label>'+
+              '<input type="checkbox" value="0" name="is_campaign_created'+ indx +'" id="is_campaign_created'+ indx +'" class="is_campaign_created">'+
+              'Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)'+
+            '</label><br><label>'+
+              '<input type="checkbox" value="0" id="product_expectations'+ indx +'" class="is_campaign_created">'+
+              'Ensure right expectations are set and advertiser understands the product.'+
+            '</label><br><label>'+
+              '<input type="checkbox" value="0" id="campaign_implemented'+ indx +'" class="is_campaign_created">'+
+              'Ensure the campaign starts running as soon as Tag gets implemented.'+
+            '</label></div></div>'
+          
          
 
-  shop =  '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
-        '<div class="col-md-2 customwidth"><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
-        '<div class="col-md-4 customwidth"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
+  shop =  '<div class="col-md-3 "><input type="text" class="form-control" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)"></div>'+
+        '<div class="col-md-3 "><input type="text" class="form-control" id="url' + indx + '" name="url' + indx + '" placeholder="URL"></div>'+
+        '<div class="col-md-4"><textarea class="form-control" id="comment' + indx + '" name="comment' + indx + '" placeholder="Special Instruction (Optional)"></textarea></div>'
 
         if(indx == 1){
               tail = '<div class="col-md-1 allcenter customwidthplus"><span onclick="addMoreTagRows('+nextInd+');" class="add_tag_' + indx + '"><img src="{% static "images/plus.png" %}" class="img-responsive plusicon"></span></div>'+
@@ -1759,26 +1755,27 @@ function createCustomerDiffDynamicFields(indx){
   var nextInd = indx + 1;
 
   ele =  '<div id="tagFields' + indx + '" class="tagFields">'+
-          '<div class="col-md-4 customwidth">'+
-              '<div class="checkbox">'+
-                 '<label>'+
-                    '<input type="checkbox" value="0" class="is_campaign_created" name="is_campaign_created' + indx + '" id="is_campaign_created' + indx + '">'+
-                    'Is the campaign created with a min budget >$30?'+
-                  '</label>'+
-                '</div></div>'+
-         '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbid' + indx + '" name="rbid' + indx + '" placeholder="Recommended Bid"></div>'+
-        '<div class="col-md-2 customwidth"><input type="text" class="form-control is_campaign_created'+ indx +'" id="rbudget' + indx + '" name="rbudget' + indx + '" placeholder="BUDGET"></div>'
+          '<div class="col-md-12"><div class="checkbox"><label>'+
+              '<input type="checkbox" value="0" name="is_campaign_created'+ indx +'" id="is_campaign_created'+ indx +'" class="is_campaign_created">'+
+              'Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)'+
+            '</label><br><label>'+
+              '<input type="checkbox" value="0" id="product_expectations'+ indx +'" class="is_campaign_created">'+
+              'Ensure right expectations are set and advertiser understands the product.'+
+            '</label><br><label>'+
+              '<input type="checkbox" value="0" id="campaign_implemented'+ indx +'" class="is_campaign_created">'+
+              'Ensure the campaign starts running as soon as Tag gets implemented.'+
+            '</label></div></div>'
 
    shop =  '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="advertiser_name' + indx + '" name="advertiser_name' + indx + '" placeholder="Customer Name">'+
                 '</div>'+
-                '<div class="col-md-3">'+
+                '<div class="col-md-4">'+
                   '<input type="text" class="form-control bggrey" id="aemail' + indx + '" name="aemail' + indx + '" placeholder="Customer Email">'+
                 '</div>'+
-                '<div class="col-md-2">'+
+                '<div class="col-md-3">'+
                   '<input type="text" class="form-control bggrey" id="phone' + indx + '" name="phone' + indx + '" placeholder="Telephone">'+
                 '</div>'+
-              ' <div class="col-md-2">'+
+              ' <div class="col-md-4">'+
                  '<input type="text" class="form-control bggrey" id="cid' + indx + '" name="cid' + indx + '" placeholder="CID (xxx-xxx-xxxx)">'+
               '</div>'+
               '<div class="col-md-4">'+
