@@ -1756,7 +1756,7 @@ def program_kick_off(request):
 
         kickoffprogram.program_name = request.POST.get('program_name')
         kickoffprogram.google_poc_locations = request.POST.get('google_poc_location')
-        kickoffprogram.advertiser_type = request.POST.get('advertiser_type')
+        kickoffprogram.advertiser_type = request.POST.getlist('advertiser_type')
 
         codetype_list = list()
         code_type_data = request.POST.getlist('codeTypeList')
@@ -2002,6 +2002,13 @@ def kickoff_export_detail(request, program_id):
                 target_location_list.append(val)
         target_location_list = ','.join(target_location_list)
 
+        get_kickoff_record.advertiser_type
+
+        advertizer_list = get_kickoff_record.advertiser_type
+        data = str(advertizer_list)
+        clean_data = data.replace("u'","")
+        clean_data_advertize_data = clean_data.translate(None,"[]'")
+
         get_codetype_list = get_kickoff_record.codetypeslist
         final_type_codelist_with_quotes = str(get_codetype_list[1:-1])
         final_type_codelist = final_type_codelist_with_quotes
@@ -2141,4 +2148,5 @@ def kickoff_export_detail(request, program_id):
                                                                   'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
                                                                   'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5,
                                                                   'all_mail': google_email,
-                                                                  'final_type_codelist': final_type_codelist})
+                                                                  'final_type_codelist': final_type_codelist,
+                                                                  'clean_data_advertize_data':clean_data_advertize_data})

@@ -84,8 +84,8 @@ body {
                       <label  for="">Support Required with Programs?</label>  
                     </div>
                     <div class="col-md-4">
-                         {% if get_kickoff_record.advertiser_type %} 
-                         <textarea class="form-control" disabled style="height:51px;overflow:hidden">{{get_kickoff_record.advertiser_type}}</textarea>
+                         {% if clean_data_advertize_data %} 
+                         <textarea class="form-control" disabled style="height:51px;overflow:hidden">{{clean_data_advertize_data}}</textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">

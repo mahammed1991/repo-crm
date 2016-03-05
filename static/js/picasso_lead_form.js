@@ -91,16 +91,35 @@ function ValidateUrlField() {
                         window.is_error = true;
                         return false;}
               if(!check){/*alert("valid with no space url");*/
+                          string = url
+                          re = new RegExp(/,\s*/);
+                          var check_coma = re.test(string);
+                          if (check_coma){
+                                  alert("URL contains comma");
+                                  window.failedFields.push(Elementurl);
+                                  $("#url").addClass('error-box');
+                                  window.is_error = true;
+                                  return false;
+                                  }
                           $("#url").removeClass('error-box');
-                          return check} 
+                          return true} 
           }
         else {  alert("Invalid URL pattern");
                $("#url").addClass('error-box'); 
                 window.is_error = true;
                 window.failedFields.push(Elementurl);
                 return false;}
-  } else {
-            /*alert("Valid Url!");*/
+  } else {  /*alert("Valid Url!");*/
+            string = url
+            re = new RegExp(/,\s*/);
+            var check_coma = re.test(string);
+            if (check_coma){
+                    alert("URL contains comma");
+                    window.failedFields.push(Elementurl);
+                    $("#url").addClass('error-box');
+                    window.is_error = true;
+                    return false;
+                    }
             $("#url").removeClass('error-box');
             return true; }
 }
