@@ -180,7 +180,7 @@ function checkout(){
       dataType: 'JSON',
       success:function(data){
         if(data['status'] == 'success'){
-          alert('This Lead already exists');
+          alert('This Lead already submitted for treatment');
           $('#formsubmit').prop('disabled', true);
         }else{
           $('#formsubmit').prop('disabled', false);

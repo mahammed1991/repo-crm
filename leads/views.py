@@ -3016,17 +3016,12 @@ def get_picasso_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid)
         if picasso_lead:
             for each_lead in picasso_lead:
-                if form_url == each_lead.url_1:
-                    database_url = each_lead.url_1.replace('www.','').replace('.com','').replace('http://','').replace('https://','').replace('/', '')
-                    if form_url_filter == database_url:
-                        status_dict['status'] = 'success'
-                        break
-                    else:
-                        status_dict['status'] = 'failure'
-                        break
+                each_lead_url = each_lead.url_1.replace('www.','').replace('.com','').replace('http://','').replace('https://','').replace('/', '')
+                if form_url_filter == each_lead_url:
+                    status_dict['status'] = 'success'
+                    break
                 else:
                     status_dict['status'] = 'failure'
-                    break
         else:
             status_dict['status'] = 'failure'
 
