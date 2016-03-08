@@ -168,6 +168,7 @@ $('#url').focusin(function(){
 });
 
 function checkout(){
+  $('#formsubmit').prop('disabled', false);
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
   if(cidElem && urlElem){
