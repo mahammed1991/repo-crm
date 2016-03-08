@@ -114,6 +114,10 @@
       
         
       </div>
+      <p id="display_block_error" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #D4676B;width: 850px;margin: 20px auto;">This Lead has already submitted for treatment</b> </p>
+      <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #D4676B;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
+      <p id="display_url_has_space" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #D4676B;width: 850px;margin: 20px auto;">URL contains Space</b> </p>
+      <p id="display_invalid_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #D4676B;width: 850px;margin: 20px auto;">Invalid URL</b> </p>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
@@ -156,6 +160,12 @@ function getLink(href){
   return link;
 }
 
+$('#cid').focusin(function(){
+  $('#formsubmit').prop('disabled', true);
+});
+$('#url').focusin(function(){
+  $('#formsubmit').prop('disabled', true);
+});
 
 function checkout(){
   var cidElem = $('#cid').val().trim();
@@ -180,9 +190,10 @@ function checkout(){
       dataType: 'JSON',
       success:function(data){
         if(data['status'] == 'success'){
-          alert('This Lead already submitted for treatment');
+          $('#display_block_error').show();
           $('#formsubmit').prop('disabled', true);
         }else{
+          $('#display_block_error').hide();
           $('#formsubmit').prop('disabled', false);
         }
       },

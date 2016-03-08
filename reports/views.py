@@ -1584,6 +1584,7 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     return path
 
 
+@login_required
 def export_action_items(request):
     if request.method == 'POST':
         meetings_date_from = request.POST.get('date_from')
@@ -1906,6 +1907,8 @@ def kickoff_thankyou(request):
     return render(request, 'reports/kickoff_thankyou.html', {'return_url': return_url})
 
 
+
+@login_required
 def kickoff_export(request):
     if request.method == 'POST':
         kickoff_date_from = request.POST.get('date_from')
@@ -1966,6 +1969,7 @@ def get_kickoff_program(request):
         return HttpResponse(json.dumps(selected_kickoff_list))
 
 
+@login_required
 def kickoff_export_detail(request, program_id):
     try:
         get_kickoff_record = KickOffProgram.objects.get(id=program_id)
