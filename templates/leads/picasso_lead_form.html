@@ -168,7 +168,10 @@ $('#url').focusin(function(){
 });
 
 function checkout(){
-  $('#formsubmit').prop('disabled', false);
+
+  $('#display_url_has_space').hide();
+  $('#display_url_has_comma').hide();
+  $('#display_invalid_url').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
   if(cidElem && urlElem){
