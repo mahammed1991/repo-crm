@@ -29,7 +29,7 @@
   $('.remove-succes').click(function () {
     id = $(this).attr('id');
     indx = id.split('_')[1];
-    if(("#removeSuccesMat_"+indx) != "#removeTestimony_1" )
+    if(("#removeSuccesMat_"+indx) != "#removeSuccesMat_1" )
     {
         $(".add-succes").show();
         $("#succes_row_"+indx).remove();

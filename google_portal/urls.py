@@ -1,9 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import RedirectView
-
 from django.contrib import admin
 admin.autodiscover()
-from main import views
 
 urlpatterns = patterns(
     '',

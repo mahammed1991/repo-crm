@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 ROOT_URLCONF = 'google_portal.urls'
 
@@ -74,8 +74,10 @@ TEMPLATE_DIRS = [
 ]
 
 ADMINS = (
-    ('Raju K R', 'rajuk@regalix-inc.com'),
+    ('Basavaraju U S', 'basavaraju@regalix-inc.com'),
 )
+
+MANAGERS = ADMINS
 
 # Application constants
 PORTAL_MAIL_ID = 'basavaraju@regalix-inc.com'
@@ -141,7 +143,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
     'forum.context.application_settings',
     'django.contrib.messages.context_processors.messages',
-    'forum.user_messages.context_processors.user_messages',
+    # 'forum.user_messages.context_processors.user_messages',
 ]
 
 APPEND_SLASH = True
@@ -157,7 +159,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'django.contrib.humanize',
     'django.contrib.sitemaps',
-    'forum',
+    # 'forum',
     'main',
     'auth',
     'leads',
@@ -181,7 +183,7 @@ MIDDLEWARE_CLASSES = [
     'lib.middleware.SetProfilePicture',
 
     # Forum related middleware classes
-    'forum.middleware.request_utils.RequestUtils',
+    # 'forum.middleware.request_utils.RequestUtils',
 ]
 
 AUTHENTICATION_BACKENDS = (
