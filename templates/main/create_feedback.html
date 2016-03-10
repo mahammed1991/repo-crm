@@ -1,0 +1,188 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Feedback Form
+{% endblock title %}
+
+{% block main_css %}
+<style type="text/css">
+    td{
+        height:40px;
+    }
+</style>
+{% endblock main_css %}
+
+{% block content %}
+<div id='content' class="clearfix">
+	<div class="main_content">
+    <fieldset style="border:1px solid #d9d9d9;">
+        <legend class="legend">
+            <p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c; padding-left:10px; padding-right:10px;">Feedback Form</p>
+        </legend>
+        <a href="{% url 'main.views.list_feedback' %}" class="logbtn" style="float:right;">Back to Dashboard</a>
+        <form onsubmit="return validate(this);" action="{% url 'main.views.create_feedback' %}" method="post" name="help-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table width="50%" border="0" cellspacing="0" cellpadding="0" style="margin: 0 auto;">
+                <tbody>
+                    <tr>
+                        <td>Google Account Manager</td>
+                        <td>
+                            <select name="representative_name" class="bgicon">
+                                <option title='{{ user.email }}' value='{{ user.email }}'>{{ user.get_full_name }}</option>";
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CID <span class="red">*</span></td>
+                        <td>
+                            <input type="text" name="cid">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Feedback to</td>
+                        <td>
+                            <input type="text" id="lead_owner" disabled />
+                            <input type="hidden" name="lead_owner" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Name of the Advertiser</td>
+                        <td>
+                            <input type="text" id="advertiser" disabled>
+                            <input type="hidden" name="advertiser">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Feedback Title <span class="red">*</span></td>
+                        <td>
+                            <input type="text" name="title">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Language
+                        </td>
+                        <td>
+                            <select name="language" class="form-control bgicon">
+                                <option value="English">English</option>
+                                <option value="French">French</option>
+                                <option value="German">German</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="Portuguese">Portuguese</option>
+                                <option value="Dutch">Dutch</option>
+                                <option value="Russian">Russian</option>
+                                <option value="Mandarin">Mandarin</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Location<span class="red">*</span>
+                        </td>
+                        <td>
+                            <select name="location" class="form-control bgicon">
+                                <option value="0">--Select--</option>
+                                {% for loc in locations %}
+                                    <option value="{{loc}}">{{loc}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Feedback Type <span class="red">*</span></td>
+                        <td>
+                            <select name="type" style="width:200px;" class="form-control bgicon">
+                                <option value="Technical - Incorrect code installed">Technical - Incorrect code installed</option>
+                                <option value="Technical - Code installed on wrong page">Technical - Code installed on wrong page</option>
+                                <option value="Communication - Rude rep">Communication - Rude rep</option>
+                                <option value="Communication - Unable to understand rep">Communication - Unable to understand rep</option>
+                                <option value="Operations - Missed appointments">Operations - Missed appointments</option>
+                                <option value="Operations - No follow up">Operations - No follow up</option>
+                                <option value="Operations - Incorrect information provided">Operations - Incorrect information provided</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Feedback Description <span class="red">*</span></td>
+                        <td>
+                            <textarea name="description" cols="20" rows="4"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Attachment(if any)
+                        </td>
+                        <td width="40%" align="left">
+                            <input type="file" name="attachment_name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>
+                            <input type="submit" value="Submit" class="logbtn">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </fieldset>
+</div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript">
+    function validate(frm) {
+        if (frm.cid.value == "") {
+            alert("Please Enter Customer ID");
+            frm.cid.focus();
+            return false;
+        }
+        
+        if (frm.title.value == "") {
+            alert("Please Enter Title");
+            frm.title.focus();
+            return false;
+        }
+
+        if (frm.location.value == "0" || frm.location.value == 0) {
+            alert("Please select location");
+            frm.location.focus();
+            return false;
+        }
+
+        if (frm.description.value == "") {
+            alert("Please Enter Description");
+            frm.description.focus();
+            return false;
+        }
+    }
+    $('input[name=cid]').on('focusout', function(){
+        if(!$(this).val()){
+            alert('Enter CID');
+            $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+        }else{
+            $.ajax({
+                'method': 'GET',
+                'dataType': 'json',
+                'url': "/leads/get-lead/" + $('input[name=cid]').val(),
+                success: function(response){
+                    if(response['status'] == 'FAILED'){
+                        alert('Lead for Selected CID not available.');
+                        $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                    }else{
+                        $('input[name=lead_owner], input[id=lead_owner]').val(response.details.email);
+                        $('input[name=advertiser], input[id=advertiser]').val(response.details.name);
+                    }
+                },
+                error:function(xhr, status, error){
+                    alert('Something went wrong!. Please check CID');
+                    $('input[name=cid], input[name=advertiser], input[id=advertiser], input[name=lead_owner], input[id=lead_owner]').val('')
+                }
+            })
+        }
+    });
+</script>
+{% endblock main_js %}
