@@ -550,7 +550,10 @@ def team(request):
 def view_feedback(request, id):
     """ Detail view of a feedback """
     normal_comments = list()
-    feedback = Feedback.objects.get(id=id)
+    try:
+        feedback = Feedback.objects.get(id=id)
+    except Feedback.DoesNotExist:
+        return redirect('main.views.main_home')
     normal_comments = FeedbackComment.objects.filter(feedback__id=id)
     resolved_count = FeedbackComment.objects.filter(feedback__id=id, feedback_status='resolved').count()
     can_resolve = True
