@@ -70,6 +70,12 @@ TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'forum/skins/default/templates'),
 ]
 
+ADMINS = (
+    ('Basavaraju U S', 'basavaraju@regalix-inc.com'),
+)
+
+MANAGERS = ADMINS
+
 # Application constants
 PORTAL_MAIL_ID = 'google@regalix-inc.com'
 REGALIX_DEFAULT_ROLE = 1
@@ -137,7 +143,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
     'forum.context.application_settings',
     'django.contrib.messages.context_processors.messages',
-    'forum.user_messages.context_processors.user_messages',
+    # 'forum.user_messages.context_processors.user_messages',
 ]
 
 APPEND_SLASH = True
@@ -153,7 +159,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'django.contrib.humanize',
     'django.contrib.sitemaps',
-    'forum',
+    # 'forum',
     'main',
     'auth',
     'leads',
@@ -176,7 +182,7 @@ MIDDLEWARE_CLASSES = [
     'lib.middleware.SetProfilePicture',
 
     # Forum related middleware classes
-    'forum.middleware.request_utils.RequestUtils',
+    # 'forum.middleware.request_utils.RequestUtils',
 ]
 
 AUTHENTICATION_BACKENDS = (
