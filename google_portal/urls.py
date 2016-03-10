@@ -1,9 +1,16 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import RedirectView
+from django.conf.urls import (
+    handler400, handler403, handler404, handler500
+)
 
 from django.contrib import admin
 admin.autodiscover()
-from main import views
+
+handler400 = 'main.views.bad_request'
+handler403 = 'main.views.permission_denied'
+handler404 = 'main.views.page_not_found'
+handler500 = 'main.views.server_error'
 
 urlpatterns = patterns(
     '',
