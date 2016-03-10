@@ -2,7 +2,6 @@
 
 {% load staticfiles %}
 {% load static %}
-{% load question_list_tags %}
 
 {% block title %}
 TagTeam Google Portal
@@ -103,55 +102,6 @@ TagTeam Google Portal
                         <button class="btn std-btn sm-btn" onclick='location.href="{% url 'main.views.create_feedback' %}?type=NORMAL"'>Add a Feedback</button>   
                     </div>
                   </li>
-                  <!-- <li class="qa">
-                    <div class="slide-wrap">
-                      <h1>Q&A Forum</h1>
-                        {% load i18n humanize extra_filters extra_tags user_tags %}
-                        <div id="listA">
-                          {% for q in question_list%}
-                            <div class="short-summary">
-                              <div class="counts">
-                                  <div class="votes">
-                                      <div class="item-count">{{ q.votes }}</div>
-                                      <div>votes</div>
-                                  </div>
-                                  <div class="status  answered">
-                                      <div class="item-count">{{q.answer}}</div>
-                                      <div>answers</div>
-                                  </div>
-                                  <div class="views">
-                                       <div class="item-count">{{q.views}}</div>
-                                       <div>views</div>
-                                  </div>
-                              </div>
-                              <div class="status  answered">
-                                  <div class="item-count">{{q.answer}}</div>
-                                  <div>answers</div>
-                              </div>
-                              <div class="views">
-                                   <div class="item-count">{{q.views}}</div>
-                                   <div>views</div>
-                              </div>
-                          </div>
-
-                              <div class="question-summary-wrapper">
-                                  <h2><a {% autoescape on %} title="{{ q.body }}" {% endautoescape %} href="/forums/questions/1/tests-questiuons1">{{ q.title }}</a></h2>
-                                  
-                                  <div class="userinfo">
-                                      <span class="relativetime" title="{{q.last_activity_at}}">{% diff_date q.last_activity_at %}</span>
-                                      <a href="/forums/users/{{q.author_id}}/{{q.author_name}}">{{q.author_name}}</a><span class="score" title="1 reputation"></span>
-
-                                  </div>
-                                  <div class="tags">
-                                      <a class="tag-link-test" href="/forums/tags/test/" title="see questions tagged 'test'" rel="tag">test</a>
-                                  </div>
-                              </div>
-
-                          </div>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </li> -->
                   <li class="resources">
                     <div class="slide-wrap">
                         <h1>Resources</h1>
