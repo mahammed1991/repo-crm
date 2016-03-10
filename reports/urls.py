@@ -42,4 +42,7 @@ urlpatterns = patterns(
     url(r'^kickoff-export-detail/(?P<program_id>\w+)/$', views.kickoff_export_detail, name='kickoff-export-detail'),
     url(r'^thankyou-kickoff-program/$', views.kickoff_thankyou),
     url(r'^get-kickoff-programs/$', views.get_kickoff_program),
+     url(r'^thankyou-tagteam-kickoff-program/$', views.tagteam_kickoff_thankyou),
+
+
 )

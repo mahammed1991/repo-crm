@@ -32,18 +32,34 @@
 
                         <tr>
                           <td style="padding: 10px; color: #6f6f6f; font-family: Calibri;font-size: 14px; line-height: 18px; vertical-align: top;">
-                             Hello {{name_of_submiter}}, {{ mail_from }}<br></br>
+                            <!--  Hello Team,<br/>
 
-                             <p>Thank you for submitting the program details. Here's a summary for your reference.</p>
-                            <p>PROGRAM NAME :{{ program_name }}</p>
-                            <!-- <p>FROM :{{ mail_from }}</p> --> 
+                             For {{ program_name }} tagteam is Added
+                            <p>PROGRAM NAME {{ program_name }}</p>
+                            <p>FROM {{ mail_from }}</p> 
                             <p>To access the form  <a href="{{ acces_link }}">Click here</a></p>
-                            <p>As the next step, you will shortly receive an email with details of the TagTeam members who would be supporting this program.We look forward to working
-                            with your team to help your clients with their code implementation needs.</p>
-                            <br>
-                            <p>Thanks,</p>
+                            <p></p> -->
 
-                            <p>Google Implementation Team</p>
+                          Hello Team,<br></br>
+
+                          Further to the request received from {{program_created_by}} on {{ kick_off_created }},<br> here's a summary of the latest program,
+                          <p>PROGRAM NAME :{{ program_name }}</p>
+                          <p>Tagteam Added by: {{ tagteam_added_by }} </p>
+                          <!-- <p>FROM {{ mail_from }}</p> -->
+
+
+                          that the TagTeam would be supporting from {{ going_live }}. 
+                          <br></br>
+                          <a href="{{ acces_link }}">Click here</a> for details of the TagTeam members who would be supporting this program.<br></br>
+                          We look forward to working with your team to help your clients with their code implementation needs.<br><br></br>
+
+                          Thanks,<br></br>
+
+                          Google Implementation Team 
+
+
+
+
                             
                             <br />
                           </div>

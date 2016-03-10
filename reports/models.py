@@ -241,6 +241,20 @@ class LeadsReport(models.Model):
         verbose_name_plural = "Leads Report"
 
 
+class MeetingActionItems(models.Model):
+    meeting_minutes = models.ForeignKey(MeetingMinutes)
+    action_items = models.TextField(null=True, blank=True)
+    owners = models.CharField(max_length=255, null=True, blank=True)
+    target_date = models.DateField(blank=True)
+    status = models.CharField(max_length=255, blank=True, null=True, default='Open')
+    closed_by = models.CharField(max_length=255, null=True, blank=True)
+    reopened_by = models.CharField(max_length=255, null=True, blank=True)
+    resolved_by = models.CharField(max_length=255, null=True, blank=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+
 class KickOffProgram(models.Model):
     """ Storing Data from kick of page """
     def get_file_path(instance, filename):
@@ -308,16 +322,26 @@ class KickOffProgram(models.Model):
     class Meta:
         verbose_name_plural = "Kick Off Program"
 
+    def __unicode__(self):
+            return u"%s" % (self.program_name)
 
-class MeetingActionItems(models.Model):
-    meeting_minutes = models.ForeignKey(MeetingMinutes)
-    action_items = models.TextField(null=True, blank=True)
-    owners = models.CharField(max_length=255, null=True, blank=True)
-    target_date = models.DateField(blank=True)
-    status = models.CharField(max_length=255, blank=True, null=True, default='Open')
-    closed_by = models.CharField(max_length=255, null=True, blank=True)
-    reopened_by = models.CharField(max_length=255, null=True, blank=True)
-    resolved_by = models.CharField(max_length=255, null=True, blank=True)
+
+class KickoffTagteam(models.Model):
+    kickoff_program = models.ForeignKey(KickOffProgram)
+    primery_poc = models.CharField(max_length=255, null=True, blank=True)
+    secondary_poc = models.CharField(max_length=255, null=True, blank=True)
+    qa = models.CharField(max_length=255, null=True, blank=True)
+    qc = models.CharField(max_length=255, null=True, blank=True)
+    trainer = models.CharField(max_length=255, null=True, blank=True)
+    all_reps = models.CharField(max_length=255, null=True, blank=True)
+
+    kickoff_meeting_date_time = models.DateTimeField(blank=True)
+    training_start_date = models.DateTimeField(blank=True)
+    training_end_date = models.DateTimeField(blank=True)
+    golive_date = models.DateTimeField(blank=True)
+
+    tagteam_added_by = models.CharField(max_length=255, null=True, blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+

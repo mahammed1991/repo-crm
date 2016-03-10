@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails, KickOffProgram, MeetingMinutes
+from reports.models import Region, QuarterTargetLeads, CSATReport, CSATFilterDetails, KickOffProgram, MeetingMinutes, KickoffTagteam
 from reports.forms import RegionForm
 
 
@@ -31,9 +31,16 @@ class CSATFilterDetailsAdmin(admin.ModelAdmin):
 
 admin.site.register(CSATFilterDetails, CSATFilterDetailsAdmin)
 
-admin.site.register(KickOffProgram)
 
 class MeetingMinutesAdmin(admin.ModelAdmin):
 	list_display = ('meeting_audience', 'program', 'program_type', 'google_team', 'subject_timeline', 'other_subject', 'meeting_time_in_ist')
 
 admin.site.register(MeetingMinutes, MeetingMinutesAdmin)
+
+class KickOffProgramAdmin(admin.ModelAdmin):
+    list_display = ('program_name',)
+admin.site.register(KickOffProgram, KickOffProgramAdmin)
+
+class TagteamKickOffProgramAdmin(admin.ModelAdmin):
+    list_display = ('kickoff_program',)
+admin.site.register(KickoffTagteam, TagteamKickOffProgramAdmin)

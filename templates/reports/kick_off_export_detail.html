@@ -104,7 +104,7 @@ body {
                      <div class="col-md-4">  
                           {% if final_type_codelist %}
                          <textarea class="form-control" disabled 
-                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;">{{final_type_codelist}}</textarea>
+                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;">{{final_type_codelist}} </textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
@@ -342,19 +342,137 @@ body {
     </div>
     </div>
 </form>
-<div class="container-fluid">
+
+<div class="container-fluid" >  
       <div class="row"  style="margin-top:30px;margin-bottom:10px;">
           <div class="col-md-12">
+          {% if get_kickoff_tagteam %}
+              <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony" checked disabled>
+               Tagteam Added 
+          {% else %}  
               <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony">
-               Do you want to add Tag-Team?                
+               Do you want to add Tag-Team? 
+          {% endif %}             
           </div>
       </div>
 </div>
 
 </section>
 
+<!-- if tagteam added -->
+{% if get_kickoff_tagteam %}
+<form method="" class="content-region inner-page" onsubmit="" id="">
+  <section>
+     <div class="tagteam_details" >
+          <div class="container-fluid">
+                <h1>TagTeam Details</h1>
+          </div>
+          <div class="container-fluid"> 
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Primary PoC:</label>
+                    </div>
+                   <div class="col-md-4">
+
+                        <input type="text" class="form-control" placeholder="" name="primery_poc" 
+                        id="primery_poc" value="{{ get_kickoff_tagteam.primery_poc }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Secondary PoC: </label>
+                    </div>
+                   <div class="col-md-4">
+                      <input class="form-control" type="text" name="secondary_poc" id="secondary_poc" placeholder=""
+                      value="{{ get_kickoff_tagteam.secondary_poc }}"  disabled/>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">QA: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="qa" name="qa"
+                      value="{{ get_kickoff_tagteam.qa }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">QC:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="qc" name="qc"
+                      value="{{ get_kickoff_tagteam.qc }}"  disabled/>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Trainer: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="trainer" name="trainer"
+                      value="{{ get_kickoff_tagteam.trainer }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Reps:</label>
+                    </div>
+                    <div class="col-md-4  googl-reps">
+                     
+                    <textarea style="height:51px;text-align:left;overflow:hidden;padding-top:5px;" class="form-control" id="tagaddreps" name="tagaddreps" 
+                    disabled>{{reps_email_list }} </textarea>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" 
+                      id="k_o_meeting_date" name="k_o_meeting_date"value="{{ meeting_date_display }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Time:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input id="kickoff_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="kickoff_meeting_time" id="kickoff_meeting_time" placeholder="Time" value="{{ meeting_time }}"  disabled/>
+                    </div>
+              </div>
+          <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Training Start-Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                     <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_start_date" name="training_start_date"
+                     value="{{ training_start_date_display }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Training End-Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_end_date" name="training_end_date"
+                        value="{{ training_end_date_display }}"  disabled/>
+                    </div>
+          </div>
+            <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Go-live Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                    <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="go_live_date" name="go_live_date"
+                    value="{{ go_live_date_display }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+             </div>
+        </div>
+    </div>
+</form>
+{% endif %}
+<!-- end of tagteam added -->
+
  <!--  ADDING TAGTEAM DETAILS STARTS HERE -->
-<form class="content-region inner-page" onsubmit="return validateAddedKickTeam(this);" id="tag-team-detail">
+ 
+<form method="POST" class="content-region inner-page" onsubmit="return validateAddedKickTeam(this);" 
+id="tag-team-detail">
+{% csrf_token %}
   <section>
      <div class="tagteam_details" >
           <div class="container-fluid">
@@ -447,6 +565,13 @@ body {
              </div>
         </div>
     </div>
+    <div class="container-fluid end">
+        <button class="btn std-btn" name="submit_kick_off" id="submit_kick_off" onclick="return validatethis(this);">Submit</button>
+      </div>
+
+</form>
+
+
 
 <!--     <div class="container-fluid">
       <div class="row"  style="margin-top:30px;">
@@ -457,7 +582,7 @@ body {
       </div>
      </div> -->
 
-    <div class="testimony container-fluid">
+    <!-- <div class="testimony container-fluid">
           <div class=" testimony_row">
                 <h1>Testimony Tracker</h1>
           </div>
@@ -506,11 +631,9 @@ body {
           <a id="removeTestimony_1" class="btn std-btn task-btn remove-testimony" style=""><i class="fa fa-minus-circle"></i>Remove</a>
     </div>
 
-      <div class="container-fluid end">
-        <button class="btn std-btn" name="submit_kick_off" id="submit_kick_off" onclick="return validatethis(this);">Submit</button>
-      </div>
+      
+ -->
 
-</form>
 </section>
 
 {% endblock content %}

@@ -7,7 +7,7 @@ from leads.models import PicassoLeads, Leads, Team, Location
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from django.conf import settings
-from reports.models import LeadSummaryReports, KickOffProgram
+from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam
 from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
 from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
@@ -1857,9 +1857,10 @@ def program_kick_off(request):
         latest_program = KickOffProgram.objects.filter(program_created_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(latest_program.id)
         mail_from = request.user.email
+        name_of_submiter = request.user.first_name + ' ' + request.user.last_name
         mail_to = ""
-        mail_subject = "Kickoff program genarated: and Name is %s " % (kickoffprogram.program_name)
-        mail_body = get_template('reports/email_templates/kick_off_form_submission.html').render(Context({'program_name': kickoffprogram.program_name, 'mail_from': mail_from, 'acces_link':acces_link}))
+        mail_subject = "TagTeam Support Request [New Program - %s ]" % (kickoffprogram.program_name)
+        mail_body = get_template('reports/email_templates/kick_off_form_submission.html').render(Context({'program_name': kickoffprogram.program_name, 'mail_from': mail_from, 'acces_link':acces_link, 'google_poc':google_poc, 'name_of_submiter':name_of_submiter}))
         bcc = set()
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -1904,6 +1905,11 @@ def program_kick_off(request):
 def kickoff_thankyou(request):
     return_url = reverse('reports.views.program_kick_off')
     return render(request, 'reports/kickoff_thankyou.html', {'return_url': return_url})
+
+@login_required
+def tagteam_kickoff_thankyou(request):
+    return_url = reverse('reports.views.kickoff_export')
+    return render(request, 'reports/tagteam_kickoff_thankyou.html', {'return_url': return_url})
 
 
 def kickoff_export(request):
@@ -1971,7 +1977,39 @@ def kickoff_export_detail(request, program_id):
         get_kickoff_record = KickOffProgram.objects.get(id=program_id)
     except KickOffProgram.DoesNotExist:
         return redirect('reports.views.kickoff_export')
+        # adding tagteam in page
+    training_start = None
+    training_end = None
+    live_date = None
+    reps_email_list = None
+    meeting_time = None
+    meeting_date = None
+    try:
+        get_kickoff_tagteam = KickoffTagteam.objects.get(kickoff_program_id=program_id)
+        if get_kickoff_tagteam:
 
+            reps_display = get_kickoff_tagteam.all_reps
+            data_reps_list = str(reps_display)
+            clean = data_reps_list.replace("u'","")
+            clean_data = clean.replace(",","")
+            reps_email_list = clean_data.translate(None,"[]'")
+
+            meeting_time = get_kickoff_tagteam.kickoff_meeting_date_time.time()
+            meeting_date = get_kickoff_tagteam.kickoff_meeting_date_time.date()
+            training_start = get_kickoff_tagteam.training_start_date.date()
+            training_end = get_kickoff_tagteam.training_start_date.date()
+            live_date = get_kickoff_tagteam.golive_date.date()
+        else:
+            reps_email_list = None
+            meeting_time = None
+            meeting_date = None
+            training_start = None
+            training_end = None
+            live_date = None
+    except KickoffTagteam.DoesNotExist:
+            get_kickoff_tagteam = None
+
+    # displaying the disabled kickof program to add tagteam
     if get_kickoff_record:
         # getting manyToMany feild goole poc email fetching
         google_pocs = get_kickoff_record.google_poc.values('email')
@@ -2011,7 +2049,9 @@ def kickoff_export_detail(request, program_id):
 
         get_codetype_list = get_kickoff_record.codetypeslist
         final_type_codelist_with_quotes = str(get_codetype_list[1:-1])
-        final_type_codelist = final_type_codelist_with_quotes
+        final_type_codelist_clean_underscore = final_type_codelist_with_quotes.replace("_"," ")
+        final_type_codelist_clean = final_type_codelist_clean_underscore.replace(","," ")
+        final_type_codelist = final_type_codelist_clean
 
     start_date = get_kickoff_record.programe_start_date
     start_date_converted = datetime.strftime(start_date, '%d.%m.%Y')
@@ -2117,11 +2157,71 @@ def kickoff_export_detail(request, program_id):
         link_file_name_5 = link_file_name_dict['file_name_link_5']
     media_url = settings.MEDIA_URL
 
+    #*************************************
     # auto populate email in tagteam detail
     managers = User.objects.values_list('email', flat=True)
     google_email = list()
     for manager in managers:
         google_email.append(str(manager))
+
+
+
+
+    # adding tag team Storing tagteam detaile & triggering mail
+    if request.method == 'POST':
+        import ipdb;ipdb.set_trace()
+        tagteamkickoff = KickoffTagteam()
+        tagteamkickoff.kickoff_program = get_kickoff_record
+        print tagteamkickoff.kickoff_program
+
+        tagteamkickoff.tagteam_added_by = request.user.email
+
+        tagteamkickoff.primery_poc = request.POST.get('primery_poc')
+        tagteamkickoff.secondary_poc = request.POST.get('secondary_poc')
+        tagteamkickoff.qa = request.POST.get('qa')
+        tagteamkickoff.qc = request.POST.get('qc')
+        tagteamkickoff.trainer = request.POST.get('trainer')
+        tagteamkickoff.all_reps = request.POST.getlist('tagaddreps')
+
+        tagteam_kickoff_meeting_date = request.POST.get('k_o_meeting_date')
+        tagteam_kickoff_meeting_time = request.POST.get('kickoff_meeting_time')
+        kickoff_meeting_date_time_add = tagteam_kickoff_meeting_date + ' ' + tagteam_kickoff_meeting_time
+        tagteamkickoff.kickoff_meeting_date_time = datetime.strptime(kickoff_meeting_date_time_add, '%d.%m.%Y %I:%M %p')
+
+        training_start_date = request.POST.get('training_start_date')
+        tagteamkickoff.training_start_date = datetime.strptime(training_start_date, '%d.%m.%Y')
+        training_end_date = request.POST.get('training_end_date')
+        tagteamkickoff.training_end_date = datetime.strptime(training_end_date, '%d.%m.%Y')
+
+        golive_date = request.POST.get('go_live_date')
+        tagteamkickoff.golive_date = datetime.strptime(golive_date, '%d.%m.%Y')
+
+        tagteamkickoff.save()
+        
+        # mailing functionalities
+        latest_program = KickoffTagteam.objects.filter(tagteam_added_by=request.user.email).last()
+        acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(get_kickoff_record.id)
+
+        program = tagteamkickoff.kickoff_program.program_name
+        google_pocs = googlepoc_email_list
+        kick_off_created = tagteamkickoff.kickoff_program.created_date
+
+        program_created_by = tagteamkickoff.kickoff_program.program_created_by
+        mail_from = request.user.email
+        tagteam_added_by = request.user.first_name + ' ' + request.user.last_name
+
+        going_live = golive_date
+        mail_to = ""
+        mail_subject = "TagTeam added [New Program - %s ]" % (program)
+        mail_body = get_template('reports/email_templates/tagteam_added_kickoff.html').render(Context({'program_name': program, 'acces_link':acces_link,'google_pocs':google_pocs,'kick_off_created':kick_off_created, 'going_live':going_live,'program_created_by':program_created_by,'tagteam_added_by':tagteam_added_by}))
+        bcc = set()
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+        print "saved"
+        return redirect('reports.views.tagteam_kickoff_thankyou')
+
+
 
     return render(request,'reports/kick_off_export_detail.html', {'get_kickoff_record': get_kickoff_record,
                                                                   'googlepoc_list': googlepoc_email_list,
@@ -2149,4 +2249,17 @@ def kickoff_export_detail(request, program_id):
                                                                   'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5,
                                                                   'all_mail': google_email,
                                                                   'final_type_codelist': final_type_codelist,
-                                                                  'clean_data_advertize_data':clean_data_advertize_data})
+                                                                  'clean_data_advertize_data':clean_data_advertize_data,
+                                                                  # tagteam detayls passing
+                                                                  'get_kickoff_tagteam':get_kickoff_tagteam,
+                                                                  'reps_email_list':reps_email_list,
+                                                                  'training_start_date_display':training_start,
+                                                                  'training_end_date_display':training_end,
+                                                                  'go_live_date_display':live_date,
+                                                                  'meeting_time':meeting_time,
+                                                                  'meeting_date_display':meeting_date,
+                                                                  })
+
+
+
+
