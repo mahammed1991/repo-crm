@@ -70,6 +70,12 @@ TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'forum/skins/default/templates'),
 ]
 
+ADMINS = (
+    ('Basavaraju U S', 'basavaraju@regalix-inc.com'),
+)
+
+MANAGERS = ADMINS
+
 # Application constants
 PORTAL_MAIL_ID = 'google@regalix-inc.com'
 REGALIX_DEFAULT_ROLE = 1

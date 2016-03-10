@@ -10,7 +10,9 @@ function validatethis(frm) {
     var numericExpression = /^[0-9]+$/;
     window.failedFields = new Array();
     var fix_slots = new Array();
-    
+    $('#display_url_has_space').hide();
+    $('#display_url_has_comma').hide();
+    $('#display_invalid_url').hide();
     window.is_error = false;
 
     if(window.is_reset == true){
@@ -85,7 +87,9 @@ function ValidateUrlField() {
           {   var inValid = /\s/;
               var value = url;
               var check = inValid.test(value);
-              if(check){alert("URL contains space"); 
+              if(check){
+                        // alert("URL contains space");
+                        $('#display_url_has_space').show(); 
                         window.failedFields.push(Elementurl);
                         $("#url").addClass('error-box');
                         window.is_error = true;
@@ -95,7 +99,8 @@ function ValidateUrlField() {
                           re = new RegExp(/,\s*/);
                           var check_coma = re.test(string);
                           if (check_coma){
-                                  alert("URL contains comma");
+                                  $('#display_url_has_comma').show();
+                                  // alert("URL contains comma");
                                   window.failedFields.push(Elementurl);
                                   $("#url").addClass('error-box');
                                   window.is_error = true;
@@ -104,7 +109,8 @@ function ValidateUrlField() {
                           $("#url").removeClass('error-box');
                           return true} 
           }
-        else {  alert("Invalid URL pattern");
+        else {
+               $('#display_invalid_url').show();
                $("#url").addClass('error-box'); 
                 window.is_error = true;
                 window.failedFields.push(Elementurl);
@@ -114,7 +120,8 @@ function ValidateUrlField() {
             re = new RegExp(/,\s*/);
             var check_coma = re.test(string);
             if (check_coma){
-                    alert("URL contains comma");
+                    $('#display_url_has_comma').show();
+                    // alert("URL contains comma");
                     window.failedFields.push(Elementurl);
                     $("#url").addClass('error-box');
                     window.is_error = true;
