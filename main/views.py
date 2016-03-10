@@ -59,7 +59,6 @@ def main_home(request):
         6. Testimonials
 
     """
-    qwe
     user_profile = get_user_profile(request.user)
     start_date, end_date = get_quarter_date_slots(datetime.utcnow())
     current_quarter = ReportService.get_current_quarter(datetime.utcnow())
@@ -1797,13 +1796,3 @@ def write_appointments_to_csv(result, collumn_attr, filename):
 
 def rlsa_limitations(request):
     return render(request, 'main/rlsa_limitations.html', {})
-
-
-def server_error(request):
-    response = render_to_response(
-        '500.html',
-        context_instance=RequestContext(request)
-    )
-
-    response.status_code = 500
-    return response
