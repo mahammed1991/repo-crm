@@ -2173,10 +2173,8 @@ def kickoff_export_detail(request, program_id):
 
     # adding tag team Storing tagteam detaile & triggering mail
     if request.method == 'POST':
-        import ipdb;ipdb.set_trace()
         tagteamkickoff = KickoffTagteam()
         tagteamkickoff.kickoff_program = get_kickoff_record
-        print tagteamkickoff.kickoff_program
 
         tagteamkickoff.tagteam_added_by = request.user.email
 
@@ -2222,7 +2220,6 @@ def kickoff_export_detail(request, program_id):
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
-        print "saved"
         return redirect('reports.views.tagteam_kickoff_thankyou')
 
 
