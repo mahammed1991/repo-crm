@@ -847,8 +847,6 @@ def available_counts_booked_specific(process_type):
     available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
     #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
 
-
-    #for listvalue in exclude_north_america:
     for item in available_counts_teams:
         item['Availability Count'] = 0
         item['Ratio'] = 0
@@ -953,7 +951,7 @@ def slots_open_booked():
 
     all_bookings = zip(tag_final,shopping_final)
 
-    #mailing functyonaliteis
+    # mailing functyonaliteis
     specific_date = datetime.today()
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
