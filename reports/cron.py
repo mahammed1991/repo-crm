@@ -4,7 +4,7 @@ from django.conf import settings
 from datetime import datetime, timedelta
 import logging
 from lib.salesforce import SalesforceApi
-from leads.models import Leads, SfdcUsers, WPPLeads, PicassoLeads
+from leads.models import Leads, SfdcUsers, WPPLeads, PicassoLeads, Timezone, RegalixTeams, Location, TimezoneMapping, CodeType
 from django.core.exceptions import ObjectDoesNotExist
 import pytz
 from representatives.models import GoogeRepresentatives, RegalixRepresentatives
@@ -26,9 +26,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 
 
 # utlizatyion dashboard
-from datetime import datetime, timedelta
 from main.models import UserDetails
-from leads.models import Timezone, RegalixTeams, Location, TimezoneMapping, Leads, WPPLeads, CodeType
 from representatives.models import (
     Availability,
     ScheduleLog,
@@ -36,19 +34,9 @@ from representatives.models import (
 )
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
-from lib.helpers import send_mail
-from django.template.loader import get_template
-from django.db.models import Sum
-from django.template import Context
-from django.db.models import Count
+from django.db.models import Sum, Count 
 from collections import OrderedDict
-#import datetime
-from datetime import timedelta, datetime
-from datetime import datetime
-import logging
-from django.template.loader import get_template
-from django.template import Context
-from lib.helpers import send_mail
+
 
 
 
@@ -971,11 +959,6 @@ def slots_open_booked():
     all_bookings = zip(tag_final,shopping_final)
 
     #mailing functyonaliteis
-    from datetime import datetime
-    import logging
-    from django.template.loader import get_template
-    from django.template import Context
-    from lib.helpers import send_mail
     specific_date = datetime.today()
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
