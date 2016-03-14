@@ -95,51 +95,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings-staging"
 
 
 
-# from representatives.models import Availability
-
-# # name = raw_input("enter date")
-# # utc_date = raw_input("enter date")
-# # availability = Availability.objects.get(date_in_utc=utc_date, team=selected_team)
-
-# selected_team = 1
-# # created_date = raw_input("enter team date")
-
-# # availability = Availability.objects.get(team=selected_team).filter(availability_count)
-# import ipdb;ipdb.set_trace()
-# availability = Availability.objects.filter(team=selected_team)
-
-# print availability
 
 
-
-# default_process_type = ['TAG', 'SHOPPING']
-# default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
-
-# for teams in default_teams:
-# 	slots_data = Availability.objects.filter(
-#             # date_in_utc__range=(from_utc_date, to_utc_date),
-#             team__id=teams.id,
-#             # team__process_type=teams.process_type
-#         ).values_list('team__team_name').annotate(count=Count('availability_count'))
-# 	print slots_data
-
-# import ipdb;ipdb.set_trace()
-
-#import ipdb;ipdb.set_trace()
-#availabl = Availability.objects.filter(team__in=default_teams, date_in_utc__range=[date, today]).values('team_id').annotate(count=Count('availability_count'))
-
-#availabl = Availability.objects.filter(team__in=default_teams, date_in_utc__range=[date, today]).values('team_id').annotate(total=Sum('availability_count'))
-
-
-# booked_count = Availability.objects.filter(team__in=default_teams, date_in_utc__range=[date, today]).values('booked_count', 'team_id')
-# print "booked-count", booked_count
-
-# dictf = reduce(lambda x, y: dict((k, v + y[k]) for k, v in x.iteritems()), availabl)
-
-# print "all sum avaialable ", dictf
-
-# import ipdb;ipdb.set_trace()
-# for data in availabl:
-# 	print data
 
 
