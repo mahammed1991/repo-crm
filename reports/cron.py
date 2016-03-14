@@ -7,7 +7,7 @@ from lib.salesforce import SalesforceApi
 from leads.models import Leads, SfdcUsers, WPPLeads, PicassoLeads, Timezone, RegalixTeams, Location, TimezoneMapping, CodeType
 from django.core.exceptions import ObjectDoesNotExist
 import pytz
-from representatives.models import GoogeRepresentatives, RegalixRepresentatives
+from representatives.models import GoogeRepresentatives, RegalixRepresentatives, Availability, ScheduleLog, AvailabilityForTAT
 import json
 import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
@@ -24,14 +24,8 @@ logging.basicConfig(filename='/tmp/cronjob.log',
                     datefmt='%d/%b/%Y %H:%M:%S',
                     level=logging.DEBUG)
 
-
 # utlizatyion dashboard
 from main.models import UserDetails
-from representatives.models import (
-    Availability,
-    ScheduleLog,
-    AvailabilityForTAT
-)
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
 from django.db.models import Sum, Count 
