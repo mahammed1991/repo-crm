@@ -1,0 +1,916 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  TagTeam - Program Kick-off Document
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+<link rel="stylesheet" href="{% static 'css/reports/kick_off.css' %}">
+{% endblock main_css %}
+<style type="text/css">
+  .tooltip-wrapper {
+    display: inline-block;
+}
+body {
+    margin-top: 50px;
+}
+</style>
+{% block content %}
+<section class="content-region inner-page">
+
+<form method="" name="kick_off_program" onsubmit="" enctype="multipart/form-data">
+  {% csrf_token %}
+      <div class="container-fluid custom-container-fluid">
+            <h1>TagTeam - Program Kick-off {{get_kickoff_record.program_name}}</h1>
+      </div>
+        <div class="container-fluid"> 
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Program Name:</label>
+                    </div>
+                   <div class="col-md-4">
+                      {% if get_kickoff_record.program_name %}
+                      <textarea style="height:51px;" class="form-control" disabled>{{get_kickoff_record.program_name}}</textarea>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Google PoC:</label>
+                    </div>
+                   <div class="col-md-4">
+                       {% if googlepoc_list %}
+                       <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{googlepoc_list}}</textarea>
+                       {% endif %}
+
+                    </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                      <label for="">Market(s)/Region(s)</br>to be served: </label>
+                    </div>
+                    <div class="col-md-4">
+                     <input type="text" {% if region_list %} value={{region_list}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Google PoC Location:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text"{% if get_kickoff_record.google_poc_locations %} value={{get_kickoff_record.google_poc_locations}} {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
+                    </div>
+              </div>
+
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Location(s) </br>to be served: </label>
+                    </div>
+                    <div class="col-md-4 target-locations-main">
+                         {% if target_location_list %}
+                         <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{target_location_list}}
+                         </textarea>
+                         {% endif %}
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Program Start </br>Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text"{% if start_date_converted %} value={{start_date_converted}} 
+                      {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
+                    </div>
+              </div>
+              <div class="row" >
+                    <div class="col-md-2">
+                      <label  for="">Support Required with Programs?</label>  
+                    </div>
+                    <div class="col-md-4">
+                         {% if clean_data_advertize_data %} 
+                         <textarea class="form-control" disabled style="height:51px;overflow:hidden">{{clean_data_advertize_data}}</textarea>
+                         {% endif %}
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Program End </br>Date:  </label>
+                    </div>
+                    <div class="col-md-4">
+                       <input type="text"{% if end_date_converted %} value={{end_date_converted}} 
+                      {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
+                    </div>
+              </div>
+
+              <div class="row">
+                    <div class="col-md-2 set-text-align-light" >
+                         <label for="">Support Required with Task Types?: </label>
+                    </div>
+                     <div class="col-md-4">  
+                          {% if final_type_codelist %}
+                         <textarea class="form-control" disabled 
+                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;">{{final_type_codelist}} </textarea>
+                         {% endif %}
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Google PoC Email:</label>
+                    </div>
+                    <div class="col-md-4">
+                      {% if google_poc_email_list %}
+                       <textarea style="height:51px;overflow:hidden;padding-top:5px;" class="form-control" disabled>{{google_poc_email_list}}
+                       </textarea>
+                       {% endif %}
+                    </div>
+              </div>
+              <div class="">
+                  <div class="row">
+                        <div class="col-md-2 ">
+                          <label class="est-lead" for="">Estimated Lead Volume:</label>
+                        </div>
+                         <div class="col-md-4">
+                              <input type="text" {% if estimated_number %}
+                          value={{estimated_number}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                        </div>
+                        <div class="col-md-1"> </div>
+                        <div class="col-md-1"> </div>
+                        <div class="col-md-4">
+                          <input type="text" 
+                          {% if estimated_volume %} value={{estimated_volume}} {% endif %}
+                          class="form-control" name="program_name" id="program_name" disabled/>
+                        </div>
+                  </div>
+             </div> 
+
+              <div class="row">
+                <div class="col-md-2 ">
+                  <label for="">Program Overview and Objectives:</label>
+                </div>
+                 <div class="col-md-10 program_over">
+                 {% if get_kickoff_record.program_overview_objective %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>{{get_kickoff_record.program_overview_objective}}</textarea>
+                  {% endif %}
+                </div>
+              </div>
+            <div class="succes-matrics ">
+               <div class=" row matrix">
+                  <table id="success-matrix"> 
+                  </table>
+               </div>
+            </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Expectations:</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                 {% if get_kickoff_record.expectations %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
+                  {{get_kickoff_record.expectations}}</textarea>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Explain Workflow :</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  {% if get_kickoff_record.explain_workflow %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
+                  {{get_kickoff_record.explain_workflow}}</textarea>
+                  {% endif %} 
+                </div>
+              </div>   
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for=""> Win Criteria:</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  {% if get_kickoff_record.win_criteria %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
+                  {{get_kickoff_record.win_criteria}}</textarea>
+                  {% endif %}
+                </div>
+              </div> 
+
+              <div class="lead_subbmission_via_portal">
+                   <div class="row " style="">
+                    <div class="col-md-2 ">
+                      <label for="">Lead Submission Mode:</label>
+                    </div>
+                    <div class="col-md-1" ></div>
+                    <div class="">
+
+                    {% if lead_type  %}
+                          <div class="col-md-2 radio-validate" style="padding-top:8px;">
+                              <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission" checked disabled> Portal.
+                          </div>
+                          <div class="col-md-2 radio-validate" style="padding-top:10px;">
+                              <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission" disabled>Others.
+                          </div>
+                    {% else %}
+                          <div class="col-md-2 radio-validate" style="padding-top:8px;">
+                              <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission" disabled> Portal.
+                          </div>
+                          <div class="col-md-2 radio-validate" style="padding-top:10px;">
+                              <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission" checked disabled>Others.
+                          </div>
+                    </div>
+                    <div class="col-md-5" >  
+                        <input  class="form-control" type='text' value={{ get_kickoff_record.lead_subbmission_other_val}} id="lead_sub_other"  name="lead_sub_other" disabled>
+                    </div>
+                    {% endif %}
+                  </div>
+              </div>
+               <div class="real_time_support set-top-bottom">
+                    <div class="row set-top-bottom">
+                            <div class="col-md-2 set-text-align">
+                              <label for="">Real-time Support Required:</label>
+                            </div>
+                           <div class="col-md-1 " ></div>
+                           {% if type_chat %}
+                         <div class="col-md-2 real-chat" style="padding-top:8px;">
+                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat" checked disabled> chat
+                        </div>
+                        <div class="col-md-2 live-trans" style="padding-top:10px;">
+                             <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans" disabled> Live Transfer 
+                        </div>
+                        {% endif%}
+                       
+                        {% if type_live %} 
+                         <div class="col-md-2 real-chat" style="padding-top:8px;">
+                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat" disabled=""> Chat
+                        </div>
+                        <div class="col-md-2 live-trans" style="padding-top:10px;">
+                             <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans" checked disabled=""> Live Transfer 
+                        </div>
+                        {% endif%}
+                        
+                        {% if chat_and_live %}
+                         <div class="col-md-2 real-chat" style="padding-top:8px;">
+                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat" 
+                             checked disabled> Chat
+                        </div>
+                        <div class="col-md-2 live-trans" style="padding-top:10px;">
+                             <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans" checked disabled=""> Live Transfer 
+                        </div>
+                        {% endif%}
+                    </div>
+              </div>
+               <div class="row">
+                    <div class="col-md-2 tagteam-connect ">
+                        <label for="">TagTeam/Google PoC Connect Details:</label>
+                    </div>
+                    <div class="col-md-4 ">
+                    {% if type_of_connect %}
+                        <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
+                        value= {{ type_of_connect }}
+                        disabled>
+                    {% endif %}
+                    </div>
+                  <div class="col-md-3">
+                     {% if type_of_connect_day %}
+                        <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
+                        value= {{ type_of_connect_day }}
+                        disabled>
+                    {% endif %}
+                  </div>
+                  <div class="col-md-3 ">
+                        {% if type_of_connect_time %}
+                        <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
+                        value= {{ type_of_connect_time }}
+                        disabled>
+                    {% endif %}
+                  </div>
+              </div>
+         <div class="">
+              <div class="row">
+                    <div class="col-md-2" >
+                      <label for="">Comments, if any</label>
+                    </div>
+                     <div class="col-md-10">
+                     {% if get_kickoff_record.comments %}
+                         <input style="height:52px;"type="text" class="form-control" id="comments" name="comments" 
+                            value={{get_kickoff_record.comments}} disabled>
+                      {% endif %}
+                    </div>
+              </div>
+        </div>
+    <div class="container-fluid" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
+      <!-- <div class="std-sub-title " style="text-align:center;background: #4D7DBE;">Attachments</div> -->
+      <div class="std-sub-title row" style="text-align:center;">Attachments</div>
+    <div id="attach" >
+      <table id="attach"  style="width: 100%;">
+        <thead>
+          <tr>
+            <td id="action-item">File Name</td>
+            <td id="action-item">Attached Links</td>
+            <td id="action-item">File Name</td>
+            <td id="action-item">Attached Files</td>
+          </tr>
+        </thead>
+        <tbody class="attachments-links-files">
+          <tr id="attachments_1" class="attachments" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_1 %} value="{{link_file_name_1}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_1 %} href="{{attach_link_1}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_1}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_1 %} value="{{attach_file_name_1}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}" target="_blank">Attachment 1</a></div></td>
+          </tr>
+          <tr id="attachments_2" class="attachments" {% if attach_link_2 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_2 %} value="{{link_file_name_2}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_2 %} href="{{attach_link_2}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_2}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_2 %} value="{{attach_file_name_2}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}" target="_blank">Attachment 2</a></div></td>
+          </tr>
+          <tr id="attachments_3" class="attachments" {% if attach_link_3 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_3 %} value="{{link_file_name_3}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_3 %} href="{{attach_link_3}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_3}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_3 %} value="{{attach_file_name_3}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}" target="_blank">Attachment 3</a></div></td>
+          </tr>
+          <tr id="attachments_4" class="attachments" {% if attach_link_4 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_4 %} value="{{link_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_4 %} href="{{attach_link_4}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_4}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_4 %} value="{{attach_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}" target="_blank">Attachment 4</a></div></td>
+          </tr>
+          <tr id="attachments_5" class="attachments" {% if attach_link_5 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_4 %} value="{{link_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>  
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_5 %} href="{{attach_link_5}}" style="" {% else %} href="" style="display:none;" {% endif %}>{{attach_link_5}}</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_5 %} value="{{attach_file_name_5}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}" target="_blank">Attachment 5</a></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+    </div>
+</form>
+
+<div class="container-fluid" >  
+      <div class="row"  style="margin-top:30px;margin-bottom:10px;">
+          <div class="col-md-12">
+          {% if get_kickoff_tagteam %}
+              <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony" checked disabled>
+               Tagteam Added 
+          {% else %}  
+              <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony">
+               Do you want to add Tag-Team? 
+          {% endif %}             
+          </div>
+      </div>
+</div>
+
+</section>
+
+<!-- if tagteam added -->
+{% if get_kickoff_tagteam %}
+<form method="" class="content-region inner-page" onsubmit="" id="">
+  <section>
+     <div class="tagteam_details" >
+          <div class="container-fluid">
+                <h1>TagTeam Details</h1>
+          </div>
+          <div class="container-fluid"> 
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Primary PoC:</label>
+                    </div>
+                   <div class="col-md-4">
+
+                        <input type="text" class="form-control" placeholder="" name="primery_poc" 
+                        id="primery_poc" value="{{ get_kickoff_tagteam.primery_poc }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Secondary PoC: </label>
+                    </div>
+                   <div class="col-md-4">
+                      <input class="form-control" type="text" name="secondary_poc" id="secondary_poc" placeholder=""
+                      value="{{ get_kickoff_tagteam.secondary_poc }}"  disabled/>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">QA: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="qa" name="qa"
+                      value="{{ get_kickoff_tagteam.qa }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">QC:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="qc" name="qc"
+                      value="{{ get_kickoff_tagteam.qc }}"  disabled/>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Trainer: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="trainer" name="trainer"
+                      value="{{ get_kickoff_tagteam.trainer }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Reps:</label>
+                    </div>
+                    <div class="col-md-4  googl-reps">
+                     
+                    <textarea style="height:51px;text-align:left;overflow:hidden;padding-top:5px;" class="form-control" id="tagaddreps" name="tagaddreps" 
+                    disabled>{{reps_email_list }} </textarea>
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" 
+                      id="k_o_meeting_date" name="k_o_meeting_date"value="{{ meeting_date_display }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Time:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input id="kickoff_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="kickoff_meeting_time" id="kickoff_meeting_time" placeholder="Time" value="{{ meeting_time }}"  disabled/>
+                    </div>
+              </div>
+          <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Training Start-Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                     <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_start_date" name="training_start_date"
+                     value="{{ training_start_date_display }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Training End-Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_end_date" name="training_end_date"
+                        value="{{ training_end_date_display }}"  disabled/>
+                    </div>
+          </div>
+            <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Go-live Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                    <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="go_live_date" name="go_live_date"
+                    value="{{ go_live_date_display }}"  disabled/>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+             </div>
+        </div>
+    </div>
+</form>
+{% endif %}
+<!-- end of tagteam added -->
+
+<div id="preloaderOverlay" style='display:none;'>
+    <div class="preloader">
+        <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+        <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+    </div>
+  </div>
+
+ <!--  ADDING TAGTEAM DETAILS STARTS HERE -->
+ 
+<form method="POST" class="content-region inner-page" onsubmit="return validateAddedKickTeam(this);" 
+id="tag-team-detail">
+{% csrf_token %}
+  <section>
+     <div class="tagteam_details" >
+          <div class="container-fluid">
+                <h1>TagTeam Details</h1>
+          </div>
+          <div class="container-fluid"> 
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Primary PoC:</label>
+                    </div>
+                   <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="" name="primery_poc" 
+                        id="primery_poc" />
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Secondary PoC: </label>
+                    </div>
+                   <div class="col-md-4">
+                      <input class="form-control" type="text" name="secondary_poc" id="secondary_poc" placeholder="">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">QA: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="qa" name="qa">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">QC:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="qc" name="qc">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Trainer: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" id="trainer" name="trainer">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Reps:</label>
+                    </div>
+                    <div class="col-md-4  googl-reps">
+                      <input type="text" class="form-control" id="tagaddreps" name="tagaddreps" placeholder="abc@google.com, abc@regalix-inc.com">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control" placeholder="Date" 
+                      id="k_o_meeting_date" name="k_o_meeting_date">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Kick-off Meeting Time:</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input id="kickoff_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="kickoff_meeting_time" id="kickoff_meeting_time" placeholder="Time">
+                    </div>
+              </div>
+          <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Training Start-Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                     <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_start_date" name="training_start_date">
+                    </div>
+                    <div class="col-md-2">
+                      <label for="">Training End-Date:</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="training_end_date" name="training_end_date">
+                    </div>
+          </div>
+            <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Go-live Date: </label>
+                    </div>
+                    <div class="col-md-4">
+                    <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="go_live_date" name="go_live_date">
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+             </div>
+        </div>
+    </div>
+    <div class="container-fluid end">
+        <button class="btn std-btn" name="submit_kick_off" id="submit_kick_off" onclick="return validatethis(this);">Submit</button>
+      </div>
+
+</form>
+
+
+
+<!--     <div class="container-fluid">
+      <div class="row"  style="margin-top:30px;">
+          <div class="col-md-12">
+              <input class="show-testimony" type='checkbox' id="add-testimony" name="add_testimony"> 
+              Do you want to add Testimony?                
+          </div>
+      </div>
+     </div> -->
+
+    <!-- <div class="testimony container-fluid">
+          <div class=" testimony_row">
+                <h1>Testimony Tracker</h1>
+          </div>
+          <div class="testimonies ">
+            <div id="testimony_1">
+                <div class="row">
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received From (Name & Ldap): </label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control testimony-reciecved-from" id="testimony_reciecved_from_name_1" name="testimony_reciecved_from_name_1">
+                    </div>
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received Date (DD/MM/YY):</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="datepickerFrom_a form-control testimony-reciecved-date" placeholder="Date" id="testimony_reciecved_date_1" name="testimony_reciecved_date_1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received for (Name & Ldap):</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control testimony-reciecved-for-name" id="testimony_reciecved_for_name_1" name="testimony_reciecved_for_name_1">
+                    </div>
+                    <div class="col-md-2 set-text-align-fit">
+                      <label for="">Testimony Received for Account (CID):</label>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control testimony-reciecved-cid" id="testimony_reciecved_cid_1" name="testimony_reciecved_cid_1">
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="">Testimony :</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control testimony-text" id="testimony_text_1" name="testimony_text_1">
+                        </div>
+                   </div>
+                <hr>
+            </div>
+          </div>
+          <a id="addTestimony_1" class="btn std-btn task-btn add-testimony" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+          <a id="removeTestimony_1" class="btn std-btn task-btn remove-testimony" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+    </div>
+
+      
+ -->
+
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+
+<script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<!-- <script src="{% static 'js/reports/kick_off.js' %}"></script>  -->
+
+<script type="text/javascript">
+/* START  ***kick_off_export_detail succes matrix colom row important javascript****   */
+var matrix = {{matrix|safe}};
+var count = 0;
+var j = 1;
+for (var i in matrix) {
+   if (matrix.hasOwnProperty(i)) 
+    {
+      count++;
+    }
+}
+
+$("#success-matrix").html('');
+for(var i=0;i<(count/3);i++){
+$('#success-matrix').append("<tr class='row' id=matrix_add_"+ j +"></tr>"); 
+$("#matrix_add_"+j).append('<td class="col-md-3"><label>Success Metrics:</label></td>');
+
+ $("#matrix_add_"+j).append('<td class="col-md-3" ><textarea style="height:51px;width:248px;"  type="text"'+
+                            'class="form-control ss succes-mat-onebox"'+ 
+                            'id="'+ matrix['succes_metrices_one_'+j]+'" name="'+ matrix['succes_metrices_one_'+j]+
+                            '" disabled'+
+                            '>'+ matrix['succes_metrices_one_'+j]+'  </textarea></td>');
+  $("#matrix_add_"+j).append('<td class="col-md-3  s-two" ><textarea style="height:51px;width:248px"  type="text"'+ 
+                              'class="form-control ss succes-mat-twobox" '+
+                              'id="'+matrix['succes_metrices_two_'+j]+'" name="'+matrix['succes_metrices_two_'+j]+
+                              '" disabled'+
+                               '>'+ matrix['succes_metrices_two_'+j]+'</textarea></td>');
+  $("#matrix_add_"+j).append('<td class="col-md-3 s-three" style="248px;"><textarea '+
+                             'style="height:51px;width:248px;" type="text" '+
+                             'class="form-control ss succes-mat-threebox" '+
+                             'id="'+matrix['succes_metrices_three_'+j]+'"name="'+matrix['succes_metrices_three_'+j]+
+                             '" disabled'+
+                             '>'+matrix['succes_metrices_three_'+j] +' </textarea></td>');
+  j++;
+} 
+
+/* end  ***kick_off_export_detail succes matrix colom row important javascript****   */
+
+/* START  ***kick_off_export_detail.html important javascript****   */
+$('.remove-testimony').hide();
+$('#tag-team-detail').hide();
+$('#show-tag-team').change(function(){
+        var tag_team = $('#show-tag-team').is(":checked");
+        if(tag_team)
+        {
+          $('#tag-team-detail').show();
+        }
+        else
+        {
+          $("#primery_poc").val('');        
+          $("#secondary_poc").val('');  
+          $("#qa").val('');        
+          $("#qc").val('');
+          $("#tagaddreps").val('');
+          $("#k_o_meeting_date").val(''); 
+          $("#training_start_date").val('');
+          $("#training_end_date").val('');
+          $("#go_live_date").val('');
+          $('#kickoff_meeting_time').val('');
+          $( "#add-testimony" ).prop( "checked", false );
+          $('.datepickerFrom_a').val('');
+          $("#testimony_reciecved_for_name_1").val('');        
+          $("testimony_reciecved_cid_1").val('');
+          $('#trainer').val('');
+          $('.testimony').hide(); 
+          $('#tag-team-detail').hide();
+        }
+    });
+
+$(".datepickerFrom_a").datetimepicker({
+      timepicker:false,
+      format:'d.m.Y',
+      scrollInput:false,
+  });
+
+$('.datetimepickerFrom').datetimepicker({
+     datepicker : false,
+     format : 'g:i A',
+     step:30,
+     scrollInput:false,
+  });
+
+$('.testimony').hide();
+$('.show-testimony').change(function(){
+        var show_testimony = $('.show-testimony').is(":checked");
+        if(show_testimony)
+        {
+          $('.testimony').show();
+          $("#testimony_reciecved_from_name_1").val('');        
+          $("#testimony_reciecved_date_1").val(''); 
+          /*$('.remove-testimony').hide();*/
+        }
+        else
+        {
+          $('.testimony').hide();
+        }
+    });
+ $('.add-testimony').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id <= 5 )
+      {
+          $(".remove-testimony").show();
+          $new_row = $("#testimony_1").clone().attr('id', 'testimony_'+next_id).show();
+          $(".testimony-reciecved-from", $new_row).attr('id', 'testimony_reciecved_from_name_'+next_id);        
+          $(".testimony-reciecved-date", $new_row).attr('id', 'testimony_reciecved_date_'+next_id);  
+          $(".testimony-reciecved-for-name", $new_row).attr('id', 'testimony_reciecved_for_name_'+next_id);  
+          $(".testimony-reciecved-cid", $new_row).attr('id', 'testimony_reciecved_cid_'+next_id);  
+          $(".testimony-text", $new_row).attr('id', 'testimony_text_'+next_id);  
+          $(".testimony-reciecved-from", $new_row).attr('name', 'testimony_reciecved_from_name_'+next_id);        
+          $(".testimony-reciecved-date", $new_row).attr('name', 'testimony_reciecved_date_'+next_id);  
+          $(".testimony-reciecved-for-name", $new_row).attr('name', 'testimony_reciecved_for_name_'+next_id);  
+          $(".testimony-reciecved-cid", $new_row).attr('name', 'testimony_reciecved_cid_'+next_id);  
+          $(".testimony-text", $new_row).attr('name', 'testimony_text_'+next_id); 
+          $new_row.appendTo(".testimonies");
+
+          $("#testimony_reciecved_from_name_"+next_id).val('');        
+          $("#testimony_reciecved_date_"+next_id).val('');  
+          $("#testimony_reciecved_for_name_"+next_id).val('');        
+          $("#testimony_reciecved_cid_"+next_id).val('');
+          $('#testimony_text_'+next_id).val('')  
+          
+          $('.remove-testimony').attr('id',"#removeTestimony_" + next_id);
+          $('.add-testimony').attr('id',"#addTestimony_" + next_id);
+          $(".datepickerFrom_a").datetimepicker({
+              timepicker:false,
+              format:'d.m.Y',
+              scrollInput:false,
+          });
+        }
+        if(next_id == 5 )
+        {
+          $(".add-testimony").hide();
+        }
+  });
+
+  $('.remove-testimony').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removeTestimony_"+indx) != "#removeTestimony_1" )
+    {
+        $(".add-testimony").show();
+        $("#testimony_"+indx).remove();
+        $('.remove-testimony').attr('id',"#removeTestimony_" + (indx-1));
+        $('.add-testimony').attr('id',"#addTestimony_" + (indx-1));
+    }
+    if(("#removeTestimony_"+(indx-1)) == "#removeTestimony_1" )
+    {
+      $('.remove-testimony').hide();
+    }
+  });
+ /* END ***kick_off_export_detail.html important css*** */
+
+/*tagteam form google reps auto compleete*/
+   $(function(){
+      var managers_email = {{all_mail|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#tagaddreps').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+      });
+    });
+/*end of tag team google reps auto compleet*/
+
+/*validating kick_off_export_detail.html page*/
+
+function validateAddedKickTeam(form) {
+  debugger;
+    $(".error-txt").remove();
+    $(".lead-form .form-control").removeClass('error-box');
+    // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var numericExpression = /^[0-9]+$/;
+    window.is_error = false;
+    window.failedFields = new Array();
+    if(window.is_reset == true){
+      window.is_reset = false;
+      return false;
+    }
+    primerypoc = document.getElementById('primery_poc'); 
+    validateField(primerypoc);
+
+    secondrypoc = document.getElementById('secondary_poc');
+    validateField(secondrypoc);
+    
+    qa = document.getElementById('qa'); 
+    validateField(qa);
+
+    qc = document.getElementById('qc');
+    validateField(qc);
+
+    trainer = document.getElementById('trainer');
+    validateField(trainer);
+
+    tagaddreps = document.getElementById('tagaddreps');
+    validateField(tagaddreps);
+
+    kickoffmeetingDate = document.getElementById('k_o_meeting_date');
+    validateField(kickoffmeetingDate);
+
+    kickoff_meeting_time = document.getElementById('kickoff_meeting_time');
+    validateField(kickoff_meeting_time);
+
+    training_start_date = document.getElementById('training_start_date');
+    validateField(training_start_date);
+
+    training_end_date = document.getElementById('training_end_date');go_live_date
+    validateField(training_end_date);
+
+    go_live_date = document.getElementById('go_live_date');
+    validateField(go_live_date);
+
+    // Check If Error in Form
+      if(window.is_error){
+        focusElem = failedFields[0];
+        $(focusElem).focus();
+        return false;
+      }else{
+        $('#preloaderOverlay').show();
+        return true;
+      }  
+    }
+
+  function validateField(elem){
+  if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val() || $(elem).val() == null ) {
+    debugger;
+  $(elem).addClass('error-box');
+  window.failedFields.push(elem);
+  window.is_error = true;
+  return false;
+  }else{
+    $(elem).removeClass('error-box');
+  }
+
+  }
+/*End of validation of kick_off_export_detail.html page*/
+
+ </script>
+
+
+{% endblock main_js %}
+
+

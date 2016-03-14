@@ -1,0 +1,28 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Thank You
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content" style="padding-top:15%;padding-bottom:20px;text-align:center;">
+
+    	<!-- TagTeam Added Thank you, please<a href="{{return_url}}"> Click here</a></br>
+        A confirmation email, summarizing the program details,along with the TagTeam details (based on the information you have provided),</br> will be sent in email shortly.  -->
+
+        TagTeam Added Thank you, please
+        <a href="{% url 'kickoff-export-detail' program_id %}" > Click here</a></br>
+        A confirmation email, summarizing the program details,along with the TagTeam details (based on the information you have provided),</br> will be sent in email shortly. 
+
+        <!-- Thank you for submitting your program details.</br>
+        A confirmation email summarizing 
+        the program details (based on the information you have provided);<br/>along with the Tag team details will be sent to you shortly.
+        If you need to change any information on the onboarding form,<br /> please reach out to
+        <b> implementation-support@google.com</b>
+        To submit , please <a href="{{return_url}}"> Click here</a> -->
+
+    </div>
+</div>
+{% endblock content %}
