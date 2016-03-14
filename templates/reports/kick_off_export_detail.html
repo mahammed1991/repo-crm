@@ -468,6 +468,13 @@ body {
 {% endif %}
 <!-- end of tagteam added -->
 
+<div id="preloaderOverlay" style='display:none;'>
+    <div class="preloader">
+        <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+        <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+    </div>
+  </div>
+
  <!--  ADDING TAGTEAM DETAILS STARTS HERE -->
  
 <form method="POST" class="content-region inner-page" onsubmit="return validateAddedKickTeam(this);" 
@@ -882,6 +889,7 @@ function validateAddedKickTeam(form) {
         $(focusElem).focus();
         return false;
       }else{
+        $('#preloaderOverlay').show();
         return true;
       }  
     }

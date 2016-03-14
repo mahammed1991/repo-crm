@@ -1909,8 +1909,10 @@ def kickoff_thankyou(request):
 
 @login_required
 def tagteam_kickoff_thankyou(request):
-    return_url = reverse('reports.views.kickoff_export')
-    return render(request, 'reports/tagteam_kickoff_thankyou.html', {'return_url': return_url})
+    #return_url = reverse('reports.views.kickoff_export_detail')
+    latest_program = KickoffTagteam.objects.filter(tagteam_added_by=request.user.email).last()
+    program_id = latest_program.kickoff_program_id
+    return render(request, 'reports/tagteam_kickoff_thankyou.html', {"program_id":program_id})
 
 
 
@@ -2167,8 +2169,6 @@ def kickoff_export_detail(request, program_id):
     google_email = list()
     for manager in managers:
         google_email.append(str(manager))
-
-
 
 
     # adding tag team Storing tagteam detaile & triggering mail

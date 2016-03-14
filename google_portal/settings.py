@@ -97,7 +97,8 @@ DEFAULT_LEAD_OWNER_ROLE = 'RR'
 DEFAULT_LEAD_OWNER_FNAME = 'Basavaraju'
 DEFAULT_LEAD_OWNER_LNAME = 'U S'
 
-BCC_EMAIL = 'gtracktesting@gmail.com'
+#BCC_EMAIL = 'gtracktesting@gmail.com'
+BCC_EMAIL = 'mashraf@regalix-inc.com'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -143,7 +144,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
     'forum.context.application_settings',
     'django.contrib.messages.context_processors.messages',
-    # 'forum.user_messages.context_processors.user_messages',
+    'forum.user_messages.context_processors.user_messages',
 ]
 
 APPEND_SLASH = True
@@ -159,7 +160,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'django.contrib.humanize',
     'django.contrib.sitemaps',
-    # 'forum',
+    'forum',
     'main',
     'auth',
     'leads',
@@ -183,7 +184,7 @@ MIDDLEWARE_CLASSES = [
     'lib.middleware.SetProfilePicture',
 
     # Forum related middleware classes
-    # 'forum.middleware.request_utils.RequestUtils',
+    'forum.middleware.request_utils.RequestUtils',
 ]
 
 AUTHENTICATION_BACKENDS = (
