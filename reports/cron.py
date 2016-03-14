@@ -854,8 +854,10 @@ def available_counts_booked_specific(process_type):
 
     for ele in available_counts_teams:
         if ele['Booked Count'] > 0:
-            value = (float(ele['Booked Count'])/ele['Availability Count'])*100
-            ele['Ratio'] = ("%.2f" % value)
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) + '%'
+            ele['Ratio'] = ("%.2f"+'%' % value)
+        else:
+            ele['Ratio'] = "-"
             
     for item in available_counts_booked:
         for item2 in available_counts_teams:
@@ -901,13 +903,15 @@ def available_counts_booked_specific_in_na(process_type):
 
     for ele in available_counts_teams:
         if ele['Booked Count'] > 0:
-            value = (float(ele['Booked Count'])/ele['Availability Count'])*100
-            ele['Ratio'] = ("%.2f" % value)
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
+            ele['Ratio'] = ("%.2f" +'%' % value)
+        else:
+            ele['Ratio'] = "-"
 
 
     return available_counts_teams
 
-@kronos.register('*/10 * * * 1,2,3,4,5,6')
+@kronos.register('* */1 * * 1,2,3,4,5,6')
 def slots_open_booked():
     tag_bookings_exclude_na = available_counts_booked_specific(['TAG'])
     shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'])
@@ -935,6 +939,7 @@ def slots_open_booked():
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         tag_final.append(each_one)
 
+
     shopping_final = list()
     for ordering in shopping_all:
         keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
@@ -944,10 +949,22 @@ def slots_open_booked():
     tag_total_sum = dict()
     tag_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in tag_all)
     tag_total_sum['Booked Count'] = sum(item['Booked Count'] for item in tag_all)
+    if tag_total_sum['Booked Count'] > 0:
+        tag_total_sum['Total ratio'] = ((float(tag_total_sum['Booked Count'])/tag_total_sum['Availability_count'])*100) + '%'
+    else:
+        tag_total_sum['Total ratio'] = '-%'
+
+    tag_total_sum_sorted = sorted(tag_total_sum.items())
 
     shopping_total_sum = dict()
     shopping_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in shopping_all)
     shopping_total_sum['Booked Count'] = sum(item['Booked Count'] for item in shopping_all)
+    if tag_total_sum['Booked Count'] > 0:
+        shopping_total_sum['Total ratio'] = ((float(shopping_total_sum['Booked Count'])/shopping_total_sum['Availability_count'])*100) + '%'
+    else:
+        shopping_total_sum['Total ratio'] = '-%'
+
+    shopping_total_sum_sorted = sorted(shopping_total_sum.items())
 
     all_bookings = zip(tag_final,shopping_final)
 
@@ -957,7 +974,7 @@ def slots_open_booked():
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
     mail_subject = "count availabel and booked slots"
-    mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'all_bookings':all_bookings, 'tag_total_sum':tag_total_sum, 'shopping_total_sum':shopping_total_sum }))
+    mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'all_bookings':all_bookings, 'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted }))
     mail_from = 'google@regalix-inc.com'
     mail_to = ['portalsupport@regalix-inc.com']
     bcc = set([])
