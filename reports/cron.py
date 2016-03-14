@@ -18,18 +18,20 @@ from django.template.loader import get_template
 from django.template import Context
 from reports.models import Region, LeadsReport
 
-logging.basicConfig(filename='/tmp/cronjob.log',
-                    filemode='a',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%d/%b/%Y %H:%M:%S',
-                    level=logging.DEBUG)
-
 # utlizatyion dashboard
 from main.models import UserDetails
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
 from django.db.models import Sum, Count 
 from collections import OrderedDict
+
+logging.basicConfig(filename='/tmp/cronjob.log',
+                    filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%d/%b/%Y %H:%M:%S',
+                    level=logging.DEBUG)
+
+
 
 
 
@@ -828,19 +830,19 @@ def available_counts_booked_specific(process_type):
     from datetime import datetime
     today_morning = datetime.today()
     today = today_morning.replace(hour=2, minute=00, second=00)
-    #print "exclude north america"
+    
     
     previous_day_time = today_morning - timedelta(days=1)
     previous_day = previous_day_time.replace(hour=3, minute=00, second=00)
     
     time_zone = 'IST'
-    #print "exclude na",today ,previous_day
+    
     exclude_north_america = ['default team', 'TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
     selected_tzone = Timezone.objects.get(zone_name=time_zone)
     from_utc_date = SalesforceApi.get_utc_date(previous_day, selected_tzone.time_value)
     to_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
     default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name__in=exclude_north_america)
-    #print default_teams
+    
     available_counts_teams = default_teams.values('team_name')
     available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
     #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
@@ -871,7 +873,6 @@ def available_counts_booked_specific_in_na(process_type):
     from datetime import datetime
     today_morning = datetime.today()
     today = today_morning.replace(hour=19, minute=00, second=00)
-    #print "include north america"
     
     next_day_time = today_morning + timedelta(days=1)
     next_day = next_day_time.replace(hour=7, minute=30, second=00)
