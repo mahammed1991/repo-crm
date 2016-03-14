@@ -94,8 +94,8 @@ DEFAULT_LEAD_OWNER_ROLE = 'RR'
 DEFAULT_LEAD_OWNER_FNAME = 'Suri'
 DEFAULT_LEAD_OWNER_LNAME = 'Kamat'
 
-#BCC_EMAIL = 'gtracktesting@gmail.com'
-BCC_EMAIL = 'mashraf@regalix-inc.com'
+BCC_EMAIL = 'gtracktesting@gmail.com'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
