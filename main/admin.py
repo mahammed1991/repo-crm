@@ -9,24 +9,24 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 
-# class MyUserAdmin(UserAdmin):
-#     UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
-#     readonly_fields = ['email', 'is_active', 'date_joined']
+class MyUserAdmin(UserAdmin):
+    UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
+    readonly_fields = ['email', 'is_active', 'date_joined']
 
-#     def get_readonly_fields(self, request, obj=None):
-#         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
+    def get_readonly_fields(self, request, obj=None):
+        return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)
 
-#     def has_add_permission(self, request):
-#         return CustomAdmin.get_permission_status(request)
+    def has_add_permission(self, request):
+        return CustomAdmin.get_permission_status(request)
 
-#     def has_delete_permission(self, request, obj=None):
-#         return CustomAdmin.get_permission_status(request)
+    def has_delete_permission(self, request, obj=None):
+        return CustomAdmin.get_permission_status(request)
 
-#     def change_view(self, request, object_id, form_url='', extra_context=None):
-#         extra_context = CustomAdmin.get_view_status(request, extra_context)
-#         return super(MyUserAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
-# admin.site.unregister(User)
-# admin.site.register(User, MyUserAdmin)
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = CustomAdmin.get_view_status(request, extra_context)
+        return super(MyUserAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+admin.site.unregister(User)
+admin.site.register(User, MyUserAdmin)
 
 
 class ContactAdmin(admin.ModelAdmin):
