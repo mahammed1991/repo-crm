@@ -907,7 +907,7 @@ def available_counts_booked_specific_in_na(process_type):
 
     return available_counts_teams
 
-@kronos.register('0 17 * * 2,3,4,5,6')
+@kronos.register('*/10 * * * 1,2,3,4,5,6')
 def slots_open_booked():
     tag_bookings_exclude_na = available_counts_booked_specific(['TAG'])
     shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'])
