@@ -911,7 +911,7 @@ def available_counts_booked_specific_in_na(process_type):
 
     return available_counts_teams
 
-@kronos.register('* */1 * * 1,2,3,4,5,6')
+@kronos.register('* 1 * * 1,2,3,4,5,6')
 def slots_open_booked():
     tag_bookings_exclude_na = available_counts_booked_specific(['TAG'])
     shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'])
@@ -952,7 +952,7 @@ def slots_open_booked():
     if tag_total_sum['Booked Count'] > 0:
         tag_total_sum['Total ratio'] = ((float(tag_total_sum['Booked Count'])/tag_total_sum['Availability_count'])*100) + '%'
     else:
-        tag_total_sum['Total ratio'] = '-%'
+        tag_total_sum['Total ratio'] = '-'
 
     tag_total_sum_sorted = sorted(tag_total_sum.items())
 
@@ -962,7 +962,7 @@ def slots_open_booked():
     if tag_total_sum['Booked Count'] > 0:
         shopping_total_sum['Total ratio'] = ((float(shopping_total_sum['Booked Count'])/shopping_total_sum['Availability_count'])*100) + '%'
     else:
-        shopping_total_sum['Total ratio'] = '-%'
+        shopping_total_sum['Total ratio'] = '-'
 
     shopping_total_sum_sorted = sorted(shopping_total_sum.items())
 
@@ -973,8 +973,8 @@ def slots_open_booked():
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
-    mail_subject = "count availabel and booked slots"
-    mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'all_bookings':all_bookings, 'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted }))
+    mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % specific_date
+    mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'all_bookings':all_bookings, 'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
     mail_from = 'google@regalix-inc.com'
     mail_to = ['portalsupport@regalix-inc.com']
     bcc = set([])
