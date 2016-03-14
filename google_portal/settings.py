@@ -144,7 +144,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
     'forum.context.application_settings',
     'django.contrib.messages.context_processors.messages',
-    'forum.user_messages.context_processors.user_messages',
+    #'forum.user_messages.context_processors.user_messages',
 ]
 
 APPEND_SLASH = True
@@ -184,7 +184,7 @@ MIDDLEWARE_CLASSES = [
     'lib.middleware.SetProfilePicture',
 
     # Forum related middleware classes
-    'forum.middleware.request_utils.RequestUtils',
+    #'forum.middleware.request_utils.RequestUtils',
 ]
 
 AUTHENTICATION_BACKENDS = (
