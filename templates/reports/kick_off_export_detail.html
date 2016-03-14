@@ -51,13 +51,13 @@ body {
                       <label for="">Market(s)/Region(s)</br>to be served: </label>
                     </div>
                     <div class="col-md-4">
-                     <input type="text" {% if region_list %} value={{region_list}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                     <input type="text" {% if region_list %} value="{{region_list}}" {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Google PoC Location:</label>
                     </div>
                     <div class="col-md-4">
-                      <input type="text"{% if get_kickoff_record.google_poc_locations %} value={{get_kickoff_record.google_poc_locations}} {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
+                      <input type="text"{% if get_kickoff_record.google_poc_locations %} value="{{get_kickoff_record.google_poc_locations}}" {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
 
@@ -75,7 +75,7 @@ body {
                       <label for="">Program Start </br>Date:</label>
                     </div>
                     <div class="col-md-4">
-                      <input type="text"{% if start_date_converted %} value={{start_date_converted}} 
+                      <input type="text"{% if start_date_converted %} value="{{start_date_converted}}" 
                       {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
@@ -92,7 +92,7 @@ body {
                       <label for="">Program End </br>Date:  </label>
                     </div>
                     <div class="col-md-4">
-                       <input type="text"{% if end_date_converted %} value={{end_date_converted}} 
+                       <input type="text"{% if end_date_converted %} value="{{end_date_converted}}" 
                       {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
@@ -124,7 +124,7 @@ body {
                         </div>
                          <div class="col-md-4">
                               <input type="text" {% if estimated_number %}
-                          value={{estimated_number}} {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                          value="{{estimated_number}}" {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                         </div>
                         <div class="col-md-1"> </div>
                         <div class="col-md-1"> </div>
@@ -213,7 +213,7 @@ body {
                           </div>
                     </div>
                     <div class="col-md-5" >  
-                        <input  class="form-control" type='text' value={{ get_kickoff_record.lead_subbmission_other_val}} id="lead_sub_other"  name="lead_sub_other" disabled>
+                        <input  class="form-control" type='text' value="{{ get_kickoff_record.lead_subbmission_other_val}}" id="lead_sub_other"  name="lead_sub_other" disabled>
                     </div>
                     {% endif %}
                   </div>
@@ -260,21 +260,21 @@ body {
                     <div class="col-md-4 ">
                     {% if type_of_connect %}
                         <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
-                        value= {{ type_of_connect }}
+                        value= "{{ type_of_connect }}"
                         disabled>
                     {% endif %}
                     </div>
                   <div class="col-md-3">
                      {% if type_of_connect_day %}
                         <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
-                        value= {{ type_of_connect_day }}
+                        value= "{{ type_of_connect_day }}"
                         disabled>
                     {% endif %}
                   </div>
                   <div class="col-md-3 ">
                         {% if type_of_connect_time %}
                         <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
-                        value= {{ type_of_connect_time }}
+                        value= "{{ type_of_connect_time }}"
                         disabled>
                     {% endif %}
                   </div>
@@ -287,7 +287,7 @@ body {
                      <div class="col-md-10">
                      {% if get_kickoff_record.comments %}
                          <input style="height:52px;"type="text" class="form-control" id="comments" name="comments" 
-                            value={{get_kickoff_record.comments}} disabled>
+                            value="{{get_kickoff_record.comments}}" disabled>
                       {% endif %}
                     </div>
               </div>
