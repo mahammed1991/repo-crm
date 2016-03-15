@@ -10,9 +10,6 @@
 <link rel="stylesheet" href="{% static 'css/reports/kick_off.css' %}">
 {% endblock main_css %}
 <style type="text/css">
-  .tooltip-wrapper {
-    display: inline-block;
-}
 body {
     margin-top: 50px;
 }
@@ -32,7 +29,7 @@ body {
                     </div>
                    <div class="col-md-4">
                       {% if get_kickoff_record.program_name %}
-                      <textarea style="height:51px;" class="form-control" disabled>{{get_kickoff_record.program_name}}</textarea>
+                      <textarea style="height:51px;" class="form-control" disabled>{{get_kickoff_record.program_name}}</textarea>{% else %}<textarea style="height:51px;" class="form-control" disabled></textarea>
                       {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
@@ -41,8 +38,9 @@ body {
                    <div class="col-md-4">
                        {% if googlepoc_list %}
                        <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{googlepoc_list}}</textarea>
+                       {% else %}
+                       <textarea style="height:51px;overflow:hidden" class="form-control" disabled></textarea>
                        {% endif %}
-
                     </div>
               </div>
 
@@ -51,13 +49,13 @@ body {
                       <label for="">Market(s)/Region(s)</br>to be served: </label>
                     </div>
                     <div class="col-md-4">
-                     <input type="text" {% if region_list %} value="{{region_list}}" {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                     <input type="text" {% if region_list %} value="{{region_list}}" {% else %} value=""{% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Google PoC Location:</label>
                     </div>
                     <div class="col-md-4">
-                      <input type="text"{% if get_kickoff_record.google_poc_locations %} value="{{get_kickoff_record.google_poc_locations}}" {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
+                      <input type="text"{% if get_kickoff_record.google_poc_locations %} value="{{get_kickoff_record.google_poc_locations}}" {% else %} value="" {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
 
@@ -69,13 +67,15 @@ body {
                          {% if target_location_list %}
                          <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{target_location_list}}
                          </textarea>
+                         {% else %}
+                          <textarea style="height:51px;overflow:hidden" class="form-control" disabled></textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Program Start </br>Date:</label>
                     </div>
                     <div class="col-md-4">
-                      <input type="text"{% if start_date_converted %} value="{{start_date_converted}}" 
+                      <input type="text"{% if start_date_converted %} value="{{start_date_converted}}" {% else %} value=""
                       {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
@@ -86,13 +86,15 @@ body {
                     <div class="col-md-4">
                          {% if clean_data_advertize_data %} 
                          <textarea class="form-control" disabled style="height:51px;overflow:hidden">{{clean_data_advertize_data}}</textarea>
+                         {% else %}
+                         <textarea class="form-control" disabled style="height:51px;overflow:hidden"></textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
                       <label for="">Program End </br>Date:  </label>
                     </div>
                     <div class="col-md-4">
-                       <input type="text"{% if end_date_converted %} value="{{end_date_converted}}" 
+                       <input type="text"{% if end_date_converted %} value="{{end_date_converted}}" {% else %} value=""
                       {% endif %} class="form-control" id="google_poc_location" name="google_poc_location" disabled>
                     </div>
               </div>
@@ -105,6 +107,9 @@ body {
                           {% if final_type_codelist %}
                          <textarea class="form-control" disabled 
                          style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;">{{final_type_codelist}} </textarea>
+                         {% else %}
+                         <textarea class="form-control" disabled 
+                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;"></textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
@@ -113,6 +118,9 @@ body {
                     <div class="col-md-4">
                       {% if google_poc_email_list %}
                        <textarea style="height:51px;overflow:hidden;padding-top:5px;" class="form-control" disabled>{{google_poc_email_list}}
+                       </textarea>
+                       {% else %}
+                       <textarea style="height:51px;overflow:hidden;padding-top:5px;" class="form-control" disabled>
                        </textarea>
                        {% endif %}
                     </div>
@@ -124,13 +132,13 @@ body {
                         </div>
                          <div class="col-md-4">
                               <input type="text" {% if estimated_number %}
-                          value="{{estimated_number}}" {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
+                          value="{{estimated_number}}"{% else %} value="" {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                         </div>
                         <div class="col-md-1"> </div>
                         <div class="col-md-1"> </div>
                         <div class="col-md-4">
                           <input type="text" 
-                          {% if estimated_volume %} value={{estimated_volume}} {% endif %}
+                          {% if estimated_volume %} value={{estimated_volume}} {% else %} value="" {% endif %}
                           class="form-control" name="program_name" id="program_name" disabled/>
                         </div>
                   </div>
@@ -143,6 +151,8 @@ body {
                  <div class="col-md-10 program_over">
                  {% if get_kickoff_record.program_overview_objective %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>{{get_kickoff_record.program_overview_objective}}</textarea>
+                  {% else %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled></textarea>
                   {% endif %}
                 </div>
               </div>
@@ -161,6 +171,9 @@ body {
                  {% if get_kickoff_record.expectations %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
                   {{get_kickoff_record.expectations}}</textarea>
+                  {% else %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
+                  </textarea>
                   {% endif %}
                 </div>
               </div>
@@ -173,6 +186,8 @@ body {
                   {% if get_kickoff_record.explain_workflow %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
                   {{get_kickoff_record.explain_workflow}}</textarea>
+                  {% else %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled></textarea>
                   {% endif %} 
                 </div>
               </div>   
@@ -185,6 +200,8 @@ body {
                   {% if get_kickoff_record.win_criteria %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
                   {{get_kickoff_record.win_criteria}}</textarea>
+                  {% else %}
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled></textarea>
                   {% endif %}
                 </div>
               </div> 
@@ -199,17 +216,17 @@ body {
 
                     {% if lead_type  %}
                           <div class="col-md-2 radio-validate" style="padding-top:8px;">
-                              <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission" checked disabled> Portal.
+                              <input type='radio'   id="lead_submission_portal" value="portal"  name="lead_submission" checked disabled> Portal.
                           </div>
                           <div class="col-md-2 radio-validate" style="padding-top:10px;">
-                              <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission" disabled>Others.
+                              <input type='radio' id="lead_submission_other" value="others"  name="lead_submission" disabled>Others.
                           </div>
                     {% else %}
                           <div class="col-md-2 radio-validate" style="padding-top:8px;">
-                              <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission" disabled> Portal.
+                              <input type='radio'   id="lead_submission_portal" value="portal"  name="lead_submission" disabled> Portal.
                           </div>
                           <div class="col-md-2 radio-validate" style="padding-top:10px;">
-                              <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission" checked disabled>Others.
+                              <input type='radio' id="lead_submission_other" value="others"  name="lead_submission" checked disabled>Others.
                           </div>
                     </div>
                     <div class="col-md-5" >  
@@ -260,21 +277,21 @@ body {
                     <div class="col-md-4 ">
                     {% if type_of_connect %}
                         <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
-                        value= "{{ type_of_connect }}"
+                        value= "{{ type_of_connect }}" 
                         disabled>
                     {% endif %}
                     </div>
                   <div class="col-md-3">
                      {% if type_of_connect_day %}
                         <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
-                        value= "{{ type_of_connect_day }}"
+                        value= "{{ type_of_connect_day }}" 
                         disabled>
                     {% endif %}
                   </div>
                   <div class="col-md-3 ">
                         {% if type_of_connect_time %}
                         <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
-                        value= "{{ type_of_connect_time }}"
+                        value= "{{ type_of_connect_time }}" 
                         disabled>
                     {% endif %}
                   </div>
@@ -287,7 +304,7 @@ body {
                      <div class="col-md-10">
                      {% if get_kickoff_record.comments %}
                          <input style="height:52px;"type="text" class="form-control" id="comments" name="comments" 
-                            value="{{get_kickoff_record.comments}}" disabled>
+                            value="{{get_kickoff_record.comments}}"  disabled>
                       {% endif %}
                     </div>
               </div>
@@ -909,7 +926,6 @@ function validateAddedKickTeam(form) {
 /*End of validation of kick_off_export_detail.html page*/
 
  </script>
-
 
 {% endblock main_js %}
 
