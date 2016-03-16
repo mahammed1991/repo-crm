@@ -130,13 +130,11 @@ body {
                         <div class="col-md-2 ">
                           <label class="est-lead" for="">Estimated Lead Volume:</label>
                         </div>
-                         <div class="col-md-4">
+                         <div class="col-md-2">
                               <input type="text" {% if estimated_number %}
                           value="{{estimated_number}}"{% else %} value="" {% endif %}class="form-control" name="program_name" id="program_name" disabled/>
                         </div>
-                        <div class="col-md-1"> </div>
-                        <div class="col-md-1"> </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                           <input type="text" 
                           {% if estimated_volume %} value={{estimated_volume}} {% else %} value="" {% endif %}
                           class="form-control" name="program_name" id="program_name" disabled/>
@@ -274,28 +272,50 @@ body {
                     <div class="col-md-2 tagteam-connect ">
                         <label for="">TagTeam/Google PoC Connect Details:</label>
                     </div>
-                    <div class="col-md-4 ">
+                    <div class="col-md-2 ">
                     {% if type_of_connect %}
-                        <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
+                        <input class="form-control conect-width" type='text' id="real_time_live_trans" name="" checked  
                         value= "{{ type_of_connect }}" 
                         disabled>
                     {% endif %}
                     </div>
-                  <div class="col-md-3">
+                  <div class="col-md-2" style="margin-left:40px;">
                      {% if type_of_connect_day %}
-                        <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
+                        <input class="form-control conect-width" type='text' id="real_time_live_trans" name="" checked  
                         value= "{{ type_of_connect_day }}" 
                         disabled>
                     {% endif %}
                   </div>
-                  <div class="col-md-3 ">
+                  <div class="col-md-2 " style="margin-left:40px;">
                         {% if type_of_connect_time %}
-                        <input class="form-control" type='text' id="real_time_live_trans" name="" checked  
+                        <input class="form-control conect-width" type='text' id="real_time_live_trans" name="" checked  
                         value= "{{ type_of_connect_time }}" 
                         disabled>
                     {% endif %}
                   </div>
+                  <div class="col-md-2 " style="margin-left:40px;">
+                        {% if type_of_connect_timezone %}
+                        <input class="form-control conect-width" type='text' id="real_time_live_trans" name="" checked  
+                        value= "{{ type_of_connect_timezone }}" 
+                        disabled>
+                    {% endif %}
+                  </div>
               </div>
+
+          <div class="row">
+              <div class="col-md-2">
+                <label for="attendees">BCC</label>
+              </div>
+             <div class="col-md-10">
+             
+                <input type="text" class="form-control" id="bcc" name="bcc" 
+                {% if bcc_kick_off_prg_list %}
+                value="{{ bcc_kick_off_prg_list }}" {% else %} value=""
+                {% endif %} disabled>
+
+            </div>
+        </div>
+
          <div class="">
               <div class="row">
                     <div class="col-md-2" >
@@ -475,9 +495,18 @@ body {
                     value="{{ go_live_date_display }}"  disabled/>
                     </div>
                     <div class="col-md-2">
+                      <label for="attendees">BCC</label>
                     </div>
-                    <div class="col-md-4">
-                    </div>
+                    
+                   <div class="col-md-4">
+                   {% if email_bcc_list %}
+                      <textarea style="height:51px;text-align:left;overflow:hidden;padding-top:5px;" class="form-control" id="kick_off_bcc"
+                       name="kick_off_bcc" disabled>{{ email_bcc_list }}</textarea>
+                      {% else %}
+                      <textarea class="form-control" id="kick_off_bcc" 
+                      name="kick_off_bcc"disabled></textarea>
+                     {% endif %}
+                  </div>
              </div>
         </div>
     </div>
@@ -583,8 +612,11 @@ id="tag-team-detail">
                     <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="go_live_date" name="go_live_date">
                     </div>
                     <div class="col-md-2">
+                        <label for="attendees">BCC</label>
                     </div>
                     <div class="col-md-4">
+                      <input type="text" class="form-control" id="kick_off_tagteam_bcc" 
+                      name="kick_off_tagteam_bcc" placeholder="Please enter e-mail ids seperated by comma(,)">
                     </div>
              </div>
         </div>
@@ -853,6 +885,37 @@ $('.show-testimony').change(function(){
     });
 /*end of tag team google reps auto compleet*/
 
+/*tagteam bcc auto compleete*/
+   $(function(){
+      var managers_email = {{all_mail|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#kick_off_tagteam_bcc').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+      });
+    });
+/*end of tag team google reps auto compleet*/
+
 /*validating kick_off_export_detail.html page*/
 
 function validateAddedKickTeam(form) {
@@ -899,6 +962,9 @@ function validateAddedKickTeam(form) {
 
     go_live_date = document.getElementById('go_live_date');
     validateField(go_live_date);
+
+    bcc_field_tagteam = document.getElementById('kick_off_tagteam_bcc');
+    validateField(bcc_field_tagteam);
 
     // Check If Error in Form
       if(window.is_error){

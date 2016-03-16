@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block title %}
-kick-off-Export
+Kick-off-Export
 {% endblock title %}
 {% block main_css %}
   <style type="text/css">
@@ -64,7 +64,7 @@ kick-off-Export
              <tr>
                <th class="headlinks-default" style="min-width:30px;">Sl No</th>
                <th class="headlinks-default" style="min-width:250px;">KICK-OFF-PROGRAM</th>
-               <th class="headlinks-default" style="text-align:center">Go</th>
+               
              </tr>
           </thead>
           <tbody class="attach-all-programm-row" id="append-Kick-List-Program-Body" >
@@ -73,8 +73,8 @@ kick-off-Export
 
             <tr>
              <td>{{ element.counter }}</td>
-             <td>{{element.program_name}}</td>
-             <td><a href={% url "kickoff-export-detail" element.program_id %} target="blank" >go</a></td>
+             
+             <td><a href={% url "kickoff-export-detail" element.program_id %} target="blank" >{{element.program_name}}</a></td>
 
             </tr>
 
@@ -180,17 +180,15 @@ function create_table(data){
       header = '<tr>'+
         '<th class="headlinks-default">Program created date.</th>'+   
         '<th class="headlinks-default">KICK-OFF-PROGRAM</th>'+
-        '<th class="headlinks-default">Go</th>'+
         '</tr>'
       row = ''
       var j=1
         for(var i=0;i<data.length;i++){
           row += '<tr>' +
-            '<td >'+data[i]['created_date']+'</td>'+
-            '<td >'+data[i]['program']+'</td>' +
-            '<td ><a href='+data[i]['access_id']+' target="blank" >go</a></td>' +
-            '</tr>'
-            j++;
+          '<td >'+data[i]['created_date']+'</td>'+
+          '<td ><a href='+data[i]['access_id']+' target="blank" >'+data[i]['program']+'</a></td>' +
+          '</tr>'
+          j++;
           }
         $('.display_selected_programs_table_body').html('');
         $('.display_selected_programs').append(header);

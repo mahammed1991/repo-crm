@@ -172,6 +172,7 @@ def get_deleted_leads():
 
 @kronos.register('0 */1 * * *')
 def implemented_leads_count_report():
+    
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
     specific_date_time = datetime.today()
@@ -208,7 +209,8 @@ def implemented_leads_count_report():
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
     logging.info("Implemeted Leads Count Mail Details sent")
-
+    #calling utiliztion-dashboard funcion
+    slots_open_booked()
 
 def get_leads_from_sfdc(start_date, end_date):
     """ Get Leads from SFDC """
@@ -911,7 +913,7 @@ def available_counts_booked_specific_in_na(process_type):
 
     return available_counts_teams
 
-@kronos.register('0 */1 * * *')
+#@kronos.register('0 */1 * * *')
 def slots_open_booked():
     tag_bookings_exclude_na = available_counts_booked_specific(['TAG'])
     shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'])

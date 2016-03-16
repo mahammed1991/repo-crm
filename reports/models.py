@@ -267,6 +267,7 @@ class KickOffProgram(models.Model):
 
     google_poc = models.ManyToManyField(User, related_name='google_poc')
     google_poc_email = models.ManyToManyField(User, related_name='google_poc_email')
+    bcc_kick_off = models.ManyToManyField(User, related_name="bcc_kick_off")
 
     region = models.ManyToManyField(Region)
     target_locations = models.ManyToManyField(Location)
@@ -335,6 +336,8 @@ class KickoffTagteam(models.Model):
     trainer = models.CharField(max_length=255, null=True, blank=True)
     all_reps = models.CharField(max_length=255, null=True, blank=True)
 
+    bcc_tagteam = models.ManyToManyField(User, related_name="bcc_tagteam")
+    
     kickoff_meeting_date_time = models.DateTimeField(blank=True)
     training_start_date = models.DateTimeField(blank=True)
     training_end_date = models.DateTimeField(blank=True)
