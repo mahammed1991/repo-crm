@@ -20,11 +20,11 @@
 <input type="hidden" name="count_url_file_name" value="">
 
   {% csrf_token %}
-			<div class="container-fluid custom-container-fluid">
-        		<h1>TagTeam - Program Kick-off Document</h1>
-      		</div>
+      <div class="container-fluid custom-container-fluid">
+            <h1>TagTeam - Program Kick-off Document</h1>
+          </div>
 
-        <div class="container-fluid">	
+        <div class="container-fluid"> 
               <div class="row">
                     <div class="col-md-2">
                       <label for="">Program Name:</label>
@@ -47,7 +47,7 @@
                             <div id="teamsDiv" class="btn-group drpDown" style="width: 98%;" name="region-ul-list">
                                  <div id="regionTypesDiv" class="btn-group drpDown" style="width: 100%;">
                                       <button type="button" class="form-control bgicon" id="regionTypeBtn" style="width: 102.5%; text-align:left;">Regions</button>
-                                      <ul class="dropdown-menu region-ul" name="region-ul-list" style="margin-top: -21px;width: 102.5%;">
+                                      <ul class="dropdown-menu region-ul" name="region-ul-list" style="margin-top: -21px;width: 102.5%;" >
                                       {% for item in regions %}
                                           <li id="{{item}}">
                                               <a href="#" class="smallReg"><input type="checkbox" class="hiddenCheckbox"/><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item.name}}</a>
@@ -156,12 +156,11 @@
 
                           <label class="est-lead" for="">Estimated Lead Volume:</label>
                         </div>
-                         <div class="col-md-4">
-                          <input type="number" min="0" class="form-control estimated_lead_number" id="estimated_lead_no" name="estimated_lead_no" placeholder="Lead Volumes in Numbers">
+                         <div class="col-md-2">
+                          <input type="number" min="0" class="form-control estimated_lead_number" id="estimated_lead_no" name="estimated_lead_no" 
+                          placeholder="Lead Volumes">
                         </div>
-                        <div class="col-md-1"> </div>
-                        <div class="col-md-1"> </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                           <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject_estimated_day" style="">
                                 <option value="choose">Choose</option>
                                 <option value="Weekly">Day</option>Biweekly
@@ -272,11 +271,11 @@
                       </div>
               </div>
                <div class="row">
-                    <div class="col-md-2 tagteam-connect ">
+                    <div class="col-md-2 tagteam-connect">
                         <label for="">TagTeam/Google PoC Connect Details:</label>
                     </div>
-                    <div class="col-md-4 ">
-                        <select class="form-control bgicon" id="connect" title="Connect" name="connect" onfocusout="">
+                    <div class="col-md-2">
+                        <select class="form-control bgicon conect-width" id="connect" title="Connect" name="connect" onfocusout="">
                           <option value="choose">Choose</option>
                           <option value="daily">Daily</option>
                           <option value="weekly">Weekly</option>
@@ -284,22 +283,42 @@
                           <option value="Monthly">Monthly</option>
                         </select>
                     </div>
-                  <div class="col-md-3">
+                  <div class="col-md-2" style="margin-left:40px;">
                        <select class="form-control bgicon conect-width" id="tagteam-connect-day" title="Connect day" name="tagteam-connect-day" onfocusout="">
                             <option value="choose">Choose Day</option>
-                            <option value="Sunday">Sunday</option>
                             <option value="Monday">Monday</option>
                             <option value="Tuesday">Tuesday</option>
-                            <option value="wednesday">Wednesday</option>
+                            <option value="Wednesday">Wednesday</option>
                             <option value="Thursday">Thursday</option>
                             <option value="Friday">Friday</option>
-                            <option value="saturday">saturday</option>
                        </select>
                   </div>
-                  <div class="col-md-3 ">
+                  <div class="col-md-2" style="margin-left:40px;">
                       <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from conect-width" type="text" name="tag_meeting_time" placeholder="Time">
                   </div>
+                  <div class="col-md-2 " style="margin-left:40px; ">
+                    <select class="form-control bgicon conect-width" style="overflow:30px;"
+                    id="tagteam-connect-timezone" name="tagteam-connect-timezone">
+                       
+                        <option value="choose">Choose Timezone</option>
+                        {% for key,val in timezone %}
+                            <option value="{{key}}{{val}}">{{key}}{{val}}</option>
+                        {% endfor %}
+                        
+                      </select>
+                  </div>
               </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="attendees">BCC</label>
+            </div>
+           <div class="col-md-10">
+              <input type="text" class="form-control" id="kick_off_bcc" name="kick_off_bcc" placeholder="Please enter e-mail ids seperated by comma(,)">
+              
+          </div>
+      </div>
+
          <div class="">
               <div class="row">
                     <div class="col-md-2" >
@@ -336,7 +355,8 @@
              </div>
           </div>
             <a id="removefileUpload_1" class="btn std-btn task-btn remove-upload" style=""><i class="fa fa-minus-circle"></i>Remove</a>
-            <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+            <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" 
+            style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
           </div>
     </div>
 
@@ -465,6 +485,37 @@ $(".datepickerFrom_a").datetimepicker({
       });
     });
 
+    $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#kick_off_bcc').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+
+
+
 
 $("#lead_sub_other").hide();
 function check(){
@@ -478,34 +529,96 @@ function uncheck(){
  $(document).ready(function(){
     window.regionWiseLocations = {{region_based_locations|safe}}
     window.locations = {{all_locations|safe}}
+    
  });
 
-
 $(document).click(function(evt){
-
-        if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
-          $('.location-ul').show();
-       }else{
+  
+      if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
+          var visility = $(".location-ul").is(":visible");
+          if(!visility)
+          {
+            $('.location-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('smallLoc'))
+            {
+             $('.location-ul').show(); 
+            }
+            else
+            {
+              $('.location-ul').hide();  
+            }
+          }
+       }
+       else{
           $('.location-ul').hide();
        }
 
        if(evt.target.classList.contains('smallReg') || evt.target.id == 'regionTypeBtn'){
-          $('.region-ul').show();
+         var visility = $(".region-ul").is(":visible");
+          if(!visility)
+          {
+            $('.region-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('smallReg'))
+            {
+             $('.region-ul').show(); 
+            }
+            else
+            {
+              $('.region-ul').hide();  
+            }
+          }
        }else{
-          $('.region-ul').hide();
+            $('.region-ul').hide(); 
        }
 
        if(evt.target.classList.contains('codeTypeOpt') || evt.target.id == 'codeTypeBtn'){
-          $('.code-type-ul').show();
+          var visility = $(".code-type-ul").is(":visible");
+          if(!visility)
+          {
+            $('.code-type-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('codeTypeOpt'))
+            {
+             $('.code-type-ul').show(); 
+            }
+            else
+            {
+              $('.code-type-ul').hide();  
+            }
+          }
        }else{
           $('.code-type-ul').hide();
        }
 
         if(evt.target.classList.contains('advertize') || evt.target.id == 'advertizeTypeBtn'){
-          $('.advertizer-prg-ul').show();
+         var visility = $(".advertizer-prg-ul").is(":visible");
+          if(!visility)
+          {
+            $('.advertizer-prg-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('advertize'))
+            {
+             $('.advertizer-prg-ul').show(); 
+            }
+            else
+            {
+              $('.advertizer-prg-ul').hide();  
+            }
+          }
        }else{
           $('.advertizer-prg-ul').hide();
        }
+
 });
 
 /* ----------------------------------------------

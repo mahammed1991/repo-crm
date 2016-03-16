@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import PicassoLeads, Leads, Team, Location
+from leads.models import PicassoLeads, Leads, Team, Location, Timezone
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from django.conf import settings
@@ -1783,8 +1783,9 @@ def program_kick_off(request):
 
         tag_team_connect_method = request.POST.get('connect') + '_'
         tag_team_connect_day = request.POST.get('tagteam-connect-day') + '_'
-        tag_team_connect_time = request.POST.get('tag_meeting_time')
-        kickoffprogram.tag_team_connect_detail = tag_team_connect_method + tag_team_connect_day + str(tag_team_connect_time)
+        tag_team_connect_time = request.POST.get('tag_meeting_time') + '_'
+        tag_team_connect_timezone = request.POST.get('tagteam-connect-timezone')
+        kickoffprogram.tag_team_connect_detail = tag_team_connect_method + tag_team_connect_day + str(tag_team_connect_time) + str(tag_team_connect_timezone)
 
         kickoffprogram.project_related_url = request.POST.get('file_info_text_1')
         kickoffprogram.code_type_list = request.POST.getlist('codeTypeList')
@@ -1855,6 +1856,14 @@ def program_kick_off(request):
         get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
         kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
 
+        bcc_list = list()
+        bcc = request.POST.get('kick_off_bcc').replace(', ', ',')
+        bcc_list = bcc.split(',')
+        if bcc_list[-1] == '':
+            bcc_list.pop(-1)
+        get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
+        kickoffprogram.bcc_kick_off.add(*get_bcc_list)
+
         latest_program = KickOffProgram.objects.filter(program_created_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(latest_program.id)
         mail_from = request.user.email
@@ -1871,6 +1880,7 @@ def program_kick_off(request):
     google_email = list()
     all_mail = list()
     managers = User.objects.values_list('email', flat=True)
+    bcc_field = managers 
     for manager in managers:
         if 'google.com' in manager:
             google_email.append(str(manager))
@@ -1892,6 +1902,10 @@ def program_kick_off(request):
         for item in regn.location.values('location_name'):
             location_list_values.append(item['location_name'])
         region_based_locations[regn.name] = location_list_values
+
+    # timezone fetching
+    timezone = Timezone.objects.values_list('zone_name', 'time_value')
+            
     return render(request, 'reports/kick_off.html', {'regions': regions,
                                                      'google_email': google_email,
                                                      'managers': all_mail,
@@ -1899,6 +1913,8 @@ def program_kick_off(request):
                                                      'locations': locations,
                                                      'region_locations': region_locations,
                                                      'all_locations': all_locations,
+                                                     'bcc_field':bcc_field,
+                                                     'timezone':timezone,
                                                      'region_based_locations': json.dumps(region_based_locations)})
 
 
@@ -1989,6 +2005,7 @@ def kickoff_export_detail(request, program_id):
     reps_email_list = None
     meeting_time = None
     meeting_date = None
+    email_bcc_list = None
     try:
         get_kickoff_tagteam = KickoffTagteam.objects.get(kickoff_program_id=program_id)
         if get_kickoff_tagteam:
@@ -2004,6 +2021,14 @@ def kickoff_export_detail(request, program_id):
             training_start = get_kickoff_tagteam.training_start_date.date()
             training_end = get_kickoff_tagteam.training_start_date.date()
             live_date = get_kickoff_tagteam.golive_date.date()
+
+            bcc_tagteam = get_kickoff_tagteam.bcc_tagteam.values('email')
+            email_bcc_list = list()
+            for mailids in bcc_tagteam:
+                email_bcc_list.append(str(mailids['email']))
+            email_bcc_list = ','.join(email_bcc_list)
+
+
         else:
             reps_email_list = None
             meeting_time = None
@@ -2011,6 +2036,8 @@ def kickoff_export_detail(request, program_id):
             training_start = None
             training_end = None
             live_date = None
+            email_bcc_list = None
+
     except KickoffTagteam.DoesNotExist:
             get_kickoff_tagteam = None
 
@@ -2029,6 +2056,13 @@ def kickoff_export_detail(request, program_id):
         for google_email_mail_ids in google_email_pocs:
             google_poc_email_list.append(str(google_email_mail_ids['email']))
         google_poc_email_list = ','.join(google_poc_email_list)
+
+        # getting ManyToMany feild BCC email email ids fetching
+        bcc_kick_off_prg = get_kickoff_record.bcc_kick_off.values('email')
+        bcc_kick_off_prg_list = list()
+        for mail_ids in bcc_kick_off_prg:
+            bcc_kick_off_prg_list.append(str(google_email_mail_ids['email']))
+        bcc_kick_off_prg_list = ','.join(bcc_kick_off_prg_list)
 
         # getting all regions from the manyToMany feild
         region_list = list()
@@ -2099,6 +2133,7 @@ def kickoff_export_detail(request, program_id):
     type_of_connect = tag_team_connect_each_data[0]
     type_of_connect_day = tag_team_connect_each_data[1]
     type_of_connect_time = tag_team_connect_each_data[2]
+    type_of_connect_timezone = tag_team_connect_each_data[3]
 
     key_order_matrix = {k: v for v, k in enumerate(['succes_metrices_one_1', 'succes_metrices_two_1', 'succes_metrices_three_1', 'succes_metrices_one_2', 'succes_metrices_two_2', 'succes_metrices_three_2', 'succes_metrices_one_3', 'succes_metrices_two_3', 'succes_metrices_three_3', 'succes_metrices_one_4', 'succes_metrices_two_4', 'succes_metrices_three_4', 'succes_metrices_one_5', 'succes_metrices_two_5','succes_metrices_three_5'])}
     success_matrix_dict = OrderedDict(sorted(get_kickoff_record.succes_matrix.items(), key=lambda i: key_order_matrix.get(i[0])))
@@ -2198,7 +2233,17 @@ def kickoff_export_detail(request, program_id):
         tagteamkickoff.golive_date = datetime.strptime(golive_date, '%d.%m.%Y')
 
         tagteamkickoff.save()
+
+        bcc_list = list()
+        bcc = request.POST.get('kick_off_tagteam_bcc').replace(', ', ',')
+        bcc_list = bcc.split(',')
+        if bcc_list[-1] == '':
+            bcc_list.pop(-1)
+        get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
+        tagteamkickoff.bcc_tagteam.add(*get_bcc_list)
         
+        tagteamkickoff.save()
+
         # mailing functionalities
         latest_program = KickoffTagteam.objects.filter(tagteam_added_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(get_kickoff_record.id)
@@ -2226,6 +2271,7 @@ def kickoff_export_detail(request, program_id):
     return render(request,'reports/kick_off_export_detail.html', {'get_kickoff_record': get_kickoff_record,
                                                                   'googlepoc_list': googlepoc_email_list,
                                                                   'google_poc_email_list': google_poc_email_list,
+                                                                  'bcc_kick_off_prg_list':bcc_kick_off_prg_list,
                                                                   'region_list': region_list,
                                                                   'start_date_converted': start_date_converted,
                                                                   'end_date_converted': end_date_converted,
@@ -2239,6 +2285,7 @@ def kickoff_export_detail(request, program_id):
                                                                   'type_of_connect': type_of_connect,
                                                                   'type_of_connect_day': type_of_connect_day,
                                                                   'type_of_connect_time': type_of_connect_time,
+                                                                  'type_of_connect_timezone':type_of_connect_timezone,
                                                                   'matrix': json.dumps(success_matrix_dict),
                                                                   'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
                                                                   'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
@@ -2258,6 +2305,7 @@ def kickoff_export_detail(request, program_id):
                                                                   'go_live_date_display':live_date,
                                                                   'meeting_time':meeting_time,
                                                                   'meeting_date_display':meeting_date,
+                                                                  'email_bcc_list':email_bcc_list,
                                                                   })
 
 

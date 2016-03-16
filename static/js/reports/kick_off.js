@@ -254,6 +254,8 @@ function validatethis() {
 
   validateConnectDay();
 
+  timezone();
+
   tag_meeting_time = document.getElementById('tag_meeting_time');
   validateField(tag_meeting_time);
    
@@ -430,9 +432,22 @@ function validateConnectDay(){
   }
 }
 
+function timezone(){
+  var timezone = document.getElementById('tagteam-connect-timezone').value;
+  if (timezone == 'choose'){
+    $('#tagteam-connect-timezone').addClass('error-box');
+    window.failedFields.push($('#tagteam-connect-timezone'));
+    window.is_error = true;
+    return false;
+  }
+  else{
+    $('#tagteam-connect-timezone').removeClass('error-box');
+    return true;
+  }
+}
+
 // Validate Form Field
 function validateField(elem) {
-  console.log($(elem).val());
   if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val() ) {
       $(elem).addClass('error-box');
       window.failedFields.push(elem);
