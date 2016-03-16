@@ -172,7 +172,7 @@ def get_deleted_leads():
 
 @kronos.register('0 */1 * * *')
 def implemented_leads_count_report():
-    
+
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
     specific_date_time = datetime.today()
@@ -846,8 +846,8 @@ def available_counts_booked_specific(process_type):
     default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name__in=exclude_north_america)
     
     available_counts_teams = default_teams.values('team_name')
-    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
 
     for item in available_counts_teams:
         item['Availability Count'] = 0
