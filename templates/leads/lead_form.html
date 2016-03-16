@@ -192,7 +192,7 @@
             
               <div class="row">
                 <div class="col-md-4 ">
-                    <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="Internal Customer ID (not MCC ID)">
+                    <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="External CID (not MCC ID)" readonly>
                 </div>
                <div class="col-md-8" >
                       <input style="height:48px;" type="text-area" class="form-control " id="authEmail" name="authEmail" placeholder="Auth E-mail Cases ID (mandatory if not e-mailed to implementation-support@google.com)">
@@ -759,8 +759,8 @@
               </label>
         </div>
             <label id="tagCheck" class="tag-policies" style="display:none;">
-               <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm">
-              Do you want to install this Tag via Google Tag Manager? (The advertiser must have the Google Tag Manager Code on his website already)
+               <!-- <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm"> -->
+               If you want this tag to be implemented via the Google Tag Manager, please make sure you clearly mention this in the <b>Special Instructions</b> section above.
             </label>
             <label id="tagAddwordsCheck" class="tag-add-policies" style="display:none;">
               Do you want to track Revenue or the order amount through AWCT? &nbsp;
