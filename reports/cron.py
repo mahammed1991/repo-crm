@@ -974,8 +974,10 @@ def slots_open_booked():
     specific_date = datetime.today()
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
-    logging.info("Implemeted Leads Count Mail Details sending")
-    mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % specific_date
+    specific_date_time = datetime.today()
+    specific_time = datetime.strftime(specific_date_time, '%H:%M:%S')
+    logging.info("UTILIZATION DASHBOARD MAILING FUNCTION")
+    mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s %s" % (specific_date, specific_time)
     mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'all_bookings':all_bookings, 'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
     mail_from = 'google@regalix-inc.com'
     mail_to = ['portalsupport@regalix-inc.com']
