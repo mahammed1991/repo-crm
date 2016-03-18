@@ -1665,7 +1665,7 @@ def export_action_items(request):
         else:
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to)).values_list('id', flat=True)
                 
-        meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes)
+        meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes).order_by('-created_date')
         all_records_list = list()
         for action_items in meeting_action_items:
             each_record_dict = dict()
@@ -1856,13 +1856,14 @@ def program_kick_off(request):
         get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
         kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
 
-        bcc_list = list()
-        bcc = request.POST.get('kick_off_bcc').replace(', ', ',')
-        bcc_list = bcc.split(',')
-        if bcc_list[-1] == '':
-            bcc_list.pop(-1)
-        get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
-        kickoffprogram.bcc_kick_off.add(*get_bcc_list)
+        # this bellow code is  used for futer use field is already in database
+        # bcc_list = list()
+        # bcc = request.POST.get('kick_off_bcc').replace(', ', ',')
+        # bcc_list = bcc.split(',')
+        # if bcc_list[-1] == '':
+        #     bcc_list.pop(-1)
+        # get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
+        # kickoffprogram.bcc_kick_off.add(*get_bcc_list)
 
         latest_program = KickOffProgram.objects.filter(program_created_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(latest_program.id)

@@ -1025,7 +1025,6 @@ def notify_faq(request, resfaq):
     bcc = set([])
 
     mail_to = set([
-        'dkarthik@regalix-inc.com',
         'abraham@regalix-inc.com',
         'asarkar@regalix-inc.com'
     ])

@@ -6,9 +6,7 @@ input[type=number]::-webkit-outer-spin-button {
    margin: 0; 
 }
 
-.conect-width{ width:182px;}
-
-#submit_kick_off { margin: auto 40%; margin-bottom: 20px; }
+.conect-width{ width:182px;}] 
 
 .add-upload-btn{background: #109d59;}
 
@@ -130,4 +128,14 @@ input[type=number]::-webkit-outer-spin-button {
 
 .ui-autocomplete{height:150px; overflow:scroll; }
 
+.end-button{margin: auto 40%;margin-bottom: 30px;}
+
+
+.kickoff-modal-dialog, .kickoff-modal-body{
+  width: 1100px;
+  height: auto;
+  z-index: 10;
+}
+
+.preview-end-buttons{margin: auto 25%;margin-bottom: 30px;}
 /* END ***kick_off_export_detail.html important css*** */

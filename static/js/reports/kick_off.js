@@ -155,8 +155,7 @@ $('.advertizer-prg-ul').children().on('click', function(){
     function selectingAdvertizeProgramType(advertizeTypeElement){
       
        if($(advertizeTypeElement).attr('id')){
-        var advertizeTypeProgram = $(advertizeTypeElement).attr('id')
-        console.log(advertizeTypeProgram);
+        var advertizeTypeProgram = $(advertizeTypeElement).attr('id');
        }
         var OptionElement = "<option class='"+advertizeTypeProgram+"' value='"+advertizeTypeProgram+"' selected></option>";
 
@@ -261,11 +260,13 @@ function validatethis() {
    
     // Check If Error in Form
       if(window.is_error || window.failedFields > 0 ){
+        
         focusElem = failedFields[0];
         $(focusElem).focus();
         return false;
       }else if (window.is_error == false && window.failedFields == 0 ){
-        $('#preloaderOverlay').show();
+        
+        $(".kickoff-preview").modal('show');
         return true;
       }  
       else{
@@ -283,8 +284,8 @@ function checkDate(elem){
   else
   {
     $(elem).removeClass('error-box');
-     window.is_error = false;
-     return true;
+    window.is_error = false;
+    return true;
   } 
 }
 
@@ -296,7 +297,9 @@ function leadSubbmission(){
     }
     else if(document.getElementById('lead_submission_other').checked == true && document.getElementById('lead_sub_other').value == ""){
         $('#lead_sub_other').addClass('error-box');
-         $('#lead_submission_other').addClass('error-box');
+        $('#lead_submission_other').addClass('error-box');
+        window.failedFields.push($('#lead_submission_other'));
+        window.failedFields.push($('#lead_sub_other'));
         window.is_error = true;
         return false;
     }
@@ -459,3 +462,205 @@ function validateField(elem) {
   }
 }
 /*End of validation of kick off program page*/
+
+/*MODEL WINDOW VALUES FILLING*/
+$('#kickoff_preview_btn').click(function(){
+
+   // $('.kickoff-preview').modal({backdrop: 'static', keyboard: false});
+
+    $('#preview_program_name').val($('#program_name').val());
+    $('#preview_google_poc').val($('#google_poc').val());
+
+    var regions = $("#regionTypeList").val();
+    $('#preview_region').text('');
+    if (regions)
+    {
+        for(var i=0;i<regions.length;i++)
+        {
+            if(regions.length > 1)
+            {
+               $('#preview_region').append(regions[i]+" , ");
+            }
+            else
+            {
+                $('#preview_region').append(regions[i]);   
+            }
+
+        }
+    }
+    $('#preview_google_poc_location').val($('#google_poc_location').val());
+
+
+    var locations = $("#locationTypeList").val();
+    $('#preview_location').text('');
+    if (locations)
+    {
+        for(var i=0;i<locations.length;i++)
+        {
+            if(locations.length > 1)
+            {
+               $('#preview_location').append(locations[i]+" , ");
+            }
+            else
+            {
+                $('#preview_location').append(locations[i]);   
+            }
+       }
+    }
+
+    $('#preview_start_date').val($('#program_start_date').val());
+
+    var programTypes = $("#advertiser_type").val();
+    $('#preview_programType').text('');
+    if (programTypes){
+        for(var i=0;i<programTypes.length;i++)
+        {
+            if(programTypes.length > 1)
+            {
+               $('#preview_programType').append(programTypes[i]+" , ");
+            }
+            else
+            {
+                $('#preview_programType').append(programTypes[i]);   
+            }
+
+        }
+    }
+
+    $('#preview_end_date').val($('#program_end_date').val());
+
+    var codetypes = $("#codeTypeList").val();
+    $('#preview_taskType').text('');
+    if (codetypes){
+    for(var i=0;i<codetypes.length;i++)
+    {
+        if(codetypes.length > 1)
+        {
+           $('#preview_taskType').append(codetypes[i]+" , ");
+        }
+        else
+        {
+            $('#preview_taskType').append(codetypes[i]);   
+        }
+      }
+    }else{
+    }
+
+    $('#preview_google_poc_email').val($('#google_poc_email').val());
+
+    $('#preview_estimated_lead_no').val($('#estimated_lead_no').val());
+
+    $('#preview-subject-estimated-day').val($('#subject-estimated-day').val());
+
+    $('#preview_program_overview').val($('#program_overview').val());
+
+   /* var succes_matrics = $(".succes-matrics").children();
+    var succes_matrics_values = [];
+
+    for(var i=1;i<=succes_matrics.length;i++)
+    {
+        succes_matrics_values.push($('#succes_metrices_one_'+i).val());
+        succes_matrics_values.push($('#succes_metrices_two_'+i).val());
+        succes_matrics_values.push($('#succes_metrices_three_'+i).val());
+    }
+    
+    for(var j=0;j<succes_matrics.length;j++)
+
+        
+    {
+
+    }*/
+
+/*=================================*/
+    $('.preview-succes-matrixs').html('');
+    var succes_matrics = $(".succes-matrics").children();
+    var succes_matrics_values = new Array();
+debugger;
+    for(var i=1;i<=succes_matrics.length;i++)
+    {
+        succes_matrics_values.push($('#succes_metrices_one_'+i).val());
+        succes_matrics_values.push($('#succes_metrices_two_'+i).val());
+        succes_matrics_values.push($('#succes_metrices_three_'+i).val());
+    }
+    var actual_action_length = succes_matrics_values.length;
+     for(var j=1;j<=((actual_action_length/3));j++)
+    {
+      $('.preview-succes-matrixs').append('<tr id="prview_succes'+j+'" </tr>');
+      $('#prview_succes'+j).append('<td id="preview_ano_'+j+'">'+succes_matrics_values[0]+'</td>');
+      $('#prview_succes'+j).append('<td id="action_item_'+j+'">'+succes_matrics_values[1]+'</td>');
+      $('#prview_succes'+j).append('<td id="owner_'+j+'">'+succes_matrics_values[2]+'</td>');
+      succes_matrics_values = succes_matrics_values.splice(3);
+    }
+    /*==========================================*/
+
+
+
+
+
+    $('#preview_expectations').val($('#expectations').val());
+
+    $('#preview_explain_workflow').val($('#explain_workflow').val());
+
+    $('#preview_win_criteria').val($('#win_criteria').val());
+
+    $('#preview_real_time_support').text('');
+    var lead_submission_portal = $("#lead_submission_portal").is(":checked");
+    if (lead_submission_portal == true)
+    {
+        $('#preview_lead_submission').val('Portal');
+    }
+
+    var lead_submission_other = $("#lead_submission_other").is(":checked");
+    if(lead_submission_other == true)
+    {
+        var other = $("#lead_sub_other").val();
+
+        $('#preview_lead_submission').val(other);
+    }
+
+    var real_time_chat = $("#real_time_chat").is(":checked");
+    if (real_time_chat == true)
+    {
+        $('#preview_real_time_support').append('Chat'+" , ");
+    }
+
+    var real_time_live_trans = $("#real_time_live_trans").is(":checked");
+    if (real_time_live_trans == true)
+    {
+        $('#preview_real_time_support').append('Live Transfer');
+    }
+
+    $('#preview_connect').val($('#connect').val());
+    $('#preview-tagteam-connect-day').val($('#tagteam-connect-day').val());
+    $('#preview_tag_meeting_time').val($('#tag_meeting_time').val());
+    $('#preview-tagteam-connect-timezone').val($('#tagteam-connect-timezone').val());
+
+    $('#preview_comments').val($('#comments').val());
+
+
+    $('.attach-link-file').html('');
+    var preview_attachments = $('.file-append');
+    var attachments = new Array();
+
+    if($('#file_name_link_1').val() == '' && $('#file_info_text_1').val() == ''){
+      $('.preview_file_attach_links').hide();
+    }else{
+      $('.preview_file_attach_links').show();
+    }
+
+    for(var i=1; i<= preview_attachments.length; i++){
+      attachments.push($('#file_name_link_'+i).val());
+      attachments.push($('#file_info_text_'+i).val());
+    }
+
+    var attachments_length = preview_attachments.length;
+
+    for(var j=1; j<=(attachments_length);j++){
+      $('.attach-link-file').append('<tr id="attachment_link'+j+'" class="attachment-link-file"></tr>');
+      $('#attachment_link'+j).append('<td id="preview_file_info_name_'+j+'" class="preview-attach">'+attachments[0]+'</td>');
+      $('#attachment_link'+j).append('<td id="preview_file_info_text_'+j+'" class="preview-attach">'+attachments[1]+'</td>');
+      attachments = attachments.splice(2);
+    }
+
+});
+/*END OF MODAL WINDOW VALUES FILLING*/

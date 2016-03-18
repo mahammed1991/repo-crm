@@ -123,31 +123,61 @@ $(function(){
   
   $('#processTypeBtn').click(function(){
     if($('#selectedProcessType').value == ""){
+
       $().hide();
     }else{}
   });
 </script>
 <script type="text/javascript">
   //Clicking outside process type list hide teams list. 
-    $(document).click(function(evt){
+    
+     $(document).click(function(evt){
        if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
-            $('.process-ul').show();
-            if($('#selectedProcessType').val() == null){
-                $('.teams-ul').hide();
-              }else{
+            var visibility = $(".process-ul").is(":visible");
+            if(!visibility)
+            {
+                $('.process-ul').show();
                 $('.teams-ul').show();
-              }
+            }
+            else
+            {
+                if(evt.target.classList.contains('small'))
+                {
+                 $('.process-ul').show();
+                 $('.teams-ul').show();  
+                }
+                else
+                {
+                  $('.process-ul').hide(); 
+                  $('.teams-ul').hide(); 
+                }
+            }
        }else{
-            $('.process-ul, .teams-ul').hide();
+
+            $('.process-ul').hide();
+            $('.teams-ul').hide();
        }
     });
+    
 
     // Process Select Button - show Process list.
-      $('#processTypeBtn').on('click', function(){
-        $('.drpDown .process-ul').toggle();
-    });
+    $/*('#teamTypeBtn').on('click', function(){
+        var visibility = $(".process-ul").is(":visible");
+        console.log(visibility); 
+        if(!visibility)
+        {
+            $('.process-ul').show();
+        }
+        else
+        {
+            $('.process-ul').hide();
+        }
+    });*/
+
     // Call Process Select.
     $('.process-ul').children().on('click', function(){
+        $('.teams-ul').show();
+        $('.process-ul').show();
         selectProcessPopulateTeamData(this);
     });
 
