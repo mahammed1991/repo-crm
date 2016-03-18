@@ -623,7 +623,7 @@ id="tag-team-detail">
         </div>
     </div>
     <div class="container-fluid end">
-        <button class="btn std-btn" name="submit_kick_off" id="submit_kick_off" onclick="return validatethis(this);">Submit</button>
+        <button class="btn std-btn " name="submit_kick_off" id="submit_kick_off" onclick="return validatethis(this);" style="margin-left: 40%;margin-bottom: 10px;">Submit</button>
       </div>
 
 </form>
@@ -920,7 +920,6 @@ $('.show-testimony').change(function(){
 /*validating kick_off_export_detail.html page*/
 
 function validateAddedKickTeam(form) {
-  debugger;
     $(".error-txt").remove();
     $(".lead-form .form-control").removeClass('error-box');
     // var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -980,7 +979,6 @@ function validateAddedKickTeam(form) {
 
   function validateField(elem){
   if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val() || $(elem).val() == null ) {
-    debugger;
   $(elem).addClass('error-box');
   window.failedFields.push(elem);
   window.is_error = true;
