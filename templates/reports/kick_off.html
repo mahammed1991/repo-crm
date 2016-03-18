@@ -398,7 +398,7 @@
                 </div>
                <div class="col-md-4">
                     <textarea style="" type="text" class="form-control
-                     " id="preview_region" name="preview_region"></textarea>
+                     " id="preview_region" name="preview_region" disabled></textarea>
                 </div>
                 <div class="col-md-2 display-inline">
                   <label for="">Google PoC Location:</label>
@@ -414,7 +414,7 @@
                 </div>
                <div class="col-md-4">
                     <textarea style="" type="text" class="form-control 
-                    " id="preview_location" name="preview_location"></textarea>
+                    " id="preview_location" name="preview_location" disabled></textarea>
                 </div>
                 <div class="col-md-2 display-inline">
                   <label for="">Program Start Date:</label>
@@ -430,7 +430,7 @@
                 </div>
                <div class="col-md-4">
                     <textarea style="" type="text" 
-                    class="form-control " id="preview_programType" name="preview_programType"></textarea>
+                    class="form-control " id="preview_programType" name="preview_programType" disabled></textarea>
                 </div>
                 <div class="col-md-2 display-inline">
                   <label for="">Program End Date:</label>
@@ -445,7 +445,7 @@
                   <label for="">Support Required with Task Types?</label>
                 </div>
                <div class="col-md-4">
-                    <textarea style="" type="text" class="form-control" id="preview_taskType" name="preview_taskType"></textarea>
+                    <textarea style="" type="text" class="form-control" id="preview_taskType" name="preview_taskType" disabled></textarea>
                 </div>
                 <div class="col-md-2 display-inline">
                   <label for="">Google PoC Email:</label>
@@ -472,7 +472,7 @@
                 <label for="">Program Overview and Objectives:</label>
               </div>
                <div class="col-md-10 program_over">
-                <textarea  type="text" class="form-control" id="preview_program_overview" name="preview_program_overview"></textarea>
+                <textarea  type="text" class="form-control" id="preview_program_overview" name="preview_program_overview" disabled></textarea>
               </div>
             </div>
 
@@ -496,7 +496,7 @@
                 <label for="">Expectations:</label>
               </div>
                <div class="col-md-10 expectations">
-                <textarea type="text" class="form-control" id="preview_expectations" name="preview_expectations"></textarea> 
+                <textarea type="text" class="form-control" id="preview_expectations" name="preview_expectations" disabled></textarea> 
               </div>
             </div>
 
@@ -505,7 +505,7 @@
                 <label for="">Explain Workflow :</label>
               </div>
                <div class="col-md-10 expectations">
-                <textarea type="text" class="form-control" id="preview_explain_workflow" name="preview_explain_workflow"></textarea> 
+                <textarea type="text" class="form-control" id="preview_explain_workflow" name="preview_explain_workflow" disabled></textarea> 
               </div>
             </div>   
 
@@ -514,7 +514,7 @@
                 <label for=""> Win Criteria:</label>
               </div>
                <div class="col-md-10 expectations">
-                <textarea type="text" class="form-control" id="preview_win_criteria" name="preview_win_criteria"></textarea> 
+                <textarea type="text" class="form-control" id="preview_win_criteria" name="preview_win_criteria" disabled></textarea> 
               </div>
             </div> 
 
@@ -523,7 +523,7 @@
                 <label for=""> Lead Submission Mode:</label>
               </div>
                <div class="col-md-4 expectations">
-                <input type="text" class="form-control" id="preview_lead_submission" name="preview_lead_submission"></input>
+                <input type="text" class="form-control" id="preview_lead_submission" name="preview_lead_submission" disabled></input>
               </div>
             </div> 
 
@@ -532,7 +532,7 @@
                 <label for="">Real-time Support Required:</label>
               </div>
                <div class="col-md-10 expectations">
-                <p type="text" class="form-control" id="preview_real_time_support" name="preview_real_time_support"></p>
+                <p type="text" class="form-control" id="preview_real_time_support" name="preview_real_time_support" disabled></p>
               </div>
             </div> 
 
@@ -560,7 +560,7 @@
                     <label for="">Comments, if any</label>
                   </div>
                    <div class="col-md-10 comment" >
-                       <textarea type="text" class="form-control" id="preview_comments" name="preview_comments"></textarea> 
+                       <textarea type="text" class="form-control" id="preview_comments" name="preview_comments" disabled></textarea> 
                   </div>
               </div>
             </div>
@@ -583,7 +583,7 @@
                <button class="btn std-btn" id="preview-submit" >Submit</button>
                <button class="btn std-btn" id="preview-edit" data-dismiss="modal">Edit</button>
              </div>
-               <div id="preloaderOverlay" style='display:none;'>
+               <div id="preloaderOverlay" style='display:none;margin-left: -65px;'>
                   <div class="preloader">
                     <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
                     <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
