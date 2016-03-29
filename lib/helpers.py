@@ -732,7 +732,7 @@ def get_tat_for_picasso(source):
     else:
         start_date = datetime.today()
         start_date = datetime(start_date.year, 1, 1, 0, 0)
-        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered']).filter(created_date__gte=start_date).count() + 1
+        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language']).filter(created_date__gte=start_date).count() + 1
 
     tz_ist = Timezone.objects.get(zone_name='IST')
     ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
