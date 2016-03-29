@@ -113,8 +113,8 @@
                 <li><a href="{% url 'representatives.views.export_appointments_with_schedule_appointments' %}" >Total Appointments</a></li>
                 <li><a href="{% url 'reports.views.meeting_minutes' %}" >MoM Form</a></li>
                 <li><a href="{% url 'reports.views.export_action_items' %}" >MoM Action Items</a></li>
-                <li><a href="{% url 'reports.views.program_kick_off' %}" >On Boarding Form</a></li>
               {% endif %}
+                <li><a href="{% url 'reports.views.program_kick_off' %}" >On Boarding Form</a></li>
               {% if "SUPERUSER" in  request.session.groups %}
                 <li><a href="{% url 'main.views.upload_file_handling' %}" >Master Data Upload</a></li>
               {% endif %}
