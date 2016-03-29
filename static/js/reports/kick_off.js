@@ -52,7 +52,6 @@
         var loc_elements = $('.location-ul li a .tickMarkShow');
         var elements = $('.region-ul li a .tickMarkShow');
         $(".location-ul").html('');
-        $("#locationTypeList").empty();
         if(elements.length > 0)
         {
             for (var i=0;i<elements.length;i++)
@@ -110,14 +109,15 @@
     function selectTeams(parentElementId, selectedElement){
        if($(selectedElement).attr('id')){
        }
-        var locationSpacereplace = $(selectedElement).attr('id').replace(/[^\w\s]/gi, "");
+        var locationSpacereplace = $(selectedElement).attr('id').replace(/[^\w\S]/gi, "");
+        var locationSpacereplace_forwardslash = locationSpacereplace.replace("/", "");
         var selectedTeamsElement = $(selectedElement).children("a").children('span');
         var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
-        var optionElementToDatabase = "<option class ='"+parentElementId+"' id='removing"+locationSpacereplace+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
+        var optionElementToDatabase = "<option class ='"+parentElementId+"' id='removing"+locationSpacereplace_forwardslash+"' value='"+ $(selectedElement).attr('id')+"' selected></option>";
         $( "#locationTypeList" ).append(optionElementToDatabase);
         if(selectedTeamsElement.hasClass('tickMarkShow')){
             selectedTeamsElement.removeClass('tickMarkShow');
-            $(' #removing'+locationSpacereplace+' ').remove();
+            $(' #removing'+locationSpacereplace_forwardslash+' ').remove();
         }
         else{
             selectedTeamsElement.addClass('tickMarkShow');
@@ -490,7 +490,6 @@ $('#kickoff_preview_btn').click(function(){
     }
     $('#preview_google_poc_location').val($('#google_poc_location').val());
 
-
     var locations = $("#locationTypeList").val();
     $('#preview_location').text('');
     if (locations)
@@ -554,28 +553,11 @@ $('#kickoff_preview_btn').click(function(){
 
     $('#preview_program_overview').val($('#program_overview').val());
 
-   /* var succes_matrics = $(".succes-matrics").children();
-    var succes_matrics_values = [];
-
-    for(var i=1;i<=succes_matrics.length;i++)
-    {
-        succes_matrics_values.push($('#succes_metrices_one_'+i).val());
-        succes_matrics_values.push($('#succes_metrices_two_'+i).val());
-        succes_matrics_values.push($('#succes_metrices_three_'+i).val());
-    }
-    
-    for(var j=0;j<succes_matrics.length;j++)
-
-        
-    {
-
-    }*/
-
-/*=================================*/
+   
     $('.preview-succes-matrixs').html('');
     var succes_matrics = $(".succes-matrics").children();
     var succes_matrics_values = new Array();
-debugger;
+
     for(var i=1;i<=succes_matrics.length;i++)
     {
         succes_matrics_values.push($('#succes_metrices_one_'+i).val());
@@ -592,10 +574,6 @@ debugger;
       succes_matrics_values = succes_matrics_values.splice(3);
     }
     /*==========================================*/
-
-
-
-
 
     $('#preview_expectations').val($('#expectations').val());
 
