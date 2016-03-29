@@ -1865,14 +1865,19 @@ def program_kick_off(request):
         # get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
         # kickoffprogram.bcc_kick_off.add(*get_bcc_list)
 
+        bcc_google_poc_list = list()
+        for each_email in google_poc_list:
+            bcc_google_poc_list.append(str(each_email))
+
         latest_program = KickOffProgram.objects.filter(program_created_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(latest_program.id)
-        mail_from = request.user.email
+        mail_from = request.user.first_name + ' ' + request.user.last_name
+        user = request.user.email
         name_of_submiter = request.user.first_name + ' ' + request.user.last_name
-        mail_to = ""
+        mail_to = ['srinivasans@regalix-inc.com', 'kushalappa.theetharamada@regalix-inc.com', str(user)]
         mail_subject = "TagTeam Support Request [New Program - %s ]" % (kickoffprogram.program_name)
         mail_body = get_template('reports/email_templates/kick_off_form_submission.html').render(Context({'program_name': kickoffprogram.program_name, 'mail_from': mail_from, 'acces_link':acces_link, 'google_poc':google_poc, 'name_of_submiter':name_of_submiter}))
-        bcc = set()
+        bcc = set(bcc_google_poc_list)
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
@@ -2243,9 +2248,14 @@ def kickoff_export_detail(request, program_id):
         get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
         tagteamkickoff.bcc_tagteam.add(*get_bcc_list)
         
+
         tagteamkickoff.save()
 
         # mailing functionalities
+        set_off_bcc_mails = list()
+        for each_mail in bcc_list:
+            set_off_bcc_mails.append(str(each_mail))
+       
         latest_program = KickoffTagteam.objects.filter(tagteam_added_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(get_kickoff_record.id)
 
@@ -2254,14 +2264,14 @@ def kickoff_export_detail(request, program_id):
         kick_off_created = tagteamkickoff.kickoff_program.created_date
 
         program_created_by = tagteamkickoff.kickoff_program.program_created_by
-        mail_from = request.user.email
+        mail_from = request.user.first_name + ' ' + request.user.last_name
+        user = request.user.email
         tagteam_added_by = request.user.first_name + ' ' + request.user.last_name
-
         going_live = golive_date
-        mail_to = ""
         mail_subject = "TagTeam added [New Program - %s ]" % (program)
+        mail_to = ['srinivasans@regalix-inc.com', 'kushalappa.theetharamada@regalix-inc.com', str(user)]
         mail_body = get_template('reports/email_templates/tagteam_added_kickoff.html').render(Context({'program_name': program, 'acces_link':acces_link,'google_pocs':google_pocs,'kick_off_created':kick_off_created, 'going_live':going_live,'program_created_by':program_created_by,'tagteam_added_by':tagteam_added_by}))
-        bcc = set()
+        bcc = set(set_off_bcc_mails)
         attachments = list()
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
