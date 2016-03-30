@@ -507,7 +507,6 @@ def common_cid_for_multiple_task_type(request,agency_bundle, cid_list):
     tag_data = basic_data
     tag_data[basic_leads['cid']] = request.POST.get('cid'+str(cid_list[0]))
 
-    import ipdb;ipdb.set_trace()
     for indx in cid_list:
         indx = str(indx)
         ctype = request.POST.get('diff_ctype' + indx)
@@ -707,7 +706,6 @@ def submit_agency_different_tasks(request, agency_bundle):
     is_tag_appointment_used = False
     is_shop_appointment_used = False
 
-    import ipdb;ipdb.set_trace()
     same_cid_list, unique_cid_list = sorted_cids(request.POST)
     for each_same_cid in same_cid_list:
         common_cid_for_multiple_task_type(request, agency_bundle, each_same_cid)
