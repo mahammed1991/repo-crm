@@ -3,6 +3,8 @@ import json
 from datetime import datetime, timedelta
 import requests
 import csv
+import itertools
+
 from uuid import uuid4
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.shortcuts import render, redirect
@@ -434,8 +436,10 @@ def agency_lead_form(request):
         ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
         # error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
 
+
         if is_google_rep:
             if customer_type == "agency":
+
                 # get Agency related lead values
                 if task_type == "same_task":
                     submit_agency_same_tasks(request, agency_bundle)
@@ -466,6 +470,114 @@ def agency_lead_form(request):
     )
 
 
+def common_cid_for_multiple_task_type(request,agency_bundle, cid_list):
+    """ Agency with common cid with multiple tasktype """
+    ret_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+    error_url = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+    if settings.SFDC == 'STAGE':
+        sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+        oid = '00D7A0000008nBH'
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
+    else:
+        sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+        oid = '00Dd0000000fk18'
+        basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
+
+    agency_diff_tag_count = request.POST.get('agency_diff_tag_count')
+    agency_diff_shop_count = request.POST.get('agency_diff_shop_count')
+    total_leads = int(agency_diff_tag_count) + int(agency_diff_shop_count)
+    is_tag_appointment_used = False
+    is_shop_appointment_used = False
+
+            # tag fields
+    j = 1
+    if settings.SFDC == 'STAGE':
+        basic_data = get_common_sandbox_lead_data(request.POST)
+    else:
+        basic_data = get_common_salesforce_lead_data(request.POST)
+    basic_data['retURL'] = ret_url
+    basic_data['errorURL'] = error_url
+    basic_data['oid'] = oid
+    full_name = request.POST.get('contact_person_name')
+    basic_data[basic_leads['agency_bundle']] = agency_bundle
+    if full_name:
+        first_name, last_name = split_fullname(full_name)
+        basic_data['first_name'] = first_name
+        basic_data['last_name'] = last_name
+    tag_data = basic_data
+    tag_data[basic_leads['cid']] = request.POST.get('cid'+str(cid_list[0]))
+
+    import ipdb;ipdb.set_trace()
+    for indx in cid_list:
+        indx = str(indx)
+        ctype = request.POST.get('diff_ctype' + indx)
+        if ctype != 'Google Shopping Setup':
+            if not is_tag_appointment_used:
+                is_tag_appointment_used = True
+                tag_data[tag_leads['tag_datepick']] = request.POST.get('tag_datepick')
+            tag_data[tag_leads['ctype'+ str(j)]] = ctype
+            tag_data[tag_leads['url'+ str(j)]] = request.POST.get('url' + indx)
+            tag_data[tag_leads['comment'+ str(j)]] = request.POST.get('comment' + indx)
+            tag_data[tag_leads['ga_setup'+ str(j)]] = request.POST.get('ga_setup' + indx)
+            tag_data[tag_leads['analytics_code'+ str(j)]] = request.POST.get('analytics_code' + indx)
+
+            tag_data[tag_leads['call_extension'+ str(j)]] = request.POST.get('call_extension' + indx)
+            tag_data[tag_leads['product_behaviour'+ str(j)]] = request.POST.get('product_behaviour' + indx)
+            tag_data[tag_leads['cartpage_behaviour'+ str(j)]] = request.POST.get('cartpage_behaviour' + indx)
+            tag_data[tag_leads['checkout_process'+ str(j)]] = request.POST.get('checkout_process' + indx)
+            tag_data[tag_leads['transaction_behaviour'+ str(j)]] = request.POST.get('transaction_behaviour' + indx)
+
+            tag_data[rlsa_leads['user_list_id'+ str(j)]] = request.POST.get('user_list_id' + indx)
+            tag_data[rlsa_leads['rsla_bid_adjustment'+ str(j)]] = request.POST.get('rsla_bid_adjustment' + indx)
+            tag_data[rlsa_leads['internal_cid'+ str(j)]] = request.POST.get('internal_cid' + indx)
+            tag_data[rlsa_leads['campaign_ids'+ str(j)]] = request.POST.get('campaign_ids' + indx)
+            tag_data[rlsa_leads['create_new_bid_modifiers'+ str(j)]] = request.POST.get('create_new_bid_modifiers' + indx)
+            tag_data[rlsa_leads['overwrite_existing_bid_modifiers'+ str(j)]] = request.POST.get('overwrite_existing_bid_modifiers' + indx)
+            # tag_data[tag_leads['rsla_policies1']] = request.POST.get('rsla_policies' + indx)
+
+            # If Dynamic Remarketing tags
+            tag_data[tag_leads['rbid'+ str(j)]] = request.POST.get('rbid' + indx)
+            tag_data[tag_leads['rbudget'+ str(j)]] = request.POST.get('rbudget' + indx)
+            j = j + 1
+    submit_lead_to_sfdc(sf_api_url, tag_data)
+
+
+    if settings.SFDC == 'STAGE':
+        basic_data_shopping = get_common_sandbox_lead_data(request.POST)
+    else:
+        basic_data_shopping = get_common_salesforce_lead_data(request.POST)
+    basic_data_shopping['retURL'] = ret_url
+    basic_data_shopping['errorURL'] = error_url
+    basic_data_shopping['oid'] = oid
+    full_name = request.POST.get('contact_person_name')
+    basic_data_shopping[basic_leads['agency_bundle']] = agency_bundle
+    if full_name:
+        first_name, last_name = split_fullname(full_name)
+        basic_data_shopping['first_name'] = first_name
+        basic_data_shopping['last_name'] = last_name
+    shop_data = basic_data_shopping
+    shop_data[basic_leads['cid']] = request.POST.get('cid'+str(cid_list[0]))
+    
+    for indx in cid_list:
+        indx = str(indx)
+        ctype = request.POST.get('diff_ctype' + indx)
+        if ctype == 'Google Shopping Setup':
+            # Get Shop lead fields
+            if not is_shop_appointment_used:
+                is_shop_appointment_used = True
+                shop_data[shop_leads['setup_datepick']] = request.POST.get('setup_datepick')
+
+            shop_data[shop_leads['ctype1']] = ctype
+            shop_data[shop_leads['shopping_url']] = request.POST.get('url' + indx)
+            shop_data[shop_leads['comment1']] = request.POST.get('comment' + indx)
+            shop_data[shop_leads['rbid']] = request.POST.get('rbid' + indx)
+            shop_data[shop_leads['rbudget']] = request.POST.get('rbudget' + indx)
+            shop_data[shop_leads['rbidmodifier']] = request.POST.get('rbidmodifier' + indx)
+            shop_data[shop_leads['web_client_inventory']] = request.POST.get('web_client_inventory')
+            shop_data[shop_leads['mc_id']] = request.POST.get('mc_id' + indx)
+            submit_lead_to_sfdc(sf_api_url, shop_data)
+
+
 # ######################## Agency Lead Functions ##################################
 def submit_agency_same_tasks(request, agency_bundle):
     """ Agency Same Tasks Submission to SFDC """
@@ -481,12 +593,18 @@ def submit_agency_same_tasks(request, agency_bundle):
         oid = '00Dd0000000fk18'
         basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
     same_task_ctype = request.POST.get('same_task_ctype')
+
+    same_cid_list, unique_cid_list = sorted_cids(request.POST)
+    for each_same_cid in same_cid_list:
+        common_cid_for_multiple_task_type(request, agency_bundle, each_same_cid)
+
     if same_task_ctype != "Google Shopping Setup":
         # Get Tag lead fields
         agency_same_tag_count = request.POST.get('agency_same_tag_count')
         agency_same_tag_count = int(agency_same_tag_count) if agency_same_tag_count else 0
 
-        for indx in range(1, agency_same_tag_count + 1):
+
+        for indx in unique_cid_list:
             # Get Basic/Common form field data
             indx = str(indx)
             if settings.SFDC == 'STAGE':
@@ -588,7 +706,13 @@ def submit_agency_different_tasks(request, agency_bundle):
     total_leads = int(agency_diff_tag_count) + int(agency_diff_shop_count)
     is_tag_appointment_used = False
     is_shop_appointment_used = False
-    for indx in range(1, total_leads + 1):
+
+    import ipdb;ipdb.set_trace()
+    same_cid_list, unique_cid_list = sorted_cids(request.POST)
+    for each_same_cid in same_cid_list:
+        common_cid_for_multiple_task_type(request, agency_bundle, each_same_cid)
+
+    for indx in unique_cid_list:
         indx = str(indx)
         # Get Basic/Common form field data
         if settings.SFDC == 'STAGE':
@@ -671,11 +795,19 @@ def submit_customer_lead_same_tasks(request, agency_bundle):
         basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
 
     same_task_cust_type = request.POST.get('same_task_cust_type')
+    same_cid_list, unique_cid_list = sorted_cids(request.POST)
+
+        
     if same_task_cust_type != "Google Shopping Setup":
         # Get Tag lead fields
         customer_same_tag_count = request.POST.get('customer_same_tag_count')
         customer_same_tag_count = int(customer_same_tag_count) if customer_same_tag_count else 0
-        for indx in range(1, customer_same_tag_count + 1):
+        same_cid_list, unique_cid_list = sorted_cids(request.POST)
+        for each_same_cid in same_cid_list:
+            common_cid_for_multiple_task_type(request, agency_bundle, each_same_cid)
+
+
+        for indx in unique_cid_list:
             indx = str(indx)
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE':
@@ -790,7 +922,13 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
     total_leads = int(customer_diff_tag_count) + int(customer_diff_shop_count)
     is_tag_appointment_used = False
     is_shop_appointment_used = False
-    for indx in range(1, total_leads + 1):
+    same_cid_list, unique_cid_list = sorted_cids(request.POST)
+
+
+    for each_same_cid in same_cid_list:
+        common_cid_for_multiple_task_type(request, agency_bundle, each_same_cid)
+
+    for indx in unique_cid_list:
         indx = str(indx)
         # Get Basic/Common form field data
         if settings.SFDC == 'STAGE':
@@ -871,6 +1009,47 @@ def submit_customer_lead_different_tasks(request, agency_bundle):
             shop_data[shop_leads['mc_id']] = request.POST.get('mc_id' + indx)
             submit_lead_to_sfdc(sf_api_url, shop_data)
             # requests.post(url=sf_api_url, data=shop_data)
+
+
+def sorted_cids(data):
+    final_cid_list = []
+    final_cid_dict = {}
+
+    for key, value in data.iteritems():
+        cid_dict = {}
+        if key[0:3] == "cid":
+            cid_dict[key] = value
+            final_cid_dict[key] = value
+            final_cid_list.append(cid_dict)
+
+    same_cid_values_list = []
+    unique_cid_values_list = []
+
+    for item in final_cid_list:
+        temp_cid_value = None
+        temp_cid_same_list = []
+        for key, value in item.iteritems():
+            temp_cid_value = value
+        for key, value in final_cid_dict.iteritems():
+            if value == temp_cid_value:
+                temp_cid_same_list.append(key[3:])
+
+        if len(temp_cid_same_list) > 1:
+            for item in range(1,4):
+                split_cid_list = temp_cid_same_list[:5]
+                if split_cid_list:
+                    same_cid_values_list.append(split_cid_list)
+                temp_cid_same_list = filter(lambda x: x not in split_cid_list, temp_cid_same_list)
+        else:
+            unique_cid_values_list.append(temp_cid_same_list[0])
+
+    
+
+    same_cid_values_list.sort()
+    same_cid_values_list = list(same_cid_values_list for same_cid_values_list, _ in itertools.groupby(same_cid_values_list))
+    return same_cid_values_list, unique_cid_values_list
+
+
 
 # ######################## Agency Lead Functions Ends ##############################
 
