@@ -699,11 +699,11 @@ function validatethis(frm) {
       }
 
       // Check Box Options
-      if($("#tag_via_gtm").is(":checked")){
-        $("#tag_via_gtm").val(1);
-      }else{
-        $("#tag_via_gtm").val(0);
-      }
+      // if($("#tag_via_gtm").is(":checked")){
+      //   $("#tag_via_gtm").val(1);
+      // }else{
+      //   $("#tag_via_gtm").val(0);
+      // }
 
       if($("#web_access").is(":checked")){
           $("#web_access").val(1);
@@ -966,18 +966,18 @@ $(document).on('click', '#is_campaign_created', function() {
     
 });
 
-$("#tagCheck").click(function(){
-    var elem = document.getElementById('tag_via_gtm'); 
-    if(elem.checked == true){
-      for( i=1; i <= $(".task").length; i++){
-        if($("#comment" + i).is(":visible")){
-         $("#comment"+i).val('implement via GTM');
-        }
-      }
-    }else{
-      $("#comment1, #comment2, #comment3, #comment4, #comment5").val('');
-    }
-});
+// $("#tagCheck").click(function(){
+//     var elem = document.getElementById('tag_via_gtm'); 
+//     if(elem.checked == true){
+//       for( i=1; i <= $(".task").length; i++){
+//         if($("#comment" + i).is(":visible")){
+//          $("#comment"+i).val('implement via GTM');
+//         }
+//       }
+//     }else{
+//       $("#comment1, #comment2, #comment3, #comment4, #comment5").val('');
+//     }
+// });
 
 $(".is_ga_setup").click(function(){
     thisId = $(this).attr('id');

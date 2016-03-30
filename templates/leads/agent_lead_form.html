@@ -112,7 +112,7 @@
                 </div>
               </div>
               <!-- ################ Google rep info Ends ######################### -->
-            <div class="bg_custom">
+            <div class="bg_custom" style="display: none;">
               <!--  <div class="form-heading">Who will submit the leads?</div>
                <div class="checkbox">
                   <input type="radio" name="cusm_type" id="me" value="me" class="cusm_type" checked="">
@@ -121,19 +121,19 @@
                   <span style="padding-right:2.5%;">Agency POC</span>
                 </div>  -->
 
-               <div class="form-heading">Will end customers be involved in the implementation process, or will we only be working with the Agency?</div>
-                <div class="checkbox web-access">
+               <div class="form-heading" style="display: none;">Will end customers be involved in the implementation process, or will we only be working with the Agency?</div>
+                <div class="checkbox web-access" style="display: none;" >
                   <input type="radio" name="customer_type" id="agency" value="agency" class="customer_type" checked="">
                   <span style="padding-right:2.5%;"> Agency </span>
                   <input type="radio" name="customer_type" id="end_customer" value="end_customer" class="customer_type">
                   <span style="padding-right:2.5%;">End Customer</span>
                 </div>
 
-              <div class="form-heading">Will the same task be implemented across different CID or will it be different tasks?</div>
-              <div>
-                 <input type="radio" name="task_type" value="same_task" id="same_task" class="task_type" checked>
+              <div class="form-heading" style="display: none;">Will the same task be implemented across different CID or will it be different tasks?</div>
+              <div style="display: none;">
+                 <input type="radio" name="task_type" value="same_task" id="same_task" class="task_type" >
                  <span style="padding-right:2.5%;"> Same task</span>
-                  <input type="radio" name="task_type" id="diff_task" value="diff_task" class="task_type">
+                  <input type="radio" name="task_type" id="diff_task" value="diff_task" class="task_type" checked>
                   <span style="padding-right:2.5%;">Different tasks </span>
               </div>
           </div>
@@ -145,7 +145,7 @@
                   <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Agency Name">
                 </div>
                 <div class="col-md-4">
-                  <input type="text" class="form-control" id="agency_poc" name="agency_poc" placeholder="Point of Contact">
+                  <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
                 </div>
                 <div class="col-md-4">
                   <input type="text" class="form-control" id="agency_email" name="agency_email" placeholder="Email">
@@ -153,17 +153,15 @@
                 <div class="col-md-4">
                   <input type="text" class="form-control" id="agency_phone" name="agency_phone" placeholder="Telephone">
                 </div>
-              </div>
 
-              <div class="row company">
                 <div class="col-md-4">
                   <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
                 </div>
-            </div>
+              </div>
         <!-- ################ Agency Conatct Info Ends ######################### -->
 
         <!-- ##################### Same Task Functionality Starts #################### --> 
-          <div id="same_task_agency">
+          <div id="same_task_agency" style="display:none;">
             <div class="std-sub-title">Same Task</div>
               <div class="row" id="same_task_agency_row">
                 <div class="col-md-4">
@@ -176,7 +174,7 @@
         <!--- #################### End Same Shop Functionality ######################## -->
 
           <!-- ##################### Different Task Functionality #################### --> 
-          <div id="different_task_agency" style="display:none;">  
+          <div id="different_task_agency">  
             <div class="std-sub-title">Different Task</div>
             <div class="row fixallit" id="addedRows"></div>
 
@@ -231,9 +229,6 @@
               <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
                 <option value="">Select Time Zone</option>
               </select>
-            </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" id="contact_person_name" name="contact_person_name" placeholder="Contact Person Name">
             </div>
           </div>
           <div class="row">
@@ -340,23 +335,23 @@ $(".task_type").click(function(){
 
     if($(".customer_type:checked").val() == 'agency'){
         $(".agency_info").show();
-        if(taskId == 'same_task'){
-          $("#same_task_agency").show();
-          $("#different_task_agency").hide();
-        }else if(taskId == 'diff_task'){
-          $("#different_task_agency").show();
-          $("#same_task_agency").hide();
-        }
+        // if(taskId == 'same_task'){
+        //   $("#same_task_agency").show();
+        //   $("#different_task_agency").hide();
+        // }else if(taskId == 'diff_task'){
+        //   $("#different_task_agency").show();
+        //   $("#same_task_agency").hide();
+        // }
         hideCustomerFields();
     }else if($(".customer_type:checked").val() == 'end_customer'){
       $(".agency_info").hide();
-        if(taskId == 'same_task'){
-          $("#same_task_customer").show();
-          $("#different_task_customer").hide();
-        }else if(taskId == 'diff_task'){
-          $("#different_task_customer").show();
-          $("#same_task_customer").hide();
-        }
+        // if(taskId == 'same_task'){
+        //   $("#same_task_customer").show();
+        //   $("#different_task_customer").hide();
+        // }else if(taskId == 'diff_task'){
+        //   $("#different_task_customer").show();
+        //   $("#same_task_customer").hide();
+        // }
         hideAgencyFields();
     }
 });
