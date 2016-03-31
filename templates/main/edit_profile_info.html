@@ -1,0 +1,170 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  User Profile
+{% endblock title %}
+
+{% block content %}
+
+<section class="content-region profile-page">
+  <div class="container-fluid">
+  <h1>My Account</h1>
+  <form class="profile" onsubmit="return validateProfile()" action="{% url 'main.views.edit_profile_info' %}" id="edit_profile" method="POST">
+    {% csrf_token %}
+    <div class="std-sub-title">Personal Info</div>
+    <div class="profile-row">
+     <div class="pull-right text-right profile-img">
+        {% if user.profile.profile_photo_url %}
+            <img src="{{user.profile.profile_photo_url}}">
+        {% else %}
+            <img src="{% static 'images/default_user.png' %}">
+        {% endif %}
+      </div>
+      <div class="profile-section">
+        <label>Name</label>
+        <input type="text" class="form-control non-edit allow-edit" name='user_full_name' id='user_full_name' value="{{ user.get_full_name }}" disabled>
+         <label>Email </label>
+        <input type="text" class="form-control non-edit" name='user_email' value="{{ user.email }}" disabled>
+         <label>Phone</label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_phone" id="user_phone" value="{{ user.profile.phone }}" disabled>
+      </div>     
+    </div>
+    <div class="std-sub-title">Team Info</div>
+    <div class="profile-row">
+      <div class="profile-section editable">
+        {% if 'google' in request.user.email %}
+          <label>Team</label>
+           <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team" disabled>
+              <option value="0">Select Team</option>
+              {% for team in teams %}
+              <option value="{{team.id}}">{{team.team_name}}</option>
+              {% endfor %}
+          </select>
+        {% endif %}
+        <label>Manager Email</label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_manager_email" id="user_manager_email" {% if user.profile.user_manager_email %}value="{{ user.profile.user_manager_email }}"{% endif %} disabled>
+
+        <label>Manager Name </label>
+        <input type="text" class="form-control non-edit allow-edit" name="user_manager_name" id="user_manager_name" {% if user.profile.user_manager_name %} value="{{ user.profile.user_manager_name }}"{% endif %} disabled>
+
+        <label for="country">Google Rep Location</label>
+          <input type="text" class="form-control non-edit allow-edit" id="rep_location" name="rep_location" 
+          value="{{ user.profile.rep_location }}" placeholder="Enter Rep Location" autocomplete="off" disabled>
+
+          <div class="rep_cur_loc" style="display:none;position: relative;">
+          <label for="current_location">Your Current Location</label>
+          <input type="text" class="form-control non-edit" id="cur_location" name="cur_location" 
+          value="" autocomplete="off" disabled="">
+          <div style="position: relative;display: inline-block;">
+            <label style="width: auto;float: left;">Copy Current Location as Rep Location</label>
+            <input type="checkbox" id='location_copy' class="checkbox" style="position: relative;right: 0px;margin-top: 18px;">
+          </div>
+          </div>
+    <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
+          {% if 'google' in request.user.email %}
+            <label>Region </label>
+            <select class="form-control non-edit allow-edit" id="region" title="Program Region" name="region" disabled>
+              <option value="0">Region</option>
+              {% for rgn in regions %}
+                <option value="{{rgn.id}}">{{rgn.name}}</option>
+              {% endfor %}
+            </select>
+
+          <label>Market Served</label>
+          <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
+              <option value="0">Market Served</option>
+              {% for loc in locations %}
+              <option value="{{loc.id}}">{{loc.location_name}}</option>
+              {% endfor %}
+          </select>
+            <label> POD Name </label>
+            <input type="text" class="form-control non-edit allow-edit" name="pod_name" id="pod_name" placeholder="POD Name" {% if podname.pod_name %} value="{{podname.pod_name}}" {% else %} value="" {% endif %} disabled>
+        {% endif %}
+        <div class="error-msg" style="display:none;margin-bottom:5px;color:red;">Please enter a valid regalix or google Email ID</div>
+      </div>
+      </div>      
+    <div class="btns text-center">
+        <div class="btn-group">
+            <button class="btn std-btn" id="profileEdit">Edit</button>
+            <button class="btn std-btn" style="display:none" id="profileUpdate">Update</button>
+            <button class="btn std-btn grayed" style="display:none" id="profileCancel">Cancel</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/profile.js' %}"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30"></script>
+    <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+     <script type="text/javascript">
+  $(document).ready(function(){
+      window.user_full_name = "{{user.get_full_name|safe}}"
+      window.loc_id = {{user.profile.location.id|safe}}
+      window.team_id = {{user.profile.team.id|safe}}
+      window.manager_name = "{{user.profile.user_manager_name|safe}}"
+      window.manager_email = "{{user.profile.user_manager_email|safe}}"
+      window.phone = "{{user.profile.phone|safe}}"
+      window.manager_details = {{manager_details|safe}}
+      window.regionWiseLocations = {{region_locations|safe}};
+      window.all_locations = {{all_locations|safe}};
+      window.rep_location = "{{user.profile.rep_location|safe}}";
+      window.toggle_loc = "{{user.profile.rep_location|safe}}";
+      /*if(!window.rep_location){
+        getLocation('cur_location');
+      }*/
+      
+      getLocation('cur_location');
+
+      $("#user_manager_email").autocomplete({
+      source: {{managers|safe}},
+      select: function(event,ui){
+         $("#user_manager_email").val(ui.item.value);
+         $('#user_manager_name').val(window.manager_details[ui.item.value]);
+      }
+    });
+
+    $("#user_team").val(window.team_id);
+
+     var userRegion = "{{user.profile.region.name|safe}}"
+     var userRegionId = "{{user.profile.region.id|safe}}";
+     if(userRegion){
+        $('#region').val(userRegionId);
+        countryList = regionWiseLocations[parseInt(userRegionId)];
+        console.log(countryList);
+        setLocationsForRegion(window.all_locations, countryList);
+       }
+
+      var userLocationId = "{{user.profile.location.id|safe}}";
+      $("#user_location").val(userLocationId);
+
+      function setLocationsForRegion(newLocations, countryIds){
+          $("#user_location option").remove()
+          $("#user_location").append('<option value="0">Market Served</option>');
+          if (countryIds){
+            for(i=0; i<newLocations.length; i++){
+              if(countryIds.indexOf(newLocations[i]['id']) != -1){
+                $("#user_location").append('<option value="'+newLocations[i]['id']+'">'+newLocations[i]['name']+'</option>');
+              }
+            }
+          }else{
+            for(i=0; i<newLocations.length; i++){
+              $("#user_location").append('<option value="'+newLocations[i]['id']+'">'+newLocations[i]['name']+'</option>')
+            }
+          }
+          
+      }
+
+      $('#region').change(function(){
+        var regionId = $(this).val();
+        countryList = regionWiseLocations[regionId];
+        setLocationsForRegion(window.all_locations, countryList);
+      });
+});
+    </script>
+{% endblock main_js %}

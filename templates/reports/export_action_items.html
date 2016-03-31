@@ -1,0 +1,294 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Action Items Meeting Minutes
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+  .headlinks-default{
+    border-right: 1px solid #ccc;
+  }
+  </style>
+{% endblock main_css %}
+{% block content %}
+
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>Action Items Summary</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="post" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-2">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+        <div class="col-md-4" style="float: left;margin-left: 16px;margin-top: 3px;">
+          <select class="form-control bgicon" id="program" title="program" name="program" style="margin: 20px;">
+            <option value="">Program</option>
+            {% if "TAG-TEAM-OWNER" in  request.session.groups %}
+            <option value="all">All</option>
+            <option value="TAG Team">TAG Team</option>
+            {% endif %}
+            {% if "WPP-OWNER" in  request.session.groups %}
+            <option value="WPP">WPP</option>
+            {% endif %}
+            {% if "PICASSO-OWNER" in  request.session.groups %}
+            <option value="PICASSO">PICASSO</option>
+            {% endif %}
+            {% if "WPP-BUILD-OWNER" in  request.session.groups %}
+            <option value="PICASSO Build">PICASSO Build</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+        
+        <div style="text-align:center;">
+            <input type="submit" value="View Status" class="btn std-btn">
+        </div>
+    </form>
+    <form method="post">
+    {% csrf_token %}
+    <div class="row" style="display:none">
+            <div class="col-md-2">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                <input id="datepickerFrom1" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-2">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
+                <input id="datepickerTo1" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+        <div class="col-md-4" style="float: left;margin-left: 16px;margin-top: 3px;">
+          <select class="form-control bgicon" id="program1" title="program" name="program" style="margin: 20px;">
+            <option value="">Program</option>
+            <option value="all">All</option>
+            <option value="TAG Team">TAG Team</option>
+            <option value="WPP">WPP</option>
+            <option value="PICASSO">PICASSO</option>
+            <option value="PICASSO Build">PICASSO Build</option>
+          </select>
+        </div>
+      </div>
+      <div class="container-fluid" id="display_all_meeting_minutes" style="display:none">
+        <table class="table" style="margin-top: 44px;margin-bottom: 35px;margin-left: -156px;">
+          <thead>
+             <tr>
+               <th class="headlinks-default" style="min-width:50px;height:48px;">Meeting Date</th>
+               <th class="headlinks-default" style="min-width:150px;">Subject Line</th>
+               <th class="headlinks-default" style="min-width:250px;">Action Item(s)</th>
+               <th class="headlinks-default" style="min-width:100px;">Owner</th>
+               <th class="headlinks-default" id="td_date" style="min-width:100px;">Deadline</th>
+               <th class="headlinks-default" style="min-width:100px;">Status</th>
+               <th class="headlinks-default" style="min-width:110px;">Closed By</th>
+               <th class="headlinks-default" style="min-width:110px;">Reopened By</th>
+               <th class="headlinks-default" style="min-width:110px;">Resolved By</th>
+               <th class="headlinks-default" style="min-width:110px;">Action</th>
+             </tr>
+          </thead>
+          <tbody class="display_all_meeting_minutes" >
+            
+          </tbody>
+        </table>
+      </div>
+      <input type="hidden" name="reference_id" value="">
+      <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;">
+    </form>
+    </div>
+</section>
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript">
+	var all_meeting_records = {{all_records_list|safe}}
+	meeting_date_from = '{{meetings_date_from|safe}}'
+	meeting_date_to = '{{meetings_date_to|safe}}'
+	program = '{{program|safe}}'
+
+	if(meeting_date_from){
+		$('#datepickerFrom').val(meeting_date_from);
+	}else{
+		$('#datepickerFrom').val('');
+	}
+
+	if(meeting_date_to){
+		$('#datepickerTo').val(meeting_date_to);
+	}else{
+		$('#datepickerTo').val('');
+	}
+
+	if(program){
+		$('#program').val(program);
+	}else{
+		$('#program').val('');
+	}
+
+	if(all_meeting_records){
+    display_all_record_table(all_meeting_records);
+  }
+  function display_all_record_table(all_meeting_records){
+  	$('#display_all_meeting_minutes').show();
+    $('.display_all_meeting_minutes').html('');
+    row = ''
+    for(var i=0; i<all_meeting_records.length;i++){
+        row += '<tr>'+
+             '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
+             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Action Items']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Owners']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Target Date']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Status']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Closed By']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Reopened By']+'</td>' +
+             '<td class="links-default">'+all_meeting_records[i]['Resolved By']+'</td>'
+             if(all_meeting_records[i]['Status'] == 'Open'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="Close">Close</input></td>'
+              }else if(all_meeting_records[i]['Status'] == 'Close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Reopened">Reopen</input></td>' 
+             }else if(all_meeting_records[i]['Status'] == 'Reopened'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Resolved">Resolve</input></td>'
+             }else{
+              row_end = '<td class="links-default">Finished</td>'
+             }
+              '</tr>'
+            row += row_end
+    }
+    $('.display_all_meeting_minutes').append(row);
+
+  }
+
+  $('input[name=status]').change(function(){
+    if($(this).prop('checked')){
+      $('#submit_status').show();
+      $('input[name="reference_id"]').val($(this).attr('class'));
+      $('#datepickerFrom1').val(meeting_date_from);
+      $('#datepickerTo1').val(meeting_date_to);
+      $('#program1').val(program);
+    }else{
+      $('#submit_status').hide();
+    }
+
+  });
+
+</script>
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+	$(function() {
+	    $("#datepickerFrom").datepicker({
+	      defaultDate : "+1w",
+	      changeMonth : true,
+	      numberOfMonths : 1,
+	      dateFormat: "mm/dd/yy",
+	      onClose : function(selectedDate) {
+	        $("#to").datepicker("option", "minDate", selectedDate);
+	      },
+	      onSelect: function (selected) {
+	            var dt = new Date(selected);
+	            dt.setDate(dt.getDate() + 1);
+	            $("#datepickerTo").datepicker("option", "minDate", dt);
+	        }
+	    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+    function validatethis(frm) {
+        window.is_error = false;
+
+        if(frm.datepickerFrom.value == "0" || frm.datepickerFrom.value == ""){
+          $(frm.datepickerFrom).addClass('error-box');
+          frm.datepickerFrom.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerFrom).removeClass('error-box');
+        }
+
+        if(frm.datepickerTo.value == "0" || frm.datepickerTo.value == ""){
+          $(frm.datepickerTo).addClass('error-box');
+          frm.datepickerTo.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerTo).removeClass('error-box');
+        }
+
+        if(frm.program.value == "0" || frm.program.value == ""){
+          $(frm.program).addClass('error-box');
+          frm.program.focus();
+          window.is_error = true;
+        }else{
+          $(frm.program).removeClass('error-box');
+        }
+
+        if(window.is_error){
+          return false;
+        }else{
+          var status = true;
+          
+          if (status) {
+            // $('#preloaderOverlay').show();
+            $('form input[type=submit]');
+          }
+          return status;
+        }
+
+    }
+
+    $('#get_meeting_minutes').click(function(){
+
+      window.has_error = false;
+
+      if($('#datepickerFrom').val() == '' || $('#datepickerFrom').val() == '0'){
+        $('#datepickerFrom').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#datepickerFrom').removeClass('error-box');
+      }
+
+      if($('#datepickerTo').val() == '' || $('#datepickerTo').val() == '0'){
+        $('#datepickerTo').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#datepickerTo').removeClass('error-box');
+      }
+
+      if($('#program').val() == '' || $('#program').val() == '0'){
+        $('#program').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#program').removeClass('error-box');
+      }
+
+      if(window.has_error){
+        return false;
+      }else{
+        var status = true;
+        if (status) {
+        	$('form input[type=submit]');
+          }
+          return status;
+      }
+
+      
+    });
+</script>
+
+{% endblock main_js %}
