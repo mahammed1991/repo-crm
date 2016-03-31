@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from leads.models import PicassoLeads, Leads, Team, Location, Timezone
+from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from django.conf import settings
@@ -1901,7 +1901,9 @@ def program_kick_off(request):
     for rgn in regions:
             for loc in rgn.location.all():
                 region_locations[int(rgn.id)] = [int(loc.id) for loc in rgn.location.filter()]
+    # code type  fetching ReportService
     code_types_name = ReportService.get_all_code_type()
+
     region_based_locations = dict()
     for regn in regions:
         location_list_values = list()
@@ -1911,11 +1913,17 @@ def program_kick_off(request):
 
     # timezone fetching
     timezone = Timezone.objects.values_list('zone_name', 'time_value')
-            
+    
+    CodeTypevalues = CodeType.objects.all()
+    final_codetypes = []
+    for item in CodeTypevalues:
+        if item.name != "RLSA Bulk Implementation":
+            final_codetypes.append(str(item.name))
+
     return render(request, 'reports/kick_off.html', {'regions': regions,
                                                      'google_email': google_email,
                                                      'managers': all_mail,
-                                                     'code_types_name': code_types_name,
+                                                     'code_types_name': final_codetypes,
                                                      'locations': locations,
                                                      'region_locations': region_locations,
                                                      'all_locations': all_locations,
@@ -2268,7 +2276,7 @@ def kickoff_export_detail(request, program_id):
         user = request.user.email
         tagteam_added_by = request.user.first_name + ' ' + request.user.last_name
         going_live = golive_date
-        mail_subject = "TagTeam added [New Program - %s ]" % (program)
+        mail_subject = "TagTeam Added [New Program - %s ]" % (program)
         mail_to = ['srinivasans@regalix-inc.com', 'kushalappa.theetharamada@regalix-inc.com', str(user)]
         mail_body = get_template('reports/email_templates/tagteam_added_kickoff.html').render(Context({'program_name': program, 'acces_link':acces_link,'google_pocs':google_pocs,'kick_off_created':kick_off_created, 'going_live':going_live,'program_created_by':program_created_by,'tagteam_added_by':tagteam_added_by}))
         bcc = set(set_off_bcc_mails)

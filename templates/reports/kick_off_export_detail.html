@@ -72,7 +72,7 @@ body {
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
-                      <label for="">Program Start </br>Date:</label>
+                      <label for="">Program Start </br>Date(Tentative):</label>
                     </div>
                     <div class="col-md-4">
                       <input type="text"{% if start_date_converted %} value="{{start_date_converted}}" {% else %} value=""
@@ -91,7 +91,7 @@ body {
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
-                      <label for="">Program End </br>Date:  </label>
+                      <label for="">Program End </br>Date(Tentative):  </label>
                     </div>
                     <div class="col-md-4">
                        <input type="text"{% if end_date_converted %} value="{{end_date_converted}}" {% else %} value=""
@@ -167,8 +167,8 @@ body {
                 </div>
                  <div class="col-md-10 expectations">
                  {% if get_kickoff_record.expectations %}
-                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
-                  {{get_kickoff_record.expectations}}</textarea>
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>{{get_kickoff_record.expectations}}</textarea>
+                  
                   {% else %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
                   </textarea>
@@ -182,8 +182,7 @@ body {
                 </div>
                  <div class="col-md-10 expectations">
                   {% if get_kickoff_record.explain_workflow %}
-                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
-                  {{get_kickoff_record.explain_workflow}}</textarea>
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>{{get_kickoff_record.explain_workflow}}</textarea>
                   {% else %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled></textarea>
                   {% endif %} 
@@ -196,8 +195,7 @@ body {
                 </div>
                  <div class="col-md-10 expectations">
                   {% if get_kickoff_record.win_criteria %}
-                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>
-                  {{get_kickoff_record.win_criteria}}</textarea>
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled>{{get_kickoff_record.win_criteria}}</textarea>
                   {% else %}
                   <textarea  type="text" class="form-control" id="program_overview" name="program_overview" disabled></textarea>
                   {% endif %}
@@ -381,18 +379,21 @@ body {
     </div>
 </form>
 
+
 <div class="container-fluid" >  
-      <div class="row"  style="margin-top:30px;margin-bottom:10px;">
-          <div class="col-md-12">
-          {% if get_kickoff_tagteam %}
-              <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony" checked disabled>
-               Tagteam Added 
-          {% else %}  
-              <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony">
-               Do you want to add Tag-Team? 
-          {% endif %}             
-          </div>
-      </div>
+        <div class="row"  style="margin-top:30px;margin-bottom:10px;">
+            <div class="col-md-12">
+            {% if get_kickoff_tagteam %}
+                <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony" checked disabled>
+                 Tagteam Added 
+            {% else %}  
+              {% if 'regalix-inc.com' in request.user.email %}
+                  <input class="show-tagteam" type='checkbox' id="show-tag-team" name="add_testimony">
+                   Do you want to add Tag-Team? 
+              {% endif %}
+            {% endif %}             
+            </div>
+        </div>
 </div>
 
 </section>

@@ -76,7 +76,7 @@
                         </div>
                       </div> 
                       <div class="col-md-2 display-inline">
-                         <label for="">Program Start </br>Date:</label>
+                         <label for="">Program Start </br>Date(Tentative):</label>
                     </div>
                     <div class="col-md-4">
                           <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="program_start_date"  />
@@ -118,7 +118,7 @@
                       </div>
                     </div>
                      <div class="col-md-2 display-inline">
-                      <label for="">Program End </br>Date:  </label>
+                      <label for="">Program End </br>Date(Tentative):  </label>
                     </div>
                     <div class="col-md-4">
                        <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="program_end_date" name="program_end_date" >
@@ -134,11 +134,11 @@
                                <div id="code_type_opt" class="btn-group drpDown" style="width: 100%;">
                                     <button type="button" class="form-control bgicon" id="codeTypeBtn" style="width:102.5%;text-align:left;">Task Types</button>
                                     <ul class="dropdown-menu code-type-ul" style="margin-top: -21px;width: 102.5%;">
-                                    {% for item in code_types_name %}
+                                    <!-- {% for item in code_types_name %}
                                         <li id="{{item.id}}" val="{{item}}">
                                             <a href="#" class="codeTypeOpt"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>{{item}}</a>
                                         </li>
-                                    {%endfor%}
+                                    {%endfor%} -->
                                 </ul>
                             </div>
                           </div>
@@ -163,10 +163,10 @@
                         <div class="col-md-2">
                           <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject_estimated_day" style="">
                                 <option value="choose">Choose</option>
-                                <option value="Weekly">Day</option>Biweekly
-                                <option value="Biweekly">Biweekly</option>
+                                <option value="Day">Day</option>
                                 <option value="Week">Week</option>
-                                <option value="Monthly">Month</option>
+                                <option value="Month">Month</option>
+                                <option value="Quarter">Quarter</option>
                             </select>
                         </div>
                   </div>
@@ -417,7 +417,7 @@
                     " id="preview_location" name="preview_location" disabled></textarea>
                 </div>
                 <div class="col-md-2 display-inline">
-                  <label for="">Program Start Date:</label>
+                  <label for="">Program Start Date(Tentative):</label> 
                 </div>
                <div class="col-md-4">
                   <input id="preview_start_date" class="form-control" type="text" name="preview_start_date" disabled>
@@ -433,7 +433,7 @@
                     class="form-control " id="preview_programType" name="preview_programType" disabled></textarea>
                 </div>
                 <div class="col-md-2 display-inline">
-                  <label for="">Program End Date:</label>
+                  <label for="">Program End Date(Tentative):</label>
                 </div>
                <div class="col-md-4">
                   <input id="preview_end_date" class="form-control" type="text" name="preview_end_date" disabled>
@@ -754,6 +754,9 @@ function uncheck(){
  $(document).ready(function(){
     window.regionWiseLocations = {{region_based_locations|safe}}
     window.locations = {{all_locations|safe}};
+    window.codetypedict = {{code_types_name|safe}};
+    // window.codetypedict = {{code_types_name_dict|safe}}
+    // console.log(window.codetypedict);
 
  });
 
@@ -898,7 +901,6 @@ $(document).click(function(evt){
   });
 
   $("#preview-submit").click(function(e){
-    console.log(e);
     if (window.is_error == false && window.failedFields == 0 ){
         $('#preloaderOverlay').show();
         $("#submit").trigger('click');

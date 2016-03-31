@@ -89,6 +89,7 @@
           $(".location-ul").append('<li id=""><a href="#" class="smallLoc"></span>&nbsp;Please Select Region</a></li>')
         }
     });
+
  // checking & unchecking also adding removing selected regions to empty selector oprtins
     function selectProcessRegionData(regionElement){
        if($(regionElement).attr('id')){
@@ -125,28 +126,94 @@
     }
 /* end of regions selection and location selection codes */
 
-/* To select multiple code type selector plugg in fetching multiple selected values id and also checking and unchecking codetype selected */
-$('.code-type-ul').children().on('click', function(){
-        selectProcessPopulateCodeType(this);
-    });
-    function selectProcessPopulateCodeType(codeTypeElement){
-       if($(codeTypeElement).attr('val')){
-        var codeTypereplace = $(codeTypeElement).attr('val').replace(/ /g, "_");
-       }
-        var OptionElement = "<option id='"+codeTypereplace+"' value='"+codeTypereplace+"' selected></option>";
+/*code type selection based on program type*/
+    $("#codeTypeBtn").click(function () {
+        var elements = $('.advertizer-prg-ul li a .tickMarkShow');
+        var codetype_elements = $('.code-type-ul li a .tickMarkShow');
+        $(".code-type-ul").html('');
+        for(var i=0;i<elements.length;i++)
+        {
 
-        var selectedProcessElement = $(codeTypeElement).children("a").children('span');
-        // UnSelect Process Items.
-        if(selectedProcessElement.hasClass('tickMarkShow')){
-            selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
-            $('#codeTypeList  #'+codeTypereplace+' ').remove();
+            if($(elements[i]).parent().parent().attr('id') == 'Tag')
+            {
+                for(var j=0;j<window.codetypedict.length;j++)
+                {
+
+                    $(".code-type-ul").append('<li id="'+ window.codetypedict[j] +'">'+
+                                                 '<a href="#" class="codeTypeOpt">'+
+                                                 '<input type="checkbox" class="hiddenCheckbox"/>'+
+                                                 '<span class="glyphicon glyphicon-ok tickMark">'+
+                                                 '</span>&nbsp;'+ window.codetypedict[j] +'</a></li>');
+                }
+            }
+            else if($(elements[i]).parent().parent().attr('id') == 'RLSA')
+            {
+                $(".code-type-ul").append('<li id=" RLSA Bulk Implementation">'+
+                                                   '<a href="#" class="codeTypeOpt">'+
+                                                   '<input type="checkbox" class="hiddenCheckbox"/>'+
+                                                   '<span class="glyphicon glyphicon-ok tickMark">'+
+                                                   '</span>&nbsp;RLSA Bulk Implementation </a></li>');
+                        
+            }
+            else if($(elements[i]).parent().parent().attr('id') == 'Shopping')
+            {
+                $(".code-type-ul").append('<li id=" Shopping Campaign Setup  ">'+
+                                                   '<a href="#" class="codeTypeOpt">'+
+                                                   '<input type="checkbox" class="hiddenCheckbox"/>'+
+                                                   '<span class="glyphicon glyphicon-ok tickMark">'+
+                                                   '</span>&nbsp; Shopping Campaign Setup  </a></li>');
+                $(".code-type-ul").append('<li id=" Existing Datafeed Optimization  ">'+
+                                                   '<a href="#" class="codeTypeOpt">'+
+                                                   '<input type="checkbox" class="hiddenCheckbox"/>'+
+                                                   '<span class="glyphicon glyphicon-ok tickMark">'+
+                                                   '</span>&nbsp; Existing Datafeed Optimization  </a></li>');
+            }
+             else
+              {
+             }
         }
-        else{
-            selectedProcessElement.addClass('tickMarkShow');
-            $( "#codeTypeList" ).append(OptionElement);
-        }
-    }
-/* end of multiple code type selector plugg in fetching multiple selected values id  */
+              var final_elements = $(".code-type-ul li");
+              for(var k=0;k<codetype_elements.length;k++)
+              {
+                for(var i=0;i<final_elements.length;i++)
+                {
+                  if($(codetype_elements[k]).parent().parent().attr('id') == $(final_elements[i]).attr('id'))
+                  {
+                    $(final_elements[i]).children().children("span").addClass("tickMarkShow");
+                  }
+                }
+              }
+                  $('.code-type-ul').children().on('click', function(){
+                    selectProcessPopulateCodeType(this);
+              });
+    if($('#advertiser_type').val() == null)
+    {
+                $(".code-type-ul").append('<li><a href="#" class="codeTypeOpt">'+
+                                  '<span class=""></span>&nbsp; Please Select Program Type  </a></li>');
+      }
+    });
+
+
+      function selectProcessPopulateCodeType(codeTypeElement){
+        
+         if($(codeTypeElement).attr('id')){
+          var values = $(codeTypeElement).attr('id');
+          var codeTypereplace = $(codeTypeElement).attr('id').replace(/ /g, "_");
+         }
+          var OptionElement = "<option id='"+codeTypereplace+"' value='"+values+"' selected></option>";
+
+          var selectedProcessElement = $(codeTypeElement).children("a").children('span');
+          // UnSelect Process Items.
+          if(selectedProcessElement.hasClass('tickMarkShow')){
+              selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
+              $('#codeTypeList  #'+codeTypereplace+' ').remove();
+          }
+          else{
+              selectedProcessElement.addClass('tickMarkShow');
+              $( "#codeTypeList" ).append(OptionElement);
+          }
+      }  
+/*End of code type selection based on program type*/
 
 /* To select multiple advertize type selector plugg in fetching multiple selected values id and also checking and unchecking codetype selected */
 $('.advertizer-prg-ul').children().on('click', function(){

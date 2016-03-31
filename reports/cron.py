@@ -970,7 +970,7 @@ def slots_open_booked():
 
     all_bookings = zip(tag_final,shopping_final)
 
-    # mailing functyonaliteis
+    # mailing functionaliteis
     specific_date = datetime.today()
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
