@@ -27,7 +27,7 @@ class SalesforceLeads(object):
                                 'fopt': '00Nd0000005WYgp',  # Webmaster First Name
                                 'lopt': '00Nd0000005WYgu',  # Webmaster Last Name
                                 'webmaster_name': '00Nd0000007fJ3Q',    # Webmaster Name
-                                'web_access': '00Nd0000007esIm',  # Web Access
+                                #'web_access': '00Nd0000007esIm',  # Web Access
                                 'web_master_email': '00Nd0000007esIh',  # Webmaster Email
                                 'popt': '00Nd0000007esIc',  # Webmaster Phone
                                 'change_lead_owner': '00Nd0000007elYB',   # Default value for Change Lead Owner
@@ -113,7 +113,7 @@ class SalesforceLeads(object):
                                    'fopt': '00Nd0000005WYgp',  # Webmaster First Name
                                    'lopt': '00Nd0000005WYgu',  # Webmaster Last Name
                                    'webmaster_name': '00Nd0000007fJ3Q',    # Webmaster Name
-                                   'web_access': '00Nd0000007esIm',  # Web Access
+                                   #'web_access': '00Nd0000007esIm',  # Web Access
                                    'web_master_email': '00Nd0000007esIh',  # Webmaster Email
                                    'popt': '00Nd0000007esIc',  # Webmaster Phone
                                    'change_lead_owner': '00Nd0000007elYB',   # Default value for Change Lead Owner

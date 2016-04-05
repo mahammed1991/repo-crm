@@ -1586,6 +1586,7 @@ def write_appointments_to_csv(result, collumn_attr, filename):
 
 @login_required
 def export_action_items(request):
+
     if request.method == 'POST':
         meetings_date_from = request.POST.get('date_from')
         meetings_date_to = request.POST.get('date_to')
@@ -1659,13 +1660,34 @@ def export_action_items(request):
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
+        
         if program != 'all':
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
                                                             program=program).values_list('id', flat=True)
         else:
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to)).values_list('id', flat=True)
-                
-        meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes).order_by('-created_date')
+
+        filter_by_status = request.POST.get('report_status')
+        if filter_by_status:
+            try:
+                if  filter_by_status == 'open':
+                    meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes,
+                                                                status=filter_by_status).order_by('-created_date')
+                if filter_by_status == 'close':
+                    meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes,
+                                                                status=filter_by_status).order_by('-created_date')
+                if filter_by_status == 'reopened':
+                    meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes,
+                                                                status=filter_by_status).order_by('-created_date')
+                if filter_by_status == 'resolved':
+                    meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes,
+                                                                status=filter_by_status).order_by('-created_date')
+            except:
+                pass
+        else:
+            filter_by_status = "View All Status"
+            meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes).order_by('-created_date')
+
         all_records_list = list()
         for action_items in meeting_action_items:
             each_record_dict = dict()
@@ -1694,13 +1716,16 @@ def export_action_items(request):
             else:
                 each_record_dict['Resolved By'] = '-'
             all_records_list.append(each_record_dict)
-
-        return render(request, 'reports/export_action_items.html', {'all_records_list': json.dumps(all_records_list), 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
+        status = {}
+        status['status'] = filter_by_status
+        return render(request, 'reports/export_action_items.html', {'status':json.dumps(status), 'all_records_list': json.dumps(all_records_list), 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
     meetings_date_from = ''
     meetings_date_to = ''
     program = ''
     all_records_list = ''
-    return render(request, 'reports/export_action_items.html', {'all_records_list': all_records_list, 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
+    status = {}
+    status['status'] = 'undefined'
+    return render(request, 'reports/export_action_items.html', {'status':json.dumps(status),'all_records_list': all_records_list, 'meetings_date_from': meetings_date_from, 'meetings_date_to': meetings_date_to, 'program': program})
 
 
 def get_meeting_minutes(request):
