@@ -1065,5 +1065,24 @@ function mandatoryAppointmentForLanguages(language){
 
   }
 }
+
+/*capitalizing advertizer name */
+
+$.fn.capitalize = function () {
+    $.each(this, function () {
+        var split = this.value.split(' ');
+        for (var i = 0, len = split.length; i < len; i++) {
+            split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1).toLowerCase();
+        }
+        this.value = split.join(' ');
+    });
+    return this;
+};
+
+$('#advertiser_name').on('focusout', function () {
+    $(this).capitalize();
+}).capitalize();
+/*end of capitalizing*/
+
 </script>
 {% endblock main_js %}

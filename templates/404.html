@@ -4,8 +4,27 @@
   Error 404
 {% endblock title %}
 
+{% block main_css %}
+  <style type="text/css">
+  h1 {
+    font-size: 24px;
+    font-family: 'robotoblack';
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock main_css %}
+
 {% block content %}
-<section>
-Error 404
+<section class="content-region inner-page">
+
+	<div class="container-fluid">
+	  <h1>Error 404</h1>
+	</div>
+
 </section>
 {% endblock content %}

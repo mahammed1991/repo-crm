@@ -36,7 +36,7 @@
       <div class="profile-section editable">
         {% if 'google' in request.user.email %}
           <label>Team</label>
-           <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team" disabled>
+           <select class="form-control non-edit allow-edit" disabled name="user_team" id="user_team" style="margin-left: 6px;" disabled>
               <option value="0">Select Team</option>
               {% for team in teams %}
               <option value="{{team.id}}">{{team.team_name}}</option>
@@ -65,7 +65,7 @@
     <!-- <input type="text" class="form-control non-edit allow-edit" name="user_team" id="user_team" {% if user.profile.team %} value="{{ user.profile.team }}"{% endif %} disabled> -->
           {% if 'google' in request.user.email %}
             <label>Region </label>
-            <select class="form-control non-edit allow-edit" id="region" title="Program Region" name="region" disabled>
+            <select class="form-control non-edit allow-edit" id="region" title="Program Region" name="region" style="margin-left: 6px;" disabled>
               <option value="0">Region</option>
               {% for rgn in regions %}
                 <option value="{{rgn.id}}">{{rgn.name}}</option>
@@ -73,7 +73,7 @@
             </select>
 
           <label>Market Served</label>
-          <select class="form-control non-edit allow-edit" name="user_location" id="user_location" disabled>
+          <select class="form-control non-edit allow-edit" name="user_location" id="user_location" style="margin-left: 6px;"  disabled>
               <option value="0">Market Served</option>
               {% for loc in locations %}
               <option value="{{loc.id}}">{{loc.location_name}}</option>

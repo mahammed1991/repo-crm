@@ -23,20 +23,24 @@ Action Items Meeting Minutes
         </div>
     <form method="post" onsubmit="return validatethis(this);">
         {% csrf_token %}
+       
         <div class="row">
-            <div class="col-md-2">
-                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+            <div class="col-md-3">
+                <label style="float: left;margin-top: 2px;margin-left:;">Start Date</label>
                 <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
             </div>
-            <div class="col-md-2">
-                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
-                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            <div class="col-md-3">
+                <label style="float: left;margin-left: 16px;margin-top:;">End Date</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date" style="margin-left: 0px;" >
             </div>
-        <div class="col-md-4" style="float: left;margin-left: 16px;margin-top: 3px;">
-          <select class="form-control bgicon" id="program" title="program" name="program" style="margin: 20px;">
+        <div class="col-md-3" style="float:;margin-left:;margin-top: 3px;">
+          <select class="form-control bgicon" id="program" title="program" name="program" 
+          style="margin-left:-2px;margin-top:20px">
             <option value="">Program</option>
-            {% if "TAG-TEAM-OWNER" in  request.session.groups %}
+             {% if "TAG-TEAM-OWNER" in request.session.groups and "WPP-OWNER" in request.session.groups and "PICASSO-OWNER" in request.session.groups and "WPP-BUILD-OWNER" in request.session.groups %}
             <option value="all">All</option>
+            {% endif %}
+            {% if "TAG-TEAM-OWNER" in  request.session.groups %}
             <option value="TAG Team">TAG Team</option>
             {% endif %}
             {% if "WPP-OWNER" in  request.session.groups %}
@@ -50,11 +54,28 @@ Action Items Meeting Minutes
             {% endif %}
           </select>
         </div>
+            <div class="col-md-3 quick_status"  style="float:left;margin-top:22px;">
+                <input type="submit" value="View All Status" class="btn std-btn" style="height:48px;">
+            </div>
+       
       </div>
-        
-        <div style="text-align:center;">
-            <input type="submit" value="View Status" class="btn std-btn">
+
+        <div class="row" style="margin-top:8px;">
+          <div class="col-md-3 quick_status">
+            <input type="submit" name="report_status" value="open" class="btn std-btn">
+          </div>
+          <div class="col-md-3 quick_status">
+            <input type="submit" name="report_status" value="close" class="btn std-btn">
+          </div>
+          <div class="col-md-3 quick_status">
+            <input type="submit" name="report_status" value="reopened" class="btn std-btn">
+          </div>
+          <div class="col-md-3 quick_status">
+            <input type="submit" name="report_status" value="resolved" class="btn std-btn ">
+          </div>
         </div>
+     
+
     </form>
     <form method="post">
     {% csrf_token %}
@@ -163,7 +184,17 @@ Action Items Meeting Minutes
     }
     $('.display_all_meeting_minutes').append(row);
 
-  }
+}
+
+$(document).ready(function(){
+    var button_name = {{status|safe}};
+    if(button_name['status'] != undefined)
+    {
+      console.log($('input[value="'+button_name['status']+'"]'));
+      $('input[value="'+button_name['status']+'"]').css("background-color", "green");
+    } 
+});
+
 
   $('input[name=status]').change(function(){
     if($(this).prop('checked')){
@@ -289,6 +320,11 @@ Action Items Meeting Minutes
 
       
     });
+
+
+ 
+
+
 </script>
 
 {% endblock main_js %}
