@@ -39,19 +39,15 @@
                             <p>FROM {{ mail_from }}</p> 
                             <p>To access the form  <a href="{{ acces_link }}">Click here</a></p>
                             <p></p> -->
+                            <!-- Tagteam Added by: {{tagteam_added_by }}  -->
+                            <!-- <p>FROM {{ mail_from }}</p> -->
 
-                          Hello Team,<br></br>
-
-                          Further to the request received from {{program_created_by}} on {{ kick_off_created }}, here's a summary of the latest program,
-                          PROGRAM NAME :{{ program_name }} .
-                          <!-- Tagteam Added by: {{tagteam_added_by }}  -->
-                          <!-- <p>FROM {{ mail_from }}</p> -->
-                          <br><br>
+                          <p style="text-align: justify;">
+                          Hello Team,<br>
+                          Further to the request received from {{program_created_by}} on {{ kick_off_created }}, here's  a summary of the latest program {{ program_name}}.
                           that the TagTeam would be supporting from {{ going_live }}. 
-                          <a href="{{ acces_link }}" style=" text-decoration: none;">Click here</a> for details of the TagTeam members who would be supporting this program.
-
-                          <br></br>
-                          We look forward to working with your team to help your clients with their code implementation needs.<br><br>
+                          <a href="{{ acces_link }}" style=" text-decoration: none;">Click here</a> for details of the TagTeam members who would be supporting this program.</p>
+                          <p>We look forward to working with your team to help your clients with their code implementation needs.</p>
 
                           Thanks,<br>
 
