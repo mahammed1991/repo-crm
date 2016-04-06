@@ -99,7 +99,7 @@ admin.site.register(TimezoneMapping, TimezoneMappingAdmin)
 
 
 class RegalixTeamsAdmin(admin.ModelAdmin):
-    list_display = ('team_name', 'location_list', 'process_type', 'team_lead_list', 'team_manager_list')
+    list_display = ('team_name', 'location_list', 'process_type', 'team_lead_list', 'team_manager_list', 'is_active')
     filter_horizontal = ('location', 'program', 'ldap', 'team_lead', 'team_manager')
 
     def get_readonly_fields(self, request, obj=None):

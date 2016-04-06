@@ -17,7 +17,7 @@
 	</body>
 </html> -->
 
-<center><table cellspacing="0" cellpadding="0" dir="ltr" style="table-layout:fixed;font-size:13px;font-family:Arial;vertical-align:middle;">
+<table cellspacing="0" cellpadding="0" dir="ltr" style="table-layout:center;font-size:13px;font-family:Arial;vertical-align:middle;">
     <colgroup>
         <col width="26">
         <col width="306">
@@ -31,15 +31,9 @@
         <col width="100">
         <col width="26">
     </colgroup>
-    <tbody>
-     
-        <tr style="height:73px;width:100%">
-       <!--  <p>Hi All,<br>
-        Please find bellow Slot Utilization Dashboard dated - {{mail_trigerring_date}}</p> -->
-            <center>
-                    <td style="padding:38px 3px 2px 130px;font-size:200%;color:#e60000;" rowspan="1" colspan="7">
-                        Utilization Dashboard-{{mail_trigerring_date}} </td>
-             </center> 
+    <tbody style=""; >
+        <tr style="height:73px;">     
+            <td style="padding:38px 3px 2px 200px;font-size:200%;color:#e60000;" rowspan="1" colspan="7">Utilization Dashboard-{{mail_trigerring_date}} </td>
         </tr>
       
         <tr style="height:21px;">
@@ -48,42 +42,72 @@
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Opened</td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Booked</td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Utilization %</td>
+        </tr>
+
+        {% for v in tag %}
+            <tr style="height:21px;">
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+                    {% for key, val in v.iteritems  %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{val}}</td>
+                     {% endfor %}
+            </tr>
+        {% endfor %}
+         <tr style="height:21px;">
+            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">TAG - TOTAL</td>
+            {% for key, value in tag_total_sum_sorted  %}
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;">{{value}}</td>
+            {% endfor %}
+        </tr>
+
+        <br>
+
+         <tr style="height:21px;">
             <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Shopping Teams</td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Opened</td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Booked</td>
-            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Utilization %</td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-        </tr>
-        {% for tag_final,shopping_final in all_bookings %}
-	        <tr style="height:21px;">
-	            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-	        	{% for value in tag_final.values  %}
-		            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{value}}</td>
-	    		{% endfor %}
-	            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-	    		{% for value in shopping_final.values  %}
-		            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{value}}</td>
-	            {% endfor %}
-	            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-	        </tr>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Utilization </td>
+          </tr>
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+
+        {% for v in shopp %}
+            <tr style="height:21px;">
+            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+                {% for key, val in v.iteritems  %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{val}}</td>
+                {% endfor %}
+            </tr>
         {% endfor %}
 
-        <tr style="height:21px;">
-            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">TAG - TOTAL</td>
-        	{% for key, value in tag_total_sum_sorted  %}
-	            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;">{{value}}</td>
-    		{% endfor %}
-            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+         <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
             <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">SHOPPING - TOTAL</td>
-    		{% for key,value in shopping_total_sum_sorted  %}
-	            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;">{{value}}</td>
+            {% for key,value in shopping_total_sum_sorted  %}
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;">{{value}}</td>
             {% endfor %}
-            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-        </tr>
 
-        <tr style="height:21px;">
+            
+
+    </tbody>
+</table>
+<table cellspacing="0" cellpadding="0" dir="ltr" style="table-layout:center;font-size:13px;font-family:Arial;vertical-align:middle;margin-left:15px; width:109%;">
+ <colgroup>
+        <col width="26">
+        <col width="306">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="26">
+        <col width="306">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="26">
+    </colgroup>
+    <tbody>
+
+    <tr style="height:21px;">
             <td style="padding:2px 3px 2px 3px;"></td>
             <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
             <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
@@ -94,19 +118,6 @@
             <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
             <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
             <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-        </tr>
-        <tr style="height:21px;">
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
             <td style="padding:2px 3px 2px 3px;"></td>
         </tr>
         <tr style="height:21px;">
@@ -119,5 +130,6 @@
             <td style="padding:2px 3px 2px 3px;color:#b7b7b7;text-align:center;" rowspan="1" colspan="9"></td>
             <td style="padding:2px 3px 2px 3px;"></td>
         </tr>
+     
     </tbody>
-</table></center>
+</table>
