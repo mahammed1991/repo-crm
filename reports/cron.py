@@ -828,10 +828,9 @@ def update_leads_reports(lead):
 #+++++++++++ exclude overlapping regons +++++++++++++++++++
 def available_counts_booked_specific(process_type):
     """ taking values from today 2AM to previous 3AM exclude_north_america"""
-    from datetime import datetime
+    #importing date library from datetime import datetime
     today_morning = datetime.today()
     today = today_morning.replace(hour=2, minute=00, second=00)
-    
     
     previous_day_time = today_morning - timedelta(days=1)
     previous_day = previous_day_time.replace(hour=3, minute=00, second=00)
@@ -842,25 +841,19 @@ def available_counts_booked_specific(process_type):
     selected_tzone = Timezone.objects.get(zone_name=time_zone)
     from_utc_date = SalesforceApi.get_utc_date(previous_day, selected_tzone.time_value)
     to_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
+    
     default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True)
     default_teams = default_teams.exclude(team_name__in=exclude_north_america)
-    
     available_counts_teams = default_teams.values('team_name')
-    #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
 
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    
     for item in available_counts_teams:
         item['Availability Count'] = 0
         item['Ratio'] = 0
         item['Booked Count'] = 0
-
-    for ele in available_counts_teams:
-        if ele['Booked Count'] > 0:
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) + '%'
-            ele['Ratio'] = ("%.2f"%value +"%" )
-        else:
-            ele['Ratio'] = "-"
-            
+    
     for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
@@ -872,7 +865,7 @@ def available_counts_booked_specific(process_type):
 # +++++++++++++++++ include overlapping regions ++++++++++++++++++++++
 def available_counts_booked_specific_in_na(process_type):
     """ 7.00PM to nextday 7.30AM only for north america   """
-    from datetime import datetime
+    #importing date library from datetime import datetime
     today_morning = datetime.today()
     today = today_morning.replace(hour=19, minute=00, second=00)
     
@@ -885,13 +878,13 @@ def available_counts_booked_specific_in_na(process_type):
     from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
     to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
     only_north_america = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
-    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True, team_name__in=only_north_america).exclude(team_name='default team' )
-   
     
+    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True, team_name__in=only_north_america).exclude(team_name='default team' )
+    available_counts_teams = default_teams.values('team_name')
+   
     available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
     #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[today, next_day]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-
-    available_counts_teams = default_teams.values('team_name')
+    
     for item in available_counts_teams:
         item['Availability Count'] = 0
         item['Ratio'] = 0
@@ -902,14 +895,6 @@ def available_counts_booked_specific_in_na(process_type):
             if item2['team_name'] == item['team__team_name']:
                 item2['Availability Count'] = item['Availability_count']
                 item2['Booked Count'] = item['booked_count']
-
-    for ele in available_counts_teams:
-        if ele['Booked Count'] > 0:
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
-            ele['Ratio'] = ("%.2f" %value +"%" )
-        else:
-            ele['Ratio'] = "-"
-
 
     return available_counts_teams
 
@@ -941,13 +926,25 @@ def slots_open_booked():
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         tag_final.append(each_one)
 
-    
+    for ele in tag_final:
+        if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
+            ele['Ratio'] = ("%.2f"%value +"%" )
+        else:
+            ele['Ratio'] = "-"
 
     shopping_final = list()
     for ordering in shopping_all:
         keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         shopping_final.append(each_one)
+
+    for ele in shopping_final:
+        if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
+            ele['Ratio'] = ("%.2f"%value +"%" )
+        else:
+            ele['Ratio'] = "-"
 
     tag_total_sum = dict()
     tag_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in tag_all)
@@ -963,11 +960,11 @@ def slots_open_booked():
     shopping_total_sum = dict()
     shopping_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in shopping_all)
     shopping_total_sum['Booked Count'] = sum(item['Booked Count'] for item in shopping_all)
-    if tag_total_sum['Booked Count'] > 0 and shopping_total_sum['Availability_count'] > 0:
+    if shopping_total_sum['Booked Count'] > 0 and shopping_total_sum['Availability_count'] > 0:
         limiting_the_float = ((float(shopping_total_sum['Booked Count'])/shopping_total_sum['Availability_count'])*100)
         shopping_total_sum['Total ratio'] = ("%.2f" %limiting_the_float +"%" )
     else:
-        shopping_total_sum['Total ratio'] = '-'
+        shopping_total_sum['Total ratio'] = '-' 
 
     shopping_total_sum_sorted = sorted(shopping_total_sum.items())
 
@@ -981,7 +978,7 @@ def slots_open_booked():
     specific_date_time = datetime.today()
     specific_time = datetime.strftime(specific_date_time, '%H:%M:%S')
     logging.info("UTILIZATION DASHBOARD MAILING FUNCTION")
-    mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s %s" % (specific_date, specific_time)
+    mail_subject = "Local[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s %s" % (specific_date, specific_time)
     mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
     mail_from = 'google@regalix-inc.com'
     mail_to = ['portalsupport@regalix-inc.com']

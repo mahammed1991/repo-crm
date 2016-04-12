@@ -855,6 +855,23 @@
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
+
+// Disable Tag+Shopping for EMEA Non English - 21st March
+jQuery('.lead-type>*').hide();
+var li = ["37", "88", "93", "107", "46", "47", "148", "99", "49", "146", "52", "54", "147", "96", "137", "58", "60", "128", "63", "129", "89", "65", "66", "78"];
+jQuery('#country').change(function() {
+for (var i = 0; i < window.locations.length; i++)
+        if (window.locations[i].name == country.value)
+            break;
+   if ((li.indexOf(window.locations[i].id.toString()) > -1)&&language.value!="English") {
+       jQuery('.lead-type>*').show()
+        jQuery('#tagImplementation,#shoppingSetup,span:contains("And/Or")').hide()
+   } else if (country.value != "0") {
+       jQuery('.lead-type>*').show();
+   }
+});
+
+
   $(document).ready(function(){
     window.locations = {{locations|safe}};
     window.regions = {{regions|safe}};

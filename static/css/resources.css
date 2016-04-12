@@ -267,6 +267,11 @@ ul li, ol li {
   /* support: IE7; */
   font-size: 100%;
 }
+
+#accordion {
+  margin-left: -14px;
+}
+
 #accordion > .ui-accordion .ui-accordion-header .ui-accordion-header-icon{  position: absolute;
   right: .5em;
   top: 50%;
@@ -372,7 +377,7 @@ font-family: robotomedium;
   padding: 15px 15px;
   border: none;
   border-radius: 0px;
-  margin: 0px 0px 6px 0px;}
+  margin: 0px 0px 7px 0px;}
 #accordion.ui-accordion .ui-accordion-content {
   padding:0px 0px; 
   margin-bottom: 0px;

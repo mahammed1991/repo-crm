@@ -113,7 +113,7 @@
                 <li><a href="{% url 'representatives.views.export_appointments_with_schedule_appointments' %}" >Total Appointments</a></li>
                 <li><a href="{% url 'reports.views.meeting_minutes' %}" >MoM Form</a></li>
                 <li><a href="{% url 'reports.views.export_action_items' %}" >MoM Action Items</a></li>
-             
+                <li><a href="{% url 'reports.views.program_kick_off' %}" >Program Kick Off</a></li>
               {% endif %}
               
               {% if "PROGRAM-KICK-OFF" in request.session.groups %}
