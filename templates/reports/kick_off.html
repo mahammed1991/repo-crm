@@ -84,12 +84,11 @@
               </div>
               <!-- hide  codetype and region and region selected location  elements to send datatbase -->
                <div class="col-md-2 box2 bb hideItems">
-                    <select id="regionTypeList" name="regionTypeList" multiple="multiple">                        
+                    <select id="regionTypeList" name="regionTypeList" multiple="multiple">
                     </select>
-                    <select class="removelocation" id="locationTypeList" name="locationTypeList" multiple="multiple">                        
+                    <select class="removelocation" id="locationTypeList" name="locationTypeList" multiple="multiple">
                     </select>
-                    <select id="codeTypeList" name="codeTypeList" multiple="multiple">                        
-                    </select>
+                    <select id="codeTypeList" name="codeTypeList" multiple="multiple">            </select>
                     <select class="form-control bgicon add-type" id="advertiser_type" name="advertiser_type"
                     multiple="multiple">
                     </select>
@@ -143,12 +142,13 @@
                             </div>
                           </div>
                     </div>
-                       <div class="col-md-2 display-inline">
+                    <!-- as suggested to kill this filed -->
+                       <!-- <div class="col-md-2 display-inline">
                           <label for="">Google PoC Email:</label>
                         </div>
                         <div class="col-md-4">
                           <input type="text" class="form-control" id="google_poc_email" name="google_poc_email" placeholder="<example: abc@google.com>">
-                        </div>
+                        </div> -->
               </div>
               <div class="">
                   <div class="row">
@@ -276,7 +276,7 @@
                     </div>
                     <div class="col-md-2">
                         <select class="form-control bgicon conect-width" id="connect" name="connect" onfocusout="">
-                          <option value="choose">Choose</option>
+                          <option value="choose">Choose Frequency</option>
                           <option value="daily">Daily</option>
                           <option value="weekly">Weekly</option>
                           <option value="bi-weekly">Bi-Weekly</option>
@@ -296,8 +296,8 @@
                   <div class="col-md-2" style="margin-left:40px;">
                       <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from conect-width" type="text" name="tag_meeting_time" placeholder="Time">
                   </div>
-                  <div class="col-md-2 " style="margin-left:40px; ">
-                    <select class="form-control bgicon conect-width" style="overflow:30px;"
+                 <!--  <div class="col-md-2 tagteam-timezone" style="margin-left:40px; "> -->
+                    <!-- <select class="form-control bgicon conect-width" style="overflow:30px;"
                     id="tagteam-connect-timezone" name="tagteam-connect-timezone">
                        
                         <option value="choose">Choose Timezone</option>
@@ -305,7 +305,15 @@
                             <option value="{{key}}{{val}}">{{key}}{{val}}</option>
                         {% endfor %}
                         
+                      </select> -->
+                      <div class="col-md-2 " style="margin-left:40px; ">
+                      <select class="form-control bgicon conect-width" style="overflow:30px;"
+                        id="tagteam-connect-timezone" name="tagteam-connect-timezone">
+                       <option value="choose">Choose Timezone</option>
                       </select>
+
+
+
                   </div>
               </div>
 
@@ -447,12 +455,13 @@
                <div class="col-md-4">
                     <textarea style="" type="text" class="form-control" id="preview_taskType" name="preview_taskType" disabled></textarea>
                 </div>
-                <div class="col-md-2 display-inline">
+                <!-- bellow field killed as suggested -->
+                <!-- <div class="col-md-2 display-inline">
                   <label for="">Google PoC Email:</label>
                 </div>
                <div class="col-md-4">
                   <input id="preview_google_poc_email" class="form-control" type="text" name="preview_google_poc_email" disabled>
-                </div>
+                </div> -->
             </div>  
 
             <div class="row">
@@ -755,6 +764,7 @@ function uncheck(){
     window.regionWiseLocations = {{region_based_locations|safe}}
     window.locations = {{all_locations|safe}};
     window.codetypedict = {{code_types_name|safe}};
+    window.location_based_zones = {{location_based_zones|safe}};
     // window.codetypedict = {{code_types_name_dict|safe}}
     // console.log(window.codetypedict);
 
@@ -918,6 +928,10 @@ $('#submit').on('click', function(){
   $('input[name=count_of_success_matrix]').val($('.succes-mat-onebox').length);
   $('input[name=count_url_file_name]').val($('.file-name-link').length);
 })
+
+
+/*--------------------------------------------------------*/
+
 
  </script>
 

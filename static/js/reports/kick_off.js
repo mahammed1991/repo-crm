@@ -81,6 +81,8 @@
             }
             $('.location-ul').children().on('click', function(){
                 selectTeams(this.className, this);
+            // bellow function calling for location based timezone adding tagteam connect detail
+                addtimezone();
             });
         }
         else
@@ -239,6 +241,37 @@ $('.advertizer-prg-ul').children().on('click', function(){
     }
 /* end of multiple advertize type selector plugg in fetching multiple selected values id  */
 
+/*-Timezzone based on locations-*/
+function addtimezone(){
+    $("#tagteam-connect-timezone").html('');
+    $("#tagteam-connect-timezone").append('<option value="choose">Choose Timezone</option>');
+    var locations = location_based_zones   
+    elements = $('#locationTypeList').val();
+        if(elements != null)
+        {
+            for (var i=0;i<elements.length;i++)
+            {
+              
+                for (var j=0;j<location_based_zones[elements[i]].length;j++){
+
+                  $("#tagteam-connect-timezone").append('<option value="'+location_based_zones[elements[i]][j]['zone_name']+location_based_zones[elements[i]][j]['time_value']+'">'+
+                                                                    ''+location_based_zones[elements[i]][j]['zone_name']+location_based_zones[elements[i]][j]['time_value']+'</option>')
+                                                                        
+                }
+            }
+            $('#tagteam-connect-timezone option').each(function() {
+              $(this).prevAll('option[value="' + this.value + '"]').remove();
+            });
+        }
+    else
+    {
+      $("#tagteam-connect-timezone").html('');
+      $("#tagteam-connect-timezone").append('<option value="choose">Choose Timezone</option>');
+    }     
+    };
+/*-End of Timezone based on locations-*/
+
+
 $(function(){
   $(':input[type=number]').on('mousewheel',function(e){ $(this).blur(); });
 });
@@ -268,8 +301,8 @@ function validatethis() {
   
   validateRegionField();
    
-  googlePocEmail = document.getElementById('google_poc_email');
-  validateField(googlePocEmail);
+  /*googlePocEmail = document.getElementById('google_poc_email');
+  validateField(googlePocEmail);*/
    
   validateLocationField();
   
@@ -612,7 +645,7 @@ $('#kickoff_preview_btn').click(function(){
     }else{
     }
 
-    $('#preview_google_poc_email').val($('#google_poc_email').val());
+    /*$('#preview_google_poc_email').val($('#google_poc_email').val());*/
 
     $('#preview_estimated_lead_no').val($('#estimated_lead_no').val());
 
@@ -709,3 +742,26 @@ $('#kickoff_preview_btn').click(function(){
 
 });
 /*END OF MODAL WINDOW VALUES FILLING*/
+
+// $('#tagteam-connect-timezone').click(function(){
+//     var locations = location_based_zones
+//     console.log(locations);
+//     elements = $('#locationTypeList').val();
+//     //$(".location-ul").html('');
+//     if(elements != null)
+//     {
+//         $("#tagteam-connect-timezone").append('<option value="choose">Choose Timezone</option>')
+//         for (var i=0;i<elements.length;i++)
+//         {
+//           for (var j=0;j<location_based_zones[elements[i]].length;j++){
+//               location_based_zones[elements[i]]
+//               $("#tagteam-connect-timezone").append('<li>'+location_based_zones[elements[i]][j]['zone_name']+'</li>')
+//             }
+//         }
+//     }
+//     else
+//     {
+//       $("#tagteam-connect-timezone").html('');
+//       $("#tagteam-connect-timezone").append('<option value="choose">Choose Timezone</option>')
+//     }     
+// });

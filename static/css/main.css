@@ -3581,3 +3581,17 @@ a#rlsaSetup ,a#shoppingSetup,a#tagImplementation{
     padding-right: 0;
     padding-left: 18px;
 }
+
+.check{position:absolute;
+	   background: white;
+	   color: green;
+	   border-radius: 50%;
+	   font-size: 15px;
+	   width: 20px;
+	   margin-left: -27.5px;
+	   display: inline-block;
+}
+
+#historicalBtn{padding-left: 35px !important;}
+
+.historical_data{margin-bottom: 10px;}

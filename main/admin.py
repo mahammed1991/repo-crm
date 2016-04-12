@@ -7,9 +7,27 @@ from main.forms import OlarkChatGroupForm
 from lib.admin_helpers import CustomAdmin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.utils.encoding import smart_str
 
+def export_csv(modeladmin, request, queryset):
+    import csv
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=user_email.csv'
+    writer = csv.writer(response, csv.excel)
+    response.write(u'\ufeff'.encode('utf8')) # BOM (optional.Excel needs it to open UTF-8 file properly)
+    writer.writerow([
+        smart_str(u"email"),
+    ])
+    for obj in queryset:
+        writer.writerow([
+            smart_str(obj.email),
+        ])
+    return response
+export_csv.short_description = u"Export CSV"
 
 class MyUserAdmin(UserAdmin):
+    actions = [export_csv]
     UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
     readonly_fields = ['email', 'is_active', 'date_joined']
 

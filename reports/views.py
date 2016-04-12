@@ -1806,9 +1806,9 @@ def program_kick_off(request):
         kickoffprogram.explain_workflow = request.POST.get('explain_workflow')
         kickoffprogram.win_criteria = request.POST.get('win_criteria')
 
-        tag_team_connect_method = request.POST.get('connect') + '_'
-        tag_team_connect_day = request.POST.get('tagteam-connect-day') + '_'
-        tag_team_connect_time = request.POST.get('tag_meeting_time') + '_'
+        tag_team_connect_method = request.POST.get('connect') + ','
+        tag_team_connect_day = request.POST.get('tagteam-connect-day') + ','
+        tag_team_connect_time = request.POST.get('tag_meeting_time') + ','
         tag_team_connect_timezone = request.POST.get('tagteam-connect-timezone')
         kickoffprogram.tag_team_connect_detail = tag_team_connect_method + tag_team_connect_day + str(tag_team_connect_time) + str(tag_team_connect_timezone)
 
@@ -1874,12 +1874,13 @@ def program_kick_off(request):
         get_google_poc_list = User.objects.filter(email__in=google_poc_list).values_list('id', flat=True)
         kickoffprogram.google_poc.add(*get_google_poc_list)
 
-        google_poc_email_list = list()
-        google_poc_email = request.POST.get('google_poc_email').replace(', ', ',')
-        google_poc_email_list = google_poc_email.split(',')
-        google_poc_email_list.pop(-1)
-        get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
-        kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
+        # this bellow field as been killed as suggested, fieled in in database
+        # google_poc_email_list = list()
+        # google_poc_email = request.POST.get('google_poc_email').replace(', ', ',')
+        # google_poc_email_list = google_poc_email.split(',')
+        # google_poc_email_list.pop(-1)
+        # get_google_poc_email_list = User.objects.filter(email__in=google_poc_email_list).values_list('id', flat=True)
+        # kickoffprogram.google_poc_email.add(*get_google_poc_email_list)
 
         # this bellow code is  used for futer use field is already in database
         # bcc_list = list()
@@ -1908,6 +1909,12 @@ def program_kick_off(request):
 
         return redirect('reports.views.kickoff_thankyou')
 
+    location_based_zones = dict()
+    locations = Location.objects.filter(is_active=True)
+    for loc in locations:
+            location_name = str(loc.location_name)
+            location_based_zones[location_name] = [{'zone_name':str(tz['zone_name']), 'time_value':str(tz['time_value'])} for tz in loc.time_zone.values()]
+    
     google_email = list()
     all_mail = list()
     managers = User.objects.values_list('email', flat=True)
@@ -1917,7 +1924,7 @@ def program_kick_off(request):
             google_email.append(str(manager))
         all_mail.append(str(manager))
     regions = Region.objects.all()
-    locations = Location.objects.filter(is_active=True)
+    #locations = Location.objects.filter(is_active=True)
     region_locations = dict()
     all_locations = list()
     for loc in locations:
@@ -1937,7 +1944,7 @@ def program_kick_off(request):
         region_based_locations[regn.name] = location_list_values
 
     # timezone fetching
-    timezone = Timezone.objects.values_list('zone_name', 'time_value')
+    #timezone = Timezone.objects.values_list('zone_name', 'time_value')
     
     CodeTypevalues = CodeType.objects.all()
     final_codetypes = []
@@ -1953,8 +1960,9 @@ def program_kick_off(request):
                                                      'region_locations': region_locations,
                                                      'all_locations': all_locations,
                                                      'bcc_field':bcc_field,
-                                                     'timezone':timezone,
-                                                     'region_based_locations': json.dumps(region_based_locations)})
+                                                     #'timezone':timezone,
+                                                     'region_based_locations': json.dumps(region_based_locations),
+                                                     'location_based_zones': json.dumps(location_based_zones)})
 
 
 @login_required
@@ -2097,11 +2105,11 @@ def kickoff_export_detail(request, program_id):
         google_poc_email_list = ','.join(google_poc_email_list)
 
         # getting ManyToMany feild BCC email email ids fetching
-        bcc_kick_off_prg = get_kickoff_record.bcc_kick_off.values('email')
-        bcc_kick_off_prg_list = list()
-        for mail_ids in bcc_kick_off_prg:
-            bcc_kick_off_prg_list.append(str(google_email_mail_ids['email']))
-        bcc_kick_off_prg_list = ','.join(bcc_kick_off_prg_list)
+        # bcc_kick_off_prg = get_kickoff_record.bcc_kick_off.values('email')
+        # bcc_kick_off_prg_list = list()
+        # for mail_ids in bcc_kick_off_prg:
+        #     bcc_kick_off_prg_list.append(str(google_email_mail_ids['email']))
+        # bcc_kick_off_prg_list = ','.join(bcc_kick_off_prg_list)
 
         # getting all regions from the manyToMany feild
         region_list = list()
@@ -2168,7 +2176,7 @@ def kickoff_export_detail(request, program_id):
             chat_and_live = False
 
     tag_team_connect_splitting = get_kickoff_record.tag_team_connect_detail
-    tag_team_connect_each_data = re.split('_|, \n', tag_team_connect_splitting)
+    tag_team_connect_each_data = re.split(',|, \n', tag_team_connect_splitting)
     type_of_connect = tag_team_connect_each_data[0]
     type_of_connect_day = tag_team_connect_each_data[1]
     type_of_connect_time = tag_team_connect_each_data[2]
@@ -2315,7 +2323,7 @@ def kickoff_export_detail(request, program_id):
     return render(request,'reports/kick_off_export_detail.html', {'get_kickoff_record': get_kickoff_record,
                                                                   'googlepoc_list': googlepoc_email_list,
                                                                   'google_poc_email_list': google_poc_email_list,
-                                                                  'bcc_kick_off_prg_list':bcc_kick_off_prg_list,
+                                                                  #'bcc_kick_off_prg_list':bcc_kick_off_prg_list,
                                                                   'region_list': region_list,
                                                                   'start_date_converted': start_date_converted,
                                                                   'end_date_converted': end_date_converted,

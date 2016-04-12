@@ -183,11 +183,13 @@ Reports
     <div class="row text-center report-category">
       <div class="col-md-12 centered select-style" style="vertical-align: middle">
         <div style="padding-top:3% !important;">
-         <span style="padding-right:1%;  vertical-align: middle; font-weight: bold;">Looking for historical data?</span>
-         <span style="margin-top: 4px;  vertical-align: middle; display: inline-block"><input type="checkbox" id="download_checkbox"></span>
+        <div class="historical_data">
+            <a class="btn std-btn" id="historicalBtn"><div class="check" id=""><i class="fa fa-check"></i></div>Looking for historical data ?</a>
+        </div>
+        <!--  <span style="padding-right:1%;  vertical-align: middle; font-weight: bold;">Looking for historical data ?</span> -->
+         <span style="margin-top: 4px;  vertical-align: middle; display: inline-block"></span>
             <div class="centered" style="float:left;vertical-align: middle">
             <input id="historical_filter_timeline" style="display:none;" class="form-control bgicon">
-            <img src="{% static 'images/close.jpg' %}" style="width: 15px; height: 15px; display:none;   margin-top: 16px; margin-left: 12px;" id="close_img">
           </div> 
        </div>
     </div>
@@ -281,7 +283,39 @@ $(document).ready(function(){
   window.current_ldap = {{request.user.id|safe}};
   window.user_id = {{request.user.id|safe}};
 draw_and_display_tables(default_reports['reports']);  
-   
+
+  // bellow code is for showing history check box to button
+  $(".check").hide();
+  $("#historicalBtn").click(function(){
+    if($(".check").is(":visible") == false)
+    {
+      $("#historicalBtn .check").animate({
+      opacity: "toggle"
+      }, 200);
+      $('#close_img').show();
+      $('#drp_autogen0').show();
+      $(function(){ 
+          $("#historical_filter_timeline").daterangepicker({
+            datepickerOptions : {
+                 numberOfMonths : 2,
+             }
+          });
+          $('#historical_filter_timeline').on('change', function(){
+              $("#download").prop('disabled', false);
+          })
+      });
+    }
+    else
+    {
+      $("#historicalBtn .check").animate({
+      opacity: "toggle"
+      }, 200);
+      $('#close_img').hide();
+      $('#historical_filter_timeline').hide();
+      $('#drp_autogen0').hide();
+    }
+  });
+
 });
 google.load("visualization", "1", {packages:["corechart"]});
 
@@ -297,44 +331,6 @@ $('#ldap').keypress(function (e) {
     $( "#get_report" ).trigger( "click" );
   }
 });
-
-// historical data download starts here
-
-$('#download_checkbox').click(function(){
-  $("#download").prop('disabled', false);
-  if($(this).prop('checked') == true){
-    $('#download_checkbox').hide();
-    $('#close_img').show();
-    $('#drp_autogen0').show();
-  }
-
-$('#close_img').click(function () {
-  $("#download").prop('disabled', false);
-  $('#close_img').hide();
-  $('#historical_filter_timeline').hide();
-  $('#drp_autogen0').hide();
-  $('#download_checkbox').show();
-  $('#download_checkbox').attr('checked', false);
-  $("#historical_filter_timeline").daterangepicker("clearRange");
-})
-
-
-
-
-$(function(){ 
-
-  $("#historical_filter_timeline").daterangepicker({
-    datepickerOptions : {
-         numberOfMonths : 2,
-     }
-  });
-  $('#historical_filter_timeline').on('change', function(){
-      $("#download").prop('disabled', false);
-  })
-});
-
-// historical data download ends here
-})
 
 </script>
 {% endblock main_js %}

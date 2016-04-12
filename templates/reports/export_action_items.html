@@ -15,15 +15,17 @@ Action Items Meeting Minutes
 {% block content %}
 
 <section class="content-region inner-page">
-    <div class="container-fluid">
-      <h1>Action Items Summary</h1>
+    <div class="container">
+      <h1 style="width: 108%;margin-left: -59px;">Action Items Summary</h1>
      <!-- google rep info -->
 
-        <div class="row std-sub-top">
+        <div class="row std-sub-top" style="width: 108%;margin-left: -59px;">
         </div>
+        </div>
+    <div class="container-fluid">
     <form method="post" onsubmit="return validatethis(this);">
         {% csrf_token %}
-       
+      
         <div class="row">
             <div class="col-md-3">
                 <label style="float: left;margin-top: 2px;margin-left:;">Start Date</label>
@@ -73,12 +75,14 @@ Action Items Meeting Minutes
           <div class="col-md-3 quick_status">
             <input type="submit" name="report_status" value="resolved" class="btn std-btn ">
           </div>
-        </div>
-     
 
+        </div>
+        
+      </div>
     </form>
     <form method="post">
     {% csrf_token %}
+    <div class="container-fluid">
     <div class="row" style="display:none">
             <div class="col-md-2">
                 <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
@@ -121,7 +125,8 @@ Action Items Meeting Minutes
         </table>
       </div>
       <input type="hidden" name="reference_id" value="">
-      <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;">
+      <input id="submit_status" type="submit" value="Submit" class="btn std-btn" style="display:none;margin-left: 371px;margin-bottom:17px;">
+      </div>
     </form>
     </div>
 </section>
