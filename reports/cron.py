@@ -828,7 +828,7 @@ def update_leads_reports(lead):
 #+++++++++++ exclude overlapping regons +++++++++++++++++++
 def available_counts_booked_specific(process_type):
     """ taking values from today 2AM to previous 3AM exclude_north_america"""
-    #importing date library from datetime import datetime
+    
     today_morning = datetime.today()
     today = today_morning.replace(hour=2, minute=00, second=00)
     
@@ -865,7 +865,7 @@ def available_counts_booked_specific(process_type):
 # +++++++++++++++++ include overlapping regions ++++++++++++++++++++++
 def available_counts_booked_specific_in_na(process_type):
     """ 7.00PM to nextday 7.30AM only for north america   """
-    #importing date library from datetime import datetime
+    
     today_morning = datetime.today()
     today = today_morning.replace(hour=19, minute=00, second=00)
     
