@@ -24,7 +24,7 @@ def export_csv(modeladmin, request, queryset):
             smart_str(obj.email),
         ])
     return response
-export_csv.short_description = u"Export CSV"
+export_csv.short_description = u"Export Users Emails"
 
 class MyUserAdmin(UserAdmin):
     actions = [export_csv]
