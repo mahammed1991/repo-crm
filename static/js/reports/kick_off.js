@@ -46,6 +46,7 @@
  /* start bootsrap selector plugg in fetching multiple selected values id's */
     $('.region-ul').children().on('click', function(){
         selectProcessRegionData(this);
+        addtimezone();
     });
     //adding locations based on region selected
     $('#locationTypeBtn').on('click', function(){
@@ -81,7 +82,7 @@
             }
             $('.location-ul').children().on('click', function(){
                 selectTeams(this.className, this);
-            // bellow function calling for location based timezone adding tagteam connect detail
+                // bellow function calling for location based timezone adding tagteam connect detail
                 addtimezone();
             });
         }
@@ -102,7 +103,12 @@
         var selectedProcessElement = $(regionElement).children("a").children('span');
         if(selectedProcessElement.hasClass('tickMarkShow')){
             selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
-            $('#regionTypeList .'+regionSpacereplace+'').remove();   
+            $('#regionTypeList .'+regionSpacereplace+'').remove();
+            var removeLoc = $('#locationTypeList').val();
+            for(var i=0;i<removeLoc.length;i++)
+            {
+                $(' #removing'+removeLoc[i]+' ').remove();
+            }  
         }
         else{
             selectedProcessElement.addClass('tickMarkShow');
@@ -208,7 +214,7 @@
           // UnSelect Process Items.
           if(selectedProcessElement.hasClass('tickMarkShow')){
               selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
-              $('#codeTypeList  #'+codeTypereplace+' ').remove();
+              $('#codeTypeList  #'+codeTypereplace+' ').remove(); 
           }
           else{
               selectedProcessElement.addClass('tickMarkShow');
@@ -219,7 +225,8 @@
 
 /* To select multiple advertize type selector plugg in fetching multiple selected values id and also checking and unchecking codetype selected */
 $('.advertizer-prg-ul').children().on('click', function(){
-        selectingAdvertizeProgramType(this);
+        selectingAdvertizeProgramType(this)
+        ;
     });
     function selectingAdvertizeProgramType(advertizeTypeElement){
       
@@ -233,6 +240,12 @@ $('.advertizer-prg-ul').children().on('click', function(){
         if(selectedProcessElement.hasClass('tickMarkShow')){
             selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
             $('#advertiser_type  .'+advertizeTypeProgram+' ').remove();
+            var removeAdv = $('#codeTypeList').val();
+            for(var i=0;i<removeAdv.length;i++)
+            { 
+                var elem = removeAdv[i].replace(/ /g, "_");
+                $('#'+elem).remove(); 
+            }
         }
         else{
             selectedProcessElement.addClass('tickMarkShow');
@@ -245,24 +258,23 @@ $('.advertizer-prg-ul').children().on('click', function(){
 function addtimezone(){
     $("#tagteam-connect-timezone").html('');
     $("#tagteam-connect-timezone").append('<option value="choose">Choose Timezone</option>');
-    var locations = location_based_zones   
+    var locations = location_based_zones;
     elements = $('#locationTypeList').val();
-        if(elements != null)
-        {
-            for (var i=0;i<elements.length;i++)
-            {
-              
-                for (var j=0;j<location_based_zones[elements[i]].length;j++){
-
-                  $("#tagteam-connect-timezone").append('<option value="'+location_based_zones[elements[i]][j]['zone_name']+location_based_zones[elements[i]][j]['time_value']+'">'+
-                                                                    ''+location_based_zones[elements[i]][j]['zone_name']+location_based_zones[elements[i]][j]['time_value']+'</option>')
-                                                                        
-                }
+    if(elements != null)
+    {
+        for (var i=0;i<elements.length;i++)
+        {    
+            for (var j=0;j<locations[elements[i]].length;j++)
+            { 
+              $("#tagteam-connect-timezone").append('<option value="'+locations[elements[i]][j]['zone_name']+locations[elements[i]][j]['time_value']+'">'+
+                                                                ''+locations[elements[i]][j]['zone_name']+locations[elements[i]][j]['time_value']+'</option>')
+                                                                    
             }
-            $('#tagteam-connect-timezone option').each(function() {
-              $(this).prevAll('option[value="' + this.value + '"]').remove();
-            });
         }
+        $('#tagteam-connect-timezone option').each(function() {
+          $(this).prevAll('option[value="' + this.value + '"]').remove();
+        });
+    }
     else
     {
       $("#tagteam-connect-timezone").html('');
