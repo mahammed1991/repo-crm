@@ -1183,10 +1183,10 @@ def notify_portal_feedback_activity(request, feedback):
     bcc = set([])
 
     mail_to = set([
-        'tkhan@regalix.com',
+        
         'g-crew@regalix-inc.com',
-        'portalsupport@regalix-inc.com',
-        'sprasad@regalix-inc.com'
+        'portalsupport@regalix-inc.com'
+        
     ])
 
     mail_from = request.user.email
@@ -1792,6 +1792,6 @@ def write_appointments_to_csv(result, collumn_attr, filename):
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
 
-
+@login_required
 def rlsa_limitations(request):
     return render(request, 'main/rlsa_limitations.html', {})
