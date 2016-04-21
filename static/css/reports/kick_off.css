@@ -140,3 +140,13 @@ input[type=number]::-webkit-outer-spin-button {
 .preview-end-buttons{margin: auto 25%;margin-bottom: 30px;}
 
 /* END ***kick_off_export_detail.html important css*** */
+
+[type="checkbox"]
+{
+    vertical-align:-2px;
+}
+[type="radio"]
+{
+    vertical-align:-2px;
+}
+

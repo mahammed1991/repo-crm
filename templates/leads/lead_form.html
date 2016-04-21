@@ -985,9 +985,7 @@ $(document).on('change', '#country', function() {
 
         if (['Vietnam'].indexOf(location) != -1) {
             $('#shoppingSetup').attr('disabled', true);
-            $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
-            window.code_types = []
-            window.code_types = ['Select Task Type', 'Adwords Conversion Code', 'AdWords Remarketing', 'Analytics', 'Analytics Destination Tracking']
+            window.code_types = {{code_types|safe}};
 
         } else {
             $('#shoppingSetup').attr('disabled', false);
@@ -1085,6 +1083,8 @@ $('#advertiser_name').on('focusout', function () {
     $(this).capitalize();
 }).capitalize();
 /*end of capitalizing*/
+
+
 
 </script>
 {% endblock main_js %}
