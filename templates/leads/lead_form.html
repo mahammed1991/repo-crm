@@ -856,21 +856,6 @@
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 <script type="text/javascript">
 
-// Disable Tag+Shopping for EMEA Non English - 21st March
-jQuery('.lead-type>*').hide();
-var li = ["37", "88", "93", "107", "46", "47", "148", "99", "49", "146", "52", "54", "147", "96", "137", "58", "60", "128", "63", "129", "89", "65", "66", "78"];
-jQuery('#country').change(function() {
-for (var i = 0; i < window.locations.length; i++)
-        if (window.locations[i].name == country.value)
-            break;
-   if ((li.indexOf(window.locations[i].id.toString()) > -1)&&language.value!="English") {
-       jQuery('.lead-type>*').show()
-        jQuery('#tagImplementation,#shoppingSetup,span:contains("And/Or")').hide()
-   } else if (country.value != "0") {
-       jQuery('.lead-type>*').show();
-   }
-});
-
 
   $(document).ready(function(){
     window.locations = {{locations|safe}};
@@ -1000,9 +985,7 @@ $(document).on('change', '#country', function() {
 
         if (['Vietnam'].indexOf(location) != -1) {
             $('#shoppingSetup').attr('disabled', true);
-            $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
-            window.code_types = []
-            window.code_types = ['Select Task Type', 'Adwords Conversion Code', 'AdWords Remarketing', 'Analytics', 'Analytics Destination Tracking']
+            window.code_types = {{code_types|safe}};
 
         } else {
             $('#shoppingSetup').attr('disabled', false);
@@ -1100,6 +1083,8 @@ $('#advertiser_name').on('focusout', function () {
     $(this).capitalize();
 }).capitalize();
 /*end of capitalizing*/
+
+
 
 </script>
 {% endblock main_js %}
