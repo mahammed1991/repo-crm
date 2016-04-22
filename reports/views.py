@@ -1599,7 +1599,7 @@ def export_action_items(request):
             bcc_list = list()
             update_status = MeetingActionItems.objects.get(id=request.POST.get('reference_id'))
             update_status.status = request.POST.get('status')
-            if request.POST.get('status') == 'Close':
+            if request.POST.get('status') == 'Closed':
                 update_status.closed_by = request.user.get_full_name()
             elif request.POST.get('status') == 'Reopened':
                 update_status.reopened_by = request.user.get_full_name()
@@ -1614,7 +1614,7 @@ def export_action_items(request):
 
             attendees_list.append(str(update_status.meeting_minutes.google_poc))
             attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
-            if request.POST.get('status') == 'Close':
+            if request.POST.get('status') == 'Closed':
                 status_changed_by = update_status.closed_by
             elif request.POST.get('status') == 'Reopened':
                 status_changed_by = update_status.reopened_by

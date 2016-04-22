@@ -10,6 +10,14 @@ Action Items Meeting Minutes
   .headlinks-default{
     border-right: 1px solid #ccc;
   }
+  [type="checkbox"]
+{
+    vertical-align:-2px;
+}
+[type="radio"]
+{
+    vertical-align:-2px;
+}
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -176,8 +184,8 @@ Action Items Meeting Minutes
              '<td class="links-default">'+all_meeting_records[i]['Reopened By']+'</td>' +
              '<td class="links-default">'+all_meeting_records[i]['Resolved By']+'</td>'
              if(all_meeting_records[i]['Status'] == 'Open'){
-              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="Close">Close</input></td>'
-              }else if(all_meeting_records[i]['Status'] == 'Close'){
+              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="Closed">Close</input></td>'
+              }else if(all_meeting_records[i]['Status'] == 'Closed'){
               row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Reopened">Reopen</input></td>' 
              }else if(all_meeting_records[i]['Status'] == 'Reopened'){
               row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Resolved">Resolve</input></td>'
