@@ -1,0 +1,938 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Program Kick-off Document
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+<link rel="stylesheet" href="{% static 'css/reports/kick_off.css' %}" >
+<style type="text/css">  </style>
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+
+<form method="POST" id="kickoff-form" name="kick_off_program" enctype="multipart/form-data">
+
+<input type="hidden" name="count_of_success_matrix" value="">
+<input type="hidden" name="count_url_file_name" value="">
+
+  {% csrf_token %}
+      <div class="container-fluid custom-container-fluid">
+            <h1>TagTeam - Program Kick-off Document</h1>
+          </div>
+
+        <div class="container-fluid"> 
+              <div class="row">
+                    <div class="col-md-2">
+                      <label for="">Program Name:</label>
+                    </div>
+                   <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="" name="program_name" id="program_name"/>
+                    </div>
+                    <div class="col-md-2 display-inline">
+                      <label for="">Google PoC:</label>
+                    </div>
+                   <div class="col-md-4">
+                      <input id="google_poc" class="form-control" type="text" name="google_poc" placeholder="<example: abc@google.com>">
+                    </div>
+              </div>
+              <div class="row">
+                    <div class="col-md-2">
+                        <label for="">Market(s)/Region(s)</br> to be served: </label>
+                    </div>
+                          <div class="col-md-4">
+                            <div id="teamsDiv" class="btn-group drpDown" style="width: 98%;" name="region-ul-list">
+                                 <div id="regionTypesDiv" class="btn-group drpDown" style="width: 100%;">
+                                      <button type="button" class="form-control bgicon" id="regionTypeBtn" style="width: 102.5%; text-align:left;">Regions</button>
+                                      <ul class="dropdown-menu region-ul" name="region-ul-list" style="margin-top: -21px;width: 102.5%;" >
+                                      {% for item in regions %}
+                                          <li id="{{item}}">
+                                              <a href="#" class="smallReg"><input type="checkbox" class="hiddenCheckbox"/><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item.name}}</a>
+                                          </li>
+                                      {%endfor%}
+                                  </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-2 display-inline">
+                            <label for="">Google PoC </br>Location:</label>
+                          </div>
+                          <div class="col-md-4">
+                               <input type="text" class="form-control" id="google_poc_location" name="google_poc_location" placeholder="">
+                          </div>
+              </div>
+              <div class="row">
+                       <div>
+                        <div class="col-md-2">
+                          <label for="">Location(s) <br>to be served: </label>
+                        </div>
+                        <div class="col-md-4 target-locations-main">
+                          <button type="button" class="form-control bgicon" id="locationTypeBtn" style="width:100%;text-align:left">Locations</button>
+                                <ul class="dropdown-menu location-ul" style="margin-top:-21px;margin-left:15px;width:91%;max-height:200px; overflow-x: hidden;">
+                                </ul>
+                        </div>
+                      </div> 
+                      <div class="col-md-2 display-inline">
+                         <label for="">Program Start </br>Date(Tentative):</label>
+                    </div>
+                    <div class="col-md-4">
+                          <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="program_start_date" id="program_start_date"  />
+                    </div>
+              </div>
+              <!-- hide  codetype and region and region selected location  elements to send datatbase -->
+               <div class="col-md-2 box2 bb hideItems">
+                    <select id="regionTypeList" name="regionTypeList" multiple="multiple">
+                    </select>
+                    <select class="removelocation" id="locationTypeList" name="locationTypeList" multiple="multiple">
+                    </select>
+                    <select id="codeTypeList" name="codeTypeList" multiple="multiple">            </select>
+                    <select class="form-control bgicon add-type" id="advertiser_type" name="advertiser_type"
+                    multiple="multiple">
+                    </select>
+                </div>
+              <!-- End of hide dodetype region and region selected location elements to send datatbase -->
+              <div class="row">
+                 <div class="col-md-2">
+                      <label  for="">Support Required with Programs?</label>
+                    </div>
+                    <div class="col-md-4">
+                    <div id="advertize-program-type" class="btn-group drpDown" style="width: 98%;" name="advertize-ul-list">
+                      <button type="button" class="form-control bgicon" id="advertizeTypeBtn" 
+                      style="width:102.5%; text-align:left;" id="advertizer-program-type" >Program Type</button>
+
+                       <ul class="dropdown-menu advertizer-prg-ul" name="advertiser_type" style="margin-top: -21px;width: 102%;" id="advertiser_type">
+                                     <li id="Tag">
+                                        <a href="#" class="advertize"><input type="checkbox" class="hiddenCheckbox"/><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Tag</a>
+                                    </li>
+                                    <li id="RLSA">
+                                        <a href="#" class="advertize"><input type="checkbox" class="hiddenCheckbox"/><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;RLSA</a>
+                                    </li>
+                                    <li id="Shopping">
+                                        <a href="#" class="advertize"><input type="checkbox" class="hiddenCheckbox"/><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Shopping</a>
+                                    </li>
+                            </ul>
+                      </div>
+                    </div>
+                     <div class="col-md-2 display-inline">
+                      <label for="">Program End </br>Date(Tentative):  </label>
+                    </div>
+                    <div class="col-md-4">
+                       <input type="text" class="datepickerFrom_a form-control" placeholder="Date" id="program_end_date" name="program_end_date" >
+                    </div>
+              </div>
+
+              <div class="row">
+                     <div class="col-md-2 set-text-align-light" >
+                         <label for="">Support Required with Task Types?: </label>
+                    </div>
+                     <div class="col-md-4">
+                          <div id="code_type" class="btn-group drpDown" style="width: 98%;">
+                               <div id="code_type_opt" class="btn-group drpDown" style="width: 100%;">
+                                    <button type="button" class="form-control bgicon" id="codeTypeBtn" style="width:102.5%;text-align:left;">Task Types</button>
+                                    <ul class="dropdown-menu code-type-ul" style="margin-top: -21px;width: 102.5%;">
+                                    <!-- {% for item in code_types_name %}
+                                        <li id="{{item.id}}" val="{{item}}">
+                                            <a href="#" class="codeTypeOpt"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>{{item}}</a>
+                                        </li>
+                                    {%endfor%} -->
+                                </ul>
+                            </div>
+                          </div>
+                    </div>
+                    <!-- as suggested to kill this filed -->
+                       <!-- <div class="col-md-2 display-inline">
+                          <label for="">Google PoC Email:</label>
+                        </div>
+                        <div class="col-md-4">
+                          <input type="text" class="form-control" id="google_poc_email" name="google_poc_email" placeholder="<example: abc@google.com>">
+                        </div> -->
+              </div>
+              <div class="">
+                  <div class="row">
+                        <div class="col-md-2 ">
+
+                          <label class="est-lead" for="">Estimated Lead Volume:</label>
+                        </div>
+                         <div class="col-md-2">
+                          <input type="number" min="0" class="form-control estimated_lead_number" id="estimated_lead_no" name="estimated_lead_no" 
+                          placeholder="Lead Volumes">
+                        </div>
+                        <div class="col-md-2">
+                          <select class="form-control bgicon" id="subject-estimated-day" title="" name="subject_estimated_day" style="">
+                                <option value="choose">Choose</option>
+                                <option value="Day">Day</option>
+                                <option value="Week">Week</option>
+                                <option value="Month">Month</option>
+                                <option value="Quarter">Quarter</option>
+                            </select>
+                        </div>
+                  </div>
+             </div> 
+
+              <div class="row">
+                <div class="col-md-2 ">
+                  <label for="">Program Overview and Objectives:</label>
+                </div>
+                 <div class="col-md-10 program_over">
+                  <textarea  type="text" class="form-control" id="program_overview" name="program_overview"></textarea>
+                </div>
+              </div>
+
+              <div class="succes_mat_main">
+                  <div class="succes-matrics">
+                   <div id="succes_row_1">
+                          <div class="row">
+                                <div class="col-md-2">
+                                  <label for="">Success Metrics:</label>
+                                </div>
+                                
+                                <div class="col-md-3 s">
+                                  <textarea style="" type="text" class="form-control succes-mat-onebox" id="succes_metrices_one_1" name="succes_metrices_one_1"></textarea>
+                                </div>
+
+                                 <div class="col-md-3 s s-two">
+                                   <textarea style=" " type="text" class="form-control succes-mat-twobox" id="succes_metrices_two_1" name="succes_metrices_two_1"></textarea>
+                                </div>
+                                 <div class="col-md-3 s s-three">
+                                   <textarea style=" " type="text" class="form-control  succes-mat-threebox" id="succes_metrices_three_1" name="succes_metrices_three_1"></textarea>
+                                </div>
+                          </div>
+                  </div>
+                </div>
+                  <div class="row">
+                     <div class="col-md-3 pull-right succes-btn">
+                          <a id="addSuccesMat_1" class="btn std-btn task-btn add-succes" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+                          <a id="removeSuccesMat_1" class="btn std-btn task-btn remove-succes" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+                    </div>
+                  </div>
+            </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Expectations:</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  <textarea type="text" class="form-control" id="expectations" name="expectations"></textarea> 
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Explain Workflow :</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  <textarea type="text" class="form-control" id="explain_workflow" name="explain_workflow"></textarea> 
+                </div>
+              </div>   
+
+              <div class="row">
+                <div class="col-md-2">
+                  <label for=""> Win Criteria:</label>
+                </div>
+                 <div class="col-md-10 expectations">
+                  <textarea type="text" class="form-control" id="win_criteria" name="win_criteria"></textarea> 
+                </div>
+              </div> 
+
+              <div class="lead_subbmission_via_portal">
+                   <div class="row " style="">
+                    <div class="col-md-2 ">
+                      <label for="">Lead Submission Mode:</label>
+                    </div>
+                    <div class="col-md-1" ></div>
+                    <div class="">
+                          <div class="col-md-2 radio-validate" style="padding-top:8px;">
+                              <input type='radio'   id="lead_submission_portal" value="portal" onclick="uncheck()" name="lead_submission"> Portal
+                          </div>
+                          <div class="col-md-2 radio-validate" style="padding-top:8px;">
+                              <input type='radio' id="lead_submission_other" value="others" onclick="check()" name="lead_submission">Others
+                          </div>
+                    </div>
+                    <div class="col-md-5" >
+                        <input  class="form-control" type='text' id="lead_sub_other"  name="lead_sub_other">
+                    </div>
+                  </div>
+              </div>
+               <div class="real_time_support set-top-bottom">
+                      <div class="row set-top-bottom">
+                            <div class="col-md-2 set-text-align">
+                              <label for="">Real-time Support Required:</label>
+                            </div>
+                           <div class="col-md-1 " ></div>
+                         <div class="col-md-2 real-chat" style="padding-top:8px;">
+                             <input class="" type='checkbox' id="real_time_chat" name="real_time_chat"> Chat
+                        </div>
+                        <div class="col-md-2 live-trans" style="padding-top:8px;">
+                             <input class="" type='checkbox' id="real_time_live_trans" name="real_time_live_trans"> Live Transfer 
+                        </div>
+                      </div>
+              </div>
+               <div class="row">
+                    <div class="col-md-2 tagteam-connect">
+                        <label for="">TagTeam/Google PoC Connect Details:</label>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control bgicon conect-width" id="connect" name="connect" onfocusout="">
+                          <option value="choose">Choose Frequency</option>
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="bi-weekly">Bi-Weekly</option>
+                          <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                  <div class="col-md-2" style="margin-left:40px;">
+                       <select class="form-control bgicon conect-width" id="tagteam-connect-day" title="Connect day" name="tagteam-connect-day" onfocusout="">
+                            <option value="choose">Choose Day</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                       </select>
+                  </div>
+                  <div class="col-md-2" style="margin-left:40px;">
+                      <input id="tag_meeting_time" class="datetimepickerFrom form-control date-from conect-width" type="text" name="tag_meeting_time" placeholder="Time">
+                  </div>
+                 <!--  <div class="col-md-2 tagteam-timezone" style="margin-left:40px; "> -->
+                    <!-- <select class="form-control bgicon conect-width" style="overflow:30px;"
+                    id="tagteam-connect-timezone" name="tagteam-connect-timezone">
+                       
+                        <option value="choose">Choose Timezone</option>
+                        {% for key,val in timezone %}
+                            <option value="{{key}}{{val}}">{{key}}{{val}}</option>
+                        {% endfor %}
+                        
+                      </select> -->
+                      <div class="col-md-2 " style="margin-left:40px; ">
+                      <select class="form-control bgicon conect-width" style="overflow:30px;"
+                        id="tagteam-connect-timezone" name="tagteam-connect-timezone">
+                       <option value="choose">Choose Timezone</option>
+                      </select>
+
+
+
+                  </div>
+              </div>
+
+<!-- bcc field is no use but field in database -->
+     <!--  <div class="row">
+            <div class="col-md-2">
+              <label for="attendees">BCC</label>
+            </div>
+           <div class="col-md-10">
+              <input type="text" class="form-control" id="kick_off_bcc" name="kick_off_bcc" placeholder="Please enter e-mail ids seperated by comma(,)">
+              
+          </div>
+      </div> -->
+
+         <div class="">
+              <div class="row">
+                    <div class="col-md-2" >
+                      <label for="">Comments, if any</label>
+                    </div>
+                     <div class="col-md-10 comment" >
+                         <textarea type="text" class="form-control" id="comments" name="comments"></textarea> 
+                    </div>
+              </div>
+        </div>
+        <div class="file-upload">
+         <div class="file-load-main">
+
+                              <div class="row container-fluid">
+                                    <label for="file_upload_link">Upload project related documents</label>
+                                </div>
+
+             <div class="row" id="file_upload_row_1">
+                        <div class="file-append">
+                                
+                                <div class="col-md-3">
+                                      <input type="text" class="form-control file-name-link" id="file_name_link_1" name="file_name_link_1" placeholder="File Name" >
+                                </div>
+                              <div class="col-md-3">
+                                      <input type="text" placeholder="Enter URL:" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" >
+                              </div>
+                              <div class="col-md-3 ">
+                                     <input type="text" class="form-control file-name-attach" id="file_name_attach_1" name="file_name_attach_1" placeholder="File Name" style="">
+                              </div>
+                              <div class="col-md-3">
+                                    <span><input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style=""></span>
+                              </div>
+                      </div>
+             </div>
+          </div>
+            <a id="removefileUpload_1" class="btn std-btn task-btn remove-upload" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+            <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" 
+            style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+          </div>
+    </div>
+
+      <div class="container-fluid end end-button">
+       <button type="button" class="btn std-btn" id="kickoff_preview_btn" {% if submit_disabled == False %} style="display:none;" {% else %} style="" {% endif %} 
+       onclick="return validatethis(this);">Preview</button>
+      <button class="btn std-btn" id="submit" style="display:none;">Submit</button>
+     </div>
+</form>
+
+<div class="modal fade kickoff-preview" tabindex="-1" role="dialog">
+  <div class="modal-dialog kickoff-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Program Kick-off Preview</h4>
+      </div>
+      <div class="modal-body kickoff-modal-body">
+        <div class="container-fluid"> 
+            <div class="row">
+                <div class="col-md-2">
+                  <label for="">Program Name:</label>
+                </div>
+               <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="" name="preview_program_name" id="preview_program_name"/ disabled>
+                </div>
+                <div class="col-md-2 display-inline">
+                  <label for="">Google PoC:</label>
+                </div>
+               <div class="col-md-4">
+                  <input id="preview_google_poc" class="form-control" type="text" name="google_poc"disabled>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                  <label for="">Market(s)/Region(s) to be served:</label>
+                </div>
+               <div class="col-md-4">
+                    <textarea style="" type="text" class="form-control
+                     " id="preview_region" name="preview_region" disabled></textarea>
+                </div>
+                <div class="col-md-2 display-inline">
+                  <label for="">Google PoC Location:</label>
+                </div>
+               <div class="col-md-4">
+                  <input id="preview_google_poc_location" class="form-control" type="text" name="preview_google_poc_location" disabled>
+                </div>
+            </div>   
+
+            <div class="row">
+                <div class="col-md-2">
+                  <label for="">Location(s) to be served:</label>
+                </div>
+               <div class="col-md-4">
+                    <textarea style="" type="text" class="form-control 
+                    " id="preview_location" name="preview_location" disabled></textarea>
+                </div>
+                <div class="col-md-2 display-inline">
+                  <label for="">Program Start Date(Tentative):</label> 
+                </div>
+               <div class="col-md-4">
+                  <input id="preview_start_date" class="form-control" type="text" name="preview_start_date" disabled>
+                </div>
+            </div> 
+
+            <div class="row">
+                <div class="col-md-2">
+                  <label for="">Support Required with Programs?</label>
+                </div>
+               <div class="col-md-4">
+                    <textarea style="" type="text" 
+                    class="form-control " id="preview_programType" name="preview_programType" disabled></textarea>
+                </div>
+                <div class="col-md-2 display-inline">
+                  <label for="">Program End Date(Tentative):</label>
+                </div>
+               <div class="col-md-4">
+                  <input id="preview_end_date" class="form-control" type="text" name="preview_end_date" disabled>
+                </div>
+            </div>   
+
+            <div class="row">
+                <div class="col-md-2">
+                  <label for="">Support Required with Task Types?</label>
+                </div>
+               <div class="col-md-4">
+                    <textarea style="" type="text" class="form-control" id="preview_taskType" name="preview_taskType" disabled></textarea>
+                </div>
+                <!-- bellow field killed as suggested -->
+                <!-- <div class="col-md-2 display-inline">
+                  <label for="">Google PoC Email:</label>
+                </div>
+               <div class="col-md-4">
+                  <input id="preview_google_poc_email" class="form-control" type="text" name="preview_google_poc_email" disabled>
+                </div> -->
+            </div>  
+
+            <div class="row">
+                <div class="col-md-2 ">
+                  <label class="est-lead" for="">Estimated Lead Volume:</label>
+                </div>
+                 <div class="col-md-2">
+                  <input type="number" min="0" class="form-control estimated_lead_number" id="preview_estimated_lead_no" name="preview_estimated_lead_no" disabled>
+                </div>
+                <div class="col-md-2">
+                  <input type="text" min="0" class="form-control estimated_lead_number" id="preview-subject-estimated-day" name="preview-subject-estimated-day" disabled>
+                </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2 ">
+                <label for="">Program Overview and Objectives:</label>
+              </div>
+               <div class="col-md-10 program_over">
+                <textarea  type="text" class="form-control" id="preview_program_overview" name="preview_program_overview" disabled></textarea>
+              </div>
+            </div>
+
+            <div class="succes_mat_main preview_succes_mat_main">
+                <div class="preview-succes-matrics">
+                <div class="" style="text-align:left">Success Metrics:</div>
+                 <table id="" class="preview-succes table">
+                        <thead>
+                          <tr>
+                            
+                          </tr>
+                        </thead>
+                        <tbody class="preview-succes-matrixs">
+                        </tbody>
+                  </table>
+                </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+                <label for="">Expectations:</label>
+              </div>
+               <div class="col-md-10 expectations">
+                <textarea type="text" class="form-control" id="preview_expectations" name="preview_expectations" disabled></textarea> 
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+                <label for="">Explain Workflow :</label>
+              </div>
+               <div class="col-md-10 expectations">
+                <textarea type="text" class="form-control" id="preview_explain_workflow" name="preview_explain_workflow" disabled></textarea> 
+              </div>
+            </div>   
+
+            <div class="row">
+              <div class="col-md-2">
+                <label for=""> Win Criteria:</label>
+              </div>
+               <div class="col-md-10 expectations">
+                <textarea type="text" class="form-control" id="preview_win_criteria" name="preview_win_criteria" disabled></textarea> 
+              </div>
+            </div> 
+
+            <div class="row">
+              <div class="col-md-2">
+                <label for=""> Lead Submission Mode:</label>
+              </div>
+               <div class="col-md-4 expectations">
+                <input type="text" class="form-control" id="preview_lead_submission" name="preview_lead_submission" disabled></input>
+              </div>
+            </div> 
+
+            <div class="row">
+              <div class="col-md-2">
+                <label for="">Real-time Support Required:</label>
+              </div>
+               <div class="col-md-10 expectations">
+                <p type="text" class="form-control" id="preview_real_time_support" name="preview_real_time_support" disabled></p>
+              </div>
+            </div> 
+
+            <div class="row">
+                <div class="col-md-2 tagteam-connect">
+                    <label for="">TagTeam/Google PoC Connect Details:</label>
+                </div>
+                <div class="col-md-2">
+                  <input type="text" min="0" class="form-control estimated_lead_number" id="preview_connect" name="preview_connect" disabled>
+                </div>
+                <div class="col-md-2" style="margin-left:40px;">
+                    <input type="text" min="0" class="form-control estimated_lead_number" id="preview-tagteam-connect-day" name="preview-tagteam-connect-day" disabled>
+                </div>
+                <div class="col-md-2" style="margin-left:40px;">
+                    <input id="preview_tag_meeting_time" class="form-control date-from conect-width" type="text" name="preview_tag_meeting_time" disabled>
+                </div>
+                <div class="col-md-2 " style="margin-left:40px; ">
+                   <input id="preview-tagteam-connect-timezone" class="form-control date-from conect-width" type="text" name="previewtagteam-connect-timezone" disabled>
+                </div>
+            </div>
+
+            <div class="">
+              <div class="row">
+                  <div class="col-md-2" >
+                    <label for="">Comments, if any</label>
+                  </div>
+                   <div class="col-md-10 comment" >
+                       <textarea type="text" class="form-control" id="preview_comments" name="preview_comments" disabled></textarea> 
+                  </div>
+              </div>
+            </div>
+
+           <div class="container-fluid preview_file_attach_links">
+      <div class="" style="text-align:left">Attachments</div>
+      <table id="attach-link-file " width="100%" class="table">
+          <thead>
+            <tr>
+              <th class="action-item-preview">Name</th>
+              <th class="action-item-preview">URL</th>
+            </tr>
+          </thead>
+          <tbody class="attach-link-file">
+          </tbody>
+      </table>
+    </div>
+
+              <div class="container-fluid buttons preview-end-buttons">
+               <button class="btn std-btn" id="preview-submit" >Submit</button>
+               <button class="btn std-btn" id="preview-edit" data-dismiss="modal">Edit</button>
+             </div>
+               <div id="preloaderOverlay" style='display:none;margin-left: -65px;'>
+                  <div class="preloader">
+                    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+                    <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+                  </div>
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+</section>
+{% endblock content %}
+
+{% block main_js %}
+
+<script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+<script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+<script src="{% static 'js/reports/kick_off.js' %}"></script> 
+
+<script type="text/javascript">
+
+$('.testimony').hide();
+$(".remove-testimony").hide();  
+$('.remove-succes').hide();
+
+$(".datepickerFrom_a").datetimepicker({
+      timepicker:false,
+      format:'d.m.Y',
+      scrollInput:false,
+  });
+
+  $('.datetimepickerFrom').datetimepicker({
+     datepicker : false,
+     format : 'g:i A',
+     step:30,
+     scrollInput:false,
+  });
+
+   $(function(){
+      var managers_email = {{google_email|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#google_poc_email').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+      });
+    });
+
+   $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#reps').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+   $(function(){
+      var managers_email = {{google_email|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#google_poc').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+    $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#kick_off_bcc').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+      }
+      });
+    });
+
+
+
+
+
+$("#lead_sub_other").hide();
+function check(){
+    $("#lead_sub_other").show();
+}
+function uncheck(){
+     $('#lead_sub_other').val('');
+     $("#lead_sub_other").hide();
+};
+
+ $(document).ready(function(){
+    window.regionWiseLocations = {{region_based_locations|safe}}
+    window.locations = {{all_locations|safe}};
+    window.codetypedict = {{code_types_name|safe}};
+    window.location_based_zones = {{location_based_zones|safe}};
+    // window.codetypedict = {{code_types_name_dict|safe}}
+    // console.log(window.codetypedict);
+
+ });
+
+$(document).click(function(evt){
+  
+      if(evt.target.classList.contains('smallLoc') || evt.target.id == 'locationTypeBtn'){
+          var visility = $(".location-ul").is(":visible");
+          if(!visility)
+          {
+            $('.location-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('smallLoc'))
+            {
+             $('.location-ul').show(); 
+            }
+            else
+            {
+              $('.location-ul').hide();  
+            }
+          }
+       }
+       else{
+          $('.location-ul').hide();
+       }
+
+       if(evt.target.classList.contains('smallReg') || evt.target.id == 'regionTypeBtn'){
+         var visility = $(".region-ul").is(":visible");
+          if(!visility)
+          {
+            $('.region-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('smallReg'))
+            {
+             $('.region-ul').show(); 
+            }
+            else
+            {
+              $('.region-ul').hide();  
+            }
+          }
+       }else{
+            $('.region-ul').hide(); 
+       }
+
+       if(evt.target.classList.contains('codeTypeOpt') || evt.target.id == 'codeTypeBtn'){
+          var visility = $(".code-type-ul").is(":visible");
+          if(!visility)
+          {
+            $('.code-type-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('codeTypeOpt'))
+            {
+             $('.code-type-ul').show(); 
+            }
+            else
+            {
+              $('.code-type-ul').hide();  
+            }
+          }
+       }else{
+          $('.code-type-ul').hide();
+       }
+
+        if(evt.target.classList.contains('advertize') || evt.target.id == 'advertizeTypeBtn'){
+         var visility = $(".advertizer-prg-ul").is(":visible");
+          if(!visility)
+          {
+            $('.advertizer-prg-ul').show();
+          }
+          else
+          {
+            if(evt.target.classList.contains('advertize'))
+            {
+             $('.advertizer-prg-ul').show(); 
+            }
+            else
+            {
+              $('.advertizer-prg-ul').hide();  
+            }
+          }
+       }else{
+          $('.advertizer-prg-ul').hide();
+       }
+
+});
+
+/* ----------------------------------------------
+    start file upload and multiple append
+  ----------------------------------------------*/
+  $('.remove-upload').hide();
+
+  $('.add-upload-btn').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 6 )
+      {
+          $(".remove-upload").show();
+          $new_row = $("#file_upload_row_1").clone().attr('id', 'file_upload_row_'+next_id).show();
+          $(".file-name-link", $new_row).attr('id', 'file_name_link_'+next_id);
+          $(".file-name-attach", $new_row).attr('id', 'file_name_attach_'+next_id);
+          $(".file-info-text", $new_row).attr('id', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('id', 'file_info_'+next_id);
+          $(".file-info-text", $new_row).attr('name', 'file_info_text_'+next_id);
+          $(".file-info", $new_row).attr('name', 'file_info_'+next_id);
+          $(".file-name-link", $new_row).attr('name', 'file_name_link_'+next_id);
+          $(".file-name-attach", $new_row).attr('name', 'file_name_attach_'+next_id);
+          $new_row.appendTo(".file-load-main");
+          $('.remove-upload').attr('id',"removefileUpload_" + next_id);
+          $('.add-upload-btn').attr('id',"addfileUpload_" + next_id);
+          $("#file_info_text_"+next_id).val('');
+          $("#file_name_link_"+next_id).val('');
+          $("#file_name_attach_"+next_id).val(''); 
+          $("#file_info_"+next_id).val('');
+        }
+        if(next_id == 5 )
+        {
+          $(".add-upload-btn").hide();
+        }
+  });
+
+  $('.remove-upload').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removefileUpload_"+indx) != "#removefileUpload_1" )
+    {
+        $(".add-upload-btn").show();
+        $("#file_upload_row_"+indx).remove();
+        $('.remove-upload').attr('id',"#removefileUpload_" + (indx-1));
+        $('.add-upload-btn').attr('id',"#addfileUpload_" + (indx-1));
+    }
+    if(("#removefileUpload_"+(indx-1)) == "#removefileUpload_1" )
+    {
+      $('.remove-upload').hide();
+    }
+  });
+
+  $("#preview-submit").click(function(e){
+    if (window.is_error == false && window.failedFields == 0 ){
+        $('#preloaderOverlay').show();
+        $("#submit").trigger('click');
+      }
+      else{
+        $(".kickoff-preview").modal('hide')
+        $('#preloaderOverlay').hide();
+      }
+  });
+/*--------------------------------------------------
+  end file upload and multiple append
+  -------------------------------------------------*/
+
+$('#submit').on('click', function(){
+  $('input[name=count_of_success_matrix]').val($('.succes-mat-onebox').length);
+  $('input[name=count_url_file_name]').val($('.file-name-link').length);
+})
+
+
+/*--------------------------------------------------------*/
+
+
+ </script>
+
+{% endblock main_js %}
