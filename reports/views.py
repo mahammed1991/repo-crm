@@ -1895,6 +1895,7 @@ def program_kick_off(request):
         for each_email in google_poc_list:
             bcc_google_poc_list.append(str(each_email))
 
+        mail_to = list()
         latest_program = KickOffProgram.objects.filter(program_created_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(latest_program.id)
         mail_from = request.user.first_name + ' ' + request.user.last_name
@@ -2304,6 +2305,7 @@ def kickoff_export_detail(request, program_id):
         google_pocs = googlepoc_email_list
         kick_off_created = tagteamkickoff.kickoff_program.created_date
 
+        mail_to = list()
         program_created_by = tagteamkickoff.kickoff_program.program_created_by
         mail_from = request.user.first_name + ' ' + request.user.last_name
         user = request.user.email
