@@ -142,17 +142,7 @@
                             </div>
                           </div>
                     </div>
-                    <!-- as suggested to kill this filed -->
-                       <!-- <div class="col-md-2 display-inline">
-                          <label for="">Google PoC Email:</label>
-                        </div>
-                        <div class="col-md-4">
-                          <input type="text" class="form-control" id="google_poc_email" name="google_poc_email" placeholder="<example: abc@google.com>">
-                        </div> -->
-              </div>
-              <div class="">
-                  <div class="row">
-                        <div class="col-md-2 ">
+                     <div class="col-md-2 ">
 
                           <label class="est-lead" for="">Estimated Lead Volume:</label>
                         </div>
@@ -169,6 +159,18 @@
                                 <option value="Quarter">Quarter</option>
                             </select>
                         </div>
+                   
+              </div>
+              <div class="">
+                  <div class="row">
+                   <!-- as suggested to kill this filed -->
+                       <!-- <div class="col-md-2 display-inline">
+                          <label for="">Google PoC Email:</label>
+                        </div>
+                        <div class="col-md-4">
+                          <input type="text" class="form-control" id="google_poc_email" name="google_poc_email" placeholder="<example: abc@google.com>">
+                        </div> -->
+                       
                   </div>
              </div> 
 
@@ -350,7 +352,7 @@
          <div class="file-load-main">
 
                               <div class="row container-fluid">
-                                    <label for="file_upload_link">Upload project related documents</label>
+                                    <label for="file_upload_link">Upload project related documents:</label>
                                 </div>
 
              <div class="row" id="file_upload_row_1">
@@ -463,16 +465,6 @@
                <div class="col-md-4">
                     <textarea style="" type="text" class="form-control" id="preview_taskType" name="preview_taskType" disabled></textarea>
                 </div>
-                <!-- bellow field killed as suggested -->
-                <!-- <div class="col-md-2 display-inline">
-                  <label for="">Google PoC Email:</label>
-                </div>
-               <div class="col-md-4">
-                  <input id="preview_google_poc_email" class="form-control" type="text" name="preview_google_poc_email" disabled>
-                </div> -->
-            </div>  
-
-            <div class="row">
                 <div class="col-md-2 ">
                   <label class="est-lead" for="">Estimated Lead Volume:</label>
                 </div>
@@ -482,6 +474,17 @@
                 <div class="col-md-2">
                   <input type="text" min="0" class="form-control estimated_lead_number" id="preview-subject-estimated-day" name="preview-subject-estimated-day" disabled>
                 </div>
+               
+            </div>  
+
+            <div class="row">
+                 <!-- bellow field killed as suggested -->
+                <!-- <div class="col-md-2 display-inline">
+                  <label for="">Google PoC Email:</label>
+                </div>
+               <div class="col-md-4">
+                  <input id="preview_google_poc_email" class="form-control" type="text" name="preview_google_poc_email" disabled>
+                </div> -->
             </div>
 
             <div class="row">
@@ -574,7 +577,7 @@
             <div class="">
               <div class="row">
                   <div class="col-md-2" >
-                    <label for="">Comments, if any</label>
+                    <label for="">Comments, if any:</label>
                   </div>
                    <div class="col-md-10 comment" >
                        <textarea type="text" class="form-control" id="preview_comments" name="preview_comments" disabled></textarea> 
@@ -583,9 +586,13 @@
             </div>
 
            <div class="container-fluid preview_file_attach_links">
-      <div class="" style="text-align:left">Attachments</div>
-      <table id="attach-link-file " width="100%" class="table">
-          <thead>
+      <div class="" style="text-align:left">Attachments:</div>
+      <table id="attach-link-file " class="table" 
+                    style="width: 103% !important ;
+                    max-width: 139% !important ;
+                    margin-bottom: 20px !important ;
+                    margin-left: -14px !important ;">
+          <thead  >
             <tr>
               <th class="action-item-preview">Name</th>
               <th class="action-item-preview">URL</th>
