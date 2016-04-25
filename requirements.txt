@@ -1,0 +1,28 @@
+# Main packages
+Django==1.6.5                   # A high-level Python Web framework that encourages rapid development and clean, pragmatic design
+MySQL-python==1.2.5             # Python interface to MySQL
+argparse==1.2.1                 # Python command-line parsing library
+oauthlib==0.6.3                 # A generic, spec-compliant, thorough implementation of the OAuth request-signing logic
+python-openid==2.2.5            # OpenID support for servers and consumers
+python-social-auth==0.1.26      # Python social authentication.
+requests==2.5.1                 # Python HTTP for Humans
+requests-oauthlib==0.4.1        # OAuthlib authentication support for Requests
+six==1.7.2                      # Python 2 and 3 compatibility utilities
+wsgiref==0.1.2                  # WSGI (PEP 333) Reference Library
+xlrd==0.9.3                     # Library for developers to extract data from Microsoft Excel (tm) spreadsheet files
+South==1.0                      # Migrations for Django
+Pillow==2.5.0                   # Python Imaging Library
+django-kronos==0.4              # Kronos is a Django application that makes it easy to define and schedule tasks with cron
+markdown==2.4.1                 # Python implementation of Markdown.                
+html5lib==0.999                 # HTML parser based on the WHATWG HTML specifcation.
+python-memcached==1.53          # Pure python memcached client.
+django-debug-toolbar==1.2.1     # A configurable set of panels that display various debug information about the current request/response.
+django-endless-pagination==2.0  # Django pagination tools supporting Ajax, multiple and lazy pagination, Twitter-style and Digg-style pagination.
+pytz==2014.7                    # World timezone definitions, modern and historical
+icalendar==3.8.4                # iCalendar parser/generator
+simple-salesforce==0.65.1       # Simple Salesforce is a basic Salesforce.com REST API client.
+gspread==0.2.5                  # Read the Google spread sheet
+pyOpenSSL==0.15.1
+oauth2client==1.5.0             # Oauth for google spreadsheet
+cryptography==1.0
+django-jsonfield2==15.6.8
