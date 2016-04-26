@@ -114,6 +114,7 @@
       
         
       </div>
+      <p id="display_error_for_objective" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select atleast one objective</b> </p>
       <p id="display_block_error" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">A lead with this CID and URL has already been submitted for treatment. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
       <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
       <p id="display_url_has_space" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Space</b> </p>
@@ -168,7 +169,7 @@ $('#url').focusin(function(){
 });
 
 function checkout(){
-
+  $('#display_error_for_objective').hide();
   $('#display_url_has_space').hide();
   $('#display_url_has_comma').hide();
   $('#display_invalid_url').hide();
@@ -206,6 +207,7 @@ function checkout(){
       }
     });
   }else{
+    $('#formsubmit').prop('disabled', false);
   }
 }
 </script>
