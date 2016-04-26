@@ -1,0 +1,74 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Thank You
+{% endblock title %}
+{% if picasso %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<style type="text/css">
+  .mdl-button {  background: 0 0;
+  border: none;
+  border-radius: 2px;
+  color: #000;
+  position: relative;
+  height: 36px;
+  min-width: 64px;
+  padding: 0 8px;
+  display: inline-block;
+  font-family: 'robotomedium';
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  overflow: hidden;
+  will-change: box-shadow,transform;
+  -webkit-transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  line-height: 11px;
+  vertical-align: middle;
+}
+</style>
+{% endblock main_css %}
+{% endif %}
+{% block content %}
+
+{% if picasso %}
+	{% include 'layouts/picasso_header.html'%}
+{% endif %}
+
+<div id="content" class="clearfix">
+    <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
+    <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">If you do not get confirmation e-mail after submitting a lead please notify us at <b>google@regalix-inc.com</b> </p>
+        Thank you for submitting your {{lead_type}}..<br />
+        {% if nomination %}
+        You will receive an email confirmation shortly with the eligibility status, proposed treatment type and approximate TAT.
+        <br /><br/>
+        {% elif picasso %}
+
+         <p style="border-radius: 20px;text-align:center;font-size: 19px;padding: 6px;background-color:#D9EAD3;width: 693px;margin: 15px auto;">Your submission is number  <b>{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date of <b>{{estimated_tat}}</b></p>
+
+        {% else %}
+        You will receive an email confirmation shortly with the complete lead details (based on the information you have provided).<br /><br />
+        {% endif %}
+        If you need to change or cancel this {% if nomination %} nomination {% else %} lead {% endif %}, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />
+        To submit an additional  {% if nomination %}
+        nomination
+        {% else %}
+        lead
+        {% endif %} , please <a href="{{ return_link }}"><b>click here.</b></a>
+    </div>
+</div>
+{% endblock content %}
+{% block main_js %}
+{% if picasso %}
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
+{% endif %}
+{% endblock main_js %}

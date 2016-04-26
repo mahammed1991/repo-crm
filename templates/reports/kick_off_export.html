@@ -1,0 +1,240 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Kick-off-Export
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+/*   .links{ padding: 0 20px;}
+   .headlinks-default{ border: 1px solid #ccc;}
+   .table{border-top: 1px solid #ccc;}
+   .headlinks{padding: 14px 53px;background: #D1D1D1;}
+   .display_selected_programs_table_body{border: 1px solid black;}
+   .display_selected_programs_table_body tr th{border: 1px solid black;}
+   .display_selected_programs_table_body tr td{border: 1px solid black;}*/
+  </style>
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container-fluid">
+      <h1>KICK-OFF-EXPORT</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="POST" name="kick_off_program" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-3">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+            <div class="col-md-3">
+                  <label style="margin-top: 3px;"></label>
+                  <input style="margin-top:26px;height:47px;margin-left:15px;" type="button" class="btn std-btn" value="view" id="view-kickoff-program">
+            </div>
+             <div class="col-md-3">
+                  <label style="margin-top:3px;"></label>
+                  <input style="margin-top:26px;height:47px;margin-left:15px;" type="submit" value="Download" 
+                   class="btn std-btn" id="download-kickoff-program" >
+            </div>
+        </div>
+    </form>
+    </div>
+
+    <div id="no-record-div" class="container-fluid alert-danger"></div>
+    <div class="container-fluid" id="div-to-add-programs">
+      <table class="display_selected_programs table" style="margin-top:44px;margin-bottom: 35px;">
+        <tbody class="display_selected_programs_table_body">
+        </tbody>
+      </table>
+    </div>
+
+  <form method="">
+    {% csrf_token %}
+      <div class="container-fluid">
+        <table class="table" style="margin-top:20px;margin-bottom: 35px;">
+          <thead>
+             <tr>
+               <th class="headlinks-default" style="min-width:30px;border: 1px solid #d6d6c2">Sl No</th>
+               <th class="headlinks-default" style="min-width:250px;border: 1px solid #d6d6c2">KICK-OFF-PROGRAM</th>
+               
+             </tr>
+          </thead>
+          <tbody class="attach-all-programm-row" id="append-Kick-List-Program-Body" >
+            
+            {% for element in getall_kickoff_records %}
+
+            <tr>
+             <td>{{ element.counter }}</td>
+             
+             <td><a href={% url "kickoff-export-detail" element.program_id %} target="blank" >{{element.program_name}}</a></td>
+
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+  </form>
+
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+
+<script type="text/javascript">
+
+window.is_error = false;
+$(function() {
+    $("#datepickerFrom").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() + 1);
+            $("#datepickerTo").datepicker("option", "minDate", dt);
+        }
+    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+
+
+
+
+$('#view-kickoff-program').click(function(){
+
+   window.has_error = false;
+
+  if($('#datepickerFrom').val() == '' || $('#datepickerFrom').val() == '0'){
+        $('#datepickerFrom').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#datepickerFrom').removeClass('error-box');
+      }
+      if($('#datepickerTo').val() == '' || $('#datepickerTo').val() == '0'){
+        $('#datepickerTo').addClass('error-box');
+        window.has_error = true;
+      }else{
+        $('#datepickerTo').removeClass('error-box');
+      }
+      if(window.has_error)
+      { return false;}
+      else{
+        var status = true;
+        if (status) {
+            dataString = {}
+            dataString['kickoff_date_from'] = $("#datepickerFrom").val();
+            dataString['kickoff_date_to'] = $("#datepickerTo").val();
+            $.ajax({
+              url:'/reports/get-kickoff-programs', 
+              type: 'GET',
+              dataType: 'JSON',
+              data: dataString,
+              success: function(data){
+                if(data.length > 0){
+                  create_table(data);
+                  $('#no-record-div').hide();
+                }else{
+                  $('#no-record-div').html('');
+                    create_No_Table();
+                    $('#no-record-div').show();
+                   }
+                 },
+              failure: function(data){
+              }
+            });
+          }
+         return status;
+       }
+    });
+
+function create_table(data){
+      header = '<tr >'+
+        '<th style="border: 1px solid #d6d6c2" class="headlinks-default">Program created date.</th>'+   
+        '<th style="border: 1px solid #d6d6c2" class="headlinks-default">KICK-OFF-PROGRAM</th>'+
+        '</tr>'
+      row = ''
+      var j=1
+        for(var i=0;i<data.length;i++){
+          row += '<tr>' +
+          '<td >'+data[i]['created_date']+'</td>'+
+          '<td ><a href='+data[i]['access_id']+' target="blank" >'+data[i]['program']+'</a></td>' +
+          '</tr>'
+          j++;
+          }
+        $('.display_selected_programs_table_body').html('');
+        $('.display_selected_programs').append(header);
+        $('.display_selected_programs_table_body').append(row);
+    }
+function create_No_Table(){
+  $('.display_selected_programs_table_body').html('');
+  statement = "<strong> <p>There is No record created on selected Date Range</p></strong>"
+  $('#no-record-div').append(statement);
+}
+
+
+
+
+    function validatethis(frm) {
+        window.is_error = false;
+        if(frm.datepickerFrom.value == "0" || frm.datepickerFrom.value == ""){
+          $(frm.datepickerFrom).addClass('error-box');
+          frm.datepickerFrom.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerFrom).removeClass('error-box');
+        }
+        if(frm.datepickerTo.value == "0" || frm.datepickerTo.value == ""){
+          $(frm.datepickerTo).addClass('error-box');
+          frm.datepickerTo.focus();
+          window.is_error = true;
+        }else{
+          $(frm.datepickerTo).removeClass('error-box');
+        }
+        if(window.is_error){
+          return false;
+        }else{
+          var status = true;
+          
+          if (status) {
+            // $('#preloaderOverlay').show();
+            $('form input[type=submit]');
+          }
+          return status;
+        }
+
+    }
+
+
+
+</script>
+
+{% endblock main_js %}
