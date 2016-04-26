@@ -34,9 +34,10 @@ function validatethis(frm) {
 
     if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked")){
       $('.checkboxvalidation').removeClass('error-box');
+      $('#display_error_for_objective').hide();
 
     }else{
-      alert('Please select atleast one objective')
+      $('#display_error_for_objective').show();
       $('.checkboxvalidation').addClass('error-box');
       window.is_error = true;
     }
@@ -64,6 +65,7 @@ function validatethis(frm) {
       return true;
     }  
   }
+
 
   function validateFiled(elem){
     // Validate Form Field
