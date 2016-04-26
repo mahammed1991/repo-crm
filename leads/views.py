@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from django.template import Context
+from urlparse import urlparse
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -3190,11 +3191,16 @@ def get_picasso_lead(request):
         status_dict = dict()
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
-        form_url_filter = form_url.replace('www.','').replace('.com','')
+        form_url_filter = form_url
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid)
         if picasso_lead:
             for each_lead in picasso_lead:
-                each_lead_url = each_lead.url_1.replace('www.','').replace('.com','').replace('http://','').replace('https://','').replace('/', '')
+                each_lead_url = each_lead.url_1
+                each_lead_url = urlparse(each_lead_url)
+                if 'www' in each_lead_url or 'http' in each_lead_url or 'https' in each_lead_url:
+                    each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
+                else:
+                    each_lead_url = '{uri.path}'.format(uri=each_lead_url)
                 if form_url_filter == each_lead_url:
                     status_dict['status'] = 'success'
                     break
