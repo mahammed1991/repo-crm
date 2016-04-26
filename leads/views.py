@@ -3201,6 +3201,7 @@ def get_picasso_lead(request):
                     each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
                 else:
                     each_lead_url = '{uri.path}'.format(uri=each_lead_url)
+                    each_lead_url = each_lead_url.split('/')[0]
                 if form_url_filter == each_lead_url:
                     status_dict['status'] = 'success'
                     break
