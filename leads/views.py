@@ -2190,6 +2190,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'gedward@regalix-inc.com',
             'vreguri@regalix-inc.com',
             'asarkar@regalix-inc.com',
+            'michelle.fernandes@regalix-inc.com',
 
         ])
 

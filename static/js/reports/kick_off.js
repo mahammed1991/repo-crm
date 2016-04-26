@@ -390,6 +390,8 @@ function checkDate(elem){
   if($(elem).val() == ""){
       $(elem).addClass('error-box');
       window.failedFields.push($(elem));
+      focusElem = failedFields[0];
+      $(focusElem).focus();
       window.is_error = true;
       return false;
   }
@@ -404,6 +406,10 @@ function checkDate(elem){
 function leadSubbmission(){
   if(document.getElementById('lead_submission_portal').checked == false && document.getElementById('lead_submission_other').checked == false){
       $('.radio-validate').addClass('error-box');
+        window.failedFields.push($('#lead_submission_portal'));
+        window.failedFields.push($('#lead_sub_other'));
+        focusElem = failedFields[0];
+        $(focusElem).focus();
         window.is_error = true;
         return false;
     }
@@ -412,6 +418,8 @@ function leadSubbmission(){
         $('#lead_submission_other').addClass('error-box');
         window.failedFields.push($('#lead_submission_other'));
         window.failedFields.push($('#lead_sub_other'));
+        focusElem = failedFields[0];
+        $(focusElem).focus();
         window.is_error = true;
         return false;
     }
@@ -430,6 +438,9 @@ function codeType(){
           $('#codeTypeBtn').addClass('error-box');
           window.failedFields.push($('#code_type_opt'));
           window.failedFields.push($('#code_type'));
+          window.failedFields.push($('#codeTypeBtn'));
+          focusElem = failedFields[0];
+          $(focusElem).focus();
           window.is_error = true;
           return false;
         }
@@ -444,7 +455,9 @@ function advertizerType(){
     if (document.getElementById('advertiser_type').value == ""){
         $('.add-type').addClass('error-box');
         $('#advertizeTypeBtn').addClass('error-box');
-        window.failedFields.push($('.add-type'));
+        window.failedFields.push($('#advertizeTypeBtn'));
+        focusElem = failedFields[0];
+        $(focusElem).focus();
         window.is_error = true;
         return false;
     }
@@ -459,6 +472,10 @@ function checkChat(){
    if(document.getElementById('real_time_live_trans').checked == false && document.getElementById('real_time_chat').checked == false){
       $('.real-chat').addClass('error-box');
        $('.live-trans').addClass('error-box');
+       window.failedFields.push($('#real_time_live_trans'));
+       window.failedFields.push($('#real_time_chat'));
+       focusElem = failedFields[0];
+        $(focusElem).focus();
         window.is_error = true;
         return false;
           }
@@ -472,6 +489,8 @@ function checkChat(){
 function subjectEstimatedDay(){
   if(document.getElementById('subject-estimated-day').value == "choose"){
     window.failedFields.push($('#subject-estimated-day')); 
+    focusElem = failedFields[0];
+        $(focusElem).focus();
     $('#subject-estimated-day').addClass('error-box'); 
       window.is_error = true;
         return false;
@@ -490,6 +509,8 @@ function subjectEstimatedDay(){
     $('#regionTypeBtn').addClass('error-box');
     window.failedFields.push($('#regionTypeBtn')); 
     window.failedFields.push($('#regionTypesDiv'));
+    focusElem = failedFields[0];
+        $(focusElem).focus();
     window.is_error = true;
     return false;
   }
@@ -508,6 +529,8 @@ function validateLocationField(){
     $('#locationTypeBtn').addClass('error-box'); 
     window.failedFields.push($('#locationTypeBtn'));
     window.failedFields.push($('.target-locations-main'));
+    focusElem = failedFields[0];
+        $(focusElem).focus();
     window.is_error = true;
     return false;
   }
@@ -524,6 +547,8 @@ function validateConnectDayType(){
   if (valofday == 'choose'){
     $('#connect').addClass('error-box');
     window.failedFields.push($('#connect'));
+    focusElem = failedFields[0];
+        $(focusElem).focus();
     window.is_error = true;
     return false;
   }
@@ -538,6 +563,8 @@ function validateConnectDay(){
   if (valofday == 'choose'){
     $('#tagteam-connect-day').addClass('error-box');
     window.failedFields.push($('#tagteam-connect-day'));
+    focusElem = failedFields[0];
+        $(focusElem).focus();
     window.is_error = true;
     return false;
   }
@@ -552,6 +579,8 @@ function timezone(){
   if (timezone == 'choose'){
     $('#tagteam-connect-timezone').addClass('error-box');
     window.failedFields.push($('#tagteam-connect-timezone'));
+    focusElem = failedFields[0];
+        $(focusElem).focus();
     window.is_error = true;
     return false;
   }

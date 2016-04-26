@@ -1673,7 +1673,7 @@ def export_action_items(request):
                 if  filter_by_status == 'open':
                     meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes,
                                                                 status=filter_by_status).order_by('-created_date')
-                if filter_by_status == 'close':
+                if filter_by_status == 'closed':
                     meeting_action_items = MeetingActionItems.objects.filter(meeting_minutes_id__in=meeting_minutes,
                                                                 status=filter_by_status).order_by('-created_date')
                 if filter_by_status == 'reopened':
