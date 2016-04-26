@@ -37,9 +37,9 @@ body {
                     </div>
                    <div class="col-md-4">
                        {% if googlepoc_list %}
-                       <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{googlepoc_list}}</textarea>
+                       <textarea style="height:51px;overflow:scroll" class="form-control" disabled>{{googlepoc_list}}</textarea>
                        {% else %}
-                       <textarea style="height:51px;overflow:hidden" class="form-control" disabled></textarea>
+                       <textarea style="height:51px;overflow:scroll" class="form-control" disabled></textarea>
                        {% endif %}
                     </div>
               </div>
@@ -65,10 +65,10 @@ body {
                     </div>
                     <div class="col-md-4 target-locations-main">
                          {% if target_location_list %}
-                         <textarea style="height:51px;overflow:hidden" class="form-control" disabled>{{target_location_list}}
+                         <textarea style="height:51px;overflow:scroll" class="form-control" disabled>{{target_location_list}}
                          </textarea>
                          {% else %}
-                          <textarea style="height:51px;overflow:hidden" class="form-control" disabled></textarea>
+                          <textarea style="height:51px;overflow:scroll" class="form-control" disabled></textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
@@ -85,9 +85,9 @@ body {
                     </div>
                     <div class="col-md-4">
                          {% if clean_data_advertize_data %} 
-                         <textarea class="form-control" disabled style="height:51px;overflow:hidden">{{clean_data_advertize_data}}</textarea>
+                         <textarea class="form-control" disabled style="height:51px;overflow:scroll">{{clean_data_advertize_data}}</textarea>
                          {% else %}
-                         <textarea class="form-control" disabled style="height:51px;overflow:hidden"></textarea>
+                         <textarea class="form-control" disabled style="height:51px;overflow:scroll"></textarea>
                          {% endif %}
                     </div>
                     <div class="col-md-2 display-inline">
@@ -106,29 +106,13 @@ body {
                      <div class="col-md-4">  
                           {% if final_type_codelist %}
                          <textarea class="form-control" disabled 
-                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;">{{final_type_codelist}} </textarea>
+                         style="height:51px;text-align:left;overflow:scroll;padding-top: 5px;">{{final_type_codelist}} </textarea>
                          {% else %}
                          <textarea class="form-control" disabled 
-                         style="height:51px;text-align:left;overflow:hidden;padding-top: 5px;"></textarea>
+                         style="height:51px;text-align:left;overflow:scroll;padding-top: 5px;"></textarea>
                          {% endif %}
                     </div>
-                    <!-- as per seggested to kill -->
-                    <!-- <div class="col-md-2 display-inline">
-                      <label for="">Google PoC Email:</label>
-                    </div>
-                    <div class="col-md-4">
-                      {% if google_poc_email_list %}
-                       <textarea style="height:51px;overflow:hidden;padding-top:5px;" class="form-control" disabled>{{google_poc_email_list}}
-                       </textarea>
-                       {% else %}
-                       <textarea style="height:51px;overflow:hidden;padding-top:5px;" class="form-control" disabled>
-                       </textarea>
-                       {% endif %}
-                    </div> -->
-              </div>
-              <div class="">
-                  <div class="row">
-                        <div class="col-md-2 ">
+                    <div class="col-md-2 ">
                           <label class="est-lead" for="">Estimated Lead Volume:</label>
                         </div>
                          <div class="col-md-2">
@@ -140,6 +124,24 @@ body {
                           {% if estimated_volume %} value={{estimated_volume}} {% else %} value="" {% endif %}
                           class="form-control" name="program_name" id="program_name" disabled/>
                         </div>
+                  
+              </div>
+              <div class="">
+                  <div class="row">
+                    <!-- as per seggested to kill -->
+                    <!-- <div class="col-md-2 display-inline">
+                      <label for="">Google PoC Email:</label>
+                    </div>
+                    <div class="col-md-4">
+                      {% if google_poc_email_list %}
+                       <textarea style="height:51px;overflow:scroll;padding-top:5px;" class="form-control" disabled>{{google_poc_email_list}}
+                       </textarea>
+                       {% else %}
+                       <textarea style="height:51px;overflow:scroll;padding-top:5px;" class="form-control" disabled>
+                       </textarea>
+                       {% endif %}
+                    </div> -->
+                        
                   </div>
              </div> 
 
@@ -454,7 +456,7 @@ body {
                     </div>
                     <div class="col-md-4  googl-reps">
                      
-                    <textarea style="height:51px;text-align:left;overflow:hidden;padding-top:5px;" class="form-control" id="tagaddreps" name="tagaddreps" 
+                    <textarea style="height:51px;text-align:left;overflow:scroll;padding-top:5px;" class="form-control" id="tagaddreps" name="tagaddreps" 
                     disabled>{{reps_email_list }} </textarea>
                     </div>
               </div>
@@ -503,7 +505,7 @@ body {
                     
                    <div class="col-md-4">
                    {% if email_bcc_list %}
-                      <textarea style="height:51px;text-align:left;overflow:hidden;padding-top:5px;" class="form-control" id="kick_off_bcc"
+                      <textarea style="height:51px;text-align:left;overflow:scroll;padding-top:5px;" class="form-control" id="kick_off_bcc"
                        name="kick_off_bcc" disabled>{{ email_bcc_list }}</textarea>
                       {% else %}
                       <textarea class="form-control" id="kick_off_bcc" 

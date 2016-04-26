@@ -197,6 +197,7 @@ function checkout(){
         if(data['status'] == 'success'){
           $('#display_block_error').show();
           $('#formsubmit').prop('disabled', true);
+          dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url.value });
         }else{
           $('#display_block_error').hide();
           $('#formsubmit').prop('disabled', false);
