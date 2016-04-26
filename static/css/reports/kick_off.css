@@ -126,7 +126,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 #success-matrix label { padding-top: 5px !important; }
 
-.ui-autocomplete{height:150px; overflow:scroll; }
+.ui-autocomplete{max-height:150px;height:auto; overflow:scroll; }
 
 .end-button{margin: auto 40%;margin-bottom: 30px;}
 

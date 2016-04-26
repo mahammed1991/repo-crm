@@ -105,10 +105,12 @@
             selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
             $('#regionTypeList .'+regionSpacereplace+'').remove();
             var removeLoc = $('#locationTypeList').val();
-            for(var i=0;i<removeLoc.length;i++)
-            {
-                $(' #removing'+removeLoc[i]+' ').remove();
-            }  
+            if (removeLoc.length>0){
+                for(var i=0;i<removeLoc.length;i++)
+                    {
+                        $(' #removing'+removeLoc[i]+' ').remove();
+                    } 
+                } 
         }
         else{
             selectedProcessElement.addClass('tickMarkShow');

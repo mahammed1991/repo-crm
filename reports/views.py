@@ -2125,7 +2125,7 @@ def kickoff_export_detail(request, program_id):
         for location in get_target_location:
             for key, val in location.iteritems():
                 target_location_list.append(val)
-        target_location_list = ','.join(target_location_list)
+        target_location_list = ', '.join(target_location_list)
 
         get_kickoff_record.advertiser_type
 
@@ -2137,8 +2137,9 @@ def kickoff_export_detail(request, program_id):
         get_codetype_list = get_kickoff_record.codetypeslist
         final_type_codelist_with_quotes = str(get_codetype_list[1:-1])
         final_type_codelist_clean_underscore = final_type_codelist_with_quotes.replace("_"," ")
-        final_type_codelist_clean = final_type_codelist_clean_underscore.replace(","," ")
-        final_type_codelist = final_type_codelist_clean
+        final_type_codelist_clean = final_type_codelist_clean_underscore.replace(",",",\n")
+        removing_quot = final_type_codelist_clean.replace("'","")
+        final_type_codelist = removing_quot
 
     start_date = get_kickoff_record.programe_start_date
     start_date_converted = datetime.strftime(start_date, '%d.%m.%Y')

@@ -61,7 +61,7 @@
                             <label for="">Google PoC </br>Location:</label>
                           </div>
                           <div class="col-md-4">
-                               <input type="text" class="form-control" id="google_poc_location" name="google_poc_location" placeholder="">
+                               <input type="text" class="form-control" id="google_poc_location" name="google_poc_location" placeholder="" autocomplete="off">
                           </div>
               </div>
               <div class="row">
@@ -505,7 +505,8 @@
                             
                           </tr>
                         </thead>
-                        <tbody class="preview-succes-matrixs">
+                        <tbody class="preview-succes-matrixs" 
+                              style="background-color:#eee;">
                         </tbody>
                   </table>
                 </div>
@@ -561,10 +562,10 @@
                     <label for="">TagTeam/Google PoC Connect Details:</label>
                 </div>
                 <div class="col-md-2">
-                  <input type="text" min="0" class="form-control estimated_lead_number" id="preview_connect" name="preview_connect" disabled>
+                  <input type="text" min="0" style="width:182px" class="form-control estimated_lead_number" id="preview_connect" name="preview_connect" disabled>
                 </div>
                 <div class="col-md-2" style="margin-left:40px;">
-                    <input type="text" min="0" class="form-control estimated_lead_number" id="preview-tagteam-connect-day" name="preview-tagteam-connect-day" disabled>
+                    <input type="text" style="width:182px" min="0" class="form-control estimated_lead_number" id="preview-tagteam-connect-day" name="preview-tagteam-connect-day" disabled>
                 </div>
                 <div class="col-md-2" style="margin-left:40px;">
                     <input id="preview_tag_meeting_time" class="form-control date-from conect-width" type="text" name="preview_tag_meeting_time" disabled>
@@ -586,22 +587,24 @@
             </div>
 
            <div class="container-fluid preview_file_attach_links">
-      <div class="" style="text-align:left">Attachments:</div>
-      <table id="attach-link-file " class="table" 
-                    style="width: 103% !important ;
-                    max-width: 139% !important ;
-                    margin-bottom: 20px !important ;
-                    margin-left: -14px !important ;">
-          <thead  >
-            <tr>
-              <th class="action-item-preview">Name</th>
-              <th class="action-item-preview">URL</th>
-            </tr>
-          </thead>
-          <tbody class="attach-link-file">
-          </tbody>
-      </table>
-    </div>
+           <div class="row" >
+              <div class="" style="text-align:left">Attachments:</div>
+           </div>
+                <table id="attach-link-file " class="table" 
+                              style="width: 103% !important;
+                              max-width: 139% !important ;
+                              margin-bottom: 20px !important ;
+                              margin-left: -14px !important ;">
+                    <thead>
+                      <tr>
+                        <th style="border: 1px solid #d6d6c2" class="action-item-preview">Name</th>
+                        <th style="border: 1px solid #d6d6c2"  class="action-item-preview">URL</th>
+                      </tr>
+                    </thead>
+                    <tbody class="attach-link-file">
+                    </tbody>
+                </table>
+          </div>
 
               <div class="container-fluid buttons preview-end-buttons">
                <button class="btn std-btn" id="preview-submit" >Submit</button>
@@ -780,6 +783,13 @@ function uncheck(){
     window.locations = {{all_locations|safe}};
     window.codetypedict = {{code_types_name|safe}};
     window.location_based_zones = {{location_based_zones|safe}};
+    window.google_poc_location = "{{user.profile.rep_location|safe}}";
+
+     if(window.google_poc_location){
+      $('#google_poc_location').val(window.google_poc_location);
+    }else{
+      getLocation('rep_location');
+    }
     // window.codetypedict = {{code_types_name_dict|safe}}
     // console.log(window.codetypedict);
 
