@@ -380,7 +380,7 @@ def create_or_update_leads(records, sf):
         lead.last_name_optional = unicode(rec.get('Last_Name_optional__c'))
         lead.phone_optional = unicode(rec.get('Phone_optional__c'))
         lead.email_optional = unicode(rec.get('Email_optional__c'))
-        lead.eto_ldap = unicode(rec.get('ETO_LDAP__c'))
+        lead.eto_ldap = unicode(rec.get('Additional_LDAP__c'))
 
         # check if column is formatted to date type
         # if it is of date type, convert to datetime object
@@ -702,12 +702,12 @@ def create_or_update_picasso_leads(records, sf):
         lead.comment_1 = rec.get('Comment_1__c') if rec.get('Comment_1__c') else ''
         lead.additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
         lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
-        lead.crop_email = rec.get('Corp_Email__c') if rec.get('Corp_Email__c') else ''
-        lead.my_advitiser_email = rec.get('My_Advertiser_Email__c') if rec.get('My_Advertiser_Email__c') else ''
-        lead.my_cases_alias = rec.get('My_Cases_Alias__c') if rec.get('My_Cases_Alias__c') else ''
-        lead.market_selector = rec.get('Market_Selector__c') if rec.get('Market_Selector__c') else ''
+        lead.crop_email = rec.get('Googler_Corporate_Email__c') if rec.get('Googler_Corporate_Email__c') else ''
+        lead.my_advitiser_email = rec.get('Picasso_Advertiser_Email__c') if rec.get('Picasso_Advertiser_Email__c') else ''
+        lead.my_cases_alias = rec.get('Googler_Cases_Alias__c') if rec.get('Googler_Cases_Alias__c') else ''
+        lead.market_selector = rec.get('Picasso_Market_Served__c') if rec.get('Picasso_Market_Served__c') else ''
         lead.language_selector = rec.get('Language_Selector__c') if rec.get('Language_Selector__c') else ''
-        lead.picasso_type = rec.get('Picasso_Type__c')
+        lead.picasso_type = rec.get('Audit_Type__c')
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
@@ -874,10 +874,10 @@ def available_counts_booked_specific(process_type):
 
 # +++++++++++++++++ include overlapping regions ++++++++++++++++++++++
 def available_counts_booked_specific_in_na(process_type):
-    """ 7.00PM to nextday 7.30AM only for north america   """
+    """ previous day 4.30PM to today 7.30AM only for north america   """
     
-    today_morning = datetime.today()
-    today = today_morning.replace(hour=19, minute=00, second=00)
+    today_morning = datetime.today() - timedelta(days=1)
+    today = today_morning.replace(hour=16, minute=30, second=00)
     
     next_day_time = today_morning + timedelta(days=1)
     next_day = next_day_time.replace(hour=7, minute=30, second=00)
