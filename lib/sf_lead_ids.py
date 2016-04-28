@@ -90,7 +90,6 @@ class SalesforceLeads(object):
                                 'my_advertiser_email': '00N7A000000ZOkm',
                                 'my_cases_alias': '00N7A000000ZOlB',
                                 'market_selector': '00N7A000000ZOlk',
-                                'language_selector': '00N7A000000ZOlp',
                                 'picasso_type': '00N7A000000ZQAC',
                                 # ETO Ldap
                                 'eto_ldap': '00N7A000000ZQ8p',
