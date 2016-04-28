@@ -1,7 +1,7 @@
 from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, WPPLeads,
                           Location, Team, CodeType, Language, LeadForm,
-                          LeadFormAccessControl, TimezoneMapping, PicassoLeads)
+                          LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
 from lib.admin_helpers import CustomAdmin
 
@@ -275,3 +275,7 @@ class PicassoLeadsAdmin(admin.ModelAdmin):
         return super(PicassoLeadsAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(PicassoLeads, PicassoLeadsAdmin)
+
+admin.site.register(PicassoLeadGroupType)
+
+

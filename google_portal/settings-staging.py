@@ -325,7 +325,8 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c,\
     Stage_URL_Credentials__c, AB_Testing__c, GCSS_Status__c, Language__c,  All_Regalix_Comments__c, Picasso_Objective__c,\
     Internal_CID_1__c, POD_Name__c, Picasso_Lead_Stage__c, PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c,\
-    Delivery_Date__c, IST_TIME_N__c"
+    Delivery_Date__c, IST_TIME_N__c, Corp_Email__c, My_Advertiser_Email__c, My_Cases_Alias__c, Market_Selector__c, Language_Selector__c,\
+    ETO_LDAP__c, Picasso_Type__c"
 
 # SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/16crEI36EeBDGuOx0GBusJ8gloH6zWsJNErf5opeavzE/edit#gid=782277640'
 
