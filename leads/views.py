@@ -3191,16 +3191,19 @@ def get_picasso_lead(request):
         status_dict = dict()
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
-        form_url_filter = form_url
+        form_url_filter = form_url.replace('www.','')
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid)
         if picasso_lead:
             for each_lead in picasso_lead:
                 each_lead_url = each_lead.url_1
+                if each_lead_url[0:4] == 'www.':
+                    each_lead_url = each_lead_url.replace('www.','')
                 each_lead_url = urlparse(each_lead_url)
-                if 'www' in each_lead_url or 'http' in each_lead_url or 'https' in each_lead_url:
+                if 'http' in each_lead_url or 'https' in each_lead_url:
                     each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
                 else:
                     each_lead_url = '{uri.path}'.format(uri=each_lead_url)
+                    each_lead_url = each_lead_url.split('/')[0]
                 if form_url_filter == each_lead_url:
                     status_dict['status'] = 'success'
                     break

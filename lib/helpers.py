@@ -757,6 +757,7 @@ def get_tat_for_picasso(source):
                 target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
                 return target_details
 
+    # lookup_sum = 0
     audits_remaining = total_no_of_inqueue_leads - lookup_sum + 2  # two days buffer
     default_emp = 7
     default_audits_per_emp = 4

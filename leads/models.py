@@ -80,6 +80,7 @@ class Leads(models.Model):
     # Rescheduled Appointments
     rescheduled_appointment = models.DateTimeField(blank=True, null=True)
     rescheduled_appointment_in_ist = models.DateTimeField(blank=True, null=True)
+    eto_ldap = models.CharField(max_length=100, blank=True, null=True, default='')
 
     dials = models.IntegerField(default=0)
     lead_sub_status = models.CharField(max_length=100, null=True)
@@ -371,8 +372,17 @@ class Location(models.Model):
         verbose_name_plural = 'Target Location'
 
 
+class PicassoLeadGroupType(models.Model):
+   group_type = models.CharField(max_length=100, blank=True, null=True)
+   is_active = models.BooleanField(default=True)
+
+   def __str__(self):
+       return self.group_type
+
+
 class Team(models.Model):
     """ Team/Program information """
+    picasso_lead_group_type = models.ForeignKey(PicassoLeadGroupType,blank=True,null=True,default=None)
     team_name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
     belongs_to = models.CharField(max_length=50, blank=False, choices=(
@@ -636,6 +646,12 @@ class PicassoLeads(models.Model):
     is_build_eligible = models.BooleanField(default=False)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
     estimated_tat = models.DateTimeField(blank=True, null=True)
+    crop_email = models.CharField(max_length=100, default='')
+    my_advitiser_email = models.CharField(max_length=100, default='', blank=True, null=True)
+    my_cases_alias = models.CharField(max_length=100, default='', blank=True, null=True)
+    market_selector = models.CharField(max_length=100, default='', blank=True, null=True)
+    language_selector = models.CharField(max_length=100, default='', blank=True, null=True)
+    picasso_type = models.CharField(max_length=100, default='PICASSO', blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"
