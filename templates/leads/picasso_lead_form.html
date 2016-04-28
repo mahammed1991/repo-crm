@@ -13,6 +13,44 @@
     .footer{position: relative;}
     .footer .container-fluid  ul{ line-height: 62px;}
     .table-container{ min-height:300px;}
+    .tab-content {
+    padding-top: 1px;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background:  #ccddff;
+
+    }
+    .nav > li.active > a{
+      background:  #ccddff !important;
+    }
+    /*li > a:hover {
+      background: #cfe0fc !important;
+    }*/
+    .nav-tabs > li > a {
+      margin-right: 0px !important;
+      width: 485px;
+    text-align: center;
+      }
+      .set-tab{
+    padding-left: 30px !important;
+    }
+    .set-tab1{
+    margin-left: 15px !important;
+    }
+     .set-tab2{
+    margin-left: -15px !important;
+    }
+    a {
+    color: #2763c9; 
+    font-weight: 500;
+  }
+  .set{
+    padding-top: 15px;
+  }
+  .row-centered{
+    margin: 0px 250px;
+  }
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -44,9 +82,11 @@
     <input type="hidden" id="country" name="country" value=".">
     <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
 
+    <input type="hidden" id="picasso_type" name="picasso_type" value="">
+
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">This submission would be approximately number <b id="picasso_tat">{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date by <b id="delivery_date" >{{estimated_tat}}</b> </p>
-    <div class="std-sub-title">Google Rep Information</div>
+    <div class="std-sub-title">Google Rep Info</div>
     <div class="row">
       <div class="col-md-6">
         <label for="gref">Google Rep Name</label>
@@ -61,64 +101,133 @@
         <select class="form-control bgicon" id="team" title="Program Name" name="team">
           <option value="">Select Program</option>
           {% for program in teams %}
-            <option value="{{program.team_name}}">{{program.team_name}}</option>
+            <option class ="{{program.picasso_lead_group_type}}" value="{{program.team_name}}">{{program.team_name}}</option>
           {% endfor %}
         </select>
       </div>
     </div>
-    <div class="std-sub-title">Advertiser Details</div>
-      <div class="row">
-        <div class="col-md-6">
-        <label for="cid">Customer ID</label>
-        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
-      </div>
-      <div class="col-md-6">
-        <label for="picasso_pod">POD Name</label>
-        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
-      </div>
-      <div class="col-md-6">
-         <label for="url" id="url_label_id">Website URL</label>
-          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" onfocusout="checkout()">
+    <div class="row">
+    <ul class="nav nav-tabs">
+      <li id="picasso" class="active"><a data-toggle="tab" href="#Picasso">Picasso</a></li>
+      <li id="bolt" style="margin-left:30px;"><a data-toggle="tab" href="#Bolt">Bolt</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="container-fluid"><br />
+        <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following:</div>
+        <div class="row">
+          <div class="col-md-1 set" style="width:20px;">
+            <label id="checkbox11" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox1">
+                <input type="checkbox" id="checkbox1" class="mdl-checkbox__input">
+                
+             </label>
+          </div>
+         
+          <div class="col-md-4" style="width:429px;">
+            <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly">  
+          </div>
+
+          <div class="col-md-2 set" style="text-align:center;width:80px;">
+            AND/OR
+          </div>
+
+          <div class="col-md-1 set" style="width:20px;">
+            <label id="checkbox22" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox2">
+                <input type="checkbox" id="checkbox2" class="mdl-checkbox__input">
+                
+             </label>
+          </div>
+         
+          <div class="col-md-4" style="width:429px;">
+            <input id="cases_alias" class="form-control" type="text" name="my_cases_alias" placeholder="My Cases Alias (eg: fred.fs@google.com)">  
+          </div>
+
         </div>
-        <div class="col-md-6">
-          <label for="additional_notes">Additional Notes(Optional)</label>
-          <textarea class="form-control" name="additional_notes" id="additional_notes" style="height: 175px;"></textarea>
-        </div>
-      <div class="col-md-6" style="margin-top: -130px;">
-        <label for="picasso_objective">Objective</label></br>
-        <div class="checkboxvalidation" style="height:95px;">
-          <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
-          </label>
-          <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry (Generate Leads)</span></br>
-          </label>
-            <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
-          </label>
-          <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
-          </label>
-          <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
-          </label>
-           <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
-          </label>
-           <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-            <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
-          </label>
-        </div>
-      </div>
-     
-      
         
+        <div class="row row-centered">
+          <div class="col-md-1 set" style="width:20px;">
+            <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
+                <input type="checkbox" id="checkbox3" class="mdl-checkbox__input">
+                
+             </label>
+          </div>
+          
+          <div class="col-md-4" style="width:429px;">
+            <input id="advertiser_email" class="form-control" type="text" name="my_advertiser_email" placeholder="My Advertiser E-mail (eg: barney.rubble@dabbadoo.com)">
+          </div>
+        </div>
+
+
+        <div class="std-sub-title">Advertiser Details</div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <label for="market_selector">Market Selector</label>
+                <select class="form-control bgicon" id="market_selector" title="Market Selector" name="market_selector">
+                  <option value="Generic Market">Generic Market</option>
+                </select>
+            </div>
+           <div class="col-md-6">
+              <label for="language_selector">Language Selector</label>
+                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language_selector">
+                  <option value="English">English</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+            <label for="cid">Customer ID</label>
+            <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
+          </div>
+          <div class="col-md-6">
+            <label for="picasso_pod">POD Name</label>
+            <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
+          </div>
+          <div class="col-md-6">
+             <label for="url" id="url_label_id">Website URL</label>
+              <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" onfocusout="checkout()">
+            </div>
+            <div class="col-md-6">
+              <label for="additional_notes">Additional Notes(Optional)</label>
+              <textarea class="form-control" name="additional_notes" id="additional_notes" style="height: 175px;"></textarea>
+            </div>
+          <div class="col-md-6" style="margin-top: -130px;">
+            <label for="picasso_objective">Objective</label></br>
+            <div class="checkboxvalidation" style="height:95px;">
+              <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
+              </label>
+              <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry (Generate Leads)</span></br>
+              </label>
+                <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
+              </label>
+              <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
+              </label>
+              <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
+              </label>
+               <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
+              </label>
+               <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
+              </label>
+            </div>
+          </div> 
+          </div>
+          </div>
+        </div>
       </div>
       <p id="display_error_for_objective" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select atleast one objective</b> </p>
       <p id="display_block_error" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">A lead with this CID and URL has already been submitted for treatment. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
       <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
       <p id="display_url_has_space" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Space</b> </p>
       <p id="display_invalid_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid URL</b> </p>
+
+      <p id="display_error_for_email_fields" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please enter valid email address</b> </p>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
@@ -173,6 +282,7 @@ function checkout(){
   $('#display_url_has_space').hide();
   $('#display_url_has_comma').hide();
   $('#display_invalid_url').hide();
+  $('#display_error_for_email_fields').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
   if(cidElem && urlElem){

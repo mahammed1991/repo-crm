@@ -355,6 +355,7 @@
         setLocations(window.locations);
         window.is_loc_changed = false;
       }
+      $('#eto_ldap').show();
       $('#tagCheckBoxs').show();
       $("#service_segment").show();
       $("#service_segment").val('');
@@ -368,7 +369,9 @@
       $('#g_cases_id').val('')
       $("#service_segment").val('');
       $('#tagCheckBoxs').show();
-    }
+    }else if(['ETO', 'ETO: Agency', 'ETO: Inbound', 'ETO: Outbound', 'ETO: CS'].indexOf(selectedTeam) != -1 ){
+      $('#eto_ldap').show();
+      }
     else{
       if (window.is_loc_changed){
         setLocations(window.locations);
@@ -381,6 +384,7 @@
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
       $('#tagCheckBoxs').hide();
+      $('#eto_ldap').hide();
     }
   });
 
@@ -492,6 +496,13 @@ function validatethis(frm) {
       gCasesIdElem = document.getElementById('g_cases_id');
       validateFiled(gCasesIdElem);
     }
+
+    //ETO LDAP validation
+    if ($(frm.eto_ldap).is(":visible")) {
+      etoLdapElem = document.getElementById('eto_ldap');
+      validateFiled(etoLdapElem);
+    }
+
     // Google Manager details validation
     teamElem = document.getElementById('team');
     validateFiled(teamElem);
