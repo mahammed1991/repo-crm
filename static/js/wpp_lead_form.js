@@ -191,7 +191,7 @@ function validatethis(frm) {
 
   function validateFiled(elem){
     // Validate Form Field
-    if ($(elem).val().trim() == "" || $(elem).val() == "0" || !$(elem).val()) {
+    if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
     $(elem).addClass('error-box');
     window.failedFields.push(elem);
     window.is_error = true;

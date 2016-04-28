@@ -1940,7 +1940,7 @@ def program_kick_off(request):
     region_based_locations = dict()
     for regn in regions:
         location_list_values = list()
-        for item in regn.location.values('location_name'):
+        for item in regn.location.values('location_name').filter(is_active=True):
             location_list_values.append(item['location_name'])
         region_based_locations[regn.name] = location_list_values
 
@@ -2002,7 +2002,7 @@ def kickoff_export(request):
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
     all_records_kickoff_list = list()
-    getall_kickoff_records = KickOffProgram.objects.all()
+    getall_kickoff_records = KickOffProgram.objects.all().order_by('-created_date')
     count = 0
     for each_record in getall_kickoff_records:
         each_record_dict = dict()
@@ -2096,14 +2096,14 @@ def kickoff_export_detail(request, program_id):
         google_poc_list = list()
         for mailids in google_pocs:
             google_poc_list.append(str(mailids['email']))
-        googlepoc_email_list = ','.join(google_poc_list)
+        googlepoc_email_list = ', \n'.join(google_poc_list)
 
         # getting ManyToMany feild goole poc email second email ids fetching
         google_email_pocs = get_kickoff_record.google_poc_email.values('email')
         google_poc_email_list = list()
         for google_email_mail_ids in google_email_pocs:
             google_poc_email_list.append(str(google_email_mail_ids['email']))
-        google_poc_email_list = ','.join(google_poc_email_list)
+        google_poc_email_list = ', '.join(google_poc_email_list)
 
         # getting ManyToMany feild BCC email email ids fetching
         # bcc_kick_off_prg = get_kickoff_record.bcc_kick_off.values('email')
@@ -2118,7 +2118,7 @@ def kickoff_export_detail(request, program_id):
         for region in get_region_list:
             for key, val in region.iteritems():
                 region_list.append(val)
-        region_list = ','.join(region_list)
+        region_list = ',  '.join(region_list)
 
         target_location_list = list()
         get_target_location = get_kickoff_record.target_locations.values('location_name')
