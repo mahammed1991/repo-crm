@@ -636,8 +636,16 @@ function validatethis(frm) {
             rbidElem = document.getElementById('rbid');
             validateFiled(rbidElem);
 
-            rbidmodifierElem = document.getElementById('rbidmodifier');
-            validateFiledAllowZero(rbidmodifierElem);
+            bidmodifiercontrolerElem = document.getElementById('bidmodifiercontroler');
+            validateFiled(bidmodifiercontrolerElem);
+
+
+            rbidinpercentageElem = document.getElementById('rbidinpercentage');
+            validateFiled(rbidinpercentageElem);
+
+
+            // rbidmodifierElem = document.getElementById('rbidmodifier');
+            // validateFiledAllowZero(rbidmodifierElem);
 
             rbudgetElem = document.getElementById('rbudget');
             validateFiled(rbudgetElem);

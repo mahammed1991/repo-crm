@@ -679,7 +679,13 @@
       <div class="row shoppingInfo">
         <div class="col-md-4">
         <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
-        <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier">
+        <select class="form-control bgicon" id="bidmodifiercontroler" style="width: 152px;">
+          <option value="Increase by">Increase by</option>
+          <option value="Decrease by">Decrease by</option>
+        </select>
+        <input id="rbidinpercentage" class="form-control" type="number" placeholder="In %" style="width: 138px;margin-left: 164px;margin-top: -67px;" onfocusout="addValueTorbidmodifier()">
+
+        <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier" style="display: none;">
         <div class="checkbox">
               <label class="lbl">
                 <input id="mcIdCheck" type="checkbox" value="" checked>
@@ -788,7 +794,7 @@
                   <ul>
                         <li> 
                           <label> 
-                            <input class="shopping-group" type="checkbox" value="" id="rules-1" name="rules-1"> Website has a secured payment gateway.
+                            <input class="shopping-group" type="checkbox" value="" id="rules-1" name="rules-1"> Website has Secured Personal details and Payment pages (https://).
                           </label>
                         </li>
                         <li> 
@@ -1114,6 +1120,18 @@ for (var i = 0; i < window.locations.length; i++)
        jQuery('.lead-type>*').show();
    }
 });
+}
+
+function addValueTorbidmodifier(){
+  var bidmodifiercontrolerVal = $('#bidmodifiercontroler').val();
+  var rbidinpercentageVal = $('#rbidinpercentage').val();
+
+  if(rbidinpercentageVal != 0 && bidmodifiercontrolerVal != ''){
+    var bidmodifiercontrolerwithtext = bidmodifiercontrolerVal
+    var rbidinpercentagewithtext = rbidinpercentageVal + '%'
+    var final_text = bidmodifiercontrolerwithtext + ' ' + rbidinpercentagewithtext
+    $('#rbidmodifier').val(final_text);
+  }
 }
 
 
