@@ -278,10 +278,12 @@ function removeAdvertiserErrorClass()
 }
 
 $("#picasso").click(function(){
- $('#picasso_type').val('PICASSO');
+ $('#ctype1').val('PICASSO');
+ $('.tab-content').css("background-color","#ccddff");
 });
 
 $("#bolt").click(function(){
-  $('#picasso_type').val('BOLT');
-
+$('#ctype1').val('BOLT');
+$('.tab-content').css("background-color","#b1e7bf");
 });
+
