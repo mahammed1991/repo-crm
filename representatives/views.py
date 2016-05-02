@@ -882,7 +882,7 @@ def export_appointments_with_schedule_appointments(request):
         s_date = from_date
         while True:
             if s_date <= to_date:
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' AV|F')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' F|AV')
                 collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' RS')
                 s_date = s_date + timedelta(days=1)
             else:

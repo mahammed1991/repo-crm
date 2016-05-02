@@ -314,7 +314,7 @@ $('#multipleUrls').change(function(){
 function populateLeadDetails(response){
     $('input[name=url1], input[id=url]').val(response.details.url);
     $('#team').val(response.details.team);
-    $('#treatment_type').val(response.details.treatment_type);
+    // $('#treatment_type').val(response.details.treatment_type);
     if(response.details.country){
       $('#country').val(response.details.country);
     }
@@ -337,7 +337,7 @@ function clearLeadDetails(){
   //$('input[type=checkbox]').prop('checked', false);
   $('input:checkbox').parent().removeClass('is-checked')
   $('#team option[value=""]').attr('selected', 'selected');
-  $('#treatment_type option[value=""]').attr('selected', 'selected');
+  // $('#treatment_type option[value=""]').attr('selected', 'selected');
   $('#country option[value="0"]').attr('selected', 'selected');
 }
 
