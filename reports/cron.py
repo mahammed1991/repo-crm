@@ -908,7 +908,7 @@ def available_counts_booked_specific_in_na(process_type):
 
     return available_counts_teams
 
-@kronos.register('0 */1 * * *')
+@kronos.register('0 9 * * 2-6')
 def slots_open_booked():
     tag_bookings_exclude_na = available_counts_booked_specific(['TAG'])
     shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'])
@@ -966,7 +966,7 @@ def slots_open_booked():
         tag_total_sum['Total ratio'] = '-'
 
     tag_total_sum_sorted = sorted(tag_total_sum.items())
-
+    
     shopping_total_sum = dict()
     shopping_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in shopping_all)
     shopping_total_sum['Booked Count'] = sum(item['Booked Count'] for item in shopping_all)
@@ -978,8 +978,10 @@ def slots_open_booked():
 
     shopping_total_sum_sorted = sorted(shopping_total_sum.items())
 
-    all_bookings = zip(tag_final,shopping_final)
+    tag_final.sort()
+    shopping_final.sort()
 
+    all_bookings = zip(tag_final,shopping_final)
 
     # mailing functionaliteis
     specific_date = datetime.today()
