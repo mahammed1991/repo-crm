@@ -48,15 +48,22 @@
             <tr style="height:21px;">
                 <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
                     {% for key, val in v.iteritems  %}
-                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{val}}</td>
+                    {% if key == 'team_name'  %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align:left;">{{val}}</td>
+                    {% else %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align:center;">{{val}}</td>
+                    {% endif %}
                      {% endfor %}
+                    
             </tr>
         {% endfor %}
          <tr style="height:21px;">
             <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">TAG - TOTAL</td>
+            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align:left;font-size: 16px;">TAG - TOTAL</td>
             {% for key, value in tag_total_sum_sorted  %}
-                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;">{{value}}</td>
+
+                
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;font-size: 16px;">{{value}}</td>
             {% endfor %}
         </tr>
 
@@ -75,16 +82,21 @@
         {% for v in shopp %}
             <tr style="height:21px;">
             <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+
                 {% for key, val in v.iteritems  %}
+                 {% if key == 'team_name'  %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align:left;">{{val}}</td>
+                    {% else %}
                     <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{val}}</td>
+                  {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
 
          <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">SHOPPING - TOTAL</td>
+            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align:left;font-size: 16px;">SHOPPING - TOTAL</td>
             {% for key,value in shopping_total_sum_sorted  %}
-                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;">{{value}}</td>
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;font-size: 16px;">{{value}}</td>
             {% endfor %}
 
             
