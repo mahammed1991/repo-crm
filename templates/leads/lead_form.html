@@ -679,13 +679,18 @@
       <div class="row shoppingInfo">
         <div class="col-md-4">
         <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
-        <select class="form-control bgicon" id="bidmodifiercontroler" style="width: 152px;">
+        <label>Recommended Mobile Bid Modifier</label>
+        <select class="form-control bgicon" id="bidmodifiercontroler" style="width: 152px;" onchange="addValueTorbidmodifier()">
           <option value="Increase by">Increase by</option>
           <option value="Decrease by">Decrease by</option>
         </select>
         <input id="rbidinpercentage" class="form-control" type="number" placeholder="In %" style="width: 138px;margin-left: 164px;margin-top: -67px;" onfocusout="addValueTorbidmodifier()">
 
         <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier" style="display: none;">
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="rbudget" class="form-control" name="rbudget" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping_url" name="shopping_url" placeholder="URL">
         <div class="checkbox">
               <label class="lbl">
                 <input id="mcIdCheck" type="checkbox" value="" checked>
@@ -693,12 +698,8 @@
             </div>
         </div>
         <div class="col-md-4">
-          <input type="text" id="rbudget" class="form-control" name="rbudget" placeholder="Budget">
-          <input type="text" class="form-control" id="shopping_url" name="shopping_url" placeholder="URL">
-          <input id="mc_id" name="mc_id" size="20" class="form-control" type="text" placeholder="MC-ID">
-        </div>
-        <div class="col-md-4">
           <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
+          <input id="mc_id" name="mc_id" size="20" class="form-control" type="text" placeholder="MC-ID">
         </div>
         <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
           <option value="Under 100">Under 100</option>
@@ -1128,9 +1129,15 @@ function addValueTorbidmodifier(){
 
   if(rbidinpercentageVal != 0 && bidmodifiercontrolerVal != ''){
     var bidmodifiercontrolerwithtext = bidmodifiercontrolerVal
-    var rbidinpercentagewithtext = rbidinpercentageVal + '%'
+    if(bidmodifiercontrolerwithtext == 'Increase by'){
+        var rbidinpercentagewithtext = '+' + rbidinpercentageVal + '%'
+      }else{
+        var rbidinpercentagewithtext = '-' + rbidinpercentageVal + '%'
+      }
+
     var final_text = bidmodifiercontrolerwithtext + ' ' + rbidinpercentagewithtext
     $('#rbidmodifier').val(final_text);
+      
   }
 }
 

@@ -9,48 +9,63 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
   <style type="text/css">
-    .tasks{ margin-bottom: 5px;}
-    .footer{position: relative;}
-    .footer .container-fluid  ul{ line-height: 62px;}
-    .table-container{ min-height:300px;}
-    .tab-content {
-    padding-top: 1px;
-    border-right: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    background:  #ccddff;
+    <style type="text/css">
+   .tasks{ margin-bottom: 5px;}
+   .footer{position: relative;}
+   .footer .container-fluid  ul{ line-height: 62px;}
+   .table-container{ min-height:300px;}
+   .tab-content {
+   padding-top: 1px;
+   border-right: 1px solid #ddd;
+   border-left: 1px solid #ddd;
+   border-bottom: 1px solid #ddd;
+   background:  #ccddff;
 
-    }
-    .nav > li.active > a{
-      background:  #ccddff !important;
-    }
-    /*li > a:hover {
-      background: #cfe0fc !important;
-    }*/
-    .nav-tabs > li > a {
-      margin-right: 0px !important;
-      width: 485px;
-    text-align: center;
-      }
-      .set-tab{
-    padding-left: 30px !important;
-    }
-    .set-tab1{
-    margin-left: 15px !important;
-    }
-     .set-tab2{
-    margin-left: -15px !important;
-    }
-    a {
-    color: #2763c9; 
-    font-weight: 500;
-  }
-  .set{
-    padding-top: 15px;
-  }
-  .row-centered{
-    margin: 0px 250px;
-  }
+   }
+   .nav > li > a:hover{
+     border-top-left-radius:1em !important;
+     border-top-right-radius:1em !important;
+   }
+   .nav > #bolt.active > a{
+     background:  #b1e7bf !important;
+     border-top-left-radius:1em;
+     border-top-right-radius:1em;
+   }
+   .nav > #picasso.active > a{
+     background:  #ccddff !important;
+     border-top-left-radius:1em;
+     border-top-right-radius:1em;
+
+   }
+   /*li > a:hover {
+     background: #cfe0fc !important;
+   }*/
+   .nav-tabs > li > a {
+     margin-right: 0px !important;
+     width: 485px;
+     font-weight: bold;
+     text-align: center;
+     }
+     .set-tab{
+   padding-left: 30px !important;
+   }
+   .set-tab1{
+   margin-left: 15px !important;
+   }
+    .set-tab2{
+   margin-left: -15px !important;
+   }
+   a {
+   color: #2763c9; 
+   font-weight: 500;
+ }
+ .set{
+   padding-top: 15px;
+ }
+ .row-centered{
+   margin: 0px 250px;
+ }
+ </style>
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -81,8 +96,6 @@
     <input type="hidden" id="company" name="company" value="">
     <input type="hidden" id="country" name="country" value=".">
     <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
-
-    <input type="hidden" id="picasso_type" name="picasso_type" value="">
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">This submission would be approximately number <b id="picasso_tat">{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date by <b id="delivery_date" >{{estimated_tat}}</b> </p>
