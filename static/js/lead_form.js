@@ -322,7 +322,8 @@
   $('#team').change(function(){
     var selectedTeam = $(this).val();
     $("#team_service_gce").hide();
-    $('#g_cases_id').val('')
+    $('#g_cases_id').val('');
+    $('#eto_ldap').val('');
     $("#service_segment").val('');
     $('#tagCheckBoxs').hide();
     $('#tag_appointment_aware, #tag_admin_access, #tag_admin_code').prop('checked', false);
@@ -336,6 +337,7 @@
       $('#g_cases_id').show();
       $('#GCaseId').show();
       $("#service_segment").hide();
+      $('#eto_ldap').hide();
       $('#tagCheckBoxs').hide();
     }else if(selectedTeam =='GCE Kickstart Reactive'){
       if (window.is_loc_changed){
@@ -349,6 +351,7 @@
       $('label[for="g_cases_id"]').show();
       $('label[for="service_segment"]').hide();
       $('#tagCheckBoxs').hide();
+      $('#eto_ldap').hide();
     }
     else if(['ETO', 'ETO: Agency', 'ETO: Inbound', 'ETO: Outbound', 'ETO: CS'].indexOf(selectedTeam) != -1 && $('#tasks').is(':visible')){
       if (window.is_loc_changed){
@@ -371,6 +374,7 @@
       $('#tagCheckBoxs').show();
     }else if(['ETO', 'ETO: Agency', 'ETO: Inbound', 'ETO: Outbound', 'ETO: CS'].indexOf(selectedTeam) != -1 ){
       $('#eto_ldap').show();
+      $('#g_cases_id').hide();
       }
     else{
       if (window.is_loc_changed){
@@ -495,12 +499,6 @@ function validatethis(frm) {
     if ($(frm.g_cases_id).is(":visible")) {
       gCasesIdElem = document.getElementById('g_cases_id');
       validateFiled(gCasesIdElem);
-    }
-
-    //ETO LDAP validation
-    if ($(frm.eto_ldap).is(":visible")) {
-      etoLdapElem = document.getElementById('eto_ldap');
-      validateFiled(etoLdapElem);
     }
 
     // Google Manager details validation

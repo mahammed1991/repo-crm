@@ -3,69 +3,67 @@
 {% load staticfiles %}
 
 {% block title %}
-  PICASSO Lead Form
+  PICASSO/BOLT
 {% endblock title %}
 {% block main_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
   <style type="text/css">
-    <style type="text/css">
-   .tasks{ margin-bottom: 5px;}
-   .footer{position: relative;}
-   .footer .container-fluid  ul{ line-height: 62px;}
-   .table-container{ min-height:300px;}
-   .tab-content {
-   padding-top: 1px;
-   border-right: 1px solid #ddd;
-   border-left: 1px solid #ddd;
-   border-bottom: 1px solid #ddd;
-   background:  #ccddff;
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    .table-container{ min-height:300px;}
+    .tab-content {
+    padding-top: 1px;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background:  #F9FAFC;
 
-   }
-   .nav > li > a:hover{
-     border-top-left-radius:1em !important;
-     border-top-right-radius:1em !important;
-   }
-   .nav > #bolt.active > a{
-     background:  #b1e7bf !important;
-     border-top-left-radius:1em;
-     border-top-right-radius:1em;
-   }
-   .nav > #picasso.active > a{
-     background:  #ccddff !important;
-     border-top-left-radius:1em;
-     border-top-right-radius:1em;
+    }
+    .nav > li > a:hover{
+      border-top-left-radius:1em !important;
+      border-top-right-radius:1em !important;
+    }
+    .nav > #bolt.active > a{
+      background:  #F9FAFC !important;
+      border-top-left-radius:1em;
+      border-top-right-radius:1em;
+    }
+    .nav > #picasso.active > a{
+      background:  #F9FAFC !important;
+      border-top-left-radius:1em;
+      border-top-right-radius:1em;
 
-   }
-   /*li > a:hover {
-     background: #cfe0fc !important;
-   }*/
-   .nav-tabs > li > a {
-     margin-right: 0px !important;
-     width: 485px;
-     font-weight: bold;
-     text-align: center;
-     }
-     .set-tab{
-   padding-left: 30px !important;
-   }
-   .set-tab1{
-   margin-left: 15px !important;
-   }
-    .set-tab2{
-   margin-left: -15px !important;
-   }
-   a {
-   color: #2763c9; 
-   font-weight: 500;
- }
- .set{
-   padding-top: 15px;
- }
- .row-centered{
-   margin: 0px 250px;
- }
- </style>
+    }
+    /*li > a:hover {
+      background: #cfe0fc !important;
+    }*/
+    .nav-tabs > li > a {
+      margin-right: 0px !important;
+      width: 485px;
+      font-weight: bold;
+      text-align: center;
+      }
+      .set-tab{
+    padding-left: 30px !important;
+    }
+    .set-tab1{
+    margin-left: 15px !important;
+    }
+     .set-tab2{
+    margin-left: -15px !important;
+    }
+    a {
+    color: #2763c9; 
+    font-weight: 500;
+  }
+  .set{
+    padding-top: 15px;
+  }
+  .row-centered{
+    margin: 0px 250px;
+  }
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -83,7 +81,7 @@
   border-bottom: 1px solid #ccc;
   padding-bottom: 12px;
   margin-top: 50px;
-  margin-bottom: 20px;">SUBMIT PICASSO MOBILE SITE AUDIT REQUEST</h1>
+  margin-bottom: 20px;">SUBMIT PICASSO/BOLT MOBILE SITE AUDIT REQUEST</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
@@ -99,17 +97,19 @@
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
     <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">This submission would be approximately number <b id="picasso_tat">{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date by <b id="delivery_date" >{{estimated_tat}}</b> </p>
-    <div class="std-sub-title">Google Rep Information</div>
+    
+    <input type="hidden" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+   <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+   <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+   <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
     <div class="row">
-      <div class="col-md-6">
-        <label for="gref">Google Rep Name</label>
-        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
-        <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
-        <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
-        <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
-
+      
+      <div class="col-md-4">
+        <label for="picasso_pod">POD Name</label>
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
       </div>
-      <div class="col-md-6">
+
+      <div class="col-md-4">
         <label for="team">Program name</label>
         <select class="form-control bgicon" id="team" title="Program Name" name="team">
           <option value="">Select Program</option>
@@ -118,84 +118,40 @@
           {% endfor %}
         </select>
       </div>
+
+      <div class="col-md-4">
+        <label for="cid">Customer ID</label>
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
+      </div>
     </div>
     <div class="row">
     <ul class="nav nav-tabs">
-      <li id="picasso" class="active"><a data-toggle="tab" href="#Picasso">Picasso (Mobile UI/UX)</a></li>
-      <li id="bolt" style="margin-left:30px;"><a data-toggle="tab" href="#Bolt">Bolt (Mobile Speed)</a></li>
+      <li id="picasso" class="active"><a data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
+      <li id="bolt" style="margin-left:30px;"><a data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
     </ul>
     <div class="tab-content">
       <div class="container-fluid"><br />
-        <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following:</div>
-        <div class="row">
-          <div class="col-md-1 set" style="width:20px;">
-            <label id="checkbox11" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox1">
-                <input type="checkbox" id="checkbox1" class="mdl-checkbox__input">
-                
-             </label>
-          </div>
-         
-          <div class="col-md-4" style="width:429px;">
-            <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly">  
-          </div>
-
-          <div class="col-md-2 set" style="text-align:center;width:80px;">
-            AND/OR
-          </div>
-
-          <div class="col-md-1 set" style="width:20px;">
-            <label id="checkbox22" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox2">
-                <input type="checkbox" id="checkbox2" class="mdl-checkbox__input">
-                
-             </label>
-          </div>
-         
-          <div class="col-md-4" style="width:429px;">
-            <input id="cases_alias" class="form-control" type="text" name="my_cases_alias" placeholder="My Cases Alias (eg: fred.fs@google.com)">  
-          </div>
-
-        </div>
         
-        <div class="row row-centered">
-          <div class="col-md-1 set" style="width:20px;">
-            <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
-                <input type="checkbox" id="checkbox3" class="mdl-checkbox__input">
-                
-             </label>
-          </div>
-          
-          <div class="col-md-4" style="width:429px;">
-            <input id="advertiser_email" class="form-control" type="text" name="my_advertiser_email" placeholder="Advertiser E-mail (eg: barney.rubble@dabbadoo.com)">
-          </div>
-        </div>
-
 
         <div class="std-sub-title">Advertiser Details</div>
 
           <div class="row">
             <div class="col-md-6">
-              <label for="market_selector">Market Selector</label>
-                <select class="form-control bgicon" id="market_selector" title="Market Selector" name="market_selector">
-                  <option value="Generic Market">Generic Market</option>
+              <label for="language_selector">Language Selector</label>
+                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language_selector">
+                  <option value="English">English</option>
                 </select>
             </div>
            <div class="col-md-6">
-              <label for="language_selector">Language Selector</label>
-                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language">
-                  <option value="English">English</option>
+            <label for="market_selector">Market Selector</label>
+                <select class="form-control bgicon" id="market_selector" title="Market Selector" name="market_selector">
+                  <option value="Generic Market">Generic Market</option>
                 </select>
             </div>
           </div>
 
           <div class="row">
-            <div class="col-md-6">
-            <label for="cid">Customer ID</label>
-            <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
-          </div>
-          <div class="col-md-6">
-            <label for="picasso_pod">POD Name</label>
-            <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
-          </div>
+          
           <div class="col-md-6">
              <label for="url" id="url_label_id">Website URL</label>
               <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" onfocusout="checkout()">
@@ -231,6 +187,66 @@
             </div>
           </div> 
           </div>
+
+
+          <div class="std-sub-title">Please provide two Competitor URLs of your advertiser (Optional)</div>
+
+          <div class="row">
+            <div class="col-md-6">
+             <label for="comp_url_11" id="url_label_id">Competitor URL 1</label>
+              <input type="text" class="form-control" id="comp_url_1" name="url2" placeholder="Competitor URL 1">
+            </div>
+           <div class="col-md-6">
+             <label for="comp_url_22" id="url_label_id">Competitor URL 2</label>
+              <input type="text" class="form-control" id="comp_url_2" name="url3" placeholder="Competitor URL 2">
+            </div>
+          </div>
+
+
+
+          <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following:</div>
+          <div class="row">
+            <div class="col-md-1 set" style="width:20px;">
+              <label id="checkbox11" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox1">
+                  <input type="checkbox" id="checkbox1" class="mdl-checkbox__input">
+                  
+               </label>
+            </div>
+           
+            <div class="col-md-4" style="width:429px;">
+              <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly">  
+            </div>
+
+            <div class="col-md-2 set" style="text-align:center;width:80px;">
+              AND/OR
+            </div>
+
+            <div class="col-md-1 set" style="width:20px;">
+              <label id="checkbox22" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox2">
+                  <input type="checkbox" id="checkbox2" class="mdl-checkbox__input">
+                  
+               </label>
+            </div>
+           
+            <div class="col-md-4" style="width:429px;">
+              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="My Cases Alias (Ex: fred.fs@google.com)">  
+            </div>
+
+          </div>
+          
+          <div class="row row-centered">
+            <div class="col-md-1 set" style="width:20px;">
+              <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
+                  <input type="checkbox" id="checkbox3" class="mdl-checkbox__input">
+                  
+               </label>
+            </div>
+            
+            <div class="col-md-4" style="width:429px;">
+              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="My Advertiser E-mail (Ex: barney.rubble@dabbadoo.com)">
+            </div>
+          </div>
+
           </div>
         </div>
       </div>
