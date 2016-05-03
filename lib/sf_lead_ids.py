@@ -179,6 +179,9 @@ class SalesforceLeads(object):
                                    'Campaign_ID': 'Campaign_ID',
                                    'oid': 'oid',
                                    '__VIEWSTATE': '__VIEWSTATE',
+
+                                   #Additional ETO-LDAP field
+                                   'eto_ldap': '00Nd0000008SWkF',
                                    }
 
     SANDBOX_TAG_LEAD_ARGS = {'first_name': 'first_name',

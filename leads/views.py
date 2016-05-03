@@ -327,6 +327,10 @@ def picasso_lead_form(request):
             else:
                 picasso_data[value] = request.POST.get(key)
 
+        if request.POST.get('url2') or request.POST.get('url3'):
+            picasso_data['url2'] = request.POST.get('url2')
+            picasso_data['url3'] = request.POST.get('url3')
+
         response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         # send_calendar_invite_to_advertiser(advirtiser_details, False)

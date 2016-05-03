@@ -21,12 +21,11 @@ function validatethis(frm) {
       return false;
     }
     // Google Rep Name Validation
-    grefElem = document.getElementById('gref');
-    validateFiled(grefElem);
+    // grefElem = document.getElementById('gref');
+    // validateFiled(grefElem);
 
     cidElem = document.getElementById('cid');
     validateFiled(cidElem);
-
     validateCorpEmail();
     validateCheckBox();
     validateCasesAliasInput();
@@ -52,6 +51,18 @@ function validatethis(frm) {
       $('.checkboxvalidation').addClass('error-box');
       window.is_error = true;
     }
+
+    if ($('#comp_url_1').val() || $('#comp_url_2').val() ){
+      var urlone = $('#comp_url_1').val();
+      var urltwo = $('#comp_url_2').val();
+      if(urlone){
+        ulrTwoElem = document.getElementById('comp_url_2');
+        validateFiled(ulrTwoElem);
+      }else{
+        ulrOneElem = document.getElementById('comp_url_1');
+        validateFiled(ulrOneElem);
+      }
+    } 
 
 
      ValidateUrlField();
@@ -81,20 +92,24 @@ function validatethis(frm) {
 $('#team').change(function(){
 
       $('#Picasso input[type="checkbox"]').attr('disabled', false);
-      var checked_elements = $('.is-checked');
-      for(var i=0;i<checked_elements.length;i++)
-      {
-        $(checked_elements[i]).trigger('click');
-      }
-      if ($(this).find('option:selected').attr("class") == 'A'){
-        $('#checkbox3').trigger('click').attr('disabled', true);
-      }
-      else if ($(this).find('option:selected').attr("class") == 'B'){
-      }
-      else{
-        $('#checkbox3').trigger('click').attr('disabled', true);
+      var gettingAorC = $(this).find('option:selected').attr("class") == 'A' || $(this).find('option:selected').attr("class") == 'C';
+        if (gettingAorC ){
+        $('#checkbox3').attr('disabled', true);
+         $('#checkbox33').addClass('is-checked');
+         $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
+          $('.add_bg').css('background-color','grey');
+           $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
+           $('.add_border').css('border','grey');
       }
 
+      else{
+        var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
+        removingStyle1.removeAttr('style');
+         var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
+        removingStyle2.removeAttr('style');
+         $('#checkbox33').removeClass('is-checked');
+         $('#checkbox3').attr('disabled', false);
+      }
   });
 
 
@@ -202,7 +217,6 @@ function validateCorpEmail()
   }
   else{
     $('#checkbox11 .mdl-checkbox__ripple-container').removeClass('error-box');
-      window.is_error = false;
       return true;
   }
 }
@@ -234,7 +248,6 @@ function validateCasesAliasInput()
   }
   else{
     $('#checkbox22 .mdl-checkbox__ripple-container').removeClass('error-box');
-      window.is_error = false;
       return true;
   }
 }
@@ -251,7 +264,6 @@ function validateAvertiserEmailInput()
   }
   else{
       $('#checkbox33 .mdl-checkbox__ripple-container').removeClass('error-box');
-        window.is_error = false;
         return true;
   }
 }
@@ -262,7 +274,6 @@ function removeCasesErrorClass()
   var cases_alias_checkbox = $('#checkbox22').attr('class');
   if($('#cases_alias').val() && cases_alias_checkbox.search('is-checked') != -1){
      $('#checkbox22 .mdl-checkbox__ripple-container').removeClass('error-box');
-      window.is_error = false;
       return true;
   }
 }
@@ -272,18 +283,17 @@ function removeAdvertiserErrorClass()
   var advertiser_email_checkbox = $('#checkbox33').attr('class');
   if($('#advertiser_email').val() && advertiser_email_checkbox.search('is-checked') != -1){
      $('#checkbox33 .mdl-checkbox__ripple-container').removeClass('error-box');
-      window.is_error = false;
       return true;
   }
 }
 
 $("#picasso").click(function(){
  $('#ctype1').val('PICASSO');
- $('.tab-content').css("background-color","#ccddff");
+ $('.tab-content').css("background-color","#F9FAFC");
 });
 
 $("#bolt").click(function(){
 $('#ctype1').val('BOLT');
-$('.tab-content').css("background-color","#b1e7bf");
+$('.tab-content').css("background-color","#F9FAFC");
 });
 
