@@ -14,6 +14,7 @@
     .avg_time{
       font-size: 15px; border-width: 0px 0px 0px 6px; border-style: solid; border-color: rgb(10, 157, 88); color: rgb(10, 157, 88); padding:4px;padding-left: 10px; margin-bottom: 18px; font-family: Roboto, Arial, sans-serif; background: rgb(230, 245, 238); margin-left: 16px;
     }
+  
 </style>
 {% endblock main_css %}
 {% block content %}
@@ -711,6 +712,19 @@
 
       </div>
       <div id="shopping_trobleshooting" style="display:none;">
+      <div class="row" style="margin-bottom:10px;">
+        <div class="col-md-12 " >
+         <ul>
+           <li style="list-style-type: square !important;list-style-position:inside;">
+            If your advertisers already have GTIN values for their products we can help them update it on the Datafeed. We will not be able to help advertisers with acquiring GTIN values for their products.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+        </div>
+      </div>
         <div class="row">
           <div class="col-md-4">
             <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
@@ -1103,7 +1117,7 @@ $('#advertiser_name').on('focusout', function () {
 region_emea_disable()
 function region_emea_disable(){
 jQuery('.lead-type>*').hide();
-var li = ["37", "88", "93", "107", "46", "47", "148", "99", "49", "146", "52", "54", "147", "96", "137", "58", "60", "128", "63", "129", "89", "65", "66", "78"];
+var li = ["37", "88", "93", "107", "46", "47", "148", "99", "49", "146", "52", "54", "147", "96", "137", "60", "128", "63", "129", "89", "65", "66", "78"];
 jQuery('#country').change(function() {
 for (var i = 0; i < window.locations.length; i++)
         if (window.locations[i].name == country.value)
