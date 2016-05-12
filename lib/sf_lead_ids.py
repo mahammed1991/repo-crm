@@ -87,8 +87,8 @@ class SalesforceLeads(object):
                                 '__VIEWSTATE': '__VIEWSTATE',
                                 #picasso new fields
                                 'corp_email': '00N7A000000ZOdl',
-                                'my_advertiser_email': '00N7A000000ZOkm',
-                                'my_cases_alias': '00N7A000000ZOlB',
+                                'advertiser_email': '00N7A000000ZOkm',
+                                'cases_alias': '00N7A000000ZOlB',
                                 'market_selector': '00N7A000000ZOlk',
                                 'picasso_type': '00N7A000000ZQAC',
                                 # ETO Ldap

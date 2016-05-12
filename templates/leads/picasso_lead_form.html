@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  PICASSO/BOLT
+  Picasso & Bolt Audit Lead Form
 {% endblock title %}
 {% block main_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
@@ -61,6 +61,9 @@
    font-weight: 500;
  }
  .set{
+   padding-top: 35px;
+ }
+ .set1{
    padding-top: 15px;
  }
  .row-centered{
@@ -127,7 +130,7 @@
 
      
     </div>
-    <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">The Customer ID that you have entered is not eligible for an Audit at this time. Please enter another Customer ID or write to <a href="website-audit-support@google.com" style="color:#2763c9;">website-audit-support@google.com</a> for more information!</b> </p>
+    <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">The Customer ID that you have entered is not eligible for an Audit at this time. Please enter another Customer ID or write to <a href="mailto:website-audit-support@google.com" style="color:#2763c9;">website-audit-support@google.com</a> for more information!</b> </p>
     <div class="row">
     <ul class="nav nav-tabs">
       <li id="picasso" class="active"><a data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
@@ -142,7 +145,7 @@
           <div class="row">
             <div class="col-md-6">
               <label for="language_selector">Language Selector</label>
-                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language_selector">
+                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language">
                   <option value="English">English</option>
                 </select>
             </div>
@@ -218,6 +221,7 @@
             </div>
            
             <div class="col-md-4" style="width:429px;">
+              <label>My Corporate Mail</label>
               <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly">  
             </div>
 
@@ -233,13 +237,14 @@
             </div>
            
             <div class="col-md-4" style="width:429px;">
+              <label>My Cases Alias</label>
               <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="My Cases Alias (Ex: fred.fs@google.com)">  
             </div>
 
           </div>
           
           <div class="row row-centered">
-            <div class="col-md-1 set" style="width:20px;">
+            <div class="col-md-1 set1" style="width:20px;">
               <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
                   <input type="checkbox" id="checkbox3" class="mdl-checkbox__input">
                   
@@ -254,6 +259,7 @@
           </div>
         </div>
       </div>
+       <p id="display_error_for_contact_mail" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select and enter atleast one of your email addresses</b> </p>
       <p id="display_error_for_objective" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select atleast one objective</b> </p>
       <p id="display_block_error" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">A lead with this CID and URL has already been submitted for treatment. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
       <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
