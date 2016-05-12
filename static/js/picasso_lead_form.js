@@ -206,49 +206,6 @@ function resetBtn(elem){
   }
 }
 
-// function validateCorpNCaseField()
-// {
-//   debugger;
-//   var corp_email_checkbox = $('#checkbox11').attr('class').search('is-checked');
-//   var cases_alias_checkbox = $('#checkbox22').attr('class').search('is-checked');
-//   var ch = ((corp_email_checkbox == -1) && (cases_alias_checkbox == -1));
-//   if(ch)
-//   {
-//     $('#checkbox11 .mdl-checkbox__ripple-container').addClass('error-box');
-//     $('#checkbox22 .mdl-checkbox__ripple-container').addClass('error-box');
-//   }
-//   else
-//   {
-//     $('#checkbox11 .mdl-checkbox__ripple-container').removeClass('error-box');
-//   }
-// }
-/*function validateCorpEmail()
-{
-  var cases_alias_checkbox = $('#checkbox22').attr('class').search('is-checked');
-  var cases_alias_value = $('#cases_alias').val();
-  var corp_email_checkbox = $('#checkbox11').attr('class');
-  if(corp_email_checkbox.search('is-checked') == -1)
-  {
-    if(cases_alias_value == -1)
-    {
-      $('#checkbox11 .mdl-checkbox__ripple-container').addClass('error-box');
-    }
-  
-    else{
-        $('#checkbox11 .mdl-checkbox__ripple-container').removeClass('error-box');
-        
-
-    }
-  }
-  else
-  {
-    alert("came");
-    if(cases_alias_checkbox != -1)
-    {
-      $('#checkbox11 .mdl-checkbox__ripple-container').removeClass('error-box');
-    }
-  }
-}*/
 
 function validateCheckBox()
 {
