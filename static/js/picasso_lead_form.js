@@ -321,15 +321,17 @@ function validateCorpNCaseField()
   var cases_alias_checkbox = $('#checkbox22').attr('class').search('is-checked');
   if((corp_email_checkbox == -1) && (cases_alias_checkbox == -1))
   {
+    window.is_error = true;
     $('#checkbox11 .mdl-checkbox__ripple-container').addClass('error-box');
     $('#checkbox22 .mdl-checkbox__ripple-container').addClass('error-box');
     $('#display_error_for_contact_mail').show();
+    return false;
   }
   else
   {
     $('#checkbox11 .mdl-checkbox__ripple-container').removeClass('error-box');
     $('#display_error_for_contact_mail').hide();
-
+    return true;
   }
 }
 /// end of code for restricted CID's
