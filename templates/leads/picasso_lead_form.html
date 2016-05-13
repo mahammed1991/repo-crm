@@ -222,7 +222,7 @@
            
             <div class="col-md-4" style="width:429px;">
               <label>My Corporate Mail</label>
-              <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly">  
+              <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly" onfocusout="checkout()">  
             </div>
 
             <div class="col-md-2 set" style="text-align:center;width:80px;">
@@ -238,7 +238,7 @@
            
             <div class="col-md-4" style="width:429px;">
               <label>My Cases Alias</label>
-              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="My Cases Alias (Ex: fred.fs@google.com)">  
+              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="My Cases Alias (Ex: fred.fs@google.com)" onfocusout="checkout()">  
             </div>
 
           </div>
@@ -319,7 +319,7 @@ $('#url').focusin(function(){
 });
 
 function checkout(){
-
+  $('#display_error_for_contact_mail').hide();
   $('#display_error_for_objective').hide();
   $('#display_url_has_space').hide();
   $('#display_url_has_comma').hide();
