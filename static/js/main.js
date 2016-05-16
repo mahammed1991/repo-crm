@@ -141,6 +141,7 @@ $('#portalFeedback').submit(function(event){
                 $("#attachmentfile").val("");
                 $("#filename").val("");
                 showOlark();
+                $('#bugreported').modal('show');
             },
             error: function (error) {
                 $('.footeroverlay').hide();
@@ -153,6 +154,5 @@ $('#portalFeedback').submit(function(event){
 });
 
 // Report a bug javascript ends
-
 
 
