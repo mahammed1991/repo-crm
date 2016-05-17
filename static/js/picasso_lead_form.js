@@ -290,7 +290,13 @@ $('#picasso').click(function(){
  $('.for-bolt').hide();
 })
 
+function resetPicasso() {
+  $('.mdl-checkbox').removeClass('is-checked');
+}
 
+function resetBolt() {
+  $('.mdl-checkbox').removeClass('is-checked');
+}
 /// code for restricted CID's
 function checkID()
 {

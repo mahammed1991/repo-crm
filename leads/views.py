@@ -3193,10 +3193,12 @@ def wpp_whitelist_request(request):
 def get_picasso_lead(request):
     if request.is_ajax():
         status_dict = dict()
+        ctype = request.GET.get('ctype')
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
         form_url_filter = form_url.replace('www.','')
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid)
+       
         if picasso_lead:
             for each_lead in picasso_lead:
                 each_lead_url = each_lead.url_1
