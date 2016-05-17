@@ -53,18 +53,23 @@ def lead_form(request):
     Lead Submission to Salesforce
     """
     if request.method == 'POST':
+        # Google form Posting Starts here
+        post_lead_to_google_form(request.POST, 'normal')
         if settings.SFDC == 'STAGE':
+            
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
             # oid = '00DZ000000MjkJO'
             oid = '00D7A0000008nBH'
         elif settings.SFDC == 'PRODUCTION':
+            lead_data['entry.1070910664'] = 'PRODUCTION'
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
             oid = '00Dd0000000fk18'
 
         ret_url = ''
         # error_url = ''
+
         if request.POST.get('is_tag_lead') == 'yes':
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE':
@@ -172,6 +177,8 @@ def lead_form(request):
             rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
             submit_lead_to_sfdc(sf_api_url, rlsa_data)
 
+        
+
         return redirect(ret_url)
 
     # Check The Rep Status and redirect
@@ -204,6 +211,7 @@ def wpp_lead_form(request, ref_id=None):
     """
     # Check The Rep Status and redirect
     if request.method == 'POST':
+        post_lead_to_google_form(request.POST, 'picasso_build')
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
@@ -286,6 +294,7 @@ def picasso_lead_form(request):
     """
     # Check The Rep Status and redirect
     if request.method == 'POST':
+        post_lead_to_google_form(request.POST, 'mobile_site')
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
@@ -3218,8 +3227,55 @@ def get_picasso_lead(request):
         else:
             status_dict['status'] = 'failure'
 
-
         if status_dict['status'] == 'success':
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
         else:
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
+
+
+def post_lead_to_google_form(post_data, lead_type):
+    if lead_type == 'picasso_build':
+        picasso_lead_data = dict()
+        google_api_url = 'https://docs.google.com/forms/d/1zG1hcRBm1Q0Bq2vXeQCkyhywvvfGv8kY8bzpfqeMR4g/formResponse'
+        for element, field_value in post_data.iteritems():
+            picasso_lead_data[SalesforceLeads.GOOGLE_PICASSO_BUILD_FORM_FIELDS.get(element)] = field_value
+        picasso_lead_data['entry.1157346905'] = post_data.getlist('picasso_objective_list[]')
+        requests.post(url=google_api_url, data=picasso_lead_data)
+    
+    elif lead_type == 'normal':
+        lead_data = dict()
+        if settings.SFDC == 'STAGE':
+            lead_data['entry.1070910664'] = 'STAGE'
+        if settings.SFDC == 'PRODUCTION':
+            lead_data['entry.1070910664'] = 'PRODUCTION'
+        
+        if post_data.get('is_tag_lead') == 'yes':
+                lead_data['entry.1566780367'] = 'TAG'
+        if post_data.get('is_shopping_lead') == 'yes':
+                lead_data['entry.1566780367'] = str(lead_data.get('entry.1566780367')) + ' SHOPPING' 
+        if post_data.get('is_rlsa_lead') == 'yes':
+            lead_data['entry.1566780367'] = str(lead_data.get('entry.1566780367')) + ' RLSA'
+
+        google_api_url = 'https://docs.google.com/forms/d/1lEqEi8TOHTSMscOD_gaI0p7m-TZfm1ZlNGnMSjPpjps/formResponse'
+        
+        for element, field_value in post_data.iteritems():
+            lead_data[SalesforceLeads.GOOGLE_FORM_FIELDS.get(element)] = field_value
+        requests.post(url=google_api_url, data=lead_data)
+
+    elif lead_type == 'mobile_site':
+        google_api_url = 'https://docs.google.com/forms/d/1-f8qTKv84JlB6N4bKjBLRBTUqracmnWwRPp_noU-IDA/formResponse'
+        leads_data = dict()
+
+        if settings.SFDC == 'STAGE':
+           leads_data['entry.1866643427'] = 'STAGE'
+        if settings.SFDC == 'PRODUCTION':
+           leads_data['entry.1866643427'] = 'PRODUCTION'
+
+        for element, field_value in post_data.iteritems():
+            leads_data[SalesforceLeads.GOOGLE_FORM_PICASSO_FIELDS.get(element)] = field_value
+        leads_data['entry.652078496'] = post_data.getlist('picasso_objective_list[]')
+        requests.post(url=google_api_url, data=leads_data)
+
+
+
+
