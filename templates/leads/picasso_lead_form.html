@@ -120,7 +120,9 @@
       </div>
 
     </div>
-    <p id="display_block_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for treatment. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
+    <p id="display_block_error_bolt" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for a Picasso Audit. So you can submit lead as Bolt audit. You can find more details at go/PicassoDash <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
+
+    <p id="display_block_error_picasso" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for a Bolt Audit. So you can submit lead as Picasso audit. You can find more details at go/PicassoDash <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
 
     <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">The Customer ID that you have entered is not eligible for an Audit at this time. Please enter another Customer ID or write to <a href="mailto:website-audit-support@google.com" style="color:#2763c9;">website-audit-support@google.com</a> for more information!</b> </p>
     
@@ -144,8 +146,8 @@
     
     <div class="row">
     <ul class="nav nav-tabs">
-      <li id="picasso" class="active"><a data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
-      <li id="bolt" style="margin-left:30px;"><a data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
+      <li id="picasso" class="active" onclick="resetPicasso()"><a data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
+      <li id="bolt" style="margin-left:30px;" onclick="resetBolt()"><a data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
     </ul>
     <div class="tab-content">
       <div class="container-fluid"><br />
@@ -334,7 +336,7 @@ function checkout(){
   $('#display_error_for_email_fields').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
-  var ctypeElem = $('#ctype1').val().trim();ctype1
+  var ctypeElem = $('#ctype1').val().trim();
   if(cidElem && urlElem){
     if(urlElem.indexOf('https://') > -1){
       var link = getLink(urlElem);
@@ -359,6 +361,7 @@ function checkout(){
           $('#formsubmit').prop('disabled', true);
           dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url.value });
         }else{
+          
           $('#display_block_error').hide();
           $('#formsubmit').prop('disabled', false);
         }
@@ -372,5 +375,6 @@ function checkout(){
   }
   checkID();
 }
+
 </script>
 {% endblock main_js %}

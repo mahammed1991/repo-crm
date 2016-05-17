@@ -40,7 +40,7 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(minutes=6000)
+    start_date = end_date - timedelta(minutes=10)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
     logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
@@ -50,23 +50,18 @@ def get_updated_leads():
     select_items = settings.SFDC_FIELDS
     tech_team_id = settings.TECH_TEAM_ID
     code_type = 'Picasso'
-    code_type_for_Bolt = 'Bolt'
     where_clause_all = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' AND Code_Type__c != '%s'" % (start_date, end_date, tech_team_id, code_type)
     where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' AND Code_Type__c = '%s'" % (start_date, end_date, tech_team_id, code_type)
-    where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type_for_Bolt)
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause_all)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
-    sql_query_picasso_bolt = "select %s from Lead %s" % (select_items, where_clause_picasso_bolt)
     try:
         all_leads = sf.query_all(sql_query_all)
         picasso_leads = sf.query_all(sql_query_picasso)
-        picasso_bolt_leads = sf.query_all(sql_query_picasso_bolt)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
         logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         update_sfdc_leads(all_leads['records'], sf)
         create_or_update_picasso_leads(picasso_leads['records'], sf)
-        create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
@@ -86,22 +81,17 @@ def get_last_day_leads():
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
     code_type = 'Picasso'
-    code_type_for_Bolt = 'Bolt'
     where_clause = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c != '%s'" % (start_date, end_date, code_type)
     where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
-    where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type_for_Bolt)
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
-    sql_query_picasso_bolt = "select %s from Lead %s" % (select_items, where_clause_picasso_bolt)
     try:
         all_leads = sf.query_all(sql_query_all)
         picasso_leads = sf.query_all(sql_query_picasso)
-        picasso_bolt_leads = sf.query_all(sql_query_picasso_bolt)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
         logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         create_or_update_picasso_leads(picasso_leads['records'], sf)
-        create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
@@ -1007,4 +997,3 @@ def slots_open_booked():
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
-
