@@ -55,6 +55,19 @@
 				{% endfor %}
 				<td style="border:1px solid #333; padding:5px;"></td>
 			</tr>
+			<tr>
+				<td style="border:1px solid #333; padding:5px;text-align: center;">RLSA</td>
+				{% for key, value in final_dict.items %}
+					{% if key == 'RLSA' %}
+						{% for val in value %}
+							{% for key, value in val.items %}
+								<td style="border:1px solid #333; padding:5px;text-align: center;">{{value}}</td>					
+							{% endfor %}
+						{% endfor %}
+					{% endif %}
+				{% endfor %}
+				<td style="border:1px solid #333; padding:5px;"></td>
+			</tr>
           </table>
               </td>
             </tr>

@@ -50,18 +50,23 @@ def get_updated_leads():
     select_items = settings.SFDC_FIELDS
     tech_team_id = settings.TECH_TEAM_ID
     code_type = 'Picasso'
+    code_type_for_Bolt = 'Bolt'
     where_clause_all = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' AND Code_Type__c != '%s'" % (start_date, end_date, tech_team_id, code_type)
     where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' AND Code_Type__c = '%s'" % (start_date, end_date, tech_team_id, code_type)
+    where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type_for_Bolt)
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause_all)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
+    sql_query_picasso_bolt = "select %s from Lead %s" % (select_items, where_clause_picasso_bolt)
     try:
         all_leads = sf.query_all(sql_query_all)
         picasso_leads = sf.query_all(sql_query_picasso)
+        picasso_bolt_leads = sf.query_all(sql_query_picasso_bolt)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
         logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         update_sfdc_leads(all_leads['records'], sf)
         create_or_update_picasso_leads(picasso_leads['records'], sf)
+        create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
@@ -81,17 +86,22 @@ def get_last_day_leads():
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
     code_type = 'Picasso'
+    code_type_for_Bolt = 'Bolt'
     where_clause = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c != '%s'" % (start_date, end_date, code_type)
     where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
+    where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type_for_Bolt)
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
+    sql_query_picasso_bolt = "select %s from Lead %s" % (select_items, where_clause_picasso_bolt)
     try:
         all_leads = sf.query_all(sql_query_all)
         picasso_leads = sf.query_all(sql_query_picasso)
+        picasso_bolt_leads = sf.query_all(sql_query_picasso_bolt)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
         logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         create_or_update_picasso_leads(picasso_leads['records'], sf)
+        create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
         print e
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
@@ -179,11 +189,13 @@ def implemented_leads_count_report():
     specific_date = datetime(specific_date_time.year, specific_date_time.month, specific_date_time.day)
     total_count_tag = list()
     total_count_shopping = list()
-    final_dict = {'TAG': 0, 'SHOPPING': 0}
+    total_count_rlsa = list()
+    final_dict = {'TAG': 0, 'SHOPPING': 0, 'RLSA':0 }
     all_regions = Region.objects.all()
     for region in all_regions:
         each_region_tag = {region.name: 0}
         each_region_shopping = {region.name: 0}
+        each_region_rlsa = {region.name: 0}
         location_list = [loc.location_name for loc in region.location.all()]
         leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
         each_region_tag[region.name] = leads_count_tag
@@ -193,6 +205,12 @@ def implemented_leads_count_report():
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
+
+        leads_count_rlsa = Leads.objects.filter(type_1__in=['RLSA Bulk Implementation'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        each_region_rlsa[region.name] = leads_count_rlsa
+        total_count_rlsa.append(each_region_rlsa)
+        final_dict['RLSA'] = total_count_rlsa
+
     specific_time = datetime.strftime(specific_date_time, '%H:%M:%S')
     specific_date = specific_date.date()
     logging.info("Implemeted Leads Count Mail Details sending")
@@ -246,226 +264,228 @@ def create_or_update_leads(records, sf):
     is_new_lead = True
     owners_list = {u.user_id: {'name': u.full_name, 'email': u.email} for u in SfdcUsers.objects.all()}
     for rec in records:
-        total_leads += 1
-        sf_lead_id = rec.get('Id')
+        if rec.keys.im_self['Code_Type__c'] != 'BOLT':
+            total_leads += 1
+            sf_lead_id = rec.get('Id')
 
-        sf_lead_id = rec.get('Id')
-        type_1 = rec.get('Code_Type__c')
-        # if type_1 == 'WPP':
-        if type_1 in ['WPP', 'WPP - Nomination']:
-            total_wpp_leads += 1
-            try:
-                lead = WPPLeads.objects.get(sf_lead_id=sf_lead_id)
-                existing_wpp_leads += 1
-            except ObjectDoesNotExist:
-                lead = WPPLeads()
-                new_wpp_leads += 1
-            lead.lead_status = rec.get('WPP_Lead_Status__c')
-            lead.is_ab_test = rec.get('AB_Testing__c')
+            sf_lead_id = rec.get('Id')
+            type_1 = rec.get('Code_Type__c')
+            # if type_1 == 'WPP':
+            if type_1 in ['WPP', 'WPP - Nomination']:
+                total_wpp_leads += 1
+                try:
+                    lead = WPPLeads.objects.get(sf_lead_id=sf_lead_id)
+                    existing_wpp_leads += 1
+                except ObjectDoesNotExist:
+                    lead = WPPLeads()
+                    new_wpp_leads += 1
+                lead.lead_status = rec.get('WPP_Lead_Status__c')
+                lead.is_ab_test = rec.get('AB_Testing__c')
 
-            # New Additional fields for lead History
-            additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
-            lead.additional_notes = additional_notes
-            lead.mockup_url = rec.get('Mockup_URL__c')
-            lead.mockup_password = rec.get('Mockup_URL_Password__c')
-            lead.stage_url = rec.get('Stage_URL__c')
-            lead.stage_password = rec.get('Stage_URL_Credentials__c')
-            # Storing obectives and pod name in comment5 & url5 fields
-            lead.comment_5 = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
-            lead.url_5 = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
-            if type_1 == 'WPP':
-                lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+                # New Additional fields for lead History
+                additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
+                lead.additional_notes = additional_notes
+                lead.mockup_url = rec.get('Mockup_URL__c')
+                lead.mockup_password = rec.get('Mockup_URL_Password__c')
+                lead.stage_url = rec.get('Stage_URL__c')
+                lead.stage_password = rec.get('Stage_URL_Credentials__c')
+                # Storing obectives and pod name in comment5 & url5 fields
+                lead.comment_5 = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
+                lead.url_5 = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
+                if type_1 == 'WPP':
+                    lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+                else:
+                    lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'NA'
+                lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
+                if rec.get('PICASSO_build_eligible__c'):
+                    if rec.get('PICASSO_build_eligible__c') == 'Yes':
+                        lead.is_nominated = True
+                    elif rec.get('PICASSO_build_eligible__c') == 'No':
+                        lead.is_nominated = False
+            
             else:
-                lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'NA'
-            lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
-            if rec.get('PICASSO_build_eligible__c'):
-                if rec.get('PICASSO_build_eligible__c') == 'Yes':
-                    lead.is_nominated = True
-                elif rec.get('PICASSO_build_eligible__c') == 'No':
-                    lead.is_nominated = False
-        else:
-            try:
-                # check for existing lead
-                lead = Leads.objects.get(sf_lead_id=sf_lead_id)
-                is_new_lead = False
-            except ObjectDoesNotExist:
-                # create new lead
-                is_new_lead = True
-                lead = Leads()
-            lead.lead_status = rec.get('Status')
-            lead.language = rec.get('Language__c')
-            lead.gcss = rec.get('GCSS_Status__c')
+                try:
+                    # check for existing lead
+                    lead = Leads.objects.get(sf_lead_id=sf_lead_id)
+                    is_new_lead = False
+                except ObjectDoesNotExist:
+                    # create new lead
+                    is_new_lead = True
+                    lead = Leads()
+                lead.lead_status = rec.get('Status')
+                lead.language = rec.get('Language__c')
+                lead.gcss = rec.get('GCSS_Status__c')
 
-        # Google Representative email and name
-        rep_email = rec.get('Email')
-        rep_name = rec.get('Google_Rep__c')
+            # Google Representative email and name
+            rep_email = rec.get('Email')
+            rep_name = rec.get('Google_Rep__c')
 
-        # Lead owner name
-        owner_id = rec.get('OwnerId')
-        if owner_id and owner_id in owners_list:
-            details = owners_list.get(owner_id)
-            lead_owner_name = details.get('name')
-            lead_owner_email = details.get('email')
-        else:
-            try:
-                user_details = sf.User.get(owner_id)
-                lead_owner_name = user_details.get('Name')
-                lead_owner_email = user_details.get('Email')
-            except ObjectDoesNotExist:
-                lead_owner_name = "%s %s" % (settings.DEFAULT_LEAD_OWNER_FNAME, settings.DEFAULT_LEAD_OWNER_LNAME)
-                lead_owner_email = settings.DEFAULT_LEAD_OWNER_EMAIL
-
-        # Team
-        team = rec.get('Team__c') if rec.get('Team__c') else ''
-
-        # Below information will be created if its a new lead or else the information will be updated
-        lead.google_rep_name = rep_name
-        lead.google_rep_email = rep_email if rep_email else settings.DEFAULT_LEAD_OWNER_EMAIL
-
-        if rep_email and rep_name:
-            # Save Google representatives information to Database
-            try:
-                GoogeRepresentatives.objects.get(email=rep_email)
-            except ObjectDoesNotExist:
-                google_rep = GoogeRepresentatives()
-                rep_name = rep_name.split(' ')
-                google_rep.first_name = unicode(rep_name[0])
-                google_rep.last_name = unicode((' ').join(rep_name[1:]))
-                google_rep.email = unicode(rep_email)
-                google_rep.team = team
-                google_rep.save()
-
-        # Save Regalix representatives information to Database
-        if lead_owner_email and lead_owner_name:
-            try:
-                RegalixRepresentatives.objects.get(email=lead_owner_email)
-            except ObjectDoesNotExist:
-                regalix_rep = RegalixRepresentatives()
-                regalix_rep.name = lead_owner_name
-                regalix_rep.email = lead_owner_email
-                regalix_rep.team = team
-                regalix_rep.save()
-
-        # check if column is formatted to date type
-        # if it is of date type, convert to datetime object
-        created_date = rec.get('CreatedDate')
-        created_date = SalesforceApi.salesforce_date_to_datetime_format(created_date)
-        if not created_date:
-            created_date = datetime.utcnow()
-
-        lead.created_date = created_date
-
-        try:
-            lead.ecommerce = int(rec.get('E-commerce'))
-        except Exception:
-            lead.ecommerce = 0
-
-        lead.lead_owner_name = lead_owner_name if lead_owner_name else "%s %s" % (settings.DEFAULT_LEAD_OWNER_FNAME,
-                                                                                  settings.DEFAULT_LEAD_OWNER_LNAME)
-        lead.lead_owner_email = lead_owner_email if lead_owner_email else settings.DEFAULT_LEAD_OWNER_EMAIL
-        lead.company = unicode(rec.get('Company'))
-        lead.country = rec.get('Location__c')
-
-        cid = rec.get('Customer_ID__c')
-        if type(cid) is float:
-            lead.customer_id = int(cid)
-        else:
-            lead.customer_id = cid
-
-        lead.first_name = unicode(rec.get('FirstName'))
-        lead.last_name = unicode(rec.get('LastName'))
-        lead.phone = unicode(rec.get('Phone'))
-
-        lead.first_name_optional = unicode(rec.get('First_Name_optional__c'))
-        lead.last_name_optional = unicode(rec.get('Last_Name_optional__c'))
-        lead.phone_optional = unicode(rec.get('Phone_optional__c'))
-        lead.email_optional = unicode(rec.get('Email_optional__c'))
-        lead.eto_ldap = unicode(rec.get('Additional_LDAP__c'))
-
-        # check if column is formatted to date type
-        # if it is of date type, convert to datetime object
-        date_of_installation = rec.get('Date_of_installation__c')
-        date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
-        lead.date_of_installation = date_of_installation
-
-        appointment_date = rec.get('Appointment_Date__c')
-        appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
-        lead.appointment_date = appointment_date
-
-        if rec.get('IST_TIME_N__c'):
-            appointment_date_in_ist = rec.get('IST_TIME_N__c')
-            appointment_date_in_ist = SalesforceApi.salesforce_date_to_datetime_format(appointment_date_in_ist)
-            lead.appointment_date_in_ist = appointment_date_in_ist
-
-        first_contacted_on = rec.get('X1st_Contact_on__c')
-        first_contacted_on = SalesforceApi.salesforce_date_to_datetime_format(first_contacted_on)
-        lead.first_contacted_on = first_contacted_on
-
-        # Rescheduled Appointments
-        rescheduled_appointment = rec.get('Rescheduled_Appointments__c')
-        rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
-        lead.rescheduled_appointment = rescheduled_appointment
-
-        # Rescheduled Appointments in IST
-        rescheduled_appointment_in_ist = rec.get('Reschedule_IST__c')
-        rescheduled_appointment_in_ist = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment_in_ist)
-        lead.rescheduled_appointment_in_ist = rescheduled_appointment_in_ist
-
-        time_zone = rec.get('Time_Zone__c') if rec.get('Time_Zone__c') else ''
-        lead.time_zone = time_zone
-
-        try:
-            lead.dials = int(rec.get('qbdialer__Dials__c'))
-        except Exception:
-            lead.dials = 0
-
-        lead.lead_sub_status = rec.get('Lead_Sub_Status__c')
-
-        all_regalix_comment = unicode(rec.get('All_Regalix_Comments__c')).encode('unicode_escape')
-        # all_regalix_comment = all_regalix_comment.replace('-', '').replace('\\n', ' ').replace('\\r', '')
-
-        lead.regalix_comment = all_regalix_comment
-        lead.google_comment = unicode(rec.get('Google_Comment__c')).encode('unicode_escape')
-
-        lead.code_1 = rec.get('Code__c') if rec.get('Code__c') else ''
-        lead.url_1 = rec.get('URL__c') if rec.get('URL__c') else ''
-        lead.type_1 = rec.get('Code_Type__c') if rec.get('Code_Type__c') else ''
-        lead.comment_1 = rec.get('Comment_1__c') if rec.get('Comment_1__c') else ''
-
-        lead.team = team
-        lead.sf_lead_id = sf_lead_id
-
-        # Calculate TAT for each lead
-        tat = 0
-        if lead.lead_status == 'Implemented':
-            if lead.team in settings.SERVICES:
-                tat = ReportService.get_tat_by_implemented_for_service(
-                    lead.date_of_installation, lead.created_date)
+            # Lead owner name
+            owner_id = rec.get('OwnerId')
+            if owner_id and owner_id in owners_list:
+                details = owners_list.get(owner_id)
+                lead_owner_name = details.get('name')
+                lead_owner_email = details.get('email')
             else:
-                tat = ReportService.get_tat_by_implemented(
-                    lead.date_of_installation, lead.appointment_date, lead.created_date)
-        else:
-            if lead.type_1 in ['WPP', 'WPP - Nomination']:
-                tat = ReportService.get_tat_by_implemented(
-                    lead.date_of_installation, lead.appointment_date, lead.created_date)
+                try:
+                    user_details = sf.User.get(owner_id)
+                    lead_owner_name = user_details.get('Name')
+                    lead_owner_email = user_details.get('Email')
+                except ObjectDoesNotExist:
+                    lead_owner_name = "%s %s" % (settings.DEFAULT_LEAD_OWNER_FNAME, settings.DEFAULT_LEAD_OWNER_LNAME)
+                    lead_owner_email = settings.DEFAULT_LEAD_OWNER_EMAIL
+
+            # Team
+            team = rec.get('Team__c') if rec.get('Team__c') else ''
+
+            # Below information will be created if its a new lead or else the information will be updated
+            lead.google_rep_name = rep_name
+            lead.google_rep_email = rep_email if rep_email else settings.DEFAULT_LEAD_OWNER_EMAIL
+
+            if rep_email and rep_name:
+                # Save Google representatives information to Database
+                try:
+                    GoogeRepresentatives.objects.get(email=rep_email)
+                except ObjectDoesNotExist:
+                    google_rep = GoogeRepresentatives()
+                    rep_name = rep_name.split(' ')
+                    google_rep.first_name = unicode(rep_name[0])
+                    google_rep.last_name = unicode((' ').join(rep_name[1:]))
+                    google_rep.email = unicode(rep_email)
+                    google_rep.team = team
+                    google_rep.save()
+
+            # Save Regalix representatives information to Database
+            if lead_owner_email and lead_owner_name:
+                try:
+                    RegalixRepresentatives.objects.get(email=lead_owner_email)
+                except ObjectDoesNotExist:
+                    regalix_rep = RegalixRepresentatives()
+                    regalix_rep.name = lead_owner_name
+                    regalix_rep.email = lead_owner_email
+                    regalix_rep.team = team
+                    regalix_rep.save()
+
+            # check if column is formatted to date type
+            # if it is of date type, convert to datetime object
+            created_date = rec.get('CreatedDate')
+            created_date = SalesforceApi.salesforce_date_to_datetime_format(created_date)
+            if not created_date:
+                created_date = datetime.utcnow()
+
+            lead.created_date = created_date
+
+            try:
+                lead.ecommerce = int(rec.get('E-commerce'))
+            except Exception:
+                lead.ecommerce = 0
+
+            lead.lead_owner_name = lead_owner_name if lead_owner_name else "%s %s" % (settings.DEFAULT_LEAD_OWNER_FNAME,
+                                                                                      settings.DEFAULT_LEAD_OWNER_LNAME)
+            lead.lead_owner_email = lead_owner_email if lead_owner_email else settings.DEFAULT_LEAD_OWNER_EMAIL
+            lead.company = unicode(rec.get('Company'))
+            lead.country = rec.get('Location__c')
+
+            cid = rec.get('Customer_ID__c')
+            if type(cid) is float:
+                lead.customer_id = int(cid)
             else:
-                tat = ReportService.get_tat_by_first_contacted_on(
-                    lead.first_contacted_on, lead.appointment_date, lead.created_date)
-        lead.tat = tat
-        # to store values in leads report model
-        update_leads_reports(lead)
-        try:
-            lead.save()
-            if is_new_lead:
-                new_lead_saved += 1
+                lead.customer_id = cid
+
+            lead.first_name = unicode(rec.get('FirstName'))
+            lead.last_name = unicode(rec.get('LastName'))
+            lead.phone = unicode(rec.get('Phone'))
+
+            lead.first_name_optional = unicode(rec.get('First_Name_optional__c'))
+            lead.last_name_optional = unicode(rec.get('Last_Name_optional__c'))
+            lead.phone_optional = unicode(rec.get('Phone_optional__c'))
+            lead.email_optional = unicode(rec.get('Email_optional__c'))
+            lead.eto_ldap = unicode(rec.get('Additional_LDAP__c'))
+
+            # check if column is formatted to date type
+            # if it is of date type, convert to datetime object
+            date_of_installation = rec.get('Date_of_installation__c')
+            date_of_installation = SalesforceApi.salesforce_date_to_datetime_format(date_of_installation)
+            lead.date_of_installation = date_of_installation
+
+            appointment_date = rec.get('Appointment_Date__c')
+            appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
+            lead.appointment_date = appointment_date
+
+            if rec.get('IST_TIME_N__c'):
+                appointment_date_in_ist = rec.get('IST_TIME_N__c')
+                appointment_date_in_ist = SalesforceApi.salesforce_date_to_datetime_format(appointment_date_in_ist)
+                lead.appointment_date_in_ist = appointment_date_in_ist
+
+            first_contacted_on = rec.get('X1st_Contact_on__c')
+            first_contacted_on = SalesforceApi.salesforce_date_to_datetime_format(first_contacted_on)
+            lead.first_contacted_on = first_contacted_on
+
+            # Rescheduled Appointments
+            rescheduled_appointment = rec.get('Rescheduled_Appointments__c')
+            rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
+            lead.rescheduled_appointment = rescheduled_appointment
+
+            # Rescheduled Appointments in IST
+            rescheduled_appointment_in_ist = rec.get('Reschedule_IST__c')
+            rescheduled_appointment_in_ist = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment_in_ist)
+            lead.rescheduled_appointment_in_ist = rescheduled_appointment_in_ist
+
+            time_zone = rec.get('Time_Zone__c') if rec.get('Time_Zone__c') else ''
+            lead.time_zone = time_zone
+
+            try:
+                lead.dials = int(rec.get('qbdialer__Dials__c'))
+            except Exception:
+                lead.dials = 0
+
+            lead.lead_sub_status = rec.get('Lead_Sub_Status__c')
+
+            all_regalix_comment = unicode(rec.get('All_Regalix_Comments__c')).encode('unicode_escape')
+            # all_regalix_comment = all_regalix_comment.replace('-', '').replace('\\n', ' ').replace('\\r', '')
+
+            lead.regalix_comment = all_regalix_comment
+            lead.google_comment = unicode(rec.get('Google_Comment__c')).encode('unicode_escape')
+
+            lead.code_1 = rec.get('Code__c') if rec.get('Code__c') else ''
+            lead.url_1 = rec.get('URL__c') if rec.get('URL__c') else ''
+            lead.type_1 = rec.get('Code_Type__c') if rec.get('Code_Type__c') else ''
+            lead.comment_1 = rec.get('Comment_1__c') if rec.get('Comment_1__c') else ''
+
+            lead.team = team
+            lead.sf_lead_id = sf_lead_id
+
+            # Calculate TAT for each lead
+            tat = 0
+            if lead.lead_status == 'Implemented':
+                if lead.team in settings.SERVICES:
+                    tat = ReportService.get_tat_by_implemented_for_service(
+                        lead.date_of_installation, lead.created_date)
+                else:
+                    tat = ReportService.get_tat_by_implemented(
+                        lead.date_of_installation, lead.appointment_date, lead.created_date)
             else:
-                exist_lead_saved += 1
-        except Exception as e:
-            print lead.sf_lead_id, e
-            if is_new_lead:
-                new_lead_failed += 1
-            else:
-                exist_lead_failed += 1
+                if lead.type_1 in ['WPP', 'WPP - Nomination']:
+                    tat = ReportService.get_tat_by_implemented(
+                        lead.date_of_installation, lead.appointment_date, lead.created_date)
+                else:
+                    tat = ReportService.get_tat_by_first_contacted_on(
+                        lead.first_contacted_on, lead.appointment_date, lead.created_date)
+            lead.tat = tat
+            # to store values in leads report model
+            update_leads_reports(lead)
+            try:
+                lead.save()
+                if is_new_lead:
+                    new_lead_saved += 1
+                else:
+                    exist_lead_saved += 1
+            except Exception as e:
+                print lead.sf_lead_id, e
+                if is_new_lead:
+                    new_lead_failed += 1
+                else:
+                    exist_lead_failed += 1
 
     logging.info("**********************************************************")
     logging.info("Total leads saved to our DB: %s" % (total_leads))

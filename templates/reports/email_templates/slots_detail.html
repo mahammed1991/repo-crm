@@ -32,10 +32,14 @@
         <col width="26">
     </colgroup>
     <tbody style=""; >
-        <tr style="height:73px;">     
-            <td style="padding:16px 3px 2px 200px;font-size:200%;color:#e60000;" rowspan="1" colspan="7">Utilization Dashboard-{{mail_trigerring_date}} </td>
+        <tr style="height:30px;">   
+            <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td>  
+            <td style="padding:16px 1px 2px 162px;font-size:200%;border:1px solid #A9A9A9;" rowspan="1" colspan="7">
+            <span style="color:#e60000; width:100%;">Utilization Dashboard-{{mail_trigerring_date}}</span></td>
         </tr>
-      
+       <tr>
+           <td style="height:21px;"></td>
+       </tr>
         <tr style="height:21px;font-size: 16px;">
             <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Tag Teams</td>
@@ -76,8 +80,8 @@
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Booked</td>
             <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Utilization </td>
           </tr>
-                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+               <!--  <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td> -->
+                <!-- <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td> -->
 
         {% for v in shopp %}
             <tr style="height:21px;">
@@ -92,56 +96,26 @@
                 {% endfor %}
             </tr>
         {% endfor %}
-
-         <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align:left;font-size: 16px;">SHOPPING - TOTAL</td>
+    <tr>
+        <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+        <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align:left;font-size: 16px;">SHOPPING - TOTAL</td>
             {% for key,value in shopping_total_sum_sorted  %}
                 <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;font-size: 16px;">{{value}}</td>
             {% endfor %}
+    </tr>
 
-            
+    <tr>
+        <td style="height:21px;"></td>
+    </tr>
 
-    </tbody>
+    <tr style="height:18px;">   
+        <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td>  
+        <td style="background-color:#f3f3f3;padding:2px 1px 2px 26px;font-size:15px;
+        text-align:center;color:#b7b7b7;border: 1px solid #A9A9A9" rowspan="1" colspan="7">
+        Copyright © 2016 Regalix Inc. All rights reserved.</td>
+    </tr>
+         
+
+ </tbody>
 </table>
-<table cellspacing="0" cellpadding="0" dir="ltr" style="table-layout:center;font-size:13px;font-family:Arial;vertical-align:middle;margin-left:15px; width:109%;">
- <colgroup>
-        <col width="26">
-        <col width="306">
-        <col width="100">
-        <col width="100">
-        <col width="100">
-        <col width="26">
-        <col width="306">
-        <col width="100">
-        <col width="100">
-        <col width="100">
-        <col width="26">
-    </colgroup>
-    <tbody>
 
-    <tr style="height:21px;">
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;border-bottom:1px solid #b7b7b7;"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-        </tr>
-        <tr style="height:21px;">
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;background-color:#f3f3f3;color:#b7b7b7;text-align:center;" rowspan="1" colspan="9">  Copyright © 2016 Regalix Inc. All rights reserved.</td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-        </tr>
-        <tr style="height:21px;">
-            <td style="padding:2px 3px 2px 3px;"></td>
-            <td style="padding:2px 3px 2px 3px;color:#b7b7b7;text-align:center;" rowspan="1" colspan="9"></td>
-            <td style="padding:2px 3px 2px 3px;"></td>
-        </tr>
-     
-    </tbody>
-</table>
