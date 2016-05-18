@@ -124,7 +124,7 @@
 
     <p id="display_block_error_picasso" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for a Picasso Audit. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
 
-    <p id="display_block_error_both" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for both Audit. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
+    <p id="display_block_error_both" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for both Audits. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
 
     <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">The Customer ID that you have entered is not eligible for an Audit at this time. Please enter another Customer ID or write to <a href="mailto:website-audit-support@google.com" style="color:#2763c9;">website-audit-support@google.com</a> for more information!</b> </p>
     
@@ -277,6 +277,7 @@
       <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
       <p id="display_url_has_space" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Space</b> </p>
       <p id="display_invalid_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid URL</b> </p>
+      <p id="invalid_url_competitor" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid Competitor URL</b> </p>
 
       <p id="display_error_for_email_fields" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please enter valid email address</b> </p>
     <div class="btns text-center" id="submit_buttons">
@@ -358,8 +359,11 @@ function checkout(){
       data: {'cid': cidElem, 'url': linkhost},
       dataType: 'JSON',
       success:function(data){
+        $('#bolt').removeClass('active');
+        $('#picasso').addClass('active');
+
         if(data['status'] == 'success'){
-          // abc(data);
+         
           if(data['type'] == 'bolt'){
             $('#display_block_error_bolt').show();
             $('#formsubmit').prop('disabled', false);
@@ -394,22 +398,26 @@ function checkout(){
 // switching button enable disable
 
 $('.common').click(function(){
-  if ($("li#picasso").hasClass("active")){
-    if($('#display_block_error_picasso').is(':visible')){
+  if ($('#display_block_error_picasso').is(':visible')){
+    if($("li#picasso").hasClass("active")){
+      $('#formsubmit').prop('disabled', false);
+    }
+
+    else{
+     $('#formsubmit').prop('disabled', true);
+    }
+  }
+
+  else if($('#display_block_error_bolt').is(':visible') ){
+    if($("li#bolt").hasClass("active")){
       $('#formsubmit').prop('disabled', false);
     }
     else{
       $('#formsubmit').prop('disabled', true);
     }
   }
-
-  else if($("li#bolt").hasClass("active")){
-    if($('#display_block_error_bolt').is(':visible')){
-      $('#formsubmit').prop('disabled', false);
-    }
-    else{
-      $('#formsubmit').prop('disabled', true);
-    }
+  else{
+    $('#formsubmit').prop('disabled', false);
   }
           
 });
