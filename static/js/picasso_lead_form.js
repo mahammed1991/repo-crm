@@ -288,13 +288,16 @@ $('#bolt').click(function(){
 
 $('#picasso').click(function(){
  $('.for-bolt').hide();
-})
+});
+
 
 function resetPicasso() {
+  $('#additional_notes').val('');
   $('.mdl-checkbox').removeClass('is-checked');
 }
 
 function resetBolt() {
+   $('#additional_notes').val(''); 
   $('.mdl-checkbox').removeClass('is-checked');
 }
 /// code for restricted CID's
@@ -337,4 +340,38 @@ function validateCorpNCaseField()
     $('#display_error_for_contact_mail').hide();
   }
 }
-/// end of code for restricted CID's
+
+function optSelect(event) {
+    if($('#team').find('option:selected').attr("class") == 'A' || $('#team').find('option:selected').attr("class") == 'C'){
+      if(this.options[this.selectedIndex].text != 'English'){
+        $('#checkbox33').removeClass('is-checked');
+        $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
+        $('.add_bg').css('background-color','');
+        $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
+        $('.add_border').css({"border-color": "grey", "border-width":"2px", "border-style":"solid"});
+        $("#advertiser_email").attr("readonly","readonly");
+        $('#checkbox3').attr('disabled','disabled');
+      }
+      else{
+        $("#advertiser_email").attr("readonly",false);
+        $('#checkbox3').attr('disabled', true);
+        $('#checkbox33').addClass('is-checked');
+        $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
+        $('.add_bg').css('background-color','grey');
+        
+      }
+    }
+    if($('#team').find('option:selected').attr("class") == 'B'){
+      if(this.options[this.selectedIndex].text != 'English'){
+        $("#advertiser_email").attr("readonly",true);
+        $('#checkbox3').attr('disabled', true);
+      }
+      else{
+        $("#advertiser_email").attr("readonly",false);
+        $('#checkbox3').attr('disabled', false);
+      }
+    }
+}
+
+  
+
