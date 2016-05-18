@@ -3194,11 +3194,37 @@ def get_picasso_lead(request):
     if request.is_ajax():
         status_dict = dict()
         cid = request.GET.get('cid')
-
         form_url = request.GET.get('url')
         form_url_filter = form_url.replace('www.','')
-        picasso_lead = PicassoLeads.objects.filter(customer_id=cid)
-        
+        current_date = datetime.utcnow()
+        quarter_one = [1, 2 ,3]
+        quarter_two = [4, 5, 6]
+        quarter_three = [7, 8, 9]
+        quarter_four = [10, 11, 12]
+        month_value = current_date.month
+
+        if month_value in quarter_one:
+            start_date = datetime(((current_date.year) - 1 ), 10, 01)
+            end_date = datetime(((current_date.year) - 1 ), 3, 31, 23, 59, 59)
+
+        if month_value in quarter_two:
+            start_date = datetime(current_date.year, 01, 01)
+            end_date = datetime(current_date.year, 6, 30, 23, 59, 59)
+
+        if month_value in quarter_three:
+            start_date = datetime(current_date.year, 04, 01)
+            end_date = datetime(current_date.year, 9, 30, 23, 59, 59)
+
+        if month_value in quarter_four:
+            start_date = datetime(current_date.year, 07, 01)
+            end_date = datetime(current_date.year, 12, 31, 23, 59, 59)
+        picasso_lead = PicassoLeads.objects.filter(customer_id=cid).filter(customer_id=cid).filter(created_date__gte=start_date, created_date__lte=end_date)       
+        bolt = 0
+        picasso = 0
+        both = 0
+        bolt = len(picasso_lead)
+        picasso = len(picasso_lead)
+        both = len(picasso_lead)
         if picasso_lead:
             for each_lead in picasso_lead:
                 each_lead_url = each_lead.url_1
@@ -3211,11 +3237,22 @@ def get_picasso_lead(request):
                     each_lead_url = '{uri.path}'.format(uri=each_lead_url)
                     each_lead_url = each_lead_url.split('/')[0]
                 if form_url_filter == each_lead_url:
-                    status_dict['status'] = 'success'
-                    break
-                else:
+                    if bolt == 1 and each_lead.type_1 == 'BOLT':
+                        status_dict['type'] = 'bolt'
+                        status_dict['status'] = 'success'                       
+                        break;
+                    elif picasso == 1 and each_lead.type_1 == 'Picasso':
+                        status_dict['type'] = 'picasso'
+                        status_dict['status'] = 'success'                       
+                        break;
+                    elif both == 2:
+                        status_dict['type'] = 'both'
+                        status_dict['status'] = 'success'                       
+                        break;
+                else:                  
                     status_dict['status'] = 'failure'
         else:
+            
             status_dict['status'] = 'failure'
 
 

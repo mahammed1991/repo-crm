@@ -120,7 +120,11 @@
       </div>
 
     </div>
-    <p id="display_block_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for treatment. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
+    <p id="display_block_error_bolt" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for a Bolt Audit. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
+
+    <p id="display_block_error_picasso" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for a Picasso Audit. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
+
+    <p id="display_block_error_both" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for both Audit. You can find more details at <a href="https://goto.google.com/PicassoDash/" target="_blank" style="color:#2763c9">go/PicassoDash</a></b> </p>
 
     <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #DD7E6B;width: 850px;margin:auto;margin-bottom:20px;">The Customer ID that you have entered is not eligible for an Audit at this time. Please enter another Customer ID or write to <a href="mailto:website-audit-support@google.com" style="color:#2763c9;">website-audit-support@google.com</a> for more information!</b> </p>
     
@@ -144,8 +148,8 @@
     
     <div class="row">
     <ul class="nav nav-tabs">
-      <li id="picasso" class="active" onclick="resetPicasso()"><a data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
-      <li id="bolt" style="margin-left:30px;" onclick="resetBolt()"><a data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
+      <li id="picasso" class="active" onclick="resetPicasso()"><a class="common" data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
+      <li id="bolt" style="margin-left:30px;" onclick="resetBolt()"><a class="common" data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
     </ul>
     <div class="tab-content">
       <div class="container-fluid"><br />
@@ -156,8 +160,9 @@
           <div class="row">
             <div class="col-md-6">
               <label for="language_selector">Language Selector</label>
-                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language">
+                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language" onchange="optSelect.call(this, event)">
                   <option value="English">English</option>
+                  <option value="German">German</option>
                 </select>
             </div>
            <div class="col-md-6">
@@ -203,7 +208,7 @@
           </div>
 
 
-          <div class="std-sub-title  for-bolt">Please provide two Competitor URLs of your advertiser (Optional)</div>
+          <div class="std-sub-title  for-bolt">Please provide two Competitor URLs of your advertiser (Optional but you cannot provide just one competitor)</div>
 
           <div class="row for-bolt" >
             <div class="col-md-6">
@@ -334,7 +339,6 @@ function checkout(){
   $('#display_error_for_email_fields').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
-  var ctypeElem = $('#ctype1').val().trim();
   if(cidElem && urlElem){
     if(urlElem.indexOf('https://') > -1){
       var link = getLink(urlElem);
@@ -351,16 +355,29 @@ function checkout(){
     $.ajax({
       url: "/leads/get-picasso-lead",
       type: "GET",
-      data: {'cid': cidElem, 'url': linkhost, 'ctype': ctypeElem},
+      data: {'cid': cidElem, 'url': linkhost},
       dataType: 'JSON',
       success:function(data){
         if(data['status'] == 'success'){
-          $('#display_block_error').show();
-          $('#formsubmit').prop('disabled', true);
+          // abc(data);
+          if(data['type'] == 'bolt'){
+            $('#display_block_error_bolt').show();
+            $('#formsubmit').prop('disabled', false);
+          }
+          else if(data['type'] == 'picasso'){
+            $('#display_block_error_picasso').show();
+            $('#formsubmit').prop('disabled', true);
+          }
+          else if(data['type'] == 'both'){
+            $('#display_block_error_both').show();
+            $('#formsubmit').prop('disabled', true);
+          }
           dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url.value });
         }else{
           
-          $('#display_block_error').hide();
+          $('#display_block_error_bolt').hide();
+          $('#display_block_error_picasso').hide();
+          $('#display_block_error_both').hide();
           $('#formsubmit').prop('disabled', false);
         }
       },
@@ -374,5 +391,27 @@ function checkout(){
   checkID();
 }
 
+// switching button enable disable
+
+$('.common').click(function(){
+  if ($("li#picasso").hasClass("active")){
+    if($('#display_block_error_picasso').is(':visible')){
+      $('#formsubmit').prop('disabled', false);
+    }
+    else{
+      $('#formsubmit').prop('disabled', true);
+    }
+  }
+
+  else if($("li#bolt").hasClass("active")){
+    if($('#display_block_error_bolt').is(':visible')){
+      $('#formsubmit').prop('disabled', false);
+    }
+    else{
+      $('#formsubmit').prop('disabled', true);
+    }
+  }
+          
+});
 </script>
 {% endblock main_js %}
