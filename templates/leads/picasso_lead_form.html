@@ -178,25 +178,25 @@
             <div class="col-md-6">
               <label for="picasso_objective">Objective</label></br>
               <div class="checkboxvalidation" style="height:95px;">
-                <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
                 </label>
-                <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:208px;">
+                <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:208px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry (Generate Leads)</span></br>
                 </label>
-                  <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                  <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
                 </label>
-                <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:180px;">
+                <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:180px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
                 </label>
-                <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
                 </label>
-                 <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
-                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
+                 <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
+                  <input class="mdl-checkbox__input picasso_objective " type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
                 </label>
-                 <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:170px;">
+                 <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
                 </label>
               </div>
@@ -212,11 +212,11 @@
 
           <div class="row for-bolt" >
             <div class="col-md-6">
-             <label for="comp_url_11" id="url_label_id">Competitor URL 1</label>
+             <label for="comp_url_1" id="url_label_id">Competitor URL 1</label>
               <input type="text" class="form-control" id="comp_url_1" name="url2" placeholder="Competitor URL 1">
             </div>
            <div class="col-md-6">
-             <label for="comp_url_22" id="url_label_id">Competitor URL 2</label>
+             <label for="comp_url_2" id="url_label_id">Competitor URL 2</label>
               <input type="text" class="form-control" id="comp_url_2" name="url3" placeholder="Competitor URL 2">
             </div>
           </div>
@@ -275,9 +275,14 @@
       <p id="display_error_for_objective" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select atleast one objective</b> </p>
       
       <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
+      
       <p id="display_url_has_space" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Space</b> </p>
+      
       <p id="display_invalid_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid URL</b> </p>
-      <p id="invalid_url_competitor" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid Competitor URL</b> </p>
+      
+      <p id="invalid_competitor_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid Competitor URL</b> </p>
+
+      <p id="display_error_for_same_competitor_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Competitor URLs should be unique</b> </p>
 
       <p id="display_error_for_email_fields" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please enter valid email address</b> </p>
     <div class="btns text-center" id="submit_buttons">
@@ -332,12 +337,17 @@ $('#url').focusin(function(){
 });
 
 function checkout(){
+  $('#display_block_error_picasso').hide();
+  $('#display_block_error_bolt').hide();
+  $('#display_block_error_both').hide();
   $('#display_error_for_contact_mail').hide();
   $('#display_error_for_objective').hide();
   $('#display_url_has_space').hide();
   $('#display_url_has_comma').hide();
   $('#display_invalid_url').hide();
   $('#display_error_for_email_fields').hide();
+  $('#invalid_competitor_url').hide();
+  $('#display_error_for_same_competitor_url').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
   if(cidElem && urlElem){
@@ -359,11 +369,8 @@ function checkout(){
       data: {'cid': cidElem, 'url': linkhost},
       dataType: 'JSON',
       success:function(data){
-        $('#bolt').removeClass('active');
-        $('#picasso').addClass('active');
-
         if(data['status'] == 'success'){
-         
+          $('#picasso a').trigger("click");
           if(data['type'] == 'bolt'){
             $('#display_block_error_bolt').show();
             $('#formsubmit').prop('disabled', false);
@@ -398,6 +405,7 @@ function checkout(){
 // switching button enable disable
 
 $('.common').click(function(){
+
   if ($('#display_block_error_picasso').is(':visible')){
     if($("li#picasso").hasClass("active")){
       $('#formsubmit').prop('disabled', false);
@@ -416,10 +424,16 @@ $('.common').click(function(){
       $('#formsubmit').prop('disabled', true);
     }
   }
+
+  else if($('#display_block_error_both').is(':visible') ){
+    $('#formsubmit').prop('disabled', true);
+  }
   else{
     $('#formsubmit').prop('disabled', false);
   }
           
 });
+
+
 </script>
 {% endblock main_js %}
