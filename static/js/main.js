@@ -155,4 +155,28 @@ $('#portalFeedback').submit(function(event){
 
 // Report a bug javascript ends
 
+// clearing bug window after done 
+$("#closing").click(function(){
+    $('#bugfeedbackType').prop('selectedIndex',0);
+    $('#bugcomments').val('');
+    $('#filename').val('');
+});
+
+$("#bug-noti-close").click(function(){
+    $('#bugfeedbackType').prop('selectedIndex',0);
+    $('#bugcomments').val('');
+    $('#filename').val('');
+});
+
+$("#bug-cls-btn").click(function(){
+    $('#bugfeedbackType').prop('selectedIndex',0);
+    $('#bugcomments').val('');
+    $('#filename').val('');
+});
+//end clearing bug window after done 
+
+
+
+
+
 
