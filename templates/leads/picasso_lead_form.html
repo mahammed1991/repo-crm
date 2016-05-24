@@ -8,67 +8,77 @@
 {% block main_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
-  <style type="text/css">
-   .tasks{ margin-bottom: 5px;}
-   .footer{position: relative;}
-   .footer .container-fluid  ul{ line-height: 62px;}
-   .table-container{ min-height:300px;}
-   .tab-content {
-   padding-top: 1px;
-   border-right: 1px solid #ddd;
-   border-left: 1px solid #ddd;
-   border-bottom: 1px solid #ddd;
-   background: #F9FAFC;
+<style type="text/css">
+  .tasks{ margin-bottom: 5px;}
+  .footer{position: relative;}
+  .footer .container-fluid  ul{ line-height: 62px;}
+  .table-container{ min-height:300px;}
+  .tab-content {
+  padding-top: 1px;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background: #F9FAFC;
 
-   }
-   .nav > li > a:hover{
-     border-top-left-radius:1em !important;
-     border-top-right-radius:1em !important;
-   }
-   .nav > #bolt.active > a{
-     background:  #F9FAFC !important;
-     border-top-left-radius:1em;
-     border-top-right-radius:1em;
-     color: #2763c9 !important; 
-   }
-   .nav > #picasso.active > a{
-     background:  #F9FAFC !important;
-     border-top-left-radius:1em;
-     border-top-right-radius:1em;
-     color: #2763c9 !important; 
+  }
+  .list{
+  width: 850px;
+  margin: auto;
+  border-radius: 20px;
+  font-size: 15px;
+  }
+  .error_list{
+  margin-left: 30px; 
+  width: 700px;
+  }
+  ol li{
+  list-style: decimal;
+  }
+  .nav > li > a:hover{
+   border-top-left-radius:1em !important;
+   border-top-right-radius:1em !important;
+  }
+  .nav > #bolt.active > a{
+   background:  #F9FAFC !important;
+   border-top-left-radius:1em;
+   border-top-right-radius:1em;
+   color: #2763c9 !important; 
+  }
+  .nav > #picasso.active > a{
+   background:  #F9FAFC !important;
+   border-top-left-radius:1em;
+   border-top-right-radius:1em;
+   color: #2763c9 !important; 
 
-   }
-   /*li > a:hover {
-     background: #cfe0fc !important;
-   }*/
-   .nav-tabs > li > a {
-     margin-right: 0px !important;
-     width: 485px;
-     font-weight: bold;
-     text-align: center;
-     color: #555 !important; 
-     }
-     .set-tab{
-   padding-left: 30px !important;
-   }
-   .set-tab1{
-   margin-left: 15px !important;
-   }
-    .set-tab2{
-   margin-left: -15px !important;
-   }
-   a {
+  }
+  /*li > a:hover {
+   background: #cfe0fc !important;
+  }*/
+  .nav-tabs > li > a {
+   margin-right: 0px !important;
+   width: 485px;
+   font-weight: bold;
+   text-align: center;
+   color: #555 !important; 
+  }
+  .set-tab{
+  padding-left: 30px !important;
+  }
+  .set-tab1{
+  margin-left: 15px !important;
+  }
+  .set-tab2{
+  margin-left: -15px !important;
+  }
+  a{
    font-weight: 500;
- }
+  }
  .set{
    padding-top: 35px;
- }
- .set1{
-   padding-top: 15px;
- }
- .row-centered{
+  }
+  .row-centered{
    margin: 0px 250px;
- }
+  }
  </style>
 {% endblock main_css %}
 {% block content %}
@@ -107,8 +117,7 @@
    <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
    <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
    <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
-    <div class="row">
-      
+    <div class="row"> 
        <div class="col-md-6">
         <label for="cid">Customer ID</label>
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
@@ -223,7 +232,7 @@
 
 
 
-          <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following:</div>
+          <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following</div>
           <div class="row">
             <div class="col-md-1 set" style="width:20px;">
               <label id="checkbox11" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox1">
@@ -238,7 +247,7 @@
             </div>
 
             <div class="col-md-2 set" style="text-align:center;width:80px;">
-              AND/OR
+              <p>AND/OR</p>
             </div>
 
             <div class="col-md-1 set" style="width:20px;">
@@ -250,13 +259,13 @@
            
             <div class="col-md-4" style="width:429px;">
               <label>My Cases Alias</label>
-              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="My Cases Alias (Ex: fred.fs@google.com)" onfocusout="checkout()">  
+              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="Ex: fred.fs@google.com" onfocusout="checkout()">  
             </div>
 
           </div>
           
           <div class="row row-centered">
-            <div class="col-md-1 set1" style="width:20px;">
+            <div class="col-md-1 set" style="width:20px;">
               <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
                   <input type="checkbox" id="checkbox3" class="mdl-checkbox__input">
                   
@@ -264,27 +273,32 @@
             </div>
             
             <div class="col-md-4" style="width:429px;">
-              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="My Advertiser E-mail (Ex: barney.rubble@dabbadoo.com)">
+            <label>My Advertiser E-mail</label>
+              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="Ex: barney.rubble@dabbadoo.com">
             </div>
-          </div>
-
           </div>
         </div>
       </div>
-       <p id="display_error_for_contact_mail" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select and enter atleast one of your email addresses</b> </p>
-      <p id="display_error_for_objective" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please select atleast one objective</b> </p>
-      
-      <p id="display_url_has_comma" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Comma</b> </p>
-      
-      <p id="display_url_has_space" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">URL contains Space</b> </p>
-      
-      <p id="display_invalid_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid URL</b> </p>
-      
-      <p id="invalid_competitor_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Invalid Competitor URL</b> </p>
+    </div>
+    <div class="list">
+      <ol class="error_list">  
+        <li id="display_error_for_objective" style="display:none;">Please select atleast one objective</b></li>
+        
+        <li id="display_url_has_comma" style="display:none;">URL contains Comma</b></li>
+        
+        <li id="display_url_has_space" style="display:none;">URL contains Space</b></li>
+        
+        <li id="display_invalid_url" style="display:none;">Invalid URL</b></li>
+        
+        <li id="display_error_for_email_fields" style="display:none;">Please enter valid email address</b></li>
 
-      <p id="display_error_for_same_competitor_url" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Competitor URLs should be unique</b> </p>
+        <li id="display_error_for_same_competitor_url" style="display:none;">Competitor URLs should be different</b></li>
 
-      <p id="display_error_for_email_fields" style="display:none;border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #E0A3A3;width: 850px;margin: 20px auto;">Please enter valid email address</b> </p>
+        <li id="display_error_for_contact_mail" style="display:none;">Please select and enter atleast one of your email addresses</b></li>
+
+        <li id="display_error_for_cases_alias" style="display:none;">Please enter valid google email address cases alias</b></li>
+      </ol>
+    </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
@@ -306,6 +320,10 @@
 <script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
+ $('#formsubmit').click(function(){
+  $('.list').css('background','#E0A3A3');
+  $('.error_list').css('margin-top','20px').css('padding','10px');
+ });
   $(document).ready(function(){
     olark('api.box.hide');
 
@@ -337,6 +355,8 @@ $('#url').focusin(function(){
 });
 
 function checkout(){
+  $('.list').css('background','none');
+  $('.error_list').css('margin-top','0px').css('padding','0px');
   $('#display_block_error_picasso').hide();
   $('#display_block_error_bolt').hide();
   $('#display_block_error_both').hide();
@@ -346,7 +366,8 @@ function checkout(){
   $('#display_url_has_comma').hide();
   $('#display_invalid_url').hide();
   $('#display_error_for_email_fields').hide();
-  $('#invalid_competitor_url').hide();
+  $('#display_error_for_cases_alias').hide();
+  /*$('#invalid_competitor_url').hide();*/
   $('#display_error_for_same_competitor_url').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
@@ -397,39 +418,42 @@ function checkout(){
       }
     });
   }else{
-    $('#formsubmit').prop('disabled', false);
+    checkID();
   }
-  checkID();
 }
 
 // switching button enable disable
 
 $('.common').click(function(){
-
-  if ($('#display_block_error_picasso').is(':visible')){
-    if($("li#picasso").hasClass("active")){
-      $('#formsubmit').prop('disabled', false);
-    }
-
-    else{
-     $('#formsubmit').prop('disabled', true);
-    }
-  }
-
-  else if($('#display_block_error_bolt').is(':visible') ){
-    if($("li#bolt").hasClass("active")){
-      $('#formsubmit').prop('disabled', false);
-    }
-    else{
-      $('#formsubmit').prop('disabled', true);
-    }
-  }
-
-  else if($('#display_block_error_both').is(':visible') ){
+  if($('#cid_error').is(':visible')){
     $('#formsubmit').prop('disabled', true);
   }
   else{
-    $('#formsubmit').prop('disabled', false);
+    if ($('#display_block_error_picasso').is(':visible')){
+      if($("li#picasso").hasClass("active")){
+        $('#formsubmit').prop('disabled', false);
+      }
+
+      else{
+       $('#formsubmit').prop('disabled', true);
+      }
+    }
+
+    else if($('#display_block_error_bolt').is(':visible') ){
+      if($("li#bolt").hasClass("active")){
+        $('#formsubmit').prop('disabled', false);
+      }
+      else{
+        $('#formsubmit').prop('disabled', true);
+      }
+    }
+
+    else if($('#display_block_error_both').is(':visible') ){
+      $('#formsubmit').prop('disabled', true);
+    }
+    else{
+      $('#formsubmit').prop('disabled', false);
+    }
   }
           
 });
