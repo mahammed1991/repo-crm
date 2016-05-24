@@ -21,9 +21,6 @@ function validatethis(frm) {
       return false;
     }
 
-    //unique competitor url
-    
-    
     // Google Rep Name Validation
     // grefElem = document.getElementById('gref');
     // validateFiled(grefElem);
@@ -48,21 +45,14 @@ function validatethis(frm) {
 
     objectiveValidation();
 
-  var comp_url1 = $('#comp_url_1').val();
-  var comp_url2 = $('#comp_url_2').val();
-  var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
+    var comp_url1 = $('#comp_url_1').val();
+    var comp_url2 = $('#comp_url_2').val();
+    var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
 
 
-  competitorValidation();
-  /*validateCompURL();*/
-  uniqueCompetitor()
-    //validate competitor url
-
-    /*cmpCompetitorField();
-
-    callCompetitorValidation();
-
-    uniqueCompetitor();*/
+    competitorValidation();
+ 
+    uniqueCompetitor()
     
     
     ValidateUrlField();
@@ -90,32 +80,33 @@ function validatethis(frm) {
 
 
 
-$('#team').change(function(){
+  $('#team').change(function(){
+    $('#adv_mail').attr('hidden',false);
     $("#advertiser_email").val('').attr('hidden',false)
     $('#checkbox33').attr('hidden',false);
     $("#advertiser_email").attr("readonly",false);
     $('#language_selector').prop('selectedIndex',0);
-      $('#Picasso input[type="checkbox"]').attr('disabled', false);
-      var gettingAorC = $(this).find('option:selected').attr("class") == 'A' || $(this).find('option:selected').attr("class") == 'C';
-        if (gettingAorC ){
-        $('#checkbox3').attr('disabled', true);
-        $('#checkbox33').addClass('is-checked');
-        $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
-        $('.add_bg').css('background-color','grey');
-        $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
-        $('.add_border').css('border','grey');
-      }
+    $('#Picasso input[type="checkbox"]').attr('disabled', false);
+    var gettingAorC = $(this).find('option:selected').attr("class") == 'A' || $(this).find('option:selected').attr("class") == 'C';
+    if (gettingAorC ){
+      $('#checkbox3').attr('disabled', true);
+      $('#checkbox33').addClass('is-checked');
+      $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
+      $('.add_bg').css('background-color','grey');
+      $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
+      $('.add_border').css('border','grey');
+    }
 
-      else{
-        var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
-        removingStyle1.removeAttr('style');
-        var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
-        removingStyle2.removeAttr('style');
-        $('#checkbox33').removeClass('is-checked');
-        $('#checkbox3').attr('disabled', false);
-      }
+    else{
+      var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
+      removingStyle1.removeAttr('style');
+      var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
+      removingStyle2.removeAttr('style');
+      $('#checkbox33').removeClass('is-checked');
+      $('#checkbox3').attr('disabled', false);
+    }
 
-});
+  });
 
 
   function validateFiled(elem){
@@ -385,10 +376,12 @@ function optSelect(event) {
         $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
         $('.add_border').css({"border-color": "grey", "border-width":"2px", "border-style":"solid"});
         $("#advertiser_email").val('').attr("readonly",true).attr('hidden',true);
+        $('#adv_mail').attr('hidden',true);
         $('#checkbox3').attr('disabled',true);
         $('#checkbox33').attr('hidden',true);
       }
       else{
+        $('#adv_mail').attr('hidden',false);
         $("#advertiser_email").attr("readonly",false).attr('hidden',false);
         $('#checkbox3').attr('disabled', false);
         $('#checkbox33').attr('hidden',false);
@@ -400,11 +393,13 @@ function optSelect(event) {
     }
     if($('#team').find('option:selected').attr("class") == 'B'){
       if(this.options[this.selectedIndex].text != 'English'){
+        $('#adv_mail').attr('hidden',true);
         $("#advertiser_email").val('').attr("readonly",true).attr('hidden',true);
         $('#checkbox3').attr('disabled', true);
         $('#checkbox33').attr('hidden',true);
       }
       else{
+        $('#adv_mail').attr('hidden',false);
         $("#advertiser_email").attr("readonly",false).attr('hidden',false);
         $('#checkbox3').attr('disabled', false);
         $('#checkbox33').attr('hidden',false);
