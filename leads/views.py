@@ -3232,9 +3232,17 @@ def get_picasso_lead(request):
         bolt = 0
         picasso = 0
         both = 0
-        bolt = len(picasso_lead)
-        picasso = len(picasso_lead)
-        both = len(picasso_lead)
+        for i in picasso_lead:
+            if i.type_1 == 'Picasso':
+                picasso = picasso + 1
+
+            elif i.type_1 == 'BOLT':
+                bolt = bolt + 1
+
+        for j in picasso_lead:
+            if j.type_1 == 'BOLT' or j.type_1 == 'Picasso':
+                both = both + 1
+                
         if picasso_lead:
             for each_lead in picasso_lead:
                 each_lead_url = each_lead.url_1
@@ -3247,15 +3255,15 @@ def get_picasso_lead(request):
                     each_lead_url = '{uri.path}'.format(uri=each_lead_url)
                     each_lead_url = each_lead_url.split('/')[0]
                 if form_url_filter == each_lead_url:
-                    if bolt == 1 and each_lead.type_1 == 'BOLT':
+                    if bolt > 0 and picasso == 0:
                         status_dict['type'] = 'bolt'
                         status_dict['status'] = 'success'                       
                         break;
-                    elif picasso == 1 and each_lead.type_1 == 'Picasso':
+                    elif picasso > 0 and bolt == 0:
                         status_dict['type'] = 'picasso'
                         status_dict['status'] = 'success'                       
                         break;
-                    elif both == 2:
+                    elif bolt != 0 and picasso != 0:
                         status_dict['type'] = 'both'
                         status_dict['status'] = 'success'                       
                         break;
@@ -3314,6 +3322,3 @@ def post_lead_to_google_form(post_data, lead_type):
             leads_data[SalesforceLeads.GOOGLE_FORM_PICASSO_FIELDS.get(element)] = field_value
         leads_data['entry.652078496'] = post_data.getlist('picasso_objective_list[]')
         requests.post(url=google_api_url, data=leads_data)
-
-
-
