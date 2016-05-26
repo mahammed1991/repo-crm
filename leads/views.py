@@ -290,9 +290,8 @@ def wpp_lead_form(request, ref_id=None):
 @login_required
 @csrf_exempt
 def picasso_lead_form(request):
-    if request.user.groups.filter(name='PICASSO'):
-        print(request.user.groups.filter(name='PICASSO'))
-        return redirect('leads.views.get_picasso')
+    if request.user.groups.filter(name='PICASSO-BOLT'):
+        return redirect('leads.views.picasso_bolt_lead_form')
 
     """
     Picasso Lead Submission to Salesforce
@@ -3204,10 +3203,151 @@ def wpp_whitelist_request(request):
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
         return HttpResponse(json.dumps({'status': 'success'}), content_type='application/json')
 
-
 def get_picasso_lead(request):
-    # if request.user.groups.filter(name='PICASSO'):
-    #     return redirect('leads.views.get_picasso')
+    if request.is_ajax():
+        status_dict = dict()
+        cid = request.GET.get('cid')
+        form_url = request.GET.get('url')
+        form_url_filter = form_url.replace('www.','')
+        current_date = datetime.utcnow()
+        quarter_one = [1, 2 ,3]
+        quarter_two = [4, 5, 6]
+        quarter_three = [7, 8, 9]
+        quarter_four = [10, 11, 12]
+        month_value = current_date.month
+
+        if month_value in quarter_one:
+            start_date = datetime(((current_date.year) - 1 ), 10, 01)
+            end_date = datetime(((current_date.year) - 1 ), 3, 31, 23, 59, 59)
+
+        if month_value in quarter_two:
+            start_date = datetime(current_date.year, 01, 01)
+            end_date = datetime(current_date.year, 6, 30, 23, 59, 59)
+
+        if month_value in quarter_three:
+            start_date = datetime(current_date.year, 04, 01)
+            end_date = datetime(current_date.year, 9, 30, 23, 59, 59)
+
+        if month_value in quarter_four:
+            start_date = datetime(current_date.year, 07, 01)
+            end_date = datetime(current_date.year, 12, 31, 23, 59, 59)
+        picasso_lead = PicassoLeads.objects.filter(customer_id=cid).filter(customer_id=cid).filter(created_date__gte=start_date, created_date__lte=end_date)       
+        
+        picasso = 0
+        for i in picasso_lead:
+            if i.type_1 == 'Picasso':
+                picasso = picasso + 1
+        if picasso_lead:
+            for each_lead in picasso_lead:
+                each_lead_url = each_lead.url_1
+                if each_lead_url[0:4] == 'www.':
+                    each_lead_url = each_lead_url.replace('www.','')
+                each_lead_url = urlparse(each_lead_url)
+                if 'http' in each_lead_url or 'https' in each_lead_url:
+                    each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
+                else:
+                    each_lead_url = '{uri.path}'.format(uri=each_lead_url)
+                    each_lead_url = each_lead_url.split('/')[0]
+                if form_url_filter == each_lead_url:
+                    if picasso > 0:
+                        status_dict['type'] = 'picasso'
+                        status_dict['status'] = 'success'                       
+                        break;
+                else:
+                    status_dict['status'] = 'failure'
+        else:
+            status_dict['status'] = 'failure'
+
+
+        if status_dict['status'] == 'success':
+            return HttpResponse(json.dumps(status_dict), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(status_dict), content_type='application/json')
+
+
+@login_required
+@csrf_exempt
+def picasso_bolt_lead_form(request):
+    if not request.user.groups.filter(name='PICASSO-BOLT'):
+        return redirect('leads.views.picasso_lead_form')
+
+    """
+    Picasso Lead Submission to Salesforce
+    """
+    # Check The Rep Status and redirect
+    if request.method == 'POST':
+        post_lead_to_google_form(request.POST, 'mobile_site')
+        if settings.SFDC == 'STAGE':
+            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
+            oid = '00D7A0000008nBH'
+        elif settings.SFDC == 'PRODUCTION':
+            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
+            oid = '00Dd0000000fk18'
+
+        ret_url = ''
+        # Get Basic/Common form field data
+        if settings.SFDC == 'STAGE':
+            basic_data = get_common_sandbox_lead_data(request.POST)
+        else:
+            basic_data = get_common_salesforce_lead_data(request.POST)
+        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+        basic_data['oid'] = oid
+        basic_data['Campaign_ID'] = None
+        ret_url = basic_data['retURL']
+        picasso_data = basic_data
+
+        estimated_tat = ""
+        tat_dict = get_tat_for_picasso('portal')
+        if tat_dict['estimated_date']:
+            estimated_tat = tat_dict['estimated_date'].date()
+            request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
+            request.session[str(request.user.email) + 'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+
+        for key, value in tag_leads.items():
+            if key == 'picasso_objective_list[]':
+                picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
+            elif key == 'unique_ref_id':
+                picasso_data[value] = get_unique_uuid('Picasso')
+            elif key == 'picasso_tat':
+                picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
+            elif key == 'picasso_auto_number':
+                picasso_data[value] = PicassoLeads.objects.all().count()
+            else:
+                picasso_data[value] = request.POST.get(key)
+
+        if request.POST.get('url2') or request.POST.get('url3'):
+            picasso_data['url2'] = request.POST.get('url2')
+            picasso_data['url3'] = request.POST.get('url3')
+
+        response = submit_lead_to_sfdc(sf_api_url, picasso_data)
+        advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
+        # send_calendar_invite_to_advertiser(advirtiser_details, False)
+        if response.status_code == 200:
+            ret_url = basic_data['retURL']
+        else:
+            ret_url = basic_data['errorURL']
+        return redirect(ret_url)
+
+    # Get all location, teams codetypes
+    lead_args = get_basic_lead_data(request)
+    lead_args['teams'] = Team.objects.filter(belongs_to__in=['PICASSO', 'TAG-PICASSO', 'WPP-PICASSO', 'ALL'], is_active=True)
+    # lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
+    lead_args['picasso'] = True
+    tat_dict = get_tat_for_picasso('portal')
+    if tat_dict:
+        lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
+        lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+    return render(
+        request,
+        'leads/picasso_bolt_lead_form.html',
+        lead_args
+    )
+
+
+def get_picasso_bolt_lead(request):
     if request.is_ajax():
         status_dict = dict()
         cid = request.GET.get('cid')
@@ -3331,82 +3471,3 @@ def post_lead_to_google_form(post_data, lead_type):
         requests.post(url=google_api_url, data=leads_data)
 
 
-def get_picasso(request):
-    if not request.user.groups.filter(name='PICASSO'):
-        return redirect('leads.views.picasso_lead_form')
-
-
-    """
-    Picasso Lead Submission to Salesforce
-    """
-    # Check The Rep Status and redirect
-    if request.method == 'POST':
-        post_lead_to_google_form(request.POST, 'mobile_site')
-        if settings.SFDC == 'STAGE':
-            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
-            oid = '00D7A0000008nBH'
-        elif settings.SFDC == 'PRODUCTION':
-            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
-            oid = '00Dd0000000fk18'
-
-        ret_url = ''
-        # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE':
-            basic_data = get_common_sandbox_lead_data(request.POST)
-        else:
-            basic_data = get_common_salesforce_lead_data(request.POST)
-        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
-        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-        basic_data['oid'] = oid
-        basic_data['Campaign_ID'] = None
-        ret_url = basic_data['retURL']
-        picasso_data = basic_data
-
-        estimated_tat = ""
-        tat_dict = get_tat_for_picasso('portal')
-        if tat_dict['estimated_date']:
-            estimated_tat = tat_dict['estimated_date'].date()
-            request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
-            request.session[str(request.user.email) + 'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
-
-        for key, value in tag_leads.items():
-            if key == 'picasso_objective_list[]':
-                picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
-            elif key == 'unique_ref_id':
-                picasso_data[value] = get_unique_uuid('Picasso')
-            elif key == 'picasso_tat':
-                picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
-            elif key == 'picasso_auto_number':
-                picasso_data[value] = PicassoLeads.objects.all().count()
-            else:
-                picasso_data[value] = request.POST.get(key)
-
-        if request.POST.get('url2') or request.POST.get('url3'):
-            picasso_data['url2'] = request.POST.get('url2')
-            picasso_data['url3'] = request.POST.get('url3')
-
-        response = submit_lead_to_sfdc(sf_api_url, picasso_data)
-        advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
-        # send_calendar_invite_to_advertiser(advirtiser_details, False)
-        if response.status_code == 200:
-            ret_url = basic_data['retURL']
-        else:
-            ret_url = basic_data['errorURL']
-        return redirect(ret_url)
-
-    # Get all location, teams codetypes
-    lead_args = get_basic_lead_data(request)
-    lead_args['teams'] = Team.objects.filter(belongs_to__in=['PICASSO', 'TAG-PICASSO', 'WPP-PICASSO', 'ALL'], is_active=True)
-    # lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
-    lead_args['picasso'] = True
-    tat_dict = get_tat_for_picasso('portal')
-    if tat_dict:
-        lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
-        lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
-    return render(
-        request,
-        'leads/picasso_form.html',
-        lead_args
-    )

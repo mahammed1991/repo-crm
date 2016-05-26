@@ -21,12 +21,12 @@ function validatethis(frm) {
       return false;
     }
 
+ 
     // Google Rep Name Validation
     // grefElem = document.getElementById('gref');
     // validateFiled(grefElem);
 
-    cidElem = document.getElementById('cid');
-    validateFiled(cidElem);
+   
     validateCheckBox();
     validateCasesAliasInput();
     removeCasesErrorClass();
@@ -36,8 +36,8 @@ function validatethis(frm) {
     validateCasesEmailField($('#cases_alias'));
     validateEmailField($('#advertiser_email'));
 
-    if(!$(cidElem).val().match(cidFormat)){
-      $(cidElem).addClass('error-box');
+    if(!$('#cid').val().match(cidFormat)){
+      $('#cid').addClass('error-box');
       /*frm.cid.focus();*/
       window.is_error = true;
     }
@@ -66,12 +66,16 @@ function validatethis(frm) {
     validateFiled(teamElem);
 
 
+    cidElem = document.getElementById('cid');
+    validateFiled(cidElem);
+
     // Check If Error in Form
     if(window.is_error){
       focusElem = failedFields[0];
       $(focusElem).focus();
       return false;
     }else{
+      $('.error_list').css({'padding-top':'0px','padding-bottom':'0px'});
       $('#company').val($('#url').val());
       $('#preloaderOverlay').show();
       return true;
@@ -113,9 +117,14 @@ function validatethis(frm) {
     // Validate Form Field
     if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
     $(elem).addClass('error-box');
+    $('#display_error_for_other_fields').show();
     window.failedFields.push(elem);
     window.is_error = true;
     return false;
+  }
+  else{
+    $('#display_error_for_other_fields').hide();
+    return true;
   }
 }
 
@@ -175,15 +184,28 @@ function ValidateUrlField() {
             return true; }
 }
 
+function validateOnlyAdv(){
+   if ($('#advertiser_email').val() == "" || $('#advertiser_email').val() == "0" || !$('#advertiser_email').val()) {
+    $('#advertiser_email').addClass('error-box');
+    $('#display_error_for_adv_mail').show();
+    window.failedFields.push(elem);
+    window.is_error = true;
+    return false;
+  }
+  else{
+    $('#display_error_for_adv_mail').hide();
+    return true;
+  }
+}
 
 function validateEmailField(elem) {
   var check = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   // Validate Email Field
   if($(elem).val()){
     if (!$(elem).val().trim().match(check)) {
-      $(elem).addClass('error-box');
       /*$(elem).focus();*/
       window.is_error = true;
+      $(elem).addClass('error-box');
       $('#display_error_for_email_fields').show();
       return false;
     }
@@ -191,7 +213,12 @@ function validateEmailField(elem) {
       $('#display_error_for_email_fields').hide();
       return true;
     }
+
   }
+   else{
+      $('#display_error_for_email_fields').hide();
+      return true;
+    }
 }
 
 function validateCasesEmailField(elem) {
@@ -232,7 +259,7 @@ function validateCheckBox()
   }
   if(advertiser_email_checkbox.search('is-checked') != -1){
       var advertiser_email = document.getElementById('advertiser_email');
-      validateFiled(advertiser_email);
+      validateOnlyAdv(advertiser_email);
   }
 }
 
@@ -265,7 +292,7 @@ function validateAvertiserEmailInput()
   }
   else{
       $('#checkbox33 .mdl-checkbox__ripple-container').removeClass('error-box');
-        return true;
+      return true;
   }
 }
 
@@ -376,6 +403,7 @@ function optSelect(event) {
         $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
         $('.add_border').css({"border-color": "grey", "border-width":"2px", "border-style":"solid"});
         $("#advertiser_email").val('').attr("readonly",true).attr('hidden',true);
+        $('#display_error_for_adv_mail').hide();
         $('#adv_mail').attr('hidden',true);
         $('#checkbox3').attr('disabled',true);
         $('#checkbox33').attr('hidden',true);
@@ -393,6 +421,7 @@ function optSelect(event) {
     }
     if($('#team').find('option:selected').attr("class") == 'B'){
       if(this.options[this.selectedIndex].text != 'English'){
+        $('#display_error_for_adv_mail').hide();
         $('#adv_mail').attr('hidden',true);
         $("#advertiser_email").val('').attr("readonly",true).attr('hidden',true);
         $('#checkbox3').attr('disabled', true);
@@ -462,13 +491,19 @@ function competitorValidation(){
   
   if(curl1 && !curl2){
     $('#comp_url_2').addClass('error-box');
+    $('#display_error_for_enter_comp_url').show();
     window.is_error = true;
     return false;
   }
   else if(curl2 && !curl1){
     $('#comp_url_1').addClass('error-box');
+     $('#display_error_for_enter_comp_url').show();
     window.is_error = true;
     return false;
+  }
+  else{
+     $('#display_error_for_enter_comp_url').hide();
+     return true;
   }
 }
 
