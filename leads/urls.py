@@ -39,7 +39,7 @@ urlpatterns = patterns(
     url(r'^priority-check/$', views.priority_check),
     url(r'^check-url-priority/$', views.check_url_priority),
     url(r'^report-team/$', views.report_team),
-    url(r'^smb-audits-lead-form/$', views.picasso_lead_form),
+    url(r'^picasso-lead-form/$', views.picasso_lead_form),
     url(r'^picasso-lead-summary/$', views.get_picasso_lead_summary),
     # picasso build wpp form
     url(r'^get-eligible-picasso-lead/$', views.get_eligible_picasso_leads),
@@ -50,5 +50,6 @@ urlpatterns = patterns(
     url(r'^wpp-lead-form/(?P<ref_id>[\w]+)$', views.wpp_lead_form),
     url(r'^wpp-whitelist-request/$', views.wpp_whitelist_request),
     url(r'^get-picasso-lead/$', views.get_picasso_lead),
-    url(r'^picasso-lead-form/$', views.get_picasso),
+    url(r'^get-picasso-bolt-lead/$', views.get_picasso_bolt_lead),
+    url(r'^smb-audits-lead-form/$', views.picasso_bolt_lead_form),
 )

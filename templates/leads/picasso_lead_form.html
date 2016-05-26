@@ -3,7 +3,7 @@
 {% load staticfiles %}
 
 {% block title %}
-  Picasso & Bolt Audit Lead Form
+  Picasso Audit Lead Form
 {% endblock title %}
 {% block main_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
@@ -29,10 +29,9 @@
   }
   .error_list{
   margin-left: 30px; 
-  width: 700px;
   }
-  ol li{
-  list-style: decimal;
+  .error_list li{
+  list-style: circle;
   }
   .nav > li > a:hover{
    border-top-left-radius:1em !important;
@@ -154,16 +153,7 @@
       </div>
     </div>
       
-    
-    <div class="row">
-    <ul class="nav nav-tabs">
-      <li id="picasso" class="active" onclick="resetPicasso()"><a class="common" data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
-      <li id="bolt" style="margin-left:30px;" onclick="resetBolt()"><a class="common" data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
-    </ul>
-    <div class="tab-content">
-      <div class="container-fluid"><br />
-        
-
+  
         <div class="std-sub-title">Advertiser Details</div>
 
           <div class="row">
@@ -217,21 +207,6 @@
           </div>
 
 
-          <div class="std-sub-title  for-bolt">Please provide two Competitor URLs of your advertiser (Optional but you cannot provide just one competitor)</div>
-
-          <div class="row for-bolt" >
-            <div class="col-md-6">
-             <label for="comp_url_1" id="url_label_id">Competitor URL 1</label>
-              <input type="text" class="form-control" id="comp_url_1" name="url2" placeholder="Competitor URL 1">
-            </div>
-           <div class="col-md-6">
-             <label for="comp_url_2" id="url_label_id">Competitor URL 2</label>
-              <input type="text" class="form-control" id="comp_url_2" name="url3" placeholder="Competitor URL 2">
-            </div>
-          </div>
-
-
-
           <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following</div>
           <div class="row">
             <div class="col-md-1 set" style="width:20px;">
@@ -277,11 +252,9 @@
               <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="Ex: barney.rubble@dabbadoo.com">
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+       
     <div class="list">
-      <ol class="error_list">  
+      <ul class="error_list">  
         <li id="display_error_for_objective" style="display:none;">Please select atleast one objective</b></li>
         
         <li id="display_url_has_comma" style="display:none;">URL contains Comma</b></li>
@@ -297,7 +270,11 @@
         <li id="display_error_for_contact_mail" style="display:none;">Please select and enter atleast one of your email addresses</b></li>
 
         <li id="display_error_for_cases_alias" style="display:none;">Please enter valid google email address cases alias</b></li>
-      </ol>
+
+         <li id="display_error_for_other_fields" style="display:none;">Please enter all the mandatory fields</b></li>
+
+          <li id="display_error_for_adv_mail" style="display:none;">Please enter Advertiser Email</b></li>
+      </ul>
     </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
@@ -322,7 +299,7 @@
 <script type="text/javascript">
  $('#formsubmit').click(function(){
   $('.list').css('background','#E0A3A3');
-  $('.error_list').css('margin-top','20px').css('padding','10px');
+  $('.error_list').css({'padding-top':'10px','padding-bottom':'10px'});
  });
   $(document).ready(function(){
     olark('api.box.hide');
@@ -337,8 +314,6 @@
           $('#'+id).val(''); // if checkbox is unchecked then clearing its value
         }
     });
-
-  $('.for-bolt').hide();
 });
 
 function getLink(href){
@@ -356,20 +331,16 @@ $('#url').focusin(function(){
 
 
 function checkout(){
-  $('.list').css('background','none');
-  $('.error_list').css('margin-top','0px').css('padding','0px');
-  $('#display_block_error_picasso').hide();
-  $('#display_block_error_bolt').hide();
-  $('#display_block_error_both').hide();
+ /* $('#display_block_error_picasso').hide();
   $('#display_error_for_contact_mail').hide();
   $('#display_error_for_objective').hide();
   $('#display_url_has_space').hide();
   $('#display_url_has_comma').hide();
   $('#display_invalid_url').hide();
   $('#display_error_for_email_fields').hide();
-  $('#display_error_for_cases_alias').hide();
+  $('#display_error_for_cases_alias').hide();*/
   /*$('#invalid_competitor_url').hide();*/
-  $('#display_error_for_same_competitor_url').hide();
+  /*$('#display_error_for_same_competitor_url').hide();*/
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
   if(cidElem && urlElem){
@@ -391,27 +362,10 @@ function checkout(){
       data: {'cid': cidElem, 'url': linkhost},
       dataType: 'JSON',
       success:function(data){
-        if(data['status'] == 'success'){
-          $('#picasso a').trigger("click");
-          if(data['type'] == 'bolt'){
-            $('#display_block_error_bolt').show();
-            $('#formsubmit').prop('disabled', false);
-          }
-          else if(data['type'] == 'picasso'){
-            $('#display_block_error_picasso').show();
-            $('#formsubmit').prop('disabled', true);
-          }
-          else if(data['type'] == 'both'){
-            $('#display_block_error_both').show();
-            $('#formsubmit').prop('disabled', true);
-          }
+        if(data['status'] == 'success' && data['type'] == 'picasso'){
+          $('#display_block_error_picasso').show();
+          $('#formsubmit').prop('disabled', true);
           dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url.value });
-        }else{
-          
-          $('#display_block_error_bolt').hide();
-          $('#display_block_error_picasso').hide();
-          $('#display_block_error_both').hide();
-          $('#formsubmit').prop('disabled', false);
         }
       },
       failure:function(error) {
@@ -419,45 +373,11 @@ function checkout(){
       }
     });
   }else{
-    checkID();
+    $('#display_block_error_picasso').hide();
+    $('#formsubmit').prop('disabled', false);
   }
+  checkID();
 }
-
-// switching button enable disable
-
-$('.common').click(function(){
-  if($('#cid_error').is(':visible')){
-    $('#formsubmit').prop('disabled', true);
-  }
-  else{
-    if ($('#display_block_error_picasso').is(':visible')){
-      if($("li#picasso").hasClass("active")){
-        $('#formsubmit').prop('disabled', false);
-      }
-
-      else{
-       $('#formsubmit').prop('disabled', true);
-      }
-    }
-
-    else if($('#display_block_error_bolt').is(':visible') ){
-      if($("li#bolt").hasClass("active")){
-        $('#formsubmit').prop('disabled', false);
-      }
-      else{
-        $('#formsubmit').prop('disabled', true);
-      }
-    }
-
-    else if($('#display_block_error_both').is(':visible') ){
-      $('#formsubmit').prop('disabled', true);
-    }
-    else{
-      $('#formsubmit').prop('disabled', false);
-    }
-  }
-          
-});
 
 
 </script>
