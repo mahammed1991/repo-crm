@@ -36,6 +36,16 @@ function validatethis(frm) {
     validateCasesEmailField($('#cases_alias'));
     validateEmailField($('#advertiser_email'));
 
+
+/*    if($('#cid').val() && $('#picasso_pod').val() && $('#team').val())
+    {
+      $('#display_error_for_other_fields').show();
+      window.failedFields.push(elem);
+      return false;
+    }*/
+
+
+
     if(!$('#cid').val().match(cidFormat)){
       $('#cid').addClass('error-box');
       /*frm.cid.focus();*/
@@ -57,8 +67,10 @@ function validatethis(frm) {
     
     ValidateUrlField();
     validateCorpNCaseField();
-
-    podElem = document.getElementById('picasso_pod');
+    validatePodField();
+    validateCidField();
+    validateTeamField();
+    /*podElem = document.getElementById('picasso_pod');
     validateFiled(podElem);
 
 
@@ -67,7 +79,7 @@ function validatethis(frm) {
 
 
     cidElem = document.getElementById('cid');
-    validateFiled(cidElem);
+    validateFiled(cidElem);*/
 
     // Check If Error in Form
     if(window.is_error){
@@ -75,6 +87,7 @@ function validatethis(frm) {
       $(focusElem).focus();
       return false;
     }else{
+      $('#display_error_for_other_fields').hide();
       $('.error_list').css({'padding-top':'0px','padding-bottom':'0px'});
       $('#company').val($('#url').val());
       $('#preloaderOverlay').show();
@@ -113,18 +126,36 @@ function validatethis(frm) {
   });
 
 
-  function validateFiled(elem){
+  function validateCidField(){
     // Validate Form Field
-    if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
-    $(elem).addClass('error-box');
+    if ($('#cid').val() == "" || $('#cid').val() == "0" || !$('#cid').val()) {
+    $('#cid').addClass('error-box');
     $('#display_error_for_other_fields').show();
     window.failedFields.push(elem);
     window.is_error = true;
     return false;
   }
-  else{
-    $('#display_error_for_other_fields').hide();
-    return true;
+}
+
+function validatePodField(){
+    // Validate Form Field
+    if ($('#picasso_pod').val() == "" || $('#picasso_pod').val() == "0" || !$('#picasso_pod').val()) {
+    $('#picasso_pod').addClass('error-box');
+    $('#display_error_for_other_fields').show();
+    window.failedFields.push(elem);
+    window.is_error = true;
+    return false;
+  }
+}
+
+function validateTeamField(){
+    // Validate Form Field
+    if ($('#team').val() == "" || $('#team').val() == "0" || !$('#team').val()) {
+    $('#team').addClass('error-box');
+    $('#display_error_for_other_fields').show();
+    window.failedFields.push(elem);
+    window.is_error = true;
+    return false;
   }
 }
 
@@ -182,6 +213,21 @@ function ValidateUrlField() {
                     }
             $("#url").removeClass('error-box');
             return true; }
+}
+
+function validateOnlyCasesField()
+{
+   if ($('#cases_alias').val() == "" || $('#cases_alias').val() == "0" || !$('#cases_alias').val()) {
+    $('#cases_alias').addClass('error-box');
+    $('#display_error_for_cases_mail').show();
+    window.failedFields.push(elem);
+    window.is_error = true;
+    return false;
+  }
+  else{
+    $('#display_error_for_cases_mail').hide();
+    return true;
+  }
 }
 
 function validateOnlyAdv(){
@@ -255,7 +301,7 @@ function validateCheckBox()
   var advertiser_email_checkbox = $('#checkbox33').attr('class');
   if(cases_alias_checkbox.search('is-checked') != -1){
       var cases_alias = document.getElementById('cases_alias');
-      validateFiled(cases_alias);
+      validateOnlyCasesField(cases_alias);
   }
   if(advertiser_email_checkbox.search('is-checked') != -1){
       var advertiser_email = document.getElementById('advertiser_email');
