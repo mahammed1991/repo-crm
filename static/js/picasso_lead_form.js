@@ -534,28 +534,34 @@ function uniqueCompetitor(){
 function competitorValidation(){
   var curl1 = $('#comp_url_1').val();
   var curl2 = $('#comp_url_2').val();
-  if(!curl1 && !curl2){
-    $('#comp_url_1').addClass('error-box');
-    $('#comp_url_2').addClass('error-box');
-    $('#display_error_for_enter_comp_url').show();
-    window.is_error = true;
-    return false;
+  if($('#bolt').hasClass('active')){ 
+    if(!curl1 && !curl2){
+      $('#comp_url_1').addClass('error-box');
+      $('#comp_url_2').addClass('error-box');
+      $('#display_error_for_enter_comp_url').show();
+      window.is_error = true;
+      return false;
+    }
+    else if(curl1 && !curl2){
+      $('#comp_url_2').addClass('error-box');
+      $('#display_error_for_enter_comp_url').show();
+      window.is_error = true;
+      return false;
+    }
+    else if(curl2 && !curl1){
+      $('#comp_url_1').addClass('error-box');
+       $('#display_error_for_enter_comp_url').show();
+      window.is_error = true;
+      return false;
+    }
+    else{
+       $('#display_error_for_enter_comp_url').hide();
+       return true;
+    }
   }
-  else if(curl1 && !curl2){
-    $('#comp_url_2').addClass('error-box');
-    $('#display_error_for_enter_comp_url').show();
-    window.is_error = true;
-    return false;
-  }
-  else if(curl2 && !curl1){
-    $('#comp_url_1').addClass('error-box');
-     $('#display_error_for_enter_comp_url').show();
-    window.is_error = true;
-    return false;
-  }
-  else{
-     $('#display_error_for_enter_comp_url').hide();
-     return true;
+   else{
+       $('#display_error_for_enter_comp_url').hide();
+       return true;
   }
 }
 
