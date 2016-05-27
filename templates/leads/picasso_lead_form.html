@@ -95,7 +95,7 @@
   border-bottom: 1px solid #ccc;
   padding-bottom: 12px;
   margin-top: 50px;
-  margin-bottom: 20px;">SUBMIT PICASSO/BOLT MOBILE SITE AUDIT REQUEST</h1>
+  margin-bottom: 20px;">SUBMIT PICASSO MOBILE SITE AUDIT REQUEST</h1>
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
@@ -118,12 +118,12 @@
    <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
     <div class="row"> 
        <div class="col-md-6">
-        <label for="cid">Customer ID</label>
+        <label for="cid">Customer ID *</label>
         <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
       </div>
 
       <div class="col-md-6">
-       <label for="url" id="url_label_id">Website URL</label>
+       <label for="url" id="url_label_id">Website URL *</label>
         <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" onfocusout="checkout()">
       </div>
 
@@ -138,12 +138,12 @@
     
     <div class="row">
       <div class="col-md-6">
-        <label for="picasso_pod">POD Name</label>
+        <label for="picasso_pod">POD Name *</label>
         <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
       </div>
 
       <div class="col-md-6">
-        <label for="team">Program name</label>
+        <label for="team">Program name *</label>
         <select class="form-control bgicon" id="team" title="Program Name" name="team">
           <option value="">Select Program</option>
           {% for program in teams %}
@@ -337,23 +337,12 @@ $('#url').focusin(function(){
 function checkout(){
   $('#display_block_error_picasso').hide();
   $('#display_error_for_cases_alias').hide();
- /* $('#display_block_error_picasso').hide();
-  $('#display_error_for_contact_mail').hide();
-  $('#display_error_for_objective').hide();
-  $('#display_url_has_space').hide();
-  $('#display_url_has_comma').hide();
-  $('#display_invalid_url').hide();
-  $('#display_error_for_email_fields').hide();
-  $('#display_error_for_cases_alias').hide();*/
-  /*$('#invalid_competitor_url').hide();*/
-  /*$('#display_error_for_same_competitor_url').hide();*/
+   $('#display_error_for_other_fields').hide();
+
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url').val().trim();
   if(cidElem && urlElem){
-    if(urlElem.indexOf('https://') > -1){
-      var link = getLink(urlElem);
-      var linkhost = link.hostname;
-    }else if(urlElem.indexOf('http://') > -1){
+    if(urlElem.indexOf('http') > -1){
       var link = getLink(urlElem);
       var linkhost = link.hostname;
     }
@@ -362,6 +351,7 @@ function checkout(){
       var link = getLink(urlElem); 
       var linkhost = link.hostname;
     }
+
     $.ajax({
       url: "/leads/get-picasso-lead",
       type: "GET",
