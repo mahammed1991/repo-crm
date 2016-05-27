@@ -253,29 +253,33 @@
             </div>
           </div>
        
-    <div class="list">
-      <ul class="error_list">  
-        <li id="display_error_for_objective" style="display:none;">Please select atleast one objective</b></li>
-        
-        <li id="display_url_has_comma" style="display:none;">URL contains Comma</b></li>
-        
-        <li id="display_url_has_space" style="display:none;">URL contains Space</b></li>
-        
-        <li id="display_invalid_url" style="display:none;">Invalid URL</b></li>
-        
-        <li id="display_error_for_email_fields" style="display:none;">Please enter valid email address</b></li>
+        <div class="list">
+          <ul class="error_list">  
+            <li id="display_error_for_objective" style="display:none;">Please select atleast one objective</b></li>
+            
+            <li id="display_url_has_comma" style="display:none;">URL contains Comma</b></li>
+            
+            <li id="display_url_has_space" style="display:none;">URL contains Space</b></li>
+            
+            <li id="display_invalid_url" style="display:none;">Invalid URL</b></li>
+            
+            <li id="display_error_for_email_fields" style="display:none;">Please enter valid email address</b></li>
 
-        <li id="display_error_for_same_competitor_url" style="display:none;">Competitor URLs should be different</b></li>
+            <li id="display_error_for_same_competitor_url" style="display:none;">Competitor URLs should be different</b></li>
 
-        <li id="display_error_for_contact_mail" style="display:none;">Please select and enter atleast one of your email addresses</b></li>
+            <li id="display_error_for_contact_mail" style="display:none;">Please select and enter atleast one of your email addresses</b></li>
 
-        <li id="display_error_for_cases_alias" style="display:none;">Please enter valid google email address cases alias</b></li>
+            <li id="display_error_for_cases_alias" style="display:none;">Please enter valid google email address cases alias</b></li>
 
-         <li id="display_error_for_other_fields" style="display:none;">Please enter all the mandatory fields</b></li>
+            <li id="display_error_for_other_fields" style="display:none;">Please enter all the mandatory fields</b></li>
 
-          <li id="display_error_for_adv_mail" style="display:none;">Please enter Advertiser Email</b></li>
-      </ul>
-    </div>
+            <li id="display_error_for_adv_mail" style="display:none;">Please enter Advertiser Email</b></li>
+
+            <li id="display_error_for_cases_mail" style="display:none;">Please enter Cases Alias Email</b></li>
+
+            <li id="display_error_for_enter_comp_url" style="display:none;">Please enter Competitor URL</b></li>
+          </ul>
+        </div>
     <div class="btns text-center" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
@@ -331,6 +335,8 @@ $('#url').focusin(function(){
 
 
 function checkout(){
+  $('#display_block_error_picasso').hide();
+  $('#display_error_for_cases_alias').hide();
  /* $('#display_block_error_picasso').hide();
   $('#display_error_for_contact_mail').hide();
   $('#display_error_for_objective').hide();
