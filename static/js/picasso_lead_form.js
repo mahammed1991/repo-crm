@@ -99,7 +99,7 @@ function validatethis(frm) {
 
   $('#team').change(function(){
     $('#adv_mail').attr('hidden',false);
-    $("#advertiser_email").val('').attr('hidden',false)
+    $("#advertiser_email").val('').attr('hidden',false);
     $('#checkbox33').attr('hidden',false);
     $("#advertiser_email").attr("readonly",false);
     $('#language_selector').prop('selectedIndex',0);
@@ -376,7 +376,20 @@ $('#picasso').click(function(){
 
 
 function resetPicasso() {
-  $("#advertiser_email").val('');
+  $('#team').prop('selectedIndex',0);
+  $('#language_selector').prop('selectedIndex',0);
+  $('#adv_mail').attr('hidden',false);
+  $("#advertiser_email").val('').attr('hidden',false);
+  $("#advertiser_email").attr("readonly",false);
+
+  $('#checkbox33').removeClass('is-checked');
+  $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
+  $('.add_bg').css('background-color','');
+  $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
+  $('.add_border').css({"border-color": "grey", "border-width":"2px", "border-style":"solid"});
+  $('#checkbox33').attr('hidden',false);
+  $('#checkbox3').attr("disabled",false);
+  
   $('.checkvalid').removeClass('is-checked');
   $('.picasso_objective').removeProp("checked");
   $('.checkboxvalidation').find('input').val('');
@@ -387,14 +400,26 @@ function resetPicasso() {
 }
 
 function resetBolt() {
-  $("#advertiser_email").val('');
+  $('#team').prop('selectedIndex',0);
+  $('#language_selector').prop('selectedIndex',0);
+  $('#adv_mail').attr('hidden',false);
+  $("#advertiser_email").val('').attr('hidden',false);
+  $("#advertiser_email").attr("readonly",false);
+
+  $('#checkbox33').removeClass('is-checked');
+  $('#checkbox33').find('span.mdl-checkbox__tick-outline').addClass('add_bg');
+  $('.add_bg').css('background-color','');
+  $('#checkbox33').find('span.mdl-checkbox__box-outline').addClass('add_border');
+  $('.add_border').css({"border-color": "grey", "border-width":"2px", "border-style":"solid"});
+  $('#checkbox33').attr('hidden',false);
+  $('#checkbox3').attr("disabled",false);
+  
   $('.checkvalid').removeClass('is-checked');
   $('.picasso_objective').removeProp("checked");
   $('.checkboxvalidation').find('input').val('');
   $('#additional_notes').val('');
   $('#comp_url_1').val('');
   $('#comp_url_2').val('');
-  
 }
 /// code for restricted CID's
 function checkID()
