@@ -3319,7 +3319,7 @@ def picasso_bolt_lead_form(request):
         
         tat_dict = get_tat_for_picasso('portal')
         bolt_tat_dict = get_tat_for_bolt('portal')
-        print bolt_tat_dict
+
 
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
