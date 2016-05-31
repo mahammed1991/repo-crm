@@ -1445,6 +1445,7 @@ def upload_file_handling(request):
                         group = Group.objects.get(name='PICASSO-BOLT')
                         for user in users:
                              user.groups.add(group)
+                    os.unlink(file_path)
                     template_args.update({'csv_file': csv_file.name, 'msg': str(len(users)) + " Users added to Picasso Bolt Group", 'upload_target': upload_target})
                 else:
                     template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
