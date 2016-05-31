@@ -286,7 +286,7 @@ def wpp_lead_form(request, ref_id=None):
         lead_args
     )
 
-import csv
+
 @login_required
 @csrf_exempt
 def picasso_lead_form(request):

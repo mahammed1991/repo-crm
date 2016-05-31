@@ -25,6 +25,7 @@ File Upload
           {% else %}
           <option value="normal_master_list">Master Data Upload</option>
           <option value="csat_report_data">CSAT Report Data</option>
+          <option value="bolt_permission_csv">Bolt Permission CSV</option>
           {% endif %}
         </select>
       </div>
@@ -48,6 +49,14 @@ File Upload
         </div>
     </div>
     </form>
+    
+
+    {% if upload_target == 'bolt_permission_csv' %}
+      <div class="alert alert-success fade in" id="boltmessage">
+        <b> <span> {{ msg }} </span></b>
+      </div>
+    {% endif %}
+    
     <!-- Table Start *******************************************  -->  
     {% else %}
     <div class="row">
