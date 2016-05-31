@@ -376,6 +376,13 @@ $('#picasso').click(function(){
 
 
 function resetPicasso() {
+  $('#cases_alias').val('');
+  $('#checkbox22').removeClass('is-checked');
+  $('#checkbox2').removeProp("checked");
+
+  $('#checkbox11').removeClass('is-checked');
+  $('#checkbox1').removeProp("checked");
+  
   $('#team').prop('selectedIndex',0);
   $('#language_selector').prop('selectedIndex',0);
   $('#adv_mail').attr('hidden',false);
@@ -400,6 +407,13 @@ function resetPicasso() {
 }
 
 function resetBolt() {
+  $('#cases_alias').val('');
+  $('#checkbox22').removeClass('is-checked');
+  $('#checkbox2').removeProp("checked");
+
+  $('#checkbox11').removeClass('is-checked');
+  $('#checkbox1').removeProp("checked");
+
   $('#team').prop('selectedIndex',0);
   $('#language_selector').prop('selectedIndex',0);
   $('#adv_mail').attr('hidden',false);
