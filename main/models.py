@@ -280,6 +280,7 @@ class PortalFeedback(models.Model):
     user = models.ForeignKey(User, related_name='portal_feedback_by')
     feedback_type = models.CharField(max_length=150)
     description = models.TextField()
+    bug_report_url = models.TextField(null=True)
     attachment = models.FileField(upload_to=get_file_path)
     created_date = models.DateTimeField(auto_now_add=True)
 

@@ -1160,6 +1160,7 @@ def report_a_bug(request):
         feedback_details.user = request.user
         feedback_details.feedback_type = str(request.POST['type'])
         feedback_details.description = str(request.POST['comment'])
+        feedback_details.bug_report_url = str(request.POST.get('bug_url'))
         if request.FILES:
             feedback_details.attachment = request.FILES['attachmentfile']
 
