@@ -29,7 +29,7 @@ from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
                           )
 from main.models import UserDetails
-from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso,
+from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso, get_tat_for_bolt,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
 from django.core.files import File
@@ -1640,7 +1640,9 @@ def leads_report(request):
 @login_required
 def thankyou(request):
     """ Thank user after sucessful submitting form to salesforce """
+    
     redirect_page = request.GET.get('n', reverse('main.views.home'))
+    lead_type = request.GET.get('type', None)
     lead_category = redirect_page
     redirect_page_source = {
         '1': reverse('leads.views.lead_form'),
@@ -1661,9 +1663,16 @@ def thankyou(request):
     if str(lead_category) == '4':
         template_args.update({'lead_type': 'WPP'})
     elif str(lead_category) == '6':
-        estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat')
-        no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads')
-        template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
+        estimated_tat = None
+        no_of_inqueue_leads = None
+        if lead_type == "bolt":    
+            estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat_bolt')
+            no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads_bolt')
+            template_args.update({'lead_type': 'Mobile Site Request', 'bolt': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
+        elif lead_type == "picasso":
+            estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat')
+            no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads')
+            template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
     elif str(lead_category) == '8':
         template_args.update({'lead_type': 'Picasso Build Nomination Request', 'nomination': True})
     else:
@@ -2196,6 +2205,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'gedward@regalix-inc.com',
             'anusha.panchikala@regalix-inc.com',
             'michelle.fernandes@regalix-inc.com',
+            'thirumalesh@regalix-inc.com',
         ])
     else:
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
@@ -2208,6 +2218,7 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'vreguri@regalix-inc.com',
             'asarkar@regalix-inc.com',
             'michelle.fernandes@regalix-inc.com',
+            'thirumalesh@regalix-inc.com',
 
         ])
 
@@ -3275,7 +3286,6 @@ def get_picasso_lead(request):
 def picasso_bolt_lead_form(request):
     if not request.user.groups.filter(name='PICASSO-BOLT'):
         return redirect('leads.views.picasso_lead_form')
-
     """
     Picasso Lead Submission to Salesforce
     """
@@ -3301,15 +3311,24 @@ def picasso_bolt_lead_form(request):
         basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
         basic_data['oid'] = oid
         basic_data['Campaign_ID'] = None
-        ret_url = basic_data['retURL']
+        ret_url = basic_data['retURL'] + "&type=bolt"
         picasso_data = basic_data
 
         estimated_tat = ""
+        estimated_bolt_tat = ""
+        
         tat_dict = get_tat_for_picasso('portal')
+        bolt_tat_dict = get_tat_for_bolt('portal')
+
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
             request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
             request.session[str(request.user.email) + 'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+
+        if bolt_tat_dict['estimated_date']:
+            estimated_bolt_tat = bolt_tat_dict['estimated_date'].date()
+            request.session[str(request.user.email) + 'estimated_tat_bolt'] = estimated_bolt_tat
+            request.session[str(request.user.email) + 'no_of_inqueue_leads_bolt'] = bolt_tat_dict['no_of_inqueue_leads']
 
         for key, value in tag_leads.items():
             if key == 'picasso_objective_list[]':
@@ -3317,7 +3336,10 @@ def picasso_bolt_lead_form(request):
             elif key == 'unique_ref_id':
                 picasso_data[value] = get_unique_uuid('Picasso')
             elif key == 'picasso_tat':
-                picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
+                if request.POST.get('ctype1') == 'BOLT':
+                    picasso_data[value] = datetime.strftime(estimated_bolt_tat, '%m/%d/%Y')
+                else:    
+                    picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
             elif key == 'picasso_auto_number':
                 picasso_data[value] = PicassoLeads.objects.all().count()
             else:
@@ -3331,7 +3353,7 @@ def picasso_bolt_lead_form(request):
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         # send_calendar_invite_to_advertiser(advirtiser_details, False)
         if response.status_code == 200:
-            ret_url = basic_data['retURL']
+            ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
         else:
             ret_url = basic_data['errorURL']
         return redirect(ret_url)
@@ -3341,10 +3363,16 @@ def picasso_bolt_lead_form(request):
     lead_args['teams'] = Team.objects.filter(belongs_to__in=['PICASSO', 'TAG-PICASSO', 'WPP-PICASSO', 'ALL'], is_active=True)
     # lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
     lead_args['picasso'] = True
+
     tat_dict = get_tat_for_picasso('portal')
+    bolt_dict = get_tat_for_bolt('portal')
     if tat_dict:
         lead_args['estimated_tat'] = tat_dict['estimated_date'].date()
         lead_args['no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
+    if bolt_dict:
+        lead_args['estimated_tat_bolt'] = bolt_dict['estimated_date'].date()
+        lead_args['no_of_inqueue_leads_bolt'] = bolt_dict['no_of_inqueue_leads']
+
     return render(
         request,
         'leads/picasso_bolt_lead_form.html',

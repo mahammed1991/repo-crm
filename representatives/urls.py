@@ -31,4 +31,8 @@ urlpatterns = patterns(
     url(r'^rep-details/$', views.tat_details),
     url(r'^rep-details/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/$', views.tat_details),
 
+    url(r'^bolt-rep-details/$', views.bolt_tat_details),
+    url(r'^bolt-rep-details/(?P<plan_month>\d+)-(?P<plan_day>\d+)-(?P<plan_year>\d+)/$', views.bolt_tat_details),
+
+
 )

@@ -14,7 +14,7 @@ from leads.models import Timezone, RegalixTeams, Location, TimezoneMapping, Lead
 from representatives.models import (
     Availability,
     ScheduleLog,
-    AvailabilityForTAT
+    AvailabilityForTAT, AvailabilityForBoltTAT,
 )
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
@@ -1363,6 +1363,7 @@ def appointments_calendar(request):
     return render(request, 'representatives/appointments_calendar.html', {'events': total_events})
 
 
+#Picasso TAT detile
 @login_required
 def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
     """ Manage scheduling appointments"""
@@ -1483,6 +1484,140 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
     return render(
         request,
         'representatives/tat_details.html',
+        {'schedule_date': plan_date,
+         'dates': plan_dates,
+         'prev_week': prev_week,
+         'next_week': next_week,
+         'plan_month': plan_month,
+         'plan_day': plan_day,
+         'plan_year': plan_year,
+         'counts_dict': counts_list,
+         'picasso': True,
+         }
+    )
+
+
+# BOLT TAT details view
+@login_required
+def bolt_tat_details(request, plan_month=0, plan_day=0, plan_year=0):
+    """ Manage scheduling appointments"""
+
+    if not int(plan_month):
+        # if month is not specified, select current month
+        today = datetime.today()
+        plan_month = today.month
+        return redirect(
+            'representatives.views.bolt_tat_details',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+        )
+
+    if not int(plan_day):
+        # if day is not specified, select today's day
+        today = datetime.today()
+        plan_day = today.day
+        return redirect(
+            'representatives.views.bolt_tat_details',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+        )
+
+    if not int(plan_year):
+        # if year is not specified, select current year
+        today = datetime.today()
+        plan_year = today.year
+        return redirect(
+            'representatives.views.bolt_tat_details',
+            plan_month=plan_month,
+            plan_day=plan_day,
+            plan_year=plan_year,
+        )
+
+    # create date from week start day
+    plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    # if week start day is not monday, select appropriate start week day of given date
+    if plan_date.weekday():
+        plan_date -= timedelta(days=plan_date.weekday())
+        return redirect(
+            'representatives.views.bolt_tat_details',
+            plan_month=plan_date.month,
+            plan_day=plan_date.day,
+            plan_year=plan_date.year,
+        )
+
+    if request.method == 'POST':
+        # time_zone = 'IST'
+        # selected_tzone = Timezone.objects.get(zone_name=time_zone)
+        for key, value in request.POST.items():
+            if key.startswith('input'):
+                data_in_a_day = int(request.POST.get(key) or 0)
+                keys = key.split('_')  # input_16_6_2014_0_0 / input_16_6_2014_0_30
+                slot_day = int(keys[1])
+                slot_month = int(keys[2])
+                slot_year = int(keys[3])
+                slot_type = keys[4]
+                slot_date = datetime(slot_year, slot_month, slot_day)
+                # utc_date = SalesforceApi.get_utc_date(slot_date, selected_tzone.time_value)
+                if slot_type == 'count':
+                    emp_count = int(data_in_a_day)
+                    try:
+                        tat_record = AvailabilityForBoltTAT.objects.get(date_in_ist=slot_date)
+                        tat_record.availability_count = emp_count
+                        tat_record.save()
+                    except ObjectDoesNotExist:
+                        tat_record = AvailabilityForBoltTAT(date_in_ist=slot_date, availability_count=emp_count)
+                        tat_record.save()
+                else:
+                    audits_per_day = int(data_in_a_day)
+                    try:
+                        tat_record = AvailabilityForBoltTAT.objects.get(date_in_ist=slot_date)
+                        tat_record.audits_per_date = audits_per_day
+                        tat_record.save()
+                    except ObjectDoesNotExist:
+                        tat_record = AvailabilityForBoltTAT(date_in_ist=slot_date, audits_per_date=audits_per_day)
+                        tat_record.save()
+
+    plan_dates = OrderedDict()
+    for i in range(1, 6):
+        plan_dates['day' + str(i)] = plan_date + timedelta(i - 1)
+
+    counts_list = list()
+    for key, _date in plan_dates.items():
+        mydict = dict()
+        count_key = 'input_'
+        count_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+        count_key += '_'
+        count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+        count_key += '_' + str(_date.year)
+        mydict['input'] = count_key
+        mydict['count'] = 1
+        mydict['audit'] = 3
+        counts_list.append(mydict)
+
+    week_start = plan_date
+    week_end = plan_date + timedelta(4)
+    details = AvailabilityForBoltTAT.objects.filter(date_in_ist__gte=week_start, date_in_ist__lte=week_end).order_by('date_in_ist')
+    for detail in details:
+        _date = detail.date_in_ist
+        count_key = 'input_'
+        count_key += '0' + str(_date.day) if len(str(_date.day)) == 1 else str(_date.day)
+        count_key += '_'
+        count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
+        count_key += '_' + str(_date.year)
+        for each_dict in counts_list:
+            if each_dict['input'] == count_key:
+                each_dict['count'] = detail.availability_count
+                each_dict['audit'] = detail.audits_per_date
+
+    # compute next week and previous week start dates
+    prev_week = plan_date + timedelta(days=-6)
+    next_week = plan_date + timedelta(days=8)
+
+    return render(
+        request,
+        'representatives/bolt_tat_details.html',
         {'schedule_date': plan_date,
          'dates': plan_dates,
          'prev_week': prev_week,

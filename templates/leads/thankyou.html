@@ -53,7 +53,12 @@
 
          <p style="border-radius: 20px;text-align:center;font-size: 19px;padding: 6px;background-color:#D9EAD3;width: 693px;margin: 15px auto;">Your submission is number  <b>{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date of <b>{{estimated_tat}}</b></p>
 
+         {% elif bolt %}
+
+         <p style="border-radius: 20px;text-align:center;font-size: 19px;padding: 6px;background-color:#D9EAD3;width: 693px;margin: 15px auto;">Your bolt submission is number  <b>{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date of <b>{{estimated_tat}}</b></p>
+
         {% else %}
+
         You will receive an email confirmation shortly with the complete lead details (based on the information you have provided).<br /><br />
         {% endif %}
         If you need to change or cancel this {% if nomination %} nomination {% else %} lead {% endif %}, please reach out to <b>{{ PORTAL_MAIL_ID }}</b><br /><br />

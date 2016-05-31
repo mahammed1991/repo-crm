@@ -21,6 +21,18 @@
 <section class="content-region inner-page">
   <div class="container-fluid">
   <h1>Submit Lead</h1>
+
+  <!-- temproray survay -->
+  <p style="border-radius: 20px;text-align: left;font-size: 15px;padding: 15px;background-color: #B6D7A8;width: 850px;margin: 20px auto;">
+  Hey There!
+  <br/>
+  <br/> 
+  We value your feedback and want to hear about your experiences with the Tag Team. Your input is critical as we continue to iterate on this program. The last time we gathered broad-based feedback, it led to changes to our tools, refinements to our processes
+  and additions to our support menu.
+  <br/>
+  <br/>
+  <b style="">Please take five minutes to complete this <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Tag', 'action': 'click', 'label': 'Survey-May-2016' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/a/google.com/forms/d/14Fat5cnJDmP_uoZZhowLBVwmQU5UorcDPGzUUzUj5ZA/viewform">survey</a>.</b></p>
+ <!--  end of temrpopery survey -->
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
@@ -31,7 +43,7 @@
     <input type="hidden" id="lead_type" name="lead_type" value="Normal Lead">
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
-    <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">If you do not get confirmation e-mail after submitting a lead please notify us at <b>google@regalix-inc.com</b> </p>
+    <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">If you do not get confirmation e-mail after submitting a lead please notify us at <b>implementation-support@google.com</b> </p>
     <div class="std-sub-title">Google Rep Info</div>
     <div class="row">
       <div class="col-md-4">

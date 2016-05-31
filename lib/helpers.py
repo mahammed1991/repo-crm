@@ -16,7 +16,7 @@ from django.db.models import Q, Count
 import operator
 from xlrd import XL_CELL_DATE, xldate_as_tuple
 from lib.salesforce import SalesforceApi
-from representatives.models import AvailabilityForTAT
+from representatives.models import AvailabilityForTAT, AvailabilityForBoltTAT
 import pytz
 import uuid
 
@@ -716,7 +716,7 @@ def get_unique_uuid(lead_type):
     except:
         return unique_rf_id
 
-
+# getting tat for normal picasso Audit
 def get_tat_for_picasso(source):
     if source == 'SFDC':
         end_date = datetime.now(pytz.UTC)   # end date in utc today
@@ -738,6 +738,63 @@ def get_tat_for_picasso(source):
     ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
     today_in_ist = datetime(ist_today.year, ist_today.month, ist_today.day)
     availabilities = AvailabilityForTAT.objects.filter(date_in_ist__gte=today_in_ist).order_by('date_in_ist')
+    target_details = dict()
+    lookup_sum = 0
+    total_no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
+    target_details = {'estimated_date': today_in_ist, 'lookup_sum': '', 'no_of_inqueue_leads': 1}
+    for availability in availabilities:
+        if availability.availability_count and availability.audits_per_date:
+            lookup_sum += availability.availability_count * availability.audits_per_date
+            if lookup_sum > total_no_of_inqueue_leads:
+                estimated_date = availability.date_in_ist + timedelta(days=2)  # two days buffer
+                if estimated_date.weekday() == 5:
+                    target_details['estimated_date'] = estimated_date + timedelta(days=2)
+                elif estimated_date.weekday() == 6:
+                    target_details['estimated_date'] = estimated_date + timedelta(days=1)
+                else:
+                    target_details['estimated_date'] = estimated_date
+                target_details['lookup_sum'] = lookup_sum
+                target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
+                return target_details
+
+    # lookup_sum = 0
+    audits_remaining = total_no_of_inqueue_leads - lookup_sum + 2  # two days buffer
+    default_emp = 7
+    default_audits_per_emp = 4
+    default_audits_per_day = default_emp * default_audits_per_emp
+    no_of_days_for_remaining_audits = audits_remaining / default_audits_per_day
+    estimated_date = target_details['estimated_date'] + timedelta(days=no_of_days_for_remaining_audits)
+    if estimated_date.weekday() == 5:
+        target_details['estimated_date'] = estimated_date + timedelta(days=2)
+    elif estimated_date.weekday() == 6:
+        target_details['estimated_date'] = estimated_date + timedelta(days=1)
+    else:
+        target_details['estimated_date'] = estimated_date
+    target_details['no_of_inqueue_leads'] = no_of_inqueue_leads
+    return target_details
+
+# tat for bolt
+def get_tat_for_bolt(source):
+    if source == 'SFDC':
+        end_date = datetime.now(pytz.UTC)   # end date in utc today
+        start_date = datetime(2016, 01, 01, 0, 0, 0, tzinfo=pytz.utc)
+        start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+        end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+        sf = SalesforceApi.connect_salesforce()
+        code_type = 'BOLT'
+        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
+        sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)
+        result = sf.query_all(sql_query_picasso)
+        no_of_inqueue_leads = result['totalSize'] + 1
+    else:
+        start_date = datetime.today()
+        start_date = datetime(start_date.year, 1, 1, 0, 0)
+        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language']).filter(created_date__gte=start_date, type_1='BOLT').count() + 1
+
+    tz_ist = Timezone.objects.get(zone_name='IST')
+    ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
+    today_in_ist = datetime(ist_today.year, ist_today.month, ist_today.day)
+    availabilities = AvailabilityForBoltTAT.objects.filter(date_in_ist__gte=today_in_ist).order_by('date_in_ist')
     target_details = dict()
     lookup_sum = 0
     total_no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
