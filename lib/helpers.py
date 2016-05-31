@@ -842,3 +842,11 @@ def get_todays_transition_leads():
                                                       updated_date__gte=start_date,
                                                       updated_date__lte=end_date, date_of_installation=ist_today.date()).count()
     return today_changed_leads
+
+
+def save_file(file_data, file_path):
+    with open(file_path, 'wb+') as destination:
+        for chunk in file_data.chunks():
+            destination.write(chunk)
+        destination.close()
+    return file_path

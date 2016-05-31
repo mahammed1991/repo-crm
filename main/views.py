@@ -37,6 +37,9 @@ from reports.report_services import ReportService, DownloadLeads
 from reports.models import Region, CSATReport
 import re
 from lib.salesforce import SalesforceApi
+from lib.helpers import save_file
+
+import csv
 
 
 def home(request):
@@ -1414,73 +1417,95 @@ def valid_string(col_val):
         return False
     else:
         return True
-
-
+from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 @csrf_exempt
 @login_required
 def upload_file_handling(request):
     template_args = dict()
     if request.method == 'POST':
         if request.FILES:
-            excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
-            if not os.path.exists(excel_file_save_path):
-                os.makedirs(excel_file_save_path)
-            excel_file = request.FILES['attachment_name']
+            file_name, file_extension = request.FILES['attachment_name'].name.split('.')
             upload_target = request.POST['uploadTarget']
-
-            if excel_file.name.split('.')[1] not in ['xls', 'xlsx']:
-                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file', 'upload_target': upload_target})
+            
+            if upload_target == 'bolt_permission_csv':
+                if file_extension == "csv":
+                    file_path = settings.MEDIA_ROOT + '/csv/'
+                    if not os.path.exists(file_path):
+                        os.makedirs(file_path)
+                    csv_file = request.FILES['attachment_name']
+                    file_path = file_path + csv_file.name
+                    file_path = save_file(csv_file, file_path)
+                    with open(file_path, 'rb') as csvfile:
+                        csv_object = csv.reader(csvfile, delimiter=',')
+                        user_email_list = []
+                        for row in csv_object:
+                            user_email_list.append(row[0])
+                        users = User.objects.filter(email__in=user_email_list)
+                        group = Group.objects.get(name='PICASSO-BOLT')
+                        for user in users:
+                             user.groups.add(group)
+                    template_args.update({'csv_file': csv_file.name, 'msg': str(len(users)) + " Users added to Picasso Bolt Group", 'upload_target': upload_target})
+                else:
+                    template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
                 return render(request, 'main/upload_file.html', template_args)
+            else:
+                excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
+                if not os.path.exists(excel_file_save_path):
+                    os.makedirs(excel_file_save_path)
+                excel_file = request.FILES['attachment_name']
+                upload_target = request.POST['uploadTarget']
 
-            file_name = excel_file.name
-            excel_file_path = excel_file_save_path + file_name
-            with open(excel_file_path, 'wb+') as destination:
-                for chunk in excel_file.chunks():
-                    destination.write(chunk)
-                destination.close()
+                if excel_file.name.split('.')[1] not in ['xls', 'xlsx']:
+                    template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': 'Please upload .xlsx file', 'upload_target': upload_target})
+                    return render(request, 'main/upload_file.html', template_args)
 
-            try:
-                workbook = open_workbook(excel_file_path)
-            except Exception as e:
-                template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': e, 'upload_target': upload_target})
-                return render(request, 'main/upload_file.html', template_args)
+                file_name = excel_file.name
+                excel_file_path = excel_file_save_path + file_name
+                file_path = save_file(excel_file, excel_file_path)
 
-            sheet = workbook.sheet_by_index(0)
-            uploaded_headers = [str(cell.value) for cell in sheet.row(0)]
+                try:
+                    workbook = open_workbook(excel_file_path)
+                except Exception as e:
+                    template_args.update({'excel_data': [], 'excel_file': excel_file.name, 'error': e, 'upload_target': upload_target})
+                    return render(request, 'main/upload_file.html', template_args)
 
-            if upload_target == 'wpp_master_list':
-                default_headers = ['CID', 'Provisional Assignee', 'URL', 'Server', 'Framework', 'CMS', 'Ecommerce', 'Priority', 'Treatment Type', 'Notes']
-                if len(default_headers) == len(uploaded_headers):
-                    if cmp(default_headers, uploaded_headers) != 0:
-                        template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
-                        return render(request, 'main/upload_file.html', template_args)
-                    else:
-                        # print default_headers, uploaded_headers
-                        excel_data = convert_excel_data_into_list(workbook)
-                        template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
-                        return render(request, 'main/upload_file.html', template_args)
+                sheet = workbook.sheet_by_index(0)
+                uploaded_headers = [str(cell.value) for cell in sheet.row(0)]
 
-            elif upload_target == 'normal_master_list':
-                default_headers = ['manager', 'username', 'market served', 'program', 'region', 'podname']
-                for element in default_headers:
-                    if element not in uploaded_headers:
-                        template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
-                        return render(request, 'main/upload_file.html', template_args)
-                    else:
-                        excel_data = convert_excel_data_into_list(workbook)
-                        template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
-                        return render(request, 'main/upload_file.html', template_args)
+                if upload_target == 'wpp_master_list':
+                    default_headers = ['CID', 'Provisional Assignee', 'URL', 'Server', 'Framework', 'CMS', 'Ecommerce', 'Priority', 'Treatment Type', 'Notes']
+                    if len(default_headers) == len(uploaded_headers):
+                        if cmp(default_headers, uploaded_headers) != 0:
+                            template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
+                            return render(request, 'main/upload_file.html', template_args)
+                        else:
+                            # print default_headers, uploaded_headers
+                            excel_data = convert_excel_data_into_list(workbook)
+                            template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
+                            return render(request, 'main/upload_file.html', template_args)
 
-            elif upload_target == 'csat_report_data':
-                default_headers = ['Date', 'Time', 'Category', 'Language', 'CID', 'CLI', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']
-                for element in default_headers:
-                    if element not in uploaded_headers:
-                        template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
-                        return render(request, 'main/upload_file.html', template_args)
-                    else:
-                        sheet = workbook.sheet_by_index(0)
-                        get_survey_data_from_excel(workbook, sheet, request.POST.get('survey_channel'))
-                        return render(request, 'main/upload_file.html')
+                elif upload_target == 'normal_master_list':
+                    default_headers = ['manager', 'username', 'market served', 'program', 'region', 'podname']
+                    for element in default_headers:
+                        if element not in uploaded_headers:
+                            template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
+                            return render(request, 'main/upload_file.html', template_args)
+                        else:
+                            excel_data = convert_excel_data_into_list(workbook)
+                            template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
+                            return render(request, 'main/upload_file.html', template_args)
+
+                elif upload_target == 'csat_report_data':
+                    default_headers = ['Date', 'Time', 'Category', 'Language', 'CID', 'CLI', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']
+                    for element in default_headers:
+                        if element not in uploaded_headers:
+                            template_args.update({'excel_data': [], 'default_headers': default_headers, 'excel_file': excel_file.name, 'error': 'Sheet Header Mis Match, please follow these header', 'upload_target': upload_target})
+                            return render(request, 'main/upload_file.html', template_args)
+                        else:
+                            sheet = workbook.sheet_by_index(0)
+                            get_survey_data_from_excel(workbook, sheet, request.POST.get('survey_channel'))
+                            return render(request, 'main/upload_file.html')
 
     return render(request, 'main/upload_file.html')
 
@@ -1611,7 +1636,6 @@ def get_survey_data_from_excel(workbook, sheet, survey_channel):
             csat_record.save()
         except Exception as e:
             print e, cid
-
 
 @csrf_exempt
 def migrate_table_data(request):
