@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup, ResourceFAQ
+from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup, ResourceFAQ, PortalFeedback
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
@@ -214,3 +214,13 @@ class ResourceFAQAdmin(admin.ModelAdmin):
         return super(ResourceFAQAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 
 admin.site.register(ResourceFAQ, ResourceFAQAdmin)
+
+
+
+class BugAdmin(admin.ModelAdmin):
+    list_display = ('user', 'feedback_type', 'description','bug_report_url', 'attachment', 'created_date')
+    readonly_fields = ['user', 'feedback_type', 'description', 'bug_report_url', 'created_date']
+
+admin.site.register(PortalFeedback, BugAdmin)
+
+

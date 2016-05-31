@@ -23,6 +23,7 @@
                 <form method='POST' enctype="multipart/form-data" id="portalFeedback">
                     {% csrf_token %}
                    <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                   <input type="hidden" id="bug_url" name="bug_url" value="">
                      <select class="form-control bgicon" id="bugfeedbackType" name="type">
                         <option value="Feedback Type">Bug Found</option>
                         <option value="UI / Design Related"> UI / Design Related</option>
@@ -79,5 +80,7 @@
   </div>
 <!--End of model window for displaing the bug as been reported -->
 
-
+<script type="text/javascript">
+  document.getElementById("bug_url").value = location.href;
+</script>
 
