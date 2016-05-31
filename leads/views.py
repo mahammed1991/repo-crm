@@ -286,7 +286,7 @@ def wpp_lead_form(request, ref_id=None):
         lead_args
     )
 
-
+import csv
 @login_required
 @csrf_exempt
 def picasso_lead_form(request):
@@ -3203,6 +3203,19 @@ def wpp_whitelist_request(request):
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
         return HttpResponse(json.dumps({'status': 'success'}), content_type='application/json')
 
+
+def url_filter(each_lead_url):
+    if each_lead_url[0:4] == 'www.':
+        each_lead_url = each_lead_url.replace('www.','')
+        each_lead_url = urlparse(each_lead_url)
+        if 'http' in each_lead_url or 'https' in each_lead_url:
+            each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
+        else:
+            each_lead_url = '{uri.path}'.format(uri=each_lead_url)
+            each_lead_url = each_lead_url.split('/')[0]
+    return each_lead_url
+
+
 def get_picasso_lead(request):
     if request.is_ajax():
         status_dict = dict()
@@ -3231,23 +3244,15 @@ def get_picasso_lead(request):
         if month_value in quarter_four:
             start_date = datetime(current_date.year, 07, 01)
             end_date = datetime(current_date.year, 12, 31, 23, 59, 59)
-        picasso_lead = PicassoLeads.objects.filter(customer_id=cid).filter(customer_id=cid).filter(created_date__gte=start_date, created_date__lte=end_date)       
-        
+        picasso_lead = PicassoLeads.objects.filter(customer_id=cid).filter(type_1='Picasso').filter(created_date__gte=start_date, created_date__lte=end_date)
         picasso = 0
         for i in picasso_lead:
             if i.type_1 == 'Picasso':
                 picasso = picasso + 1
         if picasso_lead:
             for each_lead in picasso_lead:
-                each_lead_url = each_lead.url_1
-                if each_lead_url[0:4] == 'www.':
-                    each_lead_url = each_lead_url.replace('www.','')
-                each_lead_url = urlparse(each_lead_url)
-                if 'http' in each_lead_url or 'https' in each_lead_url:
-                    each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
-                else:
-                    each_lead_url = '{uri.path}'.format(uri=each_lead_url)
-                    each_lead_url = each_lead_url.split('/')[0]
+                each_url = each_lead.url_1
+                each_lead_url = url_filter(each_url)
                 if form_url_filter == each_lead_url:
                     if picasso > 0:
                         status_dict['type'] = 'picasso'
@@ -3347,6 +3352,16 @@ def picasso_bolt_lead_form(request):
     )
 
 
+
+def get_both(picasso_lead,cid,url):
+    lead_count = 0
+    cmpr_url = str(url)
+    for i in picasso_lead:
+        db_url = url_filter(i.url_1)
+        if db_url == cmpr_url:
+            lead_count = lead_count+1
+    return lead_count
+
 def get_picasso_bolt_lead(request):
     if request.is_ajax():
         status_dict = dict()
@@ -3359,7 +3374,6 @@ def get_picasso_bolt_lead(request):
         quarter_three = [7, 8, 9]
         quarter_four = [10, 11, 12]
         month_value = current_date.month
-
         if month_value in quarter_one:
             start_date = datetime(((current_date.year) - 1 ), 10, 01)
             end_date = datetime(((current_date.year) - 1 ), 3, 31, 23, 59, 59)
@@ -3375,56 +3389,32 @@ def get_picasso_bolt_lead(request):
         if month_value in quarter_four:
             start_date = datetime(current_date.year, 07, 01)
             end_date = datetime(current_date.year, 12, 31, 23, 59, 59)
-        picasso_lead = PicassoLeads.objects.filter(customer_id=cid).filter(customer_id=cid).filter(created_date__gte=start_date, created_date__lte=end_date)       
-        bolt = 0
-        picasso = 0
-        both = 0
-        for i in picasso_lead:
-            if i.type_1 == 'Picasso':
-                picasso = picasso + 1
+        picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
 
-            elif i.type_1 == 'BOLT':
-                bolt = bolt + 1
-
-        for j in picasso_lead:
-            if j.type_1 == 'BOLT' or j.type_1 == 'Picasso':
-                both = both + 1
-
+        leads = {}
         if picasso_lead:
-            for each_lead in picasso_lead:
-                each_lead_url = each_lead.url_1
-                if each_lead_url[0:4] == 'www.':
-                    each_lead_url = each_lead_url.replace('www.','')
-                each_lead_url = urlparse(each_lead_url)
-                if 'http' in each_lead_url or 'https' in each_lead_url:
-                    each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
+            for lead in picasso_lead:
+                if form_url_filter == url_filter(lead.url_1):
+                    if lead.type_1 == 'Picasso':
+                        leads['picasso'] = True 
+                    else:
+                        ''' Currently have only two ctypes i.e. Picasso or BOLT '''
+                        leads['bolt'] = True 
                 else:
-                    each_lead_url = '{uri.path}'.format(uri=each_lead_url)
-                    each_lead_url = each_lead_url.split('/')[0]
-                if form_url_filter == each_lead_url:
-                    if bolt > 0 and picasso == 0:
-                        status_dict['type'] = 'bolt'
-                        status_dict['status'] = 'success'                       
-                        break;
-                    elif picasso > 0 and bolt == 0:
-                        status_dict['type'] = 'picasso'
-                        status_dict['status'] = 'success'                       
-                        break;
-                    elif bolt != 0 and picasso != 0:
-                        status_dict['type'] = 'both'
-                        status_dict['status'] = 'success'                       
-                        break;
-                else:                  
                     status_dict['status'] = 'failure'
+                    return HttpResponse(json.dumps(status_dict), content_type='application/json')
         else:
-            
             status_dict['status'] = 'failure'
-
-
-        if status_dict['status'] == 'success':
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
-        else:
-            return HttpResponse(json.dumps(status_dict), content_type='application/json')
+
+        if leads.get('picasso') and leads.get('bolt'):
+            status_dict['type'] = 'both'
+        elif leads.get('picasso'):
+            status_dict['type'] = 'picasso'          
+        elif leads.get('bolt'):
+            status_dict['type'] = 'bolt'
+        status_dict['status'] = 'success'  
+        return HttpResponse(json.dumps(status_dict), content_type='application/json')
 
 
 def post_lead_to_google_form(post_data, lead_type):
