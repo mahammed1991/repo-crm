@@ -1179,7 +1179,8 @@ def notify_portal_feedback_activity(request, feedback):
             'feedback': feedback,
             'user_info': request.user,
             'type': feedback.feedback_type,
-            'feedback_body': feedback.description
+            'bug_report_url':feedback.bug_report_url,
+            'feedback_body': feedback.description,
         })
     )
 

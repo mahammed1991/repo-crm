@@ -96,6 +96,16 @@
   padding-bottom: 12px;
   margin-top: 50px;
   margin-bottom: 20px;">SUBMIT PICASSO MOBILE SITE AUDIT REQUEST</h1>
+
+      <div style="border-radius: 20px;text-align: left;padding: 30px;width: 850px;margin: 20px auto;font-size: 15px;background-color: rgb(182, 215, 168);">Notice something different? The submission portal has been revamped to enable the following enhancements:
+      <ul style="padding-top: 10px; padding-bottom: 10px; padding-left: 25px;">
+        <li style="list-style-type:disc;">Ability to have audits delivered to you alone or to you and the client simultaneously (as Google Slides)</li>
+        <li style="list-style-type:disc;"> Use of Cases to track email deliveries.</li>
+        <li style="list-style-type:disc;">Eventual language expansion.</li>
+      </ul>
+      <b>For more details please see Sections 3 and 4 of <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a>.</b>
+      </div>
+
  
   <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
