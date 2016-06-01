@@ -182,6 +182,11 @@ class SalesforceLeads(object):
 
                                    #Additional ETO-LDAP field
                                    'eto_ldap': '00Nd0000008SWkF',
+                                   #picasso and bolt added on 1-june-2016
+                                   'market_selector':'00Nd0000008SWk5',
+                                   'corp_email':'00Nd0000008SWjg',
+                                   'cases_alias':'00Nd0000008SWk0',
+                                   'advertiser_email':'00Nd0000008SWjq',
                                    }
 
     SANDBOX_TAG_LEAD_ARGS = {'first_name': 'first_name',
