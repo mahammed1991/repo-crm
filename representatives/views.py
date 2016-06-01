@@ -1592,8 +1592,8 @@ def bolt_tat_details(request, plan_month=0, plan_day=0, plan_year=0):
         count_key += '0' + str(_date.month) if len(str(_date.month)) == 1 else str(_date.month)
         count_key += '_' + str(_date.year)
         mydict['input'] = count_key
-        mydict['count'] = 1
-        mydict['audit'] = 3
+        mydict['count'] = 4
+        mydict['audit'] = 4
         counts_list.append(mydict)
 
     week_start = plan_date
