@@ -3216,14 +3216,13 @@ def wpp_whitelist_request(request):
 
 
 def url_filter(each_lead_url):
-    if each_lead_url[0:4] == 'www.':
-        each_lead_url = each_lead_url.replace('www.','')
-        each_lead_url = urlparse(each_lead_url)
-        if 'http' in each_lead_url or 'https' in each_lead_url:
-            each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
-        else:
-            each_lead_url = '{uri.path}'.format(uri=each_lead_url)
-            each_lead_url = each_lead_url.split('/')[0]
+    each_lead_url = each_lead_url.replace('www.','')
+    each_lead_url = urlparse(each_lead_url)
+    if 'http' in each_lead_url or 'https' in each_lead_url:
+        each_lead_url = '{uri.netloc}'.format(uri=each_lead_url)
+    else:
+        each_lead_url = '{uri.path}'.format(uri=each_lead_url)
+        each_lead_url = each_lead_url.split('/')[0]
     return each_lead_url
 
 
@@ -3380,16 +3379,6 @@ def picasso_bolt_lead_form(request):
         lead_args
     )
 
-
-
-def get_both(picasso_lead,cid,url):
-    lead_count = 0
-    cmpr_url = str(url)
-    for i in picasso_lead:
-        db_url = url_filter(i.url_1)
-        if db_url == cmpr_url:
-            lead_count = lead_count+1
-    return lead_count
 
 def get_picasso_bolt_lead(request):
     if request.is_ajax():
