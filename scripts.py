@@ -95,54 +95,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "google_portal.settings-staging"
 
 
 
-import kronos
-from reports.report_services import ReportService
-from django.conf import settings
-from datetime import datetime, timedelta
-import logging
-from lib.salesforce import SalesforceApi
-from leads.models import Leads, SfdcUsers, WPPLeads, PicassoLeads, Timezone, RegalixTeams, Location, TimezoneMapping, CodeType
-from django.core.exceptions import ObjectDoesNotExist
-import pytz
-from representatives.models import GoogeRepresentatives, RegalixRepresentatives, Availability, ScheduleLog, AvailabilityForTAT
-import json
-import gspread
-from oauth2client.client import SignedJwtAssertionCredentials
-from reports.models import CallLogAccountManager
-from datetime import datetime
-from lib.helpers import (send_mail)
-from django.template.loader import get_template
-from django.template import Context
-from reports.models import Region, LeadsReport
-from reports.cron import create_or_update_picasso_leads
 
-# utlizatyion dashboard
-from main.models import UserDetails
-from reports.report_services import DownloadLeads
-from lib.salesforce import SalesforceApi
-from django.db.models import Sum, Count 
-from collections import OrderedDict
-
-
-end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-start_date = end_date - timedelta(days=10)# make this as days 20 or 10 to get correct value
-start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
-end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
-logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
-sf = SalesforceApi.connect_salesforce()
-logging.info("Connect Successfully")
-select_items = settings.SFDC_FIELDS
-tech_team_id = settings.TECH_TEAM_ID
-code_type = 'Picasso'
-where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' AND Code_Type__c = '%s'" % (start_date, end_date, tech_team_id, code_type)
-sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
-try:
-    picasso_leads = sf.query_all(sql_query_picasso)
-    logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
-    create_or_update_picasso_leads(picasso_leads['records'], sf)
-except Exception as e:
-    print e
 
 
 
