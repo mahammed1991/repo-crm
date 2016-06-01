@@ -25,6 +25,8 @@ File Upload
           {% else %}
           <option value="normal_master_list">Master Data Upload</option>
           <option value="csat_report_data">CSAT Report Data</option>
+          {% endif %}
+          {% if "SUPERUSER" in request.session.groups %}
           <option value="bolt_permission_csv">Bolt Permission CSV</option>
           {% endif %}
         </select>
