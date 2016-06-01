@@ -1013,7 +1013,7 @@ def slots_open_booked():
     mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % (specific_date)
     mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
     mail_from = 'google@regalix-inc.com'
-    mail_to = ['portalsupport@regalix-inc.com']
+    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
