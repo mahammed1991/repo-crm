@@ -3419,30 +3419,27 @@ def get_picasso_bolt_lead(request):
             start_date = datetime(current_date.year, 07, 01)
             end_date = datetime(current_date.year, 12, 31, 23, 59, 59)
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
-
+        
         leads = {}
-        if picasso_lead:
-            for lead in picasso_lead:
-                if form_url_filter == url_filter(lead.url_1):
-                    if lead.type_1 == 'Picasso':
-                        leads['picasso'] = True 
-                    else:
-                        ''' Currently have only two ctypes i.e. Picasso or BOLT '''
-                        leads['bolt'] = True 
+        for lead in picasso_lead:
+            if form_url_filter == url_filter(lead.url_1):
+                if lead.type_1 == 'Picasso':
+                    leads['picasso'] = True 
                 else:
-                    status_dict['status'] = 'failure'
-                    return HttpResponse(json.dumps(status_dict), content_type='application/json')
-        else:
-            status_dict['status'] = 'failure'
-            return HttpResponse(json.dumps(status_dict), content_type='application/json')
+                    ''' Currently have only two ctypes i.e. Picasso or BOLT '''
+                    leads['bolt'] = True 
 
         if leads.get('picasso') and leads.get('bolt'):
             status_dict['type'] = 'both'
+            status_dict['status'] = 'success'
         elif leads.get('picasso'):
-            status_dict['type'] = 'picasso'          
+            status_dict['type'] = 'picasso'
+            status_dict['status'] = 'success'          
         elif leads.get('bolt'):
             status_dict['type'] = 'bolt'
-        status_dict['status'] = 'success'  
+            status_dict['status'] = 'success'
+        else:
+            status_dict['status'] = 'failure' 
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
 
 
