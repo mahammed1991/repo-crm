@@ -1508,7 +1508,6 @@ def upload_file_handling(request):
                             sheet = workbook.sheet_by_index(0)
                             get_survey_data_from_excel(workbook, sheet, request.POST.get('survey_channel'))
                             return render(request, 'main/upload_file.html')
-
     return render(request, 'main/upload_file.html')
 
 
