@@ -1664,7 +1664,6 @@ def thankyou(request):
     elif str(lead_category) == '6':
         estimated_tat = None
         no_of_inqueue_leads = None
-        print "------------",lead_type
         if lead_type == "bolt":    
             estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat_bolt')
             no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads_bolt')
