@@ -195,8 +195,8 @@
 
           <div class="row">
   
-            <div class="col-md-6">
-              <label for="picasso_objective">Objective</label></br>
+            <div class="col-md-6" id="obj">
+              <label id="picasso-obj" for="picasso_objective">Objective</label></br>
               <div class="checkboxvalidation" style="height:95px;">
                 <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
                   <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
@@ -221,7 +221,7 @@
                 </label>
               </div>
             </div>
-            <div class="col-md-6">
+            <div id="add_notes" class="col-md-6">
               <label for="additional_notes">Additional Notes(Optional)</label>
               <textarea class="form-control" name="additional_notes" id="additional_notes" style="height: 135px;"></textarea>
             </div>
@@ -462,6 +462,25 @@ $('.common').click(function(){
           
 });
 
+$('#bolt').click(function()
+{
+  $('#display_error_for_objective').hide();
+  $('#picasso-obj').hide();
+  var els = $('.checkboxvalidation');
+  saved = els.clone (true);
+  els.remove();
+  $('#add_notes').removeClass('col-md-6');
+  $('#add_notes').addClass('col-md-12').css('margin-top','-20px');
+  // .... do other stuff
+  //saved.appendTo ($('.wherever-you-want-to'));
+});
 
+$('#picasso').click(function()
+{
+  $('#add_notes').removeClass('col-md-12');
+  $('#add_notes').addClass('col-md-6').css('margin-top','0px');;
+  $('#picasso-obj').show();
+  saved.appendTo($('#obj'));
+});
 </script>
 {% endblock main_js %}

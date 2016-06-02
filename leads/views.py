@@ -62,7 +62,6 @@ def lead_form(request):
             # oid = '00DZ000000MjkJO'
             oid = '00D7A0000008nBH'
         elif settings.SFDC == 'PRODUCTION':
-            lead_data['entry.1070910664'] = 'PRODUCTION'
             sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
             oid = '00Dd0000000fk18'
@@ -348,7 +347,7 @@ def picasso_lead_form(request):
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         # send_calendar_invite_to_advertiser(advirtiser_details, False)
         if response.status_code == 200:
-            ret_url = basic_data['retURL']
+            ret_url = basic_data['retURL'] + "&type=picasso"
         else:
             ret_url = basic_data['errorURL']
         return redirect(ret_url)
@@ -1665,14 +1664,29 @@ def thankyou(request):
     elif str(lead_category) == '6':
         estimated_tat = None
         no_of_inqueue_leads = None
+        print "------------",lead_type
         if lead_type == "bolt":    
             estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat_bolt')
             no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads_bolt')
-            template_args.update({'lead_type': 'Mobile Site Request', 'bolt': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
+            template_args.update(
+                {'lead_type': 'Mobile Site Request',
+                'referer':'picasso', 
+                'bolt': True, 
+                'PORTAL_MAIL_ID': 'website-audit-support@google.com',
+                'estimated_tat': estimated_tat, 
+                'no_of_inqueue_leads': no_of_inqueue_leads
+                })
         elif lead_type == "picasso":
             estimated_tat = request.session.get(str(request.user.email) + 'estimated_tat')
             no_of_inqueue_leads = request.session.get(str(request.user.email) + 'no_of_inqueue_leads')
-            template_args.update({'lead_type': 'Mobile Site Request', 'picasso': True, 'PORTAL_MAIL_ID': 'projectpicasso@regalix-inc.com', 'estimated_tat': estimated_tat, 'no_of_inqueue_leads': no_of_inqueue_leads})
+            template_args.update(
+                {'lead_type': 'Mobile Site Request', 
+                'referer':'picasso', 
+                'picasso': True, 
+                'PORTAL_MAIL_ID': 'website-audit-support@google.com', 
+                'estimated_tat': estimated_tat, 
+                'no_of_inqueue_leads': no_of_inqueue_leads
+                })
     elif str(lead_category) == '8':
         template_args.update({'lead_type': 'Picasso Build Nomination Request', 'nomination': True})
     else:
