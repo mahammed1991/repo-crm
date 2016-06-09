@@ -3311,7 +3311,7 @@ def picasso_bolt_lead_form(request):
     # Check The Rep Status and redirect
     if request.method == 'POST':
         
-        post_lead_to_google_form(request.POST, 'BOLT')
+        post_lead_to_google_form(request.POST, 'mobile_site')
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
