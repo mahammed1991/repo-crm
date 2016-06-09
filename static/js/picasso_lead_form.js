@@ -52,8 +52,10 @@ function validatethis(frm) {
       window.is_error = true;
     }
 
-
     objectiveValidation();
+/*    if($('#bolt').hasClass('active') == false){
+      objectiveValidation();
+    }*/
 
     var comp_url1 = $('#comp_url_1').val();
     var comp_url2 = $('#comp_url_2').val();
@@ -606,15 +608,19 @@ function competitorValidation(){
 
 
 function objectiveValidation(){
-  if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked")){
-      $('.checkboxvalidation').removeClass('error-box');
-      $('#display_error_for_objective').hide();
-      return true;
+    if($('#install_mobile_app').prop("checked") || $('#drive_foot_traffic').prop("checked") || $('#buy_online').prop("checked") || $('#form_entry').prop("checked") || $('#call_your_business').prop("checked") || $('#engage_with_your_content').prop("checked") || $('#become_a_fan').prop("checked")){
+        $('.checkboxvalidation').removeClass('error-box');
+        $('#display_error_for_objective').hide();
+        return true;
 
-    }else{
-      $('#display_error_for_objective').show();
-      $('.checkboxvalidation').addClass('error-box');
-      window.is_error = true;
-      return false;
-    }
+      }else{
+        $('#display_error_for_objective').show();
+        $('.checkboxvalidation').addClass('error-box');
+        if($('#bolt').hasClass('active')){
+          $('#display_error_for_objective').hide();
+          return true;
+        }
+        window.is_error = true;
+        return false;
+      }
 }
