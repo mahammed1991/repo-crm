@@ -189,6 +189,8 @@ class WPPLeads(models.Model):
     is_nominated = models.BooleanField(default=False)
     ref_uuid = models.CharField(max_length=100, blank=True, null=True)
 
+    is_build_eligible = models.CharField(max_length=10, blank=True, null=True)
+
     class Meta:
         verbose_name_plural = "WPP Leads"
 

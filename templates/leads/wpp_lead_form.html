@@ -43,7 +43,17 @@
 
     <div class="row">
     <div  class="col-md-12">
-      
+        <div class="picasso_workflow">
+          <div  id="in-queue-msg" style="display:none">
+            <p  style='color:green;font-size: 20px;' >Mail to this id <a href="malto:projectpicasso@regalix-inc.com?subject=Request for detail" target="_top">projectpicasso@regalix-inc.com</a> to get the detailed current status of this lead</p>
+          </div>
+          <div  id="not-eligible" style="display:none" >
+               <p style="color:red;font-size: 20px;" >This URL is marked as 'Not Build Eligible'</p>
+          </div>
+          <div id="redirect" style="display:none">  
+          <p style="color:green;font-size: 20px;" > Lead is to be nominated for eligibilty check, redirecting to nomination form  <a id="redirect" href="/leads/wpp-nomination-form/">click here</a></p>
+          </div>
+        </div>
     </div>
       <div class="col-md-6">
         <label for="cid">External CID</label>
@@ -444,6 +454,82 @@ $('#last_name').on('focusout', function () {
 /*end of capitalizing*/
 
 
+// picasso build form workflow
+window.onload =  function(){
+  $('input[name=cid] , input[name=url1]').on('focusout', function(){
+       var cid_value = $('input[name=cid] ').val();
+        var url_value =  $('input[name=url1]').val();
+        if (cid_value &&  url_value){
+        $.ajax({
+        'url': "/leads/picasso-build-submission-flow/",
+        'dataType': 'JSON',
+        'type': 'GET',
+        'data':{'cid':cid_value,'url1':url_value},
+          success: function(data){
+            console.log(data)
+            var returned_data = data;
+            if (returned_data.build_eligeble_in_picasso_db == true ){
+              //alert("build eligbible")
+              $('#formsubmit').prop('disabled', false);
+            }
+            if(returned_data.build_eligeble_in_picasso_db == false ){
+              //alert("not eligible")
+              $('#not-eligible').removeAttr("style");
+              $('#formsubmit').prop('disabled', true);
+              $("#ctl00 :input").attr("disabled", true);
+              $("#formReset").attr("disabled",false);
+            }
+            if(returned_data.current_status_inque_in_picasso == true){
+              //alert("leads in queue please mail abc@fck.com")
+              $('#in-queue-msg').removeAttr("style");
+               $('#formsubmit').prop('disabled', true);
+                $("#ctl00 :input").attr("disabled", true);
+                $("#formReset").attr("disabled",false);
+            }
+            if(returned_data.build_eligeble_in_nomination_db == true){
+              //alert('build eligble in nomination');
+              $('#formsubmit').prop('disabled', false);
+            }
+            if (returned_data.build_eligeble_in_nomination_db == false){
+              //alert("not build eligible in nomination")
+              $('#not-eligible').removeAttr("style");
+              $('#formsubmit').prop('disabled', true);
+               $("#ctl00 :input").attr("disabled", true);
+               $("#formReset").attr("disabled",false);
+            }
+            if (returned_data.build_eligeble_in_master_data == true){
+              alert("buld eligble in master")
+            }
+            if (returned_data.build_eligeble_in_master_data == false){
+              alert('not even build eligble in master')
+              $('#not-eligible').removeAttr("style");
+              $('#formsubmit').prop('disabled', true);
+               $("#ctl00 :input").attr("disabled", true);
+               $("#formReset").attr("disabled",false);
+            }
+            if(returned_data.redirect_to_nomiantion){
+              //alert('redirect')
+              $('#redirect').removeAttr("style");
+              $('#formsubmit').prop('disabled', true);
+               $("#ctl00 :input").attr("disabled", true);
+               $("#formReset").attr("disabled",false);
+              // $("#redirect").href = window.location.hostname+"/leads/wpp-nomination-form/";
+               document.getElementById("redirect").host = window.location.hostname+"";
+               var ask = window.confirm("This URL is not audited so redirecting to Aduit nomination form");
+                  if (ask) {
+                    document.location.href = window.location.hostname+"/leads/wpp-nomination-form/";
+                      }
+                    }
+
+                 },
+                failure: function(data){
+                  console.log("failur on eligibilty checking")
+                  console.log(data);
+                 }
+            })
+          }
+      });
+}
 
 
 </script>

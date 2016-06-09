@@ -52,4 +52,8 @@ urlpatterns = patterns(
     url(r'^get-picasso-lead/$', views.get_picasso_lead),
     url(r'^get-picasso-bolt-lead/$', views.get_picasso_bolt_lead),
     url(r'^smb-audits-lead-form/$', views.picasso_bolt_lead_form),
+
+    #picasso workflow
+    url(r'picasso-build-submission-flow/$', views.picasso_build_submission_flow),
+
 )

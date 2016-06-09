@@ -28,7 +28,7 @@ from lib.salesforce import SalesforceApi
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
                           )
-from main.models import UserDetails
+from main.models import UserDetails, PicassoEligibilityMasterUpload
 from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso, get_tat_for_bolt,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
 from icalendar import Calendar, Event, vCalAddress, vText
@@ -213,6 +213,7 @@ def wpp_lead_form(request, ref_id=None):
     """
     # Check The Rep Status and redirect
     if request.method == 'POST':
+        
         post_lead_to_google_form(request.POST, 'picasso_build')
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
@@ -2206,6 +2207,9 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'anusha.panchikala@regalix-inc.com',
             'michelle.fernandes@regalix-inc.com',
             'thirumalesh@regalix-inc.com',
+            'serena.singh@regalix-inc.com',
+            'ssaifullah@regalix-inc.com',
+            'siddhartha.roy@regalix-inc.com',
         ])
     else:
         mail_subject = "WPP - Nomination CID: %s " % (advertiser_details['cid_std'])
@@ -2219,6 +2223,9 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
             'asarkar@regalix-inc.com',
             'michelle.fernandes@regalix-inc.com',
             'thirumalesh@regalix-inc.com',
+            'serena.singh@regalix-inc.com',
+            'ssaifullah@regalix-inc.com',
+            'siddhartha.roy@regalix-inc.com',
 
         ])
 
@@ -3290,7 +3297,8 @@ def picasso_bolt_lead_form(request):
     """
     # Check The Rep Status and redirect
     if request.method == 'POST':
-        post_lead_to_google_form(request.POST, 'mobile_site')
+        
+        post_lead_to_google_form(request.POST, 'BOLT')
         if settings.SFDC == 'STAGE':
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
@@ -3432,6 +3440,7 @@ def get_picasso_bolt_lead(request):
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
 
 
+# function for posting all leads to a google spread sheet form
 def post_lead_to_google_form(post_data, lead_type):
     if lead_type == 'picasso_build':
         picasso_lead_data = dict()
@@ -3476,3 +3485,79 @@ def post_lead_to_google_form(post_data, lead_type):
         requests.post(url=google_api_url, data=leads_data)
 
 
+
+# Picasso/wpp submission flow code
+@csrf_exempt
+def picasso_build_submission_flow(request):
+    returned_data = dict()
+    if request.is_ajax():
+        cid_val = request.GET.get('cid')
+        url_val = request.GET.get('url1')
+        filterd_url = url_filter(url_val)
+        data_in_picasso_db = 0
+        data_in_nomination_db = 0
+        
+        picasso_audit_database = PicassoLeads.objects.filter(customer_id=cid_val)
+        if picasso_audit_database:
+            for data in picasso_audit_database:
+                from_db_url = url_filter(data.url_1)
+                if filterd_url == from_db_url:
+                    if data.is_build_eligible and data.lead_status == "Delivered":
+                            data_in_picasso_db = 1
+                            returned_data['build_eligeble_in_picasso_db'] = True
+                            return HttpResponse(json.dumps(returned_data), content_type='application/json')
+                    elif not data.is_build_eligible and data.lead_status == "Delivered":
+                            returned_data['build_eligeble_in_picasso_db'] = False
+                            return HttpResponse(json.dumps(returned_data), content_type='application/json')
+                    elif data.lead_status =="In Queue":
+                            data_in_picasso_db = 1
+                            returned_data['current_status_inque_in_picasso'] = True
+                            return HttpResponse(json.dumps(returned_data), content_type='application/json') 
+                else:
+                    data_in_picasso_db = 0
+
+        if data_in_picasso_db == 0:            
+            picasso_nomination_database = WPPLeads.objects.filter(customer_id=cid_val)
+            if picasso_nomination_database:
+                for data in picasso_nomination_database:
+                    from_db_url = url_filter(data.url_1)
+                    if data.is_nominated or (data.is_build_eligible =="yes") or (data.is_build_eligible == "YES") or (data.is_build_eligible == "Yes") :
+                        if filterd_url == from_db_url:
+                            returned_data['build_eligeble_in_nomination_db'] = True
+                            data_in_nomination_db = 1
+                            return HttpResponse(json.dumps(returned_data), content_type='application/json')
+                        else:
+                            data_in_nomination_db = 0
+                    else:
+                        if (data.is_build_eligible =="no") or (data.is_build_eligible == "NO") or (data.is_build_eligible == "No"):
+                            returned_data['build_eligeble_in_nomination_db'] = False
+                            return HttpResponse(json.dumps(returned_data), content_type='application/json')
+                        else:
+                            data_in_nomination_db = 0
+            else:
+                data_in_nomination_db = 0
+       
+        if (data_in_nomination_db == 0) and (data_in_picasso_db == 0):
+            master_data = PicassoEligibilityMasterUpload.objects.filter(url=url_val)            
+            if master_data:
+                for data in master_data:
+                    if (data.buildeligible == "y") or  (data.buildeligible == "yes") or (data.buildeligible == "Y") or (data.buildeligible == "YES"):
+                        returned_data['build_eligeble_in_master_data'] = True
+                        return HttpResponse(json.dumps(returned_data), content_type='application/json')
+                    elif (data.buildeligible == "n") or  (data.buildeligible == "no") or (data.buildeligible == "N") or (data.buildeligible == "NO"):
+                        returned_data['build_eligeble_in_master_data'] = False
+                        return HttpResponse(json.dumps(returned_data), content_type='application/json')
+            else:
+                returned_data['redirect_to_nomiantion'] = True
+                return HttpResponse(json.dumps(returned_data), content_type='application/json')
+    
+
+def url_filter(url):
+    url_pars = urlparse(url)
+    if 'http' in url or 'https' in url:
+        www_filter = url_pars.netloc
+    else:
+        www_filter = url_pars.path
+    if 'www.' in www_filter:
+        www_filter = www_filter.replace('www.','')
+    return www_filter

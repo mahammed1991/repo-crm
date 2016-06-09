@@ -330,7 +330,8 @@ function populateLeadDetails(response){
 
 // To clear prepopulated lead Details 
 function clearLeadDetails(){
-  $('input[name=url1], input[id=picasso_pod]').val('');
+  //$('input[name=url1], input[id=picasso_pod]').val('');
+  $('input[id=picasso_pod]').val('');
   $('#multipleUrls').hide();
   $('#url').show();
   $('#multipleUrls option').remove();

@@ -34,14 +34,14 @@ admin.site.register(Leads, LeadsAdmin)
 
 class WPPLeadsAdmin(admin.ModelAdmin):
     list_display = ('google_rep_name', 'lead_owner_name', 'first_name', 'last_name',
-                    'company', 'lead_status', 'team', 'customer_id', 'ref_uuid', )
+                    'company', 'lead_status', 'team', 'customer_id', 'ref_uuid','is_build_eligible' )
 
     search_fields = ['customer_id', 'lead_owner_name']
 
     list_filter = ('type_1', )
 
     readonly_fields = ['google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
-                       'company', 'lead_status', 'team', 'type_1']
+                       'company', 'lead_status', 'team', 'type_1', 'is_build_eligible']
 
     def get_readonly_fields(self, request, obj=None):
         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)

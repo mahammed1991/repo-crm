@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup, ResourceFAQ, PortalFeedback
+from main.models import ContectList, CustomerTestimonials, UserDetails, Notification, Feedback, OlarkChatGroup, ResourceFAQ, PortalFeedback, PicassoEligibilityMasterUpload
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
@@ -222,5 +222,17 @@ class BugAdmin(admin.ModelAdmin):
     readonly_fields = ['user', 'feedback_type', 'description', 'bug_report_url', 'created_date']
 
 admin.site.register(PortalFeedback, BugAdmin)
+
+class PicassoelEigibiltyBulkAdmin(admin.ModelAdmin):
+    list_display = ('url', 'pages', 'framework', 'mobile_responsivenes', 'priority',
+         'comments', 'buildeligible', 'priority_number', 'highest_priority_number', 'is_highest_priority', 'is_duplicate')
+    readonly_fields = ('url', 'pages', 'framework', 'mobile_responsivenes', 'priority',
+         'comments', 'buildeligible', 'priority_number', 'highest_priority_number', 'is_highest_priority', 'is_duplicate')
+
+admin.site.register(PicassoEligibilityMasterUpload, PicassoelEigibiltyBulkAdmin)
+
+
+
+
 
 

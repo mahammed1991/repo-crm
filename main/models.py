@@ -420,3 +420,38 @@ class WPPMasterList(models.Model):
         unique_together = ('customer_id', 'quarter', 'year')
         db_table = 'wpp_master_list'
         verbose_name_plural = "WPP Master List"
+
+
+# Table for Picasso workflow eligibilty check file uploading
+class PicassoEligibilityMasterUpload(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+   
+    url = models.CharField(max_length=250, blank=True, null=True)
+    date_assess = models.CharField(max_length=100, blank=True, null=True)
+    assesment_type = models.CharField(max_length=250, blank=True, null=True)
+    pages =  models.CharField(max_length=100, default=1)
+    framework = models.CharField(max_length=100, blank=True, null=True)
+    mobile_responsivenes = models.CharField(max_length=100, blank=True, null=True)
+    priority = models.CharField(max_length=100, blank=True, null=True)
+    comments = models.CharField(max_length=250, blank=True, null=True)
+    buildeligible = models.CharField(max_length=100, blank=True, null=True)
+    development_time = models.CharField(max_length=100, blank=True, null=True)
+    priority_number = models.CharField(max_length=100, default=1)
+    highest_priority_number = models.CharField(max_length=100, default=1)
+    is_highest_priority = models.CharField(max_length=100, blank=True, null=True)
+    is_duplicate = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        db_table = 'picasso_eligibilty_master_upload'
+        verbose_name_plural = 'Picasso Eligibilty master upload'
+
+
+
+
+
+
+
+
+
+

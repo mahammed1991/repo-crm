@@ -22,7 +22,7 @@ from django.conf import settings
 from lib.helpers import send_mail, manager_info_required, wpp_user_required, check_lead_submitter_for_empty
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
-                         Notification, PortalFeedback, ResourceFAQ)
+                         Notification, PortalFeedback, ResourceFAQ, PicassoEligibilityMasterUpload)
 from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
@@ -1419,8 +1419,10 @@ def valid_string(col_val):
         return False
     else:
         return True
+
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+
 @csrf_exempt
 @login_required
 def upload_file_handling(request):
@@ -1452,6 +1454,123 @@ def upload_file_handling(request):
                 else:
                     template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
                 return render(request, 'main/upload_file.html', template_args)
+
+            # Bellow elif code is for uploading master csv file of picasso workflow master data upload
+            elif upload_target == 'picasso_build_eligible_csv':
+
+                if file_extension == "csv":
+                    file_path = settings.MEDIA_ROOT + '/csv/'
+                    if not os.path.exists(file_path):
+                        os.makedirs(file_path)
+                    csv_file = request.FILES['attachment_name']
+                    csv_file_path = file_path + file_name
+                    file_path = save_file(csv_file, csv_file_path)
+                    file_name = csv_file.name
+
+                    default_column_headers = ['Url', 'Date Assessed', 'Assessment Type', 'Pages', 'Framework', 
+                                'Mobile Responsive', 'Priority', 'Comments', 'Builds Eligible', 
+                                'Development Time', 'Priority Number', 'Highest Priority Number', 
+                                'Is Highest Priority', 'Is Duplicate']
+
+
+                    with open(file_path, 'rb') as csvfile:
+                        csv_object = csv.reader(csvfile, delimiter=',')
+                        uploaded_column_headers = csv_object.next()
+                        for element in default_column_headers:
+                            if element not in uploaded_column_headers:
+                                template_args.update({'default_headers':default_column_headers, 'error':'Column Headers are not matching/not in order as fallow. Miss matched column is '+element})
+                                return render(request, 'main/upload_file.html', template_args)
+                        if cmp(default_column_headers, uploaded_column_headers) == 0:
+                            row_count = 1
+                            for each_line in csv_object:
+                                row_count = row_count + 1
+                                check_url = each_line[0]
+                                checkdata = PicassoEligibilityMasterUpload.objects.filter(url=check_url)
+                                print check_url
+                                if checkdata:
+                                    pass
+                                else:
+                                    value = PicassoEligibilityMasterUpload()
+                                    if each_line[0] == '':
+                                        upload_break_msg = "Url is Mandatory and it is not given in the row "+str (row_count)+" please upload again with adding url"
+                                        template_args.update({'upload_break_msg':upload_break_msg})
+                                        return render(request, 'main/upload_file.html', template_args) 
+                                    else:
+                                        value.url = each_line[0]
+                                    
+                                    if each_line[1] == '':
+                                        value.date_assess = 'date is not given'
+                                    else:
+                                        value.date_assess = each_line[1]
+                                    
+                                    if each_line[2] == '':
+                                        value.assesment_type = 'not given'
+                                    else:
+                                        value.assesment_type = each_line[2]
+                                    
+                                    if each_line[3] == '':
+                                        value.pages = 0
+                                    else:
+                                        value.pages = each_line[3]
+                                    
+                                    if each_line[4] == '':
+                                        value.framework = "not given"
+                                    else:
+                                        value.framework =each_line[4]
+                                    
+                                    if each_line[5] == '':
+                                         value.mobile_responsivenes = "not given"
+                                    else:
+                                        value.mobile_responsivenes = each_line[5]
+                                    
+                                    if each_line[6] == '':
+                                        value.priority = 'not given'
+                                    else:
+                                        value.priority = each_line[6]
+                                    
+                                    if each_line[7] == '':
+                                        value.comments = 'comments not given'
+                                    else:
+                                        value.comments = each_line[7]
+                                    
+                                    if each_line[8] == '':
+                                        value.buildeligible == 'not given'
+                                    else:
+                                        value.buildeligible = each_line[8]
+                                    
+                                    if each_line[9] == '':
+                                         value.development_time = 'not specified'
+                                    else:
+                                        value.development_time = each_line[9]
+                                    
+                                    if each_line[10] == '':
+                                        value.priority_number = 0
+                                    else:
+                                        value.priority_number = each_line[10]
+                                    
+                                    if each_line[11] == '':
+                                        value.highest_priority_number = 0
+                                    else: 
+                                        value.highest_priority_number = each_line[11]
+                                    
+                                    if each_line[12] == '':
+                                        value.is_highest_priority = 'not given'
+                                    else:
+                                        value.is_highest_priority = each_line[12]
+                                    
+                                    if each_line[13] == '':
+                                        value.is_duplicate = 'not given'
+                                    else:
+                                        value.is_duplicate = each_line[13]
+                                    value.save()
+                            template_args.update({'success':'File uploaded succesfully !!! '})
+                            return render(request, 'main/upload_file.html', template_args)
+                        else:
+                            template_args.update({'error':'Please falolw the order as', 'default_headers':default_column_headers, })
+                            return render(request, 'main/upload_file.html', template_args)
+                else:
+                    template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
+                    return render(request, 'main/upload_file.html', template_args)
             else:
                 excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
                 if not os.path.exists(excel_file_save_path):
@@ -1498,7 +1617,6 @@ def upload_file_handling(request):
                             excel_data = convert_excel_data_into_list(workbook)
                             template_args.update({'excel_data': excel_data, 'excel_file': excel_file.name, 'upload_target': upload_target})
                             return render(request, 'main/upload_file.html', template_args)
-
                 elif upload_target == 'csat_report_data':
                     default_headers = ['Date', 'Time', 'Category', 'Language', 'CID', 'CLI', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']
                     for element in default_headers:
