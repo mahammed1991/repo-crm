@@ -65,7 +65,7 @@
     });
     
     $("#tagImplementation" ).click(function() {
-      
+
       if($(this).children().is(':visible')){
         if($( "#shoppingSetup .check-icon" ).is(":visible") || $('#rlsaSetup .check-icon').is(":visible")){
           $("#submit_buttons").show();
@@ -1134,3 +1134,11 @@ function rlsaInternalCIDPrepopulate(){
     $('#paused_campaigns').val('');
   }
  })
+
+
+  $("#tagImplementation").click(function(){
+    if($("#tagImplementationBtn .check-icon").is(":visible") == false){
+      $('#ctype1').prop('selectedIndex',0);
+      $('#tagAddwordsCheck').hide();
+    }
+  });
