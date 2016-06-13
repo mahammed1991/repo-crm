@@ -13,6 +13,11 @@
     .footer{position: relative;}
     .footer .container-fluid  ul{ line-height: 62px;}
     .table-container{ min-height:300px;}
+
+    .picasso_workflow_text{
+         border-width: 0px 0px 0px 6px; border-style: solid; border-color: rgb(10, 157, 88); color: rgb(10, 157, 88); padding:0px;padding-left: 10px; margin-bottom: 18px; font-family: Roboto, Arial, sans-serif; background: rgb(230, 245, 238);
+       }
+
   </style>
 {% endblock main_css %}
 {% block content %}
@@ -43,15 +48,15 @@
 
     <div class="row">
     <div  class="col-md-12">
-        <div class="picasso_workflow">
-          <div  id="in-queue-msg" style="display:none">
-            <p  style='color:green;font-size: 20px;' >Mail to this id <a href="malto:projectpicasso@regalix-inc.com?subject=Request for detail" target="_top">projectpicasso@regalix-inc.com</a> to get the detailed current status of this lead</p>
+        <div class="picasso_workflow ">
+          <div  class="picasso_workflow_text" id="in-queue-msg" style="display:none">
+            <p  style='color:green;font-size: 18px;' >Mail to this id <a href="malto:projectpicasso@regalix-inc.com?subject=Request for detail" target="_top">projectpicasso@regalix-inc.com</a> to get the detailed current status of this lead</p>
           </div>
-          <div  id="not-eligible" style="display:none" >
-               <p style="color:red;font-size: 20px;" >This URL is marked as 'Not Build Eligible'</p>
+          <div  class="picasso_workflow_text" id="not-eligible" style="display:none" >
+               <p style="color:red;font-size: 18px;" >This URL is marked as 'Not Build Eligible'</p>
           </div>
-          <div id="redirect" style="display:none">  
-          <p style="color:green;font-size: 20px;" > Lead is to be nominated for eligibilty check, redirecting to nomination form  <a id="redirect" href="/leads/wpp-nomination-form/">click here</a></p>
+          <div class="picasso_workflow_text" id="redirect" style="display:none">  
+          <p style="color:green;font-size: 18px;" > Lead is to be nominated for eligibilty check, redirecting to nomination form  <a id="redirect-url" href="/leads/wpp-nomination-form/">click here</a></p>
           </div>
         </div>
     </div>
@@ -454,6 +459,12 @@ $('#last_name').on('focusout', function () {
 /*end of capitalizing*/
 
 
+// Clearing cashe values of cid and url for page previous and forward click
+$(window).bind("pageshow", function() {
+  $('#cid').val('');
+  $('#url').val('');
+});
+
 // picasso build form workflow
 window.onload =  function(){
   $('input[name=cid] , input[name=url1]').on('focusout', function(){
@@ -498,7 +509,7 @@ window.onload =  function(){
                $("#formReset").attr("disabled",false);
             }
             if (returned_data.build_eligeble_in_master_data == true){
-              alert("buld eligble in master")
+              $("#formReset").attr("disabled",false);
             }
             if (returned_data.build_eligeble_in_master_data == false){
               alert('not even build eligble in master')
@@ -513,24 +524,19 @@ window.onload =  function(){
               $('#formsubmit').prop('disabled', true);
                $("#ctl00 :input").attr("disabled", true);
                $("#formReset").attr("disabled",false);
-              // $("#redirect").href = window.location.hostname+"/leads/wpp-nomination-form/";
-               document.getElementById("redirect").host = window.location.hostname+"";
-               var ask = window.confirm("This URL is not audited so redirecting to Aduit nomination form");
-                  if (ask) {
-                    document.location.href = window.location.hostname+"/leads/wpp-nomination-form/";
-                      }
-                    }
-
+               document.getElementById("redirect-url").host = window.location.hostname+"";
+               $("#redirect").href = window.location.hostname+"/leads/wpp-nomination-form/";
+                
+                   }
                  },
                 failure: function(data){
                   console.log("failur on eligibilty checking")
                   console.log(data);
                  }
             })
-          }
-      });
+      }
+  });
 }
-
 
 </script>
 {% endblock main_js %}
