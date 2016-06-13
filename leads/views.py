@@ -254,6 +254,7 @@ def wpp_lead_form(request, ref_id=None):
         return redirect(ret_url)
 
     # Get all location, teams codetypes
+
     lead_args = get_basic_lead_data(request)
     lead_args['teams'] = Team.objects.filter(belongs_to__in=['WPP', 'TAG-WPP', 'WPP-PICASSO', 'ALL'], is_active=True)
     lead_args['treatment_type'] = [str(t_type.name) for t_type in TreatmentType.objects.all().order_by('id')]
@@ -271,7 +272,7 @@ def wpp_lead_form(request, ref_id=None):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I', 'South Africa']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I', 'South Africa', 'India']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
     wpp_loc = list()
@@ -384,7 +385,7 @@ def wpp_nomination_form(request):
 
     wpp_locations = list()
     for loc in lead_args['locations']:
-        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I', 'South Africa']:
+        if loc['name'] in ['AU/NZ', 'United States', 'Canada', 'UK/I', 'South Africa', 'India']:
             wpp_locations.append(loc)
     lead_args.update({'wpp_locations': wpp_locations})
     wpp_loc = list()
@@ -2655,6 +2656,7 @@ def get_basic_lead_data(request):
 
     lead_args = dict()
     locations = Location.objects.filter(is_active=True)
+
     new_locations = list()
     all_locations = list()
     all_code_types_with_avg_time = dict()
@@ -3514,7 +3516,7 @@ def picasso_build_submission_flow(request):
         if picasso_audit_database:
             for data in picasso_audit_database:
                 from_db_url = url_filter(data.url_1)
-                if filterd_url == from_db_url:
+                if (filterd_url == from_db_url) and (data.type_1 !='BOLT'):
                     if data.is_build_eligible and data.lead_status == "Delivered":
                             data_in_picasso_db = 1
                             returned_data['build_eligeble_in_picasso_db'] = True
@@ -3522,7 +3524,7 @@ def picasso_build_submission_flow(request):
                     elif not data.is_build_eligible and data.lead_status == "Delivered":
                             returned_data['build_eligeble_in_picasso_db'] = False
                             return HttpResponse(json.dumps(returned_data), content_type='application/json')
-                    elif data.lead_status =="In Queue":
+                    elif data.lead_status =="In Queue" or data.lead_status !="Delivered":
                             data_in_picasso_db = 1
                             returned_data['current_status_inque_in_picasso'] = True
                             return HttpResponse(json.dumps(returned_data), content_type='application/json') 
