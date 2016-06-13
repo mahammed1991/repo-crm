@@ -42,6 +42,10 @@ from reports.models import Region
 import operator
 import collections
 
+from lib.helpers import save_file
+import config
+from django.core.validators import validate_email
+
 
 # Create your views here.
 @login_required
@@ -56,7 +60,7 @@ def lead_form(request):
         # Google form Posting Starts here
         post_lead_to_google_form(request.POST, 'normal')
         if settings.SFDC == 'STAGE':
-            
+
             sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
             basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
             # oid = '00DZ000000MjkJO'
@@ -117,7 +121,6 @@ def lead_form(request):
             tag_data['last_name'] = last_name
             submit_lead_to_sfdc(sf_api_url, tag_data)
 
-        basic_data = dict()
         if request.POST.get('is_shopping_lead') == 'yes':
             # Get Basic/Common form field data
             if settings.SFDC == 'STAGE':
@@ -3208,10 +3211,10 @@ def searh_leads(request):
         mimetype = 'application/json'
         lead_list.sort(key=lambda item: item['rescheduled_appointment_in_ist'], reverse=True)
         return HttpResponse(json.dumps({'lead_list': lead_list, 'lead_status_dict': lead_status_dict}), mimetype)
-    if 'TAG' in lead_type:
+    '''if 'TAG' in lead_type:
         return render(request, 'leads/lead_summary.html', {})
     else:
-        return render(request, 'leads/wpp_lead_summary.html', {})
+        return render(request, 'leads/wpp_lead_summary.html', {})'''
 
 
 def wpp_whitelist_request(request):
@@ -3333,7 +3336,6 @@ def picasso_bolt_lead_form(request):
         basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
         basic_data['oid'] = oid
         basic_data['Campaign_ID'] = None
-        ret_url = basic_data['retURL'] + "&type=bolt"
         picasso_data = basic_data
 
         estimated_tat = ""
@@ -3499,6 +3501,93 @@ def post_lead_to_google_form(post_data, lead_type):
         leads_data['entry.652078496'] = post_data.getlist('picasso_objective_list[]')
         requests.post(url=google_api_url, data=leads_data)
 
+@login_required
+def rlsa_bulk_upload_lead_form(request):
+    """
+        RLSA Bulk upload via csv/excel
+    """
+    if request.method == 'POST':
+        if request.FILES:
+            file_name, file_extension = request.FILES['rlsaBulkFile'].name.split('.')
+            if file_extension == "csv":
+                file_path = settings.MEDIA_ROOT + '/rlsa_bulk_csv/'
+                if not os.path.exists(file_path):
+                    os.makedirs(file_path)
+                csv_file = request.FILES['rlsaBulkFile']
+                file_path = file_path + csv_file.name
+                file_path = save_file(csv_file, file_path)
+                with open(file_path, 'rb') as csvfile:
+                    csv_object = csv.reader(csvfile, delimiter=',')
+                    row_count = 0
+                    file_errors = []
+                    for row in csv_object:
+                        if row_count == 0:
+                            # Headers validation
+                            missing_headers = validate_rlsa_headers(row)
+                            if missing_headers:
+                                resp = {'success':False, 'msg':'Please check your headers - Headers Missing',
+                                        'data':missing_headers}
+                                return HttpResponse(json.dumps(resp), content_type='application/json')
+                        else:
+                            # Values
+                            row_state = validate_rlsa_csv_row(row, row_count)
+                            if not row_state.get('row_count'):
+                                file_errors.append(row_state)
+                        row_count += 1
+                    if file_errors:
+                        resp = {'success': False, 'msg': 'Errors in these rows, please fix them and re-upload csv file.',
+                                'data': file_errors}
+                        return HttpResponse(json.dumps(resp), content_type='application/json')
+                    else:
+                        # upload to sfdc
+                        # Google form Posting Starts here
+                        #post_lead_to_google_form(request.POST, 'normal')
+                        ''' Prepare SFDC lead args '''
+                        rlsa_leads = dict()
+                        tag_leads = None
+                        if settings.SFDC == 'STAGE':
+                            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+                            rlsa_leads = SalesforceLeads.SANDBOX_RLSA_ARGS
+                            tag_leads = {'comment1':'00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
+                            basic_data = get_common_sandbox_lead_data(request.POST)
+                            oid = '00D7A0000008nBH'
+                        elif settings.SFDC == 'PRODUCTION':
+                            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+                            rlsa_leads = SalesforceLeads.PRODUCTION_RLSA_ARGS
+                            tag_leads = {'code1': '00Nd0000005WYh9', 'comment1': '00Nd0000005WZIe'}
+                            basic_data = get_common_salesforce_lead_data(request.POST)
+                            oid = '00Dd0000000fk18'
+                        print "1111111111111111111"
+                        print basic_data
+                        basic_data['oid'] = oid
+                        rlsa_data = basic_data
+                        '''
+                            user_list_id1
+                            rsla_bid_adjustment1
+                            internal_cid1
+                        '''
+                        for key, value in rlsa_leads.items():
+                            rlsa_data[value] = request.POST.get(key)
+                        if request.POST.get('tag_contact_person_name'):
+                            full_name = request.POST.get('tag_contact_person_name')
+                        else:
+                            full_name = request.POST.get('advertiser_name')
+                        first_name, last_name = split_fullname(full_name)
+                        rlsa_data['first_name'] = first_name
+                        rlsa_data['last_name'] = last_name
+                        rlsa_data['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
+                        rlsa_data[tag_leads['comment1']] = request.POST.get('comments')
+                        rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
+                        submit_lead_to_sfdc(sf_api_url, rlsa_data)
+
+                resp = {'csv_file': file_name, 'success' : True, 'msg': 'Submitted all leads to SFDC'}
+            else:
+                resp = {'success':False, 'msg':'Invalid file format'}
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+
+    lead_args = get_basic_lead_data(request)
+    lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
+    return render(request, 'leads/rlsa_bulk_upload.html', lead_args)
 
 
 # Picasso/wpp submission flow code
@@ -3530,7 +3619,6 @@ def picasso_build_submission_flow(request):
                             return HttpResponse(json.dumps(returned_data), content_type='application/json') 
                 else:
                     data_in_picasso_db = 0
-
         if data_in_picasso_db == 0:            
             picasso_nomination_database = WPPLeads.objects.filter(customer_id=cid_val)
             if picasso_nomination_database:
@@ -3565,7 +3653,6 @@ def picasso_build_submission_flow(request):
             else:
                 returned_data['redirect_to_nomiantion'] = True
                 return HttpResponse(json.dumps(returned_data), content_type='application/json')
-    
 
 def url_filter(url):
     url_pars = urlparse(url)
@@ -3576,3 +3663,112 @@ def url_filter(url):
     if 'www.' in www_filter:
         www_filter = www_filter.replace('www.','')
     return www_filter
+
+'''
+   Used in
+        - rlsa_bulk_upload_lead_form
+'''
+def validate_rlsa_csv_row(row, row_count):
+    row_errors = {}
+    headers = config.RLSA_BULK_CSV_HEADERS
+
+    # validating mandatory fields
+    if not row[0]:
+        row_errors[headers[0]] = "This field is mandatory"
+    if not row[1]:
+        row_errors[headers[1]] = "This field is mandatory"
+
+    if not row[2]:
+        row_errors[headers[2]] = "This field is mandatory"
+    else:
+        if not is_email_valid(row[2]):
+            row_errors[headers[2]] = "Bad Email Format"
+
+    if not row[3]:
+        row_errors[headers[3]] = "This field is mandatory"
+    if not row[4]:
+        row_errors[headers[4]] = "This field is mandatory"
+    if not row[5]:
+        row_errors[headers[5]] = "This field is mandatory"
+
+    if not row[6]:
+        row_errors[headers[6]] = "This field is mandatory"
+    else:
+        if not is_email_valid(row[6]):
+            row_errors[headers[6]] = "Bad Email Format"
+
+    if not row[7]:
+        row_errors[headers[7]] = "This field is mandatory"
+    # row 8 is not mandatory, so lets ignore
+    if not row[9]:
+        row_errors[headers[9]] = "This field is mandatory"
+
+    #Row 10 user id and bidding id ( 5 items together one is mandatory)
+    user_bid_count = 0
+    bid_errors = {}
+    if row[10] and row[11]:
+        user_bid_count += 1
+        if not row[10].isdigit():
+            bid_errors[headers[10]] = "ID field can't be Alphanumeric"
+        if not row[11]:
+            bid_errors[headers[11]] = "This field is mandatory"
+    if row[12] and row[13]:
+        user_bid_count += 1
+        if not row[12].isdigit():
+            bid_errors[headers[12]] = "ID field can't be Alphanumeric"
+        if not row[13]:
+            bid_errors[headers[11]] = "This field is mandatory"
+    if row[14] and row[15]:
+        user_bid_count += 1
+        if not row[14].isdigit():
+            bid_errors[headers[14]] = "ID field can't be Alphanumeric"
+        if not row[15]:
+            bid_errors[headers[11]] = "This field is mandatory"
+    if row[16] and row[17]:
+        user_bid_count += 1
+        if not row[16].isdigit():
+            bid_errors[headers[16]] = "ID field can't be Alphanumeric"
+        if not row[17]:
+            bid_errors[headers[11]] = "This field is mandatory"
+    if row[18] and row[19]:
+        user_bid_count += 1
+        if not row[18].isdigit():
+            bid_errors[headers[18]] = "ID field can't be Alphanumeric"
+        if not row[19]:
+            bid_errors[headers[11]] = "This field is mandatory"
+
+    if user_bid_count == 0:
+        row_errors['bid_errors'] = "Atleast one 'User id and RLSA Bid Adjustment' is Mandatory"
+    if bid_errors:
+        row_errors['bid_errors'] = bid_errors
+    if row_errors:
+        row_errors['row_count'] = row_count
+    return row_errors
+
+
+'''
+   Used in
+        - rlsa_bulk_upload_lead_form
+'''
+def validate_rlsa_headers(headers):
+    missing_headers = []
+    for head in headers:
+        if head in config.RLSA_BULK_CSV_HEADERS:
+            pass
+        else:
+            missing_headers.append(head)
+    return missing_headers
+
+def is_email_valid(email):
+    try:
+        validate_email(email)
+        return True
+    except:
+        return False
+
+
+'''
+    Bulk upload rlsa fields mapping
+'''
+def map_rlsa_fields(row):
+    pass

@@ -1,0 +1,282 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  RLSA Bulk Upload
+{% endblock title %}
+{% block main_css %}
+    <link rel="stylesheet" href="{% static 'css/webapp/leads/rlsa_bulk_upload.css' %}">
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container-fluid">
+        <h1 class="lead-header" style="">RLSA Bulk Submit</h1>
+          <form class="lead-form" id="rlsaBulk" enctype="multipart/form-data">
+             {% csrf_token %}
+            <input type="hidden" id="oid" name="oid" value="00DZ000000MipUa">
+            <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+            <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">
+                If you do not get confirmation e-mail after submitting a lead please notify us at
+                <b>implementation-support@google.com</b>
+            </p>
+
+            <div class="std-sub-title">Google Rep Info</div>
+            <div class="row">
+              <div class="col-md-4">
+                <label for="gref">Google Rep Name</label>
+                <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}' required>
+              </div>
+              <div class="col-md-4">
+                <label for="emailref">Google Rep Email</label>
+                <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}" required>
+              </div>
+              <div class="col-md-4">
+                <label for="team">Program Name</label>
+                <select class="form-control bgicon" id="team" title="Program Name" name="team"
+                        data-validation-error-msg="Please select your team" required>
+                  <option value="">Program name</option>
+                  {% for team in teams %}
+                    <option value='{{team.team_name}}'>{{team.team_name}}</option>
+                  {% endfor %}
+                </select>
+                <!-- <input type="text" id="team" class="form-control" title="Program Name"> -->
+              </div>
+              <div class="col-md-4">
+              </div>
+              <div class="col-md-4">
+              </div>
+               <div class="col-md-4">
+                  <input type="email" class="form-control" id="ldap" name="ldap" title="" placeholder="Additional LDAP">
+                </div>
+              <div class="col-md-4">
+                <label for="manager_name">Manager Name</label>
+                <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}" required>
+              </div>
+              <div class="col-md-4">
+                <label for="manager_email">Manager Email</label>
+                <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}" required>
+              </div>
+              <div class="col-md-4">
+                <label for="rep_location">Google Rep Location</label>
+                  <input type="text" class="form-control" id="rep_location" name="rep_location" value="" placeholder="Enter Your Location" autocomplete="off">
+              </div>
+            </div>
+            <div class="col-md-4" id="file_div" style="margin-left: -14px;">
+                <input type="button" value="Choose file" id="fakeBrowse" onclick="handleBrowseClick();" style="width:40%;padding: 13px;border-radius: 10px;"/>
+                <input type="file" id="attachment_name" name="attachment_name" style="display: none" onChange="handleChange();" />
+                <input type="text" id="filename" readonly="true" style="width:58%;padding: 13px;border-radius: 10px;" />
+            </div>
+            <div id="submit" class="text-center">
+                <div class="btn-group" style="margin-left: -43%;">
+                    <button class="btn std-btn" id="file_submit" style="padding: 10px;border-radius: 10px;" disabled="disabled">Submit</button>
+                </div>
+            </div>
+          </form>
+        <div id="uploadError" class="alert alert-danger" style="display:none;"></div>
+        <!-- TIMELINE CODE START -->
+        <section id="steps" class="steps-section" style="display:none">
+            <h2 class="steps-header">Bulk upload progress</h2>
+
+            <div class="steps-timeline">
+                <div class="steps-one">
+                    <div id="circle-div" class="circle"></div>
+                    <h3 id="upload-status" class="steps-name">Uploading..</h3>
+                </div>
+
+                <div class="steps-two">
+                    <div id="circle-div" class="circle"></div>
+                    <h3 id="process-status" class="steps-name"></h3>
+                </div>
+
+                <div class="steps-three">
+                    <div id="circle-div" class="circle"></div>
+                    <h3 id="complete-status" class="steps-name"></h3>
+                </div>
+            </div>
+        </section>
+        <!-- TIMELINE CODE END -->
+  </div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    olark('api.box.hide');
+
+    /*capitalizing advertizer name */
+    $.fn.capitalize = function () {
+        $.each(this, function () {
+            var split = this.value.split(' ');
+            for (var i = 0, len = split.length; i < len; i++) {
+                split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1).toLowerCase();
+            }
+            this.value = split.join(' ');
+        });
+        return this;
+    };
+
+    $('#advertiser_name').on('focusout', function () {
+        $(this).capitalize();
+    }).capitalize();
+    /*end of capitalizing*/
+
+    $('#submit').click(function(e){
+        e.preventDefault();
+        var submit = true;
+        if($('#file_submit').prop('disabled')){submit=false;}
+
+        $("form").validate();
+        var is_valid = $("form").valid();
+        if(!is_valid){submit=false;}
+
+        //Validate form
+        var formData = new FormData();
+        var file = document.getElementById("attachment_name").files[0];
+        if (file) {
+            formData.append('rlsaBulkFile',  file);
+        }
+        formData.append('gref', $("#gref").val());
+        formData.append('emailref', $("#emailref").val());
+        formData.append('team', $("#team").val());
+        formData.append('manager_name', $("#manager_name").val());
+        formData.append('manager_email', $("#manager_email").val());
+        formData.append('oid', $("#oid").val());
+        formData.append('__VIEWSTATE', $("#__VIEWSTATE").val());
+        formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
+
+        var ldapVal = $("#ldap").val()
+        if (ldapVal)
+            formData.append('eto_ldap', ldapVal);
+
+        var repLoc = $("#rep_location").val()
+        if(repLoc)
+            formData.append('rep_location', repLoc);
+        if(submit){
+            $("form :input").attr("disabled", true);
+            $("#steps").show();
+            $(".steps-one > div").css('background','#0062B7');
+            $.ajax({
+                url: location.href,
+                type: 'POST',
+                xhr: function() {
+                    // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if(myXhr.upload){
+                        // Check if upload property exists
+                        myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+                        // For handling the progress of the upload
+                    }
+                    return myXhr;
+                },
+                success: function(e){
+                    $(".steps-two > div").css('background','#4CAF50');
+                    $(".steps-two > h3").text("Processed");
+                    $(".steps-three > div").css('background','#0062B7');
+                    $(".steps-three > div").css('background','#4CAF50');
+                    $(".steps-three > h3").text("Completed");
+                    $("form :input").attr("disabled", false);
+                    $("#file_submit").attr("disabled", true);
+                    $("#attachment_name").val("");
+                    $("#filename").val("");
+                    resetTimeline();
+                },
+                error: function(e){
+                    $("form :input").attr("disabled", false);
+                    $("#file_submit").attr("disabled", true);
+                    resetTimeline();
+                    console.log(e);
+                },
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        }else{
+            console.log("Submission Failed");
+        }
+    });
+
+    function progressHandlingFunction(e){
+        if(e.lengthComputable){
+            var percent = (e.loaded / e.total) * 100;
+            if(percent == 100){
+                $(".steps-one > div").css('background','#4CAF50');
+                $(".steps-one > h3").text("Uploaded");
+                $(".steps-two > div").css('background','#0062B7');
+                $(".steps-two > h3").text("Processing..");
+            }
+        }
+    }
+});
+
+function resetTimeline(){
+    $("#steps").hide();
+    $('.circle').each(function() {
+        $(this).css('background','#EEECEB');
+    });
+    $('.steps-timeline > div > h3').each(function() {
+        $(this).text("");
+    });
+    $('upload-status').text("Uploading..");
+}
+
+function handleBrowseClick(){
+    var fileinput = document.getElementById("attachment_name");
+    fileinput.click();
+}
+
+function handleChange(){
+    var file = document.getElementById("attachment_name");
+    var textInput = document.getElementById("filename");
+    textInput.value = file.value;//.replace("C:\\fakepath\\", "");
+    if(validateExtension(textInput.value)){
+        validateFileSize(file)
+    }
+}
+
+function validateExtension(UploadFileName) {
+    var allowedFiles = [".csv"];
+    console.log(UploadFileName)
+    var uploadError = document.getElementById("uploadError");
+    var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:()])+(" + allowedFiles.join('|') + ")$");
+    if (!regex.test(UploadFileName.toLowerCase())) {
+        $("#file_submit").prop("disabled",true);
+        $("#uploadError").show();
+        uploadError.innerHTML = "Please upload files only with extension<b>" + allowedFiles.join(', ') + "</b>";
+        return false;
+    }
+    uploadError.innerHTML = "";
+    $("#uploadError").hide();
+    $("#file_submit").prop("disabled",false);
+    return true;
+}
+
+function validateFileSize(element){
+    var maxAllowedFileSize = 2; // 2 MB
+    var uploadError = document.getElementById("uploadError");
+    if (element.files[0].size > 1024 * 1024 * maxAllowedFileSize)
+    {
+        $("#file_submit").prop("disabled",true);
+        $("#uploadError").show();
+        uploadError.innerHTML = "Max file upload size is <b>" + maxAllowedFileSize+ " MB</b>.";
+        return true;
+    }
+    uploadError.innerHTML = "";
+    $("#uploadError").hide();
+    $("#file_submit").prop("disabled",false);
+    return false;
+}
+</script>
+{% endblock main_js %}

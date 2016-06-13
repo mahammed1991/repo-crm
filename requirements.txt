@@ -13,7 +13,7 @@ xlrd==0.9.3                     # Library for developers to extract data from Mi
 South==1.0                      # Migrations for Django
 Pillow==2.5.0                   # Python Imaging Library
 django-kronos==0.4              # Kronos is a Django application that makes it easy to define and schedule tasks with cron
-markdown==2.4.1                 # Python implementation of Markdown.                
+markdown==2.4.1                 # Python implementation of Markdown.
 html5lib==0.999                 # HTML parser based on the WHATWG HTML specifcation.
 python-memcached==1.53          # Pure python memcached client.
 django-debug-toolbar==1.2.1     # A configurable set of panels that display various debug information about the current request/response.

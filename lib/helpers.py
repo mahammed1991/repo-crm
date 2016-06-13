@@ -725,22 +725,27 @@ def get_tat_for_picasso(source):
         end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
         sf = SalesforceApi.connect_salesforce()
         code_type = 'Picasso'
-        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
+        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date,
+                                                                                                    end_date, code_type)
         sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)
         result = sf.query_all(sql_query_picasso)
         no_of_inqueue_leads = result['totalSize'] + 1
     else:
         start_date = datetime.today()
         start_date = datetime(start_date.year, 1, 1, 0, 0)
-        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language']).filter(created_date__gte=start_date).count() + 1
+        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language'])\
+            .filter(created_date__gte=start_date, type_1='Picasso').count() #+ 1
 
     tz_ist = Timezone.objects.get(zone_name='IST')
     ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
     today_in_ist = datetime(ist_today.year, ist_today.month, ist_today.day)
     availabilities = AvailabilityForTAT.objects.filter(date_in_ist__gte=today_in_ist).order_by('date_in_ist')
-    target_details = dict()
     lookup_sum = 0
-    total_no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
+    '''
+        Not sure why they were adding the todays transaction leads to queue lead count, this was causing the count mis-match,
+        hence, commenting that code.
+    '''
+    total_no_of_inqueue_leads = no_of_inqueue_leads #+ get_todays_transition_leads()
     target_details = {'estimated_date': today_in_ist, 'lookup_sum': '', 'no_of_inqueue_leads': 1}
     for availability in availabilities:
         if availability.availability_count and availability.audits_per_date:
@@ -789,15 +794,19 @@ def get_tat_for_bolt(source):
     else:
         start_date = datetime.today()
         start_date = datetime(start_date.year, 1, 1, 0, 0)
-        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language']).filter(created_date__gte=start_date, type_1='BOLT').count() + 1
+        no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language'])\
+            .filter(created_date__gte=start_date, type_1='BOLT').count() #+ 1
 
     tz_ist = Timezone.objects.get(zone_name='IST')
     ist_today = SalesforceApi.convert_utc_to_timezone(datetime.utcnow(), tz_ist.time_value)
     today_in_ist = datetime(ist_today.year, ist_today.month, ist_today.day)
     availabilities = AvailabilityForBoltTAT.objects.filter(date_in_ist__gte=today_in_ist).order_by('date_in_ist')
-    target_details = dict()
     lookup_sum = 0
-    total_no_of_inqueue_leads = no_of_inqueue_leads + get_todays_transition_leads()
+    '''
+        Not sure why they were adding the todays transaction leads to queue lead count, this was causing the count mis-match,
+        hence, commenting that code.
+    '''
+    total_no_of_inqueue_leads = no_of_inqueue_leads #+ get_todays_transition_leads()
     target_details = {'estimated_date': today_in_ist, 'lookup_sum': '', 'no_of_inqueue_leads': 1}
     for availability in availabilities:
         if availability.availability_count and availability.audits_per_date:

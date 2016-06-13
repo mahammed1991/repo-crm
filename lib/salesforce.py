@@ -53,7 +53,9 @@ class SalesforceApi(object):
                 return None
         else:
             try:
-                sf = CustomeSalesforce(username='google.tech@regalix-inc.com', password='portalsupport123456', security_token='enfTcpWGlwx6ObKwksx3Bt9I')
+                sf = CustomeSalesforce(username='google.tech@regalix-inc.com',
+                                       password='portalsupport123456',
+                                       security_token='enfTcpWGlwx6ObKwksx3Bt9I')
 
                 return sf
             except Exception, e:

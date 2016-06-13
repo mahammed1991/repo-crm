@@ -276,7 +276,8 @@ class SalesforceLeads(object):
                              'unique_ref_id': '00N7A000000HAhN',  # picasso unique id
                              'picasso_tat': '00N7A000000I6pe',  # picasso TAT
                              'picasso_auto_number': '00N7A000000SrlK',  # picasso auto number
-                             }
+                             } 
+
 
     PRODUCTION_TAG_LEADS_ARGS = {'first_name': 'first_name',
                                  'last_name': 'last_name',

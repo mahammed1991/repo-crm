@@ -26,7 +26,7 @@ def export_csv(modeladmin, request, queryset):
     return response
 export_csv.short_description = u"Export Users Emails"
 
-class MyUserAdmin(UserAdmin):
+'''class MyUserAdmin(UserAdmin):
     actions = [export_csv]
     UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
     readonly_fields = ['email', 'is_active', 'date_joined']
@@ -44,7 +44,7 @@ class MyUserAdmin(UserAdmin):
         extra_context = CustomAdmin.get_view_status(request, extra_context)
         return super(MyUserAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
 admin.site.unregister(User)
-admin.site.register(User, MyUserAdmin)
+admin.site.register(User, MyUserAdmin)'''
 
 
 class ContactAdmin(admin.ModelAdmin):

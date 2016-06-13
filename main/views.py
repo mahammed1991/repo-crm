@@ -31,12 +31,7 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_p
                          get_previous_month_start_end_days, create_new_user, convert_excel_data_into_list)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
-from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
-from django.utils.html import strip_tags
-from reports.report_services import ReportService, DownloadLeads
-from reports.models import Region, CSATReport
-import re
-from lib.salesforce import SalesforceApi
+
 from lib.helpers import save_file
 
 import csv

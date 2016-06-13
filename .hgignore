@@ -13,3 +13,4 @@ syntax: glob
 static/uploads/*
 .venv
 .vagrant
+.idea/*

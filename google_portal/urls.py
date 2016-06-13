@@ -24,4 +24,5 @@ urlpatterns = patterns(
     #urls for accessing analytics file to retrive credntials from google
     url(r'^analytics\.txt', TemplateView.as_view(template_name='analytics.txt')),
     url(r'^main/home/analytics\.txt', TemplateView.as_view(template_name='analytics.txt')),
+    url(r'^robots\.txt', TemplateView.as_view(template_name='robots.txt')),
 )
