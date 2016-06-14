@@ -758,7 +758,9 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
         'vsharan@regalix-inc.com',
         'babla@regalix-inc.com',
         feedback.lead_owner.email,
-        request.user.email
+        request.user.email,
+        feedback.user.email,
+        'khengg@google.com'
     ])
 
     mail_from = request.user.email
@@ -770,7 +772,6 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return feedback
-
 
 @login_required
 def create_feedback_from_lead_status(request):
