@@ -589,7 +589,8 @@ class SalesforceLeads(object):
                             'tag_datepick': 'entry.1305368918',
                             'additional_notes': 'entry.1719133589'
                         }
-    # SUBMIT PICASSO lead form
+
+    # SUBMIT PICASSO AUDIT/BOLT lead form
     GOOGLE_FORM_PICASSO_FIELDS = {
                            'gref': 'entry.1549122955',
                            'team': 'entry.1462749639',
@@ -598,4 +599,15 @@ class SalesforceLeads(object):
                            'url1': 'entry.1406592858',
                            'additional_notes': 'entry.929766348',
                            'picasso_objective_list[]': 'entry.652078496',
+
+                           #new fields of picasso BOLT
+                           'corp_email':'entry.1814173764',
+                           'cases_alias':'entry.421466765',
+                           'advertiser_email':'entry.1530425496',
+                           'language':'entry.833984856',
+                           'market_selector':'entry.1286314510',
+                           'url2':'entry.608061483',
+                           'url3':'entry.1222396976',
+                           'ctype1':'entry.850419739',
+
                            }
