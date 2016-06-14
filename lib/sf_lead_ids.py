@@ -92,7 +92,7 @@ class SalesforceLeads(object):
                                 'market_selector': '00N7A000000ZOlk',
                                 'picasso_type': '00N7A000000ZQAC',
                                 # ETO Ldap
-                                'eto_ldap': '00N7A000000ZQ8p',
+                                'ldap': '00N7A000000ZQ8p',
                                 }
 
     PRODUCTION_BASIC_LEADS_ARGS = {'first_name': 'first_name',
@@ -181,7 +181,7 @@ class SalesforceLeads(object):
                                    '__VIEWSTATE': '__VIEWSTATE',
 
                                    #Additional ETO-LDAP field
-                                   'eto_ldap': '00Nd0000008SWkF',
+                                   'ldap': '00Nd0000008SWkF',
                                    #picasso and bolt added on 1-june-2016
                                    'market_selector':'00Nd0000008SWk5',
                                    'corp_email':'00Nd0000008SWjg',
@@ -472,7 +472,7 @@ class SalesforceLeads(object):
                             'company': 'entry.1775166236',
                             'country': 'entry.1320886132',
                             'emailref': 'entry.1798356961',
-                            'eto_ldap': 'entry.987152811',
+                            'ldap': 'entry.987152811',
                             'g_cases_id': 'entry.131955320',
                             'gref': 'entry.1184993473',
                             'language': 'entry.67038829',
