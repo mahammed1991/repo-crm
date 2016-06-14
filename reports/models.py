@@ -350,10 +350,9 @@ class KickoffTagteam(models.Model):
 
 
 class RLSABulkUpload(models.Model):
-    user_id = models.ForeignKey(User)
-    user_name = models.CharField(max_length=100)
+    uploaded_by = models.ForeignKey(User)
     created_date = models.DateTimeField(auto_now_add=True)
-    document_path = models.CharField(max_length=400)
+    file_path = models.CharField(max_length=400)
     original_name = models.CharField(max_length=200)
     uploaded_leads = models.IntegerField()
     total_leads = models.IntegerField()

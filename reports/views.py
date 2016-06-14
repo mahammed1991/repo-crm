@@ -2363,6 +2363,16 @@ def kickoff_export_detail(request, program_id):
                                                                   'email_bcc_list':email_bcc_list,
                                                                   })
 
+def rlsa_bulk_upload_report(request):
+    """
+
+    Args:
+        request: Request
+
+    Returns: Render response RLSA Bulk upload report HTML
+
+    """
+    pass
 
 
 
