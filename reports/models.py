@@ -348,3 +348,15 @@ class KickoffTagteam(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
+
+class RLSABulkUpload(models.Model):
+    uploaded_by = models.ForeignKey(User)
+    created_date = models.DateTimeField(auto_now_add=True)
+    file_path = models.CharField(max_length=400)
+    original_name = models.CharField(max_length=200)
+    uploaded_leads = models.IntegerField()
+    total_leads = models.IntegerField()
+
+    class Meta:
+        verbose_name_plural = "RLSA Bulk Upload"
+

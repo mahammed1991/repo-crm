@@ -273,11 +273,11 @@ APP_URL = 'http://localhost:5000'
 TAG_URL = APP_URL
 WPP_URL = APP_URL
 
-try:
+'''try:
     if len(FORUM_SCRIPT_ALIAS) > 0:
         APP_URL = '%s/%s' % (APP_URL, FORUM_SCRIPT_ALIAS[:-1])
 except NameError:
-    pass
+    pass'''
 
 app_url_split = APP_URL.split("://")
 
@@ -313,6 +313,8 @@ MODULE_LIST = filter(lambda m: getattr(m, 'CAN_USE', True), [
 
 SFDC = 'STAGE'
 TECH_TEAM_ID = '005d00000049PanAAE'
+SFDC_API = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+
 
 API_KEY = 'AIzaSyAV3QgE5ezDAVyXIFKO_QfYb1L-jT_cj30'
 

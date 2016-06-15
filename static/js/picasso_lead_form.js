@@ -53,6 +53,7 @@ function validatethis(frm) {
     }
 
     objectiveValidation();
+
 /*    if($('#bolt').hasClass('active') == false){
       objectiveValidation();
     }*/

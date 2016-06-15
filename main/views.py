@@ -31,15 +31,17 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_p
                          get_previous_month_start_end_days, create_new_user, convert_excel_data_into_list)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
+
+from lib.helpers import save_file
+
+import csv
+
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from django.utils.html import strip_tags
 from reports.report_services import ReportService, DownloadLeads
 from reports.models import Region, CSATReport
 import re
 from lib.salesforce import SalesforceApi
-from lib.helpers import save_file
-
-import csv
 
 
 def home(request):
@@ -763,7 +765,9 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
         'vsharan@regalix-inc.com',
         'babla@regalix-inc.com',
         feedback.lead_owner.email,
-        request.user.email
+        request.user.email,
+        feedback.user.email,
+        'khengg@google.com'
     ])
 
     mail_from = request.user.email
@@ -775,7 +779,6 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return feedback
-
 
 @login_required
 def create_feedback_from_lead_status(request):

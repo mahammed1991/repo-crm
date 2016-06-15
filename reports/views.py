@@ -1,25 +1,30 @@
+
+import re
+import json
+from datetime import datetime
+from collections import OrderedDict
+import time
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-import json
-from datetime import datetime
-from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType
-from report_services import ReportService, DownloadLeads, TrendsReportServices
-from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from django.conf import settings
-from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam
-from main.models import UserDetails, WPPMasterList
 from django.db.models import Q
-from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count
-from collections import OrderedDict
-from lib.helpers import (send_mail)
 from django.template.loader import get_template
 from django.template import Context
 from django.core.urlresolvers import reverse
-import re
+
+from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType
+from report_services import ReportService, DownloadLeads, TrendsReportServices
+from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
+from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam
+from main.models import UserDetails, WPPMasterList
+from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
+from lib.helpers import (send_mail)
+from models import RLSABulkUpload
 
 
 @login_required
@@ -120,7 +125,7 @@ def get_selected_new_reports(request):
                 email = User.objects.select_related('email').get(pk=ldap_id)
                 emails = [email]
             else:
-                emails = request.user.email
+                email = request.user.email
                 emails = [email]
 
         if 'all' in team_members:
@@ -2362,7 +2367,50 @@ def kickoff_export_detail(request, program_id):
                                                                   'meeting_date_display':meeting_date,
                                                                   'email_bcc_list':email_bcc_list,
                                                                   })
+@login_required
+def rlsa_bulk_upload_report(request):
+    """
 
+    Args:
+        request: Request
 
+    Returns: Render response RLSA Bulk upload report HTML
+
+    """
+    if request.is_ajax():
+        resp = {}
+        uploads = []
+        if request.user.groups.filter(name='SUPERUSER'):
+            records = RLSABulkUpload.objects.all()
+        else:
+            records = RLSABulkUpload.objects.all(id=request.user.id)
+        for rec in records:
+            upload = {
+                      'uploaded_by': rec.uploaded_by.first_name + " " + rec.uploaded_by.last_name,
+                      'uploaded_on': time.mktime(rec.created_date.timetuple()),
+                      'file_guid': rec.file_path.split('/')[-1].split('.')[0],
+                      'file_name': rec.original_name,
+                      'created_leads': rec.uploaded_leads,
+                      'failed_leads': rec.total_leads - rec.uploaded_leads
+                      }
+            uploads.append(upload)
+        resp['data'] = uploads
+        resp['success'] = True
+        return HttpResponse(json.dumps(resp), 'application/json')
+
+    return render(request, 'reports/rlsa_bulk_report.html')
+
+@login_required
+def download_rlsa_bulk_file(request):
+    file_guid = request.GET.get('guid', None)
+    if file_guid:
+        file_path = settings.MEDIA_ROOT + '/rlsa_bulk_csv/'+ str(file_guid) + ".csv"
+        row = RLSABulkUpload.objects.get(file_path=file_path)
+        data = open(file_path, 'r').read()
+        resp = HttpResponse(data, mimetype='application/x-download')
+        resp['Content-Disposition'] = 'attachment;filename='+row.original_name
+        return resp
+    else:
+        return HttpResponse(json.dumps({'success':False, 'msg': 'Invalid Request'}), 'application/json')
 
 

@@ -32,9 +32,9 @@ Reports
               {% for team in teams %}
                   <label>
                     {% if team == 'Other'%}
-                      <input type="checkbox" value=""> {{team}} 
+                      <input type="checkbox" value=""> {{team}}
                     {% else %}
-                      <input type="checkbox" value="{{team}}"> {{team}} 
+                      <input type="checkbox" value="{{team}}"> {{team}}
                     {% endif %}
                   </label>
               {% endfor %}
@@ -51,7 +51,7 @@ Reports
               <label><input type="checkbox" value="all" class="checkbox_select_all" checked> Select All </label>
                 {% for member in team_members %}
                     <label>
-                        <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}} 
+                        <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}}
                     </label>
                 {% endfor %}
             </div>
@@ -72,13 +72,13 @@ Reports
           </div>
         </div>
         <div id="split_location">
-          <label><input type="checkbox" id="location_split">Split Location-Wise</label>          
+          <label><input type="checkbox" id="location_split">Split Location-Wise</label>
         </div>
       </div>
       <!-- <div id="filter_country" class="col-md-3 centered" style="display:none;">
-        
+
       </div> -->
-      
+
       <div class="col-md-3 centered">
         <select name="type" id="filter_timeline" style="display:block;" class="form-control bgicon">
             <option value="">Choose Timeline</option>
@@ -89,14 +89,14 @@ Reports
             <option value="this_quarter">This Quarter</option>
             <!-- <option value="dateRange">Date Range</option> -->
         </select>
-      </div>      
+      </div>
       <!-- <div class="col-md-3 centered date-range" id="filter_dateRange" style="display:none;">
         <input id="datepickerFrom" type="text" class="form-control date-from" placeholder="From">
         <i class="fa fa-calendar"></i>
         <input id="datepickerTo" type="text" class="form-control date-to" placeholder="To">
         <i class="fa fa-calendar"></i>
       </div> -->
-      
+
     </div>
     <div class="btn-row">
       <button class="btn std-btn" id='get_report'>View Report</button>
@@ -130,28 +130,28 @@ Reports
             <a href="{% url 'main.views.edit_profile_info' %}">Your Profile</a>
         {% endif %}
         </div>
-    </div>    
-     
+    </div>
+
     <h2>Task Type Analysis</h2>
-    <div class="report-section">      
+    <div class="report-section">
         <div class="report-section-content">
           <div class="report-img" id="piechart" style="width: 720px; height: 400px;">
             </div>
             <div class="report-data" style="margin-left:20px !important;">
               <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table">
-                    
+
                 </table>
             </div>
               <div class="report-data" style="margin-left:20px !important;">
               <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="code_type_table2">
-                    
+
                 </table>
               </div>
         </div>
     </div>
-    
+
     <h2 id="tag"></h2>
-    <div class="report-section wowt">      
+    <div class="report-section wowt">
         <div class="report-section-content">
           <div id="linechart" style="width: 600px; height: 300px;float: left;">
             </div>
@@ -169,13 +169,13 @@ Reports
     </div>
 
     <h2>Lead Status Summary</h2>
-    <div class="report-section c">      
+    <div class="report-section c">
         <div class="report-section-content">
           <div class="report-img" id="columnchart" style="width: 650px; height: 400px;">
             </div>
             <div class="report-data">
               <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="lead_status_table">
-                  
+
                 </table>
             </div>
         </div>
@@ -191,7 +191,7 @@ Reports
          <span style="margin-top: 4px;  vertical-align: middle; display: inline-block"></span>
             <div class="centered" style="float:left;vertical-align: middle">
             <input id="historical_filter_timeline" style="display:none;" class="form-control bgicon">
-          </div> 
+          </div>
        </div>
     </div>
     </div>
@@ -251,7 +251,7 @@ Reports
           </div>
       </form>
     </div>
-  
+
   </div>
 </section>
 <!-- content-region ends --> 
@@ -259,7 +259,7 @@ Reports
 <div id="preloaderOverlay" style='display:none;'>
   <div class="preloader">
   <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
-  
+
   </div>
 </div>
 {% endblock content %}
@@ -277,14 +277,14 @@ Reports
 <script src="{% static 'js/chart.js' %}"></script>
 <script type="text/javascript">
   default_reports = {{report_details|safe}};
- 
+
 </script>
 <script type="text/javascript">
 
 $(document).ready(function(){
   window.current_ldap = {{request.user.id|safe}};
   window.user_id = {{request.user.id|safe}};
-draw_and_display_tables(default_reports['reports']);  
+draw_and_display_tables(default_reports['reports']);
 
   // bellow code is for showing history check box to button
   $(".check").hide();
@@ -296,7 +296,7 @@ draw_and_display_tables(default_reports['reports']);
       }, 200);
       $('#close_img').show();
       $('#drp_autogen0').show();
-      $(function(){ 
+      $(function(){
           $("#historical_filter_timeline").daterangepicker({
             datepickerOptions : {
                  numberOfMonths : 2,
