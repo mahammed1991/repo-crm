@@ -462,12 +462,15 @@ def agency_lead_form(request):
                 # get Agency related lead values
                 if task_type == "same_task":
                     submit_agency_same_tasks(request, agency_bundle)
+                    
                 elif task_type == 'diff_task':
                     # Agency Different Task submission
                     submit_agency_different_tasks(request, agency_bundle)
+                    
             elif customer_type == 'end_customer':
                 if task_type == 'same_task':
                     submit_customer_lead_same_tasks(request, agency_bundle)
+                    
                 elif task_type == 'diff_task':
                     # Customer Different Task submission
                     submit_customer_lead_different_tasks(request, agency_bundle)
@@ -2809,7 +2812,10 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
         lead_data[appointment_in_pst_key] = appointment_in_pst
         sf_resp = None
         try:
+            # print "111111111"
+            # print lead_data
             sf_resp = requests.post(url=sf_api_url, data=lead_data)
+            #print sf_resp
             # Get Advertiser Details
             advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
@@ -3253,7 +3259,7 @@ def get_picasso_lead(request):
         status_dict = dict()
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
-        form_url_filter = form_url.replace('www.','')
+        form_url_filter = form_url.replace('www.','').lower()
         current_date = datetime.utcnow()
         quarter_one = [1, 2 ,3]
         quarter_two = [4, 5, 6]
@@ -3285,7 +3291,7 @@ def get_picasso_lead(request):
             for each_lead in picasso_lead:
                 each_url = each_lead.url_1
                 each_lead_url = url_filter(each_url)
-                if form_url_filter == each_lead_url:
+                if form_url_filter == each_lead_url.lower():
                     if picasso > 0:
                         status_dict['type'] = 'picasso'
                         status_dict['status'] = 'success'                       
@@ -3367,14 +3373,16 @@ def picasso_bolt_lead_form(request):
                 picasso_data[value] = PicassoLeads.objects.all().count()
             else:
                 picasso_data[value] = request.POST.get(key)
-
-        if request.POST.get('url2') or request.POST.get('url3'):
-            picasso_data['url2'] = request.POST.get('url2')
-            picasso_data['url3'] = request.POST.get('url3')
-
+            if key == 'url2':
+                picasso_data[value] = request.POST.get('url2')
+            if key == 'url3':
+                picasso_data[value] = request.POST.get('url3')
+        # print "11111111"
+        # print picasso_data
         response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         # send_calendar_invite_to_advertiser(advirtiser_details, False)
+        # print response
         if response.status_code == 200:
             ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
         else:
