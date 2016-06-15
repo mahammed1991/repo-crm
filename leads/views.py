@@ -1,12 +1,27 @@
+# Native imports
 import os
 import json
 from datetime import datetime, timedelta
 import requests
 import csv
 import itertools
-
+import operator
+import collections
+from random import randint
 from uuid import uuid4
-from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple 
+from urlparse import urlparse
+import logging
+
+# Thirdpart imports
+from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
+from icalendar import Calendar, Event, vCalAddress, vText
+
+# Django imports
+from django.core.files import File
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
+from django.core.validators import validate_email
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
@@ -14,37 +29,30 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from django.template import Context
-from urlparse import urlparse
 
-from django.core.exceptions import ObjectDoesNotExist
+# Django and Custom Model imports
 from django.db.models import Count
-
-from django.conf import settings
-from representatives.models import (
-    GoogeRepresentatives,
-    RegalixRepresentatives
-)
-from lib.salesforce import SalesforceApi
+from django.db.models import Q
+from reports.models import RLSABulkUpload
+from main.models import UserDetails, PicassoEligibilityMasterUpload
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
                           )
-from main.models import UserDetails, PicassoEligibilityMasterUpload
+from reports.models import Region
+from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
+
+# Custom imports
+import config
+from lib.helpers import save_file
+from lib.sf_lead_ids import SalesforceLeads
+from lib.salesforce import SalesforceApi
 from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso, get_tat_for_bolt,
                          is_manager, get_user_list_by_manager, get_manager_by_user, date_range_by_quarter, tag_user_required, wpp_user_required, get_picasso_count_of_each_lead_status_by_rep)
-from icalendar import Calendar, Event, vCalAddress, vText
-from django.core.files import File
-from django.contrib.auth.models import User
 from reports.report_services import ReportService, DownloadLeads
-from django.db.models import Q
-from random import randint
-from lib.sf_lead_ids import SalesforceLeads
-from reports.models import Region
-import operator
-import collections
 
-from lib.helpers import save_file
-import config
-from django.core.validators import validate_email
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 
 # Create your views here.
@@ -2758,7 +2766,7 @@ def get_all_sfdc_lead_ids(sfdc_type):
     return basic_leads, tag_leads, shop_leads, rlsa_leads
 
 
-def submit_lead_to_sfdc(sf_api_url, lead_data):
+def submit_lead_to_sfdc(sf_api_url, lead_data, rlsa_bulk_upload=False):
     """ Submit lead to Salesforce """
     if "www" in sf_api_url:
         time_zone = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('tzone'))
@@ -2827,6 +2835,9 @@ def submit_lead_to_sfdc(sf_api_url, lead_data):
                 # send_calendar_invite_to_advertiser(advirtiser_details, is_attachment)
         except Exception as e:
             print e
+        return sf_resp
+    if rlsa_bulk_upload:
+        sf_resp = requests.post(url=sf_api_url, data=lead_data)
         return sf_resp
 
 
@@ -3580,48 +3591,81 @@ def rlsa_bulk_upload_lead_form(request):
                             # Headers validation
                             missing_headers = validate_rlsa_headers(row)
                             if missing_headers:
+                                os.unlink(file_path)
                                 resp = {'success':False, 'msg':'Please check your headers - Headers Missing',
-                                        'data':missing_headers}
+                                        'data':missing_headers, 'error': 'headers'}
                                 return HttpResponse(json.dumps(resp), content_type='application/json')
                         else:
                             # Values
                             row_state = validate_rlsa_csv_row(row, row_count)
-                            if not row_state.get('row_count'):
+                            if row_state.get('row_count') is not None:
                                 file_errors.append(row_state)
                             else:
                                 csv_obj_rows.append(row)
                         row_count += 1
                     if file_errors:
-                        resp = {'success': False, 'msg': 'Errors in these rows, please fix them and re-upload csv file.',
-                                'data': file_errors}
                         os.unlink(file_path)
+                        resp = {'success': False, 'msg': 'Errors in these rows, please fix them and re-upload csv file.',
+                                'data': file_errors, 'error': 'rows'}
                         return HttpResponse(json.dumps(resp), content_type='application/json')
                     else:
                         new_file_path = os.path.join(os.path.dirname(file_path), str(uuid4()) + "." + file_extension)
                         os.rename(file_path, new_file_path)
-                        updated_rows = 1
+                        updated_rows = 0
                         for row in csv_obj_rows:
                             '''
                                 1. Map RLSA row to args both for Google docs and SFDC
                                 2. Post to SFDC and Google docs
                             '''
-                            map_rlsa_row_fields(row, request.POST)
-                            sfdc_args, google_form_args, sf_api_url, google_api_url = map_rlsa_row_fields()
-                            try:
-                                submit_lead_to_sfdc(sf_api_url, sfdc_args)
-                            except Exception:
-                                # If it fails for some reason, we are retrying the post operation
-                                submit_lead_to_sfdc(sf_api_url, sfdc_args)
-                            try:
-                                requests.post(url=google_api_url, data=google_form_args)
-                            except Exception:
-                                # If it fails for some reason, we are retrying the post operation
-                                requests.post(url=google_api_url, data=google_form_args)
-                            updated_rows += 1
 
-                        resp = {'csv_file': file_name, 'success' : True, 'msg': 'Submitted all leads to SFDC'}
+                            sfdc_args, google_form_args, sf_api_url, google_api_url = map_rlsa_row_fields(row, request.POST)
+                            try:
+                                resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
+                            except Exception:
+                                # If it fails for some reason, we are retrying the post operation
+                                logger.info("Failed to post. Retrying...(3 Times)")
+                                success = False
+                                for i in range(0, 3):
+                                    try:
+                                        resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
+                                    except Exception:
+                                        success = False
+                                        logger.info("Retry count : " + i + 1)
+                                    if success:
+                                        logger.info("Retry successful. Data posted to SFDC")
+                                        break;
+                                if not success:
+                                    logger.info("Failed to post data to SFDC - 3 times retried")
+                            try:
+                                gresp = requests.post(url=google_api_url, data=google_form_args)
+                            except Exception:
+                                # If it fails for some reason, we are retrying the post operation
+                                logger.info("Failed to post. Retrying...(3 Times)")
+                                success = False
+                                for i in range(0, 3):
+                                    try:
+                                        gresp = requests.post(url=google_api_url, data=google_form_args)
+                                    except Exception:
+                                        success = False
+                                        logger.info("Retry count : "+ i + 1)
+                                    if success:
+                                        logger.info("Retry successful. Data posted to Google forms")
+                                        break;
+                                if not success:
+                                    logger.info("Failed to post data to google forms - 3 times retried")
+                            updated_rows += 1
+                        ''' Saving RLSA Bulk upload Info'''
+                        logger.info("Saving RLSA Bulk Upload information..")
+                        rlsa_bulk = RLSABulkUpload()
+                        rlsa_bulk.file_path = new_file_path
+                        rlsa_bulk.original_name = csv_file.name
+                        rlsa_bulk.total_leads = updated_rows
+                        rlsa_bulk.uploaded_leads = updated_rows
+                        rlsa_bulk.uploaded_by = request.user
+                        rlsa_bulk.save()
+                        resp = {'csv_file': file_name, 'success' : True, 'msg': 'Submitted all leads to SFDC', 'new_leads':updated_rows}
             else:
-                resp = {'success':False, 'msg':'Invalid file format, Please upload CSV file.'}
+                resp = {'success':False, 'msg':'Invalid file format, Please upload CSV file.', 'error': 'format'}
 
             return HttpResponse(json.dumps(resp), content_type='application/json')
 
@@ -3756,12 +3800,18 @@ def validate_rlsa_headers(headers):
     Returns: If there are missing headers, it returns missing headers else it will return empty list
 
     """
+    default_headers = config.RLSA_BULK_CSV_HEADERS
     missing_headers = []
-    for head in headers:
-        if head in config.RLSA_BULK_CSV_HEADERS:
-            pass
-        else:
-            missing_headers.append(head)
+    if len(default_headers) != len(headers):
+        diff_list = list_diff(headers, default_headers)
+        missing_headers += diff_list
+    else:
+        # Spell checks
+        for head in headers:
+            if head in default_headers:
+                pass
+            else:
+                missing_headers.append(head)
     return missing_headers
 
 
@@ -3777,7 +3827,7 @@ def is_email_valid(email):
     try:
         validate_email(email)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -3802,6 +3852,7 @@ def map_rlsa_row_fields(row, request_data):
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         rlsa_args = SalesforceLeads.SANDBOX_RLSA_ARGS
+        bsc_args = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS
         tag_args = {'comment1': '00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
         basic_args = get_common_sandbox_lead_data(request_data)
         oid = '00D7A0000008nBH'
@@ -3809,11 +3860,19 @@ def map_rlsa_row_fields(row, request_data):
     elif settings.SFDC == 'PRODUCTION':
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         rlsa_args = SalesforceLeads.PRODUCTION_RLSA_ARGS
+        bsc_args = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS
         tag_args = {'comment1': '00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
         basic_args = get_common_salesforce_lead_data(request_data)
         oid = '00Dd0000000fk18'
         google_form_args['entry.1070910664'] = 'PRODUCTION'
     basic_args['oid'] = oid
+
+    basic_args[bsc_args.get('company')] = row[1]
+    basic_args[bsc_args.get('aemail')] = row[2]
+    basic_args[bsc_args.get('phone')] = row[3]
+    basic_args[bsc_args.get('advertiser_location')] = row[4]
+    basic_args[bsc_args.get('language')] = row[5]
+    basic_args[bsc_args.get('cid')] = row[9]
 
     sfdc_args = basic_args
 
@@ -3892,3 +3951,18 @@ def url_filter(lead_url):
         lead_url = '{uri.path}'.format(uri=lead_url)
         lead_url = lead_url.split('/')[0]
     return lead_url
+
+
+def list_diff(list1, list2):
+    """
+
+    Args:
+        list1: List
+        list2: List
+
+    Returns: Difference elements in two lists
+
+    """
+    list_1 = [i for i in set(list1) if i not in list2]
+    list_2 = [i for i in set(list1) if i not in list2]
+    return list_1 + list_2

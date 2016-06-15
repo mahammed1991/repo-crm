@@ -430,7 +430,7 @@ class CodeType(models.Model):
 
 class RegalixTeams(models.Model):
 
-    def default_team_lead():
+    def default_team_lead(self):
         try:
             lead_owner = User.objects.get(email=settings.DEFAULT_LEAD_OWNER_EMAIL)
         except ObjectDoesNotExist:

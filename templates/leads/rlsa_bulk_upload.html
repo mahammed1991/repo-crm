@@ -73,7 +73,9 @@
                 </div>
             </div>
           </form>
-        <div id="uploadError" class="alert alert-danger" style="display:none;"></div>
+        <div id="status"></div>
+        <!--div id="uploadSuccess" class="alert alert-success" style="display:none;"></div-->
+        <!--div class="alert alert-danger"></div-->
         <!-- TIMELINE CODE START -->
         <section id="steps" class="steps-section" style="display:none">
             <h2 class="steps-header">Bulk upload progress</h2>
@@ -108,12 +110,20 @@
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/webapp/leads/rlsa_bulk_upload.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 
 <script type="text/javascript">
 
 $(document).ready(function(){
     olark('api.box.hide');
+
+    window.rep_location = "{{user.profile.rep_location|safe}}";
+    if(window.rep_location){
+      $('#rep_location').val(window.rep_location);
+    }else{
+      getLocation('rep_location');
+    }
 
     /*capitalizing advertizer name */
     $.fn.capitalize = function () {
@@ -158,12 +168,13 @@ $(document).ready(function(){
 
         var ldapVal = $("#ldap").val()
         if (ldapVal)
-            formData.append('eto_ldap', ldapVal);
+            formData.append('ldap', ldapVal);
 
         var repLoc = $("#rep_location").val()
         if(repLoc)
             formData.append('rep_location', repLoc);
         if(submit){
+            $("#status").empty();
             $("form :input").attr("disabled", true);
             $("#steps").show();
             $(".steps-one > div").css('background','#0062B7');
@@ -180,23 +191,83 @@ $(document).ready(function(){
                     }
                     return myXhr;
                 },
-                success: function(e){
-                    $(".steps-two > div").css('background','#4CAF50');
-                    $(".steps-two > h3").text("Processed");
-                    $(".steps-three > div").css('background','#0062B7');
-                    $(".steps-three > div").css('background','#4CAF50');
-                    $(".steps-three > h3").text("Completed");
-                    $("form :input").attr("disabled", false);
-                    $("#file_submit").attr("disabled", true);
-                    $("#attachment_name").val("");
-                    $("#filename").val("");
-                    resetTimeline();
+                success: function(res){
+                    if(res.success){
+                        $(".steps-two > div").css('background','#4CAF50');
+                        $(".steps-two > h3").text("Processed");
+                        $(".steps-three > div").css('background','#0062B7');
+                        $(".steps-three > div").css('background','#4CAF50');
+                        $(".steps-three > h3").text("Completed");
+                        $("form :input").attr("disabled", false);
+                        $("#file_submit").attr("disabled", true);
+                        $("#attachment_name").val("");
+                        $("#filename").val("");
+                        resetTimeline();
+                        var errState = document.getElementById("status");
+                        var html = "<div class='alert alert-success'><a href='#' class='close' \
+                                    data-dismiss='alert' aria-label='close'>&times;</a> <strong>Success!</strong> "+ res.new_leads +" \
+                                    New lead(s) created successfully.\n <a  target='_blank' \
+                                    href='/reports/rlsa-bulk-upload/'>Click here to see your bulk upload report</a></div>";
+                        errState.innerHTML = html;
+                    }else{
+                        $(".steps-two > div").css('background','#4CAF50');
+                        $(".steps-two > h3").text("Processed");
+                        $(".steps-three > div").css('background','#FF0000');
+                        $(".steps-three > h3").text("Upload failed");
+                        $("form :input").attr("disabled", false);
+                        $("#file_submit").attr("disabled", true);
+                        $("#attachment_name").val("");
+                        $("#filename").val("");
+                        if(res.error === "rows"){
+                            // Errors in rows
+                            var errState = document.getElementById("status");
+                            var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                                        aria-label='close'>&times;</a><b> Errors in following rows, please fix them and upload again</b> \
+                                        <table class='table'><thead><tr><th>Row Number</th><th>Errors</th></tr></thead><tbody>";
+                            $.each(res.data, function( index, value ) {
+                              html += "<tr class='danger'> <td>"+value['row_count']+"</td><td><ul>"
+                              $.each(value, function( key, value ) {
+                                  if(key !== 'row_count'){
+                                    html += "<li> <b>"+ key +"</b> : "+ value  +" </li>"
+                                  }
+                              });
+                              html += "</ul></td></tr>";
+                            });
+                            html += "</tbody></table></div>";
+                            errState.innerHTML = html;
+                            resetTimeline();
+                        }else if(res.error === "headers"){
+                            // Missing headers or unknown headers
+                            var errState = document.getElementById("status");
+                            var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                                        aria-label='close'>&times;</a> <b> Missing/Unknown headers</b> <ul>";
+                            $.each(res.data, function( index, value ) {
+                              html += "<li> "+index+" - "+ value +" </li>";
+                            });
+                            html += "</ul></div>";
+                            errState.innerHTML = html;
+                            resetTimeline();
+                        }else{
+                            // Bad File Format
+                            var errState = document.getElementById("status");
+                            var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                                        aria-label='close'>&times;</a> <b> Bad file format </b></div>";
+                            errState.innerHTML = html;
+                            resetTimeline();
+                        }
+                    }
                 },
                 error: function(e){
                     $("form :input").attr("disabled", false);
                     $("#file_submit").attr("disabled", true);
+                    $(".steps-three > div").css('background','#FF0000');
+                    $(".steps-three > h3").text("Upload failed");
+                    var errState = document.getElementById("status");
+                    var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                                aria-label='close'>&times;</a> <b> Server error.</b> Please try after sometime or \
+                                report this issue at <b>implementation-support@google.com</b></div>"
+                    errState.innerHTML = html;
                     resetTimeline();
-                    console.log(e);
                 },
                 data: formData,
                 cache: false,
@@ -207,76 +278,6 @@ $(document).ready(function(){
             console.log("Submission Failed");
         }
     });
-
-    function progressHandlingFunction(e){
-        if(e.lengthComputable){
-            var percent = (e.loaded / e.total) * 100;
-            if(percent == 100){
-                $(".steps-one > div").css('background','#4CAF50');
-                $(".steps-one > h3").text("Uploaded");
-                $(".steps-two > div").css('background','#0062B7');
-                $(".steps-two > h3").text("Processing..");
-            }
-        }
-    }
 });
-
-function resetTimeline(){
-    $("#steps").hide();
-    $('.circle').each(function() {
-        $(this).css('background','#EEECEB');
-    });
-    $('.steps-timeline > div > h3').each(function() {
-        $(this).text("");
-    });
-    $('upload-status').text("Uploading..");
-}
-
-function handleBrowseClick(){
-    var fileinput = document.getElementById("attachment_name");
-    fileinput.click();
-}
-
-function handleChange(){
-    var file = document.getElementById("attachment_name");
-    var textInput = document.getElementById("filename");
-    textInput.value = file.value;//.replace("C:\\fakepath\\", "");
-    if(validateExtension(textInput.value)){
-        validateFileSize(file)
-    }
-}
-
-function validateExtension(UploadFileName) {
-    var allowedFiles = [".csv"];
-    console.log(UploadFileName)
-    var uploadError = document.getElementById("uploadError");
-    var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:()])+(" + allowedFiles.join('|') + ")$");
-    if (!regex.test(UploadFileName.toLowerCase())) {
-        $("#file_submit").prop("disabled",true);
-        $("#uploadError").show();
-        uploadError.innerHTML = "Please upload files only with extension<b>" + allowedFiles.join(', ') + "</b>";
-        return false;
-    }
-    uploadError.innerHTML = "";
-    $("#uploadError").hide();
-    $("#file_submit").prop("disabled",false);
-    return true;
-}
-
-function validateFileSize(element){
-    var maxAllowedFileSize = 2; // 2 MB
-    var uploadError = document.getElementById("uploadError");
-    if (element.files[0].size > 1024 * 1024 * maxAllowedFileSize)
-    {
-        $("#file_submit").prop("disabled",true);
-        $("#uploadError").show();
-        uploadError.innerHTML = "Max file upload size is <b>" + maxAllowedFileSize+ " MB</b>.";
-        return true;
-    }
-    uploadError.innerHTML = "";
-    $("#uploadError").hide();
-    $("#file_submit").prop("disabled",false);
-    return false;
-}
 </script>
 {% endblock main_js %}

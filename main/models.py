@@ -16,7 +16,6 @@ from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 
-
 class Feedback(models.Model):
     """ Feedback data """
 
@@ -26,7 +25,7 @@ class Feedback(models.Model):
         filename = "%s.%s" % (uuid4(), ext)
         return os.path.join('feedback/', filename)
 
-    def default_lead_owner():
+    def default_lead_owner(self):
         try:
             lead_owner = User.objects.get(email=settings.DEFAULT_LEAD_OWNER_EMAIL)
         except ObjectDoesNotExist:

@@ -152,5 +152,10 @@ background-image: url('error.png');
   margin: 0 20px 20px 0;
 }
 
+.steps-name {
+    margin-top: 31%;
+    margin-left: 15%;
+}
+
 /*  Time Line CSS End*/
 

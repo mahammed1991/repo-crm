@@ -36,6 +36,13 @@ from lib.helpers import save_file
 
 import csv
 
+from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
+from django.utils.html import strip_tags
+from reports.report_services import ReportService, DownloadLeads
+from reports.models import Region, CSATReport
+import re
+from lib.salesforce import SalesforceApi
+
 
 def home(request):
     """ Application landing view """

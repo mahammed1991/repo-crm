@@ -4,7 +4,7 @@ $('#team').change(function(){
       // if(selectedTeam == 'Services/GCE'){
       //   alert("Only Pinnacle and HiPo Newbie customers are eligible for Regalix support");
       // }
-      $(".tr_service_segment").show();
+      //$(".tr_service_segment").show();
       $('label[for="g_cases_id"]').hide();
       $('label[for="service_segment"]').hide();
       $('#g_cases_id').show();
@@ -17,7 +17,7 @@ $('#team').change(function(){
       }
       $("#service_segment").show();
       $("#service_segment").val('');
-      $(".tr_service_segment").show();
+      //$(".tr_service_segment").show();
       $('#g_cases_id').hide();
 
       $('label[for="g_cases_id"]').hide();
@@ -27,7 +27,7 @@ $('#team').change(function(){
         setLocations(window.locations);
         window.is_loc_changed = false;
       }
-      $(".tr_service_segment").hide();
+      //$(".tr_service_segment").hide();
       $('#g_cases_id').hide();
       $('#GCaseId').hide();
 
