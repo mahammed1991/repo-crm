@@ -2823,10 +2823,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data, rlsa_bulk_upload=False):
         lead_data[appointment_in_pst_key] = appointment_in_pst
         sf_resp = None
         try:
-            # print "111111111"
-            # print lead_data
             sf_resp = requests.post(url=sf_api_url, data=lead_data)
-            #print sf_resp
             # Get Advertiser Details
             advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
@@ -3379,12 +3376,11 @@ def picasso_bolt_lead_form(request):
                 picasso_data[value] = request.POST.get('url2')
             if key == 'url3':
                 picasso_data[value] = request.POST.get('url3')
-        # print "11111111"
-        # print picasso_data
+       
         response = submit_lead_to_sfdc(sf_api_url, picasso_data)
         advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
         # send_calendar_invite_to_advertiser(advirtiser_details, False)
-        # print response
+        
         if response.status_code == 200:
             ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
         else:
