@@ -1,0 +1,119 @@
+.mdl-button {
+  background: 0 0;
+  border: none;
+  border-radius: 2px;
+  color: #000;
+  position: relative;
+  height: 36px;
+  min-width: 64px;
+  padding: 0 8px;
+  display: inline-block;
+  font-family: 'robotomedium';
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  overflow: hidden;
+  will-change: box-shadow,transform;
+  -webkit-transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  line-height: 26px;
+  vertical-align: middle;
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+}
+
+
+.header{
+  font-size: 30px;
+}
+
+.mdl-button1 {
+  background: #FF1919;
+  border: none;
+  border-radius: 2px;
+  color: #FFF;
+  position: relative;
+  height: 52px;
+  width: 203px;
+  min-width: 64px;
+  padding: 0 8px;
+  display: inline-block;
+  font-family: 'robotomedium';
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  overflow: hidden;
+  will-change: box-shadow,transform;
+  -webkit-transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  line-height: 36px;
+  vertical-align: middle;
+}
+#formsubmit:hover{
+  background: #FF1919;
+}
+
+.mdl-button2 {
+  background: #808080;
+  border: none;
+  border-radius: 2px;
+  color: #FFF;
+  position: relative;
+  margin-left: 38px;
+  width: 202px;
+  height: 52px;
+  min-width: 64px;
+  padding: 0 8px;
+  display: inline-block;
+  font-family: 'robotomedium';
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  overflow: hidden;
+  will-change: box-shadow,transform;
+  -webkit-transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  line-height: 36px;
+  vertical-align: middle;
+}
+
+
+.status-inqueue .status-txt-color {
+  color:#f6b300;
+}
+.status-audited .status-txt-color {
+  color:#e57368;
+}
+.status-alreadyresponsive .status-txt-color {
+  color:#77a7fb;
+}
+.status-delivered .status-txt-color {
+  color:#34b67a;
+}
+
+.status-inqueue .status-bor-color {
+  border-left: 6px solid #f6b300;
+}
+.status-audited .status-bor-color {
+  border-left: 6px solid #e57368;
+}
+.status-alreadyresponsive .status-bor-color {
+  border-left: 6px solid #77a7fb;
+}
+.status-delivered .status-bor-color {
+  border-left: 6px solid #34b67a;
+}

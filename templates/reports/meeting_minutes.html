@@ -1,0 +1,1180 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+  Meeting Minutes
+{% endblock title %}
+{% block main_css %}
+  <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" >
+  <link rel="stylesheet" href="{% static 'css/reports/meeting_minutes.css' %}" >
+  <style type="text/css">
+  
+    html {
+    overflow: hidden;
+    height: 100%;
+    width:100%;
+    padding-bottom: 0px !important;
+    }
+    body {
+    overflow: auto;
+    height: 100%;
+    width:100%;
+    }
+    .modal-open {
+    overflow: hidden; 
+    }
+    .footer{
+      position:relative ! important;
+    }
+    .action-items-header, .key-points-header{
+      background: #ccc;
+    }
+</style>
+{% endblock main_css %}
+
+{% block content %}
+<section class="content-region inner-page">
+<form method="POST" action="" id="meeting_form" enctype="multipart/form-data">
+{% csrf_token %}
+<input type="hidden" name="no_of_keypoints" value="">
+<input type="hidden" name="no_of_actionplans" value="">
+<input type="hidden" name="no_of_tenantive_agenda" value="">
+<input type="hidden" name="internal_region" value="">
+<input type="hidden" name="internal_location" value="">
+<input type="hidden" name="no_of_file_name_link" value="">
+<input type="hidden" name="no_of_file_name_attach" value="">
+
+      <div class="container-fluid">
+        <h1> Meeting Minutes</h1>
+      </div>
+      <div class="container-fluid">
+      <div class="row">
+      <div class="col-md-2">
+          <label for="selected_subject_summary">Subject</label>
+        </div>
+        <div class="col-md-10" style="padding-left: 15px;padding-bottom: 28px;">
+        <div class="form-control" id="selected_subject_summary" name="selected_subject_summary" style="border: 1px solid #ccc;padding: 13px;">
+          <span id="link_subject_type">Meeting Minutes :</span>
+          <span class="selected_subject" id="selected_program" ></span>
+          <span class="selected_subject" id="selected_project"></span>
+          <span class="selected_subject" id="selected_google_team"></span>
+          <span class="selected_subject" id="selected_subject"></span>
+          <span class="selected_subject" id="selected_product_name"></span>
+          <span class="selected_subject" id="selected_product_name_last"></span>
+          <span class="selected_subject" id="selected_date_last"></span>
+          <span class="selected_subject" id="selected_date"></span>
+        </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-2" style="margin-top: -12px;">
+              <label for="internal_meeting">Meeting Audience</label>
+            </div>
+              <div class="col-md-4 meeting_audience">
+                <input type="radio" id="internal_meeting" name="meeting_audience" value="internal_meeting">                  Internal Meeting</input>
+              </div>
+              <div class="col-md-4 meeting_audience">
+                <input type="radio" id="external_meeting" name="meeting_audience" value="external_meeting">                   External Meeting</input>
+              </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="subject">Nature of Meeting</label>
+            </div>
+           <div class="col-md-4">
+              <select class="form-control bgicon" id="subject" title="subject" name="subject" onfocusout="validateEachField(this)">
+                <option value="">Choose</option>
+                <option value="Weekly">Weekly Connect</option>
+                <option value="Biweekly Connect">Biweekly Connect</option>
+                <option value="Monthly Connect">Monthly Connect</option>
+                <option value="Quarterly Connect">Quarterly Connect</option>
+                <option value="Ad-hoc">Ad-hoc</option>
+                <option value="New Product Launch">New Product Launch</option>
+                <option value="New Program Launch">New Program Launch</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="others" name="other_subject" style="" {% if other_subject %} value="{{ other_subject }}" disabled{% else %} value="" {% endif %}>
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="meeting_date">Date(DD.MM.YYYY)</label>
+            </div>
+           <div class="col-md-4">
+           <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="meeting_date" id="meeting_date" {% if meeting_date %} value="{{ meeting_date }}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)"/>
+            </div>
+            <div class="col-md-2">
+              <label for="meeting_time">Time(HH:MM)</label>
+            </div>
+           <div class="col-md-4">
+           <input id="meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="meeting_time" placeholder="Time in IST" {% if meeting_time %} value="{{ meeting_time }}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="google_poc">Google PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="google_poc" placeholder="Enter Google id" name="google_poc" {% if last_meeting.google_poc %} value="{{last_meeting.google_poc}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+            </div>
+            <div class="col-md-2">
+              <label for="regalix_poc">Regalix PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="regalix_poc" placeholder="Enter Regalix id" name="regalix_poc" {% if last_meeting.regalix_poc %} value="{{last_meeting.regalix_poc}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="google_team">Google Team</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="google_team" placeholder="Enter Team/Program" name="google_team" {% if last_meeting.google_team %} value="{{last_meeting.google_team}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+            </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+              <label for="region">Region</label>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control bgicon" id="region" title="Program Region" name="region" onfocusout="validateEachField(this)">
+                <option value="0">Region</option>
+                {% for rgn in regions %}
+                  <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+        <div class="col-md-2">
+          <label for="country">Location</label>
+        </div>
+        <div class="col-md-4">
+           <select class="form-control bgicon" id="country" title="Program Location" name="location" onfocusout="validateEachField(this)">
+              <option value="0">Location</option>
+              {% for loc in locations %}
+                <option value="{{loc.location_name}}" location_id="{{loc.id}}">{{loc.location_name}}</option>
+              {% endfor %}
+            </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="program">Program</label>
+        </div>
+        <div class="col-md-4">
+          <select class="form-control bgicon" id="program" title="program" name="program" onfocusout="validateEachField(this)">
+            <option value="">Program</option>
+            <option value="TAG Team">TAG Team</option>
+            <option value="WPP">WPP</option>
+            <option value="PICASSO">PICASSO</option>
+            <option value="PICASSO Build">PICASSO Build</option>
+          </select>
+        </div>
+        <div class="col-md-2 program_type" style="display:none;">
+          <label for="program_type">Program Type</label>
+        </div>
+        <div class="col-md-4 program_type" style="display:none;">
+          <select class="form-control bgicon" id="program_type" title="program_type" name="program_type" onfocusout="validateEachField(this)">
+            <option value="">Program</option>
+            <option value="Tag">Tag</option>
+            <option value="RLSA">RLSA</option>
+            <option value="Shopping">Shopping</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="attendees">Attendees</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="attendees" name="attendees" placeholder="Please enter e-mail ids seperated by comma(,)"{% if attendees_email_list %} value="{{attendees_email_list}}" disabled{% else %} value="" {% endif %} onfocusout="validateEachField(this)">
+        </div>
+      </div>
+
+      <div class="row bcc_email">
+        <div class="col-md-2">
+          <label for="attendees">BCC</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="bcc" name="bcc" placeholder="Please enter e-mail ids seperated by comma(,)">
+        </div>
+      </div>
+
+     <div class="std-sub-title" style="text-align:center;background: #D83F34;">Key Points Discussed</div>
+  </div>
+  <div class="container-fluid">
+      <table id="keyPoint">
+        <thead >
+          <tr>
+            <td class="key-points-header" id="no">No.</td>
+            <td class="key-points-header" id="topic" style="text-align:center" >Topic</td>
+            <td class="key-points-header" id="higlights" style="text-align:center">Highlights</td>
+          </tr>
+        </thead>
+        <tbody class="add-task">
+          <tr id="key_point_1" class="key-points">
+            <td><input class="no" type='text' value="1" readonly  id="no_1" onfocusout="validateEachField(this)"></td>
+            <td><textarea class="topic" type='text' id="topic_1" name="topic_1" onfocusout="validateEachField(this)"></textarea></td>
+            <td><textarea class="highlight" type='text' id="highlight_1" name="highlight_1" onfocusout="validateEachField(this)"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeTask_1" class="btn std-btn task-btn remove" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addTask_1" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"  ></i>Add</a>
+  </div>
+  <div class="container-fluid last" style="margin-bottom: 20px;">
+    <div class="std-sub-title" style="text-align:center;background: #FED200;">Action Plan</div>
+      <table id="actionPlan">
+        <thead>
+          <tr>
+            <td class="action-items-header" id="no">No.</td>
+            <td class="action-items-header" id="action-item">Action Item(s)</td>
+            <td class="action-items-header" id="owner">Owner</td>
+            <td class="action-items-header" id="target-date">Target Date(DD.MM.YYYY)</td>
+          </tr>
+        </thead>
+        <tbody class="action-plan">
+          <tr id="action_plan_1" class="action-plans">
+            <td><input class="no" type='text' value="1" readonly  id="ano_1"></td>
+            <td><textarea class="action-items" type='text' id="action_item_1" name="action_item_1"></textarea></td>
+            <td><textarea class="oweners" type='text' id="owner_1" name="owner_1" ></textarea></td>
+            <td><input type="text" placeholder="Date" class="datepickerFrom_b target-date" name="action_date_1" id="action_date_1"/></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeAction_1" class="btn std-btn task-btn remove-action" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addAction_1" class="btn std-btn task-btn add-action" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+  </div>
+  <div class="container-fluid last next-meeting-section" style="margin-bottom: 20px;">
+    <div class="std-sub-title" style="text-align:center;background: #15A95E;">Next meeting</div>
+      <div class="col-md-12 show-date-time">
+          <input class="next-row" type='checkbox'> &nbsp;&nbsp;Want to Setup Next Meeting ?
+      </div>
+      <br><br><br>
+      <table id="nextMeeting" class="next-meeting-row">
+        <tbody class="date-time">
+          <tr id="" style="">
+            <td id="date" style="width: 148px;padding-left: 10px;">Date:(DD.MM.YYYY)</td>
+            <td><input type='text' id="next_meeting_date" placeholder="Date" class="datepickerFrom_b sel_date" name="next_meeting_date" {% if next_meeting_date %} value="{{ next_meeting_date }}" disabled{% else %} value="" {% endif %}></td>
+            <td id="time" style="width: 76px;padding-left: 10px;">Time:(HH:MM)</td>
+            <td><input id="next_meeting_time" class="datetimepickerFrom date-from sel_time" placeholder="Time in IST" type="text" name="next_meeting_time" {% if next_meeting_time %} value="{{ next_meeting_time }}" disabled{% else %} value="" {% endif %}></td>
+            <td id="next">Link to Previous Meeting Minutes : </td>
+            <td> <div type="text" id="prev_meeting_link" name="prev_meeting_link" disabled><a href="" id="generate_link" target="_blank" style="margin-left: 38%;">Click Here</a><span id="nodatafound" style="display:none;margin-left: 25%;">No Data Found!</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="nextMeeting1" class="next-meeting-row-tenantive" style="display: none;">
+        <tbody class="extra">
+          <tr id="tentative_agenda_1" style="" class="tenantive_agendas">
+            <td id="agenda">Tenantive Agenda : </td>
+            <td><input class="agenda-item" type='text' id="agenda_text_1" name="agenda_text_1"></td>
+          </tr>
+        </tbody>
+      </table>
+      <a id="removeTentativeAgenda_1" class="btn std-btn task-btn remove-agenda" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addTentativeAgenda_1" class="btn std-btn task-btn add-agenda" style="margin-right:10px;display:none;"><i class="fa fa-plus-circle"></i>Add</a>
+  </div>
+   <div class="container-fluid file-upload-section">
+       <div class="std-sub-title " style="text-align:center;background: #4D7DBE;">Attachments</div>
+          <div class="container-fluid browse-files" style="margin-left: -30px;">
+            <div class="row col-md-12 file-append" id="file_upload_row_1">
+                <div class="col-md-2">
+                    <input type="text" class="form-control file-name-link" id="file_name_link_1" name="file_name_link_1" placeholder="File Name" style="width:200px;">
+                </div>
+              <div class="col-md-3">
+                  <input type="text" class="form-control file-info-text" id="file_info_text_1" name="file_info_text_1" placeholder="Enter URL" style="width: 255px;margin-left: 60px;">
+              </div>
+              <div class="col-md-2">
+                  <input type="text" class="form-control file-name-attach" id="file_name_attach_1" name="file_name_attach_1" placeholder="File Name" style="width: 265px;margin-left: 100px;">
+              </div>
+              <div class="col-md-3" style="margin-left: 151px;">
+                  <input type="file" class="filestyle file-info" name="file_info_1" id="file_info_1" data-buttonText="Find file" style="    margin-left: 68px;">
+              </div>
+          </div>
+      </div>
+
+       <a id="removefileUpload_1" class="btn std-btn task-btn remove-upload" style=""><i class="fa fa-minus-circle"></i>Remove</a>
+      <a id="addfileUpload_1" class="btn std-btn task-btn add-upload-btn" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add</a>
+
+    </div>
+    <div class="container-fluid" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
+      <div class="std-sub-title " style="text-align:center;background: #4D7DBE;">Attachments</div>
+      <table id="attach" style="width: 100%;">
+        <thead>
+          <tr>
+            <td id="action-item">File Name</td>
+            <td id="action-item">Attached Links</td>
+            <td id="action-item">File Name</td>
+            <td id="action-item">Attached Files</td>
+          </tr>
+        </thead>
+        <tbody class="attachments-links-files">
+          <tr id="attachments_1" class="attachments" {% if attach_link_1 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_1 %} value="{{link_file_name_1}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_1 %} href="{{attach_link_1}}" style="" {% else %} href="" style="display:none;" {% endif %}>Click Here</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_1 %} value="{{attach_file_name_1}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_1 %} value="{{attach_file_1}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_1}}" target="_blank">Attachment 1</a></div></td>
+          </tr>
+          <tr id="attachments_2" class="attachments" {% if attach_link_2 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_2 %} value="{{link_file_name_2}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_2 %} href="{{attach_link_2}}" style="" {% else %} href="" style="display:none;" {% endif %}>Click Here</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_2 %} value="{{attach_file_name_2}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_2 %} value="{{attach_file_2}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_2}}" target="_blank">Attachment 2</a></div></td>
+          </tr>
+          <tr id="attachments_3" class="attachments" {% if attach_link_3 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_3 %} value="{{link_file_name_3}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_3 %} href="{{attach_link_3}}" style="" {% else %} href="" style="display:none;" {% endif %}>Click Here</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_3 %} value="{{attach_file_name_3}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_3 %} value="{{attach_file_3}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_3}}" target="_blank">Attachment 3</a></div></td>
+          </tr>
+          <tr id="attachments_4" class="attachments" {% if attach_link_4 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_4 %} value="{{link_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_4 %} href="{{attach_link_4}}" style="" {% else %} href="" style="display:none;" {% endif %}>Click Here</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_4 %} value="{{attach_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_4 %} value="{{attach_file_4}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_4}}" target="_blank">Attachment 4</a></div></td>
+          </tr>
+          <tr id="attachments_5" class="attachments" {% if attach_link_5 %} style="" {% else %} style="display:none;" {% endif %}>
+            <td class="link-file-name"><input class="file-name-link1" {% if link_file_name_4 %} value="{{link_file_name_4}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>  
+            <td class="attach_1"><div><a target="_blank" {% if attach_link_5 %} href="{{attach_link_5}}" style="" {% else %} href="" style="display:none;" {% endif %}>Click Here</a></div></td>
+            <td class="attach-file-name"><input class="file-name-attach1" {% if attach_file_name_5 %} value="{{attach_file_name_5}}" style="" {% else %} value="" style="display:none;" {% endif %}disabled></td>
+            <td class="attach_2"><div class="attachments_files" {% if attach_file_5 %} value="{{attach_file_5}}" style="" {% else %} value="" style="display:none;" {% endif %}><a href="{{media_url}}{{attach_file_5}}" target="_blank">Attachment 5</a></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <div class="container-fluid end">
+    <!-- <input type="checkbox" id="allow_ics" ></input><p>Allow option to send Calendar Invite </p> -->
+    <button type="button" class="btn std-btn" id="preview_btn" {% if submit_disabled == False %} style="display:none;" {% else %} style="" {% endif %} onclick="return validatethis(this);">Preview</button>
+    <button class="btn std-btn" id="submit" style="display:none;" onclick="return validatethis(this);">Submit</button>
+
+  </div>
+</form>
+</section>
+
+<div class="modal fade meeting-preview" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+  <div class="modal-dialog md1" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Meeting Minutes Preview</h4>
+      </div>
+      <div class="modal-body md2">
+        <div class="container-fluid">
+      <div class="row">
+      <div class="col-md-2">
+          <label for="selected_subject_summary">Subject</label>
+        </div>
+        <div class="col-md-10" style="padding-left: 15px;padding-bottom: 28px;">
+        <div class="form-control" id="selected_subject_summary" name="selected_subject_summary" style="border: 1px solid #ccc;padding: 13px;">
+          <span id="link_subject_type">Meeting Minutes :</span>
+          <span class="preview_selected_subject" id="preview_selected_program" ></span>
+          <span class="preview_selected_subject" id="preview_selected_project"></span>
+          <span class="preview_selected_subject" id="preview_selected_google_team"></span>
+          <span class="preview_selected_subject" id="preview_selected_subject"></span>
+          <span class="preview_selected_subject" id="preview_selected_product_name"></span>
+          <span class="preview_selected_subject" id="preview_selected_product_name_last"></span>
+          <span class="preview_selected_subject" id="preview_selected_date_last"></span>
+          <span class="preview_selected_subject" id="preview_selected_date"></span>
+        </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-2" style="margin-top: -12px;">
+              <label for="internal_meeting">Meeting Audience</label>
+            </div>
+            <div class="col-md-4">
+              <input type="radio" id="preview_internal_meeting" name="preview_audience_meeting">                  Internal Meeting</input>
+            </div>
+            <div class="col-md-4">
+              <input type="radio" id="preview_external_meeting" name="preview_audience_meeting">                   External Meeting</input>
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="subject">Nature of Meeting</label>
+            </div>
+           <div class="col-md-4">
+              <select class="form-control bgicon" id="preview_subject" title="subject" name="preview_subject">
+                <option value="">Choose</option>
+                <option value="Weekly">Weekly Connect</option>
+                <option value="Biweekly Connect">Biweekly Connect</option>
+                <option value="Monthly Connect">Monthly Connect</option>
+                <option value="Quarterly Connect">Quarterly Connect</option>
+                <option value="Ad-hoc">Ad-hoc</option>
+                <option value="New Product Launch">New Product Launch</option>
+                <option value="New Program Launch">New Program Launch</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="preview_others" name="preview_other_subject" disabled>
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="meeting_date">Date</label>
+            </div>
+           <div class="col-md-4">
+                <input type="text" class="datepickerFrom_a form-control" placeholder="Date" name="preview_meeting_date" id="preview_meeting_date" disabled/>
+            </div>
+            <div class="col-md-2">
+              <label for="meeting_time">Time</label>
+            </div>
+           <div class="col-md-4">
+              <input id="preview_meeting_time" class="datetimepickerFrom form-control date-from" type="text" name="preview_meeting_time" placeholder="Time" disabled>
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="google_poc">Google PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="preview_google_poc" name="preview_google_poc" disabled>
+            </div>
+            <div class="col-md-2">
+              <label for="regalix_poc">Regalix PoC</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="preview_regalix_poc" name="preview_regalix_poc" disabled>
+            </div>
+      </div>
+
+      <div class="row">
+            <div class="col-md-2">
+              <label for="google_team">Google Team</label>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="preview_google_team" name="preview_google_team" disabled>
+            </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+              <label for="region">Region</label>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control bgicon" id="preview_region" title="Program Region" name="preview_region" disabled>
+                <option value="0">Region</option>
+                {% for rgn in regions %}
+                  <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+        <div class="col-md-2">
+          <label for="country">Location</label>
+        </div>
+        <div class="col-md-4">
+           <select class="form-control bgicon" id="preview_country" title="Program Location" name="preview_location" disabled>
+              <option value="0">Location</option>
+              {% for loc in locations %}
+                <option value="{{loc.location_name}}" location_id="{{loc.id}}">{{loc.location_name}}</option>
+              {% endfor %}
+            </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="program">Program</label>
+        </div>
+        <div class="col-md-4">
+          <select class="form-control bgicon" id="preview_program" title="program" name="preview_program" disabled>
+            <option value="">Program</option>
+            <option value="TAG Team">TAG Team</option>
+            <option value="WPP">WPP</option>
+            <option value="PICASSO">PICASSO</option>
+            <option value="PICASSO Build">PICASSO Build</option>
+          </select>
+        </div>
+        <div class="col-md-2 preview_program_type" style="display:none;">
+          <label for="program_type">Program Type</label>
+        </div>
+        <div class="col-md-4 preview_program_type" style="display:none;">
+          <select class="form-control bgicon" id="preview_program_type" title="program_type" name="preview_program_type" disabled>
+            <option value="">Program</option>
+            <option value="Tag">Tag</option>
+            <option value="RLSA">RLSA</option>
+            <option value="Shopping">Shopping</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <label for="attendees">Attendees</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="preview_attendees" name="preview_attendees" placeholder="Please enter e-mail ids seperated by comma(,)"disabled>
+        </div>
+      </div>
+
+      <div class="row preview_bcc">
+        <div class="col-md-2">
+          <label for="attendees">BCC</label>
+        </div>
+         <div class="col-md-10">
+          <input type="text" class="form-control" id="preview_bcc" name="preview_bcc" placeholder="Please enter e-mail ids seperated by comma(,)"disabled>
+        </div>
+      </div>
+
+     <div class="std-sub-title" style="text-align:center">Key Points Discussed</div>
+  </div>
+  <div class="container-fluid">
+      <table id="keyPoint" class="preview_key_point">
+        <thead >
+          <tr>
+            <td id="no">No.</td>
+            <td id="topic" style="text-align:center" >Topic</td>
+            <td id="higlights" style="text-align:center">Highlights</td>
+          </tr>
+        </thead>
+        <tbody class="preview-add-task">
+        </tbody>
+      </table>
+  </div>
+  <div class="container-fluid last">
+    <div class="std-sub-title" style="text-align:center">Action Plan</div>
+      <table id="actionPlan" class="preview_action_plan">
+        <thead>
+          <tr>
+            <td id="no">No.</td>
+            <td id="action-item">Action Item(s)</td>
+            <td id="owner">Owner</td>
+            <td id="target-date">Target Date</td>
+          </tr>
+        </thead>
+        <tbody class="preview-action-plan">
+        </tbody>
+      </table>
+  </div>
+  <div class="container-fluid last preview_last">
+    <div class="std-sub-title" style="text-align:center">Next meeting</div>
+      <table id="nextMeeting" class="next-meeting-row">
+        <tbody class="date-time">
+          <tr id="" style="">
+            <td id="date1">Date : </td>
+            <td id="preview_sel_date"><input type='text' id="preview_next_meeting_date" placeholder="Date" class="datepickerFrom_b sel_date" name="preview_next_meeting_date" disabled></td>
+            <td id="time1">Time : </td>
+            <td id="preview_time_date"><input id="preview_next_meeting_time" class="datetimepickerFrom date-from sel_time preview_sel_" placeholder="Time" type="text" name="preview_next_meeting_time" disabled></td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="nextMeeting1" class="preview-next-meeting-row-tenantive" style="display: none;">
+        <tbody class="preview-extra">
+        </tbody>
+      </table>
+    </div>
+    <div class="container-fluid preview_file_attach_links">
+      <div class="std-sub-title" style="text-align:center">Attachments</div>
+      <table id="attach-link-file" width="100%">
+        <thead>
+          <tr>
+            <th class="action-item-preview">File Name</th>
+            <th class="action-item-preview">Enter URL</th>
+          </tr>
+        </thead>
+        <tbody class="attach-link-file">
+          
+        </tbody>
+      </table>
+    </div>
+    <div class="container-fluid"></div>
+      <div class="container-fluid buttons">
+       <button class="btn std-btn" id="preview-submit" >Submit</button>
+       <button class="btn std-btn" id="preview-edit" data-dismiss="modal">Edit</button>
+     </div>
+      </div>
+      <div id="preloaderOverlay" style='display:none;'>
+        <div class="preloader">
+        <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+        <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+{% endblock content %}
+
+{% block main_js %}
+  <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+  <script src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+  <script src="{% static 'js/reports/meeting_minutes.js' %}"></script>
+  <script type="text/javascript">
+window.focusoutfailedFields = new Array();
+$('.meeting-preview').modal({backdrop: 'static', keyboard: false})
+$(".meeting-preview").modal('hide');
+
+other_subject = "{{other_subject|safe}}"
+meeting_time_last = {{last_meeting_link|safe}}
+
+meeting_audience = "{{meeting_audience|safe}}"
+
+if(meeting_audience == 'internal_meeting'){
+  $('#internal_meeting').prop('checked', true);
+  $("#internal_meeting").attr("disabled", true);
+  $("#external_meeting").attr("disabled", true);
+}
+
+if(meeting_audience == 'external_meeting'){
+  $('#external_meeting').prop('checked', true);
+  $("#external_meeting").attr("disabled", true);
+  $("#internal_meeting").attr("disabled", true);
+}
+next_meeting_date_last = "{{next_meeting_date|safe}}"
+if(next_meeting_date_last == ''){
+  $('.show-date-time').hide();
+  $('.next-meeting-row').hide();
+  $('.next-meeting-row-tenantive').hide();
+}else{
+  $('.next-meeting-row-tenantive').show();
+  $('.next-meeting-row').show();
+  $('.show-date-time').hide();
+}
+
+if(window.location.pathname == '/reports/meeting-minutes/')
+{
+  $('.show-date-time').show();
+  $('.file-upload-section').show();
+}
+
+if(window.location.pathname.split('/')[2] == 'link-last-meeting')
+{
+  $('.file-upload-section').hide();
+  $('.bcc_email').hide();
+}
+
+  $('.next-row').change(function(){
+    var show_time_date = $('.next-row').is(":checked");
+    if(show_time_date)
+    {
+      $('.next-meeting-row-tenantive').show();
+      $(".add-agenda").show();
+      $('.next-meeting-row').show();
+    }
+    else
+    {
+      $('#next_meeting_date').val('');
+      $('#next_meeting_time').val('');
+      $('.agenda-item').val('');
+      $('.next-meeting-row-tenantive').hide();
+      $(".add-agenda").hide();
+      $('.next-meeting-row').hide();
+    }
+  });
+
+  $('#subject').change(function(){
+    $('#selected_subject').text(this.value+' -');
+    if(this.value == 'New Product Launch' || this.value == 'New Program Launch' || this.value == 'Ad-hoc' || this.value == 'Others'){
+       $('#selected_product_name').text("");
+    }else{
+      $('#selected_product_name').text("");
+    }
+  });
+
+
+  $('#program').change(function(){
+    $('#selected_program').text(this.value+' -');
+    if(this.value == 'TAG Team'){
+      $('.program_type').show();
+      $('#program_type').change(function(){
+        $('#selected_project').text(this.value+' -');
+      });
+    }else{
+      $('#program_type').prop('selectedIndex', 0);
+      $('.program_type').hide();
+      $('#selected_project').text("");
+    }
+  });
+
+  $('#google_team').focusout(function(){
+    var google_team = this.value;
+    if($('#external_meeting').prop('checked')){
+      $('#selected_google_team').text(google_team+' -');
+    }else{
+      $('#selected_google_team').text('');
+    }
+  });
+
+  $('#others').focusout(function(){
+    $('#selected_product_name').text(this.value+' -');
+  });
+
+  $('#meeting_date').focusout(function(){
+    $('#selected_date').text(this.value);
+  });
+
+  $(document).ready(function(){
+    window.regionWiseLocations = {{region_locations|safe}}
+    window.locations = {{all_locations|safe}}
+
+     var last_meeting_subject_timeline = "{{last_meeting.subject_timeline|safe}}"
+      if(last_meeting_subject_timeline){
+        if(last_meeting_subject_timeline == "Others" || last_meeting_subject_timeline == "New Program Launch" || last_meeting_subject_timeline == "New Product Launch" || last_meeting_subject_timeline == "Ad-hoc")
+        {
+          $("#others").show();
+        }
+        else
+        {
+          $("#others").hide();
+        }
+        $('#selected_subject').text(last_meeting_subject_timeline+' -'); 
+        $('#subject').val(last_meeting_subject_timeline);
+        $('#subject').prop('disabled', true);
+        $('#selected_product_name_last').text(other_subject+' -');
+        $('#selected_date_last').text(meeting_time_last);
+      }
+
+      var link_program = "{{link_program|safe}}"
+      if(link_program){
+        $('#selected_program').text(link_program+' -');
+      }
+
+      var link_google_team = "{{link_google_team|safe}}"
+      if(link_google_team != 'NA'){
+        $('#selected_google_team').text(link_google_team+' -');
+      }
+      var link_program_type = "{{link_program_type|safe}}"
+      
+      var link_location = "{{link_location|safe}}"
+      var link_region = {{link_region|safe}}
+
+      if(link_program){
+        if(link_program == "TAG Team"){
+          $('.program_type').show();
+          $('#program_type').show();
+          $('#program_type').val(link_program_type);
+          $('#selected_project').text(link_program_type+' -')
+          $('#program_type').prop('disabled', true);
+        }
+        if(link_program == 'TAG Team' || link_program == 'WPP' || link_program == 'PICASSO' || link_program == 'PICASSO Build'){
+          $('#program').val(link_program);
+          $('#program').prop('disabled', true);
+        }
+      }
+      
+      if(link_region){
+        $('#region').append("<option value="+link_region+">"+link_region+"</option>")
+        $('#region').val(link_region);
+        $('#region').prop('disabled', true);
+      }
+      if(link_location != '0'){
+        $('#country').append("<option>"+link_location+"</option>")
+        $('#country').val(link_location);
+        $('#country').prop('disabled', true);
+      }
+  });
+
+
+  $('#region').change(function(){
+    var regionId = $('option:selected', this).attr('region_id');
+    countryList = regionWiseLocations[regionId];
+    console.log(countryList);
+    setLocationsForRegion(window.locations, countryList);
+  });
+
+  </script>
+
+  <script type="text/javascript">
+    var key_points = {{key_points_dict|safe}}
+    var action_plan = {{action_plan_dict|safe}}
+    var tentative_agendas = {{tenantive_agenda_dict|safe}}
+
+    if('agenda_text_1' in tentative_agendas){
+      $('.next-meeting-section').show();
+    }else{
+      $('.next-meeting-section').hide();
+    }
+
+    if(window.location.pathname == '/reports/meeting-minutes/')
+    {
+      $('.next-meeting-section').show();
+    }
+
+    for(var key in tentative_agendas){
+      if(key == 'agenda_text_1'){
+        tentative_agendas_add(tentative_agendas);
+        break;
+      }
+      break;
+    }
+
+    for(var key in key_points){
+      if(key == 'topic_1'){
+        key_points_add(key_points);
+        break;
+      }
+      break;
+    }
+
+    for(var key in action_plan){
+      if(key == 'action_item_1'){
+        action_plan_add(action_plan);
+        break;
+      }
+      break;
+    }
+
+    function tentative_agendas_add(tentative_agendas){
+      $(".add-agenda").hide();
+      var count = 0;
+      var j = 1;
+      for (var i in tentative_agendas) {
+         if (tentative_agendas.hasOwnProperty(i)) 
+          {
+            count++;
+          }
+      }
+      $(".extra").html('');
+      for(var i=0;i<count;i++){
+        $('.extra').append("<tr id=tentative_agenda_"+ j +"></tr>"); 
+        $("#tentative_agenda_"+j).append('<td><p class="p-agenda">Tenantive Agenda :</p></td>');
+        $("#tentative_agenda_"+j).append('<td><p class="p-agenda-item">' + tentative_agendas['agenda_text_'+j] + '</p></td>');
+        j++;
+      }
+    }
+
+    function key_points_add(key_points){
+      $(".add").hide();
+      var count = 0;
+      var j = 1;
+      for (var i in key_points) {
+         if (key_points.hasOwnProperty(i)) 
+          {
+            count++;
+          }
+      }
+      $(".add-task").html('');
+      for(var i=0;i<(count/2);i++){
+        $('.add-task').append("<tr id=key_point_"+ j +"></tr>"); 
+        $("#key_point_"+j).append('<td><p class="p-no">' + j + '</p></td>');
+        $("#key_point_"+j).append('<td><p class="p-topic">' + key_points['topic_'+j] + '</p></td>')
+        $("#key_point_"+j).append('<td><p class="p-highlight">' + key_points['highlight_'+j] + '</p></td>')
+        j++;
+      }
+      
+    }
+
+    function action_plan_add(action_plan){
+      $(".add-action").hide();
+      var count = 0;
+      var j = 1;
+      for (var i in action_plan) {
+         if (action_plan.hasOwnProperty(i)) 
+          {
+            count++;
+          }
+      }
+      $(".action-plan").html('');
+      for(var i=0;i<(count/3);i++){
+        $('.action-plan').append("<tr id=action_plan_"+ j +"></tr>"); 
+        $("#action_plan_"+j).append('<td><p class="p-no">' + j + '</p></td>');
+        $("#action_plan_"+j).append('<td><p class="p-action_item">' + action_plan['action_item_'+j] + '</p></td>');
+        $("#action_plan_"+j).append('<td><p class="p-owner">' + action_plan['owner_'+j] + '</p></td>');
+        $("#action_plan_"+j).append('<td><p class="p-action_date">' + action_plan['action_date_'+j] + '</p></td>');
+        j++;
+      }
+      
+    }
+  </script>
+
+  <script type="text/javascript">
+  $('.datetimepickerFrom').datetimepicker({
+     datepicker : false,
+     format : 'g:i A',
+     step:30,
+     scrollInput:false,
+  });
+
+  $(".datepickerFrom_a").datetimepicker({
+      timepicker:false,
+      format:'d.m.Y',
+      scrollInput:false,
+  });
+
+  $(".datepickerFrom_b").datetimepicker({
+    timepicker:false,
+    format:'d.m.Y',
+    scrollInput:false,
+  });
+
+   $(".remove").hide();
+   $("#others").hide();
+   $(".remove-action").hide();
+   $(".remove-agenda").hide();
+
+
+  $("#subject").change(function(){
+        var val = $("#subject").val();
+        if(val == "Others" || val == "New Program Launch" || val == "New Product Launch" || val == "Ad-hoc")
+        {
+          $("#others").show();
+          $("#others").val("");
+        }
+        else
+        {
+          $("#others").hide();
+          $("#others").val("");
+        }
+    });
+
+$('.add').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 16 )
+      {
+          $(".remove").show();
+          $new_row = $("#key_point_1").clone().attr('id', 'key_point_'+next_id).show();
+          $(".no", $new_row).attr('id', 'no_'+next_id);
+          $(".no", $new_row).attr('readonly');
+          $(".topic", $new_row).attr('id', 'topic_'+next_id);
+          $(".highlight", $new_row).attr('id', 'highlight_'+next_id);
+          $new_row.appendTo(".add-task");
+          $("#no_"+next_id).attr('value', next_id);
+           $("#no_"+next_id).attr('name', "no_"+next_id);
+          $("#topic_"+next_id).val('');
+          $("#topic_"+next_id).attr('name', "topic_"+next_id);
+          $("#highlight_"+next_id).val('');
+          $("#highlight_"+next_id).attr('name', "highlight_"+next_id);
+          $('.remove').attr('id',"#removeTask_" + next_id);
+          $('.add').attr('id',"#addTask_" + next_id);
+        }
+        if(next_id == 15 )
+        {
+          $(".add").hide();
+        }
+  });
+  $('.remove').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      if(("#removeTask_"+indx) != "#removeTask_1" )
+      {
+          $(".add").show();
+          $("#key_point_"+indx).remove();
+          $('.remove').attr('id',"#removeTask_" + (indx-1));
+          $('.add').attr('id',"#addTask_" + (indx-1));
+      }
+      if(("#removeTask_"+(indx-1)) == "#removeTask_1" )
+      {
+        $('.remove').hide();
+      }
+  });
+
+
+  $('.add-action').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 16 )
+      {
+          $(".remove-action").show();
+          $new_row = $("#action_plan_1").clone().attr('id', 'action_plan_'+next_id).show();
+          $(".no", $new_row).attr('id', 'ano_'+next_id);
+          $(".no", $new_row).attr('readonly');
+          $(".action-items", $new_row).attr('id', 'action_item_'+next_id);
+          $(".action-items", $new_row).attr('name', 'action_item_'+next_id);
+          $(".oweners", $new_row).attr('id', 'owner_'+next_id);
+          $(".target-date", $new_row).attr('id', 'action_date_'+next_id);
+          $new_row.appendTo(".action-plan");
+          $("#ano_"+next_id).attr('value', next_id);
+          $("#action_date_"+next_id).val('');
+          $("#action_date_"+next_id).attr('id', "action_date_"+next_id);
+          $("#action_date_"+next_id).attr('name', "action_date_"+next_id);
+          $("#owner_"+next_id).val('');
+          $("#owner_"+next_id).attr('name', "owner_"+next_id);
+          $("#action_item_"+next_id).val('');
+          $('.remove-action').attr('id',"#removeAction_" + next_id);
+          $('.add-action').attr('id',"#addAction_" + next_id);
+          $(".datepickerFrom_b").datetimepicker({
+            timepicker:false,
+            format:'d.m.Y',
+            scrollInput:false,
+          });
+        }
+        if(next_id == 15 )
+        {
+          $(".add-action").hide();
+        }
+  });
+
+  $('.remove-action').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removeAction_"+indx) != "#removeAction_1" )
+    {
+        $(".add-action").show();
+        $("#action_plan_"+indx).remove();
+        $('.remove-action').attr('id',"#removeTask_" + (indx-1));
+        $('.add-action').attr('id',"#addTask_" + (indx-1));
+    }
+    if(("#removeAction_"+(indx-1)) == "#removeAction_1" )
+    {
+      $('.remove-action').hide();
+    }
+  });
+  
+
+  $('.add-agenda').click(function () {
+      id = $(this).attr('id');
+      indx = id.split('_')[1];
+      next_id = parseInt(indx) + 1
+      if(next_id < 16 )
+      {
+          $(".remove-agenda").show();
+          $new_row = $("#tentative_agenda_1").clone().attr('id', 'tentative_agenda_'+next_id).show();
+          $(".agenda-item", $new_row).attr('id', 'agenda_text_'+next_id);
+          $(".agenda-item", $new_row).attr('name', 'agenda_text_'+next_id);
+          $new_row.appendTo(".extra");
+          $('.remove-agenda').attr('id',"#removeTentativeAgenda_" + next_id);
+          $('.add-agenda').attr('id',"#addTentativeAgenda_" + next_id);
+          $("#agenda_text_"+next_id).val('');
+        }
+        if(next_id == 15 )
+        {
+          $(".add-agenda").hide();
+        }
+  });
+
+  $('.remove-agenda').click(function () {
+    id = $(this).attr('id');
+    indx = id.split('_')[1];
+    if(("#removeTentativeAgenda_"+indx) != "#removeTentativeAgenda_1" )
+    {
+        $(".add-agenda").show();
+        $("#tentative_agenda_"+indx).remove();
+        $('.remove-agenda').attr('id',"#removeTask_" + (indx-1));
+        $('.add-agenda').attr('id',"#addTask_" + (indx-1));
+    }
+    if(("#removeTentativeAgenda_"+(indx-1)) == "#removeTentativeAgenda_1" )
+    {
+      $('.remove-agenda').hide();
+    }
+  });
+
+
+
+    $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#attendees').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+      });
+    });
+
+    $(function(){
+      var managers_email = {{managers|safe}}
+      function split( val ) {
+        return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
+      $('#bcc').autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            managers_email, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function(event,ui){
+          event.preventDefault();
+          var manager_email = split(this.value);
+          manager_email.pop();
+          manager_email.push( ui.item.value );
+          manager_email.push("");
+          this.value = manager_email.join(", ");
+         //$('#user_manager_name').val(window.user_details[ui.item.value]);
+      }
+      });
+    });
+
+
+    $('#submit').on('click', function(event){
+
+      //$('.add-task tr:visible').length
+      $('input[name="no_of_keypoints"]').val($('.add-task tr:visible').length);
+      $('input[name="no_of_actionplans"]').val($('.action-plan tr:visible').length);
+      $('input[name="no_of_tenantive_agenda"]').val($('.extra tr:visible').length);
+      $('input[name="no_of_file_name_link"]').val($('.file-name-link').length);
+      $('input[name="no_of_file_name_attach"]').val($('.file-name-attach').length);
+    });
+
+
+    $("#google_team").autocomplete({
+      source: {{programs|safe}},
+      select: function(event,ui){
+         $("#google_team").val(ui.item);
+      }
+    });
+
+    $("#google_poc").autocomplete({
+      source: {{google_email|safe}},
+      select: function(event,ui){
+         $("#google_poc").val(ui.item);
+      }
+    });
+
+    $("#regalix_poc").autocomplete({
+      source: {{regalix_email|safe}},
+      select: function(event,ui){
+         $("#regalix_poc").val(ui.item);
+      }
+    });
+
+    $("#preview-submit").click(function(e){
+        $("#submit").trigger('click');
+        $('#preloaderOverlay').show();
+    });
+
+    function validateEachField(argument) {
+      if (argument.value == "" || argument.value == "0" || !argument.value) {
+      argument.classList.add('error-box')
+      window.focusoutfailedFields.push(argument);
+      window.is_error = true;
+      return false;
+      }else{
+        argument.classList.remove('error-box')
+      }
+    }
+
+   </script>
+{% endblock main_js %}
+
