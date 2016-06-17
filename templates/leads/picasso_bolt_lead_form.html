@@ -151,7 +151,7 @@
     <div class="row">
       <div class="col-md-6">
         <label for="picasso_pod">POD Name *</label>
-        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if userinfo.pod_name %} value="{{userinfo.pod_name}}" {% else %} value="" {% endif %}>
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
       </div>
 
       <div class="col-md-6">
@@ -345,7 +345,13 @@
   $('.error_list').css({'padding-top':'10px','padding-bottom':'10px'});
  });
 
+var nbs_team = ['NBS'];
+var pgName = "{{user.profile.team}}";
   $(document).ready(function(){
+    if(nbs_team.indexOf(pgName) != -1){
+      $('#cid').val('000-000-0000');
+      $('#team').val(pgName);
+    }
     olark('api.box.hide');
 
      // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs

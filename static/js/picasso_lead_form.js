@@ -98,8 +98,14 @@ function validatethis(frm) {
     }  
   }
 
-
+var nbs_team = ['NBS'];
   $('#team').change(function(){
+    if(nbs_team.indexOf($('#team option:selected').val()) != -1){
+      $('#cid').val('000-000-0000');
+    }
+    else{
+      $('#cid').val('');
+    }
     $('#adv_mail').attr('hidden',false);
     $("#advertiser_email").val('').attr('hidden',false);
     $('#checkbox33').attr('hidden',false);
@@ -363,14 +369,23 @@ function removeAdvertiserErrorClass()
   }
 }
 
-
+var nbs_team = ['NBS'];
+var pgName = "{{user.profile.team}}";
 $('#bolt').click(function(){
+  if(nbs_team.indexOf(pgName) == $('#team option:selected').val()){
+    $('#cid').val('000-000-0000');
+    $('#team').val(pgName);
+  }
   $('#ctype1').val('BOLT');
   $('.tab-content').css("background-color","#F9FAFC");
   $('.for-bolt').show();
 });
 
 $('#picasso').click(function(){
+  if(nbs_team.indexOf(pgName) == $('#team option:selected').val()){
+    $('#cid').val('000-000-0000');
+    $('#team').val(pgName);
+  }
   $('#ctype1').val('PICASSO');
   $('.tab-content').css("background-color","#F9FAFC");
   $('.for-bolt').hide();
