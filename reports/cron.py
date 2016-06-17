@@ -300,9 +300,10 @@ def create_or_update_leads(records, sf):
                 if rec.get('PICASSO_build_eligible__c'):
                     if rec.get('PICASSO_build_eligible__c') == 'Yes':
                         lead.is_nominated = True
+                        lead.is_build_eligible = "Yes"
                     elif rec.get('PICASSO_build_eligible__c') == 'No':
                         lead.is_nominated = False
-            
+                        lead.is_build_eligible = "No"
             else:
                 try:
                     # check for existing lead
