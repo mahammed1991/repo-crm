@@ -50,7 +50,7 @@
     <div  class="col-md-12">
         <div class="picasso_workflow ">
           <div  class="picasso_workflow_text" id="in-queue-msg" style="display:none">
-            <p  style='color:green;font-size: 18px;' >Mail to this id <a href="malto:projectpicasso@regalix-inc.com?subject=Request for detail" target="_top">projectpicasso@regalix-inc.com</a> to get the detailed current status of this lead</p>
+            <p  style='color:green;font-size: 18px;' >Mail to this id <a href="malto:website-audit-support@google.com?subject=Request for detail" target="_top">website-audit-support@google.com</a> to get the detailed current status of this lead</p>
           </div>
           <div  class="picasso_workflow_text" id="not-eligible" style="display:none" >
                <p style="color:red;font-size: 18px;" >This URL is marked as 'Not Build Eligible'</p>
@@ -512,7 +512,7 @@ window.onload =  function(){
               $("#formReset").attr("disabled",false);
             }
             if (returned_data.build_eligeble_in_master_data == false){
-              alert('not even build eligble in master')
+              //alert('not even build eligble in master')
               $('#not-eligible').removeAttr("style");
               $('#formsubmit').prop('disabled', true);
                $("#ctl00 :input").attr("disabled", true);
