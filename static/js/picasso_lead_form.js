@@ -99,11 +99,7 @@ function validatethis(frm) {
   }
 
 
-var nbs_team = ['NBS','Newbie+'];
   $('#team').change(function(){
-    if(nbs_team.indexOf($('#team option:selected').val()) != -1){
-      $('#cid').val('000-000-0000');
-    }
     $('#adv_mail').attr('hidden',false);
     $("#advertiser_email").val('').attr('hidden',false);
     $('#checkbox33').attr('hidden',false);
