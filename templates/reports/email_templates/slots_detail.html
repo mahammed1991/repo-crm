@@ -1,0 +1,121 @@
+<!-- <!DOCTYPE html>
+<html>
+	<body>
+	{% if available_counts_booked %}
+        {% for data in available_counts_booked  %}
+                {% for key, val in data.iteritems  %}
+			<P>{% if  "team__team_name" in key %} TEAM Name: {{val}}{% endif %}</P>
+			<P>{% if "Availability_count" in key %}Availability: {{val}}{% endif %}</P>	
+			<P>{% if "booked_count" in key %}Booked: {{val}}{% endif %}</P>		
+			<P>{% if "ratio" in key %}Ratio: {{val}}{% endif %}</P>
+            	  {% endfor %}
+            {% endfor %}
+      
+    {% else %}
+        <strong>There are no Details present.</strong>
+    {% endif %}
+	</body>
+</html> -->
+
+<table cellspacing="0" cellpadding="0" dir="ltr" style="table-layout:center;font-size:13px;font-family:Arial;vertical-align:middle;">
+    <colgroup>
+        <col width="26">
+        <col width="306">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="26">
+        <col width="306">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="26">
+    </colgroup>
+    <tbody style=""; >
+        <tr style="height:30px;">   
+            <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td>  
+            <td style="padding:16px 1px 2px 162px;font-size:200%;border:1px solid #A9A9A9;" rowspan="1" colspan="7">
+            <span style="color:#e60000; width:100%;">Utilization Dashboard-{{mail_trigerring_date}}</span></td>
+        </tr>
+       <tr>
+           <td style="height:21px;"></td>
+       </tr>
+        <tr style="height:21px;font-size: 16px;">
+            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Tag Teams</td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Opened</td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Booked</td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Utilization</td>
+        </tr>
+
+        {% for v in tag %}
+            <tr style="height:21px;">
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+                    {% for key, val in v.iteritems  %}
+                    {% if key == 'team_name'  %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align:left;">{{val}}</td>
+                    {% else %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align:center;">{{val}}</td>
+                    {% endif %}
+                     {% endfor %}
+                    
+            </tr>
+        {% endfor %}
+         <tr style="height:21px;">
+            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+            <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align:left;font-size: 16px;">TAG - TOTAL</td>
+            {% for key, value in tag_total_sum_sorted  %}
+
+                
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;font-size: 16px;">{{value}}</td>
+            {% endfor %}
+        </tr>
+
+        <br>
+
+         <tr style="height:21px;font-size: 16px;">
+            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Shopping Teams</td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Opened</td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Slots Booked</td>
+            <td style="padding:2px 3px 2px 3px;background-color:#99b3ff;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align: center;">Utilization </td>
+          </tr>
+               <!--  <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td> -->
+                <!-- <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td> -->
+
+        {% for v in shopp %}
+            <tr style="height:21px;">
+            <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+
+                {% for key, val in v.iteritems  %}
+                 {% if key == 'team_name'  %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align:left;">{{val}}</td>
+                    {% else %}
+                    <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#3d3d29;text-align: center;">{{val}}</td>
+                  {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    <tr>
+        <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;"></td>
+        <td style="padding:2px 3px 2px 3px;color:#e60000;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;text-align:left;font-size: 16px;">SHOPPING - TOTAL</td>
+            {% for key,value in shopping_total_sum_sorted  %}
+                <td style="padding:2px 3px 2px 3px;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;color:#e60000;text-align: center;font-size: 16px;">{{value}}</td>
+            {% endfor %}
+    </tr>
+
+    <tr>
+        <td style="height:21px;"></td>
+    </tr>
+
+    <tr style="height:18px;">   
+        <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td>  
+        <td style="background-color:#f3f3f3;padding:2px 1px 2px 26px;font-size:15px;
+        text-align:center;color:#b7b7b7;border: 1px solid #A9A9A9" rowspan="1" colspan="7">
+        Copyright © 2016 Regalix Inc. All rights reserved.</td>
+    </tr>
+         
+
+ </tbody>
+</table>
+

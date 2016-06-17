@@ -1,0 +1,455 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Shopping Campaign Setup Lead Form
+{% endblock title %}
+
+{% block content %}
+<div class="righttop_content">
+	<b>For Live Transfers</b>
+	<br>
+	US: 866-999-7725
+	<br>
+	UK: 44-800-066-4313
+	<br>
+</div>
+<div id="content" class="clearfix">
+	<div class="ss">
+		<strong style="font-size:20px;"></strong>For any US live transfers, call: 866-999-7725
+	</div>
+	<div class="main_content">
+		<fieldset style="border:1px solid #d9d9d9;">
+			<legend class="legend_bigger">
+				<p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">
+					Shopping Campaign Setup Lead Form
+				</p>
+			</legend>
+			<table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" class="body-border" background-color: "#f6f6f6;">
+				<tbody>
+					<tr>
+						<td>
+						<form onsubmit="return validatethis(this);" id="ctl00"  method="post" name="ctl00">
+							<div>
+								<input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRk35WcUIf+b0pcO4xlvg1joeaYNjs" id="__VIEWSTATE" name="__VIEWSTATE">
+							</div>
+							<div style="display:none;">
+								<select title="Task Type" class="text_container" name="00Nd0000005WYhJ" id="ctype1">
+									<option selected="selected" value="Google Shopping Setup">Google Shopping Setup</option>
+								</select>
+							</div>
+							<input type="hidden" value="00Dd0000000fk18" name="oid">
+							<input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=2" name="retURL">
+							<table class="frm_container" cellpadding="0" cellspacing="0">
+								<tr>
+									<td><label>Google Rep <span>*</span></label></td>
+									<td>
+									<select class="text_container" onchange="changerefemail(this);" id="gref1" style="display: none;">
+										<option title="{{PORTAL_MAIL_ID}}" selected="selected" class="select-o" value="None in the list"> None in the list </option>
+									</select>
+									<select class="text_container" id="gref" name="00Nd0000005WYgk" >
+										<option title="{{ user.email }}" value="{{ user.get_full_name }}">{{ user.get_full_name }}</option>
+									</select>
+									<input type="hidden" value="{{ user.email }}" id="emailref" name="email">
+									<input type="hidden" size="20" name="00Nd00000075Crj" maxlength="255" id="00Nd00000075Crj" value="{{ user.profile.user_manager_name }}">
+									<input type="hidden" size="20" name="00Nd00000077r3s" id="00Nd00000077r3s" value="{{ user.profile.user_manager_email }}" />
+									</td>
+									<td><label>Customer ID <span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="cid" name="00Nd0000005WYgV" placeholder="888-888-8888">
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td><a id="addPm" name="addPm" href="{% url 'main.views.edit_profile_info' %}" id="optlink" style="color:black;font-weight:bold;">Add / Edit manager details</a></td>
+									<td><label>E-commerce</label></td>
+									<td>
+									<input type="checkbox" name="00Nd0000005WaHr" value="1" class="text_container_chk">
+									</td>
+								</tr>
+								<tr>
+									<td><label>Advertiser Name <span>*</span> (Company)</label></td>
+									<td>
+									<input type="text" class="text_container" id="company" name="company" placeholder="Enter Advertiser's Company Name">
+									</td>
+									<td><label>Team <span>*</span></label></td>
+									<td>
+									<select id="team" title="team" class="text_container" name="00Nd0000005XIWB">
+										<option value="0">--None--</option>
+										<option value="MMS One">MMS One</option>
+										<option value="MMS Two">MMS Two</option>
+										<option value="Small Business Sales">Small Business Sales</option>
+										<option value="UMM">UMM</option>
+										<option value="Managed Agency  (AS)">Managed Agency  (AS)</option>
+										<option value="Managed Agency  (ADM)">Managed Agency  (ADM)</option>
+										<option value="Dynamic Agency">Dynamic Agency</option>
+										<option value="Traditional Agency (AS)">Traditional Agency (AS)</option>
+										<option value="Traditional Agency (ADM)">Traditional Agency (ADM)</option>
+										<option value="Newbie Plus">Newbie Plus</option>
+										<option value="Newbie">Newbie</option>
+										<option value="Top Movers">Top Movers</option>
+										<option value="NBS">NBS</option>
+										<option value="ETO: Inbound">ETO: Inbound</option>
+										<option value="ETO: CS">ETO: CS</option>
+										<option value="ETO: Outbound">ETO: Outbound</option>
+										<option value="ETO: Agency">ETO: Agency</option>
+										<option value="Newbie Legos">Newbie Legos</option>
+										<option value="Services Revenue Program (SRP)">Services Revenue Program (SRP)</option>
+										<option value="Wave">Wave</option>
+										<option value="Services (Traverwood)">Services (Traverwood)</option>
+										<option value="Services">Services</option>
+									</select></td>
+								</tr>
+								<tr id='tr_service_segment' style="display:none">
+									<td></td>
+									<td></td>
+									<td><label>Service Segment<span> *</span></label></td>
+									<td>
+										<select id="service_segment" title="service_segment" class="text_container" name="00Nd0000007e2AF">
+										<option value="">--None--</option>
+										<option value="SBA">SBA</option>
+										<option value="HPA">HPA</option>
+										<option value="HPA+">HPA+</option>
+									</td>
+								</tr>
+								<tr>
+									<td><label>Location<span>*</span></label></td>
+									<td>
+									<select class="text_container" onchange="changetime(this);" id="country" title="country" name="00Nd0000005WYga">
+										<option value="0">--None--</option>
+										{% for loc in locations %}
+										<option value="{{loc}}" location_id='{{ loc.id }}'>{{loc}}</option>
+										{% endfor %}
+									</select></td>
+									<td><label>Time Zone <span>*</span></label></td>
+									<td>
+									<select title="Timezone" class="text_container" id="tzone" name="00Nd0000005WYhT">
+										<option value="">--None--</option>
+									</select></td>
+								</tr>
+								<tr id='tr_language' style="display:none">
+									<td><label>Language</label></td>
+									<td>
+										<select id="language" title="language" class="text_container" name="00Nd0000007clUn">
+										<option value="">--None--</option>
+										<option value="English">English</option>
+										<option value="Dutch">Dutch</option>
+									</td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td><label><b>APPOINTMENT DETAILS</b></label></td>
+									<td>
+									<input type="checkbox" name="setup_datepick_nApplicable" id="setup_datepick_nApplicable" />
+									Not Applicable</td>
+									<td><label>Date &amp; Time <span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="00Nd0000005WYlL" autocomplete='off'>
+									</td>
+								</tr>
+								<tr>
+									<td><label>URL<span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="url1" name="00Nd0000005WYhE" placeholder="http://www.samplesite.com">
+									</td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td class="header_txt">Advertiser contact info<span>*</span></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td><label>First Name <span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="first_name" name="first_name">
+									</td>
+									<td><label>Last Name <span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="last_name" name="last_name">
+									</td>
+								</tr>
+								<tr>
+									<td><label>Phone <span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="phone" name="phone" placeholder="888-888-8888">
+									</td>
+									<td><label>Email <span>*</span></label></td>
+									<td>
+									<input type="text" class="text_container" id="aemail" name="00Nd0000005WcNw" placeholder="example@google.com">
+									</td>
+								</tr>
+								<tr>
+									<td><label>Role</label></td>
+									<td>
+									<select title="Primary Contact Role" name="00Nd0000005WayR" class="text_container" id="00Nd0000005WayR">
+										<option value="">--None--</option>
+										<option value="Owner">Owner</option>
+										<option value="Marketing">Marketing</option>
+										<option value="Webmaster">Webmaster</option>
+									</select></td>
+									<td><label>Established Contact </label></td>
+									<td>
+									<input type="checkbox" name="00Nd0000005Wayb" value="1" class="text_container_chk">
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4" align="left" height="40" colspan="2"><strong>Alternate contact info(Optional)</strong></td>
+								</tr>
+								<tr>
+									<td ><label> First Name</label></td>
+									<td >
+									<input type="text" class="text_container" id="fopt" name="00Nd0000005WYgp">
+									</td>
+									<td ><label> Last Name</label></td>
+									<td >
+									<input type="text" class="text_container" id="lopt" name="00Nd0000005WYgu">
+									</td>
+								</tr>
+								<tr>
+									<td><label> Phone </label></td>
+									<td >
+									<input type="text" class="text_container" id="popt" name="00Nd0000005WYgz" placeholder="888-888-8888">
+									</td>
+									<td ><label> Email</label></td>
+									<td >
+									<input type="text" class="text_container" id="eopt" name="00Nd0000005WYh4" placeholder="example@google.com">
+									</td>
+								</tr>
+								<tr>
+									<td ><label> Role</label></td>
+									<td >
+									<select title="Alternate Contact Role" name="00Nd0000005WayW" class="text_container" id="00Nd0000005WayW">
+										<option value="">--None--</option>
+										<option value="Owner">Owner</option>
+										<option value="Marketing">Marketing</option>
+										<option value="Webmaster">Webmaster</option>
+									</select></td>
+									<td ><label> Established Contact</label></td>
+									<td>
+									<input type="checkbox" name="00Nd0000005Wayg" value="1" class="text_container_chk">
+									</td>
+								</tr>
+								<tr>
+									<td ><label>MC-ID</label></td>
+									<td>
+									<input id="00Nd00000077T9o" name="00Nd00000077T9o" size="20" class="text_container" type="text">
+									</td>
+									<td><label>Client's Web inventory</label></td>
+									<td >
+									<select id="webinventory" name="00Nd00000077T9t" class="text_container" title="Client's Web inventory">
+										<option value="0">--None--</option>
+										<option value="Under 100">Under 100</option>
+										<option value="100 ~ 500">100 ~ 500</option>
+										<option value="500 ~ 2000">500 ~ 2000</option>
+										<option value="2000 ~ 5000">2000 ~ 5000</option>
+										<option value="Above 5000">Above 5000</option>
+									</select></td>
+								</tr>
+								<tr>
+									<td> Recommended Bid<span>*</span></td>
+									<td >
+									<input id="rbid" maxlength="255" name="00Nd00000077T9y" size="20" class="text_container" type="text">
+									</td>
+									<td> Recommended Budget<span>*</span></td>
+									<td >
+									<input id="rbudget" maxlength="255" name="00Nd00000077TA3" size="20" class="text_container" type="text">
+									</td>
+								</tr>
+								<tr>
+									<td > Recommended Mobile Bid modifier<span>*</span></td>
+									<td >
+									<input id="rbidmodifier" maxlength="255" name="00Nd00000077TA8" class="text_container" size="20" type="text">
+									</td>
+									<td colspan="2"></td>
+								</tr>
+								<tr>
+									<td><label class="label">Notes</label></td>
+									<td colspan="3"><textarea rows="4" name="description" cols="100" class="text_container_larg"></textarea></td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<div class="submit_button">
+											<input type="submit" value="Submit"class="logbtn">
+										</div></td>
+									</tr>
+							</table>
+
+						</form></td>
+					</tr>
+				</tbody>
+			</table>
+		</fieldset>
+	</div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script type="text/javascript">
+
+	$('#team').change(function(){
+		var selectedTeam = $(this).val();
+		if( selectedTeam == 'ETO: Inbound' || selectedTeam == 'ETO: Outbound' || selectedTeam == 'ETO: CS'){
+			$("#service_segment").val('');
+			$("#tr_service_segment").show();
+		}else{
+			$("#tr_service_segment").hide();
+		}
+	});
+
+	$('#country').change(function(){
+		var selectedTeam = $(this).val();
+		if( selectedTeam == 'Nordic(English)' || selectedTeam == 'Netherlands(English)' ){
+			$("#language").val('English');
+		}else if(selectedTeam == 'Nordic(Dutch)' || selectedTeam == 'Netherlands(Dutch)'){
+			$("#language").val('Dutch');
+		}else{
+			$("#language").val('');
+		}
+	});
+	
+
+	function validatethis(frm) {
+		var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+		var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+		var numericExpression = /^[0-9]+$/;
+		var ct = 0;
+		var rc = 0;
+		var fix_slots = new Array();
+		if ($("input[name=chkRe]:checked").length == 0) {
+			if (frm.gref.value == "") {
+				alert("Please Select Google Representative");
+				return false;
+			}
+		}
+
+		if (frm.cid.value == "") {
+			alert("Please Enter Customer ID");
+			frm.cid.focus();
+			return false;
+		}else if(!frm.cid.value.match(cidFormat)){
+			alert("Please enter valid Customer ID (nnn-nnn-nnnn)");
+			frm.cid.focus();
+			return false;
+		}
+
+		if (document.getElementById("00Nd00000075Crj").value == "") {
+			alert("Please Update Google Manager details");
+			document.getElementById("addPm").focus();
+			return false;
+		}
+
+		if (document.getElementById("00Nd00000077r3s").value == "") {
+			alert("Please Update Google Manager details");
+			document.getElementById("addPm").focus();
+			return false;
+		}
+
+		if (frm.company.value == "") {
+			alert("Please Enter Company Name");
+			frm.company.focus();
+			return false;
+		}
+
+		if (frm.team.value == "0" || frm.team.value == "") {
+			alert("Please Select the Team");
+			frm.team.focus();
+			return false;
+		}
+		if ($("#"+frm.service_segment.id).is(":visible")) {
+			if(frm.service_segment.value == ""){
+				alert("Please Select the Service Segment");
+				frm.service_segment.focus();
+				return false;
+			}
+		}
+		if (frm.country.value == "0") {
+			alert("Please Select Your Country");
+			frm.country.focus();
+			return false;
+		}
+
+		if (frm.tzone.value == "" || frm.tzone.value == 0) {
+			alert("Please Enter timezone Value");
+			frm.tzone.focus();
+			return false;
+		}
+
+		if (document.getElementById("setup_datepick_nApplicable").checked == false) {
+			if (frm.setup_datepick.value == "") {
+				alert("'Date and Time' is Mandatory for Appointments, else select 'Not Applicable' check box to continue.");
+				return false;
+			}
+			var slot = {
+				'type' : 'SHOPPING',
+				'time' : frm.setup_datepick.value
+			}
+			fix_slots.push(slot)
+		} else {
+			frm.setup_datepick.value = "";
+		}
+
+		var domain = document.getElementById('url1');
+		if (domain.value == "") {
+			alert("Please enter a URL");
+			domain.focus();
+			return false;
+		}
+
+		if (frm.first_name.value == "") {
+			alert("Please Enter First Name");
+			frm.first_name.focus();
+			return false;
+		}
+		if (frm.last_name.value == "") {
+			alert("Please Enter Last Name");
+			frm.last_name.focus();
+			return false;
+		}
+		if (frm.phone.value == "") {
+			alert("Please Enter Phone Number");
+			frm.phone.focus();
+			return false;
+		}
+		if (frm.aemail.value == "") {
+			alert("Please Enter Email Address");
+			frm.aemail.focus();
+			return false;
+		}
+		frm.aemail.value = frm.aemail.value.trim();
+		if (!frm.aemail.value.match(check)) {
+			alert("Invalid E-mail ID !");
+			frm.aemail.focus();
+			return false;
+		}
+
+		if (frm.rbid.value == "") {
+			alert("Please Enter Recommended Bid Value");
+			frm.rbid.focus();
+			return false;
+		}
+		if (frm.rbidmodifier.value == "") {
+			alert("Please Enter Recommended Mobile Bid Modifier Value");
+			frm.rbidmodifier.focus();
+			return false;
+		}
+		if (frm.rbudget.value == "") {
+			alert("Please Enter Recommended Budget Value");
+			frm.rbudget.focus();
+			return false;
+		}
+
+		var status = true;
+		if (!document.getElementById("setup_datepick_nApplicable").checked) {
+			status = check_and_create_appointment(fix_slots);
+		}
+		return status;
+	}
+</script>
+{% endblock main_js %}

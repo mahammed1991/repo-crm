@@ -1,0 +1,1174 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Tag, Shopping and RLSA Lead Form
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .shopping-policies .subitems li{
+      list-style: none;
+    }
+    .avg_time{
+      font-size: 15px; border-width: 0px 0px 0px 6px; border-style: solid; border-color: rgb(10, 157, 88); color: rgb(10, 157, 88); padding:4px;padding-left: 10px; margin-bottom: 18px; font-family: Roboto, Arial, sans-serif; background: rgb(230, 245, 238); margin-left: 16px;
+    }
+  
+</style>
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+
+  <!-- temproray survay -->
+  <p style="border-radius: 20px;text-align: left;font-size: 15px;padding: 15px;background-color: #B6D7A8;width: 850px;margin: 20px auto;">
+  Hey There!
+  <br/>
+  <br/> 
+  We value your feedback and want to hear about your experiences with the Tag Team. Your input is critical as we continue to iterate on this program. The last time we gathered broad-based feedback, it led to changes to our tools, refinements to our processes
+  and additions to our support menu.
+  <br/>
+  <br/>
+  <b style="">Please take five minutes to complete this <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Tag', 'action': 'click', 'label': 'Survey-May-2016' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/a/google.com/forms/d/14Fat5cnJDmP_uoZZhowLBVwmQU5UorcDPGzUUzUj5ZA/viewform">survey</a>.</b></p>
+ <!--  end of temrpopery survey -->
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
+    <input type="hidden" name="oid" value="00DZ000000MipUa">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+    <input type="hidden" id="lead_type" name="lead_type" value="Normal Lead">
+
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">If you do not get confirmation e-mail after submitting a lead please notify us at <b>implementation-support@google.com</b> </p>
+    <div class="std-sub-title">Google Rep Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <label for="gref">Google Rep Name</label>
+        <!-- <input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /> -->
+        <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+      </div>
+      <div class="col-md-4">
+        <label for="emailref">Google Rep Email</label>
+        <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+      </div>
+      <div class="col-md-4">
+        <label for="team">Program Name</label>
+        <select class="form-control bgicon" id="team" title="Program Name" name="team">
+          <option value="">Program name</option>
+          {% for team in teams %}
+            <option value='{{team.team_name}}'>{{team.team_name}}</option>
+          {% endfor %}
+        </select>
+        <!-- <input type="text" id="team" class="form-control" title="Program Name"> -->
+      </div>
+      <div class="col-md-8 tr_service_segment">
+        <div id="team_service_gce" style="font-size: 13px;font-weight: bold;">
+          <ol type="1">
+            <li>1. Any SRP pitch for a Pinnacle, HV/+ account, Kickstart Scaled is eligible for Tag Team Support.  Only HiPo Newbie accounts in Kickstart Reactive are eligible.</li>
+            <li>2. Visit go/regalixtransfer for more info on transfer process​</li>  
+          </ol>
+        </div>
+      </div>
+      <div class="col-md-4 tr_service_segment">
+      <!-- As per QA suggestions SERVICE SEGMENT has been removed. Reason is, its not been used anywhere -->
+        <!-- <label for="service_segment">Service Segment</label>
+          <select id="service_segment" title="service_segment" class="form-control bgicon" name="service_segment">
+              <option value="">Service Segment</option>
+              <option value="SBA">SBA</option>
+              <option value="HPA">HPA</option>
+              <option value="HPA+">HPA+</option>
+          </select> -->
+          <input type="text" class="form-control" id="g_cases_id" name="g_cases_id" title="G Case ID" placeholder="Internal Gcase ID" value="" style="display:none">
+      </div>
+      <div class="col-md-4">
+      </div>
+      <div class="col-md-4">
+      </div>
+       <div class="col-md-4">
+          <input type="email" class="form-control" id="ldap" name="ldap" title="" placeholder="Additional LDAP" value="" style="">
+        </div>
+      <div class="col-md-4">
+        <label for="manager_name">Manager Name</label>
+        <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+      </div>
+      <div class="col-md-4">
+        <label for="manager_email">Manager Email</label>
+        <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+      </div>
+      <div class="col-md-4">
+        <label for="country">Google Rep Location</label>
+          <input type="text" class="form-control" id="rep_location" name="rep_location" value="" placeholder="Enter Rep Location" autocomplete="off">
+      </div>
+    </div>
+    <div class="std-sub-title">Advertiser Info</div>
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="advertiser_name" name="advertiser_name" placeholder="Advertiser Name">
+      </div>
+      <div class="col-md-4">
+        <input type="email" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email">
+      </div>
+      <div class="col-md-4">
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Advertiser Telephone">
+            </td>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="rlsaInternalCIDPrepopulate()">
+      </div>
+      <div class="col-md-4">
+        <select class="form-control bgicon" id="region" title="Program Region" name="region">
+          <option value="0">Region</option>
+          {% for rgn in regions %}
+            <option value="{{rgn.name}}" region_id="{{rgn.id}}">{{rgn.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control bgicon" onchange="changetime(this);" id="country" title="Program Location" name="country">
+          <option value="0">Market Served</option>
+          {% for loc in locations %}
+            <option value="{{loc.name}}" location_id="{{loc.id}}">{{loc.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4" id='tr_language'>
+        <select class="form-control bgicon" id="language" title="language" name="language">
+          <option value="">Select Language</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select title="Time Zone" class="form-control bgicon" id="tzone" name="tzone">
+          <option value="">Select Time Zone</option>
+        </select>
+      </div>
+     
+    </div>
+
+    <div class="webmasterCheck">        
+      <div class="form-heading">Does the advertiser have web access or a Webmaster?</div>
+      <div class="checkbox web-access">
+            <label>
+              <input type="radio" value="" name="web_access" id="web_access">
+              Web Access
+            </label>
+            <label>
+              <input id="webmasterCheck" type="radio" name="webmasterCheck" value="">
+              Webmaster
+            </label>
+      </div>
+      <div id="webmaster" class="row" style="display:none;">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="webmaster_name" name="webmaster_name" placeholder="Webmaster Name">
+              <input type="hidden" class="form-control" id="lopt" name="lopt">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="web_master_email" name="web_master_email" placeholder="Webmaster Email">
+            </div>
+            <div class="col-md-4">
+               <input type="text" class="form-control" id="popt" name="popt" placeholder="888-888-8888">
+            </div>
+      </div>
+      <div id="webaccess-inline" class="row" style="display:none;padding-left: 20px;">
+          <span>Note that many advertisers have access to make content changes on their website but NOT code changes.  Please make sure your advertiser understands this difference and has the access to make code changes.</span>
+      </div>
+      </div>
+    <div class="lead-type">
+      <div class="form-heading">Please select the type of lead you want to submit</div>
+       <a class="btn std-btn tag-impl" id="tagImplementation"><div class="check-icon" id="tagImplementationBtn"><i class="fa fa-check"></i></div>Tag Implementation</a>
+          <span>And/Or</span>
+       <a class="btn std-btn shopping-setup" id="shoppingSetup"><div class="check-icon" id="shoppingSetupBtn"><i class="fa fa-check"></i></div>Shopping Campaign</a>
+          <span>And/Or</span>
+       <a class="btn std-btn rlsa-impl" id="rlsaSetup"><div class="check-icon" id="rlsaSetupBtn"><i class="fa fa-check"></i></div>rlsa bulk implementation</a>
+    </div>
+     <!-- start RLSA bulk implimentation code -->
+       <div class="rlsa-impl-section rlsa-codes" id="rlsa-impl-initial1">
+            <div class="std-sub-title row">RLSA BULK implementation(No Call)</div>
+            <div class="row" style="padding-left: 35px;">
+              <span style="margin-left: -20px;"><strong>Pre-Submission Checkpoints:</strong>
+              <ul style="margin-left: 25px;">
+              <li style="list-style-type: disc;"><span >Obtain Authorisation from your advertiser using </span><span style=" font-weight: 700;">only</span> <a href="https://goo.gl/UNWxAo" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">these templates</span></a></li>
+              <li style="list-style-type: disc;"><span >E-mail that authorisation e-mail to </span><a href="mailto:implementation-support@google.com" target="_blank"><span style=" color: rgb(17, 85, 204); font-weight: 700; text-decoration: underline;">implementation-support@google.com</span></a><span> with </span><span style=" font-weight: 700;">[RLSA Authorisation]</span><span> in the subject line</span></li>
+              <li style="list-style-type: disc;"><span >Please ensure that you are aware of the </span><a href="{% url 'main.views.rlsa_limitations' %}" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">TagTeam’s RLSA Support Boundaries</span></a></li>
+              <li style="list-style-type: disc;"><span >Please ensure that the website meets the RLSA policies specified </span><a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">here</span></a></li></ul>
+              </span>
+            </div>
+             <div class="row" style="margin-bottom: 12px;">
+                 <div class="col-md-12"><strong>
+                    Add RLSA to:</strong>
+                 </div>
+                 <div class="col-md-5" style="margin-left: 20px;">
+                  <input type="radio" name="campaign_ids1" id="active_campaigns" checked ><span>&nbsp;All Active AdGroups of Active Campaigns</span>
+                 </div>
+                 <div class="col-md-6">
+                   <input type="radio" name="campaign_ids1" id="paused_campaigns"><span>&nbsp;All Active and Paused AdGroups of all Active and Paused Campaigns</span>
+                 </div>
+               </div>
+            
+              <div class="row">
+                <div class="col-md-4 ">
+                    <input type="text" class="form-control" id="internal_cid1" name="internal_cid1" placeholder="External CID (not MCC ID)" readonly>
+                </div>
+               <div class="col-md-8" >
+                      <input style="height:48px;" type="text-area" class="form-control " id="authEmail" name="authEmail" placeholder="Auth E-mail Cases ID (mandatory if not e-mailed to implementation-support@google.com)">
+                  </div>
+                  <div class="col-md-12" >
+                      <input style="height:48px;" type="text-area" class="form-control " id="comments" name="comments" placeholder="Comments">
+                  </div >
+              </div>
+               <div class="row" >
+                   <div class="col-md-4">
+                     <input type="text" class="form-control " id="user_list_id1" name="user_list_id1" placeholder="User List ID/ Audieance ID">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control " id="rsla_bid_adjustment1" name="rsla_bid_adjustment1" placeholder="RLSA BID Adjustment(%)">
+                </div>
+                   <div class="col-md-4" >
+                   <p style="height:80px;text-align:left;font-size:13px;line-height:19px;color:#8c8c8c">
+                      Check PitchIQ or <a href="https://goto.google.com/rlsa-bid-dash" target="_blank">go/rlsa-bid-dash</a> for customer  <br> specific recomandations! we recommend at <br>least + 40%
+                    </p>
+                  </div>
+               </div>
+               <div class="row" >
+                  <div class="col-md-8 row" >
+                    <div class="form-heading" style="font-family:none;margin-left:17px;">&nbsp;</div>
+                  </div>
+                  <div class="col-md-4" >
+                   <a id="add_rlsa1" class="btn std-btn task-btn" style="margin-right:10px;background:#109d59 !important;" onclick="addMoreRLSAs(1);"><i class="fa fa-plus-circle" ></i>Add User List</a>
+                   <a id="removeRlsa_1" class="btn std-btn task-btn remove-rlsa" style="display:none" onclick="removeRLSAs(1);"><i class="fa fa-minus-circle"></i>Remove User List</a>
+                  </div>
+               </div>
+              
+        </div>
+
+    <input type="hidden" class="form-control" id="is_tag_lead" name="is_tag_lead" value="no">
+    <input type="hidden" class="form-control" id="is_shopping_lead" name="is_shopping_lead" value="no">
+    <input type="hidden" class="form-control" id="is_rlsa_lead" name="is_rlsa_lead" value="no">
+    <div class="tasks" id="tasks">
+        <div class="task" id="task_1">
+          <div class="std-sub-title">Task Type Info</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Task Type" class="form-control code_type bgicon" name="ctype1" id="ctype1">
+            </select>
+              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code1" name="code1" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment1" name="comment1" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            
+            <div id='ctype_campaign1' style="display:none">
+              <div class="col-md-12">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" value="0" name="is_campaign_created1" id="is_campaign_created1" class="is_campaign_created">
+                    Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)
+                  </label>
+                  <br>
+                   <!-- add dynamic code here -->
+                    <div class="col-md-12" style="    font-size: 15px;    border-width: 0px 0px 0px 6px;    border-style: solid;    border-color: #f0ad4e;    color: #7C6647;    padding: 4px;    padding-left: 10px;    margin-bottom: 18px;    font-family: Roboto, Arial, sans-serif;    background: rgba(240, 173, 78, 0.18);    margin-top: 14px;">Having an active campaign before tag implementation will ensure that the right expectations are set and that the advertiser understands the product and the campaign starts running as soon as Tag gets implemented.<br>
+                    </div>
+                </div>
+              </div>
+              </div>
+              <div class="col-md-4" id="gasetup1" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup1" type="checkbox" name="ga_setup1" value="0" class="is_ga_setup">
+                    Is there an existing Analytics account? </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="analyticscode1" style="display:none">
+                <input class="form-control" id="analytics_code1" name="analytics_code1" placeholder="Analytics account ID"></input>
+              </div>
+              <div class="col-md-4" id="callextension1" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension1" type="checkbox" name="call_extension1" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="codebehaviour1" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour1" type="checkbox" name="product_behaviour1" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour1" type="checkbox" name="cartpage_behaviour1" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process1" type="checkbox" name="checkout_process1" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour1" type="checkbox" name="transaction_behaviour1" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12 avg_time"  id="code_type_avg_time_1" style="display:none;"></div>
+              <a id="addTask_2" class="btn std-btn task-btn add" style="margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 2 ################################################### -->
+        <a id="removeTask_2" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Task Type</a>
+        <div class="task" id="task_2" style="display:none;">
+          <div class="form-heading">Task Type Info (2)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Task Type" class="form-control code_type bgicon" name="ctype2" id="ctype2">
+            </select>
+              <input type="text" class="form-control" id="url2" name="url2" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code2" name="code2" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment2" name="comment2" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign2' style="display:none">
+              <div class="col-md-12">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" value="0" name="is_campaign_created2" id="is_campaign_created2" class="is_campaign_created">
+                    Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)
+                  </label>
+                  <br>
+                   <!-- add dynaminc code here -->
+                    <div class="col-md-12" style="    font-size: 15px;    border-width: 0px 0px 0px 6px;    border-style: solid;    border-color: #f0ad4e;    color: #7C6647;    padding: 4px;    padding-left: 10px;    margin-bottom: 18px;    font-family: Roboto, Arial, sans-serif;    background: rgba(240, 173, 78, 0.18);    margin-top: 14px;">Having an active campaign before tag implementation will ensure that the right expectations are set and that the advertiser understands the product and the campaign starts running as soon as Tag gets implemented.<br>
+                    </div>
+                </div>
+              </div>
+              </div>
+            <div class="col-md-12" id="gasetup2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup2" type="checkbox" name="ga_setup2" value="0" class="is_ga_setup">
+                    Is there an existing Analytics account? </label>
+                </div>
+            </div>
+            <div class="col-md-12">
+              <div class="checkbox">
+                <label>
+                  <input id="keep_url" type="checkbox" value="">
+                  Check this box if the URL is the same for all task types.
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4" id="analyticscode2" style="display:none">
+                <input class="form-control" id="analytics_code2" name="analytics_code2" placeholder="Analytics account ID"></input>
+            </div>
+            <div class="col-md-4" id="callextension2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension2" type="checkbox" name="call_extension2" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="codebehaviour2" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour2" type="checkbox" name="product_behaviour2" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour2" type="checkbox" name="cartpage_behaviour2" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process2" type="checkbox" name="checkout_process2" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour2" type="checkbox" name="transaction_behaviour2" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12 avg_time" id="code_type_avg_time_2" style="display:none;"></div>
+            <a id="addTask_3" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
+          </div>
+        </div>
+        
+
+        <!-- ############################################### Code Type 3 ################################################### -->
+        <a id="removeTask_3" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Task Type</a>
+        <div class="task" id="task_3" style="display:none;">
+          <div class="form-heading">Task Type Info (3)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Task Type" class="form-control code_type bgicon" name="ctype3" id="ctype3">
+            </select>
+              <input type="text" class="form-control" id="url3" name="url3" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code3" name="code3" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment3" name="comment3" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign3' style="display:none">
+              <div class="col-md-12">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" value="0" name="is_campaign_created3" id="is_campaign_created3" class="is_campaign_created">
+                    Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)
+                  </label>
+                  <br>
+                   <!-- add dynamic code here -->
+                    <div class="col-md-12" style="    font-size: 15px;    border-width: 0px 0px 0px 6px;    border-style: solid;    border-color: #f0ad4e;    color: #7C6647;    padding: 4px;    padding-left: 10px;    margin-bottom: 18px;    font-family: Roboto, Arial, sans-serif;    background: rgba(240, 173, 78, 0.18);    margin-top: 14px;">Having an active campaign before tag implementation will ensure that the right expectations are set and that the advertiser understands the product and the campaign starts running as soon as Tag gets implemented.<br>
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="col-md-4" id="gasetup3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup3" type="checkbox" name="ga_setup3" value="0" class="is_ga_setup">
+                    Is there an existing Analytics account? </label>
+                </div>
+            </div>
+            <div class="col-md-4" id="analyticscode3" style="display:none">
+                <input class="form-control" id="analytics_code3" name="analytics_code3" placeholder="Analytics account ID"></input>
+            </div>
+            <div class="col-md-4" id="callextension3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension3" type="checkbox" name="call_extension3" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="codebehaviour3" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour3" type="checkbox" name="product_behaviour3" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour3" type="checkbox" name="cartpage_behaviour3" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process3" type="checkbox" name="checkout_process3" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour3" type="checkbox" name="transaction_behaviour3" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12 avg_time" id="code_type_avg_time_3" style="display:none;"></div>
+            <a id="addTask_4" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 4 ################################################### -->
+        <a id="removeTask_4" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Task Type</a>
+        <div class="task" id="task_4" style="display:none;">
+          <div class="form-heading">Task Type Info (4)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Task Type" class="form-control code_type bgicon" name="ctype4" id="ctype4">
+            </select>
+              <input type="text" class="form-control" id="url4" name="url4" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code4" name="code4" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment4" name="comment4" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign4' style="display:none">
+              <div class="col-md-12">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" value="0" name="is_campaign_created4" id="is_campaign_created4" class="is_campaign_created">
+                   Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)
+                  </label>
+                  <br>
+                   <!-- add dynaminc code here -->
+                   
+                    <div class="col-md-12" style="    font-size: 15px;    border-width: 0px 0px 0px 6px;    border-style: solid;    border-color: #f0ad4e;    color: #7C6647;    padding: 4px;    padding-left: 10px;    margin-bottom: 18px;    font-family: Roboto, Arial, sans-serif;    background: rgba(240, 173, 78, 0.18);    margin-top: 14px;">Having an active campaign before tag implementation will ensure that the right expectations are set and that the advertiser understands the product and the campaign starts running as soon as Tag gets implemented.<br>
+                  </div>
+                </div>
+              </div>
+              </div>
+            <div class="col-md-4" id="gasetup4" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup4" type="checkbox" name="ga_setup4" value="0" class="is_ga_setup">
+                    Is there an existing Analytics account? </label>
+                </div>
+            </div>
+            <div class="col-md-4" id="analyticscode4" style="display:none">
+                <input class="form-control" id="analytics_code4" name="analytics_code4" placeholder="Analytics account ID"></input>
+            </div>
+            <div class="col-md-4" id="callextension4" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension4" type="checkbox" name="call_extension4" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="codebehaviour4" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour4" type="checkbox" name="product_behaviour4" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour4" type="checkbox" name="cartpage_behaviour4" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process4" type="checkbox" name="checkout_process4" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour4" type="checkbox" name="transaction_behaviour4" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12 avg_time" id="code_type_avg_time_4" style="display:none;"></div>
+            <a id="addTask_5" class="btn std-btn task-btn add" style="display:none;margin-right:10px;"><i class="fa fa-plus-circle"></i>Add Task Type</a>
+          </div>
+        </div>
+
+        <!-- ############################################### Code Type 5 ################################################### -->
+        <a id="removeTask_5" class="btn std-btn task-btn remove" style="display:none"><i class="fa fa-minus-circle"></i>Remove Task Type</a>
+        <div class="task" id="task_5" style="display:none;">
+          <div class="form-heading">Task Type Info (5)</div>
+          <div class="row">
+            <div class="col-md-4">
+              <select title="Task Type" class="form-control code_type bgicon" name="ctype5" id="ctype5">
+            </select>
+              <input type="text" class="form-control" id="url5" name="url5" placeholder="URL">
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="code5" name="code5" placeholder="Code (Optional)"></textarea>
+            </div>
+            <div class="col-md-4">
+              <textarea class="form-control" id="comment5" name="comment5" placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            <div id='ctype_campaign5' style="display:none">
+              <div class="col-md-12">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" value="0" name="is_campaign_created5" id="is_campaign_created5" class="is_campaign_created">
+                    Please confirm the dynamic Remarketing campaign has been created and is active. (minimum budget >$30)
+                  </label>
+                  <br>
+                   <!-- add dynamic code here -->
+                    <div class="col-md-12" style="    font-size: 15px;    border-width: 0px 0px 0px 6px;    border-style: solid;    border-color: #f0ad4e;    color: #7C6647;    padding: 4px;    padding-left: 10px;    margin-bottom: 18px;    font-family: Roboto, Arial, sans-serif;    background: rgba(240, 173, 78, 0.18);    margin-top: 14px;">Having an active campaign before tag implementation will ensure that the right expectations are set and that the advertiser understands the product and the campaign starts running as soon as Tag gets implemented.<br>
+                  </div>
+                </div>
+              </div>
+            </div>
+              <div class="col-md-4" id="gasetup5" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="ga_setup5" type="checkbox" name="ga_setup5" value="0" class="is_ga_setup">
+                    Is there an existing Analytics account? </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="analyticscode5" style="display:none">
+                <input class="form-control" id="analytics_code5" name="analytics_code5" placeholder="Analytics account ID"></input>
+            </div>
+            <div class="col-md-4" id="callextension5" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="call_extension5" type="checkbox" name="call_extension5" value="0" class="call_extension">
+                    Created Call Extension </label>
+                </div>
+              </div>
+              <div class="col-md-4" id="codebehaviour5" style="display:none">
+                <div class="checkbox">
+                  <label>
+                    <input id="product_behaviour5" type="checkbox" name="product_behaviour5" value="0" class="code_behaviour">
+                    Product Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="cartpage_behaviour5" type="checkbox" name="cartpage_behaviour5" value="0" class="code_behaviour">
+                    Cart Page Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="checkout_process5" type="checkbox" name="checkout_process5" value="0" class="code_behaviour">
+                    Check Out Process </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input id="transaction_behaviour5" type="checkbox" name="transaction_behaviour5" value="0" class="code_behaviour">
+                    Transaction Behaviour </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    Implementation time to set up the code for each Behaviour will take apprx. 1  hour
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12 avg_time" id="code_type_avg_time_5" style="display:none;"></div>
+          </div>
+        </div>
+        <div class="appointment">
+          <div class="checkbox" id="appointment_check_tag">
+              <label>
+                <input id="appointmentCheck1" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+            <div class="row" id="tag_appointment">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_contact_person_name" name="tag_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <select title="Primary Contact Role" class="form-control bgicon" name="tag_primary_role" id="tag_primary_role">
+            </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="tag_datepick" process_type='TAG' placeholder="MM/DD/YYYY hh:mm AM/PM" name="tag_datepick" autocomplete='off'>       
+            </div>
+          </div>
+        </div>    
+
+    </div>
+    <div id="shoppingInfo">
+      <div class="std-sub-title">Shopping Campaign Info
+      </div>
+      <div class="row shopping_campaign" style="padding-left: 20px;padding-bottom: 20px;">
+        <div class="form-heading">Please select the required type</div>
+        <div class="checkbox">
+          <label style="font-family: 'robotoregular' !important;">
+            <input type="radio" id="Shopping_Campaign_Setup" value="Shopping_Campaign_Setup">
+            Shopping Campaign Setup
+          </label>
+          <label style="font-family: 'robotoregular' !important;">
+            <input type="radio" id="Shopping_Trobleshoot" value="Shopping_Trobleshoot" style="margin-left:40px;">
+            Existing Datafeed Optimization
+          </label>
+        </div>
+      </div>
+      <div class="row shoppingInfo">
+        <div class="col-md-4">
+        <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
+        <label>Recommended Mobile Bid Modifier</label>
+        <select class="form-control bgicon" id="bidmodifiercontroler" style="width: 152px;" onchange="addValueTorbidmodifier()">
+          <option value="Increase by">Increase by</option>
+          <option value="Decrease by">Decrease by</option>
+        </select>
+        <input id="rbidinpercentage" class="form-control" type="number" min="0" placeholder="In %" style="width: 138px;margin-left: 164px;margin-top: -67px;" onfocusout="addValueTorbidmodifier()">
+
+        <input id="rbidmodifier" name="rbidmodifier" class="form-control" type="text" placeholder="Recommended Mobile Bid Modifier" style="display: none;">
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="rbudget" class="form-control" name="rbudget" placeholder="Budget">
+          <input type="text" class="form-control" id="shopping_url" name="shopping_url" placeholder="URL">
+        <div class="checkbox">
+              <label class="lbl">
+                <input id="mcIdCheck" type="checkbox" value="" checked>
+                Customer has an existing Merchant Center account </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+          <textarea class="form-control" placeholder="Special Instructions (Optional)" name="description" id="description"></textarea>
+          <input id="mc_id" name="mc_id" size="20" class="form-control" type="text" placeholder="MC-ID">
+        </div>
+        <select id="web_client_inventory" name="web_client_inventory" class="form-control" title="Client's Web inventory" style="display:none">
+          <option value="Under 100">Under 100</option>
+        </select>
+       <!--  <div class="col-md-4">
+          <input type="checkbox" value="" id="is_tag_datepic" name="is_tag_datepic">
+            Do you want to use same timeslot for Shopping?
+        </div> -->
+
+      </div>
+      <div id="shopping_trobleshooting" style="display:none;">
+      <div class="row" style="margin-bottom:10px;">
+        <div class="col-md-12 " >
+         <ul>
+           <li style="list-style-type: square !important;list-style-position:inside;">
+            If your advertisers already have GTIN values for their products we can help them update it on the Datafeed. We will not be able to help advertisers with acquiring GTIN values for their products.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+        </div>
+      </div>
+        <div class="row">
+          <div class="col-md-4">
+            <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
+              <option value="">Select Issue Type</option>
+              <option value="GTIN Issues">GTIN Issues</option>
+              <option value="Datafeed Errors">Datafeed Errors</option>
+              <option value="Creating Product Groups">Creating Product Groups</option>
+              <option value="Adding Products to Feed">Adding Products to Feed</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <input type="text" class="form-control" id="shopping_trobleshooting_url" placeholder="URL">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <textarea class="form-control" rows="10" cols="117" id="issues_description" name="issues_description" placeholder="Trobleshooting Issues Description"></textarea>
+          </div>
+        </div>
+      </div>
+
+    <div class="appointment">
+          <div class="checkbox" id="appointment_check_shopping">
+              <label>
+                <input id="appointmentCheck2" type="checkbox" value="" checked>
+                I want to setup an appointment </label>
+            </div>
+          <div class="row" id="shopping_appointment">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="shop_contact_person_name" name="shop_contact_person_name" placeholder="Contact Person Name">
+            </div>
+            <div class="col-md-4">
+              <select title="Primary Contact Role" class="form-control bgicon" name="shop_primary_role" id="shop_primary_role">
+            </select>
+            </div>
+            <div class="col-md-4">
+            <input type="text" class="form-control" id="setup_datepick" process_type='SHOPPING' placeholder="MM/DD/YYYY hh:mm AM/PM" name="setup_datepick" autocomplete='off'>      
+            </div>
+          </div>
+        </div>
+
+  </div>
+     <div class="std-sub-title shopping-policies" id="heads_up" style="display:none">Heads Up!
+      <div class="checkbox">
+        <div id="tagCheckBoxs" style="display:none">
+              <label class="tag-policies-check-box" style="margin-left:-20px;">
+                Before you submit this lead please ensure the following:
+              </label>
+              <label class="tag-policies-aware" style="margin-left:20px;">
+                 <input type="checkbox" value="" id="tag_appointment_aware" name="tag_appointment_aware">
+                Is your advertiser aware of the appointment with the TagTeam?
+              </label>
+              <label class="tag-policies-access" style="margin-left:20px;">
+                 <input type="checkbox" value="" id="tag_admin_access" name="tag_admin_access">
+                Does your advertiser have Administrative access to the website? If not, will his web developer be available at the appointment time?
+              </label>
+              <label class="tag-policies-code" style="margin-left:20px;">
+                 <input type="checkbox" value="" id="tag_admin_code" name="tag_admin_code">
+                Does your advertiser have a clear understanding of the code to be implemented?
+              </label>
+        </div>
+            <label id="tagCheck" class="tag-policies" style="display:none;margin-left:-20px;">
+               <!-- <input type="checkbox" value="" id="tag_via_gtm" name="tag_via_gtm"> -->
+               If you want this tag to be implemented via the Google Tag Manager, please make sure you clearly mention this in the <b>Special Instructions</b> section above.
+            </label>
+            <label id="tagAddwordsCheck" class="tag-add-policies" style="display:none;">
+              Do you want to track Revenue or the order amount through AWCT? &nbsp;
+              <input type="radio" id="add_tracking_yes" name="dynamic_conversion_tracking" class="dynamic-value"> Yes <input type="radio" id="add_tracking_no" name="dynamic_conversion_tracking" class="dynamic-value"> No
+            </label>
+            <label class="rlsa-policy" style="display:none;">
+               <input id="rsla_policies1" type="checkbox" value="0" class="rlsa_bulk headsup-policies">
+                  Have you ensured that the website meets the RLSA policies specified  
+                <a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank">here?</a>
+            </label>
+            <label class="shopping-policy" style="display:none;">
+              <input type="checkbox" value="" id="is_shopping_policies" name="is_shopping_policies">
+              Have you ensured that the website meets the <a href="https://support.google.com/merchants/answer/188484?hl=en-GB" target="_blank">Google Shopping Policies</a>?
+            </label>
+            <ol class="subitems" id="shoppingTerms" style="display:none;">
+              <li>This advertiser's products aren't prohibited by Google Shopping policies (prohibited: service-only businesses, vehicles, weapons, tobacco). A full list is available <a href="https://support.google.com/merchants/answer/2731539?hl=en" target="_blank">here.</a></li>
+                <li>This advertiser's website meets Google Shopping's <a href="https://support.google.com/merchants/answer/188486?ref_topic=3163841" target="_blank">user safety requirements</a>. Notably, this advertiser's website contains:
+                  <ul>
+                        <li> 
+                          <label> 
+                            <input class="shopping-group" type="checkbox" value="" id="rules-1" name="rules-1"> Website has Secured Personal details and Payment pages (https://).
+                          </label>
+                        </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-2" name="rules-2" class="shopping-group">  Website has a return and refund page. 
+                          </label>
+                          </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-3" name="rules-3" class="shopping-group"> Website has payment options displayed on the home page. 
+                          </label>
+                          </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-4" name="rules-4" class="shopping-group"> Website has clear contact information (Company Address and Phone number). 
+                          </label>
+                          </li>
+                        <li> 
+                          <label>
+                            <input type="checkbox" value="" id="rules-5" name="rules-5" class="shopping-group"> Advertiser's Google Merchant Center account is not suspended. 
+                          </label>
+                        </li>
+                    </ul>
+                </li>
+            </ol>         
+          </div>
+    </div>
+    <!-- Notification dropdown for Web Access -->
+          <div class="modal fade" id="notification" role="dialog">
+            <div class="modal-dialog " style="width:510px;">
+              <!-- Modal content-->
+              <div class="modal-content" style="width:510px;">
+                <div class="modal-header" style="background:red !important;">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title"> Notification</h4>
+                </div>
+                <div class="modal-body" style="height:130px !important;width:510px; !important">
+                  <p>
+                       Note that many advertisers have access to make content changes on their website but NOT code changes.  Please make sure your advertiser understands this difference and has the access to make code changes.
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+    <!-- End of Notification dropdown for Web Access -->
+
+    <div class="btns text-center" style="display:none;" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn">Submit</button>
+            <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div>
+  </form>
+  </div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+{% include 'leads/timezone.html' %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+<script type="text/javascript">
+
+
+  $(document).ready(function(){
+    window.locations = {{locations|safe}};
+    window.regions = {{regions|safe}};
+    window.regionWiseLocations = {{region_locations|safe}};
+    window.new_locations = {{new_locations|safe}};
+    window.is_loc_changed = false;
+
+    window.code_types = {{code_types|safe}};
+
+    window.code_type_with_avg_time = {{code_type_with_avg_time|safe}};
+    
+    $(window).bind("load", function() {
+    $('#language').trigger('change');
+    $('#country').trigger('change');
+    });
+
+    window.rep_location = "{{user.profile.rep_location|safe}}";
+
+    if(window.rep_location){
+      $('#rep_location').val(window.rep_location);
+    }else{
+      getLocation('rep_location');
+    }
+
+    var userTeam = "{{user.profile.team.team_name|safe}}"
+    var teams = [];
+    $('#team option').each(function() { 
+        teams.push( $(this).attr('value') );
+    });
+
+    if(userTeam){
+      if(teams.indexOf(userTeam) != -1){
+        $('#team').val(userTeam);
+      }else{
+        $('#team').val("");
+      }
+    }
+
+    var userRegion = "{{user.profile.region.name|safe}}"
+    if(userRegion){
+      $('#region').val(userRegion);
+      $('#region').trigger('change');
+    }
+
+    var userLocation = "{{user.profile.location.location_name|safe}}"
+    if(userLocation){
+      $('#country').val(userLocation);
+      loc = document.getElementById('country');
+      changetime(loc.options[loc.selectedIndex]);
+    }
+
+    $('#team').trigger('change');
+    $('#active_campaigns').trigger('click');
+  
+  });
+
+$("input:radio[name=web_access]").click(function() {
+    /*var value = $(this).val();*/
+    
+    var formTeam = $('#team').val();
+    var formCountry = $('#country').val();
+    if(((formTeam.indexOf('ETO') != -1)||(['UMM'].indexOf(formTeam) != -1)) && (['AU/NZ', 'UK/I'].indexOf(formCountry) != -1)){
+        $("#notification").modal('show');
+    }else {
+        $( "#webaccess-inline" ).animate({
+        height: "toggle"
+        }, 300, function() {
+        });
+    }
+
+    $('body').removeClass('modal-open');
+    $('#tag_primary_role, #shop_primary_role').empty()
+    $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Owner">Owner</option><option value="Marketing">Marketing</option>');
+
+});
+
+$("input:radio[name=webmasterCheck]").click(function() {
+    /*var value = $(this).val();*/
+    $('#tag_primary_role, #shop_primary_role').empty()
+    $('#tag_primary_role, #shop_primary_role').append(' <option value="">Primary Contact Role</option><option value="Webmaster">Webmaster</option>');
+
+});
+
+
+  $(".dynamic-value" ).click(function(){
+    if($('#add_tracking_yes').is(':checked')){
+      $('#add_tracking_yes').val('Yes')
+      $('#add_tracking_no').val('No')
+    }else{
+      $('#add_tracking_yes').val('No')
+      $('#add_tracking_no').val('Yes')
+    }
+  });
+
+$(document).on('change', '.call_extension', function() {
+    if ($('.call_extension').is(':checked')) {
+        $(this).val(1);
+    } else {
+        $(this).val(0);
+    }
+});
+
+$(document).on('change', '.code_behaviour', function() {
+    if ($('#'+$(this).attr('id')).is(':checked')){
+       $('#'+$(this).attr('id')).val(1);
+    } else {
+        $('#'+$(this).attr('id')).val(0);
+      }
+});
+
+function GetOption(text, value) {
+        return "<option value = '" + value + "'>" + text + "</option>"
+    }
+
+$(document).on('change', '#country', function() {
+    var location = $(this).val();
+
+    var language = $('#language').val();
+    mandatoryAppointmentForLanguages(language);
+
+
+    $("#ctype1 option, #ctype2 option, #ctype3 option, #ctype4 option, #ctype5 option").remove();
+    $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption("Select Task Type", ""));
+
+    if (['AU/NZ', 'Canada', 'United States', 'UK/I', 'India'].indexOf(location) == -1) {
+
+        if (['Vietnam'].indexOf(location) != -1) {
+            $('#shoppingSetup').attr('disabled', true);
+            window.code_types = {{code_types|safe}};
+
+        } else {
+            $('#shoppingSetup').attr('disabled', false);
+            window.code_types = {{code_types|safe}};
+            rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+            if (rlsaIndx != -1) {
+                window.code_types.splice(rlsaIndx, 1);
+            }
+        }
+
+
+    } else {
+
+        if (['UK/I'].indexOf(location) != -1) {
+            $('#appointment_check_tag').show();
+            $('#appointment_check_shopping').show();
+        }
+        $('#shoppingSetup').attr('disabled', false);
+        window.code_types = {{code_types|safe}};
+        rlsaIndx = window.code_types.indexOf('RLSA Bulk Implementation');
+        if (rlsaIndx == -1) {
+            window.code_types.splice(window.rlsaIndx, 0, "RLSA Bulk Implementation");
+        }
+    }
+    //Loop through array and add options
+    $.each(window.code_types, function(index) {
+        $("#ctype1, #ctype2, #ctype3, #ctype4, #ctype5").append(GetOption(window.code_types[index], window.code_types[index]));
+    });
+    clearAndHideFields();
+})
+
+
+// Appointments Mandatory for German and France 
+$(document).on('change', '#language', function(){
+  var language = $(this).val();
+  mandatoryAppointmentForLanguages(language);
+});
+
+$(document).on('change', '[id*="ctype"]', function(){
+  var code_type = $(this).val();
+  get_avg_time(code_type,this.id);
+});
+
+function get_avg_time(code_type,id){
+  id=id.replace("ctype",'')
+  $('#code_type_avg_time_'+id).html("This Task Type takes an average of <strong>"+window.code_type_with_avg_time[code_type]+"</strong> to implement");
+  $('#code_type_avg_time_'+id).show();
+}
+
+function clearAndHideFields(){
+  for(var selectedindex=1; selectedindex<6;selectedindex++){
+    $('#ga_setup'+selectedindex).prop('checked', false);
+    $('#analytics_code'+selectedindex).val('');
+    $('#analyticscode'+selectedindex).hide();
+    $('#callextension'+selectedindex).hide();
+    $('#call_extension'+selectedindex).prop('checked', false);
+    $('#codebehaviour'+selectedindex).hide();
+
+    $('#rbid'+selectedindex).val('');
+    $('#rbudget'+selectedindex).val('');
+
+    //uncheckAllBehaviourCheckBoxs(selectedindex);
+      
+    $('#ctype_campaign'+selectedindex).hide();
+    $('#gasetup'+selectedindex).hide();
+
+  }
+}
+
+function mandatoryAppointmentForLanguages(language){
+  $('#appointment_check_tag').show();
+  $('#appointment_check_shopping').show();
+      
+  if(['French', 'German', 'Italian'].indexOf(language) != -1){
+      $('#appointment_check_tag').hide();
+       $('#appointment_check_shopping').hide();
+
+  }
+}
+
+/*capitalizing advertizer name */
+
+$.fn.capitalize = function () {
+    $.each(this, function () {
+        var split = this.value.split(' ');
+        for (var i = 0, len = split.length; i < len; i++) {
+            split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1).toLowerCase();
+        }
+        this.value = split.join(' ');
+    });
+    return this;
+};
+
+$('#advertiser_name').on('focusout', function () {
+    $(this).capitalize();
+}).capitalize();
+/*end of capitalizing*/
+
+
+//bellow is the code for deployement
+region_emea_disable()
+function region_emea_disable(){
+jQuery('.lead-type>*').hide();
+var li = ["37", "88", "93", "107", "46", "47", "148", "99", "49", "146", "52", "54", "147", "96", "137", "60", "128", "63", "129", "89", "65", "66", "78"];
+jQuery('#country').change(function() {
+for (var i = 0; i < window.locations.length; i++)
+        if (window.locations[i].name == country.value)
+            break;
+   if ((li.indexOf(window.locations[i].id.toString()) > -1)&&language.value!="English") {
+       jQuery('.lead-type>*').show()
+        if($( "#tagImplementation .check-icon" ).is(":visible")){
+          $("#tagImplementation" ).trigger('click');
+        }
+        if($( "#shoppingSetup .check-icon" ).is(":visible")){
+          $("#shoppingSetup" ).trigger('click');
+        }
+        jQuery('#tagImplementation,#shoppingSetup,span:contains("And/Or")').hide()
+   } else if (country.value != "0") {
+       jQuery('.lead-type>*').show();
+   }
+});
+}
+
+function addValueTorbidmodifier(){
+  var bidmodifiercontrolerVal = $('#bidmodifiercontroler').val();
+  var rbidinpercentageVal = $('#rbidinpercentage').val();
+
+  if(rbidinpercentageVal != 0 && bidmodifiercontrolerVal != ''){
+    var bidmodifiercontrolerwithtext = bidmodifiercontrolerVal
+    if(bidmodifiercontrolerwithtext == 'Increase by'){
+        var rbidinpercentagewithtext = '+' + rbidinpercentageVal + '%'
+      }else{
+        var rbidinpercentagewithtext = '-' + rbidinpercentageVal + '%'
+      }
+
+    var final_text = bidmodifiercontrolerwithtext + ' ' + rbidinpercentagewithtext
+    $('#rbidmodifier').val(final_text);
+      
+  }
+}
+
+
+
+</script>
+{% endblock main_js %}
