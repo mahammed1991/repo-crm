@@ -3574,6 +3574,8 @@ def picasso_build_submission_flow(request):
 def rlsa_bulk_upload_lead_form(request):
     """
         RLSA Bulk upload via csv
+        Note:  Since we have uploaded document, there is no point keeping a copy in Google forms, hence commeting
+               all the google form submission logic
     """
     if request.method == 'POST':
 
@@ -3643,7 +3645,8 @@ def rlsa_bulk_upload_lead_form(request):
                                         break
                                 if not success:
                                     logger.info("Failed to post data to SFDC - 3 times retried")
-                            try:
+
+                            '''try:
                                 gresp = requests.post(url=google_api_url, data=google_form_args)
                             except Exception:
                                 # If it fails for some reason, we are retrying the post operation
@@ -3659,7 +3662,8 @@ def rlsa_bulk_upload_lead_form(request):
                                         logger.info("Retry successful. Data posted to Google forms")
                                         break;
                                 if not success:
-                                    logger.info("Failed to post data to google forms - 3 times retried")
+                                    logger.info("Failed to post data to google forms - 3 times retried")'''
+
                             updated_rows += 1
                         ''' Saving RLSA Bulk upload Info'''
                         logger.info("Saving RLSA Bulk Upload information..")
@@ -3847,17 +3851,20 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
         request_data: request.POST
         upload_random_id: RLSA Bulk upload random Id
 
+    Note:  Since we store uploaded document with us, there is no point keeping a copy in Google forms, hence commenting
+               all the google form submission logic
+
     Returns: sfdc_args, google_form_args, sf_api_url and google_api_url
 
     """
     rlsa_args = dict()
     tag_args = None
     google_form_args = {}
-    form_feilds = SalesforceLeads.GOOGLE_FORM_FIELDS
+    '''form_feilds = SalesforceLeads.GOOGLE_FORM_FIELDS
     for key, value in request_data.items():
         key = form_feilds.get(key)
         if key:
-            google_form_args[key] = value
+            google_form_args[key] = value'''
     if settings.SFDC == 'STAGE':
         sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         rlsa_args = SalesforceLeads.SANDBOX_RLSA_ARGS
@@ -3865,7 +3872,7 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
         tag_args = {'comment1': '00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
         basic_args = get_common_sandbox_lead_data(request_data)
         oid = '00D7A0000008nBH'
-        google_form_args['entry.1070910664'] = 'STAGE'
+        #google_form_args['entry.1070910664'] = 'STAGE'
     elif settings.SFDC == 'PRODUCTION':
         sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
         rlsa_args = SalesforceLeads.PRODUCTION_RLSA_ARGS
@@ -3873,7 +3880,7 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
         tag_args = {'comment1': '00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
         basic_args = get_common_salesforce_lead_data(request_data)
         oid = '00Dd0000000fk18'
-        google_form_args['entry.1070910664'] = 'PRODUCTION'
+        #google_form_args['entry.1070910664'] = 'PRODUCTION'
     basic_args['oid'] = oid
     """
         This field is only used here i.e only when we are doing bulk upload.
@@ -3894,13 +3901,13 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
     '''
         Google form args
     '''
-    google_form_args[form_feilds.get('company')] = row[1]
+    '''google_form_args[form_feilds.get('company')] = row[1]
     google_form_args[form_feilds.get('aemail')] = row[2]
     google_form_args[form_feilds.get('phone')] = row[3]
     google_form_args[form_feilds.get('advertiser_location')] = row[4]
     google_form_args[form_feilds.get('language')] = row[5]
     google_form_args[form_feilds.get('cid')] = row[9]
-    google_form_args[form_feilds.get('agency_bundle')] = upload_random_id
+    google_form_args[form_feilds.get('agency_bundle')] = upload_random_id'''
 
     sfdc_args = basic_args
 
@@ -3910,52 +3917,52 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
         sfdc_args[rlsa_args.get('rsla_bid_adjustment1')] = row[11]
         sfdc_args[rlsa_args.get('internal_cid1')] = row[9]
 
-        google_form_args[form_feilds.get('user_list_id1')] = row[10]
+        '''google_form_args[form_feilds.get('user_list_id1')] = row[10]
         google_form_args[form_feilds.get('rsla_bid_adjustment1')] = row[11]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]
+        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
 
     if row[12] and row[13]:
         sfdc_args[rlsa_args.get('user_list_id2')] = row[12]
         sfdc_args[rlsa_args.get('rsla_bid_adjustment2')] = row[13]
         sfdc_args[rlsa_args.get('internal_cid2')] = row[9]
 
-        google_form_args[form_feilds.get('user_list_id2')] = row[12]
+        '''google_form_args[form_feilds.get('user_list_id2')] = row[12]
         google_form_args[form_feilds.get('rsla_bid_adjustment2')] = row[13]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]
+        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
 
     if row[14] and row[15]:
         sfdc_args[rlsa_args.get('user_list_id3')] = row[14]
         sfdc_args[rlsa_args.get('rsla_bid_adjustment3')] = row[15]
         sfdc_args[rlsa_args.get('internal_cid3')] = row[9]
 
-        google_form_args[form_feilds.get('user_list_id3')] = row[14]
+        '''google_form_args[form_feilds.get('user_list_id3')] = row[14]
         google_form_args[form_feilds.get('rsla_bid_adjustment3')] = row[15]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]
+        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
 
     if row[16] and row[17]:
         sfdc_args[rlsa_args.get('user_list_id4')] = row[16]
         sfdc_args[rlsa_args.get('rsla_bid_adjustment4')] = row[17]
         sfdc_args[rlsa_args.get('internal_cid4')] = row[9]
 
-        google_form_args[form_feilds.get('user_list_id4')] = row[16]
+        '''google_form_args[form_feilds.get('user_list_id4')] = row[16]
         google_form_args[form_feilds.get('rsla_bid_adjustment4')] = row[17]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]
+        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
 
     if row[18] and row[19]:
         sfdc_args[rlsa_args.get('user_list_id5')] = row[18]
         sfdc_args[rlsa_args.get('rsla_bid_adjustment5')] = row[19]
         sfdc_args[rlsa_args.get('internal_cid5')] = row[9]
 
-        google_form_args[form_feilds.get('user_list_id5')] = row[18]
+        '''google_form_args[form_feilds.get('user_list_id5')] = row[18]
         google_form_args[form_feilds.get('rsla_bid_adjustment5')] = row[19]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]
+        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
 
     # authEmail
     sfdc_args[tag_args['code1']] = row[6]
-    google_form_args[form_feilds.get('authEmail')] = row[6]
+    #google_form_args[form_feilds.get('authEmail')] = row[6]
     # comments
     sfdc_args[tag_args['comment1']] = row[8]
-    google_form_args[form_feilds.get('comments')] = row[6]
+    #google_form_args[form_feilds.get('comments')] = row[6]
 
     first_name, last_name = split_fullname(row[0])
     sfdc_args['first_name'] = first_name
@@ -3964,7 +3971,7 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
 
     # Preparing Google Forms args
     google_api_url = 'https://docs.google.com/forms/d/1lEqEi8TOHTSMscOD_gaI0p7m-TZfm1ZlNGnMSjPpjps/formResponse'
-    google_form_args['entry.1566780367'] = str(google_form_args.get('entry.1566780367')) + ' RLSA'
+    #google_form_args['entry.1566780367'] = str(google_form_args.get('entry.1566780367')) + ' RLSA'
 
     return sfdc_args, google_form_args, sf_api_url, google_api_url
 
