@@ -22,7 +22,9 @@
 {% endblock base_css %}
 
 {% block body %}
-    {% if request.user.is_authenticated and not picasso %}
+    {% if picasso_header %}
+        {% include "layouts/picasso_header.html" %}
+    {% elif request.user.is_authenticated and not picasso %}
         {% include "layouts/header.html" %}
     {% endif %}
     

@@ -421,6 +421,11 @@ def get_top_performer_by_date_range(start_date, end_date, lead_type):
 @csrf_exempt
 def edit_profile_info(request):
     """ Profile information for user """
+    picasso_header = False
+    referer = request.META.get('HTTP_REFERER', None)
+    if referer:
+        if 'picasso' in referer or 'smb' in referer:
+            picasso_header = True
     locations = Location.objects.filter(is_active=True)
     if 'google.com' in request.user.email:
         tag_teams = Team.objects.exclude(belongs_to__in=['WPP', 'PICASSO']).filter(is_active=True)
@@ -492,7 +497,7 @@ def edit_profile_info(request):
             return redirect('main.views.home')
     api_key = settings.API_KEY
     return render(request, 'main/edit_profile_info.html', {'podname': podname, 'locations': locations, 'managers': managers, 'regions': regions, 'api_key': api_key,
-                                                           'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details})
+                                                           'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details, 'picasso_header' : picasso_header})
 
 
 @login_required
