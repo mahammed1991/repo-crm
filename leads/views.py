@@ -3569,10 +3569,13 @@ def picasso_build_submission_flow(request):
 @login_required
 def rlsa_bulk_upload_lead_form(request):
     """
-        RLSA Bulk upload via csv/excel
+        RLSA Bulk upload via csv
     """
     if request.method == 'POST':
+
         if request.FILES:
+            # import time
+            # start_time = time.time()
             file_name, file_extension = request.FILES['rlsaBulkFile'].name.split('.')
             if file_extension == "csv":
                 file_path = settings.MEDIA_ROOT + '/rlsa_bulk_csv/'
@@ -3609,6 +3612,7 @@ def rlsa_bulk_upload_lead_form(request):
                                 'data': file_errors, 'error': 'rows'}
                         return HttpResponse(json.dumps(resp), content_type='application/json')
                     else:
+                        upload_random_id = "RLSABulk-%s-%s" % (request.user.email.split('@')[0], randint(0, 99999))
                         new_file_path = os.path.join(os.path.dirname(file_path), str(uuid4()) + "." + file_extension)
                         os.rename(file_path, new_file_path)
                         updated_rows = 0
@@ -3617,8 +3621,7 @@ def rlsa_bulk_upload_lead_form(request):
                                 1. Map RLSA row to args both for Google docs and SFDC
                                 2. Post to SFDC and Google docs
                             '''
-
-                            sfdc_args, google_form_args, sf_api_url, google_api_url = map_rlsa_row_fields(row, request.POST)
+                            sfdc_args, google_form_args, sf_api_url, google_api_url = map_rlsa_row_fields(row, request.POST, upload_random_id)
                             try:
                                 resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
                             except Exception:
@@ -3630,10 +3633,10 @@ def rlsa_bulk_upload_lead_form(request):
                                         resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
                                     except Exception:
                                         success = False
-                                        logger.info("Retry count : " + i + 1)
+                                        logger.info("Retry count : " , i + 1)
                                     if success:
                                         logger.info("Retry successful. Data posted to SFDC")
-                                        break;
+                                        break
                                 if not success:
                                     logger.info("Failed to post data to SFDC - 3 times retried")
                             try:
@@ -3647,7 +3650,7 @@ def rlsa_bulk_upload_lead_form(request):
                                         gresp = requests.post(url=google_api_url, data=google_form_args)
                                     except Exception:
                                         success = False
-                                        logger.info("Retry count : "+ i + 1)
+                                        logger.info("Retry count : ", i + 1)
                                     if success:
                                         logger.info("Retry successful. Data posted to Google forms")
                                         break;
@@ -3662,11 +3665,12 @@ def rlsa_bulk_upload_lead_form(request):
                         rlsa_bulk.total_leads = updated_rows
                         rlsa_bulk.uploaded_leads = updated_rows
                         rlsa_bulk.uploaded_by = request.user
+                        rlsa_bulk.upload_id = upload_random_id
                         rlsa_bulk.save()
                         resp = {'csv_file': file_name, 'success' : True, 'msg': 'Submitted all leads to SFDC', 'new_leads':updated_rows}
             else:
                 resp = {'success':False, 'msg':'Invalid file format, Please upload CSV file.', 'error': 'format'}
-
+            #print("--- %s seconds ---" % (time.time() - start_time))
             return HttpResponse(json.dumps(resp), content_type='application/json')
 
     lead_args = get_basic_lead_data(request)
@@ -3831,12 +3835,13 @@ def is_email_valid(email):
         return False
 
 
-def map_rlsa_row_fields(row, request_data):
+def map_rlsa_row_fields(row, request_data, upload_random_id):
     """
 
     Args:
         row: RLSA row data
         request_data: request.POST
+        upload_random_id: RLSA Bulk upload random Id
 
     Returns: sfdc_args, google_form_args, sf_api_url and google_api_url
 
@@ -3866,13 +3871,32 @@ def map_rlsa_row_fields(row, request_data):
         oid = '00Dd0000000fk18'
         google_form_args['entry.1070910664'] = 'PRODUCTION'
     basic_args['oid'] = oid
+    """
+        This field is only used here i.e only when we are doing bulk upload.
+        This field makes sure that, mails wont be triggered for every lead uploaded via csv.
+        We will send consolidated email from our app once all leads are uploaded SFDC successfully
+    """
+    basic_args['00Nd0000005Xozm'] = 'Bulk Upload'
 
+    #SFDC
     basic_args[bsc_args.get('company')] = row[1]
     basic_args[bsc_args.get('aemail')] = row[2]
     basic_args[bsc_args.get('phone')] = row[3]
-    basic_args[bsc_args.get('advertiser_location')] = row[4]
     basic_args[bsc_args.get('language')] = row[5]
     basic_args[bsc_args.get('cid')] = row[9]
+    basic_args[bsc_args.get('agency_bundle')] = upload_random_id
+
+    #TODO
+    '''
+        Google form args
+    '''
+    google_form_args[form_feilds.get('company')] = row[1]
+    google_form_args[form_feilds.get('aemail')] = row[2]
+    google_form_args[form_feilds.get('phone')] = row[3]
+    google_form_args[form_feilds.get('advertiser_location')] = row[4]
+    google_form_args[form_feilds.get('language')] = row[5]
+    google_form_args[form_feilds.get('cid')] = row[9]
+    google_form_args[form_feilds.get('agency_bundle')] = upload_random_id
 
     sfdc_args = basic_args
 
