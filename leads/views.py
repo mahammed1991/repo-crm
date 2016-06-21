@@ -43,7 +43,7 @@ from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
 
 # Custom imports
 import config
-from lib.helpers import save_file
+from lib.helpers import save_file, is_cid
 from lib.sf_lead_ids import SalesforceLeads
 from lib.salesforce import SalesforceApi
 from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso, get_tat_for_bolt,
@@ -1676,7 +1676,7 @@ def thankyou(request):
     template_args = {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID}
 
     if str(lead_category) == '4':
-        template_args.update({'lead_type': 'WPP'})
+        template_args.update({'lead_type': 'WPP', 'referer':'builds', 'PORTAL_MAIL_ID' : 'msite-builds-support@google.com'})
     elif str(lead_category) == '6':
         estimated_tat = None
         no_of_inqueue_leads = None
@@ -1703,7 +1703,7 @@ def thankyou(request):
                 'no_of_inqueue_leads': no_of_inqueue_leads
                 })
     elif str(lead_category) == '8':
-        template_args.update({'lead_type': 'Picasso Build Nomination Request', 'nomination': True})
+        template_args.update({'lead_type': 'Picasso Build Nomination Request', 'referer':'builds', 'nomination': True, 'PORTAL_MAIL_ID' : 'msite-builds-support@google.com'})
     else:
         template_args.update({'lead_type': 'Implementation lead'})
 
@@ -2771,6 +2771,7 @@ def get_all_sfdc_lead_ids(sfdc_type):
 
 def submit_lead_to_sfdc(sf_api_url, lead_data, rlsa_bulk_upload=False):
     """ Submit lead to Salesforce """
+
     if "www" in sf_api_url:
         time_zone = lead_data.get(SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('tzone'))
         appointment_in_ist_key = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS.get('appointment_in_ist')
@@ -2789,6 +2790,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data, rlsa_bulk_upload=False):
         country = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('country'))
         team = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('team'))
         cid = lead_data.get(SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS.get('cid'))
+
     if code_type and country and cid:
         appointment_in_ist = None
         appointment_in_pst = None
@@ -3574,14 +3576,13 @@ def picasso_build_submission_flow(request):
 def rlsa_bulk_upload_lead_form(request):
     """
         RLSA Bulk upload via csv
-        Note:  Since we have uploaded document, there is no point keeping a copy in Google forms, hence commeting
-               all the google form submission logic
+        Note:  Since we have got uploaded document, there is no point keeping a copy in Google forms,
+        hence commenting all the google form submission logic
     """
     if request.method == 'POST':
 
         if request.FILES:
-            # import time
-            # start_time = time.time()
+            request.POST.pop('csrfmiddlewaretoken')
             file_name, file_extension = request.FILES['rlsaBulkFile'].name.split('.')
             if file_extension == "csv":
                 file_path = settings.MEDIA_ROOT + '/rlsa_bulk_csv/'
@@ -3590,6 +3591,10 @@ def rlsa_bulk_upload_lead_form(request):
                 csv_file = request.FILES['rlsaBulkFile']
                 file_path = file_path + csv_file.name
                 file_path = save_file(csv_file, file_path)
+
+                locations = [i.location_name for i in Location.objects.all()]
+                languages = [i.language_name for i in Language.objects.all()]
+                apply_to = ['All Active AdGroups of Active Campaigns', 'All Active and Paused AdGroups of all Active and Paused Campaigns']
                 with open(file_path, 'rb') as csvfile:
                     csv_object = csv.reader(csvfile, delimiter=',')
                     csv_obj_rows = []
@@ -3606,12 +3611,18 @@ def rlsa_bulk_upload_lead_form(request):
                                 return HttpResponse(json.dumps(resp), content_type='application/json')
                         else:
                             # Values
-                            row_state = validate_rlsa_csv_row(row, row_count)
+                            row_state = validate_rlsa_csv_row(row, row_count, locations, languages, apply_to)
                             if row_state.get('row_count') is not None:
                                 file_errors.append(row_state)
                             else:
                                 csv_obj_rows.append(row)
                         row_count += 1
+
+                    if row_count <= 1:
+                        os.unlink(file_path)
+                        resp = {'success': False, 'msg': "Looks like you don't have data. Please check your file",
+                                'error': 'no data'}
+                        return HttpResponse(json.dumps(resp), content_type='application/json')
                     if file_errors:
                         os.unlink(file_path)
                         resp = {'success': False, 'msg': 'Errors in these rows, please fix them and re-upload csv file.',
@@ -3622,48 +3633,64 @@ def rlsa_bulk_upload_lead_form(request):
                         new_file_path = os.path.join(os.path.dirname(file_path), str(uuid4()) + "." + file_extension)
                         os.rename(file_path, new_file_path)
                         updated_rows = 0
+
+                        # Forming common arguments
+                        basic_args = dict()
+                        if settings.SFDC == 'STAGE':
+                            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+                            rlsa_args = SalesforceLeads.SANDBOX_RLSA_ARGS
+                            bsc_args = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS
+                            oid = '00D7A0000008nBH'
+                        elif settings.SFDC == 'PRODUCTION':
+                            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+                            rlsa_args = SalesforceLeads.PRODUCTION_RLSA_ARGS
+                            bsc_args = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS
+                            oid = '00Dd0000000fk18'
+
+                        # Getting basic args
+                        for key, value in request.POST.items():
+                            basic_args[bsc_args.get(key)] = value
+
+                        '''for key, value in bsc_args.items():
+                            basic_args[value] = request.POST.get(key)'''
+
+                        basic_args['oid'] = oid
+
+                        bsc_args['comment1'] = '00Nd0000005WZIe'
+                        bsc_args['code1'] = '00Nd0000005WYh9'
+
+                        """
+                            This field is only used here i.e only when we are doing bulk upload.
+                            This field makes sure that, mails wont be triggered for every lead uploaded via csv.
+                            We will send consolidated email from our app once all leads are uploaded to SFDC successfully
+                        """
+                        basic_args[bsc_args.get('lead_type')] = 'RLSA Bulk Upload'
+                        basic_args['00Nd0000005Xozm'] = 'Bulk Upload'
+                        basic_args[bsc_args.get('agency_bundle')] = upload_random_id
+                        basic_args['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
                         for row in csv_obj_rows:
                             '''
                                 1. Map RLSA row to args both for Google docs and SFDC
                                 2. Post to SFDC and Google docs
                             '''
-                            sfdc_args, google_form_args, sf_api_url, google_api_url = map_rlsa_row_fields(row, request.POST, upload_random_id)
+                            sfdc_args = map_rlsa_row_fields(row, rlsa_args, bsc_args, basic_args)
                             try:
                                 resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
                             except Exception:
                                 # If it fails for some reason, we are retrying the post operation
-                                logger.info("Failed to post. Retrying...(3 Times)")
+                                print "Failed to post. Retrying...(3 Times)"
                                 success = False
                                 for i in range(0, 3):
                                     try:
                                         resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
                                     except Exception:
                                         success = False
-                                        logger.info("Retry count : " , i + 1)
+                                        print "Retry count : " , i + 1
                                     if success:
-                                        logger.info("Retry successful. Data posted to SFDC")
+                                        print "Retry successful. Data posted to SFDC"
                                         break
                                 if not success:
-                                    logger.info("Failed to post data to SFDC - 3 times retried")
-
-                            '''try:
-                                gresp = requests.post(url=google_api_url, data=google_form_args)
-                            except Exception:
-                                # If it fails for some reason, we are retrying the post operation
-                                logger.info("Failed to post. Retrying...(3 Times)")
-                                success = False
-                                for i in range(0, 3):
-                                    try:
-                                        gresp = requests.post(url=google_api_url, data=google_form_args)
-                                    except Exception:
-                                        success = False
-                                        logger.info("Retry count : ", i + 1)
-                                    if success:
-                                        logger.info("Retry successful. Data posted to Google forms")
-                                        break;
-                                if not success:
-                                    logger.info("Failed to post data to google forms - 3 times retried")'''
-
+                                    print "Failed to post data to SFDC - 3 times retried"
                             updated_rows += 1
                         ''' Saving RLSA Bulk upload Info'''
                         logger.info("Saving RLSA Bulk Upload information..")
@@ -3675,10 +3702,10 @@ def rlsa_bulk_upload_lead_form(request):
                         rlsa_bulk.uploaded_by = request.user
                         rlsa_bulk.upload_id = upload_random_id
                         rlsa_bulk.save()
-                        resp = {'csv_file': file_name, 'success' : True, 'msg': 'Submitted all leads to SFDC', 'new_leads':updated_rows}
+                        resp = {'csv_file': file_name, 'success': True, 'msg': 'Submitted all leads to SFDC',
+                                'new_leads': updated_rows}
             else:
                 resp = {'success':False, 'msg':'Invalid file format, Please upload CSV file.', 'error': 'format'}
-            #print("--- %s seconds ---" % (time.time() - start_time))
             return HttpResponse(json.dumps(resp), content_type='application/json')
 
     lead_args = get_basic_lead_data(request)
@@ -3690,7 +3717,7 @@ def rlsa_bulk_upload_lead_form(request):
    Used in
         - rlsa_bulk_upload_lead_form
 '''
-def validate_rlsa_csv_row(row, row_count):
+def validate_rlsa_csv_row(row, row_count, locations, languages, apply_to):
     """
 
     Args:
@@ -3739,10 +3766,18 @@ def validate_rlsa_csv_row(row, row_count):
 
     if not row[3]:
         row_errors[headers[3]] = "This field is mandatory"
+
     if not row[4]:
         row_errors[headers[4]] = "This field is mandatory"
+    else:
+        if not row[4] in locations:
+            row_errors[headers[4]] = "Specified location is not present in our DB"
+
     if not row[5]:
         row_errors[headers[5]] = "This field is mandatory"
+    else:
+        if not row[5] in languages:
+            row_errors[headers[5]] = "Specified language is not present in our DB"
 
     if not row[6]:
         row_errors[headers[6]] = "This field is mandatory"
@@ -3752,9 +3787,15 @@ def validate_rlsa_csv_row(row, row_count):
 
     if not row[7]:
         row_errors[headers[7]] = "This field is mandatory"
+    else:
+        if not row[7] in apply_to:
+            row_errors[headers[7]] = "Invalid selection(RLSA applyto value)"
     # row 8 is not mandatory, so lets ignore
     if not row[9]:
         row_errors[headers[9]] = "This field is mandatory"
+    else:
+        if not is_cid(row[9]):
+            row_errors[headers[9]] = "Invalid CID format"
 
     #Row 10 user id and bidding id ( 5 items together one is mandatory)
     user_bid_count = 0
@@ -3843,7 +3884,7 @@ def is_email_valid(email):
         return False
 
 
-def map_rlsa_row_fields(row, request_data, upload_random_id):
+def map_rlsa_row_fields(row, rlsa_args, bsc_args, basic_args):
     """
 
     Args:
@@ -3851,129 +3892,56 @@ def map_rlsa_row_fields(row, request_data, upload_random_id):
         request_data: request.POST
         upload_random_id: RLSA Bulk upload random Id
 
-    Note:  Since we store uploaded document with us, there is no point keeping a copy in Google forms, hence commenting
-               all the google form submission logic
+    Note:
+        Since we store uploaded document with us, there is no point keeping a copy in Google forms,
+        hence commenting google form submission logic
 
     Returns: sfdc_args, google_form_args, sf_api_url and google_api_url
 
     """
-    rlsa_args = dict()
-    tag_args = None
-    google_form_args = {}
-    '''form_feilds = SalesforceLeads.GOOGLE_FORM_FIELDS
-    for key, value in request_data.items():
-        key = form_feilds.get(key)
-        if key:
-            google_form_args[key] = value'''
-    if settings.SFDC == 'STAGE':
-        sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        rlsa_args = SalesforceLeads.SANDBOX_RLSA_ARGS
-        bsc_args = SalesforceLeads.SANDBOX_BASIC_LEADS_ARGS
-        tag_args = {'comment1': '00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
-        basic_args = get_common_sandbox_lead_data(request_data)
-        oid = '00D7A0000008nBH'
-        #google_form_args['entry.1070910664'] = 'STAGE'
-    elif settings.SFDC == 'PRODUCTION':
-        sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-        rlsa_args = SalesforceLeads.PRODUCTION_RLSA_ARGS
-        bsc_args = SalesforceLeads.PRODUCTION_BASIC_LEADS_ARGS
-        tag_args = {'comment1': '00Nd0000005WZIe', 'code1': '00Nd0000005WYh9'}
-        basic_args = get_common_salesforce_lead_data(request_data)
-        oid = '00Dd0000000fk18'
-        #google_form_args['entry.1070910664'] = 'PRODUCTION'
-    basic_args['oid'] = oid
-    """
-        This field is only used here i.e only when we are doing bulk upload.
-        This field makes sure that, mails wont be triggered for every lead uploaded via csv.
-        We will send consolidated email from our app once all leads are uploaded SFDC successfully
-    """
-    basic_args['00Nd0000005Xozm'] = 'Bulk Upload'
-
     #SFDC
     basic_args[bsc_args.get('company')] = row[1]
     basic_args[bsc_args.get('aemail')] = row[2]
     basic_args[bsc_args.get('phone')] = row[3]
+    basic_args[bsc_args.get('country')] = row[4]
+    basic_args[bsc_args.get('advertiser_name')] = row[0]
     basic_args[bsc_args.get('language')] = row[5]
     basic_args[bsc_args.get('cid')] = row[9]
-    basic_args[bsc_args.get('agency_bundle')] = upload_random_id
-
-    #TODO
-    '''
-        Google form args
-    '''
-    '''google_form_args[form_feilds.get('company')] = row[1]
-    google_form_args[form_feilds.get('aemail')] = row[2]
-    google_form_args[form_feilds.get('phone')] = row[3]
-    google_form_args[form_feilds.get('advertiser_location')] = row[4]
-    google_form_args[form_feilds.get('language')] = row[5]
-    google_form_args[form_feilds.get('cid')] = row[9]
-    google_form_args[form_feilds.get('agency_bundle')] = upload_random_id'''
-
-    sfdc_args = basic_args
 
     # Mapping RLSA args
     if row[10] and row[11]:
-        sfdc_args[rlsa_args.get('user_list_id1')] = row[10]
-        sfdc_args[rlsa_args.get('rsla_bid_adjustment1')] = row[11]
-        sfdc_args[rlsa_args.get('internal_cid1')] = row[9]
-
-        '''google_form_args[form_feilds.get('user_list_id1')] = row[10]
-        google_form_args[form_feilds.get('rsla_bid_adjustment1')] = row[11]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
+        basic_args[rlsa_args.get('user_list_id1')] = row[10]
+        basic_args[rlsa_args.get('rsla_bid_adjustment1')] = row[11]
+        basic_args[rlsa_args.get('internal_cid1')] = row[9]
 
     if row[12] and row[13]:
-        sfdc_args[rlsa_args.get('user_list_id2')] = row[12]
-        sfdc_args[rlsa_args.get('rsla_bid_adjustment2')] = row[13]
-        sfdc_args[rlsa_args.get('internal_cid2')] = row[9]
-
-        '''google_form_args[form_feilds.get('user_list_id2')] = row[12]
-        google_form_args[form_feilds.get('rsla_bid_adjustment2')] = row[13]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
+        basic_args[rlsa_args.get('user_list_id2')] = row[12]
+        basic_args[rlsa_args.get('rsla_bid_adjustment2')] = row[13]
+        basic_args[rlsa_args.get('internal_cid2')] = row[9]
 
     if row[14] and row[15]:
-        sfdc_args[rlsa_args.get('user_list_id3')] = row[14]
-        sfdc_args[rlsa_args.get('rsla_bid_adjustment3')] = row[15]
-        sfdc_args[rlsa_args.get('internal_cid3')] = row[9]
-
-        '''google_form_args[form_feilds.get('user_list_id3')] = row[14]
-        google_form_args[form_feilds.get('rsla_bid_adjustment3')] = row[15]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
+        basic_args[rlsa_args.get('user_list_id3')] = row[14]
+        basic_args[rlsa_args.get('rsla_bid_adjustment3')] = row[15]
+        basic_args[rlsa_args.get('internal_cid3')] = row[9]
 
     if row[16] and row[17]:
-        sfdc_args[rlsa_args.get('user_list_id4')] = row[16]
-        sfdc_args[rlsa_args.get('rsla_bid_adjustment4')] = row[17]
-        sfdc_args[rlsa_args.get('internal_cid4')] = row[9]
-
-        '''google_form_args[form_feilds.get('user_list_id4')] = row[16]
-        google_form_args[form_feilds.get('rsla_bid_adjustment4')] = row[17]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
+        basic_args[rlsa_args.get('user_list_id4')] = row[16]
+        basic_args[rlsa_args.get('rsla_bid_adjustment4')] = row[17]
+        basic_args[rlsa_args.get('internal_cid4')] = row[9]
 
     if row[18] and row[19]:
-        sfdc_args[rlsa_args.get('user_list_id5')] = row[18]
-        sfdc_args[rlsa_args.get('rsla_bid_adjustment5')] = row[19]
-        sfdc_args[rlsa_args.get('internal_cid5')] = row[9]
+        basic_args[rlsa_args.get('user_list_id5')] = row[18]
+        basic_args[rlsa_args.get('rsla_bid_adjustment5')] = row[19]
+        basic_args[rlsa_args.get('internal_cid5')] = row[9]
 
-        '''google_form_args[form_feilds.get('user_list_id5')] = row[18]
-        google_form_args[form_feilds.get('rsla_bid_adjustment5')] = row[19]
-        google_form_args[form_feilds.get('internal_cid1')] = row[9]'''
-
-    # authEmail
-    sfdc_args[tag_args['code1']] = row[6]
-    #google_form_args[form_feilds.get('authEmail')] = row[6]
-    # comments
-    sfdc_args[tag_args['comment1']] = row[8]
-    #google_form_args[form_feilds.get('comments')] = row[6]
+    # authEmail & comments
+    basic_args[bsc_args['code1']] = row[6]
+    basic_args[bsc_args['comment1']] = row[8]
 
     first_name, last_name = split_fullname(row[0])
-    sfdc_args['first_name'] = first_name
-    sfdc_args['last_name'] = last_name
-    sfdc_args['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
-
-    # Preparing Google Forms args
-    google_api_url = 'https://docs.google.com/forms/d/1lEqEi8TOHTSMscOD_gaI0p7m-TZfm1ZlNGnMSjPpjps/formResponse'
-    #google_form_args['entry.1566780367'] = str(google_form_args.get('entry.1566780367')) + ' RLSA'
-
-    return sfdc_args, google_form_args, sf_api_url, google_api_url
+    basic_args['first_name'] = first_name
+    basic_args['last_name'] = last_name
+    return basic_args
 
 
 def url_filter(lead_url):
@@ -3998,6 +3966,6 @@ def list_diff(list1, list2):
     Returns: Difference elements in two lists
 
     """
-    list_1 = [i for i in set(list1) if i not in list2]
-    list_2 = [i for i in set(list1) if i not in list2]
+    list_1 = [i for i in set(list1) if i not in list2 and i != ""]
+    list_2 = [i for i in set(list2) if i not in list1 and i != ""]
     return list_1 + list_2

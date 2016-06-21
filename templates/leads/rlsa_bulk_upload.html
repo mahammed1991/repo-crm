@@ -14,7 +14,6 @@
         <h1 class="lead-header" style="">RLSA Bulk Submit</h1>
           <form class="lead-form" id="rlsaBulk" enctype="multipart/form-data">
              {% csrf_token %}
-            <input type="hidden" id="oid" name="oid" value="00DZ000000MipUa">
             <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
             <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">
                 If you do not get confirmation e-mail after submitting a lead please notify us at
@@ -115,6 +114,9 @@
 
 $(document).ready(function(){
     olark('api.box.hide');
+    $("form").submit(function(e){
+        return false;
+    });
 
     window.rep_location = "{{user.profile.rep_location|safe}}";
     if(window.rep_location){
@@ -196,6 +198,10 @@ $(document).ready(function(){
             formData.append('rep_location', repLoc);
 
         if(submit){
+            window.onbeforeunload = function() {
+                return 'You have unsaved changes!';
+            }
+
             $('#team').removeClass('error-box');
             $("#status").empty();
             $("form :input").attr("disabled", true);
@@ -215,6 +221,7 @@ $(document).ready(function(){
                     return myXhr;
                 },
                 success: function(res){
+                    window.onbeforeunload = null;
                     if(res.success){
                         $(".steps-two > div").css('background','#4CAF50');
                         $(".steps-two > h3").text("Processed");
@@ -268,6 +275,13 @@ $(document).ready(function(){
                             html += "</ul></div>";
                             errState.innerHTML = html;
                             resetTimeline();
+                        }else if(res.error === "no data"){
+                            // Missing headers or unknown headers
+                            var errState = document.getElementById("status");
+                            var html = "<div class='alert alert-warning'><a id='errAlert' href='#' class='close' data-dismiss='alert' \
+                                        aria-label='close'>&times;</a> <b>"+res.msg+"</b> <ul>"
+                            errState.innerHTML = html;
+                            resetTimeline();
                         }else{
                             // Bad File Format
                             var errState = document.getElementById("status");
@@ -279,6 +293,7 @@ $(document).ready(function(){
                     }
                 },
                 error: function(e){
+                    window.onbeforeunload = null;
                     $("form :input").attr("disabled", false);
                     $("#file_submit").attr("disabled", true);
                     $(".steps-three > div").css('background','#FF0000');

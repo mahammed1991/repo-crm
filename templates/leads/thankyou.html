@@ -45,7 +45,7 @@
 <div id="content" class="clearfix">
     <div class="main_content" style="padding-top:5%;padding-bottom:20px;text-align:center;">
     <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">If you do not get confirmation e-mail after submitting a lead please notify us at <b>
-    {% if referer == 'picasso' %}
+    {% if referer == 'picasso' or referer ==  'builds' %}
       {{ PORTAL_MAIL_ID }}
     {% else %}
       google@regalix-inc.com
