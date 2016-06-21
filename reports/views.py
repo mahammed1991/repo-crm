@@ -2387,6 +2387,7 @@ def rlsa_bulk_upload_report(request):
         for rec in records:
             upload = {
                       'uploaded_by': rec.uploaded_by.first_name + " " + rec.uploaded_by.last_name,
+                      'upload_id': rec.upload_id,
                       'uploaded_on': time.mktime(rec.created_date.timetuple()),
                       'file_guid': rec.file_path.split('/')[-1].split('.')[0],
                       'file_name': rec.original_name,

@@ -1,27 +1,30 @@
 """
 common helper function for project goes here
 """
+
+import re
+import pytz
+import uuid
+import calendar
+from functools import wraps
 from datetime import datetime, timedelta, date
+from collections import defaultdict
+import operator
+
+from xlrd import XL_CELL_DATE, xldate_as_tuple
+
+from django.db.models import Q, Count
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect
-from functools import wraps
-import calendar
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-from collections import defaultdict
+from django.contrib.auth.models import User
+
 from main.models import UserDetails
 from leads.models import Leads, WPPLeads, PicassoLeads, Timezone
 from reports.models import MeetingMinutes
-from django.db.models import Q, Count
-import operator
-from xlrd import XL_CELL_DATE, xldate_as_tuple
 from lib.salesforce import SalesforceApi
 from representatives.models import AvailabilityForTAT, AvailabilityForBoltTAT
-import pytz
-import uuid
-
-from django.contrib.auth.models import User
-
 
 def send_mail(subject, body, mail_from, to, bcc, attachments, template_added=False):
     bcc.append(settings.BCC_EMAIL)
@@ -859,3 +862,7 @@ def save_file(file_data, file_path):
             destination.write(chunk)
         destination.close()
     return file_path
+
+def is_cid(cid):
+    reg = '\d{3}-\d{3}-\d{4}$'
+    return re.match(reg, cid)
