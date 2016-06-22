@@ -38,20 +38,22 @@ def get_all_picasso_leads():
                                   "AND createdDate > '%s' ORDER BY CreatedDate LIMIT %s" % (created_date, limit)
         try:
             all_leads = sfdc_conn.query_all(sql_query_all_leads)
-            conn = db_connection()
-            cursor = conn.cursor()
+            #conn = db_connection()
+            #cursor = conn.cursor()
             lead_records = all_leads['records']
+            print len(lead_records)
             for lead in lead_records:
                 created_date = lead.get('CreatedDate')
-                if lead.get('PICASSO_build_eligible__c') == 'None':
+                print
+                if lead.get('PICASSO_build_eligible__c') is None:
                     lead['PICASSO_build_eligible__c'] = ''
                 try:
                     sql = "UPDATE leads_wppleads SET is_build_eligible = '"+lead.get('PICASSO_build_eligible__c')+"' WHERE " \
                           "sf_lead_id = '"+lead.get('Id') + "';"
-                    cursor.execute(sql)
+                    #cursor.execute(sql)
+                    print sql
                 except Exception as e:
                     print "Error %s" % (e)
-                    exit()
             records = len(lead_records)
             if records < 2000:
                 break

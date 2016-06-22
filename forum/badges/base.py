@@ -74,6 +74,6 @@ class AbstractBadge(object):
                 AwardAction(user=user, node=node).save(data=dict(badge=db_object, trigger=trigger))
         except MultipleObjectsReturned:
             if node:
-                logging.error('Found multiple %s badges awarded for user %s (%s)' % (self.name, user.username, user.id))
+                logging.error('Found multiple %s badges awarded for user %s (%s)' % (cls.name, user.username, user.id))
             else:
-                logging.error('Found multiple %s badges awarded for user %s (%s) and node %s' % (self.name, user.username, user.id, node.id))
+                logging.error('Found multiple %s badges awarded for user %s (%s) and node %s' % (cls.name, user.username, user.id, node.id))

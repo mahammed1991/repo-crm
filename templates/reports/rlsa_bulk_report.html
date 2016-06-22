@@ -14,17 +14,18 @@ RLSA Bulk Upload Report
 <div class="wrapper">
 <!-- content-region -->
     <section class="content-region inner-page">
-        <div class="container-fluid">
+        <div class="container-fluid" style="max-width: 95%;">
             <h2 class="lead-header">RLSA Bulk Upload History</h2>
-            <div id="rlsa_bulk_wrapper" class="dataTables_wrapper no-footer">
+            <div id="rlsa_bulk_wrapper" class="dataTables_wrapper no-footer" style="margin-bottom: 1%;">
                 <table id="rlsa_bulk" class="display" cellspacing="0" width="100%">
 					<thead>
 						<tr role="row">
-                            <th>Uploaded By</th>
                             <th>Uploaded On</th>
+                            <th>Upload Id</th>
+                            <th>Uploaded By</th>
                             <th>Leads Created</th>
                             <th>Leads Failed</th>
-                            <th>Uploaded File</th>
+                            <th>File Name</th>
                             <th>Download</th>
                         </tr>
 					</thead>
@@ -45,7 +46,6 @@ RLSA Bulk Upload Report
 {% block main_js %}
 <script src="{% static 'js/reports/jquery.min.js' %}"></script>
 <script src="{% static 'js/reports/moment.min.js' %}"></script>
-
 <script src="{% static 'js/webapp/vendor/jquery.dataTables.min.js' %}"></script>
 
 <script type="text/javascript">
@@ -56,12 +56,13 @@ $(document).ready(function(){
             "dataSrc": function ( json ) {
               json = json['data']
               for ( var i=0; i<json.length; i++ ) {
-                    json[i][0] = json[i].uploaded_by;
-                    json[i][1] = localTime(json[i].uploaded_on);
-                    json[i][2] = json[i].created_leads;
-                    json[i][3] = json[i].failed_leads;
-                    json[i][4] = json[i].file_name;
-                    json[i][5] = '<a href="/reports/rlsa-bulk-upload/download/?guid='+json[i].file_guid +'" class="btn btn-sm btn-info">Download \
+                    json[i][0] = localTime(json[i].uploaded_on);
+                    json[i][1] = json[i].upload_id;
+                    json[i][2] = json[i].uploaded_by;
+                    json[i][3] = json[i].created_leads;
+                    json[i][4] = json[i].failed_leads;
+                    json[i][5] = json[i].file_name;
+                    json[i][6] = '<a href="/reports/rlsa-bulk-upload/download/?guid='+json[i].file_guid +'" class="btn btn-sm btn-info">Download \
                                     <span class="glyphicon glyphicon-download-alt"></span></a>';
               }
               return json;
@@ -69,17 +70,14 @@ $(document).ready(function(){
           },
         columnDefs: [ {
 			targets: [ 0 ],
-			orderData: [ 0, 1 ]
-		}, {
-			targets: [ 1 ],
-			orderData: [ 1, 0 ]
 		}, {
 			targets: [ 4 ],
 			orderData: [ 4, 0 ]
 		}, {
 		        bSortable: false,
-		        targets: [ 4, 5 ]
+		        targets: [ 1, 6 ]
 		}],
+		order: [[ 0, "desc" ]],
 	} );
 });
 
