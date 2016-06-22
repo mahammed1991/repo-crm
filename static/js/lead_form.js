@@ -941,6 +941,14 @@ $('.code_type').change(function(){
       $('#ctype_campaign'+selectedindex).show();
       $('#gasetup'+selectedindex).hide();
   }
+
+  if(['GA Smart Goals'].indexOf(selectedCodeType) != -1){
+    $("#smart-goal-messsage").show();   
+  }
+  if(['GA Smart Goals'].indexOf(selectedCodeType) == -1){
+    $("#smart-goal-messsage").hide();   
+  }
+
   else if(selectedCodeType.indexOf('Website Call Conversion') != -1){
       $('#callextension'+selectedindex).show();
   } else if(selectedCodeType.indexOf('RLSA Bulk Implementation') != -1){

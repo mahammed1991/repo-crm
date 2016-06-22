@@ -923,3 +923,18 @@ function validateDynamicFields(elemId){
   }
 
 }
+
+/*To display the  GA smart goal message*/
+$('.agency_diff').change(function(){
+  debugger;
+    var selectedCodeType = $(this).val();
+    console.log(selectedCodeType);
+   if('GA Smart Goals'.indexOf(selectedCodeType) != -1){
+    $("#smart-goal-messsage").show();
+  }
+  if(['GA Smart Goals'].indexOf(selectedCodeType) == -1){
+    $("#smart-goal-messsage").hide();   
+  }
+});
+
+/*End display the  GA smart goal message*/
