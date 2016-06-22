@@ -1,4 +1,5 @@
 {% load static %}
+
 	<header class="header">
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid"> 
@@ -26,7 +27,7 @@
         </div>
         <ul class="nav navbar-nav navbar-right">
           <li class="submit-lead-btn">
-              <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>Submit Lead</button>
+              <button class="{% if 'edit-profile-info' in request.path %} btn std-btn sm-btn {% else %} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored {% endif %}" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>Submit Lead</button>
           </li>
           
           {% if user.is_authenticated %}

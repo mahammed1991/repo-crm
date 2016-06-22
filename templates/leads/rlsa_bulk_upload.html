@@ -14,27 +14,25 @@
         <h1 class="lead-header" style="">RLSA Bulk Submit</h1>
           <form class="lead-form" id="rlsaBulk" enctype="multipart/form-data">
              {% csrf_token %}
-            <input type="hidden" id="oid" name="oid" value="00DZ000000MipUa">
             <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
             <p style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 850px;margin: 20px auto;">
                 If you do not get confirmation e-mail after submitting a lead please notify us at
-                <b>implementation-support@google.com</b>
+                <b><a href="mailto:implementation-support@google.com" target="_top">implementation-support@google.com</a></b>
             </p>
-
             <div class="std-sub-title">Google Rep Info</div>
             <div class="row">
               <div class="col-md-4">
                 <label for="gref">Google Rep Name</label>
-                <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}' required>
+                <input type="text" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
               </div>
               <div class="col-md-4">
                 <label for="emailref">Google Rep Email</label>
-                <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}" required>
+                <input type="email" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
               </div>
               <div class="col-md-4">
                 <label for="team">Program Name</label>
                 <select class="form-control bgicon" id="team" title="Program Name" name="team"
-                        data-validation-error-msg="Please select your team" required>
+                        data-validation-error-msg="Please select your team">
                   <option value="">Program name</option>
                   {% for team in teams %}
                     <option value='{{team.team_name}}'>{{team.team_name}}</option>
@@ -51,11 +49,11 @@
                 </div>
               <div class="col-md-4">
                 <label for="manager_name">Manager Name</label>
-                <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}" required>
+                <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
               </div>
               <div class="col-md-4">
                 <label for="manager_email">Manager Email</label>
-                <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}" required>
+                <input type="email" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
               </div>
               <div class="col-md-4">
                 <label for="rep_location">Google Rep Location</label>
@@ -63,13 +61,13 @@
               </div>
             </div>
             <div class="col-md-4" id="file_div" style="margin-left: -14px;">
-                <input type="button" value="Choose file" id="fakeBrowse" onclick="handleBrowseClick();" style="width:40%;padding: 13px;border-radius: 10px;"/>
+                <input type="button" value="Choose file" id="fakeBrowse" onclick="handleBrowseClick();" style="width:40%;padding: 13px;"/>
                 <input type="file" id="attachment_name" name="attachment_name" style="display: none" onChange="handleChange();" />
-                <input type="text" id="filename" readonly="true" style="width:58%;padding: 13px;border-radius: 10px;" />
+                <input type="text" id="filename" readonly="true" style="width:58%;padding: 13px;" />
             </div>
             <div id="submit" class="text-center">
                 <div class="btn-group" style="margin-left: -43%;">
-                    <button class="btn std-btn" id="file_submit" style="padding: 10px;border-radius: 10px;" disabled="disabled">Submit</button>
+                    <button class="btn std-btn" id="file_submit" style="padding: 10px;" disabled="disabled">Submit</button>
                 </div>
             </div>
           </form>
@@ -109,7 +107,6 @@
 
 {% block main_js %}
 <script src="{% static 'js/jquery-ui.js' %}"></script>
-<script src="{% static 'js/jquery.validate.min.js' %}"></script>
 <script src="{% static 'js/webapp/leads/rlsa_bulk_upload.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
 
@@ -117,6 +114,9 @@
 
 $(document).ready(function(){
     olark('api.box.hide');
+    $("form").submit(function(e){
+        return false;
+    });
 
     window.rep_location = "{{user.profile.rep_location|safe}}";
     if(window.rep_location){
@@ -142,14 +142,37 @@ $(document).ready(function(){
     }).capitalize();
     /*end of capitalizing*/
 
+    // Caching Elements
+    var repName = $("#gref");
+    var repEmail = $("#emailref");
+    var repTeam = $("#team");
+    var managerName = $("#manager_name");
+    var managerEmail = $("#manager_email");
+    var ldap = $("#ldap");
+
+    var submit = true;
+    $('form').change(function(e){
+        submit = validateFormFields(repName, repEmail, repTeam, managerName, managerEmail, ldap);
+    });
+
+    $("body").on('click', '#errAlert', function(){
+        clearAttachment();
+    });
+
     $('#submit').click(function(e){
         e.preventDefault();
-        var submit = true;
-        if($('#file_submit').prop('disabled')){submit=false;}
+        if(submit)
+            submit = validateFormFields(repName, repEmail, repTeam, managerName, managerEmail, ldap);
 
-        $("form").validate();
-        var is_valid = $("form").valid();
-        if(!is_valid){submit=false;}
+
+        if($('#file_submit').prop('disabled')){
+            submit=false;
+            var errState = document.getElementById("status");
+            var html = "<div class='alert alert-warning'> \
+                            <a id='errAlert' href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a> \
+                        Please upload CSV file</div>";
+            errState.innerHTML = html;
+        }
 
         //Validate form
         var formData = new FormData();
@@ -157,23 +180,29 @@ $(document).ready(function(){
         if (file) {
             formData.append('rlsaBulkFile',  file);
         }
-        formData.append('gref', $("#gref").val());
-        formData.append('emailref', $("#emailref").val());
-        formData.append('team', $("#team").val());
-        formData.append('manager_name', $("#manager_name").val());
-        formData.append('manager_email', $("#manager_email").val());
+        formData.append('gref', repName.val());
+        formData.append('emailref', repEmail.val());
+        formData.append('team', repTeam.val());
+        formData.append('manager_name', managerName.val());
+        formData.append('manager_email', managerEmail.val());
         formData.append('oid', $("#oid").val());
         formData.append('__VIEWSTATE', $("#__VIEWSTATE").val());
         formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
 
-        var ldapVal = $("#ldap").val()
-        if (ldapVal)
-            formData.append('ldap', ldapVal);
+
+        if (ldap.val() !== "")
+            formData.append('ldap', ldap.val());
 
         var repLoc = $("#rep_location").val()
-        if(repLoc)
+        if(repLoc !== "")
             formData.append('rep_location', repLoc);
+
         if(submit){
+            window.onbeforeunload = function() {
+                return 'You have unsaved changes!';
+            }
+
+            $('#team').removeClass('error-box');
             $("#status").empty();
             $("form :input").attr("disabled", true);
             $("#steps").show();
@@ -192,6 +221,7 @@ $(document).ready(function(){
                     return myXhr;
                 },
                 success: function(res){
+                    window.onbeforeunload = null;
                     if(res.success){
                         $(".steps-two > div").css('background','#4CAF50');
                         $(".steps-two > h3").text("Processed");
@@ -200,8 +230,7 @@ $(document).ready(function(){
                         $(".steps-three > h3").text("Completed");
                         $("form :input").attr("disabled", false);
                         $("#file_submit").attr("disabled", true);
-                        $("#attachment_name").val("");
-                        $("#filename").val("");
+                        clearAttachment();
                         resetTimeline();
                         var errState = document.getElementById("status");
                         var html = "<div class='alert alert-success'><a href='#' class='close' \
@@ -216,12 +245,11 @@ $(document).ready(function(){
                         $(".steps-three > h3").text("Upload failed");
                         $("form :input").attr("disabled", false);
                         $("#file_submit").attr("disabled", true);
-                        $("#attachment_name").val("");
-                        $("#filename").val("");
+                        clearAttachment();
                         if(res.error === "rows"){
                             // Errors in rows
                             var errState = document.getElementById("status");
-                            var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                            var html = "<div class='alert alert-danger'><a id='errAlert' href='#' class='close' data-dismiss='alert' \
                                         aria-label='close'>&times;</a><b> Errors in following rows, please fix them and upload again</b> \
                                         <table class='table'><thead><tr><th>Row Number</th><th>Errors</th></tr></thead><tbody>";
                             $.each(res.data, function( index, value ) {
@@ -239,7 +267,7 @@ $(document).ready(function(){
                         }else if(res.error === "headers"){
                             // Missing headers or unknown headers
                             var errState = document.getElementById("status");
-                            var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                            var html = "<div class='alert alert-danger'><a id='errAlert' href='#' class='close' data-dismiss='alert' \
                                         aria-label='close'>&times;</a> <b> Missing/Unknown headers</b> <ul>";
                             $.each(res.data, function( index, value ) {
                               html += "<li> "+index+" - "+ value +" </li>";
@@ -247,10 +275,17 @@ $(document).ready(function(){
                             html += "</ul></div>";
                             errState.innerHTML = html;
                             resetTimeline();
+                        }else if(res.error === "no data"){
+                            // Missing headers or unknown headers
+                            var errState = document.getElementById("status");
+                            var html = "<div class='alert alert-warning'><a id='errAlert' href='#' class='close' data-dismiss='alert' \
+                                        aria-label='close'>&times;</a> <b>"+res.msg+"</b> <ul>"
+                            errState.innerHTML = html;
+                            resetTimeline();
                         }else{
                             // Bad File Format
                             var errState = document.getElementById("status");
-                            var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                            var html = "<div class='alert alert-danger'><a id='errAlert'  href='#' class='close' data-dismiss='alert' \
                                         aria-label='close'>&times;</a> <b> Bad file format </b></div>";
                             errState.innerHTML = html;
                             resetTimeline();
@@ -258,14 +293,16 @@ $(document).ready(function(){
                     }
                 },
                 error: function(e){
+                    window.onbeforeunload = null;
                     $("form :input").attr("disabled", false);
                     $("#file_submit").attr("disabled", true);
                     $(".steps-three > div").css('background','#FF0000');
                     $(".steps-three > h3").text("Upload failed");
+                    clearAttachment();
                     var errState = document.getElementById("status");
-                    var html = "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' \
+                    var html = "<div class='alert alert-danger'><a id='errAlert' href='#' class='close' data-dismiss='alert' \
                                 aria-label='close'>&times;</a> <b> Server error.</b> Please try after sometime or \
-                                report this issue at <b>implementation-support@google.com</b></div>"
+                                report this issue at <b><a href='mailto:implementation-support@google.com' target='_top'>implementation-support@google.com</a></b></div>"
                     errState.innerHTML = html;
                     resetTimeline();
                 },
@@ -275,7 +312,7 @@ $(document).ready(function(){
                 processData: false
             });
         }else{
-            console.log("Submission Failed");
+            console.log(false);
         }
     });
 });

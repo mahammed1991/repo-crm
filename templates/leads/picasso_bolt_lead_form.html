@@ -182,7 +182,8 @@
               <label for="language_selector">Language Selector</label>
                 <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language" onchange="optSelect.call(this, event)">
                   <option value="English">English</option>
-                  <!-- <option value="German">German</option> -->
+                  <option value="German">German</option>
+                  <option value="French">French</option>
                 </select>
             </div>
            <div class="col-md-6">
@@ -343,7 +344,14 @@
   $('.list').css({'background':'#E0A3A3','margin-top':'30px'});
   $('.error_list').css({'padding-top':'10px','padding-bottom':'10px'});
  });
+
+var nbs_team = ['NBS'];
+var pgName = "{{user.profile.team}}";
   $(document).ready(function(){
+    if(nbs_team.indexOf(pgName) != -1){
+      $('#cid').val('000-000-0000');
+      $('#team').val(pgName);
+    }
     olark('api.box.hide');
 
      // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs
