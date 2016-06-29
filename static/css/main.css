@@ -1809,8 +1809,9 @@ ul li, ol li {
 	background: #acacac;
 	margin: 0px auto;
 	font-family: robotothin;
-	margin-top: 20px;
+	margin-top: 40px;
 }
+
 .circle_red, .new {
 	background: #e57368;
 }
@@ -1838,7 +1839,7 @@ ul li, ol li {
 	background: #9933FF;
 }
 .circle_pink{
-	background: #FF33CC;
+	background: #706ef4;
 }
 .circle_lgreen{
 	background: #99CC00;
@@ -1872,6 +1873,7 @@ ul li, ol li {
 	font-size:16px;
 	margin:15px 0;
 }
+
 .main_module {
 	padding-bottom: 30px;
 	border-bottom: 1px solid #000;

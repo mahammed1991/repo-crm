@@ -283,6 +283,8 @@ def get_previous_month_start_end_days(d):
 
 
 def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None):
+    wpp_lead_status = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation','07. Self Development']
+    wpp_lead_sub_status = ['In Queue','Rework Required','Design In Progress', 'Awaiting Review','Advertiser Delay','In Queue - Website Archive','In Queue - Awaiting Developer','Development In Progress','Inactive - Customer Decision','Testing In Progress','Rework In Progress','Inactive - Unable to Reach Customer','Attempting Contact','Win - Implemented by Regalix','Self Development - Complete','Self Development - To be Verified','Self Development  - Did Not Occur']
     if is_manager(email):
         email_list = get_user_list_by_manager(email)
         email_list.append(email)
@@ -290,7 +292,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         email_list = [email]
     if start_date and end_date:
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list, 'lead_status__in': settings.WPP_LEAD_STATUS}
+        query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list, 'lead_status__in': wpp_lead_status}
         wpp_lead_status_analysis = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('lead_status').annotate(count=Count('pk'))
         total_count = WPPLeads.objects.filter(**query).count()
         nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date, created_date__lte=end_date, type_1='WPP - Nomination').count()
@@ -301,47 +303,102 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         total_count = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['type_1'] = 'WPP - Nomination'
         nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(type_1='WPP - Nomination').count()
+    
+    wpp_lead_sub_status = {}
 
     wpp_lead_status_dict = {'total_leads': 0,
-                            'open': 0,
                             'in_ui_ux_review': 0,
-                            'in_stage_adv_impl': 0,
-                            'on_hold': 0,
-                            'in_mockup': 0,
-                            'mockup_review': 0,
-                            'deferred': 0,
-                            'in_development': 0,
                             'in_stage': 0,
+                            'in_design': 0,
+                            'in_testing': 0,
+                            'in_development': 0,
+                            'in_self_development': 0,
                             'implemented': 0,
-                            'ab_testing': 0,
                             'nominated_leads': 0,
                             }
-    for status_dict in wpp_lead_status_analysis:
-        if status_dict['lead_status'] == 'Open':
-            wpp_lead_status_dict['open'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In UI/UX Review':
-            wpp_lead_status_dict['in_ui_ux_review'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In Stage - Adv Implementation':
-            wpp_lead_status_dict['in_stage_adv_impl'] += status_dict['count']
-        elif status_dict['lead_status'] == 'On Hold':
-            wpp_lead_status_dict['on_hold'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In Mockup':
-            wpp_lead_status_dict['in_mockup'] += status_dict['count']
-        elif status_dict['lead_status'] == 'Mockup Review':
-            wpp_lead_status_dict['mockup_review'] += status_dict['count']
-        elif status_dict['lead_status'] == 'Deferred':
-            wpp_lead_status_dict['deferred'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In Development':
-            wpp_lead_status_dict['in_development'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In Stage':
-            wpp_lead_status_dict['in_stage'] += status_dict['count']
-        elif status_dict['lead_status'] == 'Implemented':
-            wpp_lead_status_dict['implemented'] += status_dict['count']
-        elif status_dict['lead_status'] == 'In A/B Test':
-            wpp_lead_status_dict['ab_testing'] += status_dict['count']
 
+
+    for k in wpp_lead_status:
+        wpp_lead_sub_status_dict = {
+        'In_Queue':0,
+        'Attempting_Contact':0,
+        'Rework_Required':0,
+        'Rework_In_Progress':0,
+        'Inactive_Customer_Decision':0,
+        'Inactive_Unable_to_Reach_Customer':0,
+        'Design_In_Progress':0,
+        'Awaiting_Review':0,
+        'Advertiser_Delay':0,
+        'In_Queue_Website_Archive':0,
+        'In_Queue_Awaiting_Developer':0,
+        'Development_In_Progress':0,
+        'Testing_In_Progress':0,
+        'Win_Implemented_by_Regalix':0,
+        'Self_Development_Complete':0,
+        'Self_Development_To_be_Verified':0,
+        'Self_Development_Did_Not_Occur':0
+        }
+        wpp_lead_sub_status[k] = 0
+        lead = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(created_date__gte=start_date, created_date__lte=end_date,treatment_type__in=treatment_type_list,lead_status=k)
+        for j in lead:
+            if k == j.lead_status:
+                sub_status = str(j.lead_sub_status)
+                if 'In Queue' in sub_status and 'In Queue Website Archive' not in sub_status and 'In Queue Awaiting Developer' not in sub_status:
+                    wpp_lead_sub_status_dict['In_Queue'] += 1
+                elif 'Attempting Contact' in sub_status:
+                    wpp_lead_sub_status_dict['Attempting_Contact'] += 1
+                elif 'Rework Required' in sub_status:
+                    wpp_lead_sub_status_dict['Rework_Required'] += 1
+                elif 'Rework In Progress' in sub_status:
+                    wpp_lead_sub_status_dict['Rework_In_Progress'] += 1                
+                elif 'Inactive - Customer Decision' in sub_status:
+                    wpp_lead_sub_status_dict['Inactive_Customer_Decision'] += 1               
+                elif 'Inactive - Unable to Reach Customer' in sub_status:
+                    wpp_lead_sub_status_dict['Inactive_Unable_to_Reach_Customer'] += 1               
+                elif 'Design In Progress' in sub_status:
+                    wpp_lead_sub_status_dict['Design_In_Progress'] += 1                
+                elif 'Awaiting Review' in sub_status:
+                    wpp_lead_sub_status_dict['Awaiting_Review'] += 1
+                elif 'Advertiser Delay' in sub_status:
+                    wpp_lead_sub_status_dict['Advertiser_Delay'] += 1
+                elif 'In Queue - Website Archive' in sub_status:
+                    wpp_lead_sub_status_dict['In_Queue_Website_Archive'] += 1
+                elif 'In Queue-Awaiting Developer' in sub_status:
+                    wpp_lead_sub_status_dict['In_Queue_Awaiting_Developer'] += 1
+                elif 'Development In Progress' in sub_status:
+                    wpp_lead_sub_status_dict['Development_In_Progress'] += 1
+                elif 'Testing In Progress' in sub_status:
+                    wpp_lead_sub_status_dict['Testing_In_Progress'] += 1
+                elif 'Win Implemented by Regalix' in sub_status:
+                    wpp_lead_sub_status_dict['Win_Implemented_by_Regalix'] += 1
+                elif 'Self Development - Complete' in sub_status:
+                    wpp_lead_sub_status_dict['Self_Development_Complete'] += 1
+                elif 'Self Development - To be Verified' in sub_status:
+                    wpp_lead_sub_status_dict['Self_Development_To_be_Verified'] += 1
+                elif 'Self Development - Did Not Occur' in sub_status:
+                    wpp_lead_sub_status_dict['Self_Development_Did_Not_Occur'] += 1
+        wpp_lead_sub_status[k] = wpp_lead_sub_status_dict      
+    
+    for status_dict in wpp_lead_status_analysis:
+        if status_dict['lead_status'] == '01. UI/UX':
+            wpp_lead_status_dict['in_ui_ux_review'] += status_dict['count']
+        elif status_dict['lead_status'] == '02. Design':
+            wpp_lead_status_dict['in_design'] += status_dict['count']
+        elif status_dict['lead_status'] == '03. Development':
+            wpp_lead_status_dict['in_development'] += status_dict['count']
+        elif status_dict['lead_status'] == '04. Testing':
+            wpp_lead_status_dict['in_testing'] += status_dict['count']
+        elif status_dict['lead_status'] == '05. Staging':
+            wpp_lead_status_dict['in_stage'] += status_dict['count']
+        elif status_dict['lead_status'] == '06. Implementation':
+            wpp_lead_status_dict['implemented'] += status_dict['count']
+        elif status_dict['lead_status'] == '07. Self Development':
+            wpp_lead_status_dict['in_self_development'] += status_dict['count']
+
+    wpp_lead_status_dict['lead_sub_status'] = wpp_lead_sub_status
     wpp_lead_status_dict['total_leads'] = total_count
     wpp_lead_status_dict['nominated_leads'] = nominated_leads
+
     return wpp_lead_status_dict
 
 
