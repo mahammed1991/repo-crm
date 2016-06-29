@@ -468,74 +468,84 @@ $(window).bind("pageshow", function() {
 // picasso build form workflow
 window.onload =  function(){
   $('input[name=cid] , input[name=url1]').on('focusout', function(){
-       var cid_value = $('input[name=cid] ').val();
-        var url_value =  $('input[name=url1]').val();
-        if (cid_value &&  url_value){
-        $.ajax({
-        'url': "/leads/picasso-build-submission-flow/",
-        'dataType': 'JSON',
-        'type': 'GET',
-        'data':{'cid':cid_value,'url1':url_value},
-          success: function(data){
-            console.log(data)
-            var returned_data = data;
-            if (returned_data.build_eligeble_in_picasso_db == true ){
-              //alert("build eligbible")
-              $('#formsubmit').prop('disabled', false);
-            }
-            if(returned_data.build_eligeble_in_picasso_db == false ){
-              //alert("not eligible")
-              $('#not-eligible').removeAttr("style");
-              $('#formsubmit').prop('disabled', true);
-              $("#ctl00 :input").attr("disabled", true);
-              $("#formReset").attr("disabled",false);
-            }
-            if(returned_data.current_status_inque_in_picasso == true){
-              //alert("leads in queue please mail abc@fck.com")
-              $('#in-queue-msg').removeAttr("style");
-               $('#formsubmit').prop('disabled', true);
-                $("#ctl00 :input").attr("disabled", true);
-                $("#formReset").attr("disabled",false);
-            }
-            if(returned_data.build_eligeble_in_nomination_db == true){
-              //alert('build eligble in nomination');
-              $('#formsubmit').prop('disabled', false);
-            }
-            if (returned_data.build_eligeble_in_nomination_db == false){
-              //alert("not build eligible in nomination")
-              $('#not-eligible').removeAttr("style");
-              $('#formsubmit').prop('disabled', true);
-               $("#ctl00 :input").attr("disabled", true);
-               $("#formReset").attr("disabled",false);
-            }
-            if (returned_data.build_eligeble_in_master_data == true){
-              $("#formReset").attr("disabled",false);
-            }
-            if (returned_data.build_eligeble_in_master_data == false){
-              //alert('not even build eligble in master')
-              $('#not-eligible').removeAttr("style");
-              $('#formsubmit').prop('disabled', true);
-               $("#ctl00 :input").attr("disabled", true);
-               $("#formReset").attr("disabled",false);
-            }
-            if(returned_data.redirect_to_nomiantion){
-              //alert('redirect')
-              $('#redirect').removeAttr("style");
-              $('#formsubmit').prop('disabled', true);
-               $("#ctl00 :input").attr("disabled", true);
-               $("#formReset").attr("disabled",false);
-               document.getElementById("redirect-url").host = window.location.hostname+"";
-               $("#redirect").href = window.location.hostname+"/leads/wpp-nomination-form/";
-                
+      var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+      var cid_value = $('input[name=cid] ').val();
+      var url_value =  $('input[name=url1]').val();
+        
+      if (cidFormat.test(cid_value) &&  url_value){
+          $('#cid').removeClass('error-box');
+          $.ajax({
+          'url': "/leads/picasso-build-submission-flow/",
+          'dataType': 'JSON',
+          'type': 'GET',
+          'data':{'cid':cid_value,'url1':url_value},
+                  success: function(data){
+                  console.log(data)
+                  var returned_data = data;
+                  if (returned_data.build_eligeble_in_picasso_db == true ){
+                   //alert("build eligbible")
+                   $('#formsubmit').prop('disabled', false);
+                    }
+                  if(returned_data.build_eligeble_in_picasso_db == false ){
+                    //alert("not eligible")
+                    $('#not-eligible').removeAttr("style");
+                    $('#formsubmit').prop('disabled', true);
+                    $("#ctl00 :input").attr("disabled", true);
+                    $("#formReset").attr("disabled",false);
+                  }
+                  if(returned_data.current_status_inque_in_picasso == true){
+                  //alert("leads in queue please mail abc@fck.com")
+                  $('#in-queue-msg').removeAttr("style");
+                  $('#formsubmit').prop('disabled', true);
+                  $("#ctl00 :input").attr("disabled", true);
+                  $("#formReset").attr("disabled",false);
                    }
-                 },
+                  if(returned_data.build_eligeble_in_nomination_db == true){
+                   //alert('build eligble in nomination');
+                  $('#formsubmit').prop('disabled', false);
+                  }
+                  if (returned_data.build_eligeble_in_nomination_db == false){
+                  //alert("not build eligible in nomination")
+                  $('#not-eligible').removeAttr("style");
+                  $('#formsubmit').prop('disabled', true);
+                  $("#ctl00 :input").attr("disabled", true);
+                  $("#formReset").attr("disabled",false);
+                   }
+                  if (returned_data.build_eligeble_in_master_data == true){
+                  $("#formReset").attr("disabled",false);
+                  }
+                  if (returned_data.build_eligeble_in_master_data == false){
+                  //alert('not even build eligble in master')
+                  $('#not-eligible').removeAttr("style");
+                  $('#formsubmit').prop('disabled', true);
+                  $("#ctl00 :input").attr("disabled", true);
+                  $("#formReset").attr("disabled",false);
+                    }
+                 if(returned_data.redirect_to_nomiantion){
+                 //alert('redirect')
+                 $('#redirect').removeAttr("style");
+                 $('#formsubmit').prop('disabled', true);
+                 $("#ctl00 :input").attr("disabled", true);
+                 $("#formReset").attr("disabled",false);
+                 document.getElementById("redirect-url").host = window.location.hostname+"";
+                 $("#redirect").href = window.location.hostname+"/leads/wpp-nomination-form/";
+                
+                    }
+                  },
                 failure: function(data){
                   console.log("failur on eligibilty checking")
                   console.log(data);
                  }
-            })
-      }
-  });
+              })
+            }
+      else{
+            if (cid_value != ""){
+            alert("Please enter  correct cid format xxx-xxx-xxxx")
+            $('#cid').addClass('error-box');
+            }
+          }
+
+    });
 }
 
 </script>

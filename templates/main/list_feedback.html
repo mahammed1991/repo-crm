@@ -85,7 +85,13 @@ Manage Help
         <div class="col-xs-6 col-md-3">
           <div class="circle_green">{{feedback_list.resolved}}</div>
           <div class="sum-lbl">Resolved</div>
-        </div>         
+        </div>   
+
+        <div class="col-xs-6 col-md-3">
+          <div class="circle_google_blue">{{feedback_list.fixed}}</div>
+          <div class="sum-lbl">Fixed</div>
+        </div>
+ 
         <div class="col-xs-6 col-md-3">
           <div class="circle_black">{{feedback_list.total}}</div>
           <div class="sum-lbl">Total</div>
@@ -101,6 +107,7 @@ Manage Help
               <li> <a class="tag" href="javascript:void(0);" id='All'>All</a> </li>
               <li> <a class="page" href="javascript:void(0);" id='Resolved'>Resolved</a> </li>
               <li> <a class="page" href="javascript:void(0);" id='InProgress'>In Progress</a> </li>
+              <li> <a class="page" href="javascript:void(0);" id='Fixed'>Fixed</a> </li>
               <li> <a class="page" href="javascript:void(0);" id='New'>New</a> </li>
             </ul>
             <div class="table-search">
@@ -143,6 +150,8 @@ Manage Help
                     <tr class="status-inq">
                   {% elif feedback.status == 'IN PROGRESS' %}
                     <tr class="status-inpro">
+                  {% elif feedback.status == 'FIXED' %}
+                    <tr class="status-fixed">
                   {% elif feedback.status == 'RESOLVED' %}
                     <tr class="status-implemented">
                   {% endif %}

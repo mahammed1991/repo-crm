@@ -38,4 +38,8 @@ urlpatterns = patterns(
     url(r'^report-a-bug/$', views.report_a_bug),
     url(r'^resources/rlsa-limitations/$', views.rlsa_limitations),
 
+    # getting all regalix ids
+    url(r'^user/email/$', views.get_all_regalix_id),
+    url(r'^assign-feedback/$', views.assign_feedback),
+
 )

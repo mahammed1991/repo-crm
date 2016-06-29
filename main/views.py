@@ -296,6 +296,7 @@ def get_feedbacks(user, feedback_type):
     feedback_list['new'] = feedbacks.filter(status='NEW').count()
     feedback_list['in_progress'] = feedbacks.filter(status='IN PROGRESS').count()
     feedback_list['resolved'] = feedbacks.filter(status='RESOLVED').count()
+    feedback_list['fixed'] = feedbacks.filter(status='FIXED').count()
     feedback_list['total'] = feedbacks.count()
     return feedbacks, feedback_list
 
@@ -566,6 +567,7 @@ def view_feedback(request, id):
     normal_comments = FeedbackComment.objects.filter(feedback__id=id)
     resolved_count = FeedbackComment.objects.filter(feedback__id=id, feedback_status='resolved').count()
     can_resolve = True
+
     if request.user.email == feedback.lead_owner.email:
         can_resolve = False
 
@@ -676,7 +678,7 @@ def create_feedback(request, lead_id=None):
             feedback_details.attachment = request.FILES['attachment_name']
 
         feedback_details.save()
-        feedback_details = notify_feedback_activity(request, feedback_details, comment=None)
+        feedback_details = notify_feedback_activity(request, feedback_details, comment=None, fixed=None)
 
         if request.POST['code_type'] == 'WPP':
             return redirect('main.views.list_feedback_wpp')
@@ -687,6 +689,7 @@ def create_feedback(request, lead_id=None):
 
     # Feedback Form
     feedback_type = request.GET.get('type')
+
     lead = None
     if lead_id:
         try:
@@ -716,7 +719,7 @@ def create_feedback(request, lead_id=None):
                                                                          'feedback_type': feedback_type})
 
 
-def notify_feedback_activity(request, feedback, comment=None, is_resolved=False):
+def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_resolved=False):
     mail_subject = "Feedback - " + feedback.title
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     if feedback.code_type != 'WPP':
@@ -733,6 +736,7 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
                 'signature': signature
             })
         )
+
     elif is_resolved:
         mail_body = get_template('main/feedback_mail/resolved.html').render(
             Context({
@@ -746,6 +750,7 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
                 'signature': signature
             })
         )
+
     else:
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
             Context({
@@ -783,6 +788,35 @@ def notify_feedback_activity(request, feedback, comment=None, is_resolved=False)
 
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
+    return feedback
+
+def notify_feedback_fixed(request, feedback, comment=None, fixed=None, is_resolved=False):
+    mail_subject = "Feedback - " + feedback.title
+    feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
+    issue_fixedby = request.user.first_name + ' ' + request.user.last_name
+    if fixed:
+        mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
+            Context({
+                'feedback': feedback,
+                'user_info': request.user,
+                'feedback_url': feedback_url,
+                'cid': feedback.cid,
+                'type': feedback.feedback_type,
+                'feedback_title': feedback.title,
+                'feedback_body': feedback.description,
+                'issue_fixedby':issue_fixedby,
+                
+            })
+        )
+    feedback_super_user = User.objects.filter(groups__name='foo')
+    print feedback_super_user
+    mail_to = feedback_super_user
+    mail_from = request.user.email
+    attachments = list()
+    bcc = list()
+    if feedback.attachment:
+        attachments.append(feedback.attachment)
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
     return feedback
 
 @login_required
@@ -869,6 +903,7 @@ def reopen_feedback(request, id):
 def comment_feedback(request, id):
     """ Comment on a feedback """
     action_type = request.POST['feedback_action']
+    #action_type = request.POST['feedback_action']
     feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
     comment.feedback = feedback
@@ -889,6 +924,12 @@ def comment_feedback(request, id):
         elif resolved_count == 3:
             feedback.third_resolved_by = request.user
             feedback.third_resolved_date = datetime.utcnow()
+
+    elif action_type == 'FIXED':
+        comment.feedback_status = 'FIXED'
+        feedback.status = 'FIXED'
+        comment.save()
+
     else:
         comment.feedback_status = 'IN PROGRESS'
         feedback.status = 'IN PROGRESS'
@@ -897,6 +938,8 @@ def comment_feedback(request, id):
     feedback.save()
     if action_type == 'Resolved':
         notify_feedback_activity(request, feedback, comment, is_resolved=True)
+    elif action_type == 'FIXED':
+        notify_feedback_fixed(request, feedback, comment, fixed=True, is_resolved=False)
     else:
         notify_feedback_activity(request, feedback, comment, is_resolved=False)
     return redirect('main.views.view_feedback', id=id)
@@ -1947,3 +1990,63 @@ def write_appointments_to_csv(result, collumn_attr, filename):
 @login_required
 def rlsa_limitations(request):
     return render(request, 'main/rlsa_limitations.html', {})
+
+
+def get_all_regalix_id(request):
+    if request.is_ajax():
+        search_keyword = request.GET.get('search_key')
+        all_email = User.objects.filter(email__icontains = search_keyword)[:20]
+        regalix_email_list = list()
+        for email in all_email:
+            if 'regalix-inc.com' in email.email:
+                regalix_email_list.append(email.email)
+        return HttpResponse(json.dumps(regalix_email_list))
+    return HttpResponse(json.dumps('failur responce no key searched'))
+
+
+def assign_feedback(request):
+    if request.is_ajax():
+        assignee = request.GET.get('assignee_mail')
+        tittle = request.GET.get('assign_feedback_tittle')
+        cid = request.GET.get('assign_feedback_cid')
+        feedbacktype = request.GET.get('assign_feedback_type')
+        loaction = request.GET.get('feedback_location_name')
+        created_date = request.GET.get('assign_feedback_createddate')
+        feedback_lead_id = request.GET.get('feedbackidnumbr');
+
+        
+        # mailing functionolities
+        feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_lead_id}))
+        mail_from = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
+        mail_to = [ str(assignee) , str(request.user.email)]
+        specific_date = datetime.today().date()
+        mail_subject = "Lead Feedback is assigned to you to resolve " + str(specific_date)
+        mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
+                                    'tittle': tittle, 
+                                    'cid':cid, 'feedbacktype':feedbacktype, 
+                                    'loaction':loaction,
+                                    'url_link':feedback_url,
+                                    'created_date':created_date}))
+
+        bcc = set()
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+        
+        assiging_feedback(request, assignee, id=feedback_lead_id) # saving assigning process
+
+        response = {'success': True, 'msg':'Mail sent succesfully'}
+        return HttpResponse(json.dumps(response))
+    response = {'success': False,}
+    return HttpResponse(json.dumps(response))
+
+
+def assiging_feedback(request, assignee, id):
+    assigned_by = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
+    feedback =  Feedback.objects.get(id=id)
+    feedback_assigning_ascomment = FeedbackComment()
+    feedback_assigning_ascomment.feedback = feedback
+    feedback_assigning_ascomment.comment = "This Feedback has been assigned to "+str(assignee)+" to fix. Assigned by "+str(assigned_by)
+    feedback_assigning_ascomment.comment_by = request.user
+    feedback_assigning_ascomment.save()
+    #return redirect('main.views.view_feedback', id=id)
+    return True

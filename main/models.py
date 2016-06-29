@@ -25,7 +25,8 @@ class Feedback(models.Model):
         filename = "%s.%s" % (uuid4(), ext)
         return os.path.join('feedback/', filename)
 
-    def default_lead_owner(self):
+    @staticmethod
+    def default_lead_owner():
         try:
             lead_owner = User.objects.get(email=settings.DEFAULT_LEAD_OWNER_EMAIL)
         except ObjectDoesNotExist:
