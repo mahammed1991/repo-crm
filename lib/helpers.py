@@ -342,39 +342,40 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         lead = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(created_date__gte=start_date, created_date__lte=end_date,treatment_type__in=treatment_type_list,lead_status=k)
         for j in lead:
             if k == j.lead_status:
-                if 'In Queue' in str(j.lead_sub_status) and 'In Queue Website Archive' not in str(j.lead_sub_status) and 'In Queue Awaiting Developer' not in str(j.lead_sub_status):
+                sub_status = str(j.lead_sub_status)
+                if 'In Queue' in sub_status and 'In Queue Website Archive' not in sub_status and 'In Queue Awaiting Developer' not in sub_status:
                     wpp_lead_sub_status_dict['In_Queue'] += 1
-                elif 'Attempting Contact' in str(j.lead_sub_status):
+                elif 'Attempting Contact' in sub_status:
                     wpp_lead_sub_status_dict['Attempting_Contact'] += 1
-                elif 'Rework Required' in str(j.lead_sub_status):
+                elif 'Rework Required' in sub_status:
                     wpp_lead_sub_status_dict['Rework_Required'] += 1
-                elif 'Rework In Progress' in str(j.lead_sub_status):
+                elif 'Rework In Progress' in sub_status:
                     wpp_lead_sub_status_dict['Rework_In_Progress'] += 1                
-                elif 'Inactive - Customer Decision' in str(j.lead_sub_status):
+                elif 'Inactive - Customer Decision' in sub_status:
                     wpp_lead_sub_status_dict['Inactive_Customer_Decision'] += 1               
-                elif 'Inactive - Unable to Reach Customer' in str(j.lead_sub_status):
+                elif 'Inactive - Unable to Reach Customer' in sub_status:
                     wpp_lead_sub_status_dict['Inactive_Unable_to_Reach_Customer'] += 1               
-                elif 'Design In Progress' in str(j.lead_sub_status):
+                elif 'Design In Progress' in sub_status:
                     wpp_lead_sub_status_dict['Design_In_Progress'] += 1                
-                elif 'Awaiting Review' in str(j.lead_sub_status):
+                elif 'Awaiting Review' in sub_status:
                     wpp_lead_sub_status_dict['Awaiting_Review'] += 1
-                elif 'Advertiser Delay' in str(j.lead_sub_status):
+                elif 'Advertiser Delay' in sub_status:
                     wpp_lead_sub_status_dict['Advertiser_Delay'] += 1
-                elif 'In Queue - Website Archive' in str(j.lead_sub_status):
+                elif 'In Queue - Website Archive' in sub_status:
                     wpp_lead_sub_status_dict['In_Queue_Website_Archive'] += 1
-                elif 'In Queue-Awaiting Developer' in str(j.lead_sub_status):
+                elif 'In Queue-Awaiting Developer' in sub_status:
                     wpp_lead_sub_status_dict['In_Queue_Awaiting_Developer'] += 1
-                elif 'Development In Progress' in str(j.lead_sub_status):
+                elif 'Development In Progress' in sub_status:
                     wpp_lead_sub_status_dict['Development_In_Progress'] += 1
-                elif 'Testing In Progress' in str(j.lead_sub_status):
+                elif 'Testing In Progress' in sub_status:
                     wpp_lead_sub_status_dict['Testing_In_Progress'] += 1
-                elif 'Win Implemented by Regalix' in str(j.lead_sub_status):
+                elif 'Win Implemented by Regalix' in sub_status:
                     wpp_lead_sub_status_dict['Win_Implemented_by_Regalix'] += 1
-                elif 'Self Development - Complete' in str(j.lead_sub_status):
+                elif 'Self Development - Complete' in sub_status:
                     wpp_lead_sub_status_dict['Self_Development_Complete'] += 1
-                elif 'Self Development - To be Verified' in str(j.lead_sub_status):
+                elif 'Self Development - To be Verified' in sub_status:
                     wpp_lead_sub_status_dict['Self_Development_To_be_Verified'] += 1
-                elif 'Self Development - Did Not Occur' in str(j.lead_sub_status):
+                elif 'Self Development - Did Not Occur' in sub_status:
                     wpp_lead_sub_status_dict['Self_Development_Did_Not_Occur'] += 1
         wpp_lead_sub_status[k] = wpp_lead_sub_status_dict      
     
