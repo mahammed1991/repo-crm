@@ -16,6 +16,64 @@
         margin-bottom: 30px !important;
         text-align: center;
         }
+        .total{
+          padding-top: 10px;
+          font-size: 16px;
+          background: #e2e2e2;
+          margin-top: 20px;
+        }
+        .sub-bg{
+          background: #e2e2e2;
+          min-height: 401px;
+          padding-bottom:20px; 
+        }
+        #pop1,#pop2,#pop3,#pop4,#pop5,#pop6,#pop7{
+          display: none;
+          background: skyblue;
+          margin-top: -150px !important;
+          color: white;
+        }
+        #pop1 #pop2 #pop3 #pop4 #pop5 #pop6 #pop7 table tr,td,th{
+          border: 2px solid white;
+          padding: 0px 5px;
+          text-align: left;
+          font-style: italic;
+        }
+        #ui_ux:hover #pop1{
+          display: block;
+          position: fixed;
+        }
+        #design:hover #pop2{
+          display: block;
+          position: fixed;
+          margin-top: -215px !important;
+        }
+        #develop:hover #pop3{
+          display: block;
+          position: fixed;
+          margin-top: -190px !important;
+        }
+        #test:hover #pop4{
+          display: block;
+          position: fixed;
+          margin-left: 40px;
+          margin-top: -105px !important;
+        }
+        #stage:hover #pop5{
+          display: block;
+          position: fixed;
+        }
+        #implement:hover #pop6{
+          display: block;
+          position: fixed;
+        }
+        #self_develop:hover #pop7{
+          display: block;
+          position: fixed;
+          margin-top: -85px !important;
+        }
+
+
     </style>
 {% endblock main_css %}
 
@@ -38,67 +96,68 @@
               </div>
         </div>
           
-      </div>   
-      <div class="row summary-container">
-      <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_reddish" id='nominated_leads'>{{lead_status_dict.nominated_leads }}</div>
-          <div class="sum-lbl">Nominated Leads</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_red" id='open'>{{lead_status_dict.open }}</div>
-          <div class="sum-lbl">Open</div>
-        </div>
-
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle" id='in_ui_ux_review'>{{lead_status_dict.in_ui_ux_review}}</div>
-          <div class="sum-lbl">In UI/UX Review</div>
-        </div>
-
-
-
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_pur" id='on_hold'>{{lead_status_dict.on_hold}}</div>
-          <div class="sum-lbl">On Hold</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_yellow" id="in_mockup" >{{lead_status_dict.in_mockup}}</div>
-          <div class="sum-lbl">In Mockup</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_blue" id="mockup_review">{{lead_status_dict.mockup_review}}</div>
-          <div class="sum-lbl">Mockup Review</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_pink" id="deferred">{{lead_status_dict.deferred}}</div>
-          <div class="sum-lbl">Deferred</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_lgreen" id="in_development">{{lead_status_dict.in_development}}</div>
-          <div class="sum-lbl">In Development</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_green" id="in_stage">{{lead_status_dict.in_stage}}</div>
-          <div class="sum-lbl">In Stage</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_orange" id='in_stage_adv_impl'>{{lead_status_dict.in_stage_adv_impl}}</div>
-          <div class="sum-lbl">In Stage - Adv Implementation</div>
-        </div>
-         <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_light_grn" id="ab_testing">{{lead_status_dict.ab_testing}}</div>
-          <div class="sum-lbl">In A/B Test</div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-          <div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
-          <div class="sum-lbl">Implemented</div>
-        </div>
-        </div>
-        <div class="row summary-container">
-          <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
-            <div class="circle_black" id="total_leads">{{lead_status_dict.total_leads}}</div>
-            <div class="sum-lbl">Total</div>
-          </div>
       </div>
+
+      <div class="row summary-container">
+        <div class="col-md-12">
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div class="circle_reddish" id="nominated_leads">{{lead_status_dict.in_ui_ux_review}}</div>
+            <div class="sum-lbl">Nominated Leads</div>
+          </div>
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="ui_ux"><div class="circle_blue" id='in_ui_ux_review'>{{lead_status_dict.in_ui_ux_review}}</div>
+            <div id="pop1"></div></div>
+            <div class="sum-lbl">UI/UX Review</div>
+          </div>
+          <!-- New Fields -->
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="design"><div class="circle_red" id='in_design'>
+            {{lead_status_dict.in_design}}</div>
+            <div id="pop2"></div></div>
+            <div class="sum-lbl">Design</div>
+          </div>
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="develop"><div class="circle_lgreen" id="in_development">{{lead_status_dict.in_development}}</div>
+            <div id="pop3"></div></div>
+            <div class="sum-lbl">Development</div>
+          </div>
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="test"><div class="circle" id='in_testing'>
+            {{lead_status_dict.in_testing}}</div>
+            <div id="pop4"></div></div>
+            <div class="sum-lbl">Testing</div>
+          </div>
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="stage"><div class="circle_green" id="in_stage">
+            {{lead_status_dict.in_stage}}</div>
+            <div id="pop5"></div></div>
+            <div class="sum-lbl">Staging</div>
+          </div>
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="implement"><div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
+            <div id="pop6"></div></div>
+            <div class="sum-lbl">Implementing</div>
+          </div>
+
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+            <div id="self_develop"><div class="circle_orange" id="in_self_development">{{lead_status_dict.in_self_development}}</div>
+            <div id="pop7"></div></div>
+            <div class="sum-lbl">Self Development</div>
+          </div>      
+          <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
+           <div class="circle_pink" id="total_leads">
+           {{lead_status_dict.total_leads}}</div>
+           <div class="sum-lbl">Total</div>
+          </div>
+        </div>
+      </div>
+ 
       <h1 class="lead_status">Website Optimization Leads Status</h1>
       <div class="row">
           <div class="col-xs-10 col-sm-12 col-md-10">
@@ -257,8 +316,99 @@ function olarkShow(){
   olark('api.box.show');
 }
 
+
+/*$('#in_ui_ux_review').on('mouseover',function(){
+  $('#pop').css('display','block');
+});$('#in_ui_ux_review').on('mouseout',function(){
+  $('#pop').css('display','none');
+});*/
 function setWppLeadSummary(lead_status){
-    $('#open').text(lead_status['open'])
+  $('#pop1').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['In_Queue']+ "</td></tr>" +
+    "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['Attempting_Contact']+ "</td></tr>" +
+    "<tr><td>" + "Rework Required" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['Rework_Required']+ "</td></tr>" +
+    "<tr><td>" + "Rework In Progress" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['Rework_In_Progress']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Customer Decision" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['Inactive_Customer_Decision']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
+  "</table>");
+
+
+  $('#pop2').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['In_Queue']+ "</td></tr>" +
+    "<tr><td>" + "Design In Progress" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Design_In_Progress']+ "</td></tr>" +
+    "<tr><td>" + "Awaiting Review" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Awaiting_Review']+ "</td></tr>" +
+    "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Attempting_Contact']+ "</td></tr>" +
+    "<tr><td>" + "Advertiser Delay" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Advertiser_Delay']+ "</td></tr>" +
+    "<tr><td>" + "Rework Required" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Rework_Required']+ "</td></tr>" +"<tr><td>" + "Rework In Progress" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Rework_In_Progress']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Customer Decision" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Inactive_Customer_Decision']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
+  "</table>");
+
+  $('#pop3').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + "In Queue - Website Archive" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['In_Queue_Website_Archive']+ "</td></tr>" +
+    "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Attempting_Contact']+ "</td></tr>" +
+    "<tr><td>" + "Advertiser Delay" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Advertiser_Delay']+ "</td></tr>" +
+    "<tr><td>" + "In Queue - Awaiting Developer" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['In_Queue_Awaiting_Developer']+ "</td></tr>" +
+    "<tr><td>" + "Development In Progress" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Development_In_Progress']+ "</td></tr>" +
+    "<tr><td>" + "Rework In Progress" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Rework_In_Progress']+ "</td></tr>" +
+     "<tr><td>" + "Inactive-Customer Decision" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Inactive_Customer_Decision']+ "</td></tr>" +
+     "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
+  "</table>");
+
+
+  $('#pop4').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['04. Testing']['In_Queue']+ "</td></tr>" +
+    "<tr><td>" + "Testing In Progress" + "</td><td>" + lead_status['lead_sub_status']['04. Testing']['Testing_In_Progress']+ "</td></tr>" +
+    "<tr><td>" + "Rework Required" + "</td><td>" + lead_status['lead_sub_status']['04. Testing']['Rework_Required']+ "</td></tr>" +
+    "<tr><td>" + "Rework In Progress" + "</td><td>" + lead_status['lead_sub_status']['04. Testing']['Rework_In_Progress']+ "</td></tr>" +
+  "</table>");
+
+
+  $('#pop5').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['In_Queue']+ "</td></tr>" +
+    "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['Attempting_Contact']+ "</td></tr>" +
+    "<tr><td>" + "Advertiser Delay" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['Advertiser_Delay']+ "</td></tr>" +
+    "<tr><td>" + "Rework Required" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['Rework_Required']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Customer Decision" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['Inactive_Customer_Decision']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
+  "</table>");
+
+
+  $('#pop6').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['In_Queue']+ "</td></tr>" +
+    "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Attempting_Contact']+ "</td></tr>" +
+    "<tr><td>" + "Advertiser Delay" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Advertiser_Delay']+ "</td></tr>" +
+    "<tr><td>" + "Win - Implemented by Regalix" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Win_Implemented_by_Regalix']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Customer Decision" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Inactive_Customer_Decision']+ "</td></tr>" +
+    "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
+  "</table>");
+
+  $('#pop7').html("<table>"+
+    "<tr><th>Sub Status</th><th>Count</th></tr>"+
+    "<tr><td>" + " Self Development - Complete" + "</td><td>" + lead_status['lead_sub_status']['07. Self Development']['Self_Development_Complete']+ "</td></tr>" +
+    "<tr><td>" + "Self Development - To be Verified" + "</td><td>" + lead_status['lead_sub_status']['07. Self Development']['Self_Development_To_be_Verified']+ "</td></tr>" +
+    "<tr><td>" + "Self Development - Did Not Occur" + "</td><td>" + lead_status['lead_sub_status']['07. Self Development']['Self_Development_Did_Not_Occur']+ "</td></tr>" +
+  "</table>");
+
+
+  $('#in_ui_ux_review').text(lead_status['in_ui_ux_review'])
+  $('#in_design').text(lead_status['in_design'])
+  $('#in_testing').text(lead_status['in_testing'])
+  $('#in_self_development').text(lead_status['in_self_development'])
+  $('#in_stage').text(lead_status['in_stage'])
+  $('#in_development').text(lead_status['in_development'])
+  $('#in_stage').text(lead_status['in_stage'])
+  $('#implemented').text(lead_status['implemented'])
+  $('#total_leads').text(lead_status['total_leads'])
+  $('#nominated_leads').text(lead_status['nominated_leads'])
+
+/*    $('#open').text(lead_status['open'])
     $('#in_ui_ux_review').text(lead_status['in_ui_ux_review'])
     $('#on_hold').text(lead_status['on_hold'])
     $('#in_mockup').text(lead_status['in_mockup'])
@@ -270,7 +420,7 @@ function setWppLeadSummary(lead_status){
     $('#ab_testing').text(lead_status['ab_testing'])
     $('#implemented').text(lead_status['implemented'])
     $('#total_leads').text(lead_status['total_leads'])
-    $('#nominated_leads').text(lead_status['nominated_leads'])
+    $('#nominated_leads').text(lead_status['nominated_leads'])*/
     
   }
   function setWppLeadSummaryTable(leads){
