@@ -790,27 +790,25 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
 
     return feedback
 
-def notify_feedback_fixed(request, feedback, comment=None, fixed=None, is_resolved=False):
+def notify_feedback_fixed(request, feedback, comment=None ):
     mail_subject = "Feedback - " + feedback.title
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     issue_fixedby = request.user.first_name + ' ' + request.user.last_name
-    if fixed:
-        mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
-            Context({
-                'feedback': feedback,
-                'user_info': request.user,
-                'feedback_url': feedback_url,
-                'cid': feedback.cid,
-                'type': feedback.feedback_type,
-                'feedback_title': feedback.title,
-                'feedback_body': feedback.description,
-                'issue_fixedby':issue_fixedby,
-                
-            })
-        )
-    feedback_super_user = User.objects.filter(groups__name='foo')
-    print feedback_super_user
-    mail_to = feedback_super_user
+    mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
+        Context({
+            'feedback': feedback,
+            'user_info': request.user,
+            'feedback_url': feedback_url,
+            'cid': feedback.cid,
+            'type': feedback.feedback_type,
+            'feedback_title': feedback.title,
+            'feedback_body': feedback.description,
+            'issue_fixedby':issue_fixedby,
+            
+        })
+    )
+    feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+    mail_to = feedback_super_user_group
     mail_from = request.user.email
     attachments = list()
     bcc = list()
@@ -903,7 +901,6 @@ def reopen_feedback(request, id):
 def comment_feedback(request, id):
     """ Comment on a feedback """
     action_type = request.POST['feedback_action']
-    #action_type = request.POST['feedback_action']
     feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
     comment.feedback = feedback
@@ -939,7 +936,7 @@ def comment_feedback(request, id):
     if action_type == 'Resolved':
         notify_feedback_activity(request, feedback, comment, is_resolved=True)
     elif action_type == 'FIXED':
-        notify_feedback_fixed(request, feedback, comment, fixed=True, is_resolved=False)
+        notify_feedback_fixed(request, feedback, comment)
     else:
         notify_feedback_activity(request, feedback, comment, is_resolved=False)
     return redirect('main.views.view_feedback', id=id)
@@ -1992,7 +1989,7 @@ def rlsa_limitations(request):
     return render(request, 'main/rlsa_limitations.html', {})
 
 
-def get_all_regalix_id(request):
+def get_regalix_emails(request):
     if request.is_ajax():
         search_keyword = request.GET.get('search_key')
         all_email = User.objects.filter(email__icontains = search_keyword)[:20]
@@ -2000,14 +1997,17 @@ def get_all_regalix_id(request):
         for email in all_email:
             if 'regalix-inc.com' in email.email:
                 regalix_email_list.append(email.email)
-        return HttpResponse(json.dumps(regalix_email_list))
-    return HttpResponse(json.dumps('failur responce no key searched'))
+        response = {'success':True, 'message':'Emails Fetched', 'data':regalix_email_list}
+        return HttpResponse(json.dumps(response))
+    response = {'success':False, 'message':'failed to fetch email id or no email id in db'}
+    return HttpResponse(json.dumps(response))
 
 
 def assign_feedback(request):
     if request.is_ajax():
+        #import ipdb;ipdb.set_trace()
         assignee = request.GET.get('assignee_mail')
-        tittle = request.GET.get('assign_feedback_tittle')
+        title = request.GET.get('assign_feedback_tittle')
         cid = request.GET.get('assign_feedback_cid')
         feedbacktype = request.GET.get('assign_feedback_type')
         loaction = request.GET.get('feedback_location_name')
@@ -2022,7 +2022,7 @@ def assign_feedback(request):
         specific_date = datetime.today().date()
         mail_subject = "Lead Feedback is assigned to you to resolve " + str(specific_date)
         mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
-                                    'tittle': tittle, 
+                                    'title': title, 
                                     'cid':cid, 'feedbacktype':feedbacktype, 
                                     'loaction':loaction,
                                     'url_link':feedback_url,
