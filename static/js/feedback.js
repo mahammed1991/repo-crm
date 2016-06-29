@@ -88,22 +88,32 @@ $('#All').click(function(){
       $('.status-inq').show()
       $('.status-inpro').show()
       $('.status-implemented').show()
+      $('.status-fixed').show()
     })
 $('#Resolved').click(function(){
       $('.status-inq').hide()
       $('.status-inpro').hide()
       $('.status-implemented').show()
+      $('.status-fixed').hide()
     })
 $('#InProgress').click(function(){
       $('.status-inq').hide()
       $('.status-inpro').show()
       $('.status-implemented').hide()
+      $('.status-fixed').hide()
     })
 $('#New').click(function(){
       $('.status-inq').show()
       $('.status-inpro').hide()
       $('.status-implemented').hide()
+      $('.status-fixed').hide()
     })
+$('#Fixed').click(function(){
+	 $('.status-fixed').show()
+	 $('.status-inq').hide()
+     $('.status-inpro').hide()
+     $('.status-implemented').hide()
+})
 
 
    

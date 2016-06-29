@@ -105,6 +105,10 @@
   color:#34b67a;
 }
 
+.status-fixed .status-txt-color {
+  color:#0000e6;
+}
+
 .status-inqueue .status-bor-color {
   border-left: 6px solid #f6b300;
 }
@@ -116,4 +120,8 @@
 }
 .status-delivered .status-bor-color {
   border-left: 6px solid #34b67a;
+}
+
+.status-delivered .status-bor-color {
+  border-left: 6px solid #0000e6;
 }
