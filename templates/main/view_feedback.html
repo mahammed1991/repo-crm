@@ -208,7 +208,7 @@ Manage Help
             <input type="hidden" id="assign-feedback-type" name="assign_feedback_type" value="{{feedback.feedback_type}}">
             <input type="hidden" id="assign-feedback-location-name" name="assign_feedback_location_name" value="{{feedback.location.location_name}}">
             <input type="hidden" id="assign-feedback-createdate" name="assign_feedback_createdate" value="{{feedback.created_date | date:'D, M d Y, f A' }}">
-            <input type="hidden" name="feedbackidnumbr" id="feedbackidnumbr" value="{{feedback.id}}">
+            <input type="hidden" name="feedback_id_number" id="feedback_id_number" value="{{feedback.id}}">
             <!-- end of lead details -->
             <input type="button" name="" id="submit-assignee-form" value="Assign">
             </form>
@@ -346,13 +346,13 @@ $("#assign-feedback-to").removeClass('error-box');
     if (emailFilter.test(email) && ( email != "")) {
     
             datastring = {}
-            datastring['assign_feedback_tittle'] = $('#assign-feedback-tittle').val();
+            datastring['assign_feedback_title'] = $('#assign-feedback-tittle').val();
             datastring['assign_feedback_cid'] = $('#assign-feedback-cid').val();
             datastring['assign_feedback_type'] = $('#assign-feedback-type').val();
             datastring['feedback_location_name'] = $('#assign-feedback-location-name').val();
             datastring['assign_feedback_createddate'] = $('#assign-feedback-createdate').val();
             datastring['assignee_mail'] = $('#assign-feedback-to').val();
-            datastring['feedbackidnumbr'] = $('#feedbackidnumbr').val();
+            datastring['feedback_id_number'] = $('#feedback_id_number').val();
             $('#preloaderOverlay').show();
             $.ajax({
             'url': "/main/assign-feedback",
