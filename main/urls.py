@@ -39,7 +39,7 @@ urlpatterns = patterns(
     url(r'^resources/rlsa-limitations/$', views.rlsa_limitations),
 
     # getting all regalix ids
-    url(r'^user/email/$', views.get_all_regalix_id),
+    url(r'^user/email/$', views.get_regalix_emails),
     url(r'^assign-feedback/$', views.assign_feedback),
 
 )
