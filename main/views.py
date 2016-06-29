@@ -2005,14 +2005,13 @@ def get_regalix_emails(request):
 
 def assign_feedback(request):
     if request.is_ajax():
-        #import ipdb;ipdb.set_trace()
         assignee = request.GET.get('assignee_mail')
-        title = request.GET.get('assign_feedback_tittle')
+        title = request.GET.get('assign_feedback_title')
         cid = request.GET.get('assign_feedback_cid')
         feedbacktype = request.GET.get('assign_feedback_type')
         loaction = request.GET.get('feedback_location_name')
         created_date = request.GET.get('assign_feedback_createddate')
-        feedback_lead_id = request.GET.get('feedbackidnumbr');
+        feedback_lead_id = request.GET.get('feedback_id_number');
 
         
         # mailing functionolities
