@@ -3702,6 +3702,24 @@ def rlsa_bulk_upload_lead_form(request):
                         rlsa_bulk.uploaded_by = request.user
                         rlsa_bulk.upload_id = upload_random_id
                         rlsa_bulk.save()
+                        rlsa_upload_history_path = request.META.get('HTTP_HOST') + "/reports/rlsa-bulk-upload"
+
+                        #rlsa email code//////////////////////////////////////////
+                        mail_body = get_template('leads/email_templates/rlsa_bulk_upload.html').render(
+                            Context({
+                                'count': updated_rows,
+                                'history_path': rlsa_upload_history_path,
+                                })
+                            )
+                        mail_subject = "RLSA BULK UPLOAD"
+
+                        mail_from = 'implementation-support@google.com'
+                        mail_to = request.user.email
+                        bcc = set([])
+                        attachments = list()
+                        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
                         resp = {'csv_file': file_name, 'success': True, 'msg': 'Submitted all leads to SFDC',
                                 'new_leads': updated_rows}
             else:
