@@ -203,7 +203,7 @@ Manage Help
         {% csrf_token %}
             Please assign this feedback to a manager/TL for resolve <input type="email" id="assign-feedback-to" name="assignee_mail" placeholder="abc@regalix-inc.com">
             <!-- lead details -->
-            <input type="hidden" id="assign-feedback-tittle" name="assign_feedback_tittle" value="{{feedback.title}}">
+            <input type="hidden" id="assign-feedback-title" name="assign_feedback_title" value="{{feedback.title}}">
             <input type="hidden" id="assign-feedback-cid" name="assign_feedback_cid" value="{{feedback.cid}}">
             <input type="hidden" id="assign-feedback-type" name="assign_feedback_type" value="{{feedback.feedback_type}}">
             <input type="hidden" id="assign-feedback-location-name" name="assign_feedback_location_name" value="{{feedback.location.location_name}}">
@@ -346,7 +346,7 @@ $("#assign-feedback-to").removeClass('error-box');
     if (emailFilter.test(email) && ( email != "")) {
     
             datastring = {}
-            datastring['assign_feedback_title'] = $('#assign-feedback-tittle').val();
+            datastring['assign_feedback_title'] = $('#assign-feedback-title').val();
             datastring['assign_feedback_cid'] = $('#assign-feedback-cid').val();
             datastring['assign_feedback_type'] = $('#assign-feedback-type').val();
             datastring['feedback_location_name'] = $('#assign-feedback-location-name').val();
