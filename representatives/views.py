@@ -882,8 +882,8 @@ def export_appointments_with_schedule_appointments(request):
         s_date = from_date
         while True:
             if s_date <= to_date:
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' F|AV')
-                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' RS')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' Booked|Opened')
+                collumn_attr.append((datetime.strftime(s_date, "%d/%m/%Y")) + ' Rescheduled')
                 s_date = s_date + timedelta(days=1)
             else:
                 break
@@ -945,7 +945,7 @@ def export_appointments_with_schedule_appointments(request):
             total_appointments = dict()
             for data in schedule_data:
                 requested_date = data.get('rescheduled_appointment_in_ist')
-                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' RS')
+                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' Rescheduled')
                 _time = datetime.strftime(requested_date, "%H:%M")
                 booked_count = data.get('dcount')
                 if _date in total_appointments:
@@ -963,7 +963,7 @@ def export_appointments_with_schedule_appointments(request):
                 # time zone conversion
                 requested_date = slot.date_in_utc
                 requested_date -= timedelta(minutes=diff_in_minutes)
-                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' AV|F')
+                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' Booked|Opened')
                 _time = datetime.strftime(requested_date, "%H:%M")
                 availability_count = slot.availability_count
                 booked_count = slot.booked_count
