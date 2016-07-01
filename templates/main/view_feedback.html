@@ -53,10 +53,13 @@ Manage Help
 
 {% block content %}
 
-{% if picasso %}
-  {% include 'layouts/picasso_header.html'%}
-{% endif %}
+    {% if picasso %}
+      {% include 'layouts/picasso_header.html'%}
+    {% endif %}
 <!-- content-region -->
+
+{% if "FEEDBACK" in request.session.groups %} <!--user bellongs group/not-->
+
 <section class="content-region inner-page-wide">
   <div class="container-fluid">
   <h1>Feedback Details</h1>  
@@ -206,11 +209,14 @@ Manage Help
         
         <form class="form-inline" id="assinee-form" action="{% url 'main.views.assign_feedback' %}" method="">
         {% csrf_token %}
-            <div class="well" style="padding-bottom:1px;">
-                <label for="assign-feedback-to" style="margin-top: 10px;font-size: larger;width: inherit;">Please assign this feedback to a manager/TL for resolve</label>
+            <div class="std-sub-title" style="padding-bottom:1px;">
+               
+                 <label for="assign-feedback-to" style="font-family:'robotoblack';margin-top: 10px;font-size:inherit;width: inherit;color:black;">Please assign this feedback to a manager/TL for resolve:</label>
                  <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
                  placeholder="abc@regalix-inc.com" style="height: 38px;" >
-                 <input style="margin-top:-21px;"class="btn btn-info" type="button" name="" id="submit-assignee-form" value="Assign">
+                 <input style="margin-top: -20px;height: 36px;margin-left: 11px; padding-top: 6px;" 
+                 class="btn std-btn sm-btn" type="button" name="" id="submit-assignee-form" value="Assign">
+            
             </div>
         
                 <!-- lead details -->
@@ -280,10 +286,19 @@ Manage Help
             <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait</span>
             </div>
         </div>
-
-
-
 </section>
+
+{% else %} <!--  checking user bellongs group or not -->
+
+
+      
+      <section class="content-region inner-page-wide">
+            <div style="height:90vh; class="container-fluid">
+            <h2  style="">Sorry you are not authorized to view FEEDBACK</h2>
+            </div>
+      </section>
+{% endif %}<!--  checking user bellongs group or not -->
+
 <!-- content-region ends --> 
 {% endblock content %}
 
