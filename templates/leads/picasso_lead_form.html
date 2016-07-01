@@ -168,8 +168,8 @@
               <label for="language_selector">Language Selector</label>
                 <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language" onchange="optSelect.call(this, event)">
                   <option value="English">English</option>
-<!--                   <option value="German">German</option>
-                  <option value="French">French</option> -->
+                  <option value="German">German</option>
+                  <option value="French">French</option>
                 </select>
             </div>
            <div class="col-md-6">
@@ -241,8 +241,9 @@
             </div>
            
             <div class="col-md-4" style="width:429px;">
-              <label>My Cases Alias</label>
-              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="Ex: fred.fs@google.com" onfocusout="checkout()">  
+              <label>Other Googler email</label><!--  it was my cases alias previously -->
+              <input id="cases_alias" class="form-control" type="text" name="cases_alias" 
+              placeholder="Ex: my Cases alias, my podmate, etc." onfocusout="checkout()">  
             </div>
 
           </div>
@@ -390,5 +391,41 @@ function checkout(){
 }
 
 
+
+
+$('#language_selector').click(function()
+  {if($('#language_selector').val()!="English")
+  {
+    $('#advertiser_email').removeAttr('value');
+    $("#advertiser_email").attr("disabled", "true");
+    $("#checkbox3").removeClass("is-checked");
+    $("#checkbox3").attr("disabled", "true");
+    $('#advertiser_email').val('');
+    $("#remove-check").hide();
+      var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
+      removingStyle1.removeAttr('style');
+      var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
+      removingStyle2.removeAttr('style');
+      $('#checkbox33').removeClass('is-checked');
+      $("#checkbox3").hide();
+       $("#checkbox33").hide();
+      $('#advertiser_email').hide('');
+      $('#adv_mail').hide();
+  }
+    else if ($('#language_selector').val()=="English"){
+      $("#advertiser_email").removeAttr("disabled");
+      $("#checkbox3").removeAttr("disabled");
+      $("#checkbox3").show();
+      $('#advertiser_email').show('');
+      $('#adv_mail').show();
+      $("#remove-check").show();
+      $("#checkbox33").show();
+    }
+  });
+
+
 </script>
 {% endblock main_js %}
+
+mdl-checkbox__box-outline
+
