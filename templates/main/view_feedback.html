@@ -209,7 +209,7 @@ Manage Help
         
         <form class="form-inline" id="assinee-form" action="{% url 'main.views.assign_feedback' %}" method="">
         {% csrf_token %}
-            <div class="std-sub-title" style="padding-bottom:1px;">
+            <div class="std-sub-title" id="msg-display" style="padding-bottom:1px;">
                
                  <label for="assign-feedback-to" style="font-family:'robotoblack';margin-top: 10px;font-size:inherit;width: inherit;color:black;">Please assign this feedback to a manager/TL for resolve:</label>
                  <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
@@ -387,8 +387,8 @@ $("#assign-feedback-to").removeClass('error-box');
                 'data':datastring,
                 success: function(data){
                     $('#preloaderOverlay').hide();
-                    $('.well').html('');
-                    $('.well').append("<p style='color:green'>"+ data.msg+"</p>");
+                    $('#msg-display').html('');
+                    $('#msg-display').append("<p style='color:green;font-family:sans-serif;'>"+ data.msg+"</p>");
                 },failure: function(data){
                     $('#preloaderOverlay').hide();
                     alert("Please refesh the page and re assign")
