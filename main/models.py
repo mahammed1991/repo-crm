@@ -25,7 +25,6 @@ class Feedback(models.Model):
         filename = "%s.%s" % (uuid4(), ext)
         return os.path.join('feedback/', filename)
 
-    @staticmethod
     def default_lead_owner():
         try:
             lead_owner = User.objects.get(email=settings.DEFAULT_LEAD_OWNER_EMAIL)
@@ -66,6 +65,8 @@ class Feedback(models.Model):
     sf_lead_id = models.CharField(max_length=50, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
+
+    assigned_to = models.ForeignKey(User, related_name='assigned_to', null=True)
 
     @property
     def filename(self):
@@ -445,6 +446,8 @@ class PicassoEligibilityMasterUpload(models.Model):
     class Meta:
         db_table = 'picasso_eligibilty_master_upload'
         verbose_name_plural = 'Picasso Eligibilty master upload'
+
+
 
 
 

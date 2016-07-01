@@ -133,19 +133,24 @@ Manage Help
             {% endif %}
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Created Date</label>
+                <label>Created On</label>
                 <div class="value">{{feedback.created_date | date:"D, M d Y, f A" }}</div>
             </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label>Assigned To</label>
+                <div class="value">{{feedback.assigned_to}}</div>
+            </div>
+        </div>
+
     </div>    
   </div>
   <div class="feedback-details-section">
       <div class="std-sub-title">Feedback Description</div>
       <p>{{feedback.description}}</p>
   </div>
-
-<hr>
-
 
   <div class="feedback-details-section">
     {% if feedback.status == 'RESOLVED' %}
@@ -198,21 +203,27 @@ Manage Help
 {% if feedback.status != 'RESOLVED' and can_resolve %}
 <!-- assigning functionalities for feedbak super user -->
         {% if "FEEDBACK-SUPER-USER" in request.session.groups %}
-        <div class="well well-lg" >
-        <form  id="assinee-form" action="{% url 'main.views.assign_feedback' %}" method="">
+        
+        <form class="form-inline" id="assinee-form" action="{% url 'main.views.assign_feedback' %}" method="">
         {% csrf_token %}
-            Please assign this feedback to a manager/TL for resolve <input type="email" id="assign-feedback-to" name="assignee_mail" placeholder="abc@regalix-inc.com">
-            <!-- lead details -->
-            <input type="hidden" id="assign-feedback-title" name="assign_feedback_title" value="{{feedback.title}}">
-            <input type="hidden" id="assign-feedback-cid" name="assign_feedback_cid" value="{{feedback.cid}}">
-            <input type="hidden" id="assign-feedback-type" name="assign_feedback_type" value="{{feedback.feedback_type}}">
-            <input type="hidden" id="assign-feedback-location-name" name="assign_feedback_location_name" value="{{feedback.location.location_name}}">
-            <input type="hidden" id="assign-feedback-createdate" name="assign_feedback_createdate" value="{{feedback.created_date | date:'D, M d Y, f A' }}">
-            <input type="hidden" name="feedback_id_number" id="feedback_id_number" value="{{feedback.id}}">
-            <!-- end of lead details -->
-            <input type="button" name="" id="submit-assignee-form" value="Assign">
-            </form>
+            <div class="well" style="padding-bottom:1px;">
+                <label for="assign-feedback-to" style="margin-top: 10px;font-size: larger;width: inherit;">Please assign this feedback to a manager/TL for resolve</label>
+                 <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
+                 placeholder="abc@regalix-inc.com" style="height: 38px;" >
+                 <input style="margin-top:-21px;"class="btn btn-info" type="button" name="" id="submit-assignee-form" value="Assign">
             </div>
+        
+                <!-- lead details -->
+                <input type="hidden" id="assign-feedback-title" name="assign_feedback_title" value="{{feedback.title}}">
+                <input type="hidden" id="assign-feedback-cid" name="assign_feedback_cid" value="{{feedback.cid}}">
+                <input type="hidden" id="assign-feedback-type" name="assign_feedback_type" value="{{feedback.feedback_type}}">
+                <input type="hidden" id="assign-feedback-location-name" name="assign_feedback_location_name" value="{{feedback.location.location_name}}">
+                <input type="hidden" id="assign-feedback-createdate" name="assign_feedback_createdate" value="{{feedback.created_date | date:'D, M d Y, f A' }}">
+                <input type="hidden" name="feedback_id" id="feedback_id" value="{{feedback.id}}">
+                <!-- end of lead details -->
+                
+            </form>
+            
         {% endif %}
 
   <!-- end of assigning functionality for feed back super user -->
@@ -352,20 +363,21 @@ $("#assign-feedback-to").removeClass('error-box');
             datastring['feedback_location_name'] = $('#assign-feedback-location-name').val();
             datastring['assign_feedback_createddate'] = $('#assign-feedback-createdate').val();
             datastring['assignee_mail'] = $('#assign-feedback-to').val();
-            datastring['feedback_id_number'] = $('#feedback_id_number').val();
+            datastring['feedback_id'] = $('#feedback_id').val();
             $('#preloaderOverlay').show();
             $.ajax({
-            'url': "/main/assign-feedback",
-            'type': 'GET',
-            'dataType': 'JSON',
-            'data':datastring,
-            success: function(data){
-            $('#preloaderOverlay').hide();
-            $('.well').html('');
-            $('.well').append("<p style='color:green'>"+ data.msg+"</p>");
-            },failure: function(data){
-            alert("Please refesh the page and re assign")
-            },
+                'url': "/main/assign-feedback",
+                'type': 'GET',
+                'dataType': 'JSON',
+                'data':datastring,
+                success: function(data){
+                    $('#preloaderOverlay').hide();
+                    $('.well').html('');
+                    $('.well').append("<p style='color:green'>"+ data.msg+"</p>");
+                },failure: function(data){
+                    $('#preloaderOverlay').hide();
+                    alert("Please refesh the page and re assign")
+                },
             })
          }
     else {

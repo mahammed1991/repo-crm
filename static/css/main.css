@@ -2210,7 +2210,7 @@ tr.table_bg {
 	width:9%;
 }
 .feedback-status-table th:nth-child(3) {
-	width:26%;
+	width:20%;
 }
 .feedback-status-table th:nth-child(4) {
 	width:10%;
@@ -2222,17 +2222,22 @@ tr.table_bg {
 	width:10%;
 }
 .feedback-status-table th:nth-child(7) {
-	width:8%;
+	width:7%;
 }
 .feedback-status-table th:nth-child(8) {
-	width:8%;
+	width:7%;
 }
 .feedback-status-table th:nth-child(9) {
-	width:8%;
+	width:7%;
 }
 .feedback-status-table th:nth-child(10) {
 	width:7%;
 }
+
+.feedback-status-table th:nth-child(11) {
+	width:9%;
+}
+
 .action-item {
 	font-size:18px;
 	color:#109d59 !important;
