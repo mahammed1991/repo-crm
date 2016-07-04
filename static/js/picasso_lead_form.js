@@ -420,6 +420,11 @@ function resetPicasso() {
   $('#additional_notes').val('');
   $('#comp_url_1').val('');
   $('#comp_url_2').val('');
+
+          $("#language_selector").html('');
+          $("#language_selector").append('<option value="English">English</option>');
+          $("#language_selector").append('<option value="German">German</option>');
+          $("#language_selector").append('<option value="French">French</option>');
   
 }
 
@@ -451,6 +456,11 @@ function resetBolt() {
   $('#additional_notes').val('');
   $('#comp_url_1').val('');
   $('#comp_url_2').val('');
+
+          $("#language_selector").html('');
+          $("#language_selector").append('<option value="English">English</option>');
+          $("#language_selector").append('<option value="French">French</option>');
+
 }
 /// code for restricted CID's
 function checkID()
@@ -639,3 +649,4 @@ function objectiveValidation(){
         return false;
       }
 }
+
