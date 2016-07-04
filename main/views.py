@@ -720,7 +720,7 @@ def create_feedback(request, lead_id=None):
 
 
 def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_resolved=False):
-    mail_subject = "Feedback - " + feedback.title
+    mail_subject = "Feedback - " + feedback.title + str(datetime.today().date())
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     if feedback.code_type != 'WPP':
         signature = 'Tag Team'
@@ -768,17 +768,21 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     # get feedback user manager and lead owner managers information
     bcc = set()
 
-    mail_to = set([
-        'g-crew@regalix-inc.com',
-        'rwieker@google.com',
-        'sabinaa@google.com',
-        'vsharan@regalix-inc.com',
-        'babla@regalix-inc.com',
-        feedback.lead_owner.email,
-        request.user.email,
-        feedback.user.email,
-        'khengg@google.com'
-    ])
+    if comment:
+        feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+        mail_to = set([ feedback_super_user_group ])
+    else:
+        mail_to = set([
+            'g-crew@regalix-inc.com',
+            'rwieker@google.com',
+            'sabinaa@google.com',
+            'vsharan@regalix-inc.com',
+            'babla@regalix-inc.com',
+            feedback.lead_owner.email,
+            request.user.email,
+            feedback.user.email,
+            'khengg@google.com'
+        ])
 
     mail_from = request.user.email
 
@@ -906,6 +910,7 @@ def comment_feedback(request, id):
     comment.feedback = feedback
     comment.comment = request.POST['comment']
     comment.comment_by = request.user
+
     if action_type == 'Resolved':
         comment.feedback_status = 'RESOLVED'
         comment.save()
@@ -2008,37 +2013,37 @@ def assign_feedback(request):
         assignee = request.GET.get('assignee_mail')
         title = request.GET.get('assign_feedback_title')
         cid = request.GET.get('assign_feedback_cid')
-        feedbacktype = request.GET.get('assign_feedback_type')
+        feedback_type = request.GET.get('assign_feedback_type')
         loaction = request.GET.get('feedback_location_name')
         created_date = request.GET.get('assign_feedback_createddate')
-        feedback_lead_id = request.GET.get('feedback_id_number');
+        feedback_id = request.GET.get('feedback_id');
 
-        
-        # mailing functionolities
-        feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_lead_id}))
-        mail_from = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
-        mail_to = [ str(assignee) , str(request.user.email)]
-        specific_date = datetime.today().date()
-        mail_subject = "Lead Feedback is assigned to you to resolve " + str(specific_date)
-        mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
-                                    'title': title, 
-                                    'cid':cid, 'feedbacktype':feedbacktype, 
-                                    'loaction':loaction,
-                                    'url_link':feedback_url,
-                                    'created_date':created_date}))
-
-        bcc = set()
-        attachments = list()
-        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
-        
-        assiging_feedback(request, assignee, id=feedback_lead_id) # saving assigning process
-
-        response = {'success': True, 'msg':'Mail sent succesfully'}
-        return HttpResponse(json.dumps(response))
-    response = {'success': False,}
+        user = User.objects.get(email=assignee)
+        if user:
+            try:
+                Feedback.objects.select_for_update().filter(id=feedback_id).update(assigned_to = user)
+                # mailing functionolities
+                feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
+                mail_from = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
+                mail_to = [ str(assignee) , str(request.user.email)]
+                mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
+                                        'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
+                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date}))
+                bcc = set()
+                attachments = list()
+                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+                assiging_feedback(request, assignee, id=feedback_id) # saving assigning process
+                response = {'success': True, 'msg':'Succesfully assigned'}
+                return HttpResponse(json.dumps(response))
+            except ObjectDoesNotExist, e:
+                print e
+                response = {'success': False,'msg':'failed to assign'}
+                return HttpResponse(json.dumps(response))
+    response = {'success': False,'msg':'failed to assign. Server error please try after sometime.'}
     return HttpResponse(json.dumps(response))
 
-
+        
 def assiging_feedback(request, assignee, id):
     assigned_by = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
     feedback =  Feedback.objects.get(id=id)
@@ -2049,3 +2054,4 @@ def assiging_feedback(request, assignee, id):
     feedback_assigning_ascomment.save()
     #return redirect('main.views.view_feedback', id=id)
     return True
+
