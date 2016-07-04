@@ -27,53 +27,55 @@
           min-height: 401px;
           padding-bottom:20px; 
         }
-        #pop1,#pop2,#pop3,#pop4,#pop5,#pop6,#pop7{
-          display: none;
-          background: skyblue;
-          margin-top: -150px !important;
-          color: white;
-        }
-        #pop1 #pop2 #pop3 #pop4 #pop5 #pop6 #pop7 table tr,td,th{
-          border: 2px solid white;
+
+        .tool {
+              position: relative;
+              display: inline-block;
+          }
+
+        .tooltiptexttable tr,td,th{
+          border: 2px solid black;
           padding: 0px 5px;
+          color: black;
           text-align: left;
-          font-style: italic;
-        }
-        #ui_ux:hover #pop1{
-          display: block;
-          position: fixed;
-        }
-        #design:hover #pop2{
-          display: block;
-          position: fixed;
-          margin-top: -215px !important;
-        }
-        #develop:hover #pop3{
-          display: block;
-          position: fixed;
-          margin-top: -190px !important;
-        }
-        #test:hover #pop4{
-          display: block;
-          position: fixed;
-          margin-left: 40px;
-          margin-top: -105px !important;
-        }
-        #stage:hover #pop5{
-          display: block;
-          position: fixed;
-        }
-        #implement:hover #pop6{
-          display: block;
-          position: fixed;
-        }
-        #self_develop:hover #pop7{
-          display: block;
-          position: fixed;
-          margin-top: -85px !important;
         }
 
-
+        #tooltiptext1,#tooltiptext2,#tooltiptext3,#tooltiptext4,#tooltiptext5,#tooltiptext6,#tooltiptext7 {
+              visibility: hidden;
+              width: 285px;
+              background: skyblue;
+              font-style: italic;
+              /* Position the tooltip */
+              position: absolute;
+              z-index: 1;
+              bottom: 0.1%;
+              
+              margin-left: -80px;
+          }
+          .tool:hover #tooltiptext1 {
+              visibility: visible;
+          }
+          .tool:hover #tooltiptext2 {
+              visibility: visible;
+          }
+          .tool:hover #tooltiptext3 {
+              visibility: visible;
+          }
+          .tool:hover #tooltiptext4 {
+              margin-left: -30px;
+              width: 188px;
+              visibility: visible;
+          }
+          .tool:hover #tooltiptext5 {
+              visibility: visible;
+          }
+          .tool:hover #tooltiptext6 {
+              visibility: visible;
+          }
+          .tool:hover #tooltiptext7 {
+              width: 275px;
+              visibility: visible;
+          }
     </style>
 {% endblock main_css %}
 
@@ -107,47 +109,47 @@
           </div>
 
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="ui_ux"><div class="circle_blue" id='in_ui_ux_review'>{{lead_status_dict.in_ui_ux_review}}</div>
-            <div id="pop1"></div></div>
+            <div class="tool"><div class="circle_blue" id='in_ui_ux_review'>{{lead_status_dict.in_ui_ux_review}}</div>
+            <div id="tooltiptext1"></div></div>
             <div class="sum-lbl">UI/UX Review</div>
           </div>
-          <!-- New Fields -->
+         
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="design"><div class="circle_red" id='in_design'>
+            <div class="tool"><div class="circle_red" id='in_design'>
             {{lead_status_dict.in_design}}</div>
-            <div id="pop2"></div></div>
+            <div id="tooltiptext2"></div></div>
             <div class="sum-lbl">Design</div>
           </div>
 
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="develop"><div class="circle_lgreen" id="in_development">{{lead_status_dict.in_development}}</div>
-            <div id="pop3"></div></div>
+            <div class="tool"><div class="circle_lgreen" id="in_development">{{lead_status_dict.in_development}}</div>
+            <div id="tooltiptext3"></div></div>
             <div class="sum-lbl">Development</div>
           </div>
 
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="test"><div class="circle" id='in_testing'>
+            <div class="tool"><div class="circle" id='in_testing'>
             {{lead_status_dict.in_testing}}</div>
-            <div id="pop4"></div></div>
+            <div id="tooltiptext4"></div></div>
             <div class="sum-lbl">Testing</div>
           </div>
 
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="stage"><div class="circle_green" id="in_stage">
+            <div class="tool"><div class="circle_green" id="in_stage">
             {{lead_status_dict.in_stage}}</div>
-            <div id="pop5"></div></div>
+            <div id="tooltiptext5"></div></div>
             <div class="sum-lbl">Staging</div>
           </div>
 
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="implement"><div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
-            <div id="pop6"></div></div>
+            <div class="tool"><div class="circle_purple" id="implemented">{{lead_status_dict.implemented}}</div>
+            <div id="tooltiptext6"></div></div>
             <div class="sum-lbl">Implementing</div>
           </div>
 
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
-            <div id="self_develop"><div class="circle_orange" id="in_self_development">{{lead_status_dict.in_self_development}}</div>
-            <div id="pop7"></div></div>
+            <div class="tool"><div class="circle_orange" id="in_self_development">{{lead_status_dict.in_self_development}}</div>
+            <div id="tooltiptext7"></div></div>
             <div class="sum-lbl">Self Development</div>
           </div>      
           <div class="col-xs-3 col-sm-3 col-md-3 placeholder">
@@ -323,7 +325,7 @@ function olarkShow(){
   $('#pop').css('display','none');
 });*/
 function setWppLeadSummary(lead_status){
-  $('#pop1').html("<table>"+
+  $('#tooltiptext1').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['In_Queue']+ "</td></tr>" +
     "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['01. UI/UX']['Attempting_Contact']+ "</td></tr>" +
@@ -334,7 +336,7 @@ function setWppLeadSummary(lead_status){
   "</table>");
 
 
-  $('#pop2').html("<table>"+
+  $('#tooltiptext2').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['In_Queue']+ "</td></tr>" +
     "<tr><td>" + "Design In Progress" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Design_In_Progress']+ "</td></tr>" +
@@ -346,7 +348,7 @@ function setWppLeadSummary(lead_status){
     "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['02. Design']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
   "</table>");
 
-  $('#pop3').html("<table>"+
+  $('#tooltiptext3').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + "In Queue - Website Archive" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['In_Queue_Website_Archive']+ "</td></tr>" +
     "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['03. Development']['Attempting_Contact']+ "</td></tr>" +
@@ -359,7 +361,7 @@ function setWppLeadSummary(lead_status){
   "</table>");
 
 
-  $('#pop4').html("<table>"+
+  $('#tooltiptext4').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['04. Testing']['In_Queue']+ "</td></tr>" +
     "<tr><td>" + "Testing In Progress" + "</td><td>" + lead_status['lead_sub_status']['04. Testing']['Testing_In_Progress']+ "</td></tr>" +
@@ -368,7 +370,7 @@ function setWppLeadSummary(lead_status){
   "</table>");
 
 
-  $('#pop5').html("<table>"+
+  $('#tooltiptext5').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['In_Queue']+ "</td></tr>" +
     "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['05. Staging']['Attempting_Contact']+ "</td></tr>" +
@@ -379,7 +381,7 @@ function setWppLeadSummary(lead_status){
   "</table>");
 
 
-  $('#pop6').html("<table>"+
+  $('#tooltiptext6').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + "In Queue" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['In_Queue']+ "</td></tr>" +
     "<tr><td>" + "Attempting Contact" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Attempting_Contact']+ "</td></tr>" +
@@ -389,7 +391,7 @@ function setWppLeadSummary(lead_status){
     "<tr><td>" + "Inactive-Unable to Reach Customer" + "</td><td>" + lead_status['lead_sub_status']['06. Implementation']['Inactive_Unable_to_Reach_Customer']+ "</td></tr>" +
   "</table>");
 
-  $('#pop7').html("<table>"+
+  $('#tooltiptext7').html("<table>"+
     "<tr><th>Sub Status</th><th>Count</th></tr>"+
     "<tr><td>" + " Self Development - Complete" + "</td><td>" + lead_status['lead_sub_status']['07. Self Development']['Self_Development_Complete']+ "</td></tr>" +
     "<tr><td>" + "Self Development - To be Verified" + "</td><td>" + lead_status['lead_sub_status']['07. Self Development']['Self_Development_To_be_Verified']+ "</td></tr>" +
