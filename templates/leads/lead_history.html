@@ -174,7 +174,7 @@
 		  <br>
 		  <div id="myCarousel" class="carousel slide" data-ride="carousel">  
 
-		    <!-- Wrapper for slides -->
+		     Wrapper for slides -->
 		    <!-- <div class="carousel-inner" role="listbox">
 		      	<div class="item active">
 	      	<div class="row">
@@ -218,7 +218,7 @@
         </div>
       </div>
     </div>
-  <div align="center">    <!-- Left and right controls -->
+  <div align="center">    Left and right controls -->
     <!-- <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
       <img src="{% static 'images/left-icon.jpg' %}" alt="" width="17" height="17" />
     </a>
@@ -232,9 +232,9 @@
 		</div><div class="clearfix"></div>
 </div>
 		<div class="tatmain">
-			<h1 class="leadheader">TAT</h1>
+			<h1 class="leadheader">Staging Details</h1>
 			<div class="tat">
-			<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+			<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 				<div class=""><table class="table table-bordered table-responsive">
 					<tbody>
 					<tr class="theading">
@@ -250,7 +250,8 @@
 					   </td>
 					</tr> 
 					</tbody>
-					</table></div>
+				</table></div></div>
+			<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 					<div class=""><table class="table table-bordered table-responsive">
 					<tbody>
 					<tr class="theading">
@@ -266,22 +267,7 @@
 					</tbody>
 					</table></div>
 			</div>
-			<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-				<div class="">
-				<table class="table table-bordered table-responsive">
-					<tbody>
-						<tr class="theading">
-						  <td>Overall Lead Status</td>
-						  <td class="eventd">TAT (Days)</td>
-						</tr>
-						{% for key, value in tat_by_status %}
-							<tr class="even">
-							  <td>{{key}}</td>
-							  <td class="eventd">{{value.tat}}</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table></div></div>
+
 				<div class="clearfix"></div>
 			</div>
 		</div>

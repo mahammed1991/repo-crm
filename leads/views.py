@@ -2537,28 +2537,22 @@ def get_lead_status_by_ldap(request):
 def lead_history(request, lid):
     template_args = dict()
     lead_status = collections.OrderedDict()
-    lead_status['Open'] = {'title': 'Just received, studying requirements'}
-    lead_status['In UI/UX Review'] = {'title': 'Awaiting response from advertiser on files/instructions'}
-    lead_status['On Hold'] = {'title': 'On Hold'}
-    lead_status['In Mockup'] = {'title': 'Regalix team designing the Mock Up'}
-    lead_status['Mockup Review'] = {'title': 'Google CSRs &amp; Advertisers reviewing mock up'}
-    lead_status['In Development'] = {'title': 'Regalix team coding the website'}
-    lead_status['In Stage'] = {'title': 'On a staging server for feedback from the advertiser'}
-    lead_status['In Stage - Adv Implementation'] = {'title': 'In Stage advance to Implementation'}
-    lead_status['In A/B Test'] = {'title': 'A/B Test launched on Analytics/Adwords'}
-    lead_status['Implemented'] = {'title': 'New website launched'}
+    lead_status['01. UI/UX'] = {'title': 'arun'}
+    lead_status['02. Design'] = {'title': ''}
+    lead_status['03. Development'] = {'title': ''}
+    lead_status['04. Testing'] = {'title': ''}
+    lead_status['05. Staging'] = {'title': ''}
+    lead_status['06. Implementation'] = {'title': ''}
+    lead_status['07. Self Development'] = {'title': ''}
     lead = None
     try:
         lead = WPPLeads.objects.get(sf_lead_id=lid)
         is_ab_test = lead.is_ab_test
+        lead_status['01. UI/UX']['title'] = lead.lead_sub_status
         lead_status[lead.lead_status].update({'status': 'PROGRESS'})
         template_args['lead'] = lead
     except ObjectDoesNotExist:
         template_args['error'] = 'Lead does not exist'
-
-    tat_by_status = collections.OrderedDict()
-    for key, value in lead_status.iteritems():
-        tat_by_status[key] = {'tat': '-'}
 
     # Get Lead History by WPP Lead Status
     field = 'WPP_Lead_Status__c'
@@ -2580,34 +2574,15 @@ def lead_history(request, lid):
             tat_my_dict[old_status] += status_tat
             last_modified_date = status_modified_date
 
-    if history['records']:
-        final_new_status = history['records'][-1]['NewValue']
-        final_prev_status = history['records'][-1]['OldValue']
 
-        if final_new_status == 'On Hold':
-            lead_status[final_prev_status].update({'status': 'PAUSE'})
-            indx = lead_status.keys().index(final_prev_status)
-        else:
-            indx = lead_status.keys().index(final_new_status)
-            lead_status[lead_status.keys()[indx]].update({'status': 'PROGRESS'})
-    else:
-        indx = lead_status.keys().index('Open')
+        indx = lead_status.keys().index(lead.lead_status)    
+        lead_status[lead_status.keys()[indx]].update({'status': 'PROGRESS'})
 
     for i in range(0, indx):
         lead_status[lead_status.keys()[i]].update({'status': 'DONE'})
     for i in range(indx + 1, len(lead_status.keys())):
         lead_status[lead_status.keys()[i]].update({'status': 'FUTURE'})
 
-    for key, value in tat_my_dict.iteritems():
-        tat_by_status[key]['tat'] = value
-
-    del lead_status['On Hold']
-
-    if is_ab_test != 'Yes':
-        del lead_status['In A/B Test']
-        del tat_by_status['In A/B Test']
-
-    template_args['tat_by_status'] = tat_by_status.iteritems()
     template_args['lead_status'] = lead_status.iteritems()
 
     if template_args['lead'].company:

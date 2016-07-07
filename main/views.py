@@ -237,13 +237,13 @@ def main_home(request):
         wpp_feedback_list = dict()
         wpp_feedbacks, wpp_feedback_list = get_feedbacks(request.user, 'WPP')
 
-        wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['Implemented'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
-        wpp_report['TOTAL'] = (wpp_details['wpp_lead_status_analysis']['Implemented'] / wpp_details['wpp_lead_status_analysis']['TOTAL']) * 100 if wpp_details['wpp_lead_status_analysis']['TOTAL'] else 0
+        wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['06. Implementation'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
+        wpp_report['TOTAL'] = (wpp_details['wpp_lead_status_analysis']['06. Implementation'] / wpp_details['wpp_lead_status_analysis']['TOTAL']) * 100 if wpp_details['wpp_lead_status_analysis']['TOTAL'] else 0
 
         # print wpp_details['wpp_lead_status_analysis']
 
-        key_dict = {'Open': 'open', 'On Hold': 'on_hold', 'In UI/UX Review': 'in_ui_ux_review', 'In Stage - Adv Implementation': 'in_stage_adv_impl', 'In Mockup': 'in_mockup', 'TOTAL': 'total',
-                    'Mockup Review': 'mockup_review', 'In Development': 'in_development', 'In Stage': 'in_statge', 'In A/B Test': 'in_ab_test', 'Implemented': 'implemented', 'Deferred': 'deferred'}
+        key_dict = {'TOTAL': 'total','01. UI/UX': 'in_ui_ux', '02. Design': 'in_design', '03. Development': 'in_development', '04. Testing': 'in_testing', '05. Staging': 'in_staging', '06. Implementation': 'in_implementation', '07. Self Development': 'in_self_development'}
+
 
         wpp_lead_dict = dict()
         for key, value in key_dict.items():

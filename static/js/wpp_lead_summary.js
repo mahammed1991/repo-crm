@@ -7,29 +7,9 @@
       showAll();
     })
 
-    $('#Open').click(function(){
+    $('#InSelfDevelopment').click(function(){
       hideAll();
-      $('.open').show(); 
-    })
-
-    $('#OnHold').click(function(){
-      hideAll();
-      $('.onhold').show();
-    })
-
-    $('#InMockup').click(function(){
-      hideAll();
-      $('.inmockup').show();
-    })
-
-    $('#MockupReview').click(function(){
-      hideAll();
-      $('.mockupreview').show();
-    })
-
-    $('#Deferred').click(function(){
-      hideAll();
-      $('.deferred').show();
+      $('.inselfdevelopment').show();
     })
 
     $('#InUIUXReview').click(function(){
@@ -37,9 +17,9 @@
       $('.inuiuxreview').show()
     })
 
-    $('#InStageAdvImpl').click(function(){
+    $('#InDesign').click(function(){
       hideAll();
-      $('.instageadvimpl').show()
+      $('.indesign').show()
     })
     $('#InDevelopment').click(function(){
       hideAll();
@@ -50,41 +30,33 @@
       hideAll();
       $('.instage').show()
     })
-    $('#ABTesting').click(function(){
+    $('#InTesting').click(function(){
       hideAll();
-      $('.ab-testing').show()
+      $('.intest').show()
     })
     $('#Implemented').click(function(){
       hideAll();
-      $('.impl').show()
+      $('.inimplement').show()
     })
 
     function showAll(){
-      $('.open').show()
-      $('.onhold').show()
-      $('.inmockup').show()
-      $('.mockupreview').show()
-      $('.deferred').show()
-      $('.inuiuxreview').show()
-      $('.instageadvimpl').show()
       $('.indevelopment').show()
+      $('.indesign').show()
+      $('.inuiuxreview').show()
       $('.instage').show()
-      $('.ab-testing').show()
-      $('.impl').show()
+      $('.inimplement').show()
+      $('.intest').show()
+      $('.inselfdevelopment').show()
     }
 
     function hideAll(){
-      $('.open').hide()
-      $('.onhold').hide()
-      $('.inmockup').hide()
-      $('.mockupreview').hide()
-      $('.deferred').hide()
-      $('.inuiuxreview').hide()
-      $('.instageadvimpl').hide()
       $('.indevelopment').hide()
+      $('.indesign').hide()
+      $('.inuiuxreview').hide()
       $('.instage').hide()
-      $('.ab-testing').hide()
-      $('.impl').hide()
+      $('.inimplement').hide()
+      $('.intest').hide()
+      $('.inselfdevelopment').hide()
     }
 
 

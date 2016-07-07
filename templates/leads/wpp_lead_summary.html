@@ -165,17 +165,16 @@
           <div class="col-xs-10 col-sm-12 col-md-10">
             <ul class="pagination pull-left">
               <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
-              <li><a class="page" href="javascript:void(0);" id='Open'>Open</a></li>
-              <li><a class="page" href="javascript:void(0);" id='InUIUXReview'>In UI/UX Review</a></li>
-              <li><a class="page" href="javascript:void(0);" id='OnHold'>On Hold</a></li>
-              <li><a class="page" href="javascript:void(0);" id='InMockup'>In Mockup</a></li>
-              <li><a class="page" href="javascript:void(0);" id='MockupReview' >Mockup Review</a></li>
-              <li><a class="page" href="javascript:void(0);" id='Deferred'>Deferred</a></li>
-              <li><a class="page" href="javascript:void(0);" id='InDevelopment'>In Development</a></li>
-              <li><a class="page" href="javascript:void(0);" id='InStage'>In Stage</a></li>
-              <li><a class="page" href="javascript:void(0);" id='InStageAdvImpl'>In Stage - Adv Implementation</a></li>
-              <li><a class="page" href="javascript:void(0);" id='ABTesting'>In A/B Test</a></li>
-              <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
+              
+              <li><a class="page" href="javascript:void(0);" id='InUIUXReview'>UI/UX Review</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InDesign'>Design</a></li>
+
+              <li><a class="page" href="javascript:void(0);" id='InDevelopment'>Development</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InTesting'>Testing</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InStage'>Staging</a></li>
+              
+              <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemention</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InSelfDevelopment'>Self Development</a></li>
             </ul>
             <div class="table-search" style="margin-left: 01px !important;">
               <input type="text" class="form-control input-sm" id="wppleadSearch" name="wppleadSearch" placeholder="   Filter by text" />
@@ -431,36 +430,24 @@ function setWppLeadSummary(lead_status){
     for(i=0; i<leads.length; i += 1){
         c = i + 1
 
-        if(leads[i].lead_status == 'Open' ){
-          counter = '<tr class="status-open open searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-       }
-
-       else if (leads[i].lead_status == 'In UI/UX Review'){
+       if (leads[i].lead_status == '01. UI/UX'){
          counter =  '<tr class="status-inuiuxreview inuiuxreview searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }
-
-
-       else if (leads[i].lead_status == 'On Hold'){
-         counter =  '<tr class="status-onhold onhold searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'In Mockup'){
-        counter = '<tr class="status-inmockup  inmockup searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'Mockup Review') {
-        counter = '<tr class="status-mockupreview mockupreview searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
-        }else if (leads[i].lead_status == 'Deferred') {
-        counter = '<tr class="status-deferred deferred searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+       else if (leads[i].lead_status == '02. Design'){
+         counter =  '<tr class="status-indesign indesign searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }
-        else if (leads[i].lead_status == 'In Development') {
+        else if (leads[i].lead_status == '03. Development') {
         counter = '<tr class="status-indevelopment indevelopment searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
-        }else if(leads[i].lead_status == 'In Stage'){
-          counter = '<tr class="status-instage instage searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        }else if(leads[i].lead_status == '04. Testing'){
+          counter = '<tr class="status-intest intest searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
-        else if (leads[i].lead_status == 'In Stage - Adv Implementation'){
-         counter =  '<tr class="status-instageadvimpl instageadvimpl searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        else if (leads[i].lead_status == '05. Staging'){
+         counter =  '<tr class="status-instage instage searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
         }
-        else if(leads[i].lead_status == 'In A/B Test'){
-          counter = '<tr class="status-ab-testing ab-testing searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        else if(leads[i].lead_status == '06. Implementation'){
+          counter = '<tr class="status-inimplement inimplement searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }else{
-          counter = '<tr class="status-impl impl searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+          counter = '<tr class="status-inselfdevelopment inselfdevelopment searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
         }
        sf_lead_id = leads[i].sf_lead_id
        if (leads[i].code_type == 'WPP'){
@@ -491,7 +478,7 @@ function setWppLeadSummary(lead_status){
         treatmentType = '<td class="hidden-xs hidden-sm">N/A</td>'
       }
 
-      status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
+      status = '<td><span class="status-txt-color">'+ leads[i].lead_status.replace(/[0-9]/g, '').replace(/[^a-zA-Z0-9]\s/g, '') +'</span></td>'
       action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat(' + leads[i].lead_id +') id="lead_id-' + leads[i].lead_id +'"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid(' + leads[i].lead_id +')></i></a></td>'
       $('#tableBody').append(counter+other+commnet+treatmentType+status+action)
       

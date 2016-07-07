@@ -2036,13 +2036,13 @@ i.fa.fa-filter {
 	border-left: 6px solid #e57368;
 }
 .status-inuiuxreview .status-bor-color {
-	border-left: 6px solid #acacac;
+	border-left: 6px solid #77a7fb;
 }
 .status-instageadvimpl .status-bor-color {
 	border-left: 6px solid orange;
 }
-.status-inmockup .status-bor-color {
-	border-left: 6px solid #f5b400;
+.status-indesign .status-bor-color {
+	border-left: 6px solid #e57368;
 }
 .status-mockupreview .status-bor-color {
 	border-left: 6px solid #77a7fb;
@@ -2050,19 +2050,19 @@ i.fa.fa-filter {
 .status-mockupdelivered .status-bor-color {
 	border-left: 6px solid #acacac;
 }
-.status-deferred .status-bor-color {
-	border-left: 6px solid #ff33Ca;
+.status-inselfdevelopment .status-bor-color {
+	color:orange;
 }
 .status-indevelopment .status-bor-color {
 	border-left: 6px solid #99CC00;
 }
 .status-instage .status-bor-color {
-	border-left: 6px solid #11b98a;
+	border-left: 6px solid #34b67a;
 }
-.status-ab-testing .status-bor-color {
-	border-left: 6px solid #BEC98F;
+.status-intest .status-bor-color {
+	border-left: 6px solid #acacac;
 }
-.status-impl .status-bor-color {
+.status-inimplement .status-bor-color {
 	border-left: 6px solid purple;
 }
 
@@ -2070,16 +2070,16 @@ i.fa.fa-filter {
 	color:#9933FF;
 }
 .status-inuiuxreview .status-txt-color {
-	color:#acacac;
+	color:#77a7fb;
 }
-.status-instageadvimpl .status-txt-color {
+.status-instage .status-txt-color {
+	color:#34b67a;
+}
+.status-inselfdevelopment .status-txt-color {
 	color:orange;
 }
-.status-open .status-txt-color {
+.status-indesign .status-txt-color {
 	color:#e57368;
-}
-.status-inmockup .status-txt-color {
-	color:#f5b400;
 }
 .status-mockupreview .status-txt-color {
 	color:#77a7fb;
@@ -2096,10 +2096,10 @@ i.fa.fa-filter {
 .status-instage .status-txt-color {
 	color:#11b98a;
 }
-.status-ab-testing .status-txt-color {
-	color:#BEC98F;
+.status-intest .status-txt-color {
+	color:#acacac;
 }
-.status-impl .status-txt-color {
+.status-inimplement .status-txt-color {
 	color:purple;
 }
 
