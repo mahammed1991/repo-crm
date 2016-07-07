@@ -2533,6 +2533,94 @@ def get_lead_status_by_ldap(request):
     return render(request, 'leads/lead_summary.html', {})
 
 
+# @login_required
+# def lead_history(request, lid):
+#     template_args = dict()
+#     lead_status = collections.OrderedDict()
+#     lead_status['Open'] = {'title': 'Just received, studying requirements'}
+#     lead_status['In UI/UX Review'] = {'title': 'Awaiting response from advertiser on files/instructions'}
+#     lead_status['On Hold'] = {'title': 'On Hold'}
+#     lead_status['In Mockup'] = {'title': 'Regalix team designing the Mock Up'}
+#     lead_status['Mockup Review'] = {'title': 'Google CSRs &amp; Advertisers reviewing mock up'}
+#     lead_status['In Development'] = {'title': 'Regalix team coding the website'}
+#     lead_status['In Stage'] = {'title': 'On a staging server for feedback from the advertiser'}
+#     lead_status['In Stage - Adv Implementation'] = {'title': 'In Stage advance to Implementation'}
+#     lead_status['In A/B Test'] = {'title': 'A/B Test launched on Analytics/Adwords'}
+#     lead_status['Implemented'] = {'title': 'New website launched'}
+#     lead = None
+#     try:
+#         lead = WPPLeads.objects.get(sf_lead_id=lid)
+#         is_ab_test = lead.is_ab_test
+#         lead_status[lead.lead_status].update({'status': 'PROGRESS'})
+#         template_args['lead'] = lead
+#     except ObjectDoesNotExist:
+#         template_args['error'] = 'Lead does not exist'
+
+#     tat_by_status = collections.OrderedDict()
+#     for key, value in lead_status.iteritems():
+#         tat_by_status[key] = {'tat': '-'}
+
+#     # Get Lead History by WPP Lead Status
+#     field = 'WPP_Lead_Status__c'
+#     try:
+#         sf = SalesforceApi.connect_salesforce()
+#     except Exception:
+#         template_args['error'] = 'History Not exist'
+#     history = sf.query("SELECT Id, LeadID, Field, OldValue, NewValue, CreatedDate from LeadHistory WHERE LeadID = '%s' AND Field = '%s' ORDER BY CreatedDate ASC" % (lid, field))
+#     if lead:
+#         last_modified_date = lead.created_date
+#         tat_my_dict = collections.defaultdict(int)
+
+#         for i in range(0, len(history['records'])):
+#             old_status = history['records'][i]['OldValue']
+#             #  new_status = history['records'][i]['NewValue']
+#             status_modified_date = history['records'][i]['CreatedDate']
+#             status_modified_date = SalesforceApi.salesforce_date_to_datetime_format(status_modified_date)
+#             status_tat = tat_by_dates(last_modified_date, status_modified_date)
+#             tat_my_dict[old_status] += status_tat
+#             last_modified_date = status_modified_date
+
+#     if history['records']:
+#         final_new_status = history['records'][-1]['NewValue']
+#         final_prev_status = history['records'][-1]['OldValue']
+
+#         if final_new_status == 'On Hold':
+#             lead_status[final_prev_status].update({'status': 'PAUSE'})
+#             indx = lead_status.keys().index(final_prev_status)
+#         else:
+#             indx = lead_status.keys().index(final_new_status)
+#             lead_status[lead_status.keys()[indx]].update({'status': 'PROGRESS'})
+#     else:
+#         indx = lead_status.keys().index('Open')
+
+#     for i in range(0, indx):
+#         lead_status[lead_status.keys()[i]].update({'status': 'DONE'})
+#     for i in range(indx + 1, len(lead_status.keys())):
+#         lead_status[lead_status.keys()[i]].update({'status': 'FUTURE'})
+
+#     for key, value in tat_my_dict.iteritems():
+#         tat_by_status[key]['tat'] = value
+
+#     del lead_status['On Hold']
+
+#     if is_ab_test != 'Yes':
+#         del lead_status['In A/B Test']
+#         del tat_by_status['In A/B Test']
+
+#     template_args['tat_by_status'] = tat_by_status.iteritems()
+#     template_args['lead_status'] = lead_status.iteritems()
+
+#     if template_args['lead'].company:
+#         if 'http' in template_args['lead'].company:
+#             template_args['company_url'] = template_args['lead'].company
+#         else:
+#             template_args['company_url'] = 'http://' + template_args['lead'].company
+#     else:
+#         template_args['company_url'] = 'N/A'
+
+#     return render(request, 'leads/lead_history.html', template_args)
+
+
 @login_required
 def lead_history(request, lid):
     template_args = dict()

@@ -125,7 +125,7 @@ function treatment_type_and_lead_status_analysis_table(table_header , table_data
   var data_row = ""
   var header = "<tr><td> Treatment Type/Lead Status</td>"
   for (ele in table_header){
-    header += '<td>'+table_header[ele].replace(/[0-9]/g,'').replace('.','')+'</td>'
+    header += '<td>'+table_header[ele].replace(/[0-9\.]/g,'')+'</td>'
      }
   header += '</tr>'
 
