@@ -478,7 +478,7 @@ function setWppLeadSummary(lead_status){
         treatmentType = '<td class="hidden-xs hidden-sm">N/A</td>'
       }
 
-      status = '<td><span class="status-txt-color">'+ leads[i].lead_status.replace(/[0-9]/g, '').replace(/[^a-zA-Z0-9]\s/g, '') +'</span></td>'
+      status = '<td><span class="status-txt-color">'+ leads[i].lead_status.replace(/[0-9\.]/g,'') +'</span></td>'
       action = '<td ><a href="#" title="Ping Status" class="action-item" data-toggle="modal" data-target="#pingModal" onclick=chat(' + leads[i].lead_id +') id="lead_id-' + leads[i].lead_id +'"><i class="fa fa-comments"></i></a> <a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick=feedbackBycid(' + leads[i].lead_id +')></i></a></td>'
       $('#tableBody').append(counter+other+commnet+treatmentType+status+action)
       
