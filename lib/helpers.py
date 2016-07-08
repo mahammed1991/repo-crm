@@ -283,8 +283,7 @@ def get_previous_month_start_end_days(d):
 
 
 def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None):
-    wpp_lead_status = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation','07. Self Development']
-    wpp_lead_sub_status = ['In Queue','Rework Required','Design In Progress', 'Awaiting Review','Advertiser Delay','In Queue - Website Archive','In Queue - Awaiting Developer','Development In Progress','Inactive - Customer Decision','Testing In Progress','Rework In Progress','Inactive - Unable to Reach Customer','Attempting Contact','Win - Implemented by Regalix','Self Development - Complete','Self Development - To be Verified','Self Development  - Did Not Occur']
+    wpp_lead_status = settings.WPP_LEAD_STATUS
     if is_manager(email):
         email_list = get_user_list_by_manager(email)
         email_list.append(email)
