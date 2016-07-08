@@ -247,7 +247,7 @@ def main_home(request):
 
         wpp_lead_dict = dict()
         for key, value in key_dict.items():
-            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
+            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'].get(key)
 
         wpp_lead_dict['nominated_leads'] = nominated_leads
 
