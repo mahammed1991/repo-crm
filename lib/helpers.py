@@ -790,6 +790,8 @@ def get_tat_for_picasso(source):
         start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
         end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
         sf = SalesforceApi.connect_salesforce()
+        if not sf:
+            get_tat_for_picasso('SFDC')
         code_type = 'Picasso'
         where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date,
                                                                                                     end_date, code_type)
@@ -852,6 +854,8 @@ def get_tat_for_bolt(source):
         start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
         end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
         sf = SalesforceApi.connect_salesforce()
+        if not sf:
+            get_tat_for_bolt('SFDC')
         code_type = 'BOLT'
         where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
         sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)
