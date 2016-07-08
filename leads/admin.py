@@ -41,7 +41,7 @@ class WPPLeadsAdmin(admin.ModelAdmin):
     list_filter = ('type_1', )
 
     readonly_fields = ['google_rep_name', 'lead_owner_name', 'lead_owner_email', 'first_name', 'last_name',
-                       'company', 'lead_status', 'team', 'type_1', 'is_build_eligible']
+                       'company', 'team', 'type_1', 'is_build_eligible']
 
     def get_readonly_fields(self, request, obj=None):
         return CustomAdmin.get_readonly_status(request, self.readonly_fields, obj)

@@ -187,11 +187,7 @@ def lead_form(request):
             rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
             submit_lead_to_sfdc(sf_api_url, rlsa_data)
 
-        
-
         return redirect(ret_url)
-
-    # Check The Rep Status and redirect
     if request.user.groups.filter(name='AGENCY'):
         return redirect('leads.views.agency_lead_form')
     
@@ -201,6 +197,7 @@ def lead_form(request):
         return redirect('leads.views.bundle_lead_form')
     elif 'Agency' in form_name:
         return redirect('leads.views.agency_lead_form')
+
 
 
     # Get all location, teams codetypes
@@ -1673,10 +1670,10 @@ def thankyou(request):
     if redirect_page in redirect_page_source.keys():
         redirect_page = redirect_page_source[redirect_page]
 
-    template_args = {'return_link': redirect_page, 'PORTAL_MAIL_ID': settings.PORTAL_MAIL_ID}
+    template_args = {'return_link': redirect_page, 'PORTAL_MAIL_ID': 'implementation-support@google.com'}
 
     if str(lead_category) == '4':
-        template_args.update({'lead_type': 'WPP', 'referer':'builds', 'PORTAL_MAIL_ID' : 'msite-builds-support@google.com'})
+        template_args.update({'lead_type': 'WPP', 'referer':'builds', 'PORTAL_MAIL_ID' : 'website-optimization-support@google.com'})
     elif str(lead_category) == '6':
         estimated_tat = None
         no_of_inqueue_leads = None
@@ -1703,7 +1700,7 @@ def thankyou(request):
                 'no_of_inqueue_leads': no_of_inqueue_leads
                 })
     elif str(lead_category) == '8':
-        template_args.update({'lead_type': 'Picasso Build Nomination Request', 'referer':'builds', 'nomination': True, 'PORTAL_MAIL_ID' : 'msite-builds-support@google.com'})
+        template_args.update({'lead_type': 'Picasso Build Nomination Request', 'referer':'builds', 'nomination': True, 'PORTAL_MAIL_ID' : 'website-optimization-support@google.com'})
     else:
         template_args.update({'lead_type': 'Implementation lead'})
 
@@ -2625,7 +2622,7 @@ def get_lead_status_by_ldap(request):
 def lead_history(request, lid):
     template_args = dict()
     lead_status = collections.OrderedDict()
-    lead_status['01. UI/UX'] = {'title': 'arun'}
+    lead_status['01. UI/UX'] = {'title': ''}
     lead_status['02. Design'] = {'title': ''}
     lead_status['03. Development'] = {'title': ''}
     lead_status['04. Testing'] = {'title': ''}
@@ -3739,7 +3736,8 @@ def rlsa_bulk_upload_lead_form(request):
                             sfdc_args = map_rlsa_row_fields(row, rlsa_args, bsc_args, basic_args)
                             try:
                                 resp = submit_lead_to_sfdc(sf_api_url, sfdc_args, True)
-                            except Exception:
+                            except Exception, e:
+                                print Exception, e
                                 # If it fails for some reason, we are retrying the post operation
                                 print "Failed to post. Retrying...(3 Times)"
                                 success = False
@@ -4047,6 +4045,6 @@ def list_diff(list1, list2):
     Returns: Difference elements in two lists
 
     """
-    list_1 = [i for i in set(list1) if i not in list2 and i != ""]
-    list_2 = [i for i in set(list2) if i not in list1 and i != ""]
-    return list_1 + list_2
+    list_1 = [i for i in list1 if i not in list2 and i != ""]
+    list_2 = [i for i in list2 if i not in list1 and i != ""]
+    return set(list_1 + list_2)

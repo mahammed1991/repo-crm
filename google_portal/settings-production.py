@@ -24,7 +24,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-ADMINS = (('Porta', 'portalsupport@regalix-inc.com'))
+ADMINS = (('Portal', 'portalsupport@regalix-inc.com'))
 
 EMAIL_SUBJECT_PREFIX = '[Production]'
 

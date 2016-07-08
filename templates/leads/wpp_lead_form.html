@@ -471,8 +471,8 @@ window.onload =  function(){
       var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
       var cid_value = $('input[name=cid] ').val();
       var url_value =  $('input[name=url1]').val();
-        
-      if (cidFormat.test(cid_value) &&  url_value){
+      var valid_cid = cidFormat.test(cid_value)
+      if (valid_cid &&  url_value){
           $('#cid').removeClass('error-box');
           $.ajax({
           'url': "/leads/picasso-build-submission-flow/",
@@ -538,9 +538,9 @@ window.onload =  function(){
               })
             }
       else{
-            if (cid_value != ""){
-            alert("Please enter  correct cid format xxx-xxx-xxxx")
-            $('#cid').addClass('error-box');
+            if(!valid_cid){
+                alert("Please enter  correct cid format xxx-xxx-xxxx")
+                $('#cid').addClass('error-box');
             }
           }
 

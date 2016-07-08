@@ -104,7 +104,9 @@ var nbs_team = ['NBS'];
       $('#cid').val('000-000-0000');
     }
     else{
-      $('#cid').val('');
+      if($('#cid').val() === '000-000-0000'){
+            $('#cid').val('');
+      }
     }
     $('#adv_mail').attr('hidden',false);
     $("#advertiser_email").val('').attr('hidden',false);
@@ -460,6 +462,7 @@ function resetBolt() {
           $("#language_selector").html('');
           $("#language_selector").append('<option value="English">English</option>');
           $("#language_selector").append('<option value="French">French</option>');
+          $("#language_selector").append('<option value="German">German</option>');
 
 }
 /// code for restricted CID's

@@ -2414,4 +2414,21 @@ def download_rlsa_bulk_file(request):
     else:
         return HttpResponse(json.dumps({'success':False, 'msg': 'Invalid Request'}), 'application/json')
 
+# -------------------------------------------------------
+#                   Inventory Management
+# -------------------------------------------------------
+@login_required
+def inventory_handler(request):
+    """
+    Args:
+        request: Request Object
+    Returns: Based on request Method, i.e. if "GET", it will return all the inventory data, if "POST", creates a new
+    inventory record, if "PUT", updates an existing inventory record.
 
+    """
+    if request.method == "GET":
+        return render(request, 'reports/inventory_manager.html')
+    elif request.method == "POST":
+        pass
+    elif request.method == "PUT":
+        pass
