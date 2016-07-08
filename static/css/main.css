@@ -2051,7 +2051,7 @@ i.fa.fa-filter {
 	border-left: 6px solid #acacac;
 }
 .status-inselfdevelopment .status-bor-color {
-	color:orange;
+	border-left: 6px solid orange;
 }
 .status-indevelopment .status-bor-color {
 	border-left: 6px solid #99CC00;

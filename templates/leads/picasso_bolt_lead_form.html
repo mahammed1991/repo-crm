@@ -494,7 +494,7 @@ $('#picasso').click(function()
 
 
 $('#language_selector').click(function()
-  {if($('#language_selector').val()!="English")
+  {if($('#language_selector').val().trim()!="English")
   {
     $('#advertiser_email').removeAttr('value');
     $("#advertiser_email").attr("disabled", "true");
@@ -512,7 +512,7 @@ $('#language_selector').click(function()
       $('#advertiser_email').hide('');
       $('#adv_mail').hide();
   }
-    else if ($('#language_selector').val()=="English"){
+    else if ($('#language_selector').val().trim()=="English"){
       $("#advertiser_email").removeAttr("disabled");
       $("#checkbox3").removeAttr("disabled");
       $("#checkbox3").show();

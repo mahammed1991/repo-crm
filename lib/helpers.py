@@ -283,8 +283,7 @@ def get_previous_month_start_end_days(d):
 
 
 def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, end_date=None):
-    wpp_lead_status = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation','07. Self Development']
-    #wpp_lead_sub_status = ['In Queue','Rework Required','Design In Progress', 'Awaiting Review','Advertiser Delay','In Queue - Website Archive','In Queue - Awaiting Developer','Development In Progress','Inactive - Customer Decision','Testing In Progress','Rework In Progress','Inactive - Unable to Reach Customer','Attempting Contact','Win - Implemented by Regalix','Self Development - Complete','Self Development - To be Verified','Self Development  - Did Not Occur']
+    wpp_lead_status = settings.WPP_LEAD_STATUS
     if is_manager(email):
         email_list = get_user_list_by_manager(email)
         email_list.append(email)
@@ -304,7 +303,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         total_count = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['type_1'] = 'WPP - Nomination'
         nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(type_1='WPP - Nomination').count()
-
+    
     wpp_lead_sub_status = {}
 
     wpp_lead_status_dict = {'total_leads': 0,
@@ -787,12 +786,10 @@ def get_unique_uuid(lead_type):
 def get_tat_for_picasso(source):
     if source == 'SFDC':
         end_date = datetime.now(pytz.UTC)   # end date in utc today
-        start_date = datetime(end_date.year, 1, 1, 0, 0, tzinfo=pytz.utc)
+        start_date = datetime(2016, 01, 01, 0, 0, 0, tzinfo=pytz.utc)
         start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
         end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
         sf = SalesforceApi.connect_salesforce()
-        if not sf:
-            get_tat_for_picasso('SFDC')
         code_type = 'Picasso'
         where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date,
                                                                                                     end_date, code_type)
@@ -855,8 +852,6 @@ def get_tat_for_bolt(source):
         start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
         end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
         sf = SalesforceApi.connect_salesforce()
-        if not sf:
-            get_tat_for_bolt('SFDC')
         code_type = 'BOLT'
         where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
         sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)

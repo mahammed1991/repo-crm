@@ -375,7 +375,7 @@ $(document).on('click', '.remove', function() {
 })
 
   $('#treatment_type').on('change', function(){
-    treatment_type = $(this).val();
+    treatment_type = $(this).val().trim();
     if (treatment_type.indexOf("Regalix LP") != -1){
       $('#url_label_id').text('Website URL ( Page that needs to be converted to LP )');
     }
@@ -387,7 +387,7 @@ $(document).on('click', '.remove', function() {
 
 $(document).on('change', '.advertiser-role', function(e) {
     var selectedId = $(this).attr('id')
-    var selectedRole = $(this).val();
+    var selectedRole = $(this).val().trim();
     if (selectedRole == 'Other'){
       $(".role-other"+selectedId.slice(-1)).show();
     }else{
@@ -423,7 +423,7 @@ $('#whitelist_request').on('click', function(){
           'url': "/leads/wpp-whitelist-request/",
           'dataType': "json",
           'type': 'GET',
-          'data': {'notes': $('#whitelist_additional_notes').val()},
+          'data': {'notes': $('#whitelist_additional_notes').val().trim()},
           success: function(response) {
             if (response['status'] == 'success'){
               $("#notification").modal('hide');
@@ -469,10 +469,10 @@ $(window).bind("pageshow", function() {
 window.onload =  function(){
   $('input[name=cid] , input[name=url1]').on('focusout', function(){
       var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
-      var cid_value = $('input[name=cid] ').val();
-      var url_value =  $('input[name=url1]').val();
-      var valid_cid = cidFormat.test(cid_value)
-      if (valid_cid &&  url_value){
+      var cid_value = $('input[name=cid] ').val().trim();
+      var url_value =  $('input[name=url1]').val().trim();
+        
+      if (cidFormat.test(cid_value) &&  url_value){
           $('#cid').removeClass('error-box');
           $.ajax({
           'url': "/leads/picasso-build-submission-flow/",
@@ -538,9 +538,9 @@ window.onload =  function(){
               })
             }
       else{
-            if(!valid_cid){
-                alert("Please enter  correct cid format xxx-xxx-xxxx")
-                $('#cid').addClass('error-box');
+            if (cid_value != ""){
+            alert("Please enter  correct cid format xxx-xxx-xxxx")
+            $('#cid').addClass('error-box');
             }
           }
 
