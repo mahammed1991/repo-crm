@@ -300,10 +300,10 @@ function validateCasesEmailField(elem) {
     $('#display_error_for_cases_alias').show();
     return false;
     }
-  }
-  else{
+    else{
     $('#display_error_for_cases_alias').hide();
     return true;
+  }
   }
 }
 
