@@ -2633,7 +2633,7 @@ def lead_history(request, lid):
     try:
         lead = WPPLeads.objects.get(sf_lead_id=lid)
         is_ab_test = lead.is_ab_test
-        lead_status['01. UI/UX']['title'] = lead.lead_sub_status
+        lead_status[lead.lead_status]['title'] = lead.lead_sub_status
         lead_status[lead.lead_status].update({'status': 'PROGRESS'})
         template_args['lead'] = lead
     except ObjectDoesNotExist:
