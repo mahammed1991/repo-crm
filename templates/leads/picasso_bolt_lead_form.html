@@ -182,8 +182,8 @@
               <label for="language_selector">Language Selector</label>
                 <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language" onchange="optSelect.call(this, event)">
                   <option value="English">English</option>
-                  <option value="German">German</option>
                   <option value="French">French</option>
+                  <option value="German">German</option>
                 </select>
             </div>
            <div class="col-md-6">
@@ -474,6 +474,13 @@ $('.common').click(function(){
 
 $('#bolt').click(function()
 {
+  if($('#bolt active')){
+    $('#language_selector').append('<option>Japanese</option>'+
+    '<option>Simplified Chinese</option>'+
+    '<option>Spanish (EMEA)</option>'+
+    '<option>Spanish (LATAM)</option>');
+  }
+  $('#market_selector').html('<option>Generic Market</option>');
   $('#display_error_for_objective').hide();
   $('#picasso-obj').hide();
   $('.checkboxvalidation').hide();
@@ -485,6 +492,7 @@ $('#bolt').click(function()
 
 $('#picasso').click(function()
 {
+  $('#market_selector').html('<option>Generic Market</option>');
   $('#add_notes').removeClass('col-md-12');
   $('#add_notes').addClass('col-md-6').css('margin-top','0px');;
   $('#picasso-obj').show();
@@ -492,26 +500,35 @@ $('#picasso').click(function()
 });
 
 
-
 $('#language_selector').click(function()
-  {if($('#language_selector').val().trim()!="English")
   {
-    $('#advertiser_email').removeAttr('value');
-    $("#advertiser_email").attr("disabled", "true");
-    $("#checkbox3").removeClass("is-checked");
-    $("#checkbox3").attr("disabled", "true");
-    $('#advertiser_email').val('');
-    $("#remove-check").hide();
-      var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
-      removingStyle1.removeAttr('style');
-      var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
-      removingStyle2.removeAttr('style');
-      $('#checkbox33').removeClass('is-checked');
-      $("#checkbox3").hide();
-      $("#checkbox33").hide();
-      $('#advertiser_email').hide('');
-      $('#adv_mail').hide();
-  }
+    if($('#bolt active') && $('#language_selector').val().trim()=="Simplified Chinese"){
+      $('#market_selector').html('<option>Select Market</option>'+
+        '<option>AUNZ</option>'+
+    '<option>UKI</option>'+
+    '<option>US</option>')
+    }
+    else{
+      $('#market_selector').html('<option>Generic Market</option>');
+    }
+    if($('#language_selector').val().trim()!="English")
+    {
+      $('#advertiser_email').removeAttr('value');
+      $("#advertiser_email").attr("disabled", "true");
+      $("#checkbox3").removeClass("is-checked");
+      $("#checkbox3").attr("disabled", "true");
+      $('#advertiser_email').val('');
+      $("#remove-check").hide();
+        var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
+        removingStyle1.removeAttr('style');
+        var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
+        removingStyle2.removeAttr('style');
+        $('#checkbox33').removeClass('is-checked');
+        $("#checkbox3").hide();
+        $("#checkbox33").hide();
+        $('#advertiser_email').hide('');
+        $('#adv_mail').hide();
+    }
     else if ($('#language_selector').val().trim()=="English"){
       $("#advertiser_email").removeAttr("disabled");
       $("#checkbox3").removeAttr("disabled");
@@ -523,5 +540,10 @@ $('#language_selector').click(function()
     }
   });
 
+/*  $('#language_selector').append('<option>Simplified Chinese</option>'+
+    '<option>Japanese</option>'+
+    '<option>Spanish (EMEA)</option>'+
+    '<option>Spanish (LATAM)</option>');
+*/
 </script>
 {% endblock main_js %}

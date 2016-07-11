@@ -21,7 +21,17 @@ function validatethis(frm) {
       return false;
     }
 
- 
+
+     if($('#language_selector').val().trim()=='Simplified Chinese' && $('#market_selector option:selected').val().trim()=='Select Market')
+    {
+      $('#market_selector').addClass('error-box');
+      $('#display_error_for_other_fields').show();
+      window.is_error = true;
+    }
+    else{
+       $('#display_error_for_other_fields').hide();
+      $('#market_selector').removeClass('error-box');
+    }
     // Google Rep Name Validation
     // grefElem = document.getElementById('gref');
     // validateFiled(grefElem);
@@ -97,6 +107,7 @@ function validatethis(frm) {
       return true;
     }  
   }
+
 
 var nbs_team = ['NBS'];
   $('#team').change(function(){
