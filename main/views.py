@@ -720,7 +720,6 @@ def create_feedback(request, lead_id=None):
 
 
 def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_resolved=False):
-    mail_subject = "Feedback - " + feedback.title + str(datetime.today().date())
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     if feedback.code_type != 'WPP':
         signature = 'Tag Team'
@@ -738,6 +737,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
         )
 
     elif is_resolved:
+        mail_subject = "Customer Feedback ["+ feedback.cid+ "] Status - Resolved"
         mail_body = get_template('main/feedback_mail/resolved.html').render(
             Context({
                 'feedback': feedback,
@@ -752,6 +752,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
         )
 
     else:
+        mail_subject = "Customer Feedback ["+ feedback.cid+ "] Status - Assign Owner"
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
             Context({
                 'feedback': feedback,
@@ -769,8 +770,10 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     bcc = set()
 
     if comment:
+        mail_subject = "Customer Feedback ["+ feedback.cid+ "] Status - New comment added"
         feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-        mail_to = set([ feedback_super_user_group ])
+        assignee = Feedback.objects.get(id=feedback.id)
+        mail_to = set([ feedback_super_user_group, assignee.assigned_to  ])
     else:
         mail_to = set([
             'g-crew@regalix-inc.com',
@@ -795,7 +798,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     return feedback
 
 def notify_feedback_fixed(request, feedback, comment=None ):
-    mail_subject = "Feedback - " + feedback.title
+    mail_subject = "Customer Feedback ["+feedback.cid+"] Status- Response Submitted; Request to Closure"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     issue_fixedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
@@ -884,7 +887,6 @@ def create_feedback_from_lead_status(request):
 @manager_info_required
 def reopen_feedback(request, id):
     """ Reopen Comment """
-
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'IN PROGRESS'
     comment = FeedbackComment()
@@ -895,8 +897,30 @@ def reopen_feedback(request, id):
     comment.created_date = datetime.utcnow()
     comment.save()
     notify_feedback_activity(request, feedback, comment)
-
     feedback.save()
+
+    mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
+    feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
+    reopenedby = request.user.first_name + ' ' + request.user.last_name
+    mail_body = get_template('main/feedback_mail/reopened_feedback.html').render(
+        Context({
+            'reopenedby': reopenedby,
+            'comments':feedback.description,
+            'feedback_url': feedback_url,
+            'cid': feedback.cid,
+            'type': feedback.feedback_type,
+            'feedback_title': feedback.title,
+        })
+    )
+    feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+    mail_to = feedback_super_user_group
+    mail_from = request.user.email
+    attachments = list()
+    bcc = list()
+    if feedback.attachment:
+        attachments.append(feedback.attachment)
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
     return redirect('main.views.view_feedback', id=id)
 
 
@@ -904,11 +928,11 @@ def reopen_feedback(request, id):
 @manager_info_required
 def comment_feedback(request, id):
     """ Comment on a feedback """
-    action_type = request.POST['feedback_action']
+    action_type = request.POST.get('feedback_action')
     feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
     comment.feedback = feedback
-    comment.comment = request.POST['comment']
+    comment.comment = request.POST.get('comment')
     comment.comment_by = request.user
 
     if action_type == 'Resolved':
@@ -1539,7 +1563,6 @@ def upload_file_handling(request):
                                 row_count = row_count + 1
                                 check_url = each_line[0]
                                 checkdata = PicassoEligibilityMasterUpload.objects.filter(url=check_url)
-                                print check_url
                                 if checkdata:
                                     pass
                                 else:
@@ -2024,9 +2047,10 @@ def assign_feedback(request):
                 Feedback.objects.select_for_update().filter(id=feedback_id).update(assigned_to = user)
                 # mailing functionolities
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
-                mail_from = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
+                mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
                 mail_to = [ str(assignee) , str(request.user.email)]
-                mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                mail_subject = "Customer Feedback ["+cid+"] Status- Submit Response and/or Initiate Closure"
                 mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
                                         'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
                                         'loaction':loaction,'url_link':feedback_url, 'created_date':created_date}))
