@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<p>Hi,</p>
+<!-- <p>Hi,</p>
 		<p>Feedback has been fixed- Title is <b>{{feedback.title}}.</b> </p>
 		<p>You are super user, Please resolve this feedback, details as fallow</p>
 		<p>feedback issue has been fixed by: {{ user_info }}, name: {{ issue_fixedby }}</p>
@@ -13,7 +13,21 @@
 		<p>Feedback lead cid {{ cid }}</p>
 		<p>Feedback type {{ type }}</p>
 		<p>Feedback title {{feedback_title }}</p>
-		<p>This is auto genarated mail.</p>
+		<p>This is auto genarated mail.</p> -->
+
+<p>Hello,</p>
+
+<p>The concerned owner has responded to the feedback and requested for the thread to be closed. </p>
+<p>Kindly review the case and mark the feedback 'Resolved' / 'Reopen' the thread. </p>
+
+<p>ID - XXX- <a href="{{ feedback_url }}">{{ cid }}</a></p>
+<p>Title - {{feedback.title}}</p>
+<p>Feedback Type - {{ type }}</p>
+<p>Click here to <a href="{{ feedback_url }}">access</a></p> feedback.</p>
+<p>{{feedback_body}}</p>
+
+<p>Regards,</p></br>
+<p>Portal Team/CX Team</p>
 
 
 </body>
