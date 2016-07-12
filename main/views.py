@@ -798,7 +798,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     return feedback
 
 def notify_feedback_fixed(request, feedback, comment=None ):
-    mail_subject = "Customer Feedback ["+feedback.cid+"] Status- Response Submitted; Request to Closure"
+    mail_subject = "Customer Feedback ["+feedback.cid+"] Status- Response Submitted: Request to Closure"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     issue_fixedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
