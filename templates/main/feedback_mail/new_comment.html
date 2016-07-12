@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-	<body>
+	<!-- <body>
 		<p>Hi,</p>
 		<p>A new Comment has been added for Feedback- <b>{{feedback.title}}</b> </p>
 		<p>Feedback Details are below:</p>
@@ -22,5 +22,19 @@
 		<br /><br />
 		<p>Thanks,</p>
 		<p>{{signature}}</p>
-	</body>
+	</body> -->
+<body>
+	<p>Hello,</p>
+
+	<p>The concerned owner has responded to the feedback and added new comment. </p>
+	<p>Kindly review the case and mark the feedback 'Resolved' if it is solved / add 'Comment' in the thread. </p>
+	<p>ID - {{ feedback.cid }}</p>
+	<p>Title - {{ feedback.title }}</p>
+	<p>Feedback Type - {{ feedback.feedback_type }} </p>
+	<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
+
+	<p>Regards,</p>
+	<p>Portal Team/CX Team</p>
+
+</body>
 </html>

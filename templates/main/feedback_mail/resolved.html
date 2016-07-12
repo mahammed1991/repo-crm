@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html>
 <body>
-<p>Hi,</p>
+<!-- <p>Hi,</p>
 <p>The feedback - <b>{{ feedback.title }}</b> has been resolved by {{ user_info.get_full_name }}({{ user_info.email }}).</p>
 
 <a href="{{ feedback_url }}">Go To Feedback</a>
 <br /><br />
 <p>Thanks,</p>
-<p>{{signature}}</p>
+<p>{{signature}}</p> -->
+
+
+<p>Hello,</p>
+
+<p>The following feedback has been attend to and marked as 'Resolved'. Should the action taken be </p>
+<p>unsatisfactory, click here to request for the case to be 'Reopened'.</p>
+
+<p>ID - {{ cid }}</p>
+<p>Title - {{ feedback.title }}</p>
+<p>Feedback Type - {{type}} </p>
+<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
+
+<p>{{ feedback_body }}</p>
+
+<p>Regards,</p>
+<p>Portal Team / CX Team</p>
+
 </body>
 </html>
