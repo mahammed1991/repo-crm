@@ -22,7 +22,7 @@ function validatethis(frm) {
     }
 
 
-     if($('#language_selector').val().trim()=='Simplified Chinese' && $('#market_selector option:selected').val().trim()=='Select Market')
+    if($('#language_selector').val().trim()=='Simplified Chinese' && $('#market_selector option:selected').val().trim()=='Select Market')
     {
       $('#market_selector').addClass('error-box');
       $('#display_error_for_other_fields').show();
@@ -67,7 +67,7 @@ function validatethis(frm) {
 /*    if($('#bolt').hasClass('active') == false){
       objectiveValidation();
     }*/
-
+    
     var comp_url1 = $('#comp_url_1').val().trim();
     var comp_url2 = $('#comp_url_2').val().trim();
     var re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;

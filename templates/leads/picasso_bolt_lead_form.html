@@ -472,45 +472,10 @@ $('.common').click(function(){
           
 });
 
-$('#bolt').click(function()
-{
-  if($('#bolt active')){
-    $('#language_selector').append('<option value="Japanese">Japanese</option>'+
-    '<option value="Simplified Chinese">Simplified Chinese</option>'+
-    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
-    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
-  }
-  $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
-  $('#display_error_for_objective').hide();
-  $('#picasso-obj').hide();
-  $('.checkboxvalidation').hide();
-  $('#add_notes').removeClass('col-md-6');
-  $('#add_notes').addClass('col-md-12').css('margin-top','-20px');
-  // .... do other stuff
-  //saved.appendTo ($('.wherever-you-want-to'));
-});
-
-$('#picasso').click(function()
-{
-  $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
-  $('#add_notes').removeClass('col-md-12');
-  $('#add_notes').addClass('col-md-6').css('margin-top','0px');;
-  $('#picasso-obj').show();
-  $('.checkboxvalidation').show();
-});
 
 
 $('#language_selector').click(function()
-  {
-    if($('#bolt active') && $('#language_selector').val().trim()=="Simplified Chinese"){
-      $('#market_selector').html('<option>Select Market</option>'+
-        '<option value="AUNZ">AUNZ</option>'+
-    '<option value="UKI">UKI</option>'+
-    '<option value="US">US</option>');
-    }
-    else{
-      $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
-    }
+  { 
     if($('#language_selector').val().trim()!="English")
     {
       $('#advertiser_email').removeAttr('value');
@@ -540,10 +505,44 @@ $('#language_selector').click(function()
     }
   });
 
-/*  $('#language_selector').append('<option>Simplified Chinese</option>'+
-    '<option>Japanese</option>'+
-    '<option>Spanish (EMEA)</option>'+
-    '<option>Spanish (LATAM)</option>');
-*/
+$('#bolt').click(function()
+{
+  if($('#bolt active')){
+    $('#language_selector').append('<option value="Japanese">Japanese</option>'+
+    '<option value="Simplified Chinese">Simplified Chinese</option>'+
+    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
+    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
+  }
+  $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
+  $('#display_error_for_objective').hide();
+  $('#picasso-obj').hide();
+  $('.checkboxvalidation').hide();
+  $('#add_notes').removeClass('col-md-6');
+  $('#add_notes').addClass('col-md-12').css('margin-top','-20px');
+  // .... do other stuff
+  //saved.appendTo ($('.wherever-you-want-to'));
+});
+
+$('#picasso').click(function()
+{
+  $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
+  $('#add_notes').removeClass('col-md-12');
+  $('#add_notes').addClass('col-md-6').css('margin-top','0px');;
+  $('#picasso-obj').show();
+  $('.checkboxvalidation').show();
+});
+
+
+$('#language_selector').change(function(){
+  if($('#bolt active') && $('#language_selector').val().trim()=="Simplified Chinese"){
+      $('#market_selector').html('<option>Select Market</option>'+
+        '<option value="AUNZ">AUNZ</option>'+
+    '<option value="UKI">UKI</option>'+
+    '<option value="US">US</option>');
+    }
+    else{
+      $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
+    }
+  });
 </script>
 {% endblock main_js %}
