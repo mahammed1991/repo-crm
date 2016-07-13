@@ -230,11 +230,9 @@ def main_home(request):
                                                                             created_date__lte=end_date,
                                                                             google_rep_email__in=[request.user.email],
                                                                             type_1='WPP - Nomination').count()
-
         current_date = datetime.utcnow()
         wpp_top_performer = get_top_performer_list(current_date, 'WPP')
 
-        wpp_feedback_list = dict()
         wpp_feedbacks, wpp_feedback_list = get_feedbacks(request.user, 'WPP')
 
         wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['06. Implementation'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
@@ -247,7 +245,7 @@ def main_home(request):
 
         wpp_lead_dict = dict()
         for key, value in key_dict.items():
-            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'].get(key)
+            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
 
         wpp_lead_dict['nominated_leads'] = nominated_leads
 
@@ -1346,14 +1344,15 @@ def migrate_user_data(request):
     failed_rows = list()
     tag_wpp = Group.objects.get(name='TAG-AND-WPP')
     for r_i in range(1, sheet.nrows):
-
+        region = None
         rep_email = sheet.cell(r_i, get_col_index(sheet, 'username')).value
         google_rep_email = rep_email + '@google.com'
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'program')).value
         google_manager_email = str(google_manager) + '@google.com' if google_manager else ''
-        region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
-        country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
+        #region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
+        country = sheet.cell(r_i, get_col_index(sheet, 'market')).value
+        country1 = sheet.cell(r_i, get_col_index(sheet, 'country')).value
         podname = sheet.cell(r_i, get_col_index(sheet, 'podname')).value
         if valid_string(program) and valid_string(country):
             try:
@@ -1392,15 +1391,38 @@ def migrate_user_data(request):
                     region.save()
                     new_region.append(region.name)
                     user_details.region_id = region.id
-
+            from django.db import IntegrityError
             try:
                 location = Location.objects.get(location_name=country)
+                location.location_name = country1
+                location.save()
+            except IntegrityError:
+                location.delete()
+                location = Location.objects.get(location_name=country1)
+            except ObjectDoesNotExist:
+                location = Location(location_name=country1, is_active=False)
+                try:
+                    location.save()
+                except IntegrityError:
+                    print country1
+                    pass
+
+            user_details.location_id = location.id
+            '''try:
+                from django.db import IntegrityError
+                location = Location.objects.get(location_name=country)
+                location.location_name = country1
+                try:
+                    location.save()
+                except IntegrityError:
+                    location.delete()
+                    location = Location.objects.get(location_name=country1)
                 user_details.location_id = location.id
             except ObjectDoesNotExist:
                 location = Location(location_name=country, is_active=False)
                 location.save()
                 new_locations.append(country)
-                user_details.location_id = location.id
+                user_details.location_id = location.id'''
 
             user_details.save()
             number_of_saved_records = number_of_saved_records + 1
@@ -1413,7 +1435,7 @@ def migrate_user_data(request):
             # failed_rec['r.quarter'] = r_quarter
             failed_rec['Program'] = program
             failed_rec['Country'] = country
-            failed_rec['Region'] = region
+            #failed_rec['Region'] = region
             failed_rows.append(failed_rec)
 
     path = "/tmp/Unsaved_Records.csv"

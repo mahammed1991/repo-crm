@@ -10,17 +10,19 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.conf import settings
 from django.db.models import Q
+from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count
 from django.template.loader import get_template
 from django.template import Context
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseForbidden
 
 from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
-from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam
+from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam, ChromebookInventory
 from main.models import UserDetails, WPPMasterList
 from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
 from lib.helpers import (send_mail)
@@ -2418,6 +2420,7 @@ def download_rlsa_bulk_file(request):
 #                   Inventory Management
 # -------------------------------------------------------
 @login_required
+@csrf_exempt
 def inventory_handler(request):
     """
     Args:
@@ -2427,8 +2430,107 @@ def inventory_handler(request):
 
     """
     if request.method == "GET":
-        return render(request, 'reports/inventory_manager.html')
+        if request.user.groups.filter(name='INVENTORYUSER'):
+            inventory_details = request.GET.get('inventory', False)
+            if inventory_details:
+                data = []
+                records = ChromebookInventory.objects.all().order_by('employee_name')
+                for rec in records:
+                    da = {
+                        'employee_id': rec.employee_id,
+                        'employee_alias': rec.employee_alias,
+                        'employee_name': rec.employee_name,
+                        'employee_ldap': rec.employee_ldap,
+                        'employee_project': rec.employee_project,
+                        'device_type': rec.device_type,
+                        'mac_id': rec.mac_id,
+                        'employee_status': rec.employee_status,
+                        'device_status': rec.device_status,
+                        'returned_on': rec.returned_on,
+                        'issued_on': time.mktime(rec.issued_on.timetuple()),
+                        'id': rec.id
+                    }
+                    data.append(da)
+                resp = {'success': True, 'data': data}
+                return HttpResponse(json.dumps(resp), content_type='application/json')
+            return render(request, 'reports/inventory_manager.html')
+        else:
+            return HttpResponseForbidden(request, '403.html')
     elif request.method == "POST":
-        pass
+        data = json.loads(request.body)
+        # Mandatory Fields
+        name = data['name']
+        ldap = data['ldap']
+        project = data['project']
+        emp_id = data['emp_id']
+
+        cbi = ChromebookInventory()
+
+        cbi.created_by = request.user
+        cbi.modified_by = request.user
+        cbi.employee_alias = data.get('alias')
+        cbi.employee_id = emp_id
+        cbi.employee_name = name
+        cbi.employee_ldap = ldap
+        cbi.employee_project = project
+        cbi.device_type = data.get('deviceType')
+        cbi.mac_id = data.get('macId')
+        emp_stat = data.get('employeeStatus')
+        if emp_stat == 'active':
+            emp_stat = True
+        else:
+            emp_stat = False
+        dev_stat = data.get('deviceStatus')
+        if dev_stat == 'assigned':
+            dev_stat = True
+        else:
+            dev_stat = False
+        cbi.employee_status = emp_stat
+        cbi.device_status = dev_stat
+        cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
+        try:
+            cbi.save()
+            resp = {'success': True, 'type':'new', 'msg': 'User data saved succesfully',
+                    'data': {'id': cbi.id}}
+        except IntegrityError:
+            resp = {'success': False, 'type':'duplicate', 'msg': 'User data already exists.'}
+        return HttpResponse(json.dumps(resp), content_type='application/json')
     elif request.method == "PUT":
-        pass
+        data = json.loads(request.body)
+        # Mandatory Fields
+        id = data['row_id']
+        name = data['name']
+        ldap = data['ldap']
+        emp_id = data['emp_id']
+        project = data['project']
+
+        cbi = ChromebookInventory.objects.get(id=id)
+
+        cbi.modified_by = request.user
+        cbi.employee_alias = data.get('alias')
+        cbi.employee_name = name
+        cbi.employee_id = emp_id
+        cbi.employee_ldap = ldap
+        cbi.employee_project = project
+        cbi.device_type = data.get('deviceType')
+        cbi.mac_id = data.get('macId')
+        emp_stat = data.get('employeeStatus')
+        if emp_stat == 'active':
+            emp_stat = True
+        else:
+            emp_stat = False
+        dev_stat = data.get('deviceStatus')
+        if dev_stat == 'assigned':
+            dev_stat = True
+        else:
+            dev_stat = False
+        cbi.employee_status = emp_stat
+        cbi.device_status = dev_stat
+        try:
+            issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
+        except:
+            issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%y")
+        cbi.issued_on = issued_on
+        cbi.save()
+        resp = {'success': True, 'msg': 'User data saved succesfully'}
+        return HttpResponse(json.dumps(resp), content_type='application/json')
