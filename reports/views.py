@@ -2455,7 +2455,8 @@ def inventory_handler(request):
                 return HttpResponse(json.dumps(resp), content_type='application/json')
             return render(request, 'reports/inventory_manager.html')
         else:
-            return HttpResponseForbidden(request, '403.html')
+            from django.core import exceptions
+            raise exceptions.PermissionDenied
     elif request.method == "POST":
         data = json.loads(request.body)
         # Mandatory Fields

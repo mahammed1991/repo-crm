@@ -5,16 +5,58 @@
 {% endblock title %}
 
 {% block main_css %}
-  <style type="text/css">
-  h1 {
-    font-size: 24px;
-    font-family: 'robotoblack';
+<style type="text/css">
+
+.error-page {
+    width: 100%;
+	margin-top:5%%;
+}
+
+.error-page>.headline {
+    float: left;
+    font-size: 100px;
+    font-weight: 200;
+}
+
+.text-yellow {
+    color: #f39c12 !important;
+}
+
+.error-page>.error-content>h3 {
+    font-size: 20px;
+}
+
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+    margin: 0 0 10px;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+a {
+    color: #F39C12;
+}
+
+.error-code{
+	font-family: 'robotoblack';
+    font-size: 50px;
     text-transform: uppercase;
-    text-align: center;
     border-bottom: 1px solid #ccc;
-    padding-bottom: 12px;
-    margin-top: 50px;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    margin-top: 10%;
 }
 </style>
 {% endblock main_css %}
@@ -23,8 +65,25 @@
 <section class="content-region inner-page">
 
 	<div class="container-fluid">
-	  <h1>Error 404</h1>
+		<div class="error-code">
+			<p class="text-yellow"> 404 - Page Not Found</p>
+		</div>
+
+		<div class="error-page">
+			<div class="error-content">
+				<h3>
+					<i class="fa fa-warning text-yellow"></i>
+					Oops! We could not find the page you are looking for.
+				</h3>
+				<p>
+					<i class="fa fa-warning text-yellow"></i>
+					If you were expecting something here please contact your Admin or mail to <a href="mailto:portalsupport@regalix-inc.com" target="_top">portalsupport@regalix-inc.com</a>
+				</p>
+			</div>
+        <!-- /.error-content -->
+      	</div>
 	</div>
 
 </section>
 {% endblock content %}
+
