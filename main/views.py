@@ -230,11 +230,9 @@ def main_home(request):
                                                                             created_date__lte=end_date,
                                                                             google_rep_email__in=[request.user.email],
                                                                             type_1='WPP - Nomination').count()
-
         current_date = datetime.utcnow()
         wpp_top_performer = get_top_performer_list(current_date, 'WPP')
 
-        wpp_feedback_list = dict()
         wpp_feedbacks, wpp_feedback_list = get_feedbacks(request.user, 'WPP')
 
         wpp_report = {key: (wpp_details['wpp_treatment_type_analysis'][key]['06. Implementation'] / wpp_details['wpp_treatment_type_analysis'][key]['TOTAL']) * 100 if wpp_details['wpp_treatment_type_analysis'][key]['TOTAL'] else 0 for key in wpp_details['wpp_treatment_type_analysis'].keys()}
@@ -247,7 +245,7 @@ def main_home(request):
 
         wpp_lead_dict = dict()
         for key, value in key_dict.items():
-            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'].get(key)
+            wpp_lead_dict[value] = wpp_details['wpp_lead_status_analysis'][key]
 
         wpp_lead_dict['nominated_leads'] = nominated_leads
 
@@ -720,7 +718,6 @@ def create_feedback(request, lead_id=None):
 
 
 def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_resolved=False):
-    mail_subject = "Feedback - " + feedback.title + str(datetime.today().date())
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     if feedback.code_type != 'WPP':
         signature = 'Tag Team'
@@ -738,6 +735,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
         )
 
     elif is_resolved:
+        mail_subject = "Customer Feedback ["+ feedback.cid+ "] Status - Resolved"
         mail_body = get_template('main/feedback_mail/resolved.html').render(
             Context({
                 'feedback': feedback,
@@ -752,6 +750,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
         )
 
     else:
+        mail_subject = "Customer Feedback ["+ feedback.cid+ "] Status - Assign Owner"
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
             Context({
                 'feedback': feedback,
@@ -769,8 +768,10 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     bcc = set()
 
     if comment:
+        mail_subject = "Customer Feedback ["+ feedback.cid+ "] Status - New comment added"
         feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-        mail_to = set([ feedback_super_user_group ])
+        assignee = Feedback.objects.get(id=feedback.id)
+        mail_to = set([ feedback_super_user_group, assignee.assigned_to  ])
     else:
         mail_to = set([
             'g-crew@regalix-inc.com',
@@ -795,7 +796,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     return feedback
 
 def notify_feedback_fixed(request, feedback, comment=None ):
-    mail_subject = "Feedback - " + feedback.title
+    mail_subject = "Customer Feedback ["+feedback.cid+"] Status- Response Submitted: Request to Closure"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     issue_fixedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
@@ -884,7 +885,6 @@ def create_feedback_from_lead_status(request):
 @manager_info_required
 def reopen_feedback(request, id):
     """ Reopen Comment """
-
     feedback = Feedback.objects.get(id=id)
     feedback.status = 'IN PROGRESS'
     comment = FeedbackComment()
@@ -895,8 +895,30 @@ def reopen_feedback(request, id):
     comment.created_date = datetime.utcnow()
     comment.save()
     notify_feedback_activity(request, feedback, comment)
-
     feedback.save()
+
+    mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
+    feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
+    reopenedby = request.user.first_name + ' ' + request.user.last_name
+    mail_body = get_template('main/feedback_mail/reopened_feedback.html').render(
+        Context({
+            'reopenedby': reopenedby,
+            'comments':feedback.description,
+            'feedback_url': feedback_url,
+            'cid': feedback.cid,
+            'type': feedback.feedback_type,
+            'feedback_title': feedback.title,
+        })
+    )
+    feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+    mail_to = feedback_super_user_group
+    mail_from = request.user.email
+    attachments = list()
+    bcc = list()
+    if feedback.attachment:
+        attachments.append(feedback.attachment)
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
     return redirect('main.views.view_feedback', id=id)
 
 
@@ -904,11 +926,11 @@ def reopen_feedback(request, id):
 @manager_info_required
 def comment_feedback(request, id):
     """ Comment on a feedback """
-    action_type = request.POST['feedback_action']
+    action_type = request.POST.get('feedback_action')
     feedback = Feedback.objects.get(id=id)
     comment = FeedbackComment()
     comment.feedback = feedback
-    comment.comment = request.POST['comment']
+    comment.comment = request.POST.get('comment')
     comment.comment_by = request.user
 
     if action_type == 'Resolved':
@@ -1346,14 +1368,15 @@ def migrate_user_data(request):
     failed_rows = list()
     tag_wpp = Group.objects.get(name='TAG-AND-WPP')
     for r_i in range(1, sheet.nrows):
-
+        region = None
         rep_email = sheet.cell(r_i, get_col_index(sheet, 'username')).value
         google_rep_email = rep_email + '@google.com'
         google_manager = sheet.cell(r_i, get_col_index(sheet, 'manager')).value
         program = sheet.cell(r_i, get_col_index(sheet, 'program')).value
         google_manager_email = str(google_manager) + '@google.com' if google_manager else ''
-        region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
-        country = sheet.cell(r_i, get_col_index(sheet, 'market served')).value
+        #region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
+        country = sheet.cell(r_i, get_col_index(sheet, 'market')).value
+        country1 = sheet.cell(r_i, get_col_index(sheet, 'country')).value
         podname = sheet.cell(r_i, get_col_index(sheet, 'podname')).value
         if valid_string(program) and valid_string(country):
             try:
@@ -1392,15 +1415,38 @@ def migrate_user_data(request):
                     region.save()
                     new_region.append(region.name)
                     user_details.region_id = region.id
-
+            from django.db import IntegrityError
             try:
                 location = Location.objects.get(location_name=country)
+                location.location_name = country1
+                location.save()
+            except IntegrityError:
+                location.delete()
+                location = Location.objects.get(location_name=country1)
+            except ObjectDoesNotExist:
+                location = Location(location_name=country1, is_active=False)
+                try:
+                    location.save()
+                except IntegrityError:
+                    print country1
+                    pass
+
+            user_details.location_id = location.id
+            '''try:
+                from django.db import IntegrityError
+                location = Location.objects.get(location_name=country)
+                location.location_name = country1
+                try:
+                    location.save()
+                except IntegrityError:
+                    location.delete()
+                    location = Location.objects.get(location_name=country1)
                 user_details.location_id = location.id
             except ObjectDoesNotExist:
                 location = Location(location_name=country, is_active=False)
                 location.save()
                 new_locations.append(country)
-                user_details.location_id = location.id
+                user_details.location_id = location.id'''
 
             user_details.save()
             number_of_saved_records = number_of_saved_records + 1
@@ -1413,7 +1459,7 @@ def migrate_user_data(request):
             # failed_rec['r.quarter'] = r_quarter
             failed_rec['Program'] = program
             failed_rec['Country'] = country
-            failed_rec['Region'] = region
+            #failed_rec['Region'] = region
             failed_rows.append(failed_rec)
 
     path = "/tmp/Unsaved_Records.csv"
@@ -1539,7 +1585,6 @@ def upload_file_handling(request):
                                 row_count = row_count + 1
                                 check_url = each_line[0]
                                 checkdata = PicassoEligibilityMasterUpload.objects.filter(url=check_url)
-                                print check_url
                                 if checkdata:
                                     pass
                                 else:
@@ -2024,9 +2069,10 @@ def assign_feedback(request):
                 Feedback.objects.select_for_update().filter(id=feedback_id).update(assigned_to = user)
                 # mailing functionolities
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
-                mail_from = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
+                mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
                 mail_to = [ str(assignee) , str(request.user.email)]
-                mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                mail_subject = "Customer Feedback ["+cid+"] Status- Submit Response and/or Initiate Closure"
                 mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
                                         'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
                                         'loaction':loaction,'url_link':feedback_url, 'created_date':created_date}))
