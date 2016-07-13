@@ -302,7 +302,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         wpp_lead_status_analysis = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(reduce(operator.or_, mylist), **query).values('lead_status').annotate(count=Count('pk'))
         total_count = WPPLeads.objects.filter(reduce(operator.or_, mylist), **query).count()
         query['type_1'] = 'WPP - Nomination'
-        nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(type_1='WPP - Nomination').count()
+        nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(reduce(operator.or_, mylist),type_1='WPP - Nomination').count()
     
     wpp_lead_sub_status = {}
 
@@ -344,7 +344,8 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
                                         created_date__lte=end_date,treatment_type__in=treatment_type_list,
                                         lead_status=k)
         else:
-            lead = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(treatment_type__in=treatment_type_list,
+            mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
+            lead = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(reduce(operator.or_, mylist)).filter(treatment_type__in=treatment_type_list,
                                                                               lead_status=k)
         for j in lead:
             if k == j.lead_status:
