@@ -500,9 +500,8 @@ $('#picasso').click(function()
 });
 
 
-$('#language_selector').click(function()
-  {
-    if($('#bolt active') && $('#language_selector').val().trim()=="Simplified Chinese"){
+$('#language_selector').change(function(){
+  if($('#bolt active') && $('#language_selector').val().trim()=="Simplified Chinese"){
       $('#market_selector').html('<option>Select Market</option>'+
         '<option value="AUNZ">AUNZ</option>'+
     '<option value="UKI">UKI</option>'+
@@ -511,6 +510,9 @@ $('#language_selector').click(function()
     else{
       $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
     }
+  });
+$('#language_selector').click(function()
+  { 
     if($('#language_selector').val().trim()!="English")
     {
       $('#advertiser_email').removeAttr('value');
