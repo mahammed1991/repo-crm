@@ -472,6 +472,39 @@ $('.common').click(function(){
           
 });
 
+
+
+$('#language_selector').click(function()
+  { 
+    if($('#language_selector').val().trim()!="English")
+    {
+      $('#advertiser_email').removeAttr('value');
+      $("#advertiser_email").attr("disabled", "true");
+      $("#checkbox3").removeClass("is-checked");
+      $("#checkbox3").attr("disabled", "true");
+      $('#advertiser_email').val('');
+      $("#remove-check").hide();
+        var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
+        removingStyle1.removeAttr('style');
+        var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
+        removingStyle2.removeAttr('style');
+        $('#checkbox33').removeClass('is-checked');
+        $("#checkbox3").hide();
+        $("#checkbox33").hide();
+        $('#advertiser_email').hide('');
+        $('#adv_mail').hide();
+    }
+    else if ($('#language_selector').val().trim()=="English"){
+      $("#advertiser_email").removeAttr("disabled");
+      $("#checkbox3").removeAttr("disabled");
+      $("#checkbox3").show();
+      $("#checkbox33").show();
+      $('#advertiser_email').show('');
+      $('#adv_mail').show();
+      $("#remove-check").show();
+    }
+  });
+
 $('#bolt').click(function()
 {
   if($('#bolt active')){
@@ -511,41 +544,5 @@ $('#language_selector').change(function(){
       $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
     }
   });
-$('#language_selector').click(function()
-  { 
-    if($('#language_selector').val().trim()!="English")
-    {
-      $('#advertiser_email').removeAttr('value');
-      $("#advertiser_email").attr("disabled", "true");
-      $("#checkbox3").removeClass("is-checked");
-      $("#checkbox3").attr("disabled", "true");
-      $('#advertiser_email').val('');
-      $("#remove-check").hide();
-        var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
-        removingStyle1.removeAttr('style');
-        var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
-        removingStyle2.removeAttr('style');
-        $('#checkbox33').removeClass('is-checked');
-        $("#checkbox3").hide();
-        $("#checkbox33").hide();
-        $('#advertiser_email').hide('');
-        $('#adv_mail').hide();
-    }
-    else if ($('#language_selector').val().trim()=="English"){
-      $("#advertiser_email").removeAttr("disabled");
-      $("#checkbox3").removeAttr("disabled");
-      $("#checkbox3").show();
-      $("#checkbox33").show();
-      $('#advertiser_email').show('');
-      $('#adv_mail').show();
-      $("#remove-check").show();
-    }
-  });
-
-/*  $('#language_selector').append('<option>Simplified Chinese</option>'+
-    '<option>Japanese</option>'+
-    '<option>Spanish (EMEA)</option>'+
-    '<option>Spanish (LATAM)</option>');
-*/
 </script>
 {% endblock main_js %}
