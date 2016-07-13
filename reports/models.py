@@ -361,3 +361,25 @@ class RLSABulkUpload(models.Model):
     class Meta:
         verbose_name_plural = "RLSA Bulk Upload"
 
+
+class ChromebookInventory(models.Model):
+    employee_id = models.CharField(max_length=10, unique=True)
+    employee_name = models.CharField(max_length=100, null=True)
+    employee_ldap = models.CharField(max_length=100, unique=True)
+    employee_alias = models.CharField(max_length=100, null=True)
+    employee_project = models.CharField(max_length=100, null=True)
+    device_type = models.CharField(max_length=100, null=True)
+    mac_id = models.CharField(max_length=100, null=True)
+    employee_status = models.BooleanField(default=True)
+    device_status = models.BooleanField(default=True)
+    issued_on = models.DateTimeField(null=True)
+    returned_on = models.DateTimeField(null=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+    created_by = models.ForeignKey(User, related_name='created_by')
+    modified_by = models.ForeignKey(User, related_name='modified_by')
+
+    class Meta:
+        verbose_name_plural = "Chromebook inventory"
+
