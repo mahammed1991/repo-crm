@@ -1025,7 +1025,7 @@ def available_counts_booked_not_na(present_day, process_type):
     """ 
     Normally it is taking values from today 2AM to previous day 3AM 
     exclude overlapping regons such as north america but in this
-    function  we are fetching data from future slots so tomarrow 2AM to present day 3AM
+    function  we are fetching data from future slots so tomorrow 2AM to present day 3AM
     """
     today_morning = present_day
     today = today_morning.replace(hour=3, minute=00, second=00)
@@ -1065,7 +1065,7 @@ def available_counts_booked_not_na(present_day, process_type):
 def available_counts_booked_in_na(present_day, process_type):
     """ 
     Normally previous day 4.30PM to today 7.30AM only for North America,  in this 
-    function We are fetching from future so today 4.30PM to tomarrow 7.30AM only for NA
+    function We are fetching from future so today 4.30PM to tomorrow 7.30AM only for NA
     """
     
     today_morning = present_day
