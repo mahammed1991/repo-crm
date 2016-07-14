@@ -1024,7 +1024,7 @@ def slots_open_booked():
 def available_counts_booked_not_na(present_day, process_type):
     """ 
     Normally it is taking values from today 2AM to previous day 3AM 
-    exclude overlapping regons such as north america but in this
+    exclude overlapping regions such as north america but in this
     function  we are fetching data from future slots so tomorrow 2AM to present day 3AM
     """
     today_morning = present_day
@@ -1050,10 +1050,13 @@ def available_counts_booked_not_na(present_day, process_type):
     max_utilized_regions = dict()
 
     for item in available_counts_booked:
+        item['date'] = present_day.date() 
+
+    for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
                 if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
-                    max_utilized_regions['date'] = present_day.date().today() + timedelta(days=1)
+                    max_utilized_regions['date'] = item['date']
                     max_utilized_regions['team name'] = item['team__team_name']
                     max_utilized_regions['total availability count'] = item['availability_count']
                     max_utilized_regions['total booked count'] = item['booked_count']
@@ -1089,10 +1092,13 @@ def available_counts_booked_in_na(present_day, process_type):
     max_utilized_regions = dict()
 
     for item in available_counts_booked:
+        item['date'] = present_day.date()
+
+    for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
                 if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
-                    max_utilized_regions['date'] = present_day.date().today() + timedelta(days=1)
+                    max_utilized_regions['date'] = item['date']
                     max_utilized_regions['team name'] = item['team__team_name']
                     max_utilized_regions['total availability count'] = item['availability_count']
                     max_utilized_regions['total booked count'] = item['booked_count']
@@ -1112,7 +1118,7 @@ def fetching_future_utilized_slots():
   
     if (datetime.today().weekday() < 5):
         present_day = datetime.today()
-        if (count < 5):
+        while (count < 5):
             tag_bookings_exclude_na = available_counts_booked_not_na( present_day,process_type=['TAG'])
             shopping_bookings_exclude_na = available_counts_booked_not_na(present_day, ['SHOPPING'])
             tag_bookings_in_na = available_counts_booked_in_na( present_day,process_type=['TAG'])
@@ -1120,10 +1126,10 @@ def fetching_future_utilized_slots():
             present_day = datetime.today() + timedelta(days=(count + 1))
             count = count + 1
 
-        tag_all.append(tag_bookings_exclude_na)
-        shopping_all.append(shopping_bookings_exclude_na)
-        tag_all.append(tag_bookings_in_na)
-        shopping_all.append(shopping_bookings_in_na)
+            tag_all.append(tag_bookings_exclude_na)
+            shopping_all.append(shopping_bookings_exclude_na)
+            tag_all.append(tag_bookings_in_na)
+            shopping_all.append(shopping_bookings_in_na)
 
         tag_final = list()
         for ordering in tag_all:
