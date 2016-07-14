@@ -2091,7 +2091,7 @@ def assign_feedback(request):
 
         
 def assiging_feedback(request, assignee, id):
-    assigned_by = "Feedback Super User "+str(request.user.first_name)+' '+str(request.user.last_name)
+    assigned_by = str(request.user.first_name)+' '+str(request.user.last_name)
     feedback =  Feedback.objects.get(id=id)
     feedback_assigning_ascomment = FeedbackComment()
     feedback_assigning_ascomment.feedback = feedback
