@@ -35,24 +35,27 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(minutes=20)
+    start_date = end_date - timedelta(minutes=40)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-    logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
+    logging.info("Current Quartered Updated Leads from %s to %s" % (start_date, end_date))
     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
     sf = SalesforceApi.connect_salesforce()
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
     tech_team_id = settings.TECH_TEAM_ID
     code_type_picasso = 'Picasso'
-    code_type_Bolt = 'Bolt'
+    code_type_bolt = 'BOLT'
 
     where_clause_all = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' " \
-                       "AND Code_Type__c not in ('%s', '%s')" % (start_date, end_date, tech_team_id, code_type_picasso, code_type_Bolt)
+                       "AND Code_Type__c not in ('%s', '%s') order by LastModifiedDate desc " % (
+                        start_date, end_date, tech_team_id, code_type_picasso, code_type_bolt)
     where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) " \
-                           "AND Code_Type__c = '%s'" % (start_date, end_date,  code_type_picasso)
+                           "AND Code_Type__c = '%s' order by LastModifiedDate desc " % (
+                            start_date, end_date,  code_type_picasso)
     where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) " \
-                                "AND Code_Type__c = '%s'" % (start_date, end_date, code_type_Bolt)
+                                "AND Code_Type__c = '%s'  order by LastModifiedDate desc  " % (
+                                    start_date, end_date, code_type_bolt)
 
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause_all)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
@@ -69,7 +72,7 @@ def get_updated_leads():
         create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
         logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
-        logging.info("%s" % (e))
+        logging.info("%s" % e)
 
 
 @kronos.register('43 0 * * *')
@@ -619,11 +622,8 @@ def create_or_update_picasso_leads(records, sf):
             # create new lead
             is_new_lead = True
             lead = PicassoLeads()
-        ls = rec.get('Picasso_Lead_Stage__c')
-        if ls:
-            lead.lead_status = ls
-        else:
-            lead.lead_status = 'In Queue'
+
+        lead.lead_status = rec.get('Picasso_Lead_Stage__c')
         lead.type_1 = type_1
 
         # Google Representative email and name

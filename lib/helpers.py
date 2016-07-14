@@ -783,6 +783,7 @@ def get_unique_uuid(lead_type):
     except:
         return unique_rf_id
 
+
 # getting tat for normal picasso Audit
 def get_tat_for_picasso(source):
     if source == 'SFDC':
@@ -794,8 +795,9 @@ def get_tat_for_picasso(source):
         if not sf:
             get_tat_for_picasso('SFDC')
         code_type = 'Picasso'
-        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date,
-                                                                                                    end_date, code_type)
+        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (
+            start_date, end_date, code_type)
+
         sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)
         result = sf.query_all(sql_query_picasso)
         no_of_inqueue_leads = result['totalSize'] + 1

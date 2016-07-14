@@ -87,7 +87,7 @@
   {% include 'layouts/picasso_header.html'%}
 {% endif %}
 
-<section class="content-region inner-page">
+<section class="content-region inner-page" >
   <div class="container-fluid">
   <h1 style="font-size: 24px;
   font-family: 'robotoblack';
@@ -110,13 +110,16 @@
     <input type="hidden" id="country" name="country" value=".">
     <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
 
-      <div style="border-radius: 20px;text-align: left;padding: 30px;width: 850px;margin: 20px auto;font-size: 15px;background-color: rgb(182, 215, 168);">Notice something different? The  submission portal has been revamped to enable the following enhancements:
+      <div style="border-radius: 20px;text-align: left;padding: 30px;width: 850px;margin: 20px auto;font-size: 15px;background-color: rgb(182, 215, 168);">
           <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
-          <li style="list-style-type:disc;">Ability to have audits delivered to you alone or to you and the client simultaneously (as   Google Slides)</li>
-        <li style="list-style-type:disc;">Use of Cases to track email deliveries.</li>
-        <li style="list-style-type:disc;">Eventual language expansion.</li>
+          <li style="list-style-type:disc;">Demand for Bolt audits has been higher than anticipated. </li>
+              <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
+                  <li style="list-style-type:disc;">Please be conscious of limited capacity by avoiding bulk requests of audits and only requesting what you know you will share and discuss with your clients.</li>
+                  <li style="list-style-type:disc;">If you request a large volume of audits, we will spread delivery over a longer period of time so that you do not monopolize capacity</li>
+              </ul>
+        <li style="list-style-type:disc;">(English markets only) If you do not want to send the audit simultaneously to your client via email, you now must opt out</li>
+        <li style="list-style-type:disc;">You can review a list of all eligible opportunities for audits at <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a></li>
           </ul>
-          <b>For more details please see Sections 3 and 4 of <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a>.</b>
       </div>
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
@@ -279,7 +282,7 @@
           <div class="row row-centered">
             <div class="col-md-1 set" id="remove-check" style="width:20px;">
               <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
-                  <input type="checkbox" id="checkbox3" class="mdl-checkbox__input">
+                  <input type="checkbox" id="checkbox3" class="mdl-checkbox__input" checked>
                   
                </label>
             </div>
@@ -352,6 +355,7 @@ var pgName = "{{user.profile.team}}";
       $('#cid').val('000-000-0000');
       $('#team').val(pgName);
     }
+
     olark('api.box.hide');
 
      // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs
@@ -473,8 +477,7 @@ $('.common').click(function(){
 });
 
 
-
-$('#language_selector').click(function()
+$('#language_selector').change(function()
   { 
     if($('#language_selector').val().trim()!="English")
     {
@@ -497,6 +500,7 @@ $('#language_selector').click(function()
     else if ($('#language_selector').val().trim()=="English"){
       $("#advertiser_email").removeAttr("disabled");
       $("#checkbox3").removeAttr("disabled");
+      $('#checkbox33').addClass('is-checked');
       $("#checkbox3").show();
       $("#checkbox33").show();
       $('#advertiser_email').show('');
@@ -544,5 +548,6 @@ $('#language_selector').change(function(){
       $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
     }
   });
+
 </script>
 {% endblock main_js %}
