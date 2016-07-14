@@ -1020,13 +1020,13 @@ def slots_open_booked():
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
 
-############################ future slot utilized detail code start here###############################
 
-#+++++++++++ exclude overlapping regons such as north america +++++++++++++++++++ #
 def available_counts_booked_not_na(present_day, process_type):
-    """ normally it is taking values from today 2AM to previous 3AM exclude_north_america"""
-    """we are fetching data from future slots so tomarrows 2AM to prsent day 3AM"""
-    
+    """ 
+    Normally it is taking values from today 2AM to previous day 3AM 
+    exclude overlapping regons such as north america but in this
+    function  we are fetching data from future slots so tomarrow 2AM to present day 3AM
+    """
     today_morning = present_day
     today = today_morning.replace(hour=3, minute=00, second=00)
     
@@ -1061,10 +1061,12 @@ def available_counts_booked_not_na(present_day, process_type):
 
     return max_utilized_regions
 
-# +++++++++++++++++ include overlapping north america regions  ++++++++++++++++++++++ #
+
 def available_counts_booked_in_na(present_day, process_type):
-    """ normally previous day 4.30PM to today 7.30AM only for north america   """
-    """ we are fetching from future so today 4.30PM to tomarrow 7.30AM only for na"""
+    """ 
+    Normally previous day 4.30PM to today 7.30AM only for North America,  in this 
+    function We are fetching from future so today 4.30PM to tomarrow 7.30AM only for NA
+    """
     
     today_morning = present_day
     today = today_morning.replace(hour=16, minute=30, second=00)
@@ -1098,9 +1100,12 @@ def available_counts_booked_in_na(present_day, process_type):
 
     return max_utilized_regions
 
-# ++++++++++++++++    Main function to get data future slot utilized ++++++++++++++++++++++#
+
 @kronos.register('0 1 * * 1-5')
 def fetching_future_utilized_slots():
+    """
+    Main function to get data of slots utilized in future days
+    """
     count = 0
     tag_all = list()
     shopping_all = list()
@@ -1144,4 +1149,4 @@ def fetching_future_utilized_slots():
     if (len(tag_final) > 0 or len(shopping_final) > 0):
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
-############################   future slot utilized detail code ENDS here   ###############################
+
