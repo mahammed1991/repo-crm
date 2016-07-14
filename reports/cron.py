@@ -180,7 +180,7 @@ def get_deleted_leads():
         #     logging.info("%s" % (e))
 
 
-@kronos.register('0 */1 * * *')
+@kronos.register('0 */1 * * 1-5')
 def implemented_leads_count_report():
 
     # Leads based on Region based
@@ -1018,3 +1018,141 @@ def slots_open_booked():
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
+
+def available_counts_booked_not_na(present_day, process_type):
+    """ 
+    Normally it is taking values from today 2AM to previous day 3AM 
+    exclude overlapping regions such as north america but in this
+    function  we are fetching data from future slots so tomorrow 2AM to present day 3AM
+    """
+    today_morning = present_day
+    today = today_morning.replace(hour=3, minute=00, second=00)
+    
+    next_day_time = today_morning + timedelta(days=1)
+    next_day = next_day_time.replace(hour=2, minute=00, second=00)
+    
+    time_zone = 'IST'
+    
+    exclude_north_america = ['default team', 'TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
+    selected_tzone = Timezone.objects.get(zone_name=time_zone)
+    to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
+    from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
+    
+    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True)
+
+    default_teams = default_teams.exclude(team_name__in=exclude_north_america)
+    available_counts_teams = default_teams.values('team_name')
+    
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    
+    max_utilized_regions = dict()
+
+    for item in available_counts_booked:
+        item['date'] = present_day.date() 
+
+    for item in available_counts_booked:
+        for item2 in available_counts_teams:
+            if item2['team_name'] == item['team__team_name']:
+                if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
+                    max_utilized_regions['date'] = item['date']
+                    max_utilized_regions['team name'] = item['team__team_name']
+                    max_utilized_regions['total availability count'] = item['availability_count']
+                    max_utilized_regions['total booked count'] = item['booked_count']
+                    max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+
+    return max_utilized_regions
+
+
+def available_counts_booked_in_na(present_day, process_type):
+    """ 
+    Normally previous day 4.30PM to today 7.30AM only for North America,  in this 
+    function We are fetching from future so today 4.30PM to tomorrow 7.30AM only for NA
+    """
+    
+    today_morning = present_day
+    today = today_morning.replace(hour=16, minute=30, second=00)
+    
+    next_day_time = today_morning + timedelta(days=1)
+    next_day = next_day_time.replace(hour=7, minute=30, second=00)
+    
+    time_zone = 'IST'
+    
+    selected_tzone = Timezone.objects.get(zone_name=time_zone)
+    from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
+    to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
+    only_north_america = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
+    
+    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True, team_name__in=only_north_america).exclude(team_name='default team' )
+    available_counts_teams = default_teams.values('team_name')
+   
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+  
+    max_utilized_regions = dict()
+
+    for item in available_counts_booked:
+        item['date'] = present_day.date()
+
+    for item in available_counts_booked:
+        for item2 in available_counts_teams:
+            if item2['team_name'] == item['team__team_name']:
+                if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
+                    max_utilized_regions['date'] = item['date']
+                    max_utilized_regions['team name'] = item['team__team_name']
+                    max_utilized_regions['total availability count'] = item['availability_count']
+                    max_utilized_regions['total booked count'] = item['booked_count']
+                    max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+
+    return max_utilized_regions
+
+
+@kronos.register('0 1 * * 1-5')
+def fetching_future_utilized_slots():
+    """
+    Main function to get data of slots utilized in future days
+    """
+    count = 0
+    tag_all = list()
+    shopping_all = list()
+  
+    if (datetime.today().weekday() < 5):
+        present_day = datetime.today()
+        while (count < 5):
+            tag_bookings_exclude_na = available_counts_booked_not_na( present_day,process_type=['TAG'])
+            shopping_bookings_exclude_na = available_counts_booked_not_na(present_day, ['SHOPPING'])
+            tag_bookings_in_na = available_counts_booked_in_na( present_day,process_type=['TAG'])
+            shopping_bookings_in_na = available_counts_booked_in_na(present_day, ['SHOPPING'])
+            present_day = datetime.today() + timedelta(days=(count + 1))
+            count = count + 1
+
+            tag_all.append(tag_bookings_exclude_na)
+            shopping_all.append(shopping_bookings_exclude_na)
+            tag_all.append(tag_bookings_in_na)
+            shopping_all.append(shopping_bookings_in_na)
+
+        tag_final = list()
+        for ordering in tag_all:
+            keyorder = {k:v for v, k in enumerate(['team name', 'total availability count', 'total booked count', 'utilized ratio', 'date'])}
+            each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+            if each_one:
+                tag_final.append(each_one)
+
+        shopping_final = list()
+        for ordering in shopping_all:
+            keyorder = {k:v for v, k in enumerate(['team name', 'total availability count', 'total booked count', 'utilized ratio', 'date'])}
+            each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+            if each_one:
+                shopping_final.append(each_one)
+
+    logging.info("future slot utilization data fetching")
+    mail_subject = "ALERT - SLOT UTILIZATION NEARING 100% :"
+    mail_body = get_template('reports/email_templates/future_slot_details.html').render(Context({'tag':tag_final,'shopp':shopping_final}))
+    mail_from = 'google@regalix-inc.com'
+    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
+    bcc = set([])
+    attachments = list()
+    if (len(tag_final) > 0 or len(shopping_final) > 0):
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
