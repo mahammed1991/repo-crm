@@ -68,8 +68,8 @@ def get_updated_leads():
         create_or_update_picasso_leads(picasso_leads['records'], sf)
         create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
-        logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
-        logging.info("%s" % (e))
+        logging.error("Fail to get updated leads from %s to %s" % (start_date, end_date))
+        logging.error("%s" % (e))
 
 
 @kronos.register('43 0 * * *')
@@ -102,8 +102,8 @@ def get_last_day_leads():
         create_or_update_picasso_leads(picasso_leads['records'], sf)
         create_or_update_picasso_leads(picasso_bolt_leads['records'], sf)
     except Exception as e:
-        logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
-        logging.info("%s" % (e))
+        logging.error("Fail to get updated leads from %s to %s" % (start_date, end_date))
+        logging.error("%s" % (e))
 
 
 @kronos.register('1 * * * *')
@@ -128,8 +128,8 @@ def get_reschedule_leads():
         create_or_update_leads(all_leads['records'], sf)
         update_sfdc_leads(all_leads['records'], sf)
     except Exception as e:
-        logging.info("Fail to get updated leads from %s to %s" % (start_date, end_date))
-        logging.info("%s" % (e))
+        logging.error("Fail to get updated leads from %s to %s" % (start_date, end_date))
+        logging.error("%s" % (e))
 
 
 @kronos.register('55 0 * * *')
@@ -242,9 +242,8 @@ def get_leads_from_sfdc(start_date, end_date):
         logging.info("No of Leads from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
     except Exception as e:
-        print e
-        logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
-        logging.info("%s" % (e))
+        logging.error("Fail to get leads from %s to %s" % (start_date, end_date))
+        logging.error("%s" % (e))
 
 
 def create_or_update_leads(records, sf):
@@ -479,7 +478,8 @@ def create_or_update_leads(records, sf):
             else:
                 exist_lead_saved += 1
         except Exception as e:
-            print lead.sf_lead_id, e
+            logging.error("Exception: %s" % (e))
+            logging.error("Exception for lead id: %s" % (lead.sf_lead_id))
             if is_new_lead:
                 new_lead_failed += 1
             else:
@@ -582,8 +582,7 @@ def update_sfdc_leads(records, sf):
             try:
                 sf.Lead.update(sf_lead_id, {'Reschedule_IST__c': reschedule_in_ist})
             except Exception as e:
-                print e
-                logging.info("Failed to update the Reschedule Appointment because of this reason: %s" % (e))
+                logging.error("Failed to update the Reschedule Appointment because of this reason: %s" % (e))
         if type_1 == 'WPP' and appointment_date:
             appointment_date = SalesforceApi.salesforce_date_to_datetime_format(appointment_date)
             timezone = SalesforceApi.get_current_timezone_by_location(appointment_date, location, time_zone)
@@ -593,8 +592,7 @@ def update_sfdc_leads(records, sf):
             try:
                 sf.Lead.update(sf_lead_id, {'IST_TIME_N__c': appointment_in_ist})
             except Exception as e:
-                print e
-                logging.info("Failed to update the WPP Appointment because of this reason: %s" % (e))
+                logging.error("Failed to update the WPP Appointment because of this reason: %s" % (e))
 
 
 def create_or_update_picasso_leads(records, sf):
@@ -749,7 +747,7 @@ def create_or_update_picasso_leads(records, sf):
             else:
                 exist_lead_saved += 1
         except Exception as e:
-            logging.info(lead.sf_lead_id, e)
+            logging.error(lead.sf_lead_id, e)
             if is_new_lead:
                 new_lead_failed += 1
             else:
@@ -853,7 +851,7 @@ def update_leads_reports(lead):
     try:
         report_lead.save()
     except Exception as e:
-        print e
+        logging.error("Exception: %s" % (e))
 
 
 #+++++++++++ exclude overlapping regons +++++++++++++++++++
