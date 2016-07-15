@@ -140,8 +140,8 @@ var nbs_team = ['NBS'];
       removingStyle1.removeAttr('style');
       var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
       removingStyle2.removeAttr('style');
-      $('#checkbox33').removeClass('is-checked');
-      $('#checkbox3').attr('disabled', false);
+      //$('#checkbox33').removeClass('is-checked');
+      //$('#checkbox3').attr('disabled', false);
     }
 
   });
@@ -561,9 +561,6 @@ function optSelect(event) {
       }
     }
 }
-
-  
-
 
 function uniqueCompetitor(){
   var curl1 = $('#comp_url_1').val().trim();
