@@ -71,7 +71,7 @@ TEMPLATE_DIRS = [
 ]
 
 ADMINS = (
-    ('Basavaraju U S', 'basavaraju@regalix-inc.com'),
+    ('Portal Support', 'portalsupport@regalix-inc.com '),
 )
 
 MANAGERS = ADMINS

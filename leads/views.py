@@ -299,8 +299,8 @@ def wpp_lead_form(request, ref_id=None):
 @login_required
 @csrf_exempt
 def picasso_lead_form(request):
-    if request.user.groups.filter(name='PICASSO-BOLT'):
-        return redirect('leads.views.picasso_bolt_lead_form')
+    #if request.user.groups.filter(name='PICASSO-BOLT'):
+    return redirect('leads.views.picasso_bolt_lead_form')
 
     """
     Picasso Lead Submission to Salesforce
@@ -2886,6 +2886,7 @@ def submit_lead_to_sfdc(sf_api_url, lead_data, rlsa_bulk_upload=False):
         sf_resp = None
         try:
             sf_resp = requests.post(url=sf_api_url, data=lead_data)
+
             # Get Advertiser Details
             advirtiser_details = get_advertiser_details(sf_api_url, lead_data)
 
@@ -3373,8 +3374,8 @@ def get_picasso_lead(request):
 @login_required
 @csrf_exempt
 def picasso_bolt_lead_form(request):
-    if not request.user.groups.filter(name='PICASSO-BOLT'):
-        return redirect('leads.views.picasso_lead_form')
+    '''if not request.user.groups.filter(name='PICASSO-BOLT'):
+        return redirect('leads.views.picasso_lead_form')'''
     """
     Picasso Lead Submission to Salesforce
     """
