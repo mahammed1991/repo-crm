@@ -655,7 +655,7 @@ class ReportService(object):
 
     @staticmethod
     def get_wpp_report_details_for_filters(start_date, end_date, emails):
-        treatment_types = [treatment_type.name for treatment_type in TreatmentType.objects.all()]
+        treatment_types = [treatment_type.name for treatment_type in TreatmentType.objects.filter(is_active=True)]
         wpp_report_detail = dict()
         if emails:
             query = {'created_date__gte': start_date, 'created_date__lte': end_date,
@@ -673,7 +673,7 @@ class ReportService(object):
 
         wpp_lead_status_counts = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('lead_status').annotate(count=Count('pk'))
         wpp_lead_status_count_dict = {str(rec['lead_status']): rec['count'] for rec in wpp_lead_status_counts}
-        wpp_lead_status_count_dict['TOTAL'] = WPPLeads.objects.filter(**query).count()
+        wpp_lead_status_count_dict['TOTAL'] = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).count()
         wpp_lead_status_count_dict['TAT'] = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).aggregate(Avg('tat'))['tat__avg']
 
         key_order = [sts for sts in settings.WPP_LEAD_STATUS]

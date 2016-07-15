@@ -2310,7 +2310,7 @@ def get_lead_summary(request, lid=None, page=None):
 @wpp_user_required
 def get_wpp_lead_summary(request, lid=None):
     """Lead status and summary of wpp leads"""
-    treatment_types = [str(t_type.name) for t_type in TreatmentType.objects.all()]
+    treatment_types = [str(t_type.name) for t_type in TreatmentType.objects.filter(is_active=True)]
     return render(request, 'leads/wpp_lead_summary.html', {'treatment_types': treatment_types, 'lead_id': lid})
 
 
@@ -2321,7 +2321,7 @@ def get_wpp_lead_summary_by_treatment(request):
     email = request.user.email
     treatment_type = request.GET.get('treatment_type')
     if treatment_type == 'all':
-        treatment_type_list = [str(t_type.name) for t_type in TreatmentType.objects.all()]
+        treatment_type_list = [str(t_type.name) for t_type in TreatmentType.objects.filter(is_active=True)]
     else:
         treatment_type_list = [treatment_type]
     if request.user.groups.filter(name='SUPERUSER'):
