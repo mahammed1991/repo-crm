@@ -35,24 +35,29 @@ logging.basicConfig(filename='/tmp/cronjob.log',
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
     end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
-    start_date = end_date - timedelta(minutes=20)
+    start_date = end_date - timedelta(days=1)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-    logging.info("Current Quarted Updated Leads from %s to %s" % (start_date, end_date))
+    logging.info("Current Quartered Updated Leads from %s to %s" % (start_date, end_date))
     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
     sf = SalesforceApi.connect_salesforce()
+    if not sf:
+        sf = SalesforceApi.connect_salesforce()
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
     tech_team_id = settings.TECH_TEAM_ID
     code_type_picasso = 'Picasso'
-    code_type_Bolt = 'Bolt'
+    code_type_bolt = 'BOLT'
 
     where_clause_all = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' " \
-                       "AND Code_Type__c not in ('%s', '%s')" % (start_date, end_date, tech_team_id, code_type_picasso, code_type_Bolt)
+                       "AND Code_Type__c not in ('%s', '%s') order by LastModifiedDate desc " % (
+                        start_date, end_date, tech_team_id, code_type_picasso, code_type_bolt)
     where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) " \
-                           "AND Code_Type__c = '%s'" % (start_date, end_date,  code_type_picasso)
+                           "AND Code_Type__c = '%s' order by LastModifiedDate desc " % (
+                            start_date, end_date,  code_type_picasso)
     where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) " \
-                                "AND Code_Type__c = '%s'" % (start_date, end_date, code_type_Bolt)
+                                "AND Code_Type__c = '%s'  order by LastModifiedDate desc  " % (
+                                    start_date, end_date, code_type_bolt)
 
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause_all)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
@@ -63,6 +68,7 @@ def get_updated_leads():
         picasso_bolt_leads = sf.query_all(sql_query_picasso_bolt)
         logging.info("Updating Leads count: %s " % (len(all_leads['records'])))
         logging.info("Updating PICASSO Leads count: %s " % (len(picasso_leads['records'])))
+        logging.info("Updating PICASSO Bolt Leads count: %s " % (len(picasso_bolt_leads['records'])))
         create_or_update_leads(all_leads['records'], sf)
         update_sfdc_leads(all_leads['records'], sf)
         create_or_update_picasso_leads(picasso_leads['records'], sf)
@@ -218,7 +224,7 @@ def implemented_leads_count_report():
             'specific_date': specific_date,
         })
     )
-    mail_from = 'basavaraju@regalix-inc.com'
+    mail_from = 'portalsupport@regalix-inc.com '
     mail_to = ['g-crew@regalix-inc.com', 'portalsupport@regalix-inc.com']
     bcc = set([])
     attachments = list()
@@ -573,6 +579,7 @@ def update_sfdc_leads(records, sf):
         appointment_date = lead.get('Appointment_Date__c')
         appointment_in_ist = lead.get('IST_TIME_N__c')
         # appointment_in_pst = lead.get('Appointment_Time_in_PST__c')
+        sf_lead_id = lead.get('Id')
         if rescheduled_appointment:
             sf_lead_id = lead.get('Id')
             rescheduled_appointment = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment)
@@ -617,11 +624,8 @@ def create_or_update_picasso_leads(records, sf):
             # create new lead
             is_new_lead = True
             lead = PicassoLeads()
-        ls = rec.get('Picasso_Lead_Stage__c')
-        if ls:
-            lead.lead_status = ls
-        else:
-            lead.lead_status = 'In Queue'
+
+        lead.lead_status = rec.get('Picasso_Lead_Stage__c')
         lead.type_1 = type_1
 
         # Google Representative email and name
@@ -1145,12 +1149,13 @@ def fetching_future_utilized_slots():
 
     logging.info("future slot utilization data fetching")
     mail_subject = "ALERT - SLOT UTILIZATION NEARING 100% :"
-    mail_body = get_template('reports/email_templates/future_slot_details.html').render(Context({'tag':tag_final,'shopp':shopping_final}))
+    mail_body = get_template('reports/email_templates/future_slot_details.html').\
+        render(Context({'tag': tag_final, 'shopp': shopping_final}))
     mail_from = 'google@regalix-inc.com'
     mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
-    if (len(tag_final) > 0 or len(shopping_final) > 0):
+    if len(tag_final) > 0 or len(shopping_final) > 0:
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
 
