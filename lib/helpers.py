@@ -294,7 +294,7 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         query = {'created_date__gte': start_date, 'created_date__lte': end_date, 'treatment_type__in': treatment_type_list, 'lead_status__in': wpp_lead_status}
         wpp_lead_status_analysis = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).values('lead_status').annotate(count=Count('pk'))
-        total_count = WPPLeads.objects.filter(**query).count()
+        total_count = WPPLeads.objects.exclude(type_1='WPP - Nomination').filter(**query).count()
         nominated_leads = WPPLeads.objects.exclude(type_1='WPP').filter(created_date__gte=start_date, created_date__lte=end_date, type_1='WPP - Nomination').count()
     else:
         mylist = [Q(google_rep_email__in=email_list), Q(lead_owner_email__in=email_list)]
@@ -783,6 +783,7 @@ def get_unique_uuid(lead_type):
     except:
         return unique_rf_id
 
+
 # getting tat for normal picasso Audit
 def get_tat_for_picasso(source):
     if source == 'SFDC':
@@ -794,8 +795,9 @@ def get_tat_for_picasso(source):
         if not sf:
             get_tat_for_picasso('SFDC')
         code_type = 'Picasso'
-        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date,
-                                                                                                    end_date, code_type)
+        where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (
+            start_date, end_date, code_type)
+
         sql_query_picasso = "select count() from Lead %s" % (where_clause_picasso)
         result = sf.query_all(sql_query_picasso)
         no_of_inqueue_leads = result['totalSize'] + 1

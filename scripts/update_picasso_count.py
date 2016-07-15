@@ -22,6 +22,7 @@ def get_all_picasso_leads():
     created_date = None
     end_date = datetime.now(pytz.UTC)  # end date in utc today
     end_date = convert_date_to_salesforce_format(end_date)
+    lead_type = []
     """ Get all Picasso Bolt and Picasso Bolt Leads from SFDC """
     print "Connecting to SFDC...  \nStarted Time : %s" % (datetime.utcnow())
     if len(sys.argv) > 1:
@@ -32,20 +33,17 @@ def get_all_picasso_leads():
             exit()
     sfdc_conn = sfdc_connection(is_prod)
     print "Connected! \nProcess started..."
-    sql = "select count() from Lead WHERE " \
-          "(CreatedDate >= 2016-01-01T00:00:00-00:00 AND CreatedDate <= 2016-07-05T07:21:27-00:00) AND Code_Type__c = 'Picasso'"
-    print sfdc_conn.query_all(sql)
     while True:
 
         if index == 1:
             sql_query_all_leads = "select Id, Code_Type__c, Picasso_Lead_Stage__c, CreatedDate  from Lead WHERE " \
-                                  "(CreatedDate >= 2016-01-01T00:00:00-00:00 AND CreatedDate <= %s) " \
-                                  "AND Code_Type__c = 'Picasso' " \
+                                  "(CreatedDate >= 2016-06-30T00:00:00-00:00 AND CreatedDate <= %s) " \
+                                  "AND (Code_Type__c = 'Picasso' OR Code_Type__c = 'BOLT')  " \
                                   "ORDER BY CreatedDate LIMIT %s" % (end_date, limit)
         else:
             sql_query_all_leads = "select Id, Code_Type__c, Picasso_Lead_Stage__c, CreatedDate from Lead WHERE " \
                                   "(CreatedDate > %s AND CreatedDate <= %s) " \
-                                  "AND Code_Type__c = 'Picasso'" \
+                                  "AND (Code_Type__c = 'Picasso' OR Code_Type__c = 'BOLT')" \
                                   "ORDER BY CreatedDate LIMIT %s" % (created_date, end_date, limit)
         try:
             all_leads = sfdc_conn.query_all(sql_query_all_leads)
@@ -53,13 +51,23 @@ def get_all_picasso_leads():
             #cursor = conn.cursor()
             leads = all_leads['records']
             count = 0
+            uiux_inqueue = 0
+            bolt_inqueue = 0
             for lead in leads:
-                if lead.get('Picasso_Lead_Stage__c') not in ['Issue Case', 'Delivered', 'Unsupported Language']:
-                    count += 1
                 created_date = lead.get('CreatedDate')
                 lead_status = lead.get('Picasso_Lead_Stage__c')
+                if lead_status not in ['Issue Case', 'Delivered', 'Unsupported Language']:
+                    code_type = lead.get('Code_Type__c')
+                    if code_type == 'Picasso':
+                        uiux_inqueue += 1
+                    else:
+                        bolt_inqueue += 1
+
+
+                    lead_type.append(lead.get('Code_Type__c'))
                 if not lead_status:
                     lead_status = ""
+
 
                 sql = "UPDATE leads_picassoleads SET lead_status = '"+lead_status+"' WHERE sf_lead_id = '"+lead.get('Id') + "';"
                 #cursor.execute(sql)
@@ -73,9 +81,10 @@ def get_all_picasso_leads():
         except Exception as e:
             print "Failed to get leads from SFDC"
             print "%s" % (e)
-
+    print "Code Types : %s " % list(set(lead_type))
     print "Total Leads count: %s " % total_records
-    print "Total Inqueue Leads count: %s " % count
+    print "UIUX Inqueue : %s " % uiux_inqueue
+    print "Bolt Inqueue : %s " % bolt_inqueue
     print "Process completed... \nDisconecting from SFDC... \nEnding Time : %s" % (datetime.utcnow())
 
 
