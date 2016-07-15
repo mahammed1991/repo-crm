@@ -803,7 +803,7 @@ def get_tat_for_picasso(source):
         no_of_inqueue_leads = result['totalSize'] + 1
     else:
         start_date = datetime.today()
-        start_date = datetime(start_date.year, 1, 1, 0, 0)
+        start_date = datetime(start_date.year, 7, 1, 0, 0)
         no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language'])\
             .filter(created_date__gte=start_date, type_1='Picasso').count() #+ 1
 
@@ -866,7 +866,7 @@ def get_tat_for_bolt(source):
         no_of_inqueue_leads = result['totalSize'] + 1
     else:
         start_date = datetime.today()
-        start_date = datetime(start_date.year, 1, 1, 0, 0)
+        start_date = datetime(start_date.year, 7, 1, 0, 0)
         no_of_inqueue_leads = PicassoLeads.objects.exclude(lead_status__in=['Issue Case', 'Delivered', 'Unsupported Language'])\
             .filter(created_date__gte=start_date, type_1='BOLT').count() #+ 1
 

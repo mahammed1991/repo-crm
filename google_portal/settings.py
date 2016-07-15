@@ -74,13 +74,13 @@ TEMPLATE_DIRS = [
 ]
 
 ADMINS = (
-    ('Basavaraju U S', 'basavaraju@regalix-inc.com'),
+    ('Portal Support', 'portalsupport@regalix-inc.com '),
 )
 
 MANAGERS = ADMINS
 
 # Application constants
-PORTAL_MAIL_ID = 'basavaraju@regalix-inc.com'
+PORTAL_MAIL_ID = 'portalsupport@regalix-inc.com '
 REGALIX_DEFAULT_ROLE = 1
 GOOGLE_DEFAULT_ROLE = 3
 ADMIN_DOMAIN = 'regalix-inc.com'

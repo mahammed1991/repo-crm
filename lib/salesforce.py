@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from leads.models import Timezone, Location, TimezoneMapping
 from django.conf import settings
 import json
+import logging
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -44,12 +45,18 @@ class SalesforceApi(object):
         """ Connect to Salesforce """
         if settings.SFDC == 'STAGE':
             try:
+                logging.error("Connecting to Stage SFDC")
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
                                        password='portalsupport123456',
                                        security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
+                if not sf:
+                    sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
+                                           password='portalsupport123456',
+                                           security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
+
                 return sf
             except Exception, e:
-                print Exception, e
+                logging.error("Error while connecting to Stage SFDC : %s " % e)
                 return None
         else:
             try:
@@ -57,9 +64,14 @@ class SalesforceApi(object):
                                        password='portalsupport123456',
                                        security_token='enfTcpWGlwx6ObKwksx3Bt9I')
 
+                if not sf:
+                    sf = CustomeSalesforce(username='google.tech@regalix-inc.com',
+                                           password='portalsupport123456',
+                                           security_token='enfTcpWGlwx6ObKwksx3Bt9I')
+
                 return sf
             except Exception, e:
-                print Exception, e
+                logging.error("Error while connecting to Stage SFDC : %s " % e)
                 return None
 
     @staticmethod
