@@ -121,6 +121,7 @@
         <li style="list-style-type:disc;">(English markets only) If you do not want to send the audit simultaneously to your client via email, you now must opt out</li>
         <li style="list-style-type:disc;">You can review a list of all eligible opportunities for audits at <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a></li>
           </ul>
+          <b>For more details please see Sections 3 and 4 of <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a>.</b>
       </div>
 
     <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
@@ -352,11 +353,30 @@
 var nbs_team = ['NBS'];
 var pgName = "{{user.profile.team}}";
   $(document).ready(function(){
-    if(nbs_team.indexOf(pgName) != -1){
+    /*var set = "{{ request.get_full_path }}";
+    var res = set.split("?");
+    var res1 = res[1].split("&amp;")
+    alert(res1);*/
+    var search = location.search.substring(1);
+    var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+    function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
+    alert(prevaluedict['cid']);
+    if(prevaluedict['team'] && prevaluedict['cid']){
+      $('#cid').val(prevaluedict['cid']);
+      $('#team').val(prevaluedict['team']);
+    }
+    else if(nbs_team.indexOf(pgName) != -1){
       $('#cid').val('000-000-0000');
       $('#team').val(pgName);
     }
-
+    
+    
+    if(prevaluedict['url']){
+      $('#url').val(prevaluedict['url']);
+    }
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
+    }
     olark('api.box.hide');
 
      // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs
