@@ -360,7 +360,7 @@ var pgName = "{{user.profile.team}}";
     var search = location.search.substring(1);
     var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
     function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
-    alert(prevaluedict['cid']);
+    
     if(prevaluedict['team'] && prevaluedict['cid']){
       $('#cid').val(prevaluedict['cid']);
       $('#team').val(prevaluedict['team']);
