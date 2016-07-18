@@ -389,6 +389,12 @@ $('#bolt').click(function(){
     $('#cid').val('000-000-0000');
     $('#team').val(pgName);
   }
+
+  if(prevaluedict['team'] && prevaluedict['cid']){
+      $('#cid').val(prevaluedict['cid']);
+      $('#team').val(prevaluedict['team']);
+    }
+
   $('#ctype1').val('BOLT');
   $('.tab-content').css("background-color","#F9FAFC");
   $('.for-bolt').show();
@@ -399,6 +405,12 @@ $('#picasso').click(function(){
     $('#cid').val('000-000-0000');
     $('#team').val(pgName);
   }
+  
+  if(prevaluedict['team'] && prevaluedict['cid']){
+      $('#cid').val(prevaluedict['cid']);
+      $('#team').val(prevaluedict['team']);
+    }
+  
   $('#ctype1').val('PICASSO');
   $('.tab-content').css("background-color","#F9FAFC");
   $('.for-bolt').hide();
@@ -412,8 +424,8 @@ function resetPicasso() {
 
   $('#checkbox11').removeClass('is-checked');
   $('#checkbox1').removeProp("checked");
-  
-  $('#team').prop('selectedIndex',0);
+ /* 
+  $('#team').prop('selectedIndex',0);*/
   $('#language_selector').prop('selectedIndex',0);
   $('#adv_mail').attr('hidden',false);
   $("#advertiser_email").val('').attr('hidden',false);
@@ -448,8 +460,8 @@ function resetBolt() {
 
   $('#checkbox11').removeClass('is-checked');
   $('#checkbox1').removeProp("checked");
-
-  $('#team').prop('selectedIndex',0);
+/*
+  $('#team').prop('selectedIndex',0);*/
   $('#language_selector').prop('selectedIndex',0);
   $('#adv_mail').attr('hidden',false);
   $("#advertiser_email").val('').attr('hidden',false);
