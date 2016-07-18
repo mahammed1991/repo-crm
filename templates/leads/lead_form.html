@@ -1252,21 +1252,8 @@ function checkout(){
           modalBody = "You can also submit "+data['type']+" lead.";
           $('#eligible p').text(modalBody);
 
-          $('#picasso a').trigger("click");
-          if(data['type'] == 'bolt'){
-            alert(data['type']);
-            /*$('#display_block_error_bolt').show();
-            $('#formsubmit').prop('disabled', false);*/
-          }
-          else if(data['type'] == 'picasso'){
-            alert(data['type']);
-            /*$('#display_block_error_picasso').show();
-            $('#formsubmit').prop('disabled', true);*/
-          }
-          else if(data['type'] == 'both'){
+          if(data['type'] == 'both'){
             isBoth = data['type'];
-            /*$('#display_block_error_both').show();
-            $('#formsubmit').prop('disabled', true);*/
           }
           dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url1.value });
         }
