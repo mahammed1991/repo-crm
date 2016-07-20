@@ -320,7 +320,7 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     URL_2__c, URL_3__c, URL_4__c, URL_5__c, Comment_2__c, Comment_3__c, Comment_4__c, Comment_5__c, Type_2__c, Type_3__c,\
     Type_4__c, Type_5__c, Appointment_Date__c, qbdialer__Dials__c, Comment_1__c, E_commerce__c, Location__c, X1st_Contact_on__c,\
     Primary_Contact_Email__c, Google_Rep__c, Date_of_installation__c, Team__c, Type_Of_Installation__c, Lead_Implemented_Date_Time__c,\
-    Rescheduled_Appointments__c, Time_Zone__c, Lead_Sub_Status__c, Q2_Manager__c, WPP_Lead_Status__c, OwnerId, Reschedule_IST_Time__c,\
+    Rescheduled_Appointments__c, Time_Zone__c, Lead_Sub_Status__c, Q2_Manager__c, WPP_Lead_Status__c, WPP_Lead_Sub_Status__c, OwnerId, Reschedule_IST_Time__c,\
     Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c,\
     Stage_URL_Credentials__c, AB_Testing__c, GCSS_Status__c, Language__c,  All_Regalix_Comments__c, Picasso_Objective__c,\
     Internal_CID_1__c, POD_Name__c, Picasso_Lead_Stage__c, PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c,\
