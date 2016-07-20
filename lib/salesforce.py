@@ -61,12 +61,12 @@ class SalesforceApi(object):
         else:
             try:
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com',
-                                       password='portalsupport123456',
+                                       password='portalsupport12345',
                                        security_token='enfTcpWGlwx6ObKwksx3Bt9I')
 
                 if not sf:
                     sf = CustomeSalesforce(username='google.tech@regalix-inc.com',
-                                           password='portalsupport123456',
+                                           password='portalsupport12345',
                                            security_token='enfTcpWGlwx6ObKwksx3Bt9I')
 
                 return sf

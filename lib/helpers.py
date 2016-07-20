@@ -853,7 +853,7 @@ def get_tat_for_picasso(source):
 def get_tat_for_bolt(source):
     if source == 'SFDC':
         end_date = datetime.now(pytz.UTC)   # end date in utc today
-        start_date = datetime(2016, 01, 01, 0, 0, 0, tzinfo=pytz.utc)
+        start_date = datetime(2016, 07, 01, 0, 0, 0, tzinfo=pytz.utc)
         start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
         end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
         sf = SalesforceApi.connect_salesforce()
