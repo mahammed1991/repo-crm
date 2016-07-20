@@ -43,11 +43,12 @@ Inventory
                         <label for="project">Project</label>
                         <select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:40px;">
                             <option value="select project">Select project</option>
-                            <option value="Tag">Tag</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="RLSA">RLSA</option>
+                            <option value="Google Portal">Google Portal</option>
                             <option value="Picasso Audits">Picasso Audits</option>
-                            <option value="Shopping">Picasso Builds</option>
+                            <option value="Picasso Builds">Picasso Builds</option>
+                            <option value="RLSA">RLSA</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Tag">Tag</option>
                         </select>
                     </div>
                    <div class="col-md-2">
@@ -62,7 +63,6 @@ Inventory
                        <label for="employee-status">Employee Status</label>
                        <select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:40px;">
                            <option value="active"> Active </option>
-                           <option value="inactive"> In-active </option>
                        </select>
                    </div>
                    <div class="col-md-2">
@@ -134,14 +134,20 @@ $(document).ready(function(){
                         var employee_alias = json[i].employee_alias;
                         if(employee_alias === "")
                             employee_alias = "-";
+                        else
+                            employee_alias = employee_alias.split("@")[0]
+
+                        employee_ldap = json[i].employee_ldap.split("@")[0];
 
                         if(json[i].employee_status){
-                            employee_status = 'Active'
-                            empColor = 'green'
+                            employee_status = 'Active';
+                            empColor = 'green';
+                            margin = '15px';
                         }
                         else{
-                            employee_status = 'Inactive'
-                            empColor = 'red'
+                            employee_status = 'Inactive';
+                            empColor = 'red';
+                            margin = '5px';
                         }
 
                         if(json[i].device_status){
@@ -155,13 +161,13 @@ $(document).ready(function(){
 
                         json[i][0] = json[i].employee_id;
                         json[i][1] = json[i].employee_name;
-                        json[i][2] = json[i].employee_ldap;
+                        json[i][2] = employee_ldap;
                         json[i][3] = employee_alias;
                         json[i][4] = json[i].employee_project;
                         json[i][5] = json[i].device_type;
                         json[i][6] = json[i].mac_id;
                         json[i][7] = '<span> '+ employee_status + '<i class="fa fa-circle fa-1"'+
-                                        'aria-hidden="true" style="color:'+empColor+';margin-left: 5px;"></i></span>';;
+                                        'aria-hidden="true" style="color:'+empColor+';margin-left: '+margin+';"></i></span>';;
 
                         json[i][8] = '<span style="display: block;width: 76px;"> '+ device_status + '<i class="fa fa-circle fa-1"'+
                                         'aria-hidden="true" style="color:'+deviceColor+';margin-left: 5px;"></i></span>';
@@ -177,11 +183,16 @@ $(document).ready(function(){
                 {targets: [ 4 ], orderData: [ 4, 0 ]},
                 {bSortable: false,targets: [ 2, 3, 6, 10 ]},
                 { "width": "7%", "targets": 0 },
-                { "width": "11%", "targets": 1 },
-                { "width": "11%", "targets": 2 },
-                { "width": "8%", "targets": 3 },
-                { "width": "8%", "targets": 4 },
+                { "width": "10%", "targets": 1 },
+                { "width": "8%", "targets": 2 },
+                { "width": "6%", "targets": 3 },
+                { "width": "10%", "targets": 4 },
                 { "width": "10%", "targets": 5 },
+                { "width": "10%", "targets": 6 },
+                { "width": "11%", "targets": 7 },
+                { "width": "11%", "targets": 8 },
+                { "width": "8%", "targets": 9 },
+                { "width": "4%", "targets": 10 },
             ],
             order: [[ 0, "asc" ]],
             "bDestroy": true,
@@ -192,8 +203,8 @@ $(document).ready(function(){
 
     var formatTime = function(unixTimestamp){
         var date = new Date(unixTimestamp*1000);
-        var year = date.getYear() + ''
-        return date.getDate() + "-" + date.getMonth()+ "-" + year.substring(1,3);
+        var month = date.getMonth() + 1;
+        return date.getDate() + "-" + month + "-" + date.getFullYear();
     };
 
     $("#add_emp").click(function(){
@@ -213,11 +224,15 @@ $(document).ready(function(){
 
 
     function validateGcaseEmail(val) {
-        domain = val.split("@")[1];
-        if(domain != 'google.com')
-            return false;
-        else
+        domain = val.split("@");
+        if(domain.length > 1){
+            if(domain[1] != 'google.com')
+                return false;
+            else
+                return true;
+        }else{
             return true;
+        }
     }
 
     $('body').on('click', 'a.edit', function(e) {
@@ -225,39 +240,69 @@ $(document).ready(function(){
 
         var row = $(this).parent().parent();
         $editingRow = $(this).parent().parent().html();
-        var row_id = row.children().eq(10).find('a').attr('id');
-        var emp_id = row.children().eq(0).html();
-        var emp_name = row.children().eq(1).html();
-        var emp_email = row.children().eq(2).html();
-        var emp_alais = row.children().eq(3).html();
+        var row_id = row.children().eq(10).find('a').attr('id').trim();
+        var emp_id = row.children().eq(0).html().trim();
+        var emp_name = row.children().eq(1).html().trim();
+        var emp_email = row.children().eq(2).html().trim();
+        var emp_alais = row.children().eq(3).html().trim();
         if(emp_alais === "-")
             emp_alais = ""
-        var emp_proj = row.children().eq(4).html();
-        var emp_device = row.children().eq(5).html();
-        var emp_mac_id = row.children().eq(6).html();
-        var emp_status = row.children().eq(7).html();
-        var dev_status = row.children().eq(8).html();
-        var dev_issued_on = row.children().eq(9).html();
-        row.children().eq(0).html('<input class="input-sm" value="'+emp_id+'" size="5">');
-        row.children().eq(1).html('<input class="input-sm" value="'+emp_name+'" size="12">');
-        row.children().eq(2).html('<input class="input-sm" value="'+emp_email+'" size="15">');
-        row.children().eq(3).html('<input class="input-sm" value="'+emp_alais+'" size="10">');
-        row.children().eq(4).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:30px;margin-bottom: 2px;">'+
-                                  '<option value="select project">Select project</option>'+
-                                  '<option value="Tag">Tag</option>'+
-                                  '<option value="Shopping">Shopping</option>'+
-                                  '<option value="RLSA">RLSA</option>'+
-                                  '<option value="Picasso Audits">Picasso Audits</option>'+
-                                  '<option value="Shopping">Picasso Builds</option>');
-        row.children().eq(5).html('<input class="input-sm" value="'+emp_device+'" size="11">');
-        row.children().eq(6).html('<input class="input-sm" value="'+emp_mac_id+'" size="9">');
-        row.children().eq(7).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:30px;margin-bottom: 2px;">'+
-                                  '<option value="active">Active</option>'+
-                                  '<option value="inactive">Inactive</option></select>');
-        row.children().eq(8).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:30px;margin-bottom: 2px;">'+
-                                  '<option value="assigned">Assigned</option>'+
-                                  '<option value="returned">Returned</option></select>');
-        row.children().eq(9).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" size="5">');
+
+        var emp_proj = row.children().eq(4).html().trim();
+        var projOptions = '<option value="Google Portal">Google Portal</option>'+
+                        '<option value="Picasso Audits">Picasso Audits</option>'+
+                        '<option value="Picasso Builds">Picasso Builds</option>'+
+                        '<option value="RLSA">RLSA</option>'+
+                        '<option value="Shopping">Shopping</option>'+
+                        '<option value="Tag">Tag</option>';
+        if(emp_proj === 'Tag')
+            projOptions = projOptions.replace('"Tag"', '"Tag" selected');
+        else if (emp_proj === 'Shopping')
+            projOptions = projOptions.replace('"Shopping"', '"Shopping" selected');
+        else if (emp_proj === 'RLSA')
+            projOptions = projOptions.replace('"RLSA"', '"RLSA" selected');
+        else if (emp_proj === 'Picasso Audits')
+            projOptions = projOptions.replace('"Picasso Audits"', '"Picasso Audits" selected');
+        else if (emp_proj === 'Picasso Builds')
+            projOptions = projOptions.replace('"Picasso Builds"', '"Picasso Builds" selected');
+        else if (emp_proj === 'Google Portal')
+            projOptions = projOptions.replace('"Google Portal"', '"Google Portal" selected');
+
+        var emp_device = row.children().eq(5).html().trim();
+        var emp_mac_id = row.children().eq(6).html().trim();
+        var emp_status = row.children().eq(7).text().trim();
+
+        var empStatusOptions = '<option value="Active">Active</option><option value="Inactive">Inactive</option>';
+        if(emp_status === 'Active')
+            empStatusOptions = empStatusOptions.replace('Active"', 'Active" selected');
+        else
+            empStatusOptions = empStatusOptions.replace('Inactive"', 'Inactive" selected');
+
+        var dev_status = row.children().eq(8).text().trim();
+        var deviceStatusOptions =  '<option value="Assigned">Assigned</option><option value="Returned">Returned</option>';
+        if(dev_status === 'Assigned')
+            deviceStatusOptions = deviceStatusOptions.replace('Assigned"', 'Assigned" selected');
+        else
+            deviceStatusOptions = deviceStatusOptions.replace('Returned"', 'Returned" selected');
+
+
+        var dev_issued_on = row.children().eq(9).html().trim();
+        row.children().eq(0).html('<input class="input-sm" value="'+emp_id+'" style="width: 110%;">');
+        row.children().eq(1).html('<input class="input-sm" value="'+emp_name+'" style="width: 110%;">');
+        row.children().eq(2).html('<input class="input-sm" value="'+emp_email+'" style="width: 110%;">');
+        row.children().eq(3).html('<input class="input-sm" value="'+emp_alais+'" style="width: 120%;">');
+        row.children().eq(4).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+                                   projOptions +
+                                  '</select>');
+        row.children().eq(5).html('<input class="input-sm" value="'+emp_device+'" style="width: 90%;">');
+        row.children().eq(6).html('<input class="input-sm" value="'+emp_mac_id+'" style="width: 110%;">');
+        row.children().eq(7).html('<select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:31.5px;margin-bottom: 2px;width: 100%;">'+
+                                    empStatusOptions +
+                                  '</select>');
+        row.children().eq(8).html('<select type="text" class="form-control bgicon dropdown" id="device-type" name="device-type" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+                                    deviceStatusOptions +
+                                 '</select>');
+        row.children().eq(9).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" style="width: 100%;">');
 
         row.children().eq(10).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
                                     '<a title="Cancel" class="cancel" href="#" style="margin-left: 10px; color: #D83F34;"><span class="glyphicon glyphicon-remove"></span></a>');;
@@ -299,13 +344,23 @@ $(document).ready(function(){
             ldap.addClass('error-box');
             valid = false;
         }else{
-            //if(validateGcaseEmail(employee_ldap)){
+            if(validateGcaseEmail(employee_ldap)){
                 ldap.removeClass('error-box');
-            /*}else{
+            }else{
                 ldap.addClass('error-box');
                 valid = false;
-            }*/
+            }
         }
+
+        var alias_val = alias.val().trim();
+        if(alias_val.length > 0){
+            if(validateGcaseEmail(alias_val)){
+                alias.removeClass('error-box');
+            }else{
+                alias.addClass('error-box');
+                valid = false;
+            };
+        };
 
         var employee_project = project.val().trim()
         if(employee_project === "select project"){
@@ -335,22 +390,12 @@ $(document).ready(function(){
         }else
             issuedOn.removeClass('error-box');
 
-        var alias = alias.val().trim();
-        if(alias.length > 0){
-            //if(validateGcaseEmail(alias)){
-                $("#alias").removeClass('error-box');
-            /*}else{
-                $("#alias").addClass('error-box');
-                valid = false;
-            };*/
-        };
-
         var jsonData = {
                 row_id: row_id,
                 emp_id: employee_id,
                 name: employee_name,
                 ldap: employee_ldap,
-                alias: alias,
+                alias: alias_val,
                 project: employee_project,
                 deviceType: employee_deviceType,
                 macId: employee_macId,
@@ -426,12 +471,12 @@ $(document).ready(function(){
             ldap.addClass('error-box');
             valid = false;
         }else{
-            //if(validateGcaseEmail(employee_ldap)){
+            if(validateGcaseEmail(employee_ldap)){
                 ldap.removeClass('error-box');
-            /*}else{
+            }else{
                 ldap.addClass('error-box');
                 valid = false;
-            }*/
+            }
         }
 
         var employee_project = project.val().trim()
@@ -464,12 +509,12 @@ $(document).ready(function(){
 
         var alias = $("#alias").val().trim();
         if(alias.length > 0){
-            //if(validateGcaseEmail(alias)){
+            if(validateGcaseEmail(alias)){
                 $("#alias").removeClass('error-box');
-            /*}else{
+            }else{
                 $("#alias").addClass('error-box');
                 valid = false;
-            };*/
+            };
         };
 
         var jsonData = {

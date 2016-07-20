@@ -2516,22 +2516,18 @@ def inventory_handler(request):
         cbi.device_type = data.get('deviceType')
         cbi.mac_id = data.get('macId')
         emp_stat = data.get('employeeStatus')
-        if emp_stat == 'active':
+        if emp_stat == 'Active':
             emp_stat = True
         else:
             emp_stat = False
         dev_stat = data.get('deviceStatus')
-        if dev_stat == 'assigned':
+        if dev_stat == 'Assigned':
             dev_stat = True
         else:
             dev_stat = False
         cbi.employee_status = emp_stat
         cbi.device_status = dev_stat
-        try:
-            issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
-        except:
-            issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%y")
-        cbi.issued_on = issued_on
+        cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
         cbi.save()
         resp = {'success': True, 'msg': 'User data saved succesfully'}
         return HttpResponse(json.dumps(resp), content_type='application/json')

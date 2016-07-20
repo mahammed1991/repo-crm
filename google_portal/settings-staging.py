@@ -136,7 +136,7 @@ SESSION_COOKIE_DOMAIN = ".regalixdev.com"
 
 # list of domains allowed
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['regalix-inc.com', 'gmail.com']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['bshivamallappa@google.com', 'spenz@google.com', 'rwieker@google.com', 'sabinaa@google.com', 'avenkataratnam@google.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['bshivamallappa@google.com', 'spenz@google.com', 'rwieker@google.com', 'sabinaa@google.com', 'avenkataratnam@google.com', 'caitlinsims@google.com']
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
