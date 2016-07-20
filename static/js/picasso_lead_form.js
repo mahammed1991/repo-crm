@@ -140,8 +140,8 @@ var nbs_team = ['NBS'];
       removingStyle1.removeAttr('style');
       var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
       removingStyle2.removeAttr('style');
-      //$('#checkbox33').removeClass('is-checked');
-      //$('#checkbox3').attr('disabled', false);
+      $('#checkbox33').removeClass('is-checked');
+      $('#checkbox3').attr('disabled', false);
     }
 
   });
