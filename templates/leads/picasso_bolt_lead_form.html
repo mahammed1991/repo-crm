@@ -345,6 +345,11 @@
 <script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
+  
+  var search = location.search.substring(1);
+  var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+  function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
+  
   $('#formsubmit').click(function(){
   $('.list').css({'background':'#E0A3A3','margin-top':'30px'});
   $('.error_list').css({'padding-top':'10px','padding-bottom':'10px'});
@@ -357,10 +362,7 @@ var pgName = "{{user.profile.team}}";
     var res = set.split("?");
     var res1 = res[1].split("&amp;")
     alert(res1);*/
-    var search = location.search.substring(1);
-    var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
-    function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
-    
+
     if(prevaluedict['team'] && prevaluedict['cid']){
       $('#cid').val(prevaluedict['cid']);
       $('#team').val(prevaluedict['team']);
