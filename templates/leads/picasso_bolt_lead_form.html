@@ -115,12 +115,11 @@
           <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
           <li style="list-style-type:disc;">Demand for Bolt audits has been higher than anticipated. </li>
               <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
-                  <li style="list-style-type:circle;">Please be conscious of limited capacity by avoiding bulk requests of audits and only requesting what you know you will share and discuss with your clients.</li>
-                  <li style="list-style-type:circle;">If you request a large volume of audits, we will spread delivery over a longer period of time so that you do not monopolize capacity</li>
+                  <li style="list-style-type:disc;">Please be conscious of limited capacity by avoiding bulk requests of audits and only requesting what you know you will share and discuss with your clients.</li>
+                  <li style="list-style-type:disc;">If you request a large volume of audits, we will spread delivery over a longer period of time so that you do not monopolize capacity</li>
               </ul>
         <li style="list-style-type:disc;">(English markets only) If you do not want to send the audit simultaneously to your client via email, you now must opt out</li>
-        <li style="list-style-type:disc;">You can review a list of all eligible opportunities for audits at
-            <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/SMBAuditsDash' });" style="font-size: 18px;" target="_blank" href="http://go/SMBAuditsDash">go/SMBAuditsDash</a></li>
+        <li style="list-style-type:disc;">You can review a list of all eligible opportunities for audits at <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a></li>
           </ul>
           <b>For more details please see Sections 3 and 4 of <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a>.</b>
       </div>
@@ -152,12 +151,7 @@
 
     <p id="display_block_error_both" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for both Audits. You can find more details at <a href="https://goto.google.com/SMBAuditsDash/" target="_blank" style="color:#2763c9">(see go/SMBAuditsDash)</a></b> </p>
 
-    <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">
-        This CID is not eligible for an audit at this time. Please check Opportunity PitchIQ to identify who is eligible for an audit. To request an exception, fill out
-        <a href="http://go/audit-exception-form" target="_blank" style="color:#2763c9;">go/audit-exception-form</a>
-        </b>
-    </p>
-
+    <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">The Customer ID that you have entered is not eligible for an Audit at this time. Please enter another Customer ID or write to <a href="mailto:website-audit-support@google.com" style="color:#2763c9;">website-audit-support@google.com</a> for more information!</b> </p>
     
     <div class="row">
       <div class="col-md-6">
@@ -351,11 +345,6 @@
 <script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script type="text/javascript">
-  
-  var search = location.search.substring(1);
-  var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
-  function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
-  
   $('#formsubmit').click(function(){
   $('.list').css({'background':'#E0A3A3','margin-top':'30px'});
   $('.error_list').css({'padding-top':'10px','padding-bottom':'10px'});
@@ -363,12 +352,15 @@
 
 var nbs_team = ['NBS'];
 var pgName = "{{user.profile.team}}";
+var search = location.search.substring(1);
+var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
   $(document).ready(function(){
     /*var set = "{{ request.get_full_path }}";
     var res = set.split("?");
     var res1 = res[1].split("&amp;")
     alert(res1);*/
-
+    
     if(prevaluedict['team'] && prevaluedict['cid']){
       $('#cid').val(prevaluedict['cid']);
       $('#team').val(prevaluedict['team']);

@@ -55,5 +55,5 @@ urlpatterns = patterns(
     url(r'^rlsa-bulk-upload/$', views.rlsa_bulk_upload_lead_form),
     #picasso workflow
     url(r'picasso-build-submission-flow/$', views.picasso_build_submission_flow),
-
+    url(r'^picasso/cid/$', views.picasso_blacklist_cid),
 )
