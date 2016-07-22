@@ -14,7 +14,32 @@
     .avg_time{
       font-size: 15px; border-width: 0px 0px 0px 6px; border-style: solid; border-color: rgb(10, 157, 88); color: rgb(10, 157, 88); padding:4px;padding-left: 10px; margin-bottom: 18px; font-family: Roboto, Arial, sans-serif; background: rgb(230, 245, 238); margin-left: 16px;
     }
-  
+
+    #b a{
+      text-decoration: none;
+      color: white;
+    }
+
+.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) { 
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  width: 300px;
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
 </style>
 {% endblock main_css %}
 {% block content %}
@@ -248,7 +273,7 @@
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype1" id="ctype1">
             </select>
-              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL" onfocusout="checkout()">
             </div>
             <div class="col-md-4">
               <textarea class="form-control" id="code1" name="code1" placeholder="Code (Optional)"></textarea>
@@ -875,6 +900,26 @@
           </div>
     <!-- End of Notification dropdown for Web Access -->
 
+  <!-- modal fo picasso-->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Picasso/Bolt Audits Eligibility</h4>
+        </div>
+        <div class="modal-body" id="eligible">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button id="b" class="btn btn-primary"><a href="" target="_blank">Submit</a></button>
+        </div>
+      </div> 
+    </div>
+  </div>
+
+
     <div class="btns text-center" style="display:none;" id="submit_buttons">
         <div class="btn-group">
             <button class="btn std-btn">Submit</button>
@@ -1170,6 +1215,76 @@ function addValueTorbidmodifier(){
   }
 }
 
+
+
+//functions related to picasso form
+function getLink(href){
+  var link = document.createElement("a");
+  link.href = href;
+  return link;
+}
+
+var modalBody;
+var isBoth;
+function checkout(){
+ /* $('#display_block_error_picasso').hide();
+  $('#display_block_error_bolt').hide();
+  $('#display_block_error_both').hide();*/
+  var cidElem = $('#cid').val().trim();
+  var urlElem = $('#url1').val().trim();
+  if(cidElem && urlElem){
+    if(urlElem.indexOf('http') > -1){
+      var link = getLink(urlElem);
+      var linkhost = link.hostname;
+    }
+    else{
+      var urlElem = 'https://' + urlElem;
+      var link = getLink(urlElem); 
+      var linkhost = link.hostname;
+    }
+    $.ajax({
+      url: "/leads/get-picasso-bolt-lead",
+      type: "GET",
+      data: {'cid': cidElem, 'url': linkhost},
+      dataType: 'JSON',
+      success:function(data){
+        if(data['status'] == 'success'){
+          modalBody = "You can also submit "+data['type']+" lead.";
+          $('#eligible p').text(modalBody);
+
+          if(data['type'] == 'both'){
+            isBoth = data['type'];
+          }
+          dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url1.value });
+        }
+        else if(data['status'] == 'failure'){
+          modal_body = "You can also submit picasso and bolt audit leads.";
+          $('#eligible p').text(modal_body);
+        }
+      },
+      failure:function(error) {
+      }
+    });
+  }/*else{
+    $('#display_block_error_bolt').hide();
+    $('#display_block_error_picasso').hide();
+    $('#display_block_error_both').hide();
+    $('#formsubmit').prop('disabled', false);
+  }*/
+  checkID();
+}
+
+
+
+
+$('#b').click(function(){
+  var cid = $('#cid').val().trim();
+  var url = $('#url1').val().trim();
+  var advmail = $('#aemail').val().trim();
+  var program = $('#team').val().trim();
+  var url = '{{request.META.HTTP_HOST}}' + "{% url 'leads.views.picasso_bolt_lead_form' %}" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program;
+  $('#b a').attr('href',url);
+});
 
 
 </script>
