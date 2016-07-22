@@ -412,7 +412,7 @@ function checkout(){
   $('#display_block_error_bolt').hide();
   $('#display_block_error_both').hide();
   var cidElem = $('#cid').val().trim();
-  var urlElem = $('#url').val().trim();
+  var urlElem = $('#url').val().toLowerCase().trim();
   if(cidElem && urlElem){
     if(urlElem.indexOf('http') > -1){
       var link = getLink(urlElem);
