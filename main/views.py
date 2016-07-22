@@ -2070,6 +2070,7 @@ def assign_feedback(request):
                 # mailing functionolities
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
                 mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
+                feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
                 mail_to = [ str(assignee) , str(request.user.email)]
                 #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
                 mail_subject = "Customer Feedback ["+cid+"] Status- Submit Response and/or Initiate Closure"
@@ -2092,7 +2093,7 @@ def assign_feedback(request):
         
 def assiging_feedback(request, assignee, id):
     assigned_by = str(request.user.first_name)+' '+str(request.user.last_name)
-    feedback =  Feedback.objects.get(id=id)
+    feedback = Feedback.objects.get(id=id)
     feedback_assigning_ascomment = FeedbackComment()
     feedback_assigning_ascomment.feedback = feedback
     feedback_assigning_ascomment.comment = "This Feedback has been assigned to "+str(assignee)+" to fix. Assigned by "+str(assigned_by)
