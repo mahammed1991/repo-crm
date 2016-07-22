@@ -4090,13 +4090,14 @@ def picasso_blacklist_cid(request):
             from django.core import exceptions
             raise exceptions.PermissionDenied
     if request.method == "PUT":
-        bl_id = request.GET.get('id')
-        if bl_id:
-            record = BlackListedCID.objects.get(id=bl_id)
-            record.active = False
-            record.save()
-            resp = {'status': 'success'}
-            return HttpResponse(json.dumps(resp), content_type='application/json')
+        if request.user.groups.filter(name='PICASSO-BLACKLIST-MANAGER'):
+            bl_id = request.GET.get('id')
+            if bl_id:
+                record = BlackListedCID.objects.get(id=bl_id)
+                record.active = False
+                record.save()
+                resp = {'status': 'success'}
+                return HttpResponse(json.dumps(resp), content_type='application/json')
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
