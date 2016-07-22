@@ -510,7 +510,7 @@ function resetBolt() {
 function checkID()
 {
   var cid_to_compare = $('#cid').val().trim();
-  if(cid_to_compare != '000-000-0000'){
+  if(cid_to_compare != '000-000-0000') {
     $.ajax({
       url: "/leads/get-picasso-bolt-lead/?cid="+cid_to_compare,
       type: "PUT",
