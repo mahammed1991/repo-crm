@@ -3831,16 +3831,16 @@ def validate_rlsa_csv_row(row, row_count, locations, languages, apply_to):
         row[7] - Apply to
         row[8] - Comment
         row[9] - Advertiser Customer ID
-        row[10] - User List ID 1	String
-        row[11] - RLSA Bid Adjustment 1	Float
-        row[12] - User List ID 2	Integer
-        row[13] - RLSA Bid Adjustment 2	Float
-        row[14] - User List ID 3	Integer
-        row[15] - RLSA Bid Adjustment 3	Float
-        row[16] - User List ID 4	Integer
-        row[17] - RLSA Bid Adjustment 4	Float
-        row[18] - User List ID 5	Integer
-        row[19] - RLSA Bid Adjustment 5	Float
+        row[10] - User List ID 1    String
+        row[11] - RLSA Bid Adjustment 1 Float
+        row[12] - User List ID 2    Integer
+        row[13] - RLSA Bid Adjustment 2 Float
+        row[14] - User List ID 3    Integer
+        row[15] - RLSA Bid Adjustment 3 Float
+        row[16] - User List ID 4    Integer
+        row[17] - RLSA Bid Adjustment 4 Float
+        row[18] - User List ID 5    Integer
+        row[19] - RLSA Bid Adjustment 5 Float
     '''
     row_errors = {}
     headers = config.RLSA_BULK_CSV_HEADERS
@@ -4090,13 +4090,14 @@ def picasso_blacklist_cid(request):
             from django.core import exceptions
             raise exceptions.PermissionDenied
     if request.method == "PUT":
-        bl_id = request.GET.get('id')
-        if bl_id:
-            record = BlackListedCID.objects.get(id=bl_id)
-            record.active = False
-            record.save()
-            resp = {'status': 'success'}
-            return HttpResponse(json.dumps(resp), content_type='application/json')
+        if request.user.groups.filter(name='PICASSO-BLACKLIST-MANAGER'):
+            bl_id = request.GET.get('id')
+            if bl_id:
+                record = BlackListedCID.objects.get(id=bl_id)
+                record.active = False
+                record.save()
+                resp = {'status': 'success'}
+                return HttpResponse(json.dumps(resp), content_type='application/json')
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied

@@ -183,7 +183,7 @@ function validateTeamField(){
 
 function ValidateUrlField() {
   var regexp = new RegExp("^http(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?$");
-    var url = document.getElementById("url").value;
+    var url = document.getElementById("url").value.toLowerCase();
     var Elementurl = document.getElementById("url");
     if (!regexp.test(url)) {
       var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&/=]*)?/
@@ -511,7 +511,7 @@ function resetBolt() {
 function checkID()
 {
   var cid_to_compare = $('#cid').val().trim();
-  if(cid_to_compare != '000-000-0000'){
+  if(cid_to_compare != '000-000-0000') {
     $.ajax({
       url: "/leads/get-picasso-bolt-lead/?cid="+cid_to_compare,
       type: "PUT",
@@ -537,6 +537,9 @@ function checkID()
         // body...
       }
     });
+  }
+  else{
+    $('#formsubmit').prop('disabled', false);
   }
 }
 
