@@ -1,7 +1,7 @@
 from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, WPPLeads,
                           Location, Team, CodeType, Language, LeadForm,
-                          LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType)
+                          LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType, BlackListedCID)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
 from lib.admin_helpers import CustomAdmin
 
@@ -277,5 +277,10 @@ class PicassoLeadsAdmin(admin.ModelAdmin):
 admin.site.register(PicassoLeads, PicassoLeadsAdmin)
 
 admin.site.register(PicassoLeadGroupType)
+
+class BlackListedCIDAdmin(admin.ModelAdmin):
+    list_display = ('cid','active')
+
+admin.site.register(BlackListedCID, BlackListedCIDAdmin)
 
 
