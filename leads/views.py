@@ -36,7 +36,7 @@ from django.db.models import Q
 from reports.models import RLSABulkUpload
 from main.models import UserDetails, PicassoEligibilityMasterUpload
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
-                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads
+                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads, BlackListedCID
                           )
 from reports.models import Region
 from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
@@ -3472,8 +3472,9 @@ def picasso_bolt_lead_form(request):
     )
 
 
+@csrf_exempt
 def get_picasso_bolt_lead(request):
-    if request.is_ajax():
+    if request.is_ajax() and request.method == 'GET':
         status_dict = dict()
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
@@ -3522,6 +3523,18 @@ def get_picasso_bolt_lead(request):
         else:
             status_dict['status'] = 'failure' 
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
+    elif request.method == 'PUT':
+        status_dict = dict()
+        bl_cid = request.GET.get('cid')
+        try:
+            blacklistcid_details = BlackListedCID.objects.get(cid=bl_cid,active=True)
+            if blacklistcid_details:
+                status_dict['status'] = 'success'
+            else:
+                status_dict['status'] = 'failure'
+            return HttpResponse(json.dumps(status_dict), content_type='application/json')
+        except:
+            return HttpResponse(json.dumps(status_dict), content_type='application/json')
 
 
 # function for posting all leads to a google spread sheet form
@@ -3818,16 +3831,16 @@ def validate_rlsa_csv_row(row, row_count, locations, languages, apply_to):
         row[7] - Apply to
         row[8] - Comment
         row[9] - Advertiser Customer ID
-        row[10] - User List ID 1	String
-        row[11] - RLSA Bid Adjustment 1	Float
-        row[12] - User List ID 2	Integer
-        row[13] - RLSA Bid Adjustment 2	Float
-        row[14] - User List ID 3	Integer
-        row[15] - RLSA Bid Adjustment 3	Float
-        row[16] - User List ID 4	Integer
-        row[17] - RLSA Bid Adjustment 4	Float
-        row[18] - User List ID 5	Integer
-        row[19] - RLSA Bid Adjustment 5	Float
+        row[10] - User List ID 1    String
+        row[11] - RLSA Bid Adjustment 1 Float
+        row[12] - User List ID 2    Integer
+        row[13] - RLSA Bid Adjustment 2 Float
+        row[14] - User List ID 3    Integer
+        row[15] - RLSA Bid Adjustment 3 Float
+        row[16] - User List ID 4    Integer
+        row[17] - RLSA Bid Adjustment 4 Float
+        row[18] - User List ID 5    Integer
+        row[19] - RLSA Bid Adjustment 5 Float
     '''
     row_errors = {}
     headers = config.RLSA_BULK_CSV_HEADERS
@@ -4049,3 +4062,43 @@ def list_diff(list1, list2):
     list_1 = [i for i in list1 if i not in list2 and i != ""]
     list_2 = [i for i in list2 if i not in list1 and i != ""]
     return set(list_1 + list_2)
+
+@login_required
+@csrf_exempt
+def picasso_blacklist_cid(request):
+    # blacklist_cid = []
+    # for i in blacklist_cid:
+    #     bl_cid = BlackListedCID()
+    #     bl_cid.cid = i
+    #     bl_cid.save()
+    if request.method == "GET":
+        if request.user.groups.filter(name='PICASSO-BLACKLIST-MANAGER'):
+            blacklistcid_details = request.GET.get('cid', False)
+            if blacklistcid_details:
+                data = []
+                records = BlackListedCID.objects.filter(active=True).order_by('cid')
+                for rec in records:
+                    da = {
+                        'id': rec.id,
+                        'cid': rec.cid,
+                    }
+                    data.append(da)
+                resp = {'success': True, 'data': data}
+                return HttpResponse(json.dumps(resp), content_type='application/json')
+            return render(request, 'leads/picasso_blacklist_cid.html')
+        else:
+            from django.core import exceptions
+            raise exceptions.PermissionDenied
+    if request.method == "PUT":
+        if request.user.groups.filter(name='PICASSO-BLACKLIST-MANAGER'):
+            bl_id = request.GET.get('id')
+            if bl_id:
+                record = BlackListedCID.objects.get(id=bl_id)
+                record.active = False
+                record.save()
+                resp = {'status': 'success'}
+                return HttpResponse(json.dumps(resp), content_type='application/json')
+        else:
+            from django.core import exceptions
+            raise exceptions.PermissionDenied
+

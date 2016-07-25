@@ -2436,8 +2436,10 @@ def inventory_handler(request):
                 data = []
                 records = ChromebookInventory.objects.all().order_by('employee_name')
                 for rec in records:
+                    returned_on = rec.returned_on
+                    if returned_on:
+                        returned_on = time.mktime(returned_on.timetuple())
                     da = {
-                        'employee_id': rec.employee_id,
                         'employee_alias': rec.employee_alias,
                         'employee_name': rec.employee_name,
                         'employee_ldap': rec.employee_ldap,
@@ -2446,7 +2448,7 @@ def inventory_handler(request):
                         'mac_id': rec.mac_id,
                         'employee_status': rec.employee_status,
                         'device_status': rec.device_status,
-                        'returned_on': rec.returned_on,
+                        'returned_on': returned_on,
                         'issued_on': time.mktime(rec.issued_on.timetuple()),
                         'id': rec.id
                     }
@@ -2463,19 +2465,17 @@ def inventory_handler(request):
         name = data['name']
         ldap = data['ldap']
         project = data['project']
-        emp_id = data['emp_id']
 
         cbi = ChromebookInventory()
 
         cbi.created_by = request.user
         cbi.modified_by = request.user
         cbi.employee_alias = data.get('alias')
-        cbi.employee_id = emp_id
         cbi.employee_name = name
         cbi.employee_ldap = ldap
         cbi.employee_project = project
         cbi.device_type = data.get('deviceType')
-        cbi.mac_id = data.get('macId')
+        cbi.mac_id = data.get('macId', "")
         emp_stat = data.get('employeeStatus')
         if emp_stat == 'active':
             emp_stat = True
@@ -2502,7 +2502,6 @@ def inventory_handler(request):
         id = data['row_id']
         name = data['name']
         ldap = data['ldap']
-        emp_id = data['emp_id']
         project = data['project']
 
         cbi = ChromebookInventory.objects.get(id=id)
@@ -2510,28 +2509,26 @@ def inventory_handler(request):
         cbi.modified_by = request.user
         cbi.employee_alias = data.get('alias')
         cbi.employee_name = name
-        cbi.employee_id = emp_id
         cbi.employee_ldap = ldap
         cbi.employee_project = project
         cbi.device_type = data.get('deviceType')
-        cbi.mac_id = data.get('macId')
+        cbi.mac_id = data.get('macId', "")
         emp_stat = data.get('employeeStatus')
-        if emp_stat == 'active':
+        if emp_stat == 'Active':
             emp_stat = True
         else:
             emp_stat = False
         dev_stat = data.get('deviceStatus')
-        if dev_stat == 'assigned':
+        if dev_stat == 'Assigned':
             dev_stat = True
         else:
             dev_stat = False
         cbi.employee_status = emp_stat
         cbi.device_status = dev_stat
-        try:
-            issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
-        except:
-            issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%y")
-        cbi.issued_on = issued_on
+        cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
+        returned_on = data.get('returnedOn', None)
+        if returned_on and returned_on != "-":
+            cbi.returned_on = datetime.strptime(returned_on, "%d-%m-%Y")
         cbi.save()
         resp = {'success': True, 'msg': 'User data saved succesfully'}
         return HttpResponse(json.dumps(resp), content_type='application/json')

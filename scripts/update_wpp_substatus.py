@@ -5,7 +5,7 @@ import sys
 import pytz
 
 '''
-    This script is written to update the picasso count in portal db.
+    This script is written to update the WPP status and sub-status in portal db.
 '''
 
 
@@ -14,7 +14,7 @@ def convert_date_to_salesforce_format(_date):
     return datetime.strftime(_date, '%Y-%m-%dT%H:%M:%S-00:00')
 
 # Bolt and Picasso
-def get_all_picasso_leads():
+def get_all_wpp_leads():
     limit = 2000
     index = 1
     total_records = 0
@@ -36,14 +36,14 @@ def get_all_picasso_leads():
     while True:
 
         if index == 1:
-            sql_query_all_leads = "select Id, Code_Type__c, Picasso_Lead_Stage__c, CreatedDate  from Lead WHERE " \
-                                  "(CreatedDate >= 2016-06-30T00:00:00-00:00 AND CreatedDate <= %s) " \
-                                  "AND (Code_Type__c = 'Picasso' OR Code_Type__c = 'BOLT')  " \
+            sql_query_all_leads = "select Id, Code_Type__c, WPP_Lead_Status__c, WPP_Lead_Sub_Status__c, CreatedDate " \
+                                  "from Lead WHERE (CreatedDate >= 2014-01-30T00:00:00-00:00 AND CreatedDate <= %s) " \
+                                  "AND Code_Type__c = 'WPP' " \
                                   "ORDER BY CreatedDate LIMIT %s" % (end_date, limit)
         else:
-            sql_query_all_leads = "select Id, Code_Type__c, Picasso_Lead_Stage__c, CreatedDate from Lead WHERE " \
-                                  "(CreatedDate > %s AND CreatedDate <= %s) " \
-                                  "AND (Code_Type__c = 'Picasso' OR Code_Type__c = 'BOLT')" \
+            sql_query_all_leads = "select Id, Code_Type__c, WPP_Lead_Status__c, WPP_Lead_Sub_Status__c, CreatedDate " \
+                                  "from Lead WHERE (CreatedDate > %s AND CreatedDate <= %s) " \
+                                  "AND Code_Type__c = 'WPP' " \
                                   "ORDER BY CreatedDate LIMIT %s" % (created_date, end_date, limit)
         try:
             all_leads = sfdc_conn.query_all(sql_query_all_leads)
@@ -55,21 +55,14 @@ def get_all_picasso_leads():
             bolt_inqueue = 0
             for lead in leads:
                 created_date = lead.get('CreatedDate')
-                lead_status = lead.get('Picasso_Lead_Stage__c')
-                if lead_status not in ['Issue Case', 'Delivered', 'Unsupported Language']:
-                    code_type = lead.get('Code_Type__c')
-                    if code_type == 'Picasso':
-                        uiux_inqueue += 1
-                    else:
-                        bolt_inqueue += 1
+                lead_status = lead.get('WPP_Lead_Status__c')
+                lead_sub_status = lead.get('WPP_Lead_Sub_Status__c')
+                if not lead_sub_status:
+                    lead_sub_status = None
 
 
-                    lead_type.append(lead.get('Code_Type__c'))
-                if not lead_status:
-                    lead_status = ""
-
-
-                sql = "UPDATE leads_picassoleads SET lead_status = '"+lead_status+"' WHERE sf_lead_id = '"+lead.get('Id') + "';"
+                sql = "UPDATE leads_wppleads SET lead_status = '"+lead_status+"' "  \
+                        ", lead_sub_status = '"+lead_sub_status+"' WHERE sf_lead_id = '"+lead.get('Id') + "';"
                 #cursor.execute(sql)
                 print sql
             records = len(leads)
@@ -83,8 +76,6 @@ def get_all_picasso_leads():
             print "%s" % (e)
     print "Code Types : %s " % list(set(lead_type))
     print "Total Leads count: %s " % total_records
-    print "UIUX Inqueue : %s " % uiux_inqueue
-    print "Bolt Inqueue : %s " % bolt_inqueue
     print "Process completed... \nDisconecting from SFDC... \nEnding Time : %s" % (datetime.utcnow())
 
 
@@ -104,4 +95,4 @@ def sfdc_connection(is_prod):
     return sfdc_conn
 
 
-get_all_picasso_leads()
+get_all_wpp_leads()

@@ -807,7 +807,7 @@ def notify_feedback_fixed(request, feedback, comment=None ):
             'cid': feedback.cid,
             'type': feedback.feedback_type,
             'feedback_title': feedback.title,
-            'description': feedback.description,
+            'feedback_body': feedback.description,
             'issue_fixedby':issue_fixedby,
             
         })
@@ -894,9 +894,11 @@ def reopen_feedback(request, id):
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
+    notify_feedback_activity(request, feedback, comment)
     feedback.save()
     comment_for_reopen = request.POST.get('reopencomment')
 
+    mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     reopenedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/reopened_feedback.html').render(
@@ -2063,8 +2065,7 @@ def assign_feedback(request):
         feedback_type = request.GET.get('assign_feedback_type')
         loaction = request.GET.get('feedback_location_name')
         created_date = request.GET.get('assign_feedback_createddate')
-        feedback_id = request.GET.get('feedback_id')
-        feedback_description = request.GET.get('feedback_description')
+        feedback_id = request.GET.get('feedback_id');
 
         user = User.objects.get(email=assignee)
         if user:

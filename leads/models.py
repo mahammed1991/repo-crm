@@ -657,3 +657,11 @@ class PicassoLeads(models.Model):
 
     class Meta:
         verbose_name_plural = "Picasso Leads"
+
+
+class BlackListedCID(models.Model):
+    cid = models.CharField(max_length=50, unique=True)
+    active = models.BooleanField(default=True)
+    modified_by = models.ForeignKey(User, related_name='modified_by_user',default='', blank=True, null=True)
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    modified_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)

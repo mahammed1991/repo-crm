@@ -363,7 +363,6 @@ class RLSABulkUpload(models.Model):
 
 
 class ChromebookInventory(models.Model):
-    employee_id = models.CharField(max_length=10, unique=True)
     employee_name = models.CharField(max_length=100, null=True)
     employee_ldap = models.CharField(max_length=100, unique=True)
     employee_alias = models.CharField(max_length=100, null=True)
