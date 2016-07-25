@@ -744,7 +744,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
                 'cid': feedback.cid,
                 'type': feedback.feedback_type,
                 'feedback_title': feedback.title,
-                'feedback_body': feedback.description,
+                'description': feedback.description,
                 'signature': signature
             })
         )
@@ -807,7 +807,7 @@ def notify_feedback_fixed(request, feedback, comment=None ):
             'cid': feedback.cid,
             'type': feedback.feedback_type,
             'feedback_title': feedback.title,
-            'feedback_body': feedback.description,
+            'description': feedback.description,
             'issue_fixedby':issue_fixedby,
             
         })
@@ -889,25 +889,25 @@ def reopen_feedback(request, id):
     feedback.status = 'IN PROGRESS'
     comment = FeedbackComment()
     comment.feedback = feedback
-    comment.comment = request.POST['reopencomment']
+    comment.comment = request.POST.get('reopencomment')
     comment.comment_by = request.user
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
-    notify_feedback_activity(request, feedback, comment)
     feedback.save()
+    comment_for_reopen = request.POST.get('reopencomment')
 
-    mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     reopenedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/reopened_feedback.html').render(
         Context({
             'reopenedby': reopenedby,
-            'comments':feedback.description,
+            'description':feedback.description,
             'feedback_url': feedback_url,
             'cid': feedback.cid,
             'type': feedback.feedback_type,
             'feedback_title': feedback.title,
+            'comment_for_reopen':comment_for_reopen,
         })
     )
     feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
@@ -917,6 +917,7 @@ def reopen_feedback(request, id):
     bcc = list()
     if feedback.attachment:
         attachments.append(feedback.attachment)
+    mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return redirect('main.views.view_feedback', id=id)
@@ -960,8 +961,9 @@ def comment_feedback(request, id):
         comment.save()
 
     feedback.save()
+    
     if action_type == 'Resolved':
-        notify_feedback_activity(request, feedback, comment, is_resolved=True)
+        notify_feedback_activity(request, feedback, comment=False, is_resolved=True)
     elif action_type == 'FIXED':
         notify_feedback_fixed(request, feedback, comment)
     else:
@@ -2061,7 +2063,8 @@ def assign_feedback(request):
         feedback_type = request.GET.get('assign_feedback_type')
         loaction = request.GET.get('feedback_location_name')
         created_date = request.GET.get('assign_feedback_createddate')
-        feedback_id = request.GET.get('feedback_id');
+        feedback_id = request.GET.get('feedback_id')
+        feedback_description = request.GET.get('feedback_description')
 
         user = User.objects.get(email=assignee)
         if user:
@@ -2070,12 +2073,13 @@ def assign_feedback(request):
                 # mailing functionolities
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
                 mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
-                mail_to = [ str(assignee) , str(request.user.email)]
+                feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+                mail_to = [ str(assignee) , feedback_super_user_group]
                 #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
                 mail_subject = "Customer Feedback ["+cid+"] Status- Submit Response and/or Initiate Closure"
                 mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
                                         'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
-                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date}))
+                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description}))
                 bcc = set()
                 attachments = list()
                 send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
