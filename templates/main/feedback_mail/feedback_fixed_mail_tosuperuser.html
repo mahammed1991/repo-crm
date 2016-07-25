@@ -17,17 +17,23 @@
 
 <p>Hello,</p>
 
-<p>The concerned owner has responded to the feedback and requested for the thread to be closed. </p>
-<p>Kindly review the case and mark the feedback 'Resolved' / 'Reopen' the thread. </p>
+<div>
+	<span>
+	<p>The concerned owner has responded to the feedback and requested for the thread to be closed.Kindly review the case and mark the feedback 'Resolved' / 'Reopen' the thread. </p>
 
-<p>ID - <a href="{{ feedback_url }}">{{ cid }}</a></p>
-<p>Title - {{feedback.title}}</p>
-<p>Feedback Type - {{ type }}</p>
-<p>Click here to <a href="{{ feedback_url }}">access</a></p> feedback.</p>
-<p>{{feedback_body}}</p>
+	<b>ID </b>- <a href="{{ feedback_url }}">{{ cid }}</a><br>
+	<b>Title </b>- {{feedback.title}}<br>
+	<b>Feedback Type </b>- {{ type }}<br>
+	<b>Description </b> -{{description}}<br>
 
-<p>Regards,</p></br>
-<p>Portal Team/CX Team</p>
+	<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
+	</span>
+</div>
+<div>
+	Regards,<br>
+	Portal Team/CX Team
+</div>
+
 
 
 </body>
