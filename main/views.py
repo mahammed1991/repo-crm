@@ -744,7 +744,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
                 'cid': feedback.cid,
                 'type': feedback.feedback_type,
                 'feedback_title': feedback.title,
-                'feedback_body': feedback.description,
+                'description': feedback.description,
                 'signature': signature
             })
         )
@@ -889,13 +889,14 @@ def reopen_feedback(request, id):
     feedback.status = 'IN PROGRESS'
     comment = FeedbackComment()
     comment.feedback = feedback
-    comment.comment = request.POST['reopencomment']
+    comment.comment = request.POST.get('reopencomment')
     comment.comment_by = request.user
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
     comment.save()
     notify_feedback_activity(request, feedback, comment)
     feedback.save()
+    comment_for_reopen = request.POST.get('reopencomment')
 
     mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
@@ -903,11 +904,12 @@ def reopen_feedback(request, id):
     mail_body = get_template('main/feedback_mail/reopened_feedback.html').render(
         Context({
             'reopenedby': reopenedby,
-            'comments':feedback.description,
+            'description':feedback.description,
             'feedback_url': feedback_url,
             'cid': feedback.cid,
             'type': feedback.feedback_type,
             'feedback_title': feedback.title,
+            'comment_for_reopen':comment_for_reopen,
         })
     )
     feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
@@ -917,6 +919,7 @@ def reopen_feedback(request, id):
     bcc = list()
     if feedback.attachment:
         attachments.append(feedback.attachment)
+    mail_subject = "Customer Feedback ["+ feedback.cid+"] Status - Reopened"
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return redirect('main.views.view_feedback', id=id)
@@ -960,8 +963,9 @@ def comment_feedback(request, id):
         comment.save()
 
     feedback.save()
+    
     if action_type == 'Resolved':
-        notify_feedback_activity(request, feedback, comment, is_resolved=True)
+        notify_feedback_activity(request, feedback, comment=False, is_resolved=True)
     elif action_type == 'FIXED':
         notify_feedback_fixed(request, feedback, comment)
     else:
@@ -2071,12 +2075,12 @@ def assign_feedback(request):
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
                 mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
                 feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-                mail_to = [ str(assignee) , str(request.user.email)]
+                mail_to = [ str(assignee) , feedback_super_user_group]
                 #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
                 mail_subject = "Customer Feedback ["+cid+"] Status- Submit Response and/or Initiate Closure"
                 mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
                                         'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
-                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date}))
+                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description}))
                 bcc = set()
                 attachments = list()
                 send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
@@ -2093,7 +2097,7 @@ def assign_feedback(request):
         
 def assiging_feedback(request, assignee, id):
     assigned_by = str(request.user.first_name)+' '+str(request.user.last_name)
-    feedback = Feedback.objects.get(id=id)
+    feedback =  Feedback.objects.get(id=id)
     feedback_assigning_ascomment = FeedbackComment()
     feedback_assigning_ascomment.feedback = feedback
     feedback_assigning_ascomment.comment = "This Feedback has been assigned to "+str(assignee)+" to fix. Assigned by "+str(assigned_by)

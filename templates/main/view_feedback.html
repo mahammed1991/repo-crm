@@ -68,83 +68,87 @@ Manage Help
     <div class="row">
         <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Title</label>
-                <div class="value">{{feedback.title}}</div>
+                <label class="value">Title :</label>
+                <div >{{feedback.title}}</div>
             </div>
             </div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Feedback ID</label>
-                <div class="value" id='feedbackId'>Goog-{{feedback.id}}</div>
+                <label class="value">Feedback ID :</label>
+                <div  id='feedbackId'>Goog-{{feedback.id}}</div>
             </div>
             </div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>CID</label>
-                <div class="value">{{feedback.cid}}</div>
+                <label class="value">CID :</label>
+                <div >{{feedback.cid}}</div>
             </div>
             </div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Advertiser Name</label>
-                <div class="value">{{feedback.advertiser_name}}</div>
+                <label class="value">Advertiser Name :</label>
+                <div >{{feedback.advertiser_name}}</div>
             </div>
         </div>    
         <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Google Acc. Manager</label>
-                <div class="value">{{feedback.google_account_manager.first_name}} {{feedback.google_account_manager.last_name}}</div>
+                <label class="value">Google Acc. Manager :</label>
+                <div >{{feedback.google_account_manager.first_name}} {{feedback.google_account_manager.last_name}}</div>
             </div></div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Email</label>
-                <div class="value">{{feedback.google_account_manager.email}}</div>
+                <label class="value">Email :</label>
+                <div >{{feedback.google_account_manager.email}}</div>
             </div>
             </div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Lead Owner</label>
-                <div class="value">{{feedback.lead_owner.first_name}} {{feedback.lead_owner.last_name}}</div>
+                <label class="value">Lead Owner :</label>
+                <div >{{feedback.lead_owner.first_name}} {{feedback.lead_owner.last_name}}</div>
             </div>
             </div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Lead Owner Email</label>
-                <div class="value">{{feedback.lead_owner.email}}</div>
+                <label class="value">Lead Owner Email :</label>
+                <div >{{feedback.lead_owner.email}}</div>
             </div>
         </div>    
         <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Feedback Type</label>
-                <div class="value">{{feedback.feedback_type}}</div>
+                <label class="value">Feedback Type :</label>
+                <div >{{feedback.feedback_type}}</div>
             </div>
             </div>
             {% if picasso %}
             {% else %}
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Location</label>
-                <div class="value">{{feedback.location.location_name}}</div>
+                <label class="value">Location :</label>
+                <div >{{feedback.location.location_name}}</div>
             </div>
             </div>
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Language</label>
-                <div class="value">{{feedback.language}}</div>
+                <label class="value">Language :</label>
+                <div >{{feedback.language}}</div>
             </div>
             </div>
             {% endif %}
             <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Created On</label>
-                <div class="value">{{feedback.created_date | date:"D, M d Y, f A" }}</div>
+                <label class="value">Created On :</label>
+                <div >{{feedback.created_date | date:"D, M d Y, f A" }}</div>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="feedback-info-row">
-                <label>Assigned To</label>
-                <div class="value">{{feedback.assigned_to}}</div>
+                <label class="value">Assigned To :</label>
+                {% if feedback.assigned_to == None  %}
+                    <div >Un Assigned</div>
+                {% else %}
+                    <div >{{feedback.assigned_to}}</div>
+                {% endif %}
             </div>
         </div>
 
@@ -168,10 +172,12 @@ Manage Help
         <div class="feedback-status fixed">Fixed</div>
     {% endif %}
 
+    {% if comments %}
+
     <div class="feedback-comments">
 
         <!-- commnet start here -->
-             {% if comments %}
+
 
                     {% for c in comments %}
                         {% if 'regalix' in c.comment_by.email %}
@@ -199,9 +205,10 @@ Manage Help
                         {% endif %}
                          
                     {% endfor %}
-            {% endif %}
+           
         <!--normal comments ends here  -->
     </div>
+     {% endif %}
     
 {% if feedback.status != 'RESOLVED' and can_resolve %}
 <!-- assigning functionalities for feedbak super user -->
@@ -211,11 +218,21 @@ Manage Help
         {% csrf_token %}
             <div class="std-sub-title" id="msg-display" style="padding-bottom:1px;">
                
-                 <label for="assign-feedback-to" style="font-family:'robotoblack';margin-top: 10px;font-size:inherit;width: inherit;color:black;">Please assign this feedback to a manager/TL for resolve:</label>
+               {% if feedback.assigned_to == None  %}
+                 <label for="assign-feedback-to" style="font-family:'fantasy';margin-top: 10px;font-size:initial;width: inherit;color:black;">Please assign this feedback to a manager/TL for resolve:</label>
                  <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
                  placeholder="abc@regalix-inc.com" style="height: 38px;" >
                  <input style="margin-top: -20px;height: 36px;margin-left: 11px; padding-top: 6px;" 
                  class="btn std-btn sm-btn" type="button" name="" id="submit-assignee-form" value="Assign">
+                {% else %}
+                <label for="assign-feedback-to" style="font-family:'fantasy';margin-top: 10px;font-size:initial;width: inherit;color:black;">
+                This feedback already assigned to <b>{{ feedback.assigned_to }}</b>, You can re-assign</label>
+                 <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
+                 placeholder="abc@regalix-inc.com" style="height: 38px;" >
+                 <input style="margin-top: -20px;height: 36px;margin-left: 11px; padding-top: 6px;" 
+                 class="btn std-btn sm-btn" type="button" name="" id="submit-assignee-form" value="Assign">
+                 {% endif %}
+                
             
             </div>
         
@@ -226,6 +243,7 @@ Manage Help
                 <input type="hidden" id="assign-feedback-location-name" name="assign_feedback_location_name" value="{{feedback.location.location_name}}">
                 <input type="hidden" id="assign-feedback-createdate" name="assign_feedback_createdate" value="{{feedback.created_date | date:'D, M d Y, f A' }}">
                 <input type="hidden" name="feedback_id" id="feedback_id" value="{{feedback.id}}">
+                <input type="hidden" name="feedback_description" id="feedback_description" value={{feedback.description}}>
                 <!-- end of lead details -->
                 
             </form>
@@ -379,6 +397,7 @@ $("#assign-feedback-to").removeClass('error-box');
             datastring['assign_feedback_createddate'] = $('#assign-feedback-createdate').val();
             datastring['assignee_mail'] = $('#assign-feedback-to').val();
             datastring['feedback_id'] = $('#feedback_id').val();
+            datastring['feedback_description'] = $('#feedback_description').val();
             $('#preloaderOverlay').show();
             $.ajax({
                 'url': "/main/assign-feedback",

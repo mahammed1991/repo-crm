@@ -6,16 +6,22 @@
 <body>
 
 <p>Hello,</p>
-<p>Feedback to be Reopened for the following reasons [Refer comments below]</p>
-<p>The following feedback has been attend to and marked as 'Resolved'. Should the action taken be unsatisfactory, this case has been 'Re-opened' and reopened by {{reopenedby}}. </p>
+<div>
+	<span><p>Feedback to be Reopened for the following reasons [Refer comments below]
+	The following feedback has been attend to and marked as 'Resolved'. Should the action taken be unsatisfactory, this case has been 'Re-opened' and reopened by {{reopenedby}}. </p>
 
-<p>ID - {{ cid }}</p>
-<p>Title - {{ feedback.title }}</p>
-<p>Feedback Type - {{type}} </p>
-<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
+	<b>ID </b> - {{ cid }}<br>
+	<b>Title </b> - {{ feedback_title }}<br>
+	<b>Feedback Type </b> - {{type}} <br>
+	<b>Description </b> - {{ description }} <br>
+	<b>Comment for reopen </b> - {{ comment_for_reopen }} <br>
+	<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
 
-<p>Comments</p>
-<p>{{ comments }}</p>
-
+	</span>
+</div>
+	<div>
+	Regards,<br>
+	Portal Team/CX Team
+	</div>
 </body>
 </html>
