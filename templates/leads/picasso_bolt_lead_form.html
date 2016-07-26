@@ -110,7 +110,7 @@
     <input type="hidden" id="country" name="country" value=".">
     <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
 
-      <div style="border-radius: 20px;text-align: left;padding: 30px;padding-top: 10px;padding-bottom: 10px;width: 850px;margin: 20px auto;font-size: 15px;background-color: rgb(182, 215, 168);">
+ <div style="border-radius: 20px;text-align: left;padding: 30px;padding-top: 10px;padding-bottom: 10px;width: 850px;margin: 20px auto;font-size: 15px;background-color: rgb(182, 215, 168);">
           <span style="font-size: 24px;font-family: 'robotoblack';text-transform: uppercase;margin-left: 318px;">Announcements:</span>
           <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
           <li style="list-style-type:disc;">Demand for Bolt audits has been higher than anticipated. While we increase capacity:</li>
@@ -157,7 +157,6 @@
         <a href="http://go/audit-exception-form" target="_blank" style="color:#2763c9;">go/audit-exception-form</a>
         </b>
     </p>
-
     
     <div class="row">
       <div class="col-md-6">
@@ -328,6 +327,8 @@
         <li id="display_error_for_cases_mail" style="display:none;">Please enter Cases Alias Email</b></li>
 
         <li id="display_error_for_enter_comp_url" style="display:none;">Please enter Competitor URL</b></li>
+
+        <li id="display_error_for_enter_valid_cid_format" style="display:none;">Please enter valid CID format</b></li>
       </ul>
     </div>
     <div class="btns text-center" id="submit_buttons">
@@ -358,10 +359,52 @@
 
 var nbs_team = ['NBS'];
 var pgName = "{{user.profile.team}}";
+var search = location.search.substring(1);
+var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
   $(document).ready(function(){
-    if(nbs_team.indexOf(pgName) != -1){
+    /*var set = "{{ request.get_full_path }}";
+    var res = set.split("?");
+    var res1 = res[1].split("&amp;")
+    alert(res1);*/
+    if(prevaluedict['type']){
+      if(prevaluedict['type'] == 'bolt'){
+        $('#picasso').removeClass('active');
+        $('#bolt').addClass('active');
+      }
+      else{
+         $('#bolt').removeClass('active');
+        $('#picasso').addClass('active');
+      }
+    }
+    if(prevaluedict['cid']){
+      $('#cid').val(prevaluedict['cid']);
+    }
+    if(prevaluedict['team']){
+      $("#team > option").each(function() {
+        if(this.text == prevaluedict['team']){
+          $('#team').val(prevaluedict['team']);
+        }
+        else{
+          $('#team').prop('selectedIndex',0);
+        }
+      });
+    }
+    else if(nbs_team.indexOf(pgName) != -1){
       $('#cid').val('000-000-0000');
       $('#team').val(pgName);
+    }
+    
+    
+    if(prevaluedict['url']){
+      $('#url').val(prevaluedict['url']);
+    }
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
+    }
+
+    if($('#url').val()){
+      $('#url').focus();
     }
 
     olark('api.box.hide');
@@ -418,7 +461,7 @@ function checkout(){
         dataType: 'JSON',
         success:function(data){
           if(data['status'] == 'success'){
-            $('#picasso a').trigger("click");
+           /* $('#picasso a').trigger("click");*/
             if(data['type'] == 'bolt'){
               $('#display_block_error_bolt').show();
               $('#formsubmit').prop('disabled', false);

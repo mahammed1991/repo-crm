@@ -19,6 +19,13 @@
       text-decoration: none;
       color: white;
     }
+    #c{
+      background: #4CAF50;
+      color: white;
+      padding: 15px 15px !important;
+      width: 45%;
+      float: right;
+    }
 
 .modal {
   text-align: center;
@@ -33,11 +40,22 @@
   }
 }
 
+#b{
+  background: #5ba0d0;
+  padding: 15px 15px !important;
+  width: 50%;
+  float: left;
+}
+
 .modal-dialog {
   width: 300px;
   display: inline-block;
   text-align: left;
   vertical-align: middle;
+}
+
+.modal-title {
+    margin-bottom: -1.5%;
 }
 
 </style>
@@ -48,9 +66,9 @@
   <h1>Submit Lead</h1>
 
   <!-- temproray survay -->
-  <!--  end of temrpopery survey -->
+  <!--  end of temrpopery survey return validatethis(this); -->
  
-  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+  <form class="lead-form" name="lead_form" id="ctl00"  action="/leads/lead-form/" method="POST">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=1" name="retURL">
     <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=1" name="errorURL">
     <input type="hidden" name="oid" value="00DZ000000MipUa">
@@ -273,7 +291,7 @@
             <div class="col-md-4">
               <select title="Task Type" class="form-control code_type bgicon" name="ctype1" id="ctype1">
             </select>
-              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL">
+              <input type="text" class="form-control" id="url1" name="url1" placeholder="URL" onfocusout="checkout()">
             </div>
             <div class="col-md-4">
               <textarea class="form-control" id="code1" name="code1" placeholder="Code (Optional)"></textarea>
@@ -901,28 +919,28 @@
     <!-- End of Notification dropdown for Web Access -->
 
   <!-- modal fo picasso-->
-<!--   <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" style="width:70%;">
+      <div class="modal-content" style="width:100%;">
+        <div class="modal-header" style="width:100%;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Picasso/Bolt Audits Eligibility</h4>
+          <h3 class="modal-title" style="font-size:22px;">Picasso/Bolt Audits Eligibility</h3>
         </div>
-        <div class="modal-body" id="eligible">
-          <p></p>
+        <div class="modal-body" id="eligible" style="width:100%;">
+          <p style="font-size:18px;font-weight: bold;text-align:center;"></p>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button id="b" class="btn btn-primary"><a href="" target="_blank">Submit</a></button>
+        <div class="modal-footer" style="padding-bottom:25px;">
+          <button id="b" class="btn"><a href="" target="_blank">Click here to submit PICASSO AUDIT/BOLT leads</a></button>
+          <button id="c" class="btn" data-dismiss="modal">I do it later</button>
         </div>
       </div> 
     </div>
-  </div> -->
+  </div>
 
 
     <div class="btns text-center" style="display:none;" id="submit_buttons">
         <div class="btn-group">
-            <button class="btn std-btn">Submit</button>
+            <button id="form-submit" class="btn std-btn">Submit</button>
             <button class="btn std-btn grayed" onclick="resetBtn(this);" id="formReset">Reset</button>
         </div>
     </div>
@@ -1224,8 +1242,8 @@ function getLink(href){
   return link;
 }
 
-//var modalBody;
-//var isBoth;
+var modalBody;
+var isBoth;
 function checkout(){
   //$('#display_block_error_picasso').hide();
   //$('#display_block_error_bolt').hide();
@@ -1249,8 +1267,14 @@ function checkout(){
       dataType: 'JSON',
       success:function(data){
         if(data['status'] == 'success'){
-          modalBody = "You can also submit "+data['type']+" lead.";
-          $('#eligible p').text(modalBody);
+          if(data['type'] == 'picasso'){
+            modalBody = "Your Tag lead is also eligible for Bolt Lead.";
+            $('#eligible p').text(modalBody);
+          }
+          else{
+            modalBody = "Your Tag lead is also eligible for Picasso Audit Lead.";
+            $('#eligible p').text(modalBody);
+          }
 
           if(data['type'] == 'both'){
             isBoth = data['type'];
@@ -1258,7 +1282,7 @@ function checkout(){
           dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url1.value });
         }
         else if(data['status'] == 'failure'){
-          modal_body = "You can also submit picasso and bolt audit leads.";
+          modal_body = "Your Tag lead is also eligible for both Picasso Audit and Bolt Leads.";
           $('#eligible p').text(modal_body);
         }
       },
@@ -1277,14 +1301,69 @@ function checkout(){
 
 
 
-/*$('#b').click(function(){
+$('#b').click(function(){
   var cid = $('#cid').val().trim();
   var url = $('#url1').val().trim();
   var advmail = $('#aemail').val().trim();
   var program = $('#team').val().trim();
-  var url = '{{request.META.HTTP_HOST}}' + "{% url 'leads.views.picasso_bolt_lead_form' %}" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program;
+  var modal_body = $("#eligible p").text();
+  if(modal_body.indexOf('Picasso') != -1 && modal_body.indexOf('Bolt') == -1){
+    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program+"&type=picasso";
+  }
+  else if(modal_body.indexOf('Picasso') == -1 && modal_body.indexOf('Bolt') != -1){
+    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program+"&type=bolt";
+  }
+  else{
+    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program;
+  }
   $('#b a').attr('href',url);
-});*/
+});
+
+var submit = false;
+$("#ctl00").submit(function(e){
+  e.preventDefault();
+  var isFormValid = validatethis(document.getElementById("ctl00"));
+  //to workon picasso modal
+  if(isFormValid && isBoth != 'both' && !submit){
+      $("#myModal").modal({
+        backdrop: 'static',
+        keyboard: false
+      });
+  }else{
+      if(isFormValid){
+          // Submit Form
+          var form = $('form')[0]; // You need to use standart javascript object here
+          var formData = new FormData(form);
+
+          $.ajax({
+            url: '/leads/lead-form/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function(resp){
+              $("#preloaderOverlay").hide();           
+              location.href = "/leads/thankyou/?n=1";
+              return false;
+            },
+            error: function(resp){
+              $("#preloaderOverlay").hide();           
+              location.href = "/leads/lead_error/?n=1";
+              return false;
+            }
+          });
+      }
+  }
+  
+ /* $(".lead-form")[0].submit();*/
+});
+$("#myModal").on("hidden.bs.modal", function () {
+  $("#preloaderOverlay").hide();
+  submit = true;
+  $("#ctl00").submit();
+});
+
+
 
 
 </script>
