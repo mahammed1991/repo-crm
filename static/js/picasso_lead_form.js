@@ -392,10 +392,10 @@ $('#bolt').click(function(){
     $('#team').val(pgName);
   }
 
-  if(prevaluedict['team'] && prevaluedict['cid']){
-      $('#cid').val(prevaluedict['cid']);
-      $('#team').val(prevaluedict['team']);
-    }
+  //if(prevaluedict['team'] && prevaluedict['cid']){
+    //  $('#cid').val(prevaluedict['cid']);
+     // $('#team').val(prevaluedict['team']);
+   // }
 
   $('#ctype1').val('BOLT');
   $('.tab-content').css("background-color","#F9FAFC");
@@ -408,10 +408,10 @@ $('#picasso').click(function(){
     $('#team').val(pgName);
   }
   
-  if(prevaluedict['team'] && prevaluedict['cid']){
-      $('#cid').val(prevaluedict['cid']);
-      $('#team').val(prevaluedict['team']);
-    }
+ // if(prevaluedict['team'] && prevaluedict['cid']){
+   //   $('#cid').val(prevaluedict['cid']);
+     // $('#team').val(prevaluedict['team']);
+    //}
   
   $('#ctype1').val('PICASSO');
   $('.tab-content').css("background-color","#F9FAFC");
