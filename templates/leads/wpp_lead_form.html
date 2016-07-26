@@ -62,14 +62,17 @@
     </div>
       <div class="col-md-6">
         <label for="cid">External CID</label>
-        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Please enter the CID (xxx-xxx-xxxx)" {% if ref_lead.customer_id == "" or ref_lead.customer_id == "None" %} value="" {% else %} value="{{ ref_lead.customer_id }}" {% endif %}>
-          <label>Entering CID will retrieve any applicable Picasso audit submissions</label>
+
+        <input style="margin-bottom: 7px;" type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Please enter the CID (xxx-xxx-xxxx)" {% if ref_lead.customer_id == "" or ref_lead.customer_id == "None" %} value="" {% else %} value="{{ ref_lead.customer_id }}" {% endif %}>
+        <span style="display:none;color:red" id="cid-error">Please enter correct CID format (xxx-xxx-xxxx)</span>
+          <label style="margin-top: 13px;">Entering CID will retrieve any applicable Picasso audit submissions</label>
       </div>
       <div class="col-md-6">
          <label for="url" id="url_label_id">Website URL</label>
           <select class="form-control bgicon" id="multipleUrls" name="multipleUrls" style="display:none;">
           </select>
-          <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" {% if ref_lead.url_1 == "" or ref_lead.url_1 == "None" %} value="" {% else %} value="{{ ref_lead.url_1 }}" {% endif %}>
+          <input style="margin-bottom: 7px; type="text" class="form-control" id="url" name="url1" placeholder="Website URL" {% if ref_lead.url_1 == "" or ref_lead.url_1 == "None" %} value="" {% else %} value="{{ ref_lead.url_1 }}" {% endif %}>
+          <span style="display:none;color:red" id="url-error">Please enter valid URL</span>
         </div>
       <div class="row">
         <div class="col-md-6">
@@ -467,13 +470,51 @@ $(window).bind("pageshow", function() {
 
 // picasso build form workflow
 window.onload =  function(){
+
+     function isUrl(url) {
+      var strRegex = "^((https|http|ftp|rtsp|mms)?://)"
+          + "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" //ftp的user@
+          + "(([0-9]{1,3}\.){3}[0-9]{1,3}" // URL- 199.194.52.184
+          + "|" // DOMAIN（域名）
+          + "([0-9a-z_!~*'()-]+\.)*" // 域名- www.
+          + "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\." // 二级域名
+          + "[a-z]{2,6})" // first level domain- .com or .museum
+          + "(:[0-9]{1,4})?" // 端口- :80
+          + "((/?)|" // a slash isn't required if there is no file name
+          + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";
+          var re=new RegExp(strRegex);
+          if ($('input[name=url1]').val().trim().length > 0 && re.test(url) == false ){
+              $('#url').addClass('error-box');
+              $('#url-error').show();
+                }
+          else {
+               $('#url-error').css('display','none');
+               $('#url').removeClass('error-box'); 
+               }
+              return re.test(url);
+          }
+
   $('input[name=cid] , input[name=url1]').on('focusout', function(){
       var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
       var cid_value = $('input[name=cid] ').val().trim();
-      var url_value =  $('input[name=url1]').val().trim();
+      var url_value =  $('input[name=url1]').val().trim().toLowerCase();
       var isCidValid = cidFormat.test(cid_value)
-      if (isCidValid &&  url_value){
+      var valid_url = isUrl(url_value)
+
+      if ($('input[name=cid]').val().trim().length > 0 && isCidValid == false ){
+        $('#cid').addClass('error-box');
+        $('#cid-error').show();
+      }
+      else{
+        $('#cid-error').css('display','none');
+        $('#cid').removeClass('error-box');
+      }
+     
+      if (isCidValid &&  valid_url){
           $('#cid').removeClass('error-box');
+          $('#url').removeClass('error-box'); 
+          $('#cid-error').css('display','none');
+          $('#url-error').css('display','none');
           $.ajax({
           'url': "/leads/picasso-build-submission-flow/",
           'dataType': 'JSON',
@@ -537,13 +578,6 @@ window.onload =  function(){
                  }
               })
             }
-      else{
-            if (!isCidValid){
-              alert("Please enter correct CID format (xxx-xxx-xxxx)")
-              $('#cid').addClass('error-box');
-            }
-          }
-
     });
 }
 

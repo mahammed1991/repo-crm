@@ -26,15 +26,21 @@
 <body>
 	<p>Hello,</p>
 
-	<p>The concerned owner has responded to the feedback and added new comment. </p>
-	<p>Kindly review the case and mark the feedback 'Resolved' if it is solved / add 'Comment' in the thread. </p>
-	<p>ID - {{ feedback.cid }}</p>
-	<p>Title - {{ feedback.title }}</p>
-	<p>Feedback Type - {{ feedback.feedback_type }} </p>
-	<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
-
-	<p>Regards,</p>
-	<p>Portal Team/CX Team</p>
-
+	<div>
+	<p>The concerned owner has responded to the feedback and added new comment. 
+	 Kindly review the case and mark the feedback 'Resolved' if it is solved / add 'Comment' in the thread.</p>
+	<span>
+		<b>ID </b>- {{ feedback.cid }}<br>
+		<b>Title</b> - {{ feedback.title }}<br>
+		<b>Feedback Type</b> - {{ feedback.feedback_type }}<br>
+		<b>Description</b> - {{ feedback.description }} <br>
+		<b>Comment</b> -{{comment.comment}} <br>
+		<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
+	</span>
+	</div>
+	<div>
+	Regards,<br>
+	Portal Team/CX Team
+	</div>
 </body>
 </html>

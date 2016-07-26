@@ -21,13 +21,17 @@
 <p>Hello,</p>
 
 <p>Please assign following customer feedback to concerned owner(s) for action.</p>
-<p>ID - <a href="{{ feedback_url }}">{{ feedback.cid }}</a></p>
-<p>Title - {{feedback.title}}</p>
-<p>Feedback Type - {{ feedback.feedback_type }}</p>
-<p>Click here to <a href="{{ feedback_url }}">assign</a></p> feedback.</p>
-
-<p>Regards,</p></br>
-<p>Portal Team/CX Team</p>
+<div>
+	<span><b>ID</b> - <a href="{{ feedback_url }}">{{ feedback.cid }}</a><br>
+	<b>Title</b> - {{feedback.title}}<br>
+	<b>Feedback Type</b> - {{ feedback.feedback_type }}<br>
+	<b>Description</b> - {{ feedback.description }}<br> </span>
+	<p>Click here to <a href="{{ feedback_url }}">assign</a> feedback.</p>
+</div>
+<div>
+	Regards,<br>
+	Portal Team/CX Team
+</div>
 
 </body>
 </html>
