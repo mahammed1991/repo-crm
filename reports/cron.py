@@ -955,27 +955,35 @@ def slots_open_booked():
 
     tag_final = list()
     for ordering in tag_all:
-        keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        keyorder = {k:v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         tag_final.append(each_one)
 
     for ele in tag_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
             value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
-            ele['Ratio'] = ("%.2f"%value +"%" )
+            if value < 80.00:
+                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['greater'] = True
+            else:
+                ele['Ratio'] = ("%.2f"%value +"%" )
         else:
             ele['Ratio'] = "-"
 
     shopping_final = list()
     for ordering in shopping_all:
-        keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        keyorder = {k:v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         shopping_final.append(each_one)
 
     for ele in shopping_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
             value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
-            ele['Ratio'] = ("%.2f"%value +"%" )
+            if value < 80.00:
+                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['greater'] = True
+            else:
+                ele['Ratio'] = ("%.2f"%value +"%" )
         else:
             ele['Ratio'] = "-"
 
