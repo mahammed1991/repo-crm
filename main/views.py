@@ -735,9 +735,9 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
             })
         )
 
-    elif is_resolved == True:
+    elif is_resolved:
         mail_from = request.user.email
-        mail_subject = "Customer Feedback ["+feedback.feedback_type+"-"+ feedback.cid+"] Status - Resolved"
+        mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Resolved"
         mail_body = get_template('main/feedback_mail/resolved.html').render(
             Context({
                 'feedback': feedback,
@@ -754,7 +754,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
 
     else:
         mail_from = "Google Feedback <" + request.user.email +">"
-        mail_subject = "Customer Feedback ["+feedback.feedback_type+"- "+ feedback.cid+"] Status - Assign Owner"
+        mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Assign Owner"
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
             Context({
                 'feedback': feedback,
@@ -773,10 +773,10 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
 
     if comment and is_resolved == False:
         mail_from = "Google Feedback <" + request.user.email +">"
-        mail_subject = "Customer Feedback ["+feedback.feedback_type+"- "+ feedback.cid+"] Status - New comment added"
+        mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - New comment added"
         feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
         assignee = Feedback.objects.get(id=feedback.id)
-        mail_to = set([ feedback_super_user_group, assignee.assigned_to  ])
+        mail_to = set([ feedback_super_user_group, assignee.assigned_to , 'g-crew@regalix-inc.com' ])
     else:
         mail_from = "Google Feedback <" + request.user.email +">"
         mail_to = set([
@@ -804,7 +804,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
     return feedback
 
 def notify_feedback_fixed(request, feedback, comment=None ):
-    mail_subject = "Customer Feedback ["+feedback.feedback_type+"-"+ feedback.cid+"] Status- Response Submitted: Request to Closure"
+    mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status- Response Submitted: Request to Closure"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     issue_fixedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
@@ -905,7 +905,7 @@ def reopen_feedback(request, id):
     feedback.save()
     comment_for_reopen = request.POST.get('reopencomment')
 
-    mail_subject = "Customer Feedback ["+feedback.feedback_type+"-"+ feedback.cid+"] Status - Reopened"
+    mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Reopened"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     reopenedby = request.user.first_name + ' ' + request.user.last_name
     mail_body = get_template('main/feedback_mail/reopened_feedback.html').render(
@@ -926,7 +926,7 @@ def reopen_feedback(request, id):
     bcc = list()
     if feedback.attachment:
         attachments.append(feedback.attachment)
-    mail_subject = "Customer Feedback ["+feedback.feedback_type+"-"+ feedback.cid+"] Status - Reopened"
+    mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Reopened"
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     return redirect('main.views.view_feedback', id=id)
@@ -2085,7 +2085,7 @@ def assign_feedback(request):
                 feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
                 mail_to = [ str(assignee) , feedback_super_user_group]
                 #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
-                mail_subject = "Customer Feedback ["+feedback_type+"-"+cid+"] Status- Submit Response and/or Initiate Closure"
+                mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
                 mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
                                         'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
                                         'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description}))
