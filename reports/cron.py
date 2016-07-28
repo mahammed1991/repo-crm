@@ -1058,7 +1058,7 @@ def available_counts_booked_not_na(present_day, process_type):
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
                 if item['booked_count'] > 0 and item['availability_count'] > 0:
-                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
+                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 95:
                         max_utilized_regions['date'] = item['date']
                         max_utilized_regions['team name'] = item['team__team_name']
                         max_utilized_regions['total availability count'] = item['availability_count']
@@ -1101,7 +1101,7 @@ def available_counts_booked_in_na(present_day, process_type):
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
                 if item['booked_count'] > 0 and item['availability_count'] > 0:
-                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
+                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 95:
                         max_utilized_regions['date'] = item['date']
                         max_utilized_regions['team name'] = item['team__team_name']
                         max_utilized_regions['total availability count'] = item['availability_count']
