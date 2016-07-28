@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<!-- <body>
+		<p>Hi,</p>
+		<p>A new Comment has been added for Feedback- <b>{{feedback.title}}</b> </p>
+		<p>Feedback Details are below:</p>
+		<p>Feedback By: {{ feedback.user.get_full_name }} ({{ feedback.user.email}})</p>
+		<p>Feedback To: {{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }} ({{ feedback.lead_owner.email }})</p>
+		<p>CID: {{ feedback.cid }}</p>
+		<p>Name of the Advertiser: {{ feedback.advertiser_name }}</p>
+		<p>Feedback Type: {{ feedback.feedback_type }}</p>
+		<p>Language: {{ feedback.language }}</p>
+		<p>Location: {{ feedback.location.location_name }}</p>
+		<p>Description: {{ feedback.description }}</p>
+
+
+		<p>Comment Details:</p>
+		<p>Comment By: {{comment.comment_by}}</p>
+		<p>Comment: {{comment.comment|linebreaks}} </p>
+
+		<a href="{{ feedback_url }}">Go To Feedback</a>
+		<br /><br />
+		<p>Thanks,</p>
+		<p>{{signature}}</p>
+	</body> -->
+<body>
+	<p>Hello,</p>
+
+	<div>
+	<p>The concerned owner has responded to the feedback and added new comment. 
+	 Kindly review the case and mark the feedback 'Resolved' if it is solved / add 'Comment' in the thread.</p>
+	<span>
+		<b>ID </b>- {{ feedback.cid }}<br>
+		<b>Title</b> - {{ feedback.title }}<br>
+		<b>Feedback Type</b> - {{ feedback.feedback_type }}<br>
+		<b>Description</b> - {{ feedback.description }} <br>
+		<b>Comment</b> -{{comment.comment}} <br>
+		<p><a href="{{ feedback_url }}">Click here </a>to access feedback.</p>
+	</span>
+	</div>
+	<div>
+	Regards,<br>
+	Portal Team/CX Team
+	</div>
+</body>
+</html>
