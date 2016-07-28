@@ -1015,7 +1015,7 @@ def slots_open_booked():
     logging.info("UTILIZATION DASHBOARD MAILING FUNCTION")
     mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % (specific_date)
     mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
-    mail_from = 'google@regalix-inc.com'
+    mail_from = 'Google Slots Utilized <google@regalix-inc.com>'
     mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
@@ -1057,12 +1057,13 @@ def available_counts_booked_not_na(present_day, process_type):
     for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
-                if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
-                    max_utilized_regions['date'] = item['date']
-                    max_utilized_regions['team name'] = item['team__team_name']
-                    max_utilized_regions['total availability count'] = item['availability_count']
-                    max_utilized_regions['total booked count'] = item['booked_count']
-                    max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                if item['booked_count'] > 0 and item['availability_count'] > 0:
+                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
+                        max_utilized_regions['date'] = item['date']
+                        max_utilized_regions['team name'] = item['team__team_name']
+                        max_utilized_regions['total availability count'] = item['availability_count']
+                        max_utilized_regions['total booked count'] = item['booked_count']
+                        max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
 
     return max_utilized_regions
 
@@ -1099,12 +1100,13 @@ def available_counts_booked_in_na(present_day, process_type):
     for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
-                if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
-                    max_utilized_regions['date'] = item['date']
-                    max_utilized_regions['team name'] = item['team__team_name']
-                    max_utilized_regions['total availability count'] = item['availability_count']
-                    max_utilized_regions['total booked count'] = item['booked_count']
-                    max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                if item['booked_count'] > 0 and item['availability_count'] > 0:
+                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
+                        max_utilized_regions['date'] = item['date']
+                        max_utilized_regions['team name'] = item['team__team_name']
+                        max_utilized_regions['total availability count'] = item['availability_count']
+                        max_utilized_regions['total booked count'] = item['booked_count']
+                        max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
 
     return max_utilized_regions
 
@@ -1151,11 +1153,9 @@ def fetching_future_utilized_slots():
     mail_subject = "ALERT - SLOT UTILIZATION NEARING 100% :"
     mail_body = get_template('reports/email_templates/future_slot_details.html').\
         render(Context({'tag': tag_final, 'shopp': shopping_final}))
-    mail_from = 'google@regalix-inc.com'
+    mail_from = 'Google Slots Utilization <google@regalix-inc.com>'
     mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     if len(tag_final) > 0 or len(shopping_final) > 0:
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
-
-

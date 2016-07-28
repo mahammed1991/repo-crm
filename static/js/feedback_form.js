@@ -67,7 +67,7 @@ window.cancel_clicked = false;
 
     function validateField(elem){
         // Validate Form Field
-        if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+        if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val() || $(elem).val() == 'Feedback Type') {
           $(elem).addClass('error-box');
           $(elem).focus();
           window.is_error = true;
