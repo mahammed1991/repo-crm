@@ -924,14 +924,14 @@
       <div class="modal-content" style="width:100%;">
         <div class="modal-header" style="width:100%;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h3 class="modal-title" style="font-size:22px;">Picasso/Bolt Audits Eligibility</h3>
+          <h3 class="modal-title" style="font-size:22px;">UI-UX/BOLT AUDIT ELIGIBILITY</h3>
         </div>
         <div class="modal-body" id="eligible" style="width:100%;">
           <p style="font-size:18px;font-weight: bold;text-align:center;"></p>
         </div>
         <div class="modal-footer" style="padding-bottom:25px;">
-          <button id="b" class="btn"><a href="" target="_blank">Click here to submit PICASSO AUDIT/BOLT leads</a></button>
-          <button id="c" class="btn" data-dismiss="modal">I do it later</button>
+          <button id="b" class="btn"><a href="" target="_blank">Click Here to Submit UI-UX and Bolt Leads</a></button>
+          <button id="c" class="btn" data-dismiss="modal">I'll do it later</button>
         </div>
       </div> 
     </div>
@@ -1250,52 +1250,58 @@ function checkout(){
   //$('#display_block_error_both').hide();
   var cidElem = $('#cid').val().trim();
   var urlElem = $('#url1').val().trim();
-  if(cidElem && urlElem){
-    if(urlElem.indexOf('http') > -1){
-      var link = getLink(urlElem);
-      var linkhost = link.hostname;
-    }
-    else{
-      var urlElem = 'https://' + urlElem;
-      var link = getLink(urlElem); 
-      var linkhost = link.hostname;
-    }
-    $.ajax({
-      url: "/leads/get-picasso-bolt-lead",
-      type: "GET",
-      data: {'cid': cidElem, 'url': linkhost},
-      dataType: 'JSON',
-      success:function(data){
-        if(data['status'] == 'success'){
-          if(data['type'] == 'picasso'){
-            modalBody = "Your Tag lead is also eligible for Bolt Lead.";
-            $('#eligible p').text(modalBody);
-          }
-          else{
-            modalBody = "Your Tag lead is also eligible for Picasso Audit Lead.";
-            $('#eligible p').text(modalBody);
-          }
-
-          if(data['type'] == 'both'){
-            isBoth = data['type'];
-          }
-          dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url1.value });
-        }
-        else if(data['status'] == 'failure'){
-          modal_body = "Your Tag lead is also eligible for both Picasso Audit and Bolt Leads.";
-          $('#eligible p').text(modal_body);
-        }
-      },
-      failure:function(error) {
+  var userProgram = "{{ user.profile.team|safe }}";
+  var program = ["AppDev", "Channel Sales", "Dynamic Agency", "ETO", "GEM", "GEM ML", "LCS", "Managed Agency ADM", "Managed Agency AS", "Managed Agency Atlantis ADM", "Managed Agency Atlantis AS", "Managed Agency Three ADM", "Managed Agency Three AS", "Managed Agency Two AS", "MBE Sales", "MMS Amplify", "MMS One", "MMS One Apollo", "MMS Two", "NBS", "Newbie+/Kickstart+", "Small Business", "Small Business Mobile", "SMB Upsell", "Traditional Agency AS", "UMM Mobile"];
+  if(program.indexOf(userProgram) > -1)
+  {
+    alert(program.indexOf(userProgram) > -1)
+    if(cidElem && urlElem){
+      if(urlElem.indexOf('http') > -1){
+        var link = getLink(urlElem);
+        var linkhost = link.hostname;
       }
-    });
-  }/*else{
-    $('#display_block_error_bolt').hide();
-    $('#display_block_error_picasso').hide();
-    $('#display_block_error_both').hide();
-    $('#formsubmit').prop('disabled', false);
-  }*/
-  checkID();
+      else{
+        var urlElem = 'https://' + urlElem;
+        var link = getLink(urlElem); 
+        var linkhost = link.hostname;
+      }
+      $.ajax({
+        url: "/leads/get-picasso-bolt-lead",
+        type: "GET",
+        data: {'cid': cidElem, 'url': linkhost},
+        dataType: 'JSON',
+        success:function(data){
+          if(data['status'] == 'success'){
+            if(data['type'] == 'picasso'){
+              modalBody = "Your Tag Lead is now eligible for Bolt Audit.";
+              $('#eligible p').text(modalBody);
+            }
+            else{
+              modalBody = "Your Tag Lead is now eligible for UI-UX Audit.";
+              $('#eligible p').text(modalBody);
+            }
+
+            if(data['type'] == 'both'){
+              isBoth = data['type'];
+            }
+
+          }
+          else if(data['status'] == 'failure'){
+            modal_body = "Your Tag Leads is now eligible for both UI-UX and Bolt Audits";
+            $('#eligible p').text(modal_body);
+          }
+        },
+        failure:function(error) {
+        }
+      });
+    }/*else{
+      $('#display_block_error_bolt').hide();
+      $('#display_block_error_picasso').hide();
+      $('#display_block_error_both').hide();
+      $('#formsubmit').prop('disabled', false);
+    }*/
+    checkID();
+  }  
 }
 
 
@@ -1307,10 +1313,10 @@ $('#b').click(function(){
   var advmail = $('#aemail').val().trim();
   var program = $('#team').val().trim();
   var modal_body = $("#eligible p").text();
-  if(modal_body.indexOf('Picasso') != -1 && modal_body.indexOf('Bolt') == -1){
+  if(modal_body.indexOf('UI-UX') != -1 && modal_body.indexOf('Bolt') == -1){
     var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program+"&type=picasso";
   }
-  else if(modal_body.indexOf('Picasso') == -1 && modal_body.indexOf('Bolt') != -1){
+  else if(modal_body.indexOf('UI-UX') == -1 && modal_body.indexOf('Bolt') != -1){
     var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program+"&type=bolt";
   }
   else{
@@ -1324,7 +1330,10 @@ $("#ctl00").submit(function(e){
   e.preventDefault();
   var isFormValid = validatethis(document.getElementById("ctl00"));
   //to workon picasso modal
-  if(isFormValid && isBoth != 'both' && !submit){
+  var userProgram = "{{ user.profile.team|safe }}";
+  var program = ["AppDev", "Channel Sales", "Dynamic Agency", "ETO", "GEM", "GEM ML", "LCS", "Managed Agency ADM", "Managed Agency AS", "Managed Agency Atlantis ADM", "Managed Agency Atlantis AS", "Managed Agency Three ADM", "Managed Agency Three AS", "Managed Agency Two AS", "MBE Sales", "MMS Amplify", "MMS One", "MMS One Apollo", "MMS Two", "NBS", "Newbie+/Kickstart+", "Small Business", "Small Business Mobile", "SMB Upsell", "Traditional Agency AS", "UMM Mobile"];
+
+  if(isFormValid && isBoth != 'both' && !submit && program.indexOf(userProgram) > -1){
       $("#myModal").modal({
         backdrop: 'static',
         keyboard: false
