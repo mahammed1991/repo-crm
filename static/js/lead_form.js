@@ -71,7 +71,9 @@
           $("#submit_buttons").show();
           //$("#heads_up").show();
         }else{
-          $("#submit_buttons").hide();
+           $("#submit_buttons").hide();
+           $("#smart_goal_messsage_1").hide();
+           $("#code_type_avg_time_1").hide();
           //$("#heads_up").hide();
         }
       }else{
@@ -284,8 +286,9 @@
       $( ".remove" ).hide();
       id = $(this).attr('id');
       indx = id.split('_')[1];
-      $('#code_type_avg_time_'+indx).html('');
-      $('#code_type_avg_time_'+indx).hide('');
+       $('#smart_goal_messsage_'+indx).hide('');
+       $('#code_type_avg_time_'+indx).html('');
+       $('#code_type_avg_time_'+indx).hide('');
       next_id = parseInt(indx) + 1
       prev_id = parseInt(indx) - 1
       $("#ctype" + indx).val('');
@@ -943,10 +946,12 @@ $('.code_type').change(function(){
   }
 
   if(['GA Smart Goals'].indexOf(selectedCodeType) != -1){
-    $("#smart-goal-messsage").show();   
+
+    $('#smart_goal_messsage_'+selectedindex).show();   
   }
   if(['GA Smart Goals'].indexOf(selectedCodeType) == -1){
-    $("#smart-goal-messsage").hide();   
+ 
+    $('#smart_goal_messsage_'+selectedindex).hide(); 
   }
 
   else if(selectedCodeType.indexOf('Website Call Conversion') != -1){
