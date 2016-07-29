@@ -3599,7 +3599,7 @@ def picasso_bolt_lead_form(request):
 
 @csrf_exempt
 def get_picasso_bolt_lead(request):
-    if request.is_ajax() and request.method == 'GET':
+    if request.is_ajax() and request.method == 'GET' and request.GET.get('picasso_lead_db'):
         status_dict = dict()
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
@@ -3648,7 +3648,7 @@ def get_picasso_bolt_lead(request):
         else:
             status_dict['status'] = 'failure' 
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
-    elif request.method == 'PUT':
+    elif request.method == 'GET':
         status_dict = dict()
         bl_cid = request.GET.get('cid')
         try:
