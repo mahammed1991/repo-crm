@@ -99,7 +99,7 @@ def sfdc_connection(is_prod):
                                security_token='enfTcpWGlwx6ObKwksx3Bt9I')
     else:
         sfdc_conn = Salesforce(username='google.tech@regalix-inc.com.regalixdev',
-                               password='portalsupport123456',
+                               password='portalsupport1234',
                                security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
     return sfdc_conn
 
