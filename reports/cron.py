@@ -961,7 +961,7 @@ def slots_open_booked():
 
     for ele in tag_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
             if value < 80.00:
                 ele['Ratio'] = ("%.2f"%value +"%" )
                 ele['greater'] = True
@@ -972,7 +972,7 @@ def slots_open_booked():
 
     shopping_final = list()
     for ordering in shopping_all:
-        keyorder = {k:v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        keyorder = {k:v for v, k in enumerate(['greater','team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         shopping_final.append(each_one)
 
@@ -1167,3 +1167,5 @@ def fetching_future_utilized_slots():
     attachments = list()
     if len(tag_final) > 0 or len(shopping_final) > 0:
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
