@@ -177,7 +177,7 @@
       
     
     <div class="row">
-    <ul class="nav nav-tabs">
+    <ul id="tabs" class="nav nav-tabs">
       <li id="picasso" class="active" onclick="resetPicasso()"><a class="common" data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
       <li id="bolt" style="margin-left:30px;" onclick="resetBolt()"><a class="common" data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
     </ul>
@@ -363,32 +363,41 @@ var search = location.search.substring(1);
 var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
 function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
   $(document).ready(function(){
-    /*var set = "{{ request.get_full_path }}";
-    var res = set.split("?");
-    var res1 = res[1].split("&amp;")
-    alert(res1);*/
+   
     if(prevaluedict['type']){
       if(prevaluedict['type'] == 'bolt'){
         $('#picasso').removeClass('active');
-        $('#bolt').addClass('active');
+        $('#bolt').addClass('active').trigger( "click" );
+        $('#picasso a').click(function(e){
+          e.preventDefault();
+          return false;
+        });
+        $('#language_selector').append('<option value="Japanese">Japanese</option>'+
+        '<option value="Simplified Chinese">Simplified Chinese</option>'+
+        '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
+        '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
       }
       else{
-         $('#bolt').removeClass('active');
-        $('#picasso').addClass('active');
+         $('#bolt a').click(function(e){
+          e.preventDefault();
+          return false;
+        });
       }
     }
     if(prevaluedict['cid']){
       $('#cid').val(prevaluedict['cid']);
     }
+    var tmp = [];
+    $("#team > option").each(function() {
+      tmp.push(this.text);
+    });
     if(prevaluedict['team']){
-      $("#team > option").each(function() {
-        if(this.text == prevaluedict['team']){
-          $('#team').val(prevaluedict['team']);
-        }
-        else{
-          $('#team').prop('selectedIndex',0);
-        }
-      });
+      if(tmp.indexOf(prevaluedict['team']) > -1){
+        $('#team').val(prevaluedict['team']);
+      }
+      else{
+        $('#team').prop('selectedIndex',0);
+      }
     }
     else if(nbs_team.indexOf(pgName) != -1){
       $('#cid').val('000-000-0000');

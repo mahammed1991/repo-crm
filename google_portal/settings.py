@@ -170,6 +170,7 @@ INSTALLED_APPS = (
     'reports',
     'kronos',
     'umm',
+    'django.contrib.humanize',
 
 )
 
