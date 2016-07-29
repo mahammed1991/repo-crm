@@ -466,7 +466,7 @@ function checkout(){
       $.ajax({
         url: "/leads/get-picasso-bolt-lead",
         type: "GET",
-        data: {'cid': cidElem, 'url': linkhost},
+        data: {'cid': cidElem, 'url': linkhost, 'picasso_lead_db':true},
         dataType: 'JSON',
         success:function(data){
           if(data['status'] == 'success'){
