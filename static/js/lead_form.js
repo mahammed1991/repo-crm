@@ -1161,7 +1161,7 @@ function checkID()
 
   $.ajax({
     url: "/leads/get-picasso-bolt-lead/?cid="+cid_to_compare,
-    type: "PUT",
+    type: "GET",
     dataType: 'JSON',
     success:function(data){
       if(data['status'] === 'success') {
