@@ -1,0 +1,613 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  Picasso & Bolt - SMB Audit Lead Form
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+<style type="text/css">
+  .tasks{ margin-bottom: 5px;}
+  .footer{position: relative;}
+  .footer .container-fluid  ul{ line-height: 62px;}
+  .table-container{ min-height:300px;}
+  .tab-content {
+  padding-top: 1px;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background: #F9FAFC;
+
+  }
+  .list{
+  width: 850px;
+  margin: auto;
+  border-radius: 20px;
+  font-size: 15px;
+  }
+  .error_list{
+  margin-left: 30px; 
+  width: 700px;
+  }
+  .error_list li{
+  list-style: circle;
+  }
+  .nav > li > a:hover{
+   border-top-left-radius:1em !important;
+   border-top-right-radius:1em !important;
+  }
+  .nav > #bolt.active > a{
+   background:  #F9FAFC !important;
+   border-top-left-radius:1em;
+   border-top-right-radius:1em;
+   color: #2763c9 !important; 
+  }
+  .nav > #picasso.active > a{
+   background:  #F9FAFC !important;
+   border-top-left-radius:1em;
+   border-top-right-radius:1em;
+   color: #2763c9 !important; 
+
+  }
+  /*li > a:hover {
+   background: #cfe0fc !important;
+  }*/
+  .nav-tabs > li > a {
+   margin-right: 0px !important;
+   width: 485px;
+   font-weight: bold;
+   text-align: center;
+   color: #555 !important; 
+  }
+  .set-tab{
+  padding-left: 30px !important;
+  }
+  .set-tab1{
+  margin-left: 15px !important;
+  }
+  .set-tab2{
+  margin-left: -15px !important;
+  }
+  a{
+   font-weight: 500;
+  }
+ .set{
+   padding-top: 35px;
+  }
+  .row-centered{
+   margin: 0px 250px;
+  }
+ </style>
+{% endblock main_css %}
+{% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
+
+<section class="content-region inner-page" >
+  <div class="container-fluid">
+  <h1 style="font-size: 24px;
+  font-family: 'robotoblack';
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+  margin-top: 50px;
+  margin-bottom: 20px;">SUBMIT PICASSO/BOLT MOBILE SITE AUDIT REQUEST</h1>
+ 
+  <form class="lead-form" id="ctl00" onsubmit="return validatethis(this);" method="POST">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=6" name="retURL">
+    <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.lead_error' %}?n=6" name="errorURL">
+    <input type="hidden" name="oid" value="00DZ000000MipUa">
+    <input type="hidden" id="campid" name="Campaign_ID" value="None">
+    <input type="hidden" id="change_lead_owner" name="change_lead_owner" value="1">
+    <input type="hidden" id="picasso_lead_status" name="picasso_lead_status" value="In Queue">
+    <input type="hidden" id="ctype1" name="ctype1" value="PICASSO">
+    <input type="hidden" id="company" name="company" value="">
+    <input type="hidden" id="country" name="country" value=".">
+    <input type="hidden" class="form-control" id="aemail" name="aemail" placeholder="Advertiser Email" value="projectpicasso@regalix-inc.com">
+
+ <div style="border-radius: 20px;text-align: left;padding: 30px;padding-top: 10px;padding-bottom: 10px;width: 850px;margin: 20px auto;font-size: 15px;background-color: rgb(182, 215, 168);">
+          <span style="font-size: 24px;font-family: 'robotoblack';text-transform: uppercase;margin-left: 318px;">Announcements:</span>
+          <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
+          <li style="list-style-type:disc;">Demand for Bolt audits has been higher than anticipated. While we increase capacity:</li>
+              <ul style="padding-top: 10px; padding-bottom: 10px;padding-left: 25px;">
+                  <li style="list-style-type:circle;">Please be conscious of limited capacity by avoiding bulk requests of audits and only requesting what you know you will share and discuss with your clients.</li>
+                  <li style="list-style-type:circle;">If you request a large volume of audits, we will spread delivery over a longer period of time so that you do not monopolize capacity</li>
+              </ul>
+        <li style="list-style-type:disc;">(English markets only) If you do not want to send the audit simultaneously to your client via email, you now must opt out</li>
+        <li style="list-style-type:disc;">You can review a list of all eligible opportunities for audits at
+            <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/SMBAuditsDash' });" style="font-size: 18px;" target="_blank" href="http://go/SMBAuditsDash">go/SMBAuditsDash</a></li>
+          </ul>
+          <b>For more details please see Sections 3 and 4 of <a onclick="dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Builds', 'action': 'click', 'label': 'go/AuditsCommDoc' });" style="font-size: 18px;" target="_blank" href="https://docs.google.com/document/d/17sI5nJD2EEXgknMPAv8tMm2EelEjKZE39YNTuoF9mDY/edit#">go/AuditsCommDoc</a>.</b>
+      </div>
+
+    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+    <p id="picasso-tag" style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 960px;margin: 18px auto;">This Picasso (Mobile UI/UX) submission would be approximately number <b id="picasso_tat">{{no_of_inqueue_leads}}</b> in the queue with an expected delivery date by <b id="delivery_date" >{{estimated_tat}}</b> </p>
+
+     <p id="Bolt-tag" style="border-radius: 20px;text-align:center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 960px;margin: 20px auto;">This Bolt (Mobile Speed) submission would be approximately number <b id="picasso_bolt_tat">{{no_of_inqueue_leads_bolt}}</b> in the queue with an expected delivery date by <b id="delivery_date_bolt" >{{estimated_tat_bolt}}</b> </p>
+    
+    <input type="hidden" class="form-control" id="gref" name="gref" placeholder="Google Rep Name" value='{{ user.get_full_name }}'>
+   <input type="hidden" class="form-control" id="emailref" name="emailref" placeholder="Google Rep Email" value="{{ user.email }}">
+   <input type="hidden" class="form-control" name="manager_name" id="manager_name" placeholder="Manager Name" value="{{user.profile.user_manager_name}}">
+   <input type="hidden" class="form-control" name="manager_email" id="manager_email" placeholder="Manager Email" value="{{user.profile.user_manager_email}}">
+    <div class="row"> 
+       <div class="col-md-6">
+        <label for="cid">Customer ID *</label>
+        <input type="text" class="form-control" id="cid" maxlength="255" name="cid" placeholder="Customer ID (xxx-xxx-xxxx)" onfocusout="checkout()">
+      </div>
+
+      <div class="col-md-6">
+       <label for="url" id="url_label_id">Website URL *</label>
+        <input type="text" class="form-control" id="url" name="url1" placeholder="Website URL" onfocusout="checkout()">
+      </div>
+
+    </div>
+    <p id="display_block_error_bolt" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">This lead has already been submitted for a Bolt Audit <a href="https://goto.google.com/SMBAuditsDash/" target="_blank" style="color:#2763c9">(see go/SMBAuditsDash)</a></b>. However, you can still request a Picasso Audit.</p>
+
+    <p id="display_block_error_picasso" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">This lead has already been submitted for a Picasso Audit <a href="https://goto.google.com/SMBAuditsDash/" target="_blank" style="color:#2763c9">(see go/SMBAuditsDash)</a></b>. However, you can still request a Bolt Audit.</p>
+
+    <p id="display_block_error_both" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">A lead with this CID and URL has already been submitted for both Audits. You can find more details at <a href="https://goto.google.com/SMBAuditsDash/" target="_blank" style="color:#2763c9">(see go/SMBAuditsDash)</a></b> </p>
+
+    <p id="cid_error" style="display:none;border-radius: 39px;text-align:center;font-size: 15px;padding: 10px 42px;background-color: #93C47D;width: 850px;margin:auto;margin-bottom:20px;">
+        This CID is not eligible for an audit at this time. Please ensure the Opportunity PitchIQ explicitly states the customer is eligible for an audit. To request an exception, fill out
+        <a href="http://go/audit-exception-form" target="_blank" style="color:#2763c9;">go/audit-exception-form</a>
+        </b>
+    </p>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <label for="picasso_pod">POD Name *</label>
+        <input type="text" class="form-control" id="picasso_pod" maxlength="255" name="picasso_pod" placeholder="Ex: MMS Two Apollo-US-MTV2" {% if user.profile.pod_name %} value="{{user.profile.pod_name}}" {% else %} value="" {% endif %}>
+      </div>
+
+      <div class="col-md-6">
+        <label for="team">Program name *</label>
+        <select class="form-control bgicon" id="team" title="Program Name" name="team">
+          <option value="">Select Program</option>
+          {% for program in teams %}
+            <option class ="{{program.picasso_lead_group_type}}" value="{{program.team_name}}">{{program.team_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+      
+    
+    <div class="row">
+    <ul id="tabs" class="nav nav-tabs">
+      <li id="picasso" class="active" onclick="resetPicasso()"><a class="common" data-toggle="tab" href="#">Picasso (Mobile UI/UX)</a></li>
+      <li id="bolt" style="margin-left:30px;" onclick="resetBolt()"><a class="common" data-toggle="tab" href="#">Bolt (Mobile Speed)</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="container-fluid"><br />
+        
+
+        <div class="std-sub-title">Advertiser Details</div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <label for="language_selector">Language Selector</label>
+                <select class="form-control bgicon" id="language_selector" title="Language Selector" name="language" onchange="optSelect.call(this, event)">
+                  <option value="English">English</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                </select>
+            </div>
+           <div class="col-md-6">
+            <label for="market_selector">Market Selector</label>
+                <select class="form-control bgicon" id="market_selector" title="Market Selector" name="market_selector">
+                  <option value="Generic Market">Generic Market</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="row">
+  
+            <div class="col-md-6" id="obj">
+              <label id="picasso-obj" for="picasso_objective">Objective</label></br>
+              <div class="checkboxvalidation" style="height:95px;">
+                <label for="buy_online" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
+                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="buy_online" data="Buy Online"><span>Buy Online</span></br>
+                </label>
+                <label for="form_entry" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:208px;">
+                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="form_entry" data="Form Entry"><span>Form Entry (Generate Leads)</span></br>
+                </label>
+                  <label for="call_your_business" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
+                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="call_your_business" data="Call your Business"><span>Call your Business</span>
+                </label>
+                <label for="engage_with_your_content" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:180px;">
+                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="engage_with_your_content" data="Engage with your Content"><span>Engage with your Content</span></br>
+                </label>
+                <label for="become_a_fan" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
+                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="become_a_fan" data="Become a Fan"><span>Become a Fan</span>
+                </label>
+                 <label for="drive_foot_traffic" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
+                  <input class="mdl-checkbox__input picasso_objective " type="checkbox" name="picasso_objective_list[]" id="drive_foot_traffic" data="Drive Foot Traffic"><span>Drive Foot Traffic</span>
+                </label>
+                 <label for="install_mobile_app" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect checkvalid" style="width:170px;">
+                  <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="picasso_objective_list[]" id="install_mobile_app" data="Install Mobile App"><span>Install Mobile App</span>
+                </label>
+              </div>
+            </div>
+            <div id="add_notes" class="col-md-6">
+              <label for="additional_notes">Additional Notes(Optional)</label>
+              <textarea class="form-control" name="additional_notes" id="additional_notes" style="height: 135px;"></textarea>
+            </div>
+          </div>
+
+
+          <div class="std-sub-title  for-bolt">Please provide two Competitor URLs of your advertiser</div>
+
+          <div class="row for-bolt" >
+            <div class="col-md-6">
+             <label for="comp_url_1" id="url_label_id">Competitor URL 1</label>
+              <input type="text" class="form-control" id="comp_url_1" name="url2" placeholder="Competitor URL 1">
+            </div>
+           <div class="col-md-6">
+             <label for="comp_url_2" id="url_label_id">Competitor URL 2</label>
+              <input type="text" class="form-control" id="comp_url_2" name="url3" placeholder="Competitor URL 2">
+            </div>
+          </div>
+
+
+
+          <div class="std-sub-title">Contact Information - Once completed, the deck will be sent to the following</div>
+          <div class="row">
+            <div class="col-md-1 set" style="width:20px;">
+              <label id="checkbox11" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox1">
+                  <input type="checkbox" id="checkbox1" class="mdl-checkbox__input">
+                  
+               </label>
+            </div>
+           
+            <div class="col-md-4" style="width:429px;">
+              <label>My Corporate Mail</label>
+              <input id="corp_email" class="form-control" type="text" name="corp_email" value="{{request.user}}" readonly="readonly" onfocusout="checkout()">  
+            </div>
+
+            <div class="col-md-2 set" style="text-align:center;width:80px;">
+              <p>AND/OR</p>
+            </div>
+
+            <div class="col-md-1 set" style="width:20px;">
+              <label id="checkbox22" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox2">
+                  <input type="checkbox" id="checkbox2" class="mdl-checkbox__input">
+                  
+               </label>
+            </div>
+           
+            <div class="col-md-4" style="width:429px;">
+              <label>Other Googler email</label><!--  it was my cases alias previously -->
+              <input id="cases_alias" class="form-control" type="text" name="cases_alias" placeholder="Ex: my Cases alias, my podmate, etc." onfocusout="checkout()">  
+            </div>
+
+          </div>
+          
+          <div class="row row-centered">
+            <div class="col-md-1 set" id="remove-check" style="width:20px;">
+              <label id="checkbox33" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox3">
+                  <input type="checkbox" id="checkbox3" class="mdl-checkbox__input" checked>
+                  
+               </label>
+            </div>
+            
+            <div class="col-md-4" style="width:429px;">
+            <label id="adv_mail">My Advertiser E-mail</label>
+              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="Ex: barney.rubble@dabbadoo.com">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="list">
+      <ul class="error_list">  
+        <li id="display_error_for_objective" style="display:none;">Please select atleast one objective</b></li>
+        
+        <li id="display_url_has_comma" style="display:none;">URL contains Comma</b></li>
+        
+        <li id="display_url_has_space" style="display:none;">URL contains Space</b></li>
+        
+        <li id="display_invalid_url" style="display:none;">Invalid URL</b></li>
+        
+        <li id="display_error_for_email_fields" style="display:none;">Please enter valid email address</b></li>
+
+        <li id="display_error_for_same_competitor_url" style="display:none;">Competitor URLs should be different</b></li>
+
+        <li id="display_error_for_contact_mail" style="display:none;">Please select and enter atleast one of your email addresses</b></li>
+
+        <li id="display_error_for_cases_alias" style="display:none;">Please enter valid google email address cases alias</b></li>
+
+        <li id="display_error_for_other_fields" style="display:none;">Please enter all the mandatory fields</b></li>
+
+        <li id="display_error_for_adv_mail" style="display:none;">Please enter Advertiser Email</b></li>
+
+        <li id="display_error_for_cases_mail" style="display:none;">Please enter Cases Alias Email</b></li>
+
+        <li id="display_error_for_enter_comp_url" style="display:none;">Please enter Competitor URL</b></li>
+
+        <li id="display_error_for_enter_valid_cid_format" style="display:none;">Please enter valid CID format</b></li>
+      </ul>
+    </div>
+    <div class="btns text-center" id="submit_buttons">
+        <div class="btn-group">
+            <button class="btn std-btn mdl-button1 mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="formsubmit">Submit Request</button>
+            <button class="grey mdl-button2 mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="resetBtn(this);" id="formReset">Reset</button>
+        </div>
+    </div>
+  </form>
+</div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/picasso_lead_form.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+<script type="text/javascript">
+  $('#formsubmit').click(function(){
+  $('.list').css({'background':'#E0A3A3','margin-top':'30px'});
+  $('.error_list').css({'padding-top':'10px','padding-bottom':'10px'});
+ });
+
+var nbs_team = ['NBS'];
+var pgName = "{{user.profile.team}}";
+var search = location.search.substring(1);
+var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
+  $(document).ready(function(){
+   
+    if(prevaluedict['type']){
+      if(prevaluedict['type'] == 'bolt'){
+        $('#picasso').removeClass('active');
+        $('#bolt').addClass('active').trigger( "click" );
+        $('#picasso a').click(function(e){
+          e.preventDefault();
+          return false;
+        });
+        $('#language_selector').append('<option value="Japanese">Japanese</option>'+
+        '<option value="Simplified Chinese">Simplified Chinese</option>'+
+        '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
+        '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
+      }
+      else{
+         $('#bolt a').click(function(e){
+          e.preventDefault();
+          return false;
+        });
+      }
+    }
+    if(prevaluedict['cid']){
+      $('#cid').val(prevaluedict['cid']);
+    }
+    var tmp = [];
+    $("#team > option").each(function() {
+      tmp.push(this.text);
+    });
+    if(prevaluedict['team']){
+      if(tmp.indexOf(prevaluedict['team']) > -1){
+        $('#team').val(prevaluedict['team']);
+      }
+      else{
+        $('#team').prop('selectedIndex',0);
+      }
+    }
+    else if(nbs_team.indexOf(pgName) != -1){
+      $('#cid').val('000-000-0000');
+      $('#team').val(pgName);
+    }
+    
+    
+    if(prevaluedict['url']){
+      $('#url').val(prevaluedict['url']);
+    }
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
+    }
+
+    if($('#url').val()){
+      $('#url').focus();
+    }
+
+    olark('api.box.hide');
+
+     // on click of picasso objectives - Adding Text as Value and if it is uncheck clearing values of checkboxs
+  $(document).on('change', '.mdl-checkbox__input', function() {
+        id = $(this).attr('id');
+        if($('#'+id).is(':checked')){
+          //Placing data attr as Value
+          $('#'+id).val($('#'+id).attr('data'));
+        }else{
+          $('#'+id).val(''); // if checkbox is unchecked then clearing its value
+        }
+    });
+
+  $('.for-bolt').hide();
+});
+
+function getLink(href){
+  var link = document.createElement("a");
+  link.href = href;
+  return link;
+}
+
+$('#cid').focusin(function(){
+  $('#formsubmit').prop('disabled', true);
+});
+$('#url').focusin(function(){
+  $('#formsubmit').prop('disabled', true);
+});
+
+
+function checkout(){
+  $('#display_block_error_picasso').hide();
+  $('#display_block_error_bolt').hide();
+  $('#display_block_error_both').hide();
+  var cidElem = $('#cid').val().trim();
+  var urlElem = $('#url').val().toLowerCase().trim();
+  if(cidElem && urlElem){
+    if(urlElem.indexOf('http') > -1){
+      var link = getLink(urlElem);
+      var linkhost = link.hostname;
+    }
+    else{
+      var urlElem = 'https://' + urlElem;
+      var link = getLink(urlElem); 
+      var linkhost = link.hostname;
+    }
+    if(cidElem != '000-000-0000'){  
+      $.ajax({
+        url: "/leads/get-picasso-bolt-lead",
+        type: "GET",
+        data: {'cid': cidElem, 'url': linkhost, 'picasso_lead_db':true},
+        dataType: 'JSON',
+        success:function(data){
+          if(data['status'] == 'success'){
+           /* $('#picasso a').trigger("click");*/
+            if(data['type'] == 'bolt'){
+              $('#display_block_error_bolt').show();
+              $('#formsubmit').prop('disabled', false);
+            }
+            else if(data['type'] == 'picasso'){
+              $('#display_block_error_picasso').show();
+              $('#formsubmit').prop('disabled', true);
+            }
+            else if(data['type'] == 'both'){
+              $('#display_block_error_both').show();
+              $('#formsubmit').prop('disabled', true);
+            }
+            dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url.value });
+          }
+        },
+        failure:function(error) {
+          // body...
+        }
+      });
+    }
+  }else{
+    $('#display_block_error_bolt').hide();
+    $('#display_block_error_picasso').hide();
+    $('#display_block_error_both').hide();
+    $('#formsubmit').prop('disabled', false);
+  }
+  checkID();
+}
+
+// switching button enable disable
+
+$('.common').click(function(){
+  if($('#cid_error').is(':visible')){
+    $('#formsubmit').prop('disabled', true);
+  }
+  else{
+    if ($('#display_block_error_picasso').is(':visible')){
+      if($("li#picasso").hasClass("active")){
+        $('#formsubmit').prop('disabled', false);
+      }
+
+      else{
+       $('#formsubmit').prop('disabled', true);
+      }
+    }
+
+    else if($('#display_block_error_bolt').is(':visible') ){
+      if($("li#bolt").hasClass("active")){
+        $('#formsubmit').prop('disabled', false);
+      }
+      else{
+        $('#formsubmit').prop('disabled', true);
+      }
+    }
+
+    else if($('#display_block_error_both').is(':visible') ){
+      $('#formsubmit').prop('disabled', true);
+    }
+    else{
+      $('#formsubmit').prop('disabled', false);
+    }
+  }
+          
+});
+
+
+$('#language_selector').change(function()
+  { 
+    if($('#language_selector').val().trim()!="English")
+    {
+      $('#advertiser_email').removeAttr('value');
+      $("#advertiser_email").attr("disabled", "true");
+      $("#checkbox3").removeClass("is-checked");
+      $("#checkbox3").attr("disabled", "true");
+      $('#advertiser_email').val('');
+      $("#remove-check").hide();
+        var removingStyle1 = $('#checkbox33').find('span.mdl-checkbox__tick-outline');
+        removingStyle1.removeAttr('style');
+        var removingStyle2 = $('#checkbox33').find('span.mdl-checkbox__box-outline');
+        removingStyle2.removeAttr('style');
+        $('#checkbox33').removeClass('is-checked');
+        $("#checkbox3").hide();
+        $("#checkbox33").hide();
+        $('#advertiser_email').hide('');
+        $('#adv_mail').hide();
+    }
+    else if ($('#language_selector').val().trim()=="English"){
+      $("#advertiser_email").removeAttr("disabled");
+      $("#checkbox3").removeAttr("disabled");
+      $('#checkbox33').addClass('is-checked');
+      $("#checkbox3").show();
+      $("#checkbox33").show();
+      $('#advertiser_email').show('');
+      $('#adv_mail').show();
+      $("#remove-check").show();
+    }
+  });
+
+$('#bolt').click(function()
+{
+  if($('#bolt active')){
+    $('#language_selector').append('<option value="Japanese">Japanese</option>'+
+    '<option value="Simplified Chinese">Simplified Chinese</option>'+
+    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
+    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
+  }
+  $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
+  $('#display_error_for_objective').hide();
+  $('#picasso-obj').hide();
+  $('.checkboxvalidation').hide();
+  $('#add_notes').removeClass('col-md-6');
+  $('#add_notes').addClass('col-md-12').css('margin-top','-20px');
+  // .... do other stuff
+  //saved.appendTo ($('.wherever-you-want-to'));
+});
+
+$('#picasso').click(function()
+{
+  $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
+  $('#add_notes').removeClass('col-md-12');
+  $('#add_notes').addClass('col-md-6').css('margin-top','0px');;
+  $('#picasso-obj').show();
+  $('.checkboxvalidation').show();
+});
+
+
+$('#language_selector').change(function(){
+  if($('#bolt active') && $('#language_selector').val().trim()=="Simplified Chinese"){
+      $('#market_selector').html('<option>Select Market</option>'+
+        '<option value="AUNZ">AUNZ</option>'+
+    '<option value="UKI">UKI</option>'+
+    '<option value="US">US</option>');
+    }
+    else{
+      $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
+    }
+  });
+
+</script>
+{% endblock main_js %}
