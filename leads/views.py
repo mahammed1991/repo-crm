@@ -3758,7 +3758,7 @@ def picasso_build_submission_flow(request):
                 data_in_nomination_db = 0
        
         if (data_in_nomination_db == 0) and (data_in_picasso_db == 0):
-            master_data = PicassoEligibilityMasterUpload.objects.filter(url=url_val)            
+            master_data = PicassoEligibilityMasterUpload.objects.filter(url=filterd_url)            
             if master_data:
                 for data in master_data:
                     if (data.buildeligible == "y") or  (data.buildeligible == "yes") or (data.buildeligible == "Y") or (data.buildeligible == "YES"):

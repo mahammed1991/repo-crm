@@ -228,7 +228,8 @@ class PicassoelEigibiltyBulkAdmin(admin.ModelAdmin):
          'comments', 'buildeligible', 'priority_number', 'highest_priority_number', 'is_highest_priority', 'is_duplicate')
     readonly_fields = ('url', 'pages', 'framework', 'mobile_responsivenes', 'priority',
          'comments', 'buildeligible', 'priority_number', 'highest_priority_number', 'is_highest_priority', 'is_duplicate')
-
+    search_fields = ['url']
+    
 admin.site.register(PicassoEligibilityMasterUpload, PicassoelEigibiltyBulkAdmin)
 
 
