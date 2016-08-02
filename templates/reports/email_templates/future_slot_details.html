@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<body>
+<table cellspacing="0" cellpadding="0" dir="ltr" style="table-layout:center;font-size:13px;font-family:Arial;vertical-align:middle;">
+    <colgroup>
+        <col width="26">
+        <col width="306">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="26">
+        <col width="306">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="26">
+    </colgroup>
+    <tbody style=""; >
+        <tr style="height:30px;border-bottom:1px solid #b7b7b7;background-color:#b3c6ff;">   
+            <!-- <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;background-color: #ffffff;">
+            </td>  --> 
+            <td style="padding:4px 1px 2px 70px;font-size:230%;border:1px solid #A9A9A9;" rowspan="1" colspan="7"><span style="color:#009933; width:100%;text-align:center;">ALERT - SLOT UTILIZATION NEARING 100%</span></td>
+        </tr>
+        <tr>
+        	<td style="font-size: 18px;padding-top: 5px;">
+    		Please ensure to release more slots for below region(s)</td>
+        </tr>
+
+<!-- heading -->
+{% if tag %}
+			<tr style="height:21px;"></tr>
+			<tr style="height:21px;">
+				<!-- <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td> -->
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;border-left:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;">
+					Tag</td>
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+					Slots Opened</td>
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+					Slots Booked</td>
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+					Slots Utilization %</td>
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+					Date</td>
+			</tr>
+
+	{% for data in tag %}		
+        <tr style="height:21px;border-top:1px solid #b7b7b7;">
+            <!-- <td style="padding:0px 0px 0px 0px;border-right:0px solid #b7b7b7;"></td> -->
+	        
+		            {% for key, val in data.iteritems  %}
+		            	{% if  "team name" in key %}
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-left:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align:center;width: 37%;">
+		            	 	{{val}}</td>
+		            	{% endif %}
+		            	{% if "total availability count" in key %}
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;width: 14%;">
+		            	 	{{val}}</td>
+		            	{% endif %}
+		            	{% if "total booked count" in key %}
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center; width: 14%;">
+		            	 	{{val}}</td>
+		            	{% endif %}
+		            	{% if "utilized ratio" in key %}
+		            	 	<td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center; color:red;width: 18%;">{{val}}</td>
+		            	{% endif %}
+		            	{% if "date" in key %}
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;width: 18%;">
+		            	 	{{val}}</td>
+		            	{% endif %}
+		            {% endfor %}
+	        
+        </tr>
+    {% endfor %}
+{% endif %}
+		
+		<tr style="height:21px;"></tr>
+<!-- heading -->
+{% if shopp %}
+        <tr style="height:21px;">
+            <!-- <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td> -->
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;border-left:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 	Shopping</td>
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 	Slots Opened</td>
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 	Slots booked</td>
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 	Slots Utilization %</td>
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 	Date</td>
+        </tr>
+
+   {% for data in shopp %}
+   	    <tr style="height:21px;">
+        <!-- <td style="padding:0px 0px 0px 0px;border-right:0px solid #b7b7b7;"></td> -->
+	            {% for key, val in data.iteritems  %}
+	            	{% if  "team name" in key %}
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-left:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align:center;width: 37%;">
+	            	 	{{val}}</td>
+	            	{% endif %}
+	            	{% if "total availability count" in key %}
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;border-top:1px solid #b7b7b7;text-align: center;width:14%;">
+	            	 	{{val}}</td>
+	            	{% endif %}
+	            	{% if "total booked count" in key %}
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;border-top:1px solid #b7b7b7;text-align: center;width:14%;">
+	            	 	{{val}}</td>
+	            	{% endif %}
+	            	{% if "utilized ratio" in key %}
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;color:red;width:18%;">
+	            	 	{{val}}</td>
+	            	{% endif %}
+	            	{% if "date" in key %}
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;width:18%;">
+	            	 	{{val}}</td>
+	            	{% endif %}
+	            {% endfor %}
+    	</tr>
+	{% endfor %}
+
+{% endif %}
+
+        <tr style="height:21px;"></tr>
+        <tr style="height:18px;">   
+	        <!-- <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td>  --> 
+	        <td style="background-color:#f3f3f3;padding:2px 1px 2px 26px;font-size:15px;
+	        text-align:center;color:#b7b7b7;border: 1px solid #A9A9A9" rowspan="1" colspan="7">
+	        Copyright © 2016 Regalix Inc. All rights reserved.</td>
+    	</tr>
+
+    	</tbody>
+</table>
+
+</body>
+</html>
