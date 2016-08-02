@@ -1375,10 +1375,9 @@ $("#ctl00").submit(function(e){
   e.preventDefault();
   var isFormValid = validatethis(document.getElementById("ctl00"));
   //to workon picasso modal
-  var userProgram = "{{ user.profile.team|safe }}";
-  var program = ["AppDev", "Channel Sales", "Dynamic Agency", "ETO", "GEM", "GEM ML", "LCS", "Managed Agency ADM", "Managed Agency AS", "Managed Agency Atlantis ADM", "Managed Agency Atlantis AS", "Managed Agency Three ADM", "Managed Agency Three AS", "Managed Agency Two AS", "MBE Sales", "MMS Amplify", "MMS One", "MMS One Apollo", "MMS Two", "NBS", "Newbie+/Kickstart+", "Small Business", "Small Business Mobile", "SMB Upsell", "Traditional Agency AS", "UMM Mobile"];
+  var userProgram = $('#team').val().trim();
 
-  if(isFormValid && isBoth != 'both' && !submit && program.indexOf(userProgram) > -1){
+  if(isFormValid && isBoth != 'both' && !submit && picassoPrograms.indexOf(userProgram) > -1){
       $("#myModal").modal({
         backdrop: 'static',
         keyboard: false

@@ -398,18 +398,15 @@ $('#bolt').click(function(){
   }
 
   if(prevaluedict['cid']){
-      $('#cid').val(prevaluedict['cid']);
-    }
-    if(prevaluedict['team']){
-      $("#team > option").each(function() {
-        if(this.text == prevaluedict['team']){
-          $('#team').val(prevaluedict['team']);
-        }
-        else{
-          $('#team').prop('selectedIndex',0);
-        }
-      });
-    }
+    $('#cid').val(prevaluedict['cid']);
+  }
+  if(prevaluedict['team']){
+    $("#team > option").each(function() {
+      if(this.text == prevaluedict['team']){
+        $('#team').val(prevaluedict['team']);
+      }
+    });
+  }
 
   $('#ctype1').val('BOLT');
   $('.tab-content').css("background-color","#F9FAFC");
@@ -424,17 +421,15 @@ $('#picasso').click(function(){
   
   if(prevaluedict['cid']){
       $('#cid').val(prevaluedict['cid']);
-    }
-    if(prevaluedict['team']){
-      $("#team > option").each(function() {
-        if(this.text == prevaluedict['team']){
-          $('#team').val(prevaluedict['team']);
-        }
-        else{
-          $('#team').prop('selectedIndex',0);
-        }
-      });
-    }
+  }
+
+  if(prevaluedict['team']){
+    $("#team > option").each(function() {
+      if(this.text == prevaluedict['team']){
+        $('#team').val(prevaluedict['team']);
+      }
+    });
+  }
   
   $('#ctype1').val('PICASSO');
   $('.tab-content').css("background-color","#F9FAFC");
@@ -477,11 +472,14 @@ function resetPicasso() {
           $("#language_selector").append('<option value="French">French</option>');
 
   $("#advertiser_email").removeAttr("disabled");
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
+  }
   $("#checkbox3").removeAttr("disabled");
   $('#checkbox33').addClass('is-checked');
   $("#checkbox3").show();
   $("#checkbox33").show();
-  $('#advertiser_email').show('');
+  $('#advertiser_email').show();
   $('#adv_mail').show();
   $("#remove-check").show();
   
@@ -516,17 +514,24 @@ function resetBolt() {
   $('#comp_url_1').val('');
   $('#comp_url_2').val('');
 
-          $("#language_selector").html('');
-          $("#language_selector").append('<option value="English">English</option>');
-          $("#language_selector").append('<option value="French">French</option>');
-          $("#language_selector").append('<option value="German">German</option>');
+    $("#language_selector").html('');
+    $("#language_selector").append('<option value="English">English</option>'+
+    '<option value="French">French</option>'+
+    '<option value="German">German</option>'+
+    '<option value="Japanese">Japanese</option>'+
+    '<option value="Simplified Chinese">Simplified Chinese</option>'+
+    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
+    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
 
   $("#advertiser_email").removeAttr("disabled");
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
+  }
   $("#checkbox3").removeAttr("disabled");
   $('#checkbox33').addClass('is-checked');
   $("#checkbox3").show();
   $("#checkbox33").show();
-  $('#advertiser_email').show('');
+  $('#advertiser_email').show();
   $('#adv_mail').show();
   $("#remove-check").show();
 

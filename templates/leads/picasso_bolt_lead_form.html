@@ -490,10 +490,6 @@ function checkout(){
                 e.preventDefault();
                 return false;
               });
-              $('#language_selector').append('<option value="Japanese">Japanese</option>'+
-              '<option value="Simplified Chinese">Simplified Chinese</option>'+
-              '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
-              '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
             }
             else if(data['type'] == 'both'){
               $('#display_block_error_both').show();
@@ -513,6 +509,8 @@ function checkout(){
     $('#display_block_error_both').hide();
     $('#formsubmit').prop('disabled', false);
   }
+  $('#picasso a').unbind('click');
+  $('#bolt a').unbind('click');
   checkID();
 }
 
@@ -587,12 +585,6 @@ $('#language_selector').change(function()
 
 $('#bolt').click(function()
 {
-  if($('#bolt active')){
-    $('#language_selector').append('<option value="Japanese">Japanese</option>'+
-    '<option value="Simplified Chinese">Simplified Chinese</option>'+
-    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
-    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
-  }
   $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
   $('#display_error_for_objective').hide();
   $('#picasso-obj').hide();
