@@ -1152,7 +1152,8 @@ def fetching_future_utilized_slots():
     mail_body = get_template('reports/email_templates/future_slot_details.html').\
         render(Context({'tag': tag_final, 'shopp': shopping_final}))
     mail_from = 'google@regalix-inc.com'
-    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
+    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com', 'tkhan@regalix-inc.com',
+               'rwieker@google.com', 'sabinaa@google.com']
     bcc = set([])
     attachments = list()
     if len(tag_final) > 0 or len(shopping_final) > 0:

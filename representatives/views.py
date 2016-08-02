@@ -434,7 +434,7 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     utc_date = SalesforceApi.get_utc_date(avail_date, tz.time_value)
 
     # filter and block past appointment slots
-    today_date = datetime.utcnow()
+    today_date = datetime.utcnow() + timedelta(minutes=30)
 
     utc_start_date = utc_date if utc_date > today_date else today_date
     utc_end_date = utc_date + timedelta(days=5)
@@ -1363,7 +1363,7 @@ def appointments_calendar(request):
     return render(request, 'representatives/appointments_calendar.html', {'events': total_events})
 
 
-#Picasso TAT detile
+#Picasso TAT details
 @login_required
 def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
     """ Manage scheduling appointments"""
