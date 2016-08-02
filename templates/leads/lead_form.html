@@ -1359,10 +1359,10 @@ $('#b').click(function(){
   var program = $('#team').val().trim();
   var modal_body = $("#eligible p").text();
   if(modal_body.indexOf('UI-UX') != -1 && modal_body.indexOf('Bolt') == -1){
-    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program+"&type=picasso";
+    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program;
   }
   else if(modal_body.indexOf('UI-UX') == -1 && modal_body.indexOf('Bolt') != -1){
-    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program+"&type=bolt";
+    var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program;
   }
   else{
     var url = "/leads/smb-audits-lead-form/" + "?cid="+cid+"&url="+url+"&aemail="+advmail+"&team="+program;
