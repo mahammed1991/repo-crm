@@ -364,10 +364,11 @@ var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(
 function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
   $(document).ready(function(){
    
-    if(prevaluedict['type']){
+/*    if(prevaluedict['type']){
       if(prevaluedict['type'] == 'bolt'){
         $('#picasso').removeClass('active');
         $('#bolt').addClass('active').trigger( "click" );
+        $('#ctype1').val('BOLT');
         $('#picasso a').click(function(e){
           e.preventDefault();
           return false;
@@ -383,7 +384,7 @@ function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
           return false;
         });
       }
-    }
+    }*/
     if(prevaluedict['cid']){
       $('#cid').val(prevaluedict['cid']);
     }
@@ -473,11 +474,26 @@ function checkout(){
            /* $('#picasso a').trigger("click");*/
             if(data['type'] == 'bolt'){
               $('#display_block_error_bolt').show();
-              $('#formsubmit').prop('disabled', false);
+              /*$('#formsubmit').prop('disabled', false);*/
+              $('#bolt a').click(function(e){
+                e.preventDefault();
+                return false;
+              });
             }
             else if(data['type'] == 'picasso'){
               $('#display_block_error_picasso').show();
-              $('#formsubmit').prop('disabled', true);
+              /*$('#formsubmit').prop('disabled', true);*/
+              $('#picasso').removeClass('active');
+              $('#bolt').addClass('active').trigger( "click" );
+              $('#ctype1').val('BOLT');
+              $('#picasso a').click(function(e){
+                e.preventDefault();
+                return false;
+              });
+              $('#language_selector').append('<option value="Japanese">Japanese</option>'+
+              '<option value="Simplified Chinese">Simplified Chinese</option>'+
+              '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
+              '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
             }
             else if(data['type'] == 'both'){
               $('#display_block_error_both').show();
@@ -502,7 +518,7 @@ function checkout(){
 
 // switching button enable disable
 
-$('.common').click(function(){
+/*$('.common').click(function(){
   if($('#cid_error').is(':visible')){
     $('#formsubmit').prop('disabled', true);
   }
@@ -534,7 +550,7 @@ $('.common').click(function(){
     }
   }
           
-});
+});*/
 
 
 $('#language_selector').change(function()
