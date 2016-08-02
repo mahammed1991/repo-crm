@@ -15,7 +15,7 @@ import logging
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from icalendar import Calendar, Event, vCalAddress, vText
-
+from django.utils.safestring import mark_safe
 # Django imports
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -327,7 +327,12 @@ def lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
+    picasso_programs = []
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
+    temp = Team.objects.filter(belongs_to__in=['ALL','TAG-PICASSO','PICASSO','WPP-PICASSO'],is_active=True)
+    for i in temp:
+        picasso_programs.append(i.team_name)
+    lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
     return render(
         request,
         'leads/lead_form.html',
@@ -4226,4 +4231,3 @@ def picasso_blacklist_cid(request):
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
-
