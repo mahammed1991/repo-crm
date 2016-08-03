@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+<!-- 		<p>Hi</p>
+		<p>This lead feedback has been assigned to you,</p>
+		<p>please fix the issue and update status as fixed.</p>
+		<p>Deatil of the lead is as fallow</p>
+		<p> {{title}} </p>
+		<p> {{cid}} </p>
+		<p> {{ feedbacktype }} </p>
+		<p> {{loaction}} </p>
+		<p>{{ created_date }} </p>
+		<p><a href="{{ url_link }}">please click here to go</a></p>
+ -->
+
+	<p style="margin-top: 0px;">Hello,</p>
+	<div>
+		<p>The following customer feedback is assigned to you for action. Please submit appropriate response and/ or initiate closure in a timely manner.</p>
+
+		<b>ID</b> - <a href="{{ url_link }}">{{cid}}</a><br>
+		<b>Title</b> - {{title}}<br>
+		<b>Feedback Type</b> - {{ feedbacktype }}<br>
+		<b>description</b> - {{ feedback_description }}<br>
+		<p><a href="{{ url_link }}">Click here</a> to access feedback.</p>
+	</div>
+
+	<div>
+	Regards,<br>
+	Portal Team/CX Team
+	</div>
+
+	</body>
+</html>
