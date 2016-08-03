@@ -968,7 +968,11 @@ def slots_open_booked():
             else:
                 ele['Ratio'] = ("%.2f"%value +"%" )
         else:
-            ele['Ratio'] = "-"
+            if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
+                ele['Ratio'] = "-"
+            else:
+                ele['Ratio'] = "-"
+                ele['greater'] = True
 
     shopping_final = list()
     for ordering in shopping_all:
@@ -985,7 +989,11 @@ def slots_open_booked():
             else:
                 ele['Ratio'] = ("%.2f"%value +"%" )
         else:
-            ele['Ratio'] = "-"
+            if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
+                ele['Ratio'] = "-"
+            else:
+                ele['Ratio'] = "-"
+                ele['greater'] = True
 
     tag_total_sum = dict()
     tag_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in tag_all)

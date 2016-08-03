@@ -115,6 +115,10 @@ function validatethis(frm) {
 
 var nbs_team = ['NBS'];
   $('#team').change(function(){
+  if(prevaluedict['cid']){
+      $('#cid').val(prevaluedict['cid']);
+  }
+  else{
     if(nbs_team.indexOf($('#team option:selected').val().trim()) != -1){
       $('#cid').val('000-000-0000');
     }
@@ -123,6 +127,7 @@ var nbs_team = ['NBS'];
             $('#cid').val('');
       }
     }
+  }
     $('#adv_mail').attr('hidden',false);
     $("#advertiser_email").val('').attr('hidden',false);
     $('#checkbox33').attr('hidden',false);
@@ -147,6 +152,9 @@ var nbs_team = ['NBS'];
       //$('#checkbox33').removeClass('is-checked');
       //$('#checkbox3').attr('disabled', false);
     }
+  if(prevaluedict['aemail']){
+    $('#advertiser_email').val(prevaluedict['aemail']);
+  }
 
   });
 

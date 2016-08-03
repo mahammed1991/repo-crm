@@ -296,7 +296,7 @@
             
             <div class="col-md-4" style="width:429px;">
             <label id="adv_mail">My Advertiser E-mail</label>
-              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="Ex: barney.rubble@dabbadoo.com">
+              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="(Preferably a gmail account the advertiser uses.)">
             </div>
           </div>
         </div>
@@ -580,6 +580,9 @@ $('#language_selector').change(function()
       $('#advertiser_email').show('');
       $('#adv_mail').show();
       $("#remove-check").show();
+    }
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
     }
   });
 
