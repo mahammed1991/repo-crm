@@ -363,6 +363,7 @@ var search = location.search.substring(1);
 var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
 function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
   $(document).ready(function(){
+
    
 /*    if(prevaluedict['type']){
       if(prevaluedict['type'] == 'bolt'){
@@ -402,6 +403,9 @@ function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
     }
     else if(nbs_team.indexOf(pgName) != -1){
       $('#cid').val('000-000-0000');
+      $('#team').val(pgName);
+    }
+    else if(tmp.indexOf(pgName) > -1){
       $('#team').val(pgName);
     }
     
