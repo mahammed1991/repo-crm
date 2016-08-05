@@ -182,7 +182,7 @@ display:block;
                     </tr>
 
                      <tr style="background-color: rgb(166, 166, 104);">
-                        <td class="cubg2">Without Appointment Total</td>
+                        <td class="cubg2">Total Leads W/O Appointment </td>
                         {% for data in without_appointmnet_list %}
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="2">
@@ -197,7 +197,7 @@ display:block;
                   
 
                     <tr style="background-color: rgb(166, 166, 104);">
-                        <td class="cubg2">With Appointment Total</td>
+                        <td class="cubg2">Total Leads With Appointment</td>
                         {% for slot in total_slots %}
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="2">
@@ -720,7 +720,7 @@ $('.arrow-down').css('display','none');
 
         // Check for process items, select-all, teams.
         if(!($('#selectedProcessType').children().length) || (!($('#selectedTeams option[value="000"]:only-child').length) && !$('#selectedTeams').children().length)){
-            alert('Please select atleast one Process and Team value for with appointmnet');
+            alert('Please select atleast one Process and Team value');
             return false;
         }
 
