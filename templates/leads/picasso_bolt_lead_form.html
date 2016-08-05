@@ -157,6 +157,7 @@
         <a href="http://go/audit-exception-form" target="_blank" style="color:#2763c9;">go/audit-exception-form</a>
         </b>
     </p>
+
     
     <div class="row">
       <div class="col-md-6">
@@ -296,7 +297,7 @@
             
             <div class="col-md-4" style="width:429px;">
             <label id="adv_mail">My Advertiser E-mail</label>
-              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="Ex: barney.rubble@dabbadoo.com">
+              <input id="advertiser_email" class="form-control" type="text" name="advertiser_email" placeholder="(Preferably a gmail account the advertiser uses.)">
             </div>
           </div>
         </div>
@@ -363,6 +364,7 @@ var search = location.search.substring(1);
 var prevaluedict = search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
 function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
   $(document).ready(function(){
+
    
 /*    if(prevaluedict['type']){
       if(prevaluedict['type'] == 'bolt'){
@@ -402,6 +404,9 @@ function(key, value) { return key===""?value:decodeURIComponent(value) }):{}
     }
     else if(nbs_team.indexOf(pgName) != -1){
       $('#cid').val('000-000-0000');
+      $('#team').val(pgName);
+    }
+    else if(tmp.indexOf(pgName) > -1){
       $('#team').val(pgName);
     }
     
@@ -513,6 +518,8 @@ function checkout(){
     $('#display_block_error_both').hide();
     $('#formsubmit').prop('disabled', false);
   }
+  $('#picasso a').unbind('click');
+  $('#bolt a').unbind('click');
   checkID();
 }
 
@@ -582,6 +589,9 @@ $('#language_selector').change(function()
       $('#advertiser_email').show('');
       $('#adv_mail').show();
       $("#remove-check").show();
+    }
+    if(prevaluedict['aemail']){
+      $('#advertiser_email').val(prevaluedict['aemail']);
     }
   });
 
