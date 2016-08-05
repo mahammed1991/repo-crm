@@ -1288,6 +1288,7 @@ function getLink(href){
 
 var modalBody;
 var isBoth;
+var eligibleForAuditCheck = false;
 var picassoPrograms = {{picasso_programs}}
 function checkout(){
   //$('#display_block_error_picasso').hide();
@@ -1299,6 +1300,7 @@ function checkout(){
  
   if(picassoPrograms.indexOf(userProgram) > -1)
   {
+    eligibleForAuditCheck = true;
     if(cidElem && urlElem){
       if(urlElem.indexOf('http') > -1){
         var link = getLink(urlElem);
@@ -1318,6 +1320,7 @@ function checkout(){
           if(data['status'] == 'success'){
             if(data['type'] == 'picasso'){
               modalBody = "Your Tag Lead is now eligible for Bolt Audit.";
+    
               $('#eligible p').text(modalBody);
             }
             else{
@@ -1374,10 +1377,8 @@ $("#ctl00").submit(function(e){
   e.preventDefault();
   var isFormValid = validatethis(document.getElementById("ctl00"));
   //to workon picasso modal
-  var userProgram = "{{ user.profile.team|safe }}";
-  var program = ["AppDev", "Channel Sales", "Dynamic Agency", "ETO", "GEM", "GEM ML", "LCS", "Managed Agency ADM", "Managed Agency AS", "Managed Agency Atlantis ADM", "Managed Agency Atlantis AS", "Managed Agency Three ADM", "Managed Agency Three AS", "Managed Agency Two AS", "MBE Sales", "MMS Amplify", "MMS One", "MMS One Apollo", "MMS Two", "NBS", "Newbie+/Kickstart+", "Small Business", "Small Business Mobile", "SMB Upsell", "Traditional Agency AS", "UMM Mobile"];
-
-  if(isFormValid && isBoth != 'both' && !submit && program.indexOf(userProgram) > -1){
+  var userProgram = $('#team').val().trim();
+  if(isFormValid && isBoth != 'both'  && !submit && eligibleForAuditCheck && picassoPrograms.indexOf(userProgram) > -1){
       $("#myModal").modal({
         backdrop: 'static',
         keyboard: false

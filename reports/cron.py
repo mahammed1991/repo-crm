@@ -955,29 +955,45 @@ def slots_open_booked():
 
     tag_final = list()
     for ordering in tag_all:
-        keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        keyorder = {k:v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         tag_final.append(each_one)
 
     for ele in tag_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
-            ele['Ratio'] = ("%.2f"%value +"%" )
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
+            if value < 80.00:
+                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['greater'] = True
+            else:
+                ele['Ratio'] = ("%.2f"%value +"%" )
         else:
-            ele['Ratio'] = "-"
+            if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
+                ele['Ratio'] = "-"
+            else:
+                ele['Ratio'] = "-"
+                ele['greater'] = True
 
     shopping_final = list()
     for ordering in shopping_all:
-        keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        keyorder = {k:v for v, k in enumerate(['greater','team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
         each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
         shopping_final.append(each_one)
 
     for ele in shopping_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
             value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
-            ele['Ratio'] = ("%.2f"%value +"%" )
+            if value < 80.00:
+                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['greater'] = True
+            else:
+                ele['Ratio'] = ("%.2f"%value +"%" )
         else:
-            ele['Ratio'] = "-"
+            if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
+                ele['Ratio'] = "-"
+            else:
+                ele['Ratio'] = "-"
+                ele['greater'] = True
 
     tag_total_sum = dict()
     tag_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in tag_all)
@@ -1015,7 +1031,7 @@ def slots_open_booked():
     logging.info("UTILIZATION DASHBOARD MAILING FUNCTION")
     mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % (specific_date)
     mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
-    mail_from = 'google@regalix-inc.com'
+    mail_from = 'Google Slots Utilized <google@regalix-inc.com>'
     mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
@@ -1057,12 +1073,13 @@ def available_counts_booked_not_na(present_day, process_type):
     for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
-                if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
-                    max_utilized_regions['date'] = item['date']
-                    max_utilized_regions['team name'] = item['team__team_name']
-                    max_utilized_regions['total availability count'] = item['availability_count']
-                    max_utilized_regions['total booked count'] = item['booked_count']
-                    max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                if item['booked_count'] > 0 and item['availability_count'] > 0:
+                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 95:
+                        max_utilized_regions['date'] = item['date']
+                        max_utilized_regions['team name'] = item['team__team_name']
+                        max_utilized_regions['total availability count'] = item['availability_count']
+                        max_utilized_regions['total booked count'] = item['booked_count']
+                        max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
 
     return max_utilized_regions
 
@@ -1099,12 +1116,13 @@ def available_counts_booked_in_na(present_day, process_type):
     for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
-                if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 94:
-                    max_utilized_regions['date'] = item['date']
-                    max_utilized_regions['team name'] = item['team__team_name']
-                    max_utilized_regions['total availability count'] = item['availability_count']
-                    max_utilized_regions['total booked count'] = item['booked_count']
-                    max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                if item['booked_count'] > 0 and item['availability_count'] > 0:
+                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 95:
+                        max_utilized_regions['date'] = item['date']
+                        max_utilized_regions['team name'] = item['team__team_name']
+                        max_utilized_regions['total availability count'] = item['availability_count']
+                        max_utilized_regions['total booked count'] = item['booked_count']
+                        max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
 
     return max_utilized_regions
 
@@ -1151,9 +1169,8 @@ def fetching_future_utilized_slots():
     mail_subject = "ALERT - SLOT UTILIZATION NEARING 100% :"
     mail_body = get_template('reports/email_templates/future_slot_details.html').\
         render(Context({'tag': tag_final, 'shopp': shopping_final}))
-    mail_from = 'google@regalix-inc.com'
-    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com', 'tkhan@regalix-inc.com',
-               'rwieker@google.com', 'sabinaa@google.com']
+    mail_from = 'Google Slots Utilization <google@regalix-inc.com>'
+    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     if len(tag_final) > 0 or len(shopping_final) > 0:
