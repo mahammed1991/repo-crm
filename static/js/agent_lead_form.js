@@ -925,10 +925,9 @@ function validateDynamicFields(elemId){
 }
 
 /*To display the  GA smart goal message*/
-$('.agency_diff').change(function(){
-  debugger;
+
+$(document).on('change', '.agency_diff', function(){
     var selectedCodeType = $(this).val();
-    console.log(selectedCodeType);
    if('GA Smart Goals'.indexOf(selectedCodeType) != -1){
     $("#smart-goal-messsage").show();
   }
