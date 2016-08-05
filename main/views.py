@@ -1717,7 +1717,7 @@ def upload_file_handling(request):
                             if not cid:
                                 skip = True
                                 error["row_count"] = row_count
-                                error["missing_data"] = [cid]
+                                error["missing_data"] = ["CID"]
 
                             url = row[1]
                             if not url:
@@ -1725,27 +1725,30 @@ def upload_file_handling(request):
                                 error["row_count"] = row_count
                                 err = error.get("missing_data", False)
                                 if not err:
-                                    error["missing_data"] = [url]
+                                    error["missing_data"] = ['URL']
                                 else:
                                     err.append(url)
 
                             domain = url_filter(url)
 
                             last_assessed_date = row[2]
-                            if not last_assessed_date:
-                                last_assessed_date = datetime.now()
+                            if len(last_assessed_date) > 0:
+                                try:
+                                    last_assessed_date = datetime.strptime(last_assessed_date, "%d/%m/%Y")
+                                except:
+                                    skip = True
+                                    error["row_count"] = row_count
+                                    err = error.get("missing_data", False)
+                                    if not err:
+                                        error["missing_data"] = ["LAST ASSESSED DATE"]
+                                    else:
+                                        err.append(last_assessed_date)
                             else:
-                                last_assessed_date = datetime.strptime(last_assessed_date, "%d/%m/%Y")
+                                last_assessed_date = datetime.now()
 
                             bolt_eligible = row[9]
                             if not bolt_eligible:
-                                skip = True
-                                error["row_count"] = row_count
-                                err = error.get("missing_data", False)
-                                if not err:
-                                    error["missing_data"] = [url]
-                                else:
-                                    err.append(url)
+                                bolt_eligible = False
                             else:
                                 bolt_eligible = bolt_eligible.lower()
                                 if bolt_eligible == "y":
@@ -1770,7 +1773,10 @@ def upload_file_handling(request):
                                     bolt_object.save()
                             else:
                                 errors.append(error)
-                        template_args.update({'success': 'File uploaded succesfully !!! ', 'errors':errors})
+                        if errors:
+                            template_args.update({'success': 'File uploaded succesfully !!! ', 'error':errors})
+                        else:
+                            template_args.update({'success': 'File uploaded succesfully !!! '})
                         return render(request, 'main/upload_file.html', template_args)
                 else:
                     template_args.update({'success': 'Invalid file format'})
