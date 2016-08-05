@@ -10,17 +10,17 @@
 <p>{{signature}}</p> -->
 
 
-<p>Hello,</p>
+<p style="margin-top: 0px;" >Hello,</p>
 
 <div>
-<p>The following feedback has been attend to and marked as 'Resolved'. Should the action taken be unsatisfactory, click here to request for the case to be 'Reopened'.</p>
+<p>The following feedback has been attend to and marked as 'Resolved'. Should the action taken be unsatisfactory, <a href="{{ feedback_url }}">Click here</a> to request for the case to be 'Reopened'.</p>
 
 <b>ID</b> - {{ cid }}<br>
 <b>Title</b> - {{ feedback.title }}<br>
-<b>Feedback Type<b> - {{type}} <br>
-<b>Description</b>- {{ description }}
-
-<p>Click here to <a href="{{ feedback_url }}">access</a> feedback.</p>
+<b>Feedback Type</b> - {{type}} <br>
+<b>Description</b> - {{ description }} <br>
+<b>Comment</b> - {{ comment.comment }}
+<p><a href="{{ feedback_url }}">Click here</a> to access feedback.</p>
 </div>
 <div>
 	Regards,<br>

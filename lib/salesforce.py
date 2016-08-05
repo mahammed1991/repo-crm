@@ -47,11 +47,11 @@ class SalesforceApi(object):
             try:
                 logging.error("Connecting to Stage SFDC")
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
-                                       password='portalsupport123456',
+                                       password='portalsupport1234',
                                        security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
                 if not sf:
                     sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
-                                           password='portalsupport123456',
+                                           password='portalsupport1234',
                                            security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
 
                 return sf

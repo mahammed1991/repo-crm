@@ -15,7 +15,7 @@ import logging
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from icalendar import Calendar, Event, vCalAddress, vText
-
+from django.utils.safestring import mark_safe
 # Django imports
 from django.core.files import File
 from django.contrib.auth.models import User
@@ -64,7 +64,131 @@ def lead_form(request):
     """
     Lead Submission to Salesforce
     """
-    if request.method == 'POST':
+    if request.method == 'POST' and request.is_ajax():
+        # Google form Posting Starts here
+        post_lead_to_google_form(request.POST, 'normal')
+        if settings.SFDC == 'STAGE':
+
+            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
+            # oid = '00DZ000000MjkJO'
+            oid = '00D7A0000008nBH'
+        elif settings.SFDC == 'PRODUCTION':
+            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
+            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
+            oid = '00Dd0000000fk18'
+
+        ret_url = ''
+        # error_url = ''
+
+        if request.POST.get('is_tag_lead') == 'yes':
+            # Get Basic/Common form field data
+            if settings.SFDC == 'STAGE':
+                basic_data = get_common_sandbox_lead_data(request.POST)
+            else:
+                basic_data = get_common_salesforce_lead_data(request.POST)
+            basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+            basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+            basic_data['oid'] = oid
+            ret_url = basic_data['retURL']
+            # error_url = basic_data['errorURL']
+
+            tag_data = basic_data
+            for key, value in tag_leads.items():
+                tag_data[value] = request.POST.get(key)
+
+            for i in range(1, 6):
+                i = str(i)
+                rbid_key = 'rbid' + i
+                rbudget_key = 'rbudget' + i
+                ga_setup_key = 'ga_setup' + i
+                analytics_code_key = 'analytics_code' + i
+                call_extension_key = 'call_extension' + i
+                product_behaviour_key = 'product_behaviour' + i
+                cartpage_behaviour_key = 'cartpage_behaviour' + i
+                checkout_process_key = 'checkout_process' + i
+                transaction_behaviour_key = 'transaction_behaviour' + i
+
+                tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
+                tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
+                tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
+                tag_data[tag_leads[analytics_code_key]] = request.POST.get(analytics_code_key)
+                tag_data[tag_leads[call_extension_key]] = request.POST.get(call_extension_key)
+                tag_data[tag_leads[product_behaviour_key]] = request.POST.get(product_behaviour_key)
+                tag_data[tag_leads[cartpage_behaviour_key]] = request.POST.get(cartpage_behaviour_key)
+                tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
+                tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
+
+            # Split Tag Contact Person Name to First and Last Name
+            if request.POST.get('tag_contact_person_name'):
+                full_name = request.POST.get('tag_contact_person_name')
+            else:
+                full_name = request.POST.get('advertiser_name')
+            first_name, last_name = split_fullname(full_name)
+            tag_data['first_name'] = first_name
+            tag_data['last_name'] = last_name
+            submit_lead_to_sfdc(sf_api_url, tag_data)
+
+        if request.POST.get('is_shopping_lead') == 'yes':
+            # Get Basic/Common form field data
+            if settings.SFDC == 'STAGE':
+                basic_data = get_common_sandbox_lead_data(request.POST)
+            else:
+                basic_data = get_common_salesforce_lead_data(request.POST)
+            basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+            basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+            basic_data['oid'] = oid
+            ret_url = basic_data['retURL']
+            # error_url = basic_data['errorURL']
+
+            setup_data = basic_data
+            for key, value in shop_leads.items():
+                setup_data[value] = request.POST.get(key)
+
+            # Split Shopping Contact Person Name to First and Last Name
+            if request.POST.get('shop_contact_person_name'):
+                full_name = request.POST.get('shop_contact_person_name')
+                first_name, last_name = split_fullname(full_name)
+                setup_data['first_name'] = first_name  # Primary Contact First Name
+                setup_data['last_name'] = last_name  # Primary Contact Last Name
+            if request.POST.get('shopping_campaign_issues'):
+                setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
+                setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
+            else:
+                setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
+                setup_data[shop_leads['comment1']] = request.POST.get('description')
+            submit_lead_to_sfdc(sf_api_url, setup_data)
+
+        basic_data = dict()
+        if request.POST.get('is_rlsa_lead') == 'yes':
+            # Get Basic/Common form field data
+            if settings.SFDC == 'STAGE':
+                basic_data = get_common_sandbox_lead_data(request.POST)
+            else:
+                basic_data = get_common_salesforce_lead_data(request.POST)
+            basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+            basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+            basic_data['oid'] = oid
+            ret_url = basic_data['retURL']
+            # error_url = basic_data['errorURL']
+
+            rlsa_data = basic_data
+            for key, value in rlsa_leads.items():
+                rlsa_data[value] = request.POST.get(key)
+            if request.POST.get('tag_contact_person_name'):
+                full_name = request.POST.get('tag_contact_person_name')
+            else:
+                full_name = request.POST.get('advertiser_name')
+            first_name, last_name = split_fullname(full_name)
+            rlsa_data['first_name'] = first_name
+            rlsa_data['last_name'] = last_name
+            rlsa_data['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
+            rlsa_data[tag_leads['comment1']] = request.POST.get('comments')
+            rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
+            submit_lead_to_sfdc(sf_api_url, rlsa_data)
+        resp = {'success':True, 'redirect':True}
+        return HttpResponse(json.dumps(resp))
+    elif request.method == 'POST':
         # Google form Posting Starts here
         post_lead_to_google_form(request.POST, 'normal')
         if settings.SFDC == 'STAGE':
@@ -188,6 +312,7 @@ def lead_form(request):
             submit_lead_to_sfdc(sf_api_url, rlsa_data)
 
         return redirect(ret_url)
+
     if request.user.groups.filter(name='AGENCY'):
         return redirect('leads.views.agency_lead_form')
     
@@ -202,7 +327,12 @@ def lead_form(request):
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
+    picasso_programs = []
     lead_args['PORTAL_MAIL_ID'] = settings.PORTAL_MAIL_ID
+    temp = Team.objects.filter(belongs_to__in=['ALL','TAG-PICASSO','PICASSO','WPP-PICASSO'],is_active=True)
+    for i in temp:
+        picasso_programs.append(i.team_name)
+    lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
     return render(
         request,
         'leads/lead_form.html',
@@ -3474,7 +3604,7 @@ def picasso_bolt_lead_form(request):
 
 @csrf_exempt
 def get_picasso_bolt_lead(request):
-    if request.is_ajax() and request.method == 'GET':
+    if request.is_ajax() and request.method == 'GET' and request.GET.get('picasso_lead_db'):
         status_dict = dict()
         cid = request.GET.get('cid')
         form_url = request.GET.get('url')
@@ -3523,7 +3653,7 @@ def get_picasso_bolt_lead(request):
         else:
             status_dict['status'] = 'failure' 
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
-    elif request.method == 'PUT':
+    elif request.method == 'GET':
         status_dict = dict()
         bl_cid = request.GET.get('cid')
         try:
@@ -3633,7 +3763,7 @@ def picasso_build_submission_flow(request):
                 data_in_nomination_db = 0
        
         if (data_in_nomination_db == 0) and (data_in_picasso_db == 0):
-            master_data = PicassoEligibilityMasterUpload.objects.filter(url=url_val)            
+            master_data = PicassoEligibilityMasterUpload.objects.filter(url=filterd_url)            
             if master_data:
                 for data in master_data:
                     if (data.buildeligible == "y") or  (data.buildeligible == "yes") or (data.buildeligible == "Y") or (data.buildeligible == "YES"):
@@ -4101,4 +4231,3 @@ def picasso_blacklist_cid(request):
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
-
