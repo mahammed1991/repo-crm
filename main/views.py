@@ -1753,8 +1753,9 @@ def upload_file_handling(request):
                                 elif bolt_eligible == "n":
                                     bolt_eligible = False
                             if not skip:
-                                bolt_object = BuildsBoltEligibility.objects.filter(url=url)[0]
+                                bolt_object = BuildsBoltEligibility.objects.filter(cid=cid, url=url).order_by('-last_assessed_date')
                                 if bolt_object:
+                                    bolt_object = bolt_object[0]
                                     bolt_object.last_assessed_date = last_assessed_date
                                     bolt_object.bolt_eligible = bolt_eligible
                                     bolt_object.cid = cid
