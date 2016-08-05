@@ -665,3 +665,19 @@ class BlackListedCID(models.Model):
     modified_by = models.ForeignKey(User, related_name='modified_by_user',default='', blank=True, null=True)
     created_date = models.DateTimeField(default=datetime.utcnow())
     modified_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+
+# New feature for builds similar to Picasso Bolt
+class BuildsBoltEligibility(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+    cid = models.CharField(max_length=20, unique=True)
+    url = models.CharField(max_length=500, blank=True, null=True)
+    domain = models.CharField(max_length=150, blank=True, null=True)
+    bolt_eligible = models.BooleanField(default=True)
+    last_assessed_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'builds_bolt_eligibility'
+        verbose_name_plural = 'Builds Bolt Eligibility'
