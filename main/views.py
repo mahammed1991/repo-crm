@@ -1740,7 +1740,7 @@ def upload_file_handling(request):
                                     error["row_count"] = row_count
                                     err = error.get("missing_data", False)
                                     if not err:
-                                        error["missing_data"] = ["LAST ASSESSED DATE"]
+                                        error["Invalid Date Format"] = ["LAST ASSESSED DATE"]
                                     else:
                                         err.append(last_assessed_date)
                             else:
