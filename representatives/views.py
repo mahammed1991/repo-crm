@@ -1420,6 +1420,10 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
                             type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', ], country__in=without_appointment_selected_country)
                     shopping_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(appointment_date__isnull=False).count()
                     shopp_total.append(shopping_leads_without_appointmnet_count)
+            
+            elif process == "WPP":
+                for day_key, date_value in sorted(plan_dates_without_appointment.items()):
+                    wpp_total.append(0)
 
         without_appointmnet_total_list = list()
 
@@ -1433,6 +1437,9 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         elif (len(shopp_total) > 0) and (len(tag_total) == 0):
             for each in shopp_total:
                 without_appointmnet_total_list.append({'total':each})
+        elif (len(wpp_total) > 0) and (len(tag_total) == 0) and (len(shopp_total) == 0):
+            for each in wpp_total:
+                without_appointmnet_total_list.append({'total':'NA'})
         else:
             without_appointmnet_total_list.append({'total':'error'})
              
