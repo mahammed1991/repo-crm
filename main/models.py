@@ -448,22 +448,6 @@ class PicassoEligibilityMasterUpload(models.Model):
         verbose_name_plural = 'Picasso Eligibilty master upload'
 
 
-# Table for Picasso workflow eligibilty check file uploading
-class BuildsBoltEligibility(models.Model):
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-
-    url = models.CharField(max_length=500, blank=True, null=True)
-    domain = models.CharField(max_length=100, blank=True, null=True)
-    bolt_eligible = models.BooleanField(default=True)
-    last_assessed_time = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'builds_bolt_eligibility'
-        verbose_name_plural = 'Builds Bolt Eligibility'
-
-
-
 
 
 

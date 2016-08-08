@@ -31,7 +31,7 @@ from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_p
                          get_previous_month_start_end_days, create_new_user, convert_excel_data_into_list)
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
-
+from leads.models import BuildsBoltEligibility
 from lib.helpers import save_file
 
 import csv
@@ -1679,6 +1679,107 @@ def upload_file_handling(request):
                             return render(request, 'main/upload_file.html', template_args)
                 else:
                     template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
+                    return render(request, 'main/upload_file.html', template_args)
+                    # Bellow elif code is for uploading master csv file of picasso workflow master data upload
+            elif upload_target == 'wpp_speed_optimization_csv':
+
+                if file_extension == "csv":
+                    file_path = settings.MEDIA_ROOT + '/csv/'
+                    if not os.path.exists(file_path):
+                        os.makedirs(file_path)
+                    csv_file = request.FILES['attachment_name']
+                    csv_file_path = file_path + file_name
+                    file_path = save_file(csv_file, csv_file_path)
+                    file_name = csv_file.name
+
+                    required_headers = ['CID', 'URL', 'Builds Eligible?', 'Date Assessed']
+
+                    with open(file_path, 'rb') as csvfile:
+                        csv_object = csv.reader(csvfile, delimiter=',')
+                        uploaded_column_headers = csv_object.next()
+                        missing_headers = []
+                        for element in required_headers:
+                            if element not in uploaded_column_headers:
+                                missing_headers.append(element)
+                        if missing_headers:
+                            template_args.update({'default_headers': missing_headers,
+                                                      'error': 'Missing Headers '+ missing_headers})
+                            return render(request, 'main/upload_file.html', template_args)
+
+                        row_count = 0
+                        from leads.views import url_filter
+                        errors = []
+                        for row in csv_object:
+                            skip = False
+                            error = {}
+                            row_count += 1
+                            cid = row[0]
+                            if not cid:
+                                skip = True
+                                error["row_count"] = row_count
+                                error["missing_data"] = ["CID"]
+
+                            url = row[1]
+                            if not url:
+                                skip = True
+                                error["row_count"] = row_count
+                                err = error.get("missing_data", False)
+                                if not err:
+                                    error["missing_data"] = ['URL']
+                                else:
+                                    err.append(url)
+
+                            domain = url_filter(url)
+
+                            last_assessed_date = row[2]
+                            if len(last_assessed_date) > 0:
+                                try:
+                                    last_assessed_date = datetime.strptime(last_assessed_date, "%d/%m/%Y")
+                                except:
+                                    skip = True
+                                    error["row_count"] = row_count
+                                    err = error.get("missing_data", False)
+                                    if not err:
+                                        error["Invalid Date Format"] = ["LAST ASSESSED DATE"]
+                                    else:
+                                        err.append(last_assessed_date)
+                            else:
+                                last_assessed_date = datetime.now()
+
+                            bolt_eligible = row[9]
+                            if not bolt_eligible:
+                                bolt_eligible = False
+                            else:
+                                bolt_eligible = bolt_eligible.lower()
+                                if bolt_eligible == "y":
+                                    bolt_eligible = True
+                                elif bolt_eligible == "n":
+                                    bolt_eligible = False
+                            if not skip:
+                                bolt_object = BuildsBoltEligibility.objects.filter(cid=cid, url=url).order_by('-last_assessed_date')
+                                if bolt_object:
+                                    bolt_object = bolt_object[0]
+                                    bolt_object.last_assessed_date = last_assessed_date
+                                    bolt_object.bolt_eligible = bolt_eligible
+                                    bolt_object.cid = cid
+                                    bolt_object.save()
+                                else:
+                                    bolt_object = BuildsBoltEligibility()
+                                    bolt_object.last_assessed_date = last_assessed_date
+                                    bolt_object.bolt_eligible = bolt_eligible
+                                    bolt_object.cid = cid
+                                    bolt_object.url = url
+                                    bolt_object.domain = domain
+                                    bolt_object.save()
+                            else:
+                                errors.append(error)
+                        if errors:
+                            template_args.update({'success': 'File uploaded succesfully !!! ', 'error':errors})
+                        else:
+                            template_args.update({'success': 'File uploaded succesfully !!! '})
+                        return render(request, 'main/upload_file.html', template_args)
+                else:
+                    template_args.update({'success': 'Invalid file format'})
                     return render(request, 'main/upload_file.html', template_args)
             else:
                 excel_file_save_path = settings.MEDIA_ROOT + '/excel/'
