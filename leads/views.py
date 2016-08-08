@@ -36,7 +36,8 @@ from django.db.models import Q
 from reports.models import RLSABulkUpload
 from main.models import UserDetails, PicassoEligibilityMasterUpload
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
-                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads, BlackListedCID
+                          AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
+                          BlackListedCID, BuildsBoltEligibility
                           )
 from reports.models import Region
 from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
@@ -4231,3 +4232,21 @@ def picasso_blacklist_cid(request):
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
+
+
+def is_bolt_treatment_eligible(request):
+    if request.method == "GET":
+        cid = request.GET.get('cid')
+        url = request.GET.get('url1')
+        domain = url_filter(url)
+        bolt_eligibility = BuildsBoltEligibility.objects.filter(cid=cid, url=url).order_by('-last_assessed_date')[:1]
+        if not bolt_eligibility:
+            resp = {"success": False, "msg": "URL is not eligible for Speed Optimization treatment"}
+        else:
+            bolt_eligibility = bolt_eligibility[0]
+            if bolt_eligibility.bolt_eligible:
+                resp = {'success': True}
+            else:
+                resp = {"success": False, "msg": "URL is not eligible for Speed Optimization treatment"}
+        return HttpResponse(json.dumps(resp), content_type='application/json')
+
