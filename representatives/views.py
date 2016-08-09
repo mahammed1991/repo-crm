@@ -1378,6 +1378,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         
         tag_total = list()
         shopp_total = list()
+        wpp_total = list()
         for process in process_type:
             if process == "TAG":
                 for day_key, date_value in sorted(plan_dates_without_appointment.items()):
