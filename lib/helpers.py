@@ -336,7 +336,9 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
         'Win_Implemented_by_Regalix':0,
         'Self_Development_Complete':0,
         'Self_Development_To_be_Verified':0,
-        'Self_Development_Did_Not_Occur':0
+        'Self_Development_Did_Not_Occur':0,
+        'Advertiser_Implementation':0,
+        'Win_Implemented_by_Advertiser':0
         }
         wpp_lead_sub_status[k] = 0
         if start_date and end_date:
@@ -384,6 +386,10 @@ def wpp_lead_status_count_analysis(email, treatment_type_list, start_date=None, 
                     wpp_lead_sub_status_dict['Self_Development_To_be_Verified'] += 1
                 elif 'Self Development - Did Not Occur' in sub_status:
                     wpp_lead_sub_status_dict['Self_Development_Did_Not_Occur'] += 1
+                elif 'Advertiser Implementation' in sub_status:
+                    wpp_lead_sub_status_dict['Advertiser_Implementation'] += 1
+                elif 'Win - Implemented by Advertiser' in sub_status:
+                    wpp_lead_sub_status_dict['Win_Implemented_by_Advertiser'] += 1
         wpp_lead_sub_status[k] = wpp_lead_sub_status_dict      
     
     for status_dict in wpp_lead_status_analysis:

@@ -1226,6 +1226,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     diff_in_minutes = diff[0]
     total_booked = dict()
     total_available = dict()
+    team_names = dict()
     # prepare appointments slot keys
     appointments = dict()
     for key, _date in plan_dates.items():
@@ -1309,18 +1310,34 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
                 '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
 
         if key in appointments:
-            appointments[key]['value'] += int(apptmnt.availability_count)
-            appointments[key]['booked'] += int(apptmnt.booked_count)
-            appointments[key]['team_count'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.availability_count))})
-            if apptmnt.booked_count != 0L:
-                appointments[key]['team_booked'].update({str(apptmnt.team.team_name): '%s' % (int(apptmnt.booked_count))})
+            team_name = str(apptmnt.team.team_name)
+            booked_count = int(apptmnt.booked_count)
+            available_count = int(apptmnt.availability_count)
 
-            # appointments[key]['team_count'] = 8
-            total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
-            total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.booked_count))
+            appointments[key]['value'] += available_count
+            appointments[key]['booked'] += booked_count
+            appointments[key]['team_count'].update({team_name: '%s' % (available_count)})
+            
+            if booked_count != 0L:
+                appointments[key]['team_booked'].update({team_name: '%s' % (booked_count)})
+                # Grouping all team with booked count
+                striped_time = datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')
+                tn_dict = team_names.get(striped_time)
+                if tn_dict:
+                    tm_count = tn_dict.get(team_name, None)
+                    if tm_count: 
+                        tn_dict[team_name] = tm_count + booked_count
+                    else:
+                        tn_dict[team_name] = booked_count
+                else:
+                    team_names[striped_time]={team_name : booked_count}
+            total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(available_count)
+            total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(booked_count)
     total_slots = list()
+
     for key, value in sorted(total_available.iteritems()):
-        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key])})
+        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key]), 'team_counts':team_names.get(key)})
+    print total_slots
 
     # Without appointment total lead count, code start from here
     plan_dates_without_appointment = {

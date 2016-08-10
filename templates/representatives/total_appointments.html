@@ -18,6 +18,14 @@ Total Appointments
             margin-right:20px;
             margin-top:20px;
     }
+
+        .new_row_display_total{
+            width:100%;
+            position:relative;
+            margin-left:20px;
+            margin-right:20px;
+            margin-top:20px;
+    }
     .common_td{
             position:relative;
             background:#f8f8f8;
@@ -202,13 +210,27 @@ display:block;
                             <td class="cubg2">
                                 <table class="table ttb" cellspacing="2">
                                     <tr>
-                                        <td  class="cubg3 common_td">{{slot.booked}}</td>
+                                        <td  class="cubg3 common_td" onclick="teamCount({{slot.team_counts}})">{{slot.booked}}</td>
                                         <td class="cubg4">{{slot.available}}</td>
                                     </tr>
                                 </table>
                             </td>
                         {% endfor %}
+
                     </tr>
+
+                    <tr class='new_row_display_total' style="display:none;">
+                    
+                        <td class='display_count' colspan='100%' style='background:#ccffff;'><div <span class='col-xs-12' style='padding-bottom: 0px !important;padding-top:0px !important;width: 102%;'><i class="fa fa-times vva" id="click-close"></i>
+                        <p id="text-adding"></p>
+                    </div>
+                    </tr>
+                 
+
+
+
+
+
                    {% for i in 3|get_range_specific:'12' %}
                         <tr class="first_{{forloop.counter}}">
                             {% if forloop.first %}
@@ -972,5 +994,22 @@ $('.arrow-down').css('display','none');
     $(document).on('click', '.vva', function(){
          $('.arrow-down').css('display','none');
     })
+
+    function teamCount(team){
+        var s = [];
+        $(".new_row_display_total").show();
+        for(var k in team){
+            s+= "<span <span class='col-lg-3 col-md-3 col-xs-3' style='background: #fff; padding: 5px 25px;margin:5px 35px;border-bottom: 1px solid #ccc;'>"+k+" ("+team[k]+")</span>";
+        }
+        $('#text-adding').html(s);
+    }
+
+$("#click-close").click(function(){
+         if ($('.new_row_display_total').is(":visible")) {
+            $(".new_row_display_total").hide();
+        }
+    });
+
+
     </script>
 {% endblock main_js %}
