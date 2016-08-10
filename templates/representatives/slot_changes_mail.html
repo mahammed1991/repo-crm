@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<thead>
+	<style>
+		table, th, td {
+    	border: 1px solid black;
+}
+	</style>
+</thead>
+<body>
+<p>Hi All,</p>
+<br/>
+<table>
+	<tr>
+		<th>Date</th>
+		<th>Time</th>
+		<th>Previous Available Count</th>
+		<th>Updated Available Count</th>
+	</tr>
+	{% for rec in records %}
+	<tr>
+		<td>{{ rec.date }}</td>
+		<td>{{ rec.time }}</td>
+		<td>{{ rec.prev_available_cnt }}</td>
+		<td>{{ rec.updated_cnt }}</td>
+	</tr>
+	{% endfor %}
+</table>
+<br /><br />
+<p>Thanks,</p>
+<p>{{signature}}</p>
+</body>
+</html>
