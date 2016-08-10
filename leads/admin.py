@@ -2,7 +2,7 @@ from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, WPPLeads,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType, BlackListedCID,
-                          BuildsBoltEligibility)
+                          BuildsBoltEligibility, WhiteListedAuditCID)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
 from lib.admin_helpers import CustomAdmin
 
@@ -289,5 +289,7 @@ class WPPBoltEligibilityAdmin(admin.ModelAdmin):
 
 admin.site.register(BuildsBoltEligibility, WPPBoltEligibilityAdmin)
 
+class WhiteListedAuditCIDAdmin(admin.ModelAdmin):
+    list_display = ('external_customer_id','opportunity_type')
 
-
+admin.site.register(WhiteListedAuditCID, WhiteListedAuditCIDAdmin)

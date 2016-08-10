@@ -37,7 +37,7 @@ from reports.models import RLSABulkUpload
 from main.models import UserDetails, PicassoEligibilityMasterUpload
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
-                          BlackListedCID, BuildsBoltEligibility
+                          BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID
                           )
 from reports.models import Region
 from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
@@ -3634,6 +3634,10 @@ def get_picasso_bolt_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
         
         leads = {}
+        try:
+            wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
+        except:
+            pass
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
@@ -3646,13 +3650,21 @@ def get_picasso_bolt_lead(request):
             status_dict['type'] = 'both'
             status_dict['status'] = 'success'
         elif leads.get('picasso'):
-            status_dict['type'] = 'picasso'
-            status_dict['status'] = 'success'          
+            if wl_db.opportunity_type == 'mSite Adoption':
+                status_dict['type'] = 'both'
+                status_dict['status'] = 'success'
+            else: 
+                status_dict['type'] = 'picasso'
+                status_dict['status'] = 'success'    
         elif leads.get('bolt'):
-            status_dict['type'] = 'bolt'
-            status_dict['status'] = 'success'
+            if wl_db.opportunity_type == 'mSite Speed':
+                status_dict['type'] = 'both'
+                status_dict['status'] = 'success'
+            else:         
+                status_dict['type'] = 'bolt'
+                status_dict['status'] = 'success'    
         else:
-            status_dict['status'] = 'failure' 
+            status_dict['status'] = 'failure'
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
     elif request.method == 'GET':
         status_dict = dict()
@@ -3666,6 +3678,15 @@ def get_picasso_bolt_lead(request):
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
         except:
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
+
+
+    # if request.method == 'GET' and request.GET.get('whitelist'):
+    #     status_dict = dict()
+    #     wl_cid = request.GET.get('cid')
+    #     picasso_lead = Picasso.objects.get(cid=wl_cid)
+    #     if picasso_lead:
+    #         for lead in picasso_lead:
+    #             print ""
 
 
 # function for posting all leads to a google spread sheet form

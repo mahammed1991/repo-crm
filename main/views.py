@@ -23,7 +23,7 @@ from lib.helpers import send_mail, manager_info_required, wpp_user_required, che
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ, PicassoEligibilityMasterUpload)
-from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads
+from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads, WhiteListedAuditCID
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
@@ -1542,6 +1542,42 @@ def upload_file_handling(request):
             file_name, file_extension = request.FILES['attachment_name'].name.split('.')
             upload_target = request.POST['uploadTarget']
             
+            if upload_target == 'whitelist_audit_permission_csv':
+                print "yup"
+                if file_extension == "csv":
+                    file_path = settings.MEDIA_ROOT + '/csv/'
+                    if not os.path.exists(file_path):
+                        os.makedirs(file_path)
+                    csv_file = request.FILES['attachment_name']
+                    file_path = file_path + csv_file.name
+                    file_path = save_file(csv_file, file_path)
+                    required_headers = ['External Customer Id', 'Opportunity Type']
+
+                    with open(file_path, 'rb') as csvfile:
+                        csv_object = csv.reader(csvfile, delimiter=',')
+                        uploaded_column_headers = csv_object.next()
+                        for row in csv_object:
+                            s = str(row[2])
+                            cid = s[:3] + '-' + s[3:6] + '-' + s[6:]
+                            whitelist = WhiteListedAuditCID.objects.filter(external_customer_id=cid).first()
+                            if whitelist:
+                                whitelist.external_customer_id = s[:3] + '-' + s[3:6] + '-' + s[6:]
+                                whitelist.opportunity_type = row[4]
+                                whitelist.save()
+                            else:
+                                whitelist = WhiteListedAuditCID()
+                                whitelist.external_customer_id = cid
+                                whitelist.opportunity_type = row[4]
+                                whitelist.save()
+
+
+                    os.unlink(file_path)
+                    template_args.update({'csv_file': csv_file.name, 'msg': "File Upload Done Successfully" + " WhiteList Added", 'upload_target': upload_target})
+                else:
+                    template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
+                return render(request, 'main/upload_file.html', template_args)
+
+
             if upload_target == 'bolt_permission_csv':
                 if file_extension == "csv":
                     file_path = settings.MEDIA_ROOT + '/csv/'
