@@ -17,7 +17,7 @@ Inventory
     <section class="content-region inner-page">
         <div class="container-fluid" style="max-width: 98%;">
                 <button id="add_emp" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 10%;line-height: 90%;" >+ Add</button>
-                <h2>Chromebook Inventory</h2>
+                <h2>Google Asset Inventory</h2>
                 <div id="emp_entry" class="row" style="margin-bottom:1%;display:none;">
                     {% csrf_token %}
                     <div style="margin-bottom: 1%;margin-left: 1.2%;font-weight: bold;">
@@ -170,7 +170,7 @@ $(document).ready(function(){
             },
             columnDefs: [
                 {targets: [ 4 ], orderData: [ 4, 0 ]},
-                {bSortable: false,targets: [ 2, 3, 6, 10 ]},
+                {bSortable: false,targets: [ 2, 5, 10 ]},
                 { "width": "10%", "targets": 0 },
                 { "width": "8%", "targets": 1 },
                 { "width": "6%", "targets": 2 },

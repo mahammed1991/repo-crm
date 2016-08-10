@@ -1,7 +1,8 @@
 from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, WPPLeads,
                           Location, Team, CodeType, Language, LeadForm,
-                          LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType, BlackListedCID)
+                          LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType, BlackListedCID,
+                          BuildsBoltEligibility)
 from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
 from lib.admin_helpers import CustomAdmin
 
@@ -282,5 +283,11 @@ class BlackListedCIDAdmin(admin.ModelAdmin):
     list_display = ('cid','active')
 
 admin.site.register(BlackListedCID, BlackListedCIDAdmin)
+
+class WPPBoltEligibilityAdmin(admin.ModelAdmin):
+    list_display = ('cid','url', 'domain', 'bolt_eligible', 'last_assessed_date')
+
+admin.site.register(BuildsBoltEligibility, WPPBoltEligibilityAdmin)
+
 
 

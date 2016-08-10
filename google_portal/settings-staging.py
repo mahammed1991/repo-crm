@@ -136,7 +136,7 @@ SESSION_COOKIE_DOMAIN = ".regalixdev.com"
 
 # list of domains allowed
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['regalix-inc.com', 'gmail.com']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['bshivamallappa@google.com', 'spenz@google.com', 'rwieker@google.com', 'sabinaa@google.com', 'avenkataratnam@google.com', 'caitlinsims@google.com', 'yunus@google.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = ['bshivamallappa@google.com', 'spenz@google.com', 'rwieker@google.com', 'sabinaa@google.com', 'avenkataratnam@google.com', 'caitlinsims@google.com', 'yunus@google.com', 'sumuralidhar@google.com']
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
@@ -212,7 +212,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active',
                'Implemented', 'ON CALL', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
 
-WPP_LEAD_STATUS = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation','07. Self Development']
+WPP_LEAD_STATUS = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation',
+                   '07. Self Development']
 
 LEAD_STATUS_DICT = {'Attempting Contact': ['Attempting Contact'],
                     'In Progress': ['In Progress'],

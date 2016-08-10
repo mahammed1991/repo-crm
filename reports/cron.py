@@ -1079,8 +1079,8 @@ def available_counts_booked_not_na(present_day, process_type):
                         max_utilized_regions['team name'] = item['team__team_name']
                         max_utilized_regions['total availability count'] = item['availability_count']
                         max_utilized_regions['total booked count'] = item['booked_count']
-                        max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
-
+                        # max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                        max_utilized_regions['utilized ratio'] = ("%.2f" %((float(item['booked_count']) / (item['availability_count']) )*100) +" %" )
     return max_utilized_regions
 
 
@@ -1122,8 +1122,8 @@ def available_counts_booked_in_na(present_day, process_type):
                         max_utilized_regions['team name'] = item['team__team_name']
                         max_utilized_regions['total availability count'] = item['availability_count']
                         max_utilized_regions['total booked count'] = item['booked_count']
-                        max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
-
+                        #max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                        max_utilized_regions['utilized ratio'] = ("%.2f" %((float(item['booked_count']) / (item['availability_count']) )*100) +" %" )
     return max_utilized_regions
 
 
@@ -1170,7 +1170,7 @@ def fetching_future_utilized_slots():
     mail_body = get_template('reports/email_templates/future_slot_details.html').\
         render(Context({'tag': tag_final, 'shopp': shopping_final}))
     mail_from = 'Google Slots Utilization <google@regalix-inc.com>'
-    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
+    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com', 'rwieker@google.com', 'sabinaa@google.com']
     bcc = set([])
     attachments = list()
     if len(tag_final) > 0 or len(shopping_final) > 0:

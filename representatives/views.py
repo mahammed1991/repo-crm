@@ -434,7 +434,7 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     utc_date = SalesforceApi.get_utc_date(avail_date, tz.time_value)
 
     # filter and block past appointment slots
-    today_date = datetime.utcnow()
+    today_date = datetime.utcnow() + timedelta(minutes=30)
 
     utc_start_date = utc_date if utc_date > today_date else today_date
     utc_end_date = utc_date + timedelta(days=5)
@@ -1339,6 +1339,128 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         total_slots.append({'available': sum(value), 'booked': sum(total_booked[key]), 'team_counts':team_names.get(key)})
     print total_slots
 
+    # Without appointment total lead count, code start from here
+    plan_dates_without_appointment = {
+        'day1': plan_date,
+        'day2': plan_date + timedelta(days=1),
+        'day3': plan_date + timedelta(days=2),
+        'day4': plan_date + timedelta(days=3),
+        'day5': plan_date + timedelta(days=4),
+        'day6': plan_date + timedelta(days=5)
+    }
+
+    without_appointmnet_total_list = list()
+    for day_key, date_value in sorted(plan_dates_without_appointment.items()):
+
+        from_day = date_value.replace(hour=00, minute=00, second=00)
+        to_date = date_value.replace(hour=23, minute=59, second=59 )
+
+        time_zone = 'IST'    
+        selected_tzone = Timezone.objects.get(zone_name=time_zone)
+        from_day = SalesforceApi.get_utc_date(from_day, selected_tzone.time_value)
+        to_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
+
+        all_active_teams = RegalixTeams.objects.filter(is_active=True)
+        all_active_team_country = all_active_teams.values_list('location__location_name')
+        all_without_appointment_active_country = [ "%s" % data for data in all_active_team_country ]
+
+        total_leads_without_appointmnet = Leads.objects.exclude(appointment_date__isnull=False)\
+         .filter(created_date__range=[from_day, to_date], country__in=all_without_appointment_active_country)
+        total_leads_without_appointmnet_count = total_leads_without_appointmnet.exclude(type_1__in=['RLSA Bulk Implementation']).count()
+        
+        try:
+            without_appointmnet_total_list.append({'total':total_leads_without_appointmnet_count})
+        except:
+            without_appointmnet_total_list.append({'total':'error'})
+
+    if request.method == 'POST':
+    
+        if 'prev_week_start_date' in request.POST:
+            team_ids = request.POST.get('prevselectedTeams')
+            process_type = request.POST.get('prevselectedProcessType')
+            team_ids = team_ids.split(',')
+            process_type = process_type.split(',')
+        elif 'next_week_start_date' in request.POST:
+            team_ids = request.POST.get('nextselectedTeams')
+            process_type = request.POST.get('nextselectedProcessType')
+            team_ids = team_ids.split(',')
+            process_type = process_type.split(',')
+        else:
+            team_ids = request.POST.getlist('selectedTeams')
+            process_type = request.POST.getlist('selectedProcessType')
+
+        without_appointmnet_list = list()
+        shopping_leads_without_appointmnet_count = 0
+        tag_leads_without_appointment_count = 0
+        
+        tag_total = list()
+        shopp_total = list()
+        wpp_total = list()
+        for process in process_type:
+            if process == "TAG":
+                for day_key, date_value in sorted(plan_dates_without_appointment.items()):
+                    from_day = date_value.replace(hour=00, minute=00, second=00)
+                    to_date = date_value.replace(hour=23, minute=59, second=59 )
+
+                    time_zone = 'IST'    
+                    selected_tzone = Timezone.objects.get(zone_name=time_zone)
+                    from_day = SalesforceApi.get_utc_date(from_day, selected_tzone.time_value)
+                    to_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
+
+                    without_appointment_selected_teams = RegalixTeams.objects.filter(id__in=team_ids, process_type__in=process_type, is_active=True,)
+                    without_appointment_selected_country = without_appointment_selected_teams.values_list('location__location_name')
+                    without_appointment_selected_country = [ "%s" % data for data in without_appointment_selected_country ]
+                    
+                    tag_leads_without_appointment = Leads.objects.filter(created_date__range=[from_day, to_date] ,country__in=without_appointment_selected_country )
+                    tag_leads_without_appointment = tag_leads_without_appointment.exclude\
+                                (type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])
+                    tag_leads_without_appointment = tag_leads_without_appointment.exclude(appointment_date__isnull=False)                   
+                    
+                    tag_leads_without_appointment_count = tag_leads_without_appointment.count()
+                    tag_total.append(tag_leads_without_appointment_count)
+
+            elif process == "SHOPPING":
+                for day_key, date_value in sorted(plan_dates_without_appointment.items()):
+                    
+                    from_day = date_value.replace(hour=00, minute=00, second=00)
+                    to_date = date_value.replace(hour=23, minute=59, second=59 )
+
+                    time_zone = 'IST'    
+                    selected_tzone = Timezone.objects.get(zone_name=time_zone)
+                    from_day = SalesforceApi.get_utc_date(from_day, selected_tzone.time_value)
+                    to_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
+
+                    without_appointment_selected_teams = RegalixTeams.objects.filter(id__in=team_ids, process_type__in=process_type, is_active=True,)
+                    without_appointment_selected_country = without_appointment_selected_teams.values_list('location__location_name')
+                    without_appointment_selected_country = [ "%s" % data for data in without_appointment_selected_country ]
+
+                    shopping_leads_without_appointmnet = Leads.objects.filter(created_date__range=[from_day, to_date], \
+                            type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', ], country__in=without_appointment_selected_country)
+                    shopping_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(appointment_date__isnull=False).count()
+                    shopp_total.append(shopping_leads_without_appointmnet_count)
+            
+            elif process == "WPP":
+                for day_key, date_value in sorted(plan_dates_without_appointment.items()):
+                    wpp_total.append(0)
+
+        without_appointmnet_total_list = list()
+
+        if (len(tag_total) > 0) and (len(shopp_total) > 0):
+            for i in range(0,6):
+                resulted_sum = tag_total[i] + shopp_total[i]
+                without_appointmnet_total_list.append({'total':resulted_sum})
+        elif (len(tag_total) > 0) and len(shopp_total) == 0:
+            for each in tag_total:
+                without_appointmnet_total_list.append({'total':each})
+        elif (len(shopp_total) > 0) and (len(tag_total) == 0):
+            for each in shopp_total:
+                without_appointmnet_total_list.append({'total':each})
+        elif (len(wpp_total) > 0) and (len(tag_total) == 0) and (len(shopp_total) == 0):
+            for each in wpp_total:
+                without_appointmnet_total_list.append({'total':'NA'})
+        else:
+            without_appointmnet_total_list.append({'total':'error'})
+             
     return render(
         request,
         'representatives/total_appointments.html',
@@ -1356,6 +1478,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'process_type': process_type,
          'process_types': process_types,
          'total_slots': total_slots,
+         'without_appointmnet_list':without_appointmnet_total_list,
          'result_dict': json.dumps(result_dict),
          'process': process,
          'default_process_type': default_process_type,
@@ -1380,7 +1503,7 @@ def appointments_calendar(request):
     return render(request, 'representatives/appointments_calendar.html', {'events': total_events})
 
 
-#Picasso TAT detile
+#Picasso TAT details
 @login_required
 def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
     """ Manage scheduling appointments"""
