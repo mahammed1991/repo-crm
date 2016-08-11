@@ -778,7 +778,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
             mail_to.extend(fb_su)
             mail_to = set(mail_to)
         else:
-            mail_to = [assignee.assigned_to.email, feedback.user.email, ]
+            mail_to = [assignee.assigned_to.email, feedback.user.email, feedback.lead_owner.email]
             mail_to.extend(fb_su)
             mail_to = set(mail_to)
     else:
@@ -922,7 +922,7 @@ def reopen_feedback(request, id):
     comment.comment_by = request.user
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
-        # If assigining we add the comment in Table, so just to know who added the comment.
+    # If assigining we add the comment in Table, so just to know who added the comment.
     # We use comment_type 'S' == System comment, 'U' == User comment
     comment.comment_type = 'U'
     comment.save()
