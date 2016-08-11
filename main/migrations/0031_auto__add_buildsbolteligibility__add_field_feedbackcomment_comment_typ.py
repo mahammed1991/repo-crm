@@ -8,18 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'BuildsBoltEligibility'
-        db.create_table('builds_bolt_eligibility', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
-            ('url', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
-            ('domain', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('bolt_eligible', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('last_assessed_time', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal(u'main', ['BuildsBoltEligibility'])
-
         # Adding field 'FeedbackComment.comment_type'
         db.add_column('feedback_comments', 'comment_type',
                       self.gf('django.db.models.fields.CharField')(max_length=1, null=True, blank=True),
@@ -27,9 +15,6 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting model 'BuildsBoltEligibility'
-        db.delete_table('builds_bolt_eligibility')
-
         # Deleting field 'FeedbackComment.comment_type'
         db.delete_column('feedback_comments', 'comment_type')
 
