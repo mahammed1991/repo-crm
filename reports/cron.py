@@ -859,10 +859,13 @@ def update_leads_reports(lead):
 
 
 #+++++++++++ exclude overlapping regons +++++++++++++++++++
-def available_counts_booked_specific(process_type):
+def available_counts_booked_specific(process_type , date=None):
     """ taking values from today 2AM to previous 3AM exclude_north_america"""
+    if date == None:
+        today_morning = datetime.today() #date value for dailr cron job email triggering
+    else:
+        today_morning = date # date value comming from reports views page
     
-    today_morning = datetime.today()
     today = today_morning.replace(hour=2, minute=00, second=00)
     
     previous_day_time = today_morning - timedelta(days=1)
@@ -896,10 +899,14 @@ def available_counts_booked_specific(process_type):
     return available_counts_teams
 
 # +++++++++++++++++ include overlapping regions ++++++++++++++++++++++
-def available_counts_booked_specific_in_na(process_type):
+def available_counts_booked_specific_in_na(process_type , date=None):
     """ previous day 4.30PM to today 7.30AM only for north america   """
-    
-    today_morning = datetime.today() - timedelta(days=1)
+    if date == None:
+        date_for_north_america = datetime.today() #date value for dailr cron job email triggering
+    else:
+        date_for_north_america = date # date value comming from reports views page
+
+    today_morning = date_for_north_america - timedelta(days=1)
     today = today_morning.replace(hour=16, minute=30, second=00)
     
     next_day_time = today_morning + timedelta(days=1)
