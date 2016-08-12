@@ -2532,3 +2532,26 @@ def inventory_handler(request):
         cbi.save()
         resp = {'success': True, 'msg': 'User data saved succesfully'}
         return HttpResponse(json.dumps(resp), content_type='application/json')
+
+import csv
+
+@login_required
+def download_inventory_details(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="InventoryCountReport'+str(datetime.now().date())+'.csv"'
+    data = ChromebookInventory.objects.all().order_by('employee_name')
+    writer = csv.writer(response)
+    writer.writerow(['Name','LDAP','Alias','Project','Device type','MAC ID','Employ Status','Device Status','Issued on','Returned'])
+    for i in data:
+        issued = str(i.issued_on)
+        i.issued_on = datetime.strptime(issued, '%Y-%m-%d %H:%M:%S').date()
+        if i.employee_status:
+            i.employee_status = 'Active'
+        else:
+            i.employee_status = 'Inactive'
+        if i.device_status:
+            i.device_status = 'Active'
+        else:
+            i.device_status = 'Returned'
+        writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
+    return response
