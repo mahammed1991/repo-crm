@@ -2219,16 +2219,38 @@ def assign_feedback(request):
                 # mailing functionolities
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
                 mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
+                fb_su = []
                 feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-                mail_to = [ str(assignee) , feedback_super_user_group]
-                #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
-                mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
-                mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
-                                        'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
-                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description}))
-                bcc = set()
-                attachments = list()
-                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+                
+                for user in feedback_super_user_group:
+                    fb_su.append(user.email)
+
+                if feedback_super_user_group:
+
+                    description = "The following customer feedback is assigned to "+str(assignee)+" for action by " + request.user.first_name + " " + request.user.last_name
+                    mail_to = [fb_su]
+                    #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                    mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
+                    mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
+                                            'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
+                                            'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description, 'description' : description}))
+                    bcc = set()
+                    attachments = list()
+                    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+
+                if assignee:
+                    description = "The following customer feedback is assigned to you for action. Please submit appropriate response and/ or initiate closure in a timely manner."
+
+                    mail_to = [ str(assignee)]
+                    #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                    mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
+                    mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
+                                            'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
+                                            'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description, 'description' : description}))
+                    bcc = set()
+                    attachments = list()
+                    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+                
                 assiging_feedback(request, assignee, id=feedback_id) # saving assigning process
                 response = {'success': True, 'msg':'Succesfully assigned'}
                 return HttpResponse(json.dumps(response))

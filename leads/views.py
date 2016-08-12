@@ -3637,7 +3637,7 @@ def get_picasso_bolt_lead(request):
         try:
             wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
         except:
-            pass
+            wl_db = None
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
@@ -3647,24 +3647,45 @@ def get_picasso_bolt_lead(request):
                     leads['bolt'] = True 
 
         if leads.get('picasso') and leads.get('bolt'):
+            # Both submitted
             status_dict['type'] = 'both'
             status_dict['status'] = 'success'
         elif leads.get('picasso'):
-            if wl_db.opportunity_type == 'mSite Adoption':
-                status_dict['type'] = 'both'
+            # Submitted for Picasso
+            if wl_db:
+                if wl_db.opportunity_type == 'mSite Speed':
+                    status_dict['type'] = 'picasso'
+                    status_dict['message'] = 'Eligible for Bolt Audit'
+                else:
+                    status_dict['type'] = 'both'
+                    status_dict['message'] = 'Submitted as Bolt Audit'
                 status_dict['status'] = 'success'
             else: 
                 status_dict['type'] = 'picasso'
                 status_dict['status'] = 'success'    
         elif leads.get('bolt'):
-            if wl_db.opportunity_type == 'mSite Speed':
-                status_dict['type'] = 'both'
+            if wl_db:
+                if wl_db.opportunity_type == 'mSite Adoption':
+                    status_dict['type'] = 'bolt'
+                    status_dict['message'] = 'Eligible for Picasso Audit'
+                else:
+                    status_dict['type'] = 'both'
+                    status_dict['message'] = 'Submitted as Picasso Audit'
                 status_dict['status'] = 'success'
             else:         
                 status_dict['type'] = 'bolt'
                 status_dict['status'] = 'success'    
         else:
-            status_dict['status'] = 'failure'
+            if wl_db:
+                if wl_db.opportunity_type == 'mSite Speed':
+                    status_dict['type'] = 'picasso'
+                    status_dict['message'] = 'Eligible for Bolt Audit'
+                else:
+                    status_dict['type'] = 'bolt'
+                    status_dict['message'] = 'Eligible for Picasso Audit' 
+                status_dict['status'] = 'success' 
+            else:
+                status_dict['status'] = 'failure'
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
     elif request.method == 'GET':
         status_dict = dict()

@@ -48,5 +48,6 @@ urlpatterns = patterns(
 
     # Inventory
     url(r'^inventory/$', views.inventory_handler),
+    url(r'^download/$', views.download_inventory_details),
 
 )

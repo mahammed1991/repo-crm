@@ -478,7 +478,14 @@ function checkout(){
           if(data['status'] == 'success'){
            /* $('#picasso a').trigger("click");*/
             if(data['type'] == 'bolt'){
-              $('#display_block_error_bolt').show();
+              if(data['message'] == 'Eligible for Picasso Audit'){
+                modal_body = 'Given CID is eligible for Picasso Mobile UI/UX Audit'
+                $('#display_block_error_bolt').text(modal_body);
+                $('#display_block_error_bolt').show();
+              }
+              else{
+                $('#display_block_error_bolt').show();
+              }
               /*$('#formsubmit').prop('disabled', false);*/
               $('#bolt a').click(function(e){
                 e.preventDefault();
@@ -486,7 +493,14 @@ function checkout(){
               });
             }
             else if(data['type'] == 'picasso'){
-              $('#display_block_error_picasso').show();
+              if(data['message'] == 'Eligible for Bolt Audit'){
+                modal_body = 'Given CID is eligible for Picasso Mobile Speed Audit'
+                $('#display_block_error_picasso').text(modal_body);
+                $('#display_block_error_picasso').show();
+              }
+              else{
+                $('#display_block_error_picasso').show();
+              }
               /*$('#formsubmit').prop('disabled', true);*/
               $('#picasso').removeClass('active');
               $('#bolt').addClass('active').trigger( "click" );
@@ -497,7 +511,19 @@ function checkout(){
               });
             }
             else if(data['type'] == 'both'){
-              $('#display_block_error_both').show();
+              if(data['message'] == 'Submitted as Picasso Audit'){
+                modal_body = 'Entered CID is eligible for Picasso Mobile UI/UX Audit and its already submitted.'
+                $('#display_block_error_both').text(modal_body);
+                $('#display_block_error_both').show();
+              }
+              else if(data['message'] == 'Submitted as Bolt Audit'){
+                modal_body = 'Entered CID is eligible for Picasso Mobile Speed Audit and its already submitted.'
+                $('#display_block_error_both').text(modal_body);
+                $('#display_block_error_both').show();
+              }
+              else{
+                $('#display_block_error_both').show();
+              }
               $('#formsubmit').prop('disabled', true);
             }
             dataLayer.push({ 'event': 'gTrackEvent', 'category': 'Picasso', 'action': 'duplicate', 'label': cid.value+" - "+url.value });
