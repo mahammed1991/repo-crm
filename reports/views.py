@@ -2548,10 +2548,13 @@ def download_inventory_details(request):
         if i.employee_status:
             i.employee_status = 'Active'
         else:
-            i.employee_status = 'Inactive'
-        if i.device_status:
-            i.device_status = 'Active'
-        else:
-            i.device_status = 'Returned'
-        writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
-    return response
+            return render(request, 'reports/export_slot_utilization.html', {'tag_result_final':tag_result_final, 'shopp_result_final':shopp_result_final})
+    return render(request, 'reports/export_slot_utilization.html', {})
+
+
+def write_utilization_report_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
+
+
