@@ -1582,7 +1582,6 @@ def upload_file_handling(request):
             upload_target = request.POST['uploadTarget']
             
             if upload_target == 'whitelist_audit_permission_csv':
-                print "yup"
                 if file_extension == "csv":
                     file_path = settings.MEDIA_ROOT + '/csv/'
                     if not os.path.exists(file_path):
