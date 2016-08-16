@@ -487,6 +487,9 @@ function checkout(){
                 $('#display_block_error_bolt').show();
               }
               /*$('#formsubmit').prop('disabled', false);*/
+              $('#bolt').removeClass('active');
+              $('#picasso').addClass('active').trigger( "click" );
+              $('#ctype1').val('PICASSO');
               $('#bolt a').click(function(e){
                 e.preventDefault();
                 return false;
