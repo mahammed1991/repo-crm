@@ -2433,7 +2433,6 @@ def get_lead_summary(request, lid=None, page=None):
                                                            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
-
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
@@ -3634,11 +3633,11 @@ def get_picasso_bolt_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
         
         leads = {}
-        # try:
-        #     wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
-        # except:
-        #     wl_db = None
-        wl_db = None
+        try:
+            wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
+        except:
+            wl_db = None
+        #wl_db = None
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
