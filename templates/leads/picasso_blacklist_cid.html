@@ -17,7 +17,7 @@
 <!-- content-region -->
     <section class="content-region inner-page">
         <div class="container-fluid" style="max-width: 75%;">
-                <h2>Picasso BlackList</h2>
+                <button id="download" class="btn std-btn sm-btn" style="float:right;margin-top:5px;"><span class="glyphicon glyphicon-download"></span>  DOWNLOAD</button><h2>Picasso BlackList</h2>
                 <div id="blacklist_wrapper" class="dataTables_wrapper no-footer" style="margin-bottom: 1%;">
                     <table id="blacklist" class="display" cellspacing="0">
                         <thead>
@@ -98,5 +98,17 @@ $('body').on('click', '.delete', function(){
   });
 
 
+$('#download').click(function(){
+     $.ajax({
+        type: "GET",
+        url: '/leads/download/',
+        success: function (data) {
+            location.replace('/leads/download/');
+        },
+        error: function(data){
+            alert("Something went wrong, please try after some time");
+        }
+    });
+});
 </script>
 {% endblock main_js %}

@@ -2548,6 +2548,123 @@ def download_inventory_details(request):
         if i.employee_status:
             i.employee_status = 'Active'
         else:
+            i.employee_status = 'Inactive'
+        if i.device_status:
+            i.device_status = 'Active'
+        else:
+            i.device_status = 'Returned'
+        writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
+    return response
+
+
+def export_slot_utilization(request):
+    from datetime import datetime, timedelta
+    from cron import (available_counts_booked_specific_in_na, available_counts_booked_specific)
+    if request.method == "POST":
+        request_type = request.POST.get('selection')
+        posted_from_date = request.POST.get('date_from')
+        posted_to_date = request.POST.get('date_to')
+        from_date = datetime.strptime(posted_from_date, '%m/%d/%Y')
+        from_date = from_date + timedelta(days=1) # In Called function it will be converted to respective date
+        to_date = datetime.strptime(posted_to_date, '%m/%d/%Y')
+        stop_date = to_date + timedelta(days=1) # Date to stop the looping of range
+
+        tag_result_final = list()
+        shopp_result_final = list()
+
+        initializer = "run-loop"
+        while initializer == "run-loop":
+            tag_result = list()
+            shopp_result = list()
+            
+            tag_exclud_na = available_counts_booked_specific(['TAG'], from_date)
+           
+            tag_includ_na = available_counts_booked_specific_in_na(['TAG'], from_date)
+           
+            shopp_exclude_na = available_counts_booked_specific(['SHOPPING'], from_date)
+            
+            shop_includ_na = available_counts_booked_specific_in_na(['SHOPPING'], from_date)
+            
+            for data in tag_exclud_na:
+                data['date'] = from_date.date() - timedelta(days=1)
+                tag_result.append(data)
+            for data in tag_includ_na:
+                data['date'] = from_date.date() - timedelta(days=1)
+                tag_result.append(data)
+
+            tag_result_final.append(tag_result)
+
+            for element in tag_result:
+                if (element['Booked Count'] > 0 and element['Availability Count'] > 0):
+                    value = ((float(element['Booked Count'])/element['Availability Count'])*100)
+                    element['Ratio'] = ("%.2f"%value +"%" )
+                else:
+                    element['Ratio'] = "-"
+
+            for data in shopp_exclude_na:
+                data['date'] = from_date.date() - timedelta(days=1)
+                shopp_result.append(data) 
+            for data in shop_includ_na:
+                data['date'] = from_date.date() - timedelta(days=1)
+                shopp_result.append(data)
+
+            shopp_result_final.append(shopp_result)
+
+            for element in shopp_result:
+                if (element['Booked Count'] > 0 and element['Availability Count'] > 0):
+                    value = ((float(element['Booked Count'])/element['Availability Count'])*100)
+                    element['Ratio'] = ("%.2f"%value +"%" )
+                else:
+                    element['Ratio'] = "-"
+
+            if from_date == stop_date:
+                initializer = "stop-loop"
+            else:
+                initializer = "run-loop"
+
+            from_date = from_date + timedelta(days=1)
+        
+        tag_and_shopping_values_to_write = list()
+        for data in tag_result_final:
+            for each_dict in data:
+                tag_and_shopping_values_to_write.append(each_dict)
+        for data in shopp_result_final:
+            for each_dict in data:
+                tag_and_shopping_values_to_write.append(each_dict)
+
+        #print tag_and_shopping_values_to_write
+        if request_type == "download_report":
+            excel_header = ['date', 'team_name', 'Ratio', 'Availability Count', 'Booked Count']
+            filename = "Utiliztion report"
+            path = write_utilization_report_to_csv(tag_and_shopping_values_to_write, excel_header, filename)
+            response = DownloadLeads.get_downloaded_file_response(path)
+            return response
+        elif request_type == "download_summary":
+            unic_list = []
+            for data in tag_and_shopping_values_to_write:
+                u_data = {}
+                sum_avalibilty = list()
+                booked_availabilty = list()
+                for value in tag_and_shopping_values_to_write:
+                    if data['team_name'] == value['team_name']:
+                        u_data['Team Name'] = data['team_name']
+                        sum_avalibilty.append(value['Availability Count'])
+                        booked_availabilty.append(value['Booked Count'])
+                    u_data['Availability Count'] = sum(sum_avalibilty)
+                    u_data['Booked Count'] = sum(booked_availabilty)
+                unic_list.append(u_data)
+            summary_with_ratio = sorted([dict(t) for t in set([tuple(data.items()) for data in unic_list])])  
+            for each in summary_with_ratio:
+                if each['Availability Count'] > 0:
+                    each['Ratio'] =round( (((float(each['Booked Count']) / each['Availability Count']) )*100), 2)
+                else:
+                    each['Ratio'] = "-"      
+            excel_header = ['Team Name' , 'Availability Count', 'Booked Count', 'Ratio']
+            filename = "Utiliztion report summary"
+            path = write_utilization_report_to_csv(summary_with_ratio, excel_header, filename)
+            response = DownloadLeads.get_downloaded_file_response(path)
+            return response
+        else:
             return render(request, 'reports/export_slot_utilization.html', {'tag_result_final':tag_result_final, 'shopp_result_final':shopp_result_final})
     return render(request, 'reports/export_slot_utilization.html', {})
 
@@ -2556,5 +2673,3 @@ def write_utilization_report_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
-
-
