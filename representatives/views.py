@@ -1336,8 +1336,12 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     total_slots = list()
 
     for key, value in sorted(total_available.iteritems()):
-        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key]), 'team_counts':team_names.get(key)})
-
+        if team_names.get(key) == None:
+            team_count = 0
+        else:
+            team_count = team_names.get(key)
+        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key]), 'team_counts':team_count})
+    print total_slots
     # Without appointment total lead count, code start from here
     plan_dates_without_appointment = {
         'day1': plan_date,

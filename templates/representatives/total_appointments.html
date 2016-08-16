@@ -980,7 +980,7 @@ $('.arrow-down').css('display','none');
     });
 
     $(document).on('click', '.cubg3', function(){
-        if($(this).find('.in_val').html()==0){
+        if($(this).text()==0){
             $('.arrow-down').css('display','none');
         }
         else{
@@ -996,12 +996,18 @@ $('.arrow-down').css('display','none');
     })
 
     function teamCount(team){
-        var s = [];
-        $(".new_row_display_total").show();
-        for(var k in team){
-            s+= "<span <span class='col-lg-3 col-md-3 col-xs-3' style='background: #fff; padding: 5px 25px;margin:5px 35px;border-bottom: 1px solid #ccc;'>"+k+" ("+team[k]+")</span>";
+        if(team == 0)
+        {
+            $(".new_row_display_total").hide();
         }
-        $('#text-adding').html(s);
+        else{ 
+            var s = [];
+            $(".new_row_display_total").show();
+            for(var k in team){
+                s+= "<span <span class='col-lg-3 col-md-3 col-xs-3' style='background: #fff; padding: 5px 25px;margin:5px 35px;border-bottom: 1px solid #ccc;'>"+k+" ("+team[k]+")</span>";
+            }
+            $('#text-adding').html(s);
+        }
     }
 
 $("#click-close").click(function(){
