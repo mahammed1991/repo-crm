@@ -3634,10 +3634,11 @@ def get_picasso_bolt_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
         
         leads = {}
-        try:
-            wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
-        except:
-            wl_db = None
+        # try:
+        #     wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
+        # except:
+        #     wl_db = None
+        wl_db = None
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
@@ -4292,3 +4293,13 @@ def is_bolt_treatment_eligible(request):
                 resp = {"success": False, "msg": "URL is not eligible for Speed Optimization treatment"}
         return HttpResponse(json.dumps(resp), content_type='application/json')
 
+@login_required
+def picasso_blacklist_cid_download(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="BlackListCidReport'+str(datetime.now().date())+'.csv"'
+    data = BlackListedCID.objects.filter(active=True)
+    writer = csv.writer(response)
+    writer.writerow(['BlackList CID'])
+    for i in data:
+        writer.writerow([i.cid])
+    return response
