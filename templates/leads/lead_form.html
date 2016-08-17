@@ -1401,12 +1401,12 @@ $("#ctl00").submit(function(e){
   var isFormValid = validatethis(document.getElementById("ctl00"));
   //to workon picasso modal
   var userProgram = $('#team').val().trim();
-  if(isFormValid && isBoth != 'both'  && !submit && eligibleForAuditCheck && picassoPrograms.indexOf(userProgram) > -1){
+ /* if(isFormValid && isBoth != 'both'  && !submit && eligibleForAuditCheck && picassoPrograms.indexOf(userProgram) > -1){
       $("#myModal").modal({
         backdrop: 'static',
         keyboard: false
       });
-  }else{
+  }else{*/
       if(isFormValid){
           // Submit Form
           var form = $('form')[0]; // You need to use standart javascript object here
@@ -1430,7 +1430,7 @@ $("#ctl00").submit(function(e){
             }
           });
       }
-  }
+/*  }*/
   
  /* $(".lead-form")[0].submit();*/
 });
