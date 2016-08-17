@@ -1594,20 +1594,22 @@ def upload_file_handling(request):
                     with open(file_path, 'rb') as csvfile:
                         csv_object = csv.reader(csvfile, delimiter=',')
                         uploaded_column_headers = csv_object.next()
-                        for row in csv_object:
-                            s = str(row[2])
-                            cid = s[:3] + '-' + s[3:6] + '-' + s[6:]
-                            whitelist = WhiteListedAuditCID.objects.filter(external_customer_id=cid).first()
-                            if whitelist:
-                                whitelist.external_customer_id = s[:3] + '-' + s[3:6] + '-' + s[6:]
-                                whitelist.opportunity_type = row[4]
-                                whitelist.save()
-                            else:
-                                whitelist = WhiteListedAuditCID()
-                                whitelist.external_customer_id = cid
-                                whitelist.opportunity_type = row[4]
-                                whitelist.save()
-
+                        if required_headers[0] == uploaded_column_headers[0] and required_headers[1] == uploaded_column_headers[1]:
+                            for row in csv_object:
+                                s = str(row[2])
+                                cid = s[:3] + '-' + s[3:6] + '-' + s[6:]
+                                whitelist = WhiteListedAuditCID.objects.filter(external_customer_id=cid).first()
+                                if whitelist:
+                                    whitelist.external_customer_id = s[:3] + '-' + s[3:6] + '-' + s[6:]
+                                    whitelist.opportunity_type = row[4]
+                                    whitelist.save()
+                                else:
+                                    whitelist = WhiteListedAuditCID()
+                                    whitelist.external_customer_id = cid
+                                    whitelist.opportunity_type = row[4]
+                                    whitelist.save()
+                        else:
+                            template_args.update({'csv_file': file_name, 'error': 'File headers mismatch. Please upload correct .csv file', 'upload_target': upload_target})
 
                     os.unlink(file_path)
                     template_args.update({'csv_file': csv_file.name, 'msg': "File Upload Done Successfully" + " WhiteList Added", 'upload_target': upload_target})
