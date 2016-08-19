@@ -11,7 +11,7 @@ from random import randint
 from uuid import uuid4
 from urlparse import urlparse
 import logging
-from django.db import IntegrityError
+
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from icalendar import Calendar, Event, vCalAddress, vText
