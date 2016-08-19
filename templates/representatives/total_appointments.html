@@ -123,6 +123,9 @@ display:block;
                                     <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
                                 </li>
                             {%endfor%}
+                            <li id="rlsa-count-link">
+                                    <a href="#" class=""><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;<font size="2">RLSA</a>
+                                </li>
                         </ul>
                     </div>
                 </div>
@@ -176,8 +179,9 @@ display:block;
         </form>
         <form method="post" action="{% url 'representatives.views.total_appointments' plan_month plan_day plan_year %}">
             {% csrf_token %}
+                
             <div>
-                <table class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
+                <table id ="rlsa-table-main" class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
                     <tr>
                         <!-- <th>Slots/Day</th> -->
                         <th style="border-top:none !important; border:none !important; width:8% !important;"></th>
@@ -188,6 +192,50 @@ display:block;
                         <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Fri</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day5'|date:"M d, Y"}}</td></tr></table></th>
                         <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Sat</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day6'|date:"M d, Y"}}</td></tr></table></th>
                     </tr>
+
+                    <tr id="rlsa-count" style="background-color: rgb(166, 166, 104);display:">
+                        <td class="cubg2">Total RLSA Leads </td>
+                        {% for data in rlsa_total_count %}
+                            <td class="cubg2">
+                                <table class="table ttb rlsa-count-intable" cellspacing="2">
+                                    <tr>
+                                        <td style="background-color:rgb(230, 255, 230)" class=" common_td">{{data.total_rlsa}}</td>
+                                        <td class="cubg4">NA</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        {% endfor %}
+                    </tr>
+            </table>
+            </div>
+
+                <table id="tag-shopping-table" class="table table-bordered table-hover table-responsive" cellspacing="10" style="border-spacing:5px; border-collapse: inherit;">
+                        <tr>
+                            <!-- <th>Slots/Day</th> -->
+                            <th style="border-top:none !important; border:none !important; width:8% !important;"></th>
+                            <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Mon</td></tr><tr><td class="cubg">{{dates|get_dict_val:'day1'|date:"M d, Y"}}</td></tr></table></th>
+                            <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Tue</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day2'|date:"M d, Y"}}</td></tr></table></th>
+                            <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Wed</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day3'|date:"M d, Y"}}</td></tr></table></th>
+                            <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Thu</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day4'|date:"M d, Y"}}</td></tr></table></th>
+                            <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Fri</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day5'|date:"M d, Y"}}</td></tr></table></th>
+                            <th class="custom-bg" ><table class="table cubg" ><tr><td class="cubg"> Sat</td></tr><tr><td class="cubg"> {{dates|get_dict_val:'day6'|date:"M d, Y"}}</td></tr></table></th>
+                        </tr>
+
+
+                    <tr id="rlsa-table" style="background-color: rgb(166, 166, 104);display:none">
+                        <td class="cubg2">Total RLSA Leads </td>
+                        {% for data in rlsa_total_count %}
+                            <td class="cubg2">
+                                <table class="table ttb rlsa-count-intable" cellspacing="2">
+                                    <tr>
+                                        <td style="background-color:rgb(230, 255, 230)" class=" common_td">{{data.total_rlsa}}</td>
+                                        <td class="cubg4">NA</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                   
 
                      <tr style="background-color: rgb(166, 166, 104);">
                         <td class="cubg2">Total Leads W/O Appointment </td>
@@ -1011,11 +1059,138 @@ $('.arrow-down').css('display','none');
         }
     }
 
-$("#click-close").click(function(){
-         if ($('.new_row_display_total').is(":visible")) {
-            $(".new_row_display_total").hide();
-        }
+
+    $(document).ready(function(){
+        $('#rlsa-table').css('display', 'none');
+        $('#rlsa-table-main').css('display','none');
+        $('#tag-shopping-table').css('display', 'show');
+        $('#rlsa-count-link span').removeClass('tickMarkShow');
     });
+
+    $(document).on('click', '#rlsa-count-link', function(){
+         if (($('#TAG a span').hasClass('tickMarkShow') || 
+                  $('#SHOPPING a span').hasClass('tickMarkShow') || 
+                  $('#WPP a span').hasClass('tickMarkShow'))
+                  &&  $('#rlsa-count-link a span').hasClass('tickMarkShow') == false)  
+                {
+                    $('#rlsa-table-main').css('display','none');
+                    $('#tag-shopping-table').css('display', '');
+                    $('#rlsa-table ').css('display', 'none');
+                }
+        else if (  $('#TAG a span').hasClass('tickMarkShow') == false &&
+                   $('#SHOPPING a span').hasClass('tickMarkShow') ==false &&
+                   $('#WPP a span').hasClass('tickMarkShow') == false &&
+                   $('#rlsa-count-link a span').hasClass('tickMarkShow') ==false) 
+                {
+                    $('#tag-shopping-table').css('display', ''); 
+                    $('#rlsa-table-main').css('display','none');                   
+                }
+        else if (  ($('#TAG a span').hasClass('tickMarkShow') == false &&
+                   $('#SHOPPING a span').hasClass('tickMarkShow') ==false &&
+                   $('#WPP a span').hasClass('tickMarkShow') == false )&&
+                   $('#rlsa-count-link a span').hasClass('tickMarkShow')) 
+                    {
+                    $('#rlsa-table-main').css('display','');  
+                     $('#tag-shopping-table').css('display', 'none');
+                     $('#rlsa-table ').css('display', 'none');      
+                    }
+        else if (  ($('#TAG a span').hasClass('tickMarkShow')  ||
+                   $('#SHOPPING a span').hasClass('tickMarkShow') ||
+                   $('#WPP a span').hasClass('tickMarkShow'))  ||
+                   $('#rlsa-count-link a span').hasClass('tickMarkShow') ) 
+                    {
+                    $('#rlsa-table-main').css('display','none');  
+                    $('#tag-shopping-table').css('display', '');       
+                    $('#rlsa-table ').css('display', '');
+                    }
+         else{
+                $('#tag-shopping-table').css('display', '');  
+                    }
+        });
+
+
+        $(document).on('click', '#TAG', function(){
+         if (  $('#rlsa-count-link a span').hasClass('tickMarkShow') &&
+            (  $('#TAG a span').hasClass('tickMarkShow') || 
+                $('#SHOPPING a span').hasClass('tickMarkShow') || 
+                $('#WPP a span').hasClass('tickMarkShow')))
+                {
+                    $('#rlsa-table ').css('display','');
+                    $('#tag-shopping-table').css('display', '');
+                    $('#rlsa-table-main').css('display','none');
+                }
+        else if (  $('#TAG a span').hasClass('tickMarkShow') == false &&
+                   $('#SHOPPING a span').hasClass('tickMarkShow') ==false &&
+                   $('#WPP a span').hasClass('tickMarkShow') == false &&
+                   $('#rlsa-count-link a span').hasClass('tickMarkShow')) 
+                {
+                    $('#rlsa-table-main').css('display','');
+                    $('#tag-shopping-table').css('display', 'none');
+                    $('#rlsa-table ').css('display', 'none');
+                 }
+         else  {
+                $('#rlsa-table ').css('display', 'none');
+                $('#tag-shopping-table').css('display', '');
+                $('#rlsa-table-main').css('display','none');
+               
+                }
+        });
+
+        $(document).on('click', '#WPP', function(){
+        
+         if (  $('#rlsa-count-link a span').hasClass('tickMarkShow') && 
+              ($('#TAG a span').hasClass('tickMarkShow') || 
+               $('#SHOPPING a span').hasClass('tickMarkShow') || 
+               $('#WPP a span').hasClass('tickMarkShow')))
+                {
+                    $('#rlsa-table ').css('display','');
+                    $('#tag-shopping-table').css('display', '');
+                    $('#rlsa-table-main').css('display','none');
+                }
+         else if (  $('#TAG a span').hasClass('tickMarkShow') == false &&
+                       $('#SHOPPING a span').hasClass('tickMarkShow') ==false &&
+                       $('#WPP a span').hasClass('tickMarkShow') == false &&
+                       $('#rlsa-count-link a span').hasClass('tickMarkShow')) 
+                {
+                    $('#rlsa-table-main').css('display','');
+                    $('#tag-shopping-table').css('display', 'none');
+                    $('#rlsa-table ').css('display', 'none');
+                }
+         else  {
+                $('#rlsa-table ').css('display', 'none');
+                $('#tag-shopping-table').css('display', '');
+                $('#rlsa-table-main').css('display','none');
+                 
+                }
+        });
+
+        $(document).on('click', '#SHOPPING', function(){
+        
+         if (  $('#rlsa-count-link a span').hasClass('tickMarkShow') && 
+               ( $('#TAG a span').hasClass('tickMarkShow') || 
+                 $('#SHOPPING a span').hasClass('tickMarkShow') || 
+                 $('#WPP a span').hasClass('tickMarkShow')))
+                {
+                    $('#rlsa-table ').css('display','');
+                    $('#tag-shopping-table').css('display', '');
+                    $('#rlsa-table-main').css('display','none');
+                }
+         else if (  $('#TAG a span').hasClass('tickMarkShow') == false &&
+                       $('#SHOPPING a span').hasClass('tickMarkShow') ==false &&
+                       $('#WPP a span').hasClass('tickMarkShow') == false &&
+                       $('#rlsa-count-link a span').hasClass('tickMarkShow')) 
+                    {
+                    $('#rlsa-table-main').css('display','');
+                    $('#tag-shopping-table').css('display', 'none');
+                    $('#rlsa-table ').css('display', 'none');
+                    }
+         else      {
+                $('#rlsa-table ').css('display', 'none');
+                $('#tag-shopping-table').css('display', '');
+                $('#rlsa-table-main').css('display','none');
+                 
+                }
+        });
 
 
     </script>

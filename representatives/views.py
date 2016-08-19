@@ -1352,7 +1352,8 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         'day6': plan_date + timedelta(days=5)
     }
 
-    without_appointmnet_total_list = list()
+    without_appointmnet_total_list = list() 
+    rlsa_total_count = list()
     for day_key, date_value in sorted(plan_dates_without_appointment.items()):
 
         from_day = date_value.replace(hour=00, minute=00, second=00)
@@ -1375,6 +1376,17 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             without_appointmnet_total_list.append({'total':total_leads_without_appointmnet_count})
         except:
             without_appointmnet_total_list.append({'total':'error'})
+
+        # RLSA count without appointment
+        rlsa_total_leads = Leads.objects.\
+         filter(created_date__range=[from_day, to_date], country__in=all_without_appointment_active_country)
+        rlsa_total_leads_count = rlsa_total_leads.filter(type_1__in=['RLSA Bulk Implementation']).count()
+        
+        try:
+            rlsa_total_count.append({'total_rlsa':rlsa_total_leads_count})
+        except:
+            rlsa_total_count.append({'total_rlsa':'error'})
+
 
     if request.method == 'POST':
     
@@ -1482,6 +1494,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'process_types': process_types,
          'total_slots': total_slots,
          'without_appointmnet_list':without_appointmnet_total_list,
+         'rlsa_total_count':rlsa_total_count,
          'result_dict': json.dumps(result_dict),
          'process': process,
          'default_process_type': default_process_type,
