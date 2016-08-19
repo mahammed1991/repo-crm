@@ -772,8 +772,7 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
         first_comment_count = first_comment_count.filter(comment_type="U").count()
 
         if first_comment_count == 0:
-            mail_to = [ assignee.assigned_to.email, 'g-crew@regalix-inc.com',
-                        'portalsupport@regalix-inc.com', 'sabinaa@google.com',
+            mail_to = [ assignee.assigned_to.email, 'g-crew@regalix-inc.com', 'sabinaa@google.com',
                         'rwieker@google.com', feedback.lead_owner.email ]
             mail_to.extend(fb_su)
             mail_to = set(mail_to)
@@ -2268,7 +2267,6 @@ def assign_feedback(request):
                 if feedback_super_user_group:
 
                     description = "The following customer feedback is assigned to "+str(assignee)+" for action by " + request.user.first_name + " " + request.user.last_name
-                    mail_to = [fb_su]
                     #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
                     mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
                     mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
@@ -2276,7 +2274,7 @@ def assign_feedback(request):
                                             'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description, 'description' : description}))
                     bcc = set()
                     attachments = list()
-                    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+                    send_mail(mail_subject, mail_body, mail_from, fb_su, list(bcc),  attachments, template_added=True)
 
                 if assignee:
                     description = "The following customer feedback is assigned to you for action. Please submit appropriate response and/ or initiate closure in a timely manner."
