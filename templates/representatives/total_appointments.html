@@ -1065,6 +1065,13 @@ $('.arrow-down').css('display','none');
         $('#tag-shopping-table').css('display', 'show');
         $('#rlsa-count-link span').removeClass('tickMarkShow');
     });
+    
+    $(document).on('click','#form_submit',function(){
+        if($('#rlsa-count-link a span').hasClass('tickMarkShow') == true){
+            alert("Please unselect RLSA process type");
+            return false
+            } 
+    });
 
     $(document).on('click', '#rlsa-count-link', function(){
          if (($('#TAG a span').hasClass('tickMarkShow') || 
