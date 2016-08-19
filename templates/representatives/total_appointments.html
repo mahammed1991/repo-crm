@@ -1068,8 +1068,8 @@ $('.arrow-down').css('display','none');
     
     $(document).on('click','#form_submit',function(){
         if($('#rlsa-count-link a span').hasClass('tickMarkShow') == true){
-            alert("Please unselect RLSA process type");
-            return false
+            $('#rlsa-count-link a span').removeClass('tickMarkShow')
+            return true
             } 
     });
 
