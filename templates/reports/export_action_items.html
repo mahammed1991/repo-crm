@@ -168,13 +168,14 @@ Action Items Meeting Minutes
 	if(all_meeting_records){
     display_all_record_table(all_meeting_records);
   }
+
   function display_all_record_table(all_meeting_records){
-  	$('#display_all_meeting_minutes').show();
+    $('#display_all_meeting_minutes').show();
     $('.display_all_meeting_minutes').html('');
     row = ''
     for(var i=0; i<all_meeting_records.length;i++){
         row += '<tr>'+
-             '<td class="links-default" >'+all_meeting_records[i]['Meeting Date']+'</td>'+
+             '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
              '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
              '<td class="links-default">'+all_meeting_records[i]['Action Items']+'</td>' +
              '<td class="links-default">'+all_meeting_records[i]['Owners']+'</td>' +
@@ -225,21 +226,21 @@ $(document).ready(function(){
 </script>
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript">
-	$(function() {
-	    $("#datepickerFrom").datepicker({
-	      defaultDate : "+1w",
-	      changeMonth : true,
-	      numberOfMonths : 1,
-	      dateFormat: "mm/dd/yy",
-	      onClose : function(selectedDate) {
-	        $("#to").datepicker("option", "minDate", selectedDate);
-	      },
-	      onSelect: function (selected) {
-	            var dt = new Date(selected);
-	            dt.setDate(dt.getDate() + 1);
-	            $("#datepickerTo").datepicker("option", "minDate", dt);
-	        }
-	    });
+  $(function() {
+      $("#datepickerFrom").datepicker({
+        defaultDate : "+1w",
+        changeMonth : true,
+        numberOfMonths : 1,
+        dateFormat: "mm/dd/yy",
+        onClose : function(selectedDate) {
+          $("#to").datepicker("option", "minDate", selectedDate);
+        },
+        onSelect: function (selected) {
+              var dt = new Date(selected);
+              dt.setDate(dt.getDate() + 1);
+              $("#datepickerTo").datepicker("option", "minDate", dt);
+          }
+      });
     $("#datepickerTo").datepicker({
       defaultDate : "+1w",
       changeMonth : true,
@@ -326,7 +327,7 @@ $(document).ready(function(){
       }else{
         var status = true;
         if (status) {
-        	$('form input[type=submit]');
+          $('form input[type=submit]');
           }
           return status;
       }
@@ -336,7 +337,6 @@ $(document).ready(function(){
 
 
  
-
 
 </script>
 

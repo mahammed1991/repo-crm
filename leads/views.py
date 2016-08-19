@@ -11,7 +11,7 @@ from random import randint
 from uuid import uuid4
 from urlparse import urlparse
 import logging
-
+from django.db import IntegrityError
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from icalendar import Calendar, Event, vCalAddress, vText
@@ -4274,6 +4274,23 @@ def picasso_blacklist_cid(request):
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
+    if request.method == "POST":
+        data = json.loads(request.body)
+        bl_cid = data['cid']
+        bl = BlackListedCID.objects.get(cid=bl_cid)
+        if bl:
+            if bl.active:
+                resp = {'success': False, 'msg': 'This CID is already BlackListed','cid': bl.cid,'id':bl.id}
+            else:
+                bl.active = True
+                resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
+        else:
+            bl = BlackListedCID()
+            bl.cid = cid
+            bl.active = True
+            resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
+        bl.save()
+        return HttpResponse(json.dumps(resp), content_type='application/json')
 
 
 def is_bolt_treatment_eligible(request):
