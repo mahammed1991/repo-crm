@@ -1621,15 +1621,12 @@ def export_action_items(request):
 
             attendees_list.append(str(update_status.meeting_minutes.google_poc))
             attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
-
+            
             remove_list = ['babla@regalix-inc.com', 'tkhan@regalix-inc.com','vsharan@regalix-inc.com','nvohra@regalix-inc.com','nsethi@regalix-inc.com']
             if request.POST.get('status') == 'Closed':
                 attendees_list = list(set(attendees_list) - set(remove_list))
-                new_list = []
-                for a in attendees_list:
-                    if not 'google.com' in str(a):
-                        new_list.append(a)
-                mail_to = new_list
+                attendees_list = [ x for x in attendees_list if "@google.com" not in x ]
+                mail_to = attendees_list
             else:
                 mail_to = attendees_list
             
