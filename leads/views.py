@@ -3633,11 +3633,11 @@ def get_picasso_bolt_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
         
         leads = {}
-        try:
-            wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
-        except:
-            wl_db = None
-        #wl_db = None
+        # try:
+        #     wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
+        # except:
+        #     wl_db = None
+        wl_db = None
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
