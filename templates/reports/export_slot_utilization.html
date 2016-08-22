@@ -1,0 +1,132 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Export-Slot-utilization
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+  </style>
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+    <div class="container">
+      <h1>EXPORT-SLOT-UTILIZATION</h1>
+     <!-- google rep info -->
+
+        <div class="row std-sub-top">
+        </div>
+    <form method="POST" name="" onsubmit="return validatethis(this);">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+            </div>
+            <div class="col-md-3">
+                <label style="float: left;margin-left: 16px;margin-top: 3px;">End Date</label>
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+            </div>
+            <div class="col-md-3"> 
+                    <label style="margin-top: 3px;margin-left: 36px;">Choose Type</label><br>
+                        <select style="margin-left: 36px;" class="form-control bgicon" name="selection" id="download_type">
+                          <option value="choose">Choose</option>
+                          <option value="download_report">Download Report</option>
+                          <option value="download_summary">Download Summary</option>
+                        </select>
+                  
+            </div>
+             <div class="col-md-3">
+                  <label style="margin-top:3px;"></label>
+                  <input style="margin-top:26px;height:47px;margin-left:51px;" type="submit" value="Download" 
+                   class="btn std-btn" id="" >
+            </div>
+        </div>
+    </form>
+    </div>
+
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+
+
+
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+window.is_error = false;
+$(function() {
+    $("#datepickerFrom").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() + 1);
+            $("#datepickerTo").datepicker("option", "minDate", dt);
+        }
+    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+
+
+  function validatethis(frm) {
+    window.is_error = false;
+    if(frm.datepickerFrom.value == "0" || frm.datepickerFrom.value == "")
+      {
+          $(frm.datepickerFrom).addClass('error-box');
+          frm.datepickerFrom.focus();
+          window.is_error = true;
+      }
+    else{
+          $(frm.datepickerFrom).removeClass('error-box');
+        }
+    if(frm.datepickerTo.value == "0" || frm.datepickerTo.value == "")
+      {
+          $(frm.datepickerTo).addClass('error-box');
+          window.is_error = true;
+          frm.datepickerTo.focus();
+      }
+    else{
+          $(frm.datepickerTo).removeClass('error-box');
+        }
+    if($("#download_type").val() == "choose"){
+      $("#download_type").addClass('error-box');
+      window.is_error = true;
+      $("#download_type").focus();
+    }
+    else{
+      $("#download_type").removeClass('error-box');
+    }
+    if(window.is_error)
+        {
+          return false;
+        }
+    else{
+        var status = true; 
+        return status;
+      }
+    }
+
+</script>
+
+{% endblock main_js %}
