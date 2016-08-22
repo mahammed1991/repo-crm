@@ -28,7 +28,7 @@
                 {% csrf_token %}
                   <div class="col-md-4">
                       <label for="cid">BlackList CID</label>
-                      <input type="text" class="form-control" id="cid" name="cid" placeholder="CID" style="height:40px;">
+                      <input type="text" class="form-control" id="cid" name="cid" placeholder="CID" style="height:40px;"> 
                       
                   </div>
                   <div class="col-md-4">
@@ -130,19 +130,32 @@ $('#download').click(function(){
 
 
 
+
+
 $("#submit").click(function(e){
     var cid = $("#cid").val().trim();
-    valid = true;
+    var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+    valid = true;  
 
     if(cid === ""){
-        $("#cid").addClass('error-box');
-        valid = false;
+      $("#cid").addClass('error-box');
+      valid = false;
     }else
     {
-        $("#cid").removeClass('error-box');
+      if(!cid.match(cidFormat) && !cid == ""){
+        valid = false;
+        $("#msg-container").css('color', 'red');
+        $('#msg-container').text("CID format is invalid");
+        $('#msg-container').show();
+        $('#cid').addClass('error-box');
+        /*frm.cid.focus();*/
+        }
+      else{
+        valid = true;
+        $('#msg-container').hide();
+        $('#cid').removeClass('error-box');
+      }
     }
-
-
 
     var jsonData = {
             cid: cid,
@@ -164,7 +177,9 @@ $("#submit").click(function(e){
                       t.row.add( [data.cid,
                               "<button class='btn-sm btn btn-danger delete' data-id="+data.id+" data-cid="+data.cid+" >Delete</button>"
                           ] ).draw( false );
+                      $('#msg-container').show();
                     }else{
+                      $('#msg-container').show();
                       $("#msg-container").css('color', 'red');
                     }
                     
@@ -176,5 +191,8 @@ $("#submit").click(function(e){
     }else
         console.log(false);
 });
+
+
+
 </script>
 {% endblock main_js %}

@@ -4277,19 +4277,23 @@ def picasso_blacklist_cid(request):
     if request.method == "POST":
         data = json.loads(request.body)
         bl_cid = data['cid']
-        bl = BlackListedCID.objects.get(cid=bl_cid)
+        try:
+            bl = BlackListedCID.objects.get(cid=bl_cid)
+        except:
+            bl = None
         if bl:
             if bl.active:
                 resp = {'success': False, 'msg': 'This CID is already BlackListed','cid': bl.cid,'id':bl.id}
             else:
                 bl.active = True
+                bl.save()
                 resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
         else:
             bl = BlackListedCID()
-            bl.cid = cid
+            bl.cid = bl_cid
             bl.active = True
+            bl.save()
             resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
-        bl.save()
         return HttpResponse(json.dumps(resp), content_type='application/json')
 
 
