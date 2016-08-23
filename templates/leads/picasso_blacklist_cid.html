@@ -17,7 +17,24 @@
 <!-- content-region -->
     <section class="content-region inner-page">
         <div class="container-fluid" style="max-width: 75%;">
+                <button id="download" class="btn std-btn sm-btn" style="float:right;margin-top:5px;"><span class="glyphicon glyphicon-download"></span>  DOWNLOAD</button>
+        
                 <h2>Picasso BlackList</h2>
+                <div id="add_blacklist_cid">
+                <div style="margin-bottom: 1%;margin-left: 1.2%;font-weight: bold;">
+                <button id="addRow" style="display:none;"></button>
+                        <span id="msg-container"></span>
+                    </div>
+                {% csrf_token %}
+                  <div class="col-md-4">
+                      <label for="cid">BlackList CID</label>
+                      <input type="text" class="form-control" id="cid" name="cid" placeholder="CID" style="height:40px;"> 
+                      
+                  </div>
+                  <div class="col-md-4">
+                    <button id="submit" class="btn std-btn sm-btn" style="margin-top: 8.7%;height:40px;">+ Add</button>
+                  </div>
+                </div>
                 <div id="blacklist_wrapper" class="dataTables_wrapper no-footer" style="margin-bottom: 1%;">
                     <table id="blacklist" class="display" cellspacing="0">
                         <thead>
@@ -65,7 +82,7 @@ function updateBlacklistData(){
             {bSortable: false, targets: [1]},
             { "width": "50%", "targets": 0 },
             { "width": "50%", "targets": 1 },
-        ]
+        ],
     });
 }
 $(document).ready(function(){
@@ -96,6 +113,85 @@ $('body').on('click', '.delete', function(){
             
         }
   });
+
+
+$('#download').click(function(){
+     $.ajax({
+        type: "GET",
+        url: '/leads/download/',
+        success: function (data) {
+            location.replace('/leads/download/');
+        },
+        error: function(data){
+            alert("Something went wrong, please try after some time");
+        }
+    });
+});
+
+
+
+
+
+$("#submit").click(function(e){
+    var cid = $("#cid").val().trim();
+    var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+    valid = true;  
+
+    if(cid === ""){
+      $("#cid").addClass('error-box');
+      valid = false;
+    }else
+    {
+      if(!cid.match(cidFormat) && !cid == ""){
+        valid = false;
+        $("#msg-container").css('color', 'red');
+        $('#msg-container').text("CID format is invalid");
+        $('#msg-container').show();
+        $('#cid').addClass('error-box');
+        /*frm.cid.focus();*/
+        }
+      else{
+        valid = true;
+        $('#msg-container').hide();
+        $('#cid').removeClass('error-box');
+      }
+    }
+
+    var jsonData = {
+            cid: cid,
+    }
+
+    if(valid){
+        $.ajax({
+            type: "POST",
+            url: location.href,
+            data: JSON.stringify(jsonData),
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: function (data) {
+                    $("#msg-container").html(data.msg);
+                    if(data.success){
+                      $("#msg-container").css('color', '#3c763d');
+                      $("#cid").val('');
+                      var t = $('#blacklist').DataTable();
+                      t.row.add( [data.cid,
+                              "<button class='btn-sm btn btn-danger delete' data-id="+data.id+" data-cid="+data.cid+" >Delete</button>"
+                          ] ).draw( false );
+                      $('#msg-container').show();
+                    }else{
+                      $('#msg-container').show();
+                      $("#msg-container").css('color', 'red');
+                    }
+                    
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+        });
+    }else
+        console.log(false);
+});
+
 
 
 </script>

@@ -56,5 +56,6 @@ urlpatterns = patterns(
     #picasso workflow
     url(r'picasso-build-submission-flow/$', views.picasso_build_submission_flow),
     url(r'^picasso/cid/$', views.picasso_blacklist_cid),
+    url(r'^download/$', views.picasso_blacklist_cid_download),
     url(r'^builds/bolt-eligible/$', views.is_bolt_treatment_eligible),
 )

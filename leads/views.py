@@ -37,7 +37,7 @@ from reports.models import RLSABulkUpload
 from main.models import UserDetails, PicassoEligibilityMasterUpload
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
-                          BlackListedCID, BuildsBoltEligibility
+                          BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID
                           )
 from reports.models import Region
 from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
@@ -2439,7 +2439,6 @@ def get_lead_summary(request, lid=None, page=None):
                                                            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
 
         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
-
     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
@@ -3640,6 +3639,11 @@ def get_picasso_bolt_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
         
         leads = {}
+        # try:
+        #     wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
+        # except:
+        #     wl_db = None
+        wl_db = None
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
@@ -3649,16 +3653,45 @@ def get_picasso_bolt_lead(request):
                     leads['bolt'] = True 
 
         if leads.get('picasso') and leads.get('bolt'):
+            # Both submitted
             status_dict['type'] = 'both'
             status_dict['status'] = 'success'
         elif leads.get('picasso'):
-            status_dict['type'] = 'picasso'
-            status_dict['status'] = 'success'          
+            # Submitted for Picasso
+            if wl_db:
+                if wl_db.opportunity_type == 'mSite Speed':
+                    status_dict['type'] = 'picasso'
+                    status_dict['message'] = 'Eligible for Bolt Audit'
+                else:
+                    status_dict['type'] = 'both'
+                    status_dict['message'] = 'Submitted as Bolt Audit'
+                status_dict['status'] = 'success'
+            else: 
+                status_dict['type'] = 'picasso'
+                status_dict['status'] = 'success'    
         elif leads.get('bolt'):
-            status_dict['type'] = 'bolt'
-            status_dict['status'] = 'success'
+            if wl_db:
+                if wl_db.opportunity_type == 'mSite Adoption':
+                    status_dict['type'] = 'bolt'
+                    status_dict['message'] = 'Eligible for Picasso Audit'
+                else:
+                    status_dict['type'] = 'both'
+                    status_dict['message'] = 'Submitted as Picasso Audit'
+                status_dict['status'] = 'success'
+            else:         
+                status_dict['type'] = 'bolt'
+                status_dict['status'] = 'success'    
         else:
-            status_dict['status'] = 'failure' 
+            if wl_db:
+                if wl_db.opportunity_type == 'mSite Speed':
+                    status_dict['type'] = 'picasso'
+                    status_dict['message'] = 'Eligible for Bolt Audit'
+                else:
+                    status_dict['type'] = 'bolt'
+                    status_dict['message'] = 'Eligible for Picasso Audit' 
+                status_dict['status'] = 'success' 
+            else:
+                status_dict['status'] = 'failure'
         return HttpResponse(json.dumps(status_dict), content_type='application/json')
     elif request.method == 'GET':
         status_dict = dict()
@@ -3672,6 +3705,15 @@ def get_picasso_bolt_lead(request):
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
         except:
             return HttpResponse(json.dumps(status_dict), content_type='application/json')
+
+
+    # if request.method == 'GET' and request.GET.get('whitelist'):
+    #     status_dict = dict()
+    #     wl_cid = request.GET.get('cid')
+    #     picasso_lead = Picasso.objects.get(cid=wl_cid)
+    #     if picasso_lead:
+    #         for lead in picasso_lead:
+    #             print ""
 
 
 # function for posting all leads to a google spread sheet form
@@ -4238,6 +4280,27 @@ def picasso_blacklist_cid(request):
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
+    if request.method == "POST":
+        data = json.loads(request.body)
+        bl_cid = data['cid']
+        try:
+            bl = BlackListedCID.objects.get(cid=bl_cid)
+        except:
+            bl = None
+        if bl:
+            if bl.active:
+                resp = {'success': False, 'msg': 'This CID is already BlackListed','cid': bl.cid,'id':bl.id}
+            else:
+                bl.active = True
+                bl.save()
+                resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
+        else:
+            bl = BlackListedCID()
+            bl.cid = bl_cid
+            bl.active = True
+            bl.save()
+            resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
+        return HttpResponse(json.dumps(resp), content_type='application/json')
 
 
 def is_bolt_treatment_eligible(request):
@@ -4256,3 +4319,13 @@ def is_bolt_treatment_eligible(request):
                 resp = {"success": False, "msg": "URL is not eligible for Speed Optimization treatment"}
         return HttpResponse(json.dumps(resp), content_type='application/json')
 
+@login_required
+def picasso_blacklist_cid_download(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="BlackListCidReport'+str(datetime.now().date())+'.csv"'
+    data = BlackListedCID.objects.filter(active=True)
+    writer = csv.writer(response)
+    writer.writerow(['BlackList CID'])
+    for i in data:
+        writer.writerow([i.cid])
+    return response

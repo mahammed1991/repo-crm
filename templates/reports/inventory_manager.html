@@ -16,7 +16,8 @@ Inventory
 <!-- content-region -->
     <section class="content-region inner-page">
         <div class="container-fluid" style="max-width: 98%;">
-                <button id="add_emp" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 10%;line-height: 90%;" >+ Add</button>
+                                <button id="download" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" ><span class="glyphicon glyphicon-download"></span>  DOWNLOAD</button>
+                <button id="add_emp" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" >+ Add</button>
                 <h2>Google Asset Inventory</h2>
                 <div id="emp_entry" class="row" style="margin-bottom:1%;display:none;">
                     {% csrf_token %}
@@ -529,6 +530,19 @@ $(document).ready(function(){
             });
         }else
             console.log(false);
+    });
+});
+
+$('#download').click(function(){
+     $.ajax({
+        type: "GET",
+        url: '/reports/download/',
+        success: function (data) {
+            location.replace('/reports/download/');
+        },
+        error: function(data){
+            alert("Something went wrong, please try after some time");
+        }
     });
 });
 </script>

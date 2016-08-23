@@ -46,7 +46,10 @@ urlpatterns = patterns(
     url(r'^rlsa-bulk-upload/$', views.rlsa_bulk_upload_report),
     url(r'^rlsa-bulk-upload/download/$', views.download_rlsa_bulk_file),
 
+    # Export slot utilization 
+    url(r'^export-utilization/$', views.export_slot_utilization),
     # Inventory
     url(r'^inventory/$', views.inventory_handler),
+    url(r'^download/$', views.download_inventory_details),
 
 )

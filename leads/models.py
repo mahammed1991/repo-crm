@@ -691,3 +691,10 @@ class BuildsBoltEligibility(models.Model):
     class Meta:
         db_table = 'builds_bolt_eligibility'
         verbose_name_plural = 'Builds Bolt Eligibility'
+
+
+class WhiteListedAuditCID(models.Model):
+    external_customer_id = models.CharField(max_length=50, unique=True)
+    opportunity_type = models.CharField(max_length=100)
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    modified_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)

@@ -23,7 +23,7 @@ from lib.helpers import send_mail, manager_info_required, wpp_user_required, che
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ, PicassoEligibilityMasterUpload)
-from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads
+from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads, WhiteListedAuditCID
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
@@ -723,21 +723,11 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
         signature = 'Tag Team'
     else:
         signature = 'WPP Team'
-    if comment and is_resolved == False:
-        mail_from = "Google Feedback <" + request.user.email +">"
-        mail_body = get_template('main/feedback_mail/new_comment.html').render(
-            Context({
-                'feedback': feedback,
-                'comment': comment,
-                'feedback_url': feedback_url,
-                'feedback_owner': request.user.first_name + request.user.last_name,
-                'signature': signature
-            })
-        )
+    bcc = set()
 
-    elif is_resolved:
-        mail_from = request.user.email
+    if is_resolved:
         mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Resolved"
+        mail_from = "Google Feedback <" + request.user.email +">"
         mail_body = get_template('main/feedback_mail/resolved.html').render(
             Context({
                 'feedback': feedback,
@@ -751,8 +741,48 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
                 'signature': signature
             })
         )
+        fb_su = []
+        feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+        for user in feedback_super_user_group:
+            fb_su.append(user.email)
+        assignee = Feedback.objects.get(id=feedback.id)
+        mail_to = [  
+                 assignee.assigned_to.email, feedback.lead_owner.email, feedback.user.email,
+                 'sabinaa@google.com','rwieker@google.com', 'g-crew@regalix-inc.com',]
+        mail_to.extend(fb_su)
+        mail_to = set(mail_to)
+    elif comment:
+        mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - New comment added"
+        mail_from = "Google Feedback <" + request.user.email +">"
+        mail_body = get_template('main/feedback_mail/new_comment.html').render(
+            Context({
+                'feedback': feedback,
+                'comment': comment,
+                'feedback_url': feedback_url,
+                'feedback_owner': request.user.first_name + request.user.last_name,
+                'signature': signature
+            })
+        )
+        fb_su = []
+        feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
+        for user in feedback_super_user_group:
+            fb_su.append(user.email)
+        assignee = Feedback.objects.get(id=feedback.id)
+        first_comment_count = FeedbackComment.objects.filter(feedback=feedback.id)
+        first_comment_count = first_comment_count.filter(comment_type="U").count()
 
+        if first_comment_count == 0:
+            mail_to = [ assignee.assigned_to.email, 'g-crew@regalix-inc.com', 'sabinaa@google.com',
+                        'rwieker@google.com', feedback.lead_owner.email ]
+            mail_to.extend(fb_su)
+            mail_to = set(mail_to)
+        else:
+            mail_to = [assignee.assigned_to.email, feedback.user.email, feedback.lead_owner.email]
+            mail_to.extend(fb_su)
+            mail_to = set(mail_to)
     else:
+        # New Feedback mailing
+        mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Assign Owner"
         mail_from = "Google Feedback <" + request.user.email +">"
         mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - Assign Owner"
         mail_body = get_template('main/feedback_mail/new_feedback.html').render(
@@ -767,34 +797,19 @@ def notify_feedback_activity(request, feedback, comment=None, fixed=None, is_res
                 'signature': signature
             })
         )
-
-    # get feedback user manager and lead owner managers information
-    bcc = set()
-
-    if comment and is_resolved == False:
-        mail_from = "Google Feedback <" + request.user.email +">"
-        mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status - New comment added"
+        fb_su = []
         feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-        assignee = Feedback.objects.get(id=feedback.id)
-        mail_to = set([ feedback_super_user_group, assignee.assigned_to , 'g-crew@regalix-inc.com' ])
-    else:
-        mail_from = "Google Feedback <" + request.user.email +">"
-        mail_to = set([
-            'g-crew@regalix-inc.com',
-            'rwieker@google.com',
-            'sabinaa@google.com',
-            'vsharan@regalix-inc.com',
-            'babla@regalix-inc.com',
-            feedback.lead_owner.email,
-            request.user.email,
-            feedback.user.email,
-            'khengg@google.com',
-            'portalsupport@regalix-inc.com'
-        ])
-
-
-   
-
+        for user in feedback_super_user_group:
+            fb_su.append(user.email)
+        mail_to = [
+                'g-crew@regalix-inc.com', 'rwieker@google.com',
+                'sabinaa@google.com', 'vsharan@regalix-inc.com',
+                'babla@regalix-inc.com','khengg@google.com',
+                'portalsupport@regalix-inc.com', request.user.email,
+                feedback.user.email, feedback.lead_owner.email,
+                 ]
+        mail_to.extend(fb_su)
+        mail_to = set(mail_to)
     attachments = list()
     if feedback.attachment:
         attachments.append(feedback.attachment)
@@ -807,6 +822,7 @@ def notify_feedback_fixed(request, feedback, comment=None ):
     mail_subject = "Customer Feedback ["+feedback.feedback_type+" - "+ feedback.cid+"] Status- Response Submitted: Request to Closure"
     feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback.id}))
     issue_fixedby = request.user.first_name + ' ' + request.user.last_name
+    assignee = Feedback.objects.get(id=feedback.id)
     mail_body = get_template('main/feedback_mail/feedback_fixed_mail_tosuperuser.html').render(
         Context({
             'feedback': feedback,
@@ -815,13 +831,18 @@ def notify_feedback_fixed(request, feedback, comment=None ):
             'cid': feedback.cid,
             'type': feedback.feedback_type,
             'feedback_title': feedback.title,
-            'feedback_body': feedback.description,
+            'description': feedback.description,
             'issue_fixedby':issue_fixedby,
-            
+            'comment':comment,
         })
     )
+    fb_su = []
     feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-    mail_to = feedback_super_user_group
+    for user in feedback_super_user_group:
+        fb_su.append(user.email)
+    mail_to = [ assignee.assigned_to.email,]
+    mail_to.extend(fb_su)
+    mail_to = set(mail_to)
     mail_from = "Google Feedback <" + request.user.email +">"
     attachments = list()
     bcc = list()
@@ -901,6 +922,9 @@ def reopen_feedback(request, id):
     comment.comment_by = request.user
     comment.feedback_status = 'IN PROGRESS'
     comment.created_date = datetime.utcnow()
+    # If assigining we add the comment in Table, so just to know who added the comment.
+    # We use comment_type 'S' == System comment, 'U' == User comment
+    comment.comment_type = 'U'
     comment.save()
     feedback.save()
     comment_for_reopen = request.POST.get('reopencomment')
@@ -919,9 +943,19 @@ def reopen_feedback(request, id):
             'comment_for_reopen':comment_for_reopen,
         })
     )
+    fb_su = []
     feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
     mail_to = feedback_super_user_group
     mail_from = "Google Feedback <" + request.user.email +">"
+    for user in feedback_super_user_group:
+        fb_su.append(user.email)
+    mail_to = [ 'rwieker@google.com',
+                'g-crew@regalix-inc.com',
+                'sabinaa@google.com',
+                feedback.lead_owner.email,
+                feedback.user.email,]
+    mail_to.extend(fb_su)
+    mail_to = set(mail_to)
     attachments = list()
     bcc = list()
     if feedback.attachment:
@@ -942,6 +976,9 @@ def comment_feedback(request, id):
     comment.feedback = feedback
     comment.comment = request.POST.get('comment')
     comment.comment_by = request.user
+    # If assigining we add the comment in Table, so just to know who added the comment.
+    # We use comment_type 'S' == System comment, 'U' == User comment
+    comment.comment_type = 'U'
 
     if action_type == 'Resolved':
         comment.feedback_status = 'RESOLVED'
@@ -970,12 +1007,13 @@ def comment_feedback(request, id):
         comment.save()
 
     feedback.save()
-    
+
     if action_type == 'Resolved':
         notify_feedback_activity(request, feedback, comment, is_resolved=True)
     elif action_type == 'FIXED':
         notify_feedback_fixed(request, feedback, comment)
     else:
+        # Here comment is the event
         notify_feedback_activity(request, feedback, comment, is_resolved=False)
     return redirect('main.views.view_feedback', id=id)
 
@@ -1543,6 +1581,43 @@ def upload_file_handling(request):
             file_name, file_extension = request.FILES['attachment_name'].name.split('.')
             upload_target = request.POST['uploadTarget']
             
+            if upload_target == 'whitelist_audit_permission_csv':
+                if file_extension == "csv":
+                    file_path = settings.MEDIA_ROOT + '/csv/'
+                    if not os.path.exists(file_path):
+                        os.makedirs(file_path)
+                    csv_file = request.FILES['attachment_name']
+                    file_path = file_path + csv_file.name
+                    file_path = save_file(csv_file, file_path)
+                    required_headers = ['External Customer Id', 'Opportunity Type']
+
+                    with open(file_path, 'rb') as csvfile:
+                        csv_object = csv.reader(csvfile, delimiter=',')
+                        uploaded_column_headers = csv_object.next()
+                        if required_headers[0] == uploaded_column_headers[0] and required_headers[1] == uploaded_column_headers[1]:
+                            for row in csv_object:
+                                s = str(row[2])
+                                cid = s[:3] + '-' + s[3:6] + '-' + s[6:]
+                                whitelist = WhiteListedAuditCID.objects.filter(external_customer_id=cid).first()
+                                if whitelist:
+                                    whitelist.external_customer_id = s[:3] + '-' + s[3:6] + '-' + s[6:]
+                                    whitelist.opportunity_type = row[4]
+                                    whitelist.save()
+                                else:
+                                    whitelist = WhiteListedAuditCID()
+                                    whitelist.external_customer_id = cid
+                                    whitelist.opportunity_type = row[4]
+                                    whitelist.save()
+                        else:
+                            template_args.update({'csv_file': file_name, 'error': 'File headers mismatch. Please upload correct .csv file', 'upload_target': upload_target})
+
+                    os.unlink(file_path)
+                    template_args.update({'csv_file': csv_file.name, 'msg': "File Upload Done Successfully" + " WhiteList Added", 'upload_target': upload_target})
+                else:
+                    template_args.update({'csv_file': file_name, 'error': 'Please upload .csv file', 'upload_target': upload_target})
+                return render(request, 'main/upload_file.html', template_args)
+
+
             if upload_target == 'bolt_permission_csv':
                 if file_extension == "csv":
                     file_path = settings.MEDIA_ROOT + '/csv/'
@@ -2184,16 +2259,37 @@ def assign_feedback(request):
                 # mailing functionolities
                 feedback_url = request.build_absolute_uri(reverse('main.views.view_feedback', kwargs={'id': feedback_id}))
                 mail_from = str(request.user.first_name)+' '+str(request.user.last_name)
+                fb_su = []
                 feedback_super_user_group = User.objects.filter(groups__name='FEEDBACK-SUPER-USER')
-                mail_to = [ str(assignee) , feedback_super_user_group]
-                #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
-                mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
-                mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
-                                        'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
-                                        'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description}))
-                bcc = set()
-                attachments = list()
-                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+                
+                for user in feedback_super_user_group:
+                    fb_su.append(user.email)
+
+                if feedback_super_user_group:
+
+                    description = "The following customer feedback is assigned to "+str(assignee)+" for action by " + request.user.first_name + " " + request.user.last_name
+                    #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                    mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
+                    mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
+                                            'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
+                                            'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description, 'description' : description}))
+                    bcc = set()
+                    attachments = list()
+                    send_mail(mail_subject, mail_body, mail_from, fb_su, list(bcc),  attachments, template_added=True)
+
+                if assignee:
+                    description = "The following customer feedback is assigned to you for action. Please submit appropriate response and/ or initiate closure in a timely manner."
+
+                    mail_to = [ str(assignee)]
+                    #mail_subject = "Lead Feedback is assigned to you to resolve " + str(datetime.today().date())
+                    mail_subject = "Customer Feedback ["+feedback_type+" - "+cid+"] Status- Submit Response and/or Initiate Closure"
+                    mail_body = get_template('main/feedback_mail/feedback_assigning_mail.html').render(Context({
+                                            'title': title, 'cid':cid, 'feedbacktype':feedback_type, 
+                                            'loaction':loaction,'url_link':feedback_url, 'created_date':created_date, 'feedback_description':feedback_description, 'description' : description}))
+                    bcc = set()
+                    attachments = list()
+                    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc),  attachments, template_added=True)
+                
                 assiging_feedback(request, assignee, id=feedback_id) # saving assigning process
                 response = {'success': True, 'msg':'Succesfully assigned'}
                 return HttpResponse(json.dumps(response))
@@ -2212,6 +2308,9 @@ def assiging_feedback(request, assignee, id):
     feedback_assigning_ascomment.feedback = feedback
     feedback_assigning_ascomment.comment = "This Feedback has been assigned to "+str(assignee)+" to fix. Assigned by "+str(assigned_by)
     feedback_assigning_ascomment.comment_by = request.user
+    # If assigining we add the comment in Table, so just to know who added the comment.
+    # We use comment_type 'S' == System comment, 'U' == User comment
+    feedback_assigning_ascomment.comment_type = 'S'
     feedback_assigning_ascomment.save()
     #return redirect('main.views.view_feedback', id=id)
     return True
