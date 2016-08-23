@@ -34,15 +34,15 @@
 			<tr style="height:21px;"></tr>
 			<tr style="height:21px;">
 				<!-- <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td> -->
-				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;border-left:0px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;">
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;border-left:0px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-bottom:1px solid #b7b7b7;">
 					Tag</td>
-				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
 					Slots Opened</td>
-				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
 					Slots Booked</td>
-				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
-					Slots Utilization %</td>
-				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:0px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
+					Slots Utilization </td>
+				<td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:0px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
 					Date</td>
 			</tr>
 
@@ -52,22 +52,22 @@
 	        
 		            {% for key, val in data.iteritems  %}
 		            	{% if  "team name" in key %}
-		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-left:0px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align:center;width: 37%;">
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-left:0px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align:center;width: 37%;">
 		            	 	{{val}}</td>
 		            	{% endif %}
 		            	{% if "total availability count" in key %}
-		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;width: 14%;">
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align: center;width: 14%;">
 		            	 	{{val}}</td>
 		            	{% endif %}
 		            	{% if "total booked count" in key %}
-		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center; width: 14%;">
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align: center; width: 14%;">
 		            	 	{{val}}</td>
 		            	{% endif %}
 		            	{% if "utilized ratio" in key %}
-		            	 	<td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center; color:red;width: 18%;">{{val}}</td>
+		            	 	<td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align: center; color:red;width: 18%;">{{val}}</td>
 		            	{% endif %}
 		            	{% if "date" in key %}
-		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:0px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;width: 18%;">
+		            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:0px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align: center;width: 18%;">
 		            	 	{{val}}</td>
 		            	{% endif %}
 		            {% endfor %}
@@ -81,15 +81,15 @@
 {% if shopp %}
         <tr style="height:21px;">
             <!-- <td style="padding:2px 3px 2px 3px;border-right:0px solid #b7b7b7;"></td> -->
-            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;border-left:0px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;border-left:0px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
             	 	Shopping</td>
-            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
             	 	Slots Opened</td>
-            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
             	 	Slots booked</td>
-            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
-            	 	Slots Utilization %</td>
-            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:0px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;">
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:1px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
+            	 	Slots Utilization </td>
+            	 <td style="padding:2px 3px 2px 3px;background-color:#b3ffb3;border-right:0px solid #b7b7b7;font-weight:bold;text-align: center;font-size: 15px;border-top:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;">
             	 	Date</td>
         </tr>
 
@@ -98,23 +98,23 @@
         <!-- <td style="padding:0px 0px 0px 0px;border-right:0px solid #b7b7b7;"></td> -->
 	            {% for key, val in data.iteritems  %}
 	            	{% if  "team name" in key %}
-	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-left:0px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align:center;width: 37%;">
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-left:0px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align:center;width: 37%;">
 	            	 	{{val}}</td>
 	            	{% endif %}
 	            	{% if "total availability count" in key %}
-	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;border-top:1px solid #b7b7b7;text-align: center;width:14%;">
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;border-top:0px solid #b7b7b7;text-align: center;width:14%;">
 	            	 	{{val}}</td>
 	            	{% endif %}
 	            	{% if "total booked count" in key %}
-	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;border-top:1px solid #b7b7b7;text-align: center;width:14%;">
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;font-weight:bold;border-top:0px solid #b7b7b7;text-align: center;width:14%;">
 	            	 	{{val}}</td>
 	            	{% endif %}
 	            	{% if "utilized ratio" in key %}
-	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;color:red;width:18%;">
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:1px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align: center;color:red;width:18%;">
 	            	 	{{val}}</td>
 	            	{% endif %}
 	            	{% if "date" in key %}
-	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:0px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:1px solid #b7b7b7;font-weight:bold;text-align: center;width:18%;">
+	            	 <td style="padding:2px 3px 2px 3px;background-color:#f2ffe6;border-right:0px solid #b7b7b7;border-bottom:1px solid #b7b7b7;border-top:0px solid #b7b7b7;font-weight:bold;text-align: center;width:18%;">
 	            	 	{{val}}</td>
 	            	{% endif %}
 	            {% endfor %}

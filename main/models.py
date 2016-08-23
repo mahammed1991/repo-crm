@@ -68,6 +68,8 @@ class Feedback(models.Model):
 
     assigned_to = models.ForeignKey(User, related_name='assigned_to', null=True)
 
+
+
     @property
     def filename(self):
         return os.path.basename(self.attachment.name)
@@ -83,6 +85,8 @@ class FeedbackComment(models.Model):
     comment_by = models.ForeignKey(User)
     feedback_status = models.CharField(max_length=20, default='NEW')
     created_date = models.DateTimeField(auto_now_add=True)
+
+    comment_type = models.CharField(max_length=1, null=True, blank=True)
 
     class Meta:
         db_table = 'feedback_comments'

@@ -38,7 +38,9 @@
               {% else %}
                   <li><a href="{% url 'reports.views.reports' %}">Reports</a></li>
               {% endif %}
-                
+                {% if "OPERATIONS" in  request.session.groups %}
+                <li><a href="{% url 'reports.views.export_slot_utilization' %}">Slot Utilization</a></li>
+                {% endif %}
               </ul>
             </li>
             <!-- <li><a href="{% url 'main.views.sales_tasks' %}"> Sales Tasks</a></li>               -->
