@@ -169,35 +169,89 @@ Action Items Meeting Minutes
     display_all_record_table(all_meeting_records);
   }
 
-  function display_all_record_table(all_meeting_records){
-    $('#display_all_meeting_minutes').show();
-    $('.display_all_meeting_minutes').html('');
-    row = ''
-    for(var i=0; i<all_meeting_records.length;i++){
-        row += '<tr>'+
-             '<td class="links-default">'+all_meeting_records[i]['Meeting Date']+'</td>'+
-             '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Action Items']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Owners']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Target Date']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Status']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Closed By']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Reopened By']+'</td>' +
-             '<td class="links-default">'+all_meeting_records[i]['Resolved By']+'</td>'
-             if(all_meeting_records[i]['Status'] == 'Open'){
-              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="Closed">Close</input></td>'
-              }else if(all_meeting_records[i]['Status'] == 'Closed'){
-              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Reopened">Reopen</input></td>' 
-             }else if(all_meeting_records[i]['Status'] == 'Reopened'){
-              row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Resolved">Resolve</input></td>'
-             }else{
-              row_end = '<td class="links-default">Finished</td>'
-             }
-              '</tr>'
-            row += row_end
-    }
-    $('.display_all_meeting_minutes').append(row);
 
+function removeDuplicates(){
+  var table = $(".display_all_meeting_minutes");
+  var rows = table.find($("tr"));
+  //var colsLength = $(rows[0]).find($("td")).length;
+  var removeLater = new Array();;
+  for(var i=0; i<1; i++){
+      var startIndex = 0;
+      var lastIndex = 0;
+      var startText = $($(rows[0]).find("td")[i]).text();
+      var startText1 = $($(rows[0]).find("td")[i+1]).text();
+      for(var j=1; j<rows.length; j++){
+          var cRow =$(rows[j]);
+          var cCol = $(cRow.find("td")[i]);
+          var currentText = cCol.text();
+          if(currentText==startText && String(startText1) == String($($(rows[j]).find("td")[i+1]).text())){
+              
+              //console.log(cCol);
+              removeLater.push(cCol);
+              removeLater.push($($(rows[j]).find("td")[i+1]));
+              lastIndex=j;
+          }else{
+              var spanLength = lastIndex-startIndex;
+              if(spanLength>=1){
+                  //console.log(lastIndex+" - "+startIndex)
+                  //console.log($($(rows[startIndex]).find("td")[i]))
+                  $($(rows[startIndex]).find("td")[i]).attr("rowspan",spanLength+1);
+
+                  $($(rows[startIndex]).find("td")[i+1]).attr("rowspan",spanLength+1);
+              }
+              lastIndex = j;
+              startIndex = j;
+              startText = currentText;
+              startText1 = $($(rows[j]).find("td")[i+1]).text();
+          }
+              
+      }
+      var spanLength = lastIndex-startIndex;
+              if(spanLength>=1){
+                  //console.log(lastIndex+" - "+startIndex)
+                  //console.log($($(rows[startIndex]).find("td")[i]))
+                  $($(rows[startIndex]).find("td")[i]).attr("rowspan",spanLength+1);
+
+                  $($(rows[startIndex]).find("td")[i+1]).attr("rowspan",spanLength+1);
+              }
+      //console.log("---");
+  }
+
+  for(var i in removeLater){
+      $(removeLater[i]).remove();
+  }
+}
+
+
+function display_all_record_table(all_meeting_records){
+  $('#display_all_meeting_minutes').show();
+  $('.display_all_meeting_minutes').html('');
+  row = ''
+  for(var i=0; i<all_meeting_records.length;i++){
+      row += '<tr>'+
+           '<td class="links-default date_class">'+all_meeting_records[i]['Meeting Date']+'</td>'+
+           '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Action Items']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Owners']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Target Date']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Status']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Closed By']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Reopened By']+'</td>' +
+           '<td class="links-default">'+all_meeting_records[i]['Resolved By']+'</td>'
+           if(all_meeting_records[i]['Status'] == 'Open'){
+            row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_open" name="status" style="text-align:center;margin-right:5px;" value="Closed">Close</input></td>'
+            }else if(all_meeting_records[i]['Status'] == 'Closed'){
+            row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Reopened">Reopen</input></td>' 
+           }else if(all_meeting_records[i]['Status'] == 'Reopened'){
+            row_end = '<td class="links-default"><input class='+all_meeting_records[i]['Action Item Id']+' type="checkbox" id="status_close" style="text-align:center;margin-right:5px;" name="status" value="Resolved">Resolve</input></td>'
+           }else{
+            row_end = '<td class="links-default">Finished</td>'
+           }
+            '</tr>'
+          row += row_end
+  }
+  $('.display_all_meeting_minutes').append(row);
+removeDuplicates();
 }
 
 $(document).ready(function(){
