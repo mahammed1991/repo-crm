@@ -3633,11 +3633,11 @@ def get_picasso_bolt_lead(request):
         picasso_lead = PicassoLeads.objects.filter(customer_id=cid, created_date__gte=start_date, created_date__lte=end_date)
         
         leads = {}
-        try:
-            wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
-        except:
-            wl_db = None
-        #wl_db = None
+        # try:
+        #     wl_db = WhiteListedAuditCID.objects.get(external_customer_id=cid)
+        # except:
+        #     wl_db = None
+        wl_db = None
         for lead in picasso_lead:
             if form_url_filter == url_filter(lead.url_1):
                 if lead.type_1 == 'Picasso':
@@ -4274,6 +4274,27 @@ def picasso_blacklist_cid(request):
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
+    if request.method == "POST":
+        data = json.loads(request.body)
+        bl_cid = data['cid']
+        try:
+            bl = BlackListedCID.objects.get(cid=bl_cid)
+        except:
+            bl = None
+        if bl:
+            if bl.active:
+                resp = {'success': False, 'msg': 'This CID is already BlackListed','cid': bl.cid,'id':bl.id}
+            else:
+                bl.active = True
+                bl.save()
+                resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
+        else:
+            bl = BlackListedCID()
+            bl.cid = bl_cid
+            bl.active = True
+            bl.save()
+            resp = {'success': True, 'msg': 'BlackListed CID data saved succesfully','cid': bl.cid,'id':bl.id}
+        return HttpResponse(json.dumps(resp), content_type='application/json')
 
 
 def is_bolt_treatment_eligible(request):

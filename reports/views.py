@@ -1631,6 +1631,17 @@ def export_action_items(request):
 
             attendees_list.append(str(update_status.meeting_minutes.google_poc))
             attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
+            
+            remove_list = ['babla@regalix-inc.com', 'tkhan@regalix-inc.com','vsharan@regalix-inc.com','nvohra@regalix-inc.com','nsethi@regalix-inc.com']
+            if request.POST.get('status') == 'Closed':
+                attendees_list = list(set(attendees_list) - set(remove_list))
+                attendees_list = [ x for x in attendees_list if "@google.com" not in x ]
+                mail_to = attendees_list
+            else:
+                mail_to = attendees_list
+            
+
+ 
             if request.POST.get('status') == 'Closed':
                 status_changed_by = update_status.closed_by
             elif request.POST.get('status') == 'Reopened':
@@ -1672,7 +1683,7 @@ def export_action_items(request):
                 mail_from = 'PICASSO Build Team'
             else:
                 mail_from = 'PICASSO Team'
-            mail_to = attendees_list
+            
             bcc = set(bcc_email_list)
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
