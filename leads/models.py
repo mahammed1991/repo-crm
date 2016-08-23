@@ -95,6 +95,16 @@ class Leads(models.Model):
     language = models.CharField(max_length=50, blank=True, null=True)
     gcss = models.CharField(max_length=50, blank=True, null=True)
 
+    # New fields for Argos Project
+    feed_optimisation_status = models.CharField(max_length=300, blank=True, null=True)
+    feed_optimisation_sub_status = models.CharField(max_length=300, blank=True, null=True)
+    number_of_products = models.CharField(max_length=100, blank=True, null=True)
+    additional_description = models.CharField(max_length=3000, blank=True, null=True)
+    area_tobe_improved = models.CharField(max_length=3000, blank=True, null=True)
+    shopping_feed_link = models.CharField(max_length=1000, blank=True, null=True)
+    business_type = models.CharField(max_length=100, blank=True, null=True)
+    authcase_id = models.CharField(max_length=100, blank=True, null=True)
+
     class Meta:
         verbose_name_plural = "Leads"
 
@@ -672,7 +682,7 @@ class BuildsBoltEligibility(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
-    cid = models.CharField(max_length=20, unique=True)
+    cid = models.CharField(max_length=20)
     url = models.CharField(max_length=500, blank=True, null=True)
     domain = models.CharField(max_length=150, blank=True, null=True)
     bolt_eligible = models.BooleanField(default=True)

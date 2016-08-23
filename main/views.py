@@ -1208,6 +1208,7 @@ def get_notifications(request):
     if 'WPP' not in request.session['groups'] and 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
+            #notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
             notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
         else:
             notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
@@ -1703,7 +1704,7 @@ def upload_file_handling(request):
                                 missing_headers.append(element)
                         if missing_headers:
                             template_args.update({'default_headers': missing_headers,
-                                                      'error': 'Missing Headers '+ missing_headers})
+                                                      'error': 'Missing Headers '+ str(missing_headers)})
                             return render(request, 'main/upload_file.html', template_args)
 
                         row_count = 0
@@ -1734,7 +1735,7 @@ def upload_file_handling(request):
                             last_assessed_date = row[2]
                             if len(last_assessed_date) > 0:
                                 try:
-                                    last_assessed_date = datetime.strptime(last_assessed_date, "%d/%m/%Y")
+                                    last_assessed_date = datetime.strptime(last_assessed_date, "%m/%d/%Y")
                                 except:
                                     skip = True
                                     error["row_count"] = row_count
@@ -1756,7 +1757,7 @@ def upload_file_handling(request):
                                 elif bolt_eligible == "n":
                                     bolt_eligible = False
                             if not skip:
-                                bolt_object = BuildsBoltEligibility.objects.filter(cid=cid, url=url).order_by('-last_assessed_date')
+                                bolt_object = BuildsBoltEligibility.objects.filter(cid=cid, domain=domain).order_by('-last_assessed_date')
                                 if bolt_object:
                                     bolt_object = bolt_object[0]
                                     bolt_object.last_assessed_date = last_assessed_date
@@ -2206,7 +2207,7 @@ def assign_feedback(request):
         
 def assiging_feedback(request, assignee, id):
     assigned_by = str(request.user.first_name)+' '+str(request.user.last_name)
-    feedback =  Feedback.objects.get(id=id)
+    feedback = Feedback.objects.get(id=id)
     feedback_assigning_ascomment = FeedbackComment()
     feedback_assigning_ascomment.feedback = feedback
     feedback_assigning_ascomment.comment = "This Feedback has been assigned to "+str(assignee)+" to fix. Assigned by "+str(assigned_by)
@@ -2214,4 +2215,19 @@ def assiging_feedback(request, assignee, id):
     feedback_assigning_ascomment.save()
     #return redirect('main.views.view_feedback', id=id)
     return True
+
+
+# Notification Manager
+def notification_manager(request):
+
+    if request.method == "POST":
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
+        to_date = datetime.strptime(str(date_to), '%m/%d/%Y')
+
+
+    return render(request, 'main/notification_manager.html', {})
+
+
 

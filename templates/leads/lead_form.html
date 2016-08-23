@@ -58,11 +58,24 @@
     margin-bottom: -1.5%;
 }
 
+.dynamic-message {
+    margin-top: 20px;
+    border-radius: 20px;
+    padding: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 850px;
+    margin: 20px auto;
+    font-size: 15px;
+    background-color: rgb(182, 215, 168);
+}
+
 </style>
 {% endblock main_css %}
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
+    <!--div class="dynamic-message"><span>Dynamic messaging system</span></div-->
   <h1>Submit Lead</h1>
 
   <!-- temproray survay -->
@@ -777,6 +790,10 @@
             <input type="radio" id="Shopping_Trobleshoot" value="Shopping_Trobleshoot" style="margin-left:40px;">
             Existing Datafeed Optimization
           </label>
+          <label style="font-family: 'robotoregular' !important;" id="shopping_argos_option">
+            <input type="radio" id="Shopping_argos" value="Shopping_argos" style="margin-left:40px;">
+            Feed Performance Optimization - Argos
+          </label>
         </div>
       </div>
       <div class="row shoppingInfo">
@@ -814,38 +831,101 @@
 
       </div>
       <div id="shopping_trobleshooting" style="display:none;">
-      <div class="row" style="margin-bottom:10px;">
-        <div class="col-md-12 " >
-         <ul>
-           <li style="list-style-type: square !important;list-style-position:inside;">
-            If your advertisers already have GTIN values for their products we can help them update it on the Datafeed. We will not be able to help advertisers with acquiring GTIN values for their products.
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-        </div>
-      </div>
-        <div class="row">
-          <div class="col-md-4">
-            <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
-              <option value="">Select Issue Type</option>
-              <option value="GTIN Issues">GTIN Issues</option>
-              <option value="Datafeed Errors">Datafeed Errors</option>
-              <option value="Creating Product Groups">Creating Product Groups</option>
-              <option value="Adding Products to Feed">Adding Products to Feed</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control" id="shopping_trobleshooting_url" placeholder="URL">
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-md-12 " >
+           <ul>
+             <li style="list-style-type: square !important;list-style-position:inside;">
+              If your advertisers already have GTIN values for their products we can help them update it on the Datafeed. We will not be able to help advertisers with acquiring GTIN values for their products.
+              </li>
+            </ul>
           </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <textarea class="form-control" rows="10" cols="117" id="issues_description" name="issues_description" placeholder="Trobleshooting Issues Description"></textarea>
           </div>
         </div>
+          <div class="row">
+            <div class="col-md-4">
+              <select class="form-control bgicon" id="shopping_campaign_issues" title="Select Issues" name="shopping_campaign_issues">
+                <option value="">Select Issue Type</option>
+                <option value="GTIN Issues">GTIN Issues</option>
+                <option value="Datafeed Errors">Datafeed Errors</option>
+                <option value="Creating Product Groups">Creating Product Groups</option>
+                <option value="Adding Products to Feed">Adding Products to Feed</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="shopping_trobleshooting_url" placeholder="URL">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <textarea class="form-control" rows="10" cols="117" id="issues_description" name="issues_description" placeholder="Trobleshooting Issues Description"></textarea>
+            </div>
+          </div>
+      </div>
+      <!-- Project Argos -->
+      <div id="shopping_feed_optimisation" style="display:none;">
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-md-12" >
+           <p id="tatMsg" style="border-radius: 20px;text-align: center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 100%;margin-top: -10px;">
+             Approximate TAT for this lead will be 30-Aug-2016</b> </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+          </div>
+        </div>
+          <div class="row">
+            <div class="col-md-3">
+              <select class="form-control bgicon" id="shopping_argos_categories" title="Select Business Type" name="shopping_argos_categories">
+                <option value="Business Type"> Select Business Type </option>
+                <option value="Animals & Pet Supplies"> Animals & Pet Supplies </option>
+                <option value="Arts & Entertainment"> Arts & Entertainment </option>
+                <option value="Baby & Toddler"> Baby & Toddler </option>
+                <option value="Business & Industrial"> Business & Industrial </option>
+                <option value="Electronics"> Electronics </option>
+                <option value="Clothing & Accessories"> Clothing & Accessories </option>
+                <option value="Cameras & Optics"> Cameras & Optics </option>
+                <option value="Food, Beverages & Tobacco"> Food, Beverages & Tobacco </option>
+                <option value="Furniture"> Furniture </option>
+                <option value="Hardware"> Hardware </option>
+                <option value="Health & Beauty"> Health & Beauty </option>
+                <option value="Home & Garden"> Home & Garden </option>
+                <option value="Luggage & Bags"> Luggage & Bags </option>
+                <option value="Mature"> Mature </option>
+                <option value="Media"> Media </option>
+                <option value="Office Supplies"> Office Supplies </option>
+                <option value="Religious & Ceremonial"> Religious & Ceremonial </option>
+                <option value="Software"> Software </option>
+                <option value="Sporting Goods"> Sporting Goods </option>
+                <option value="Toys & Games"> Toys & Games </option>
+                <option value="Vehicles & Parts"> Vehicles & Parts </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <input id="argos_mc_id" name="argos_mc_id" size="20" class="form-control" type="text" onkeypress="return isNumber(event)" placeholder="MC-ID">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" id="auth_case_id" name="auth_case_id" placeholder="Auth Case ID">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" name="products_count" id="products_count" placeholder="Total Number of Products"  onkeypress="return isNumber(event)">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" class="form-control" id="sheets_link" name="sheets_link" placeholder="Shopping Feed Link (Google Sheets)">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-7">
+              <textarea class="form-control" rows="10" cols="117" id="area" name="area" placeholder="Ex- Title, Google product category..etc "></textarea>
+            </div>
+            <div class="col-md-5">
+              <textarea class="form-control" rows="10" cols="117" id="additional_description" name="additional_description" placeholder="Anything else we should know?"></textarea>
+            </div>
+          </div>
       </div>
 
     <div class="appointment">
@@ -1351,9 +1431,6 @@ function checkout(){
   }  
 }
 
-
-
-
 $('#b').click(function(){
   var cid = $('#cid').val().trim();
   var url = $('#url1').val().trim();
@@ -1386,7 +1463,7 @@ $("#ctl00").submit(function(e){
   }else{*/
       if(isFormValid){
           // Submit Form
-          var form = $('form')[0]; // You need to use standart javascript object here
+          var form = $('form')[0]; // You need to use standard javascript object here
           var formData = new FormData(form);
 
           $.ajax({
