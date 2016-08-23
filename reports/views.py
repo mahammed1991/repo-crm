@@ -2722,8 +2722,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     monday_values.append(data)
                 if ist_value.weekday() == 1: # Tuesday
@@ -2731,8 +2731,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Tuesday_values.append(data)
                 if ist_value.weekday() == 2: # Wednesday
@@ -2740,8 +2740,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Wednusday_values.append(data)
                 if ist_value.weekday() == 3: # Thursday
@@ -2749,8 +2749,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name 
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Thursday_values.append(data)
                 if ist_value.weekday() == 4: # Friday
@@ -2758,8 +2758,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Friday_values.append(data)
                 if ist_value.weekday() == 5: # Satdurday
@@ -2767,8 +2767,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Satdrady_values.append(data)
                 if ist_value.weekday() == 6: # Sunday
@@ -2776,8 +2776,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Sunday_values.append(data)
 
@@ -2804,10 +2804,10 @@ def export_slot_utilization(request):
                 sunday = total_available_booked_time_based(Sunday_values)
                 result = result + sunday
 
-            excel_header = ['TEAM' , 'DAY', 'TIME', 'AVAILABLE', 'BOOKED', 'RATIO']
+            excel_header = ['TEAM' , 'DAY', 'TIME', 'SLOTS OPENED', 'SLOTS BOOKED', 'RATIO']
             from_date_str = time.strftime(posted_from_date)
             to_date_str = time.strftime(posted_to_date)
-            filename = "Utiliztion Report Summary (DAY & TIME)"
+            filename = "Utiliztion Report Summary by DAY & TIME"
             path = write_utilization_report_to_csv(result, excel_header, filename)
             response = DownloadLeads.get_downloaded_file_response(path)
             return response
@@ -2838,22 +2838,22 @@ def total_available_booked_time_based(data_sent):
                 u_data['TEAM'] = data['TEAM']
                 u_data['TIME'] = data['TIME']
                 u_data['DAY'] = data['DAY']
-                sum_avalibilty.append(value['AVAILABLE'])
-                booked_availabilty.append(value['BOOKED'])
-            u_data['AVAILABLE'] = sum(sum_avalibilty)
-            u_data['BOOKED'] = sum(booked_availabilty)
+                sum_avalibilty.append(value['SLOTS OPENED'])
+                booked_availabilty.append(value['SLOTS BOOKED'])
+            u_data['SLOTS OPENED'] = sum(sum_avalibilty)
+            u_data['SLOTS BOOKED'] = sum(booked_availabilty)
             unic_list.append(u_data)
     summary = sorted([dict(values) for values in set([tuple(data.items()) for data in unic_list])])
     for each in summary:
-        if each['AVAILABLE'] > 0:
-            each['RATIO'] =round( (((float(each['BOOKED']) / each['AVAILABLE']) )*100), 2)
+        if each['SLOTS OPENED'] > 0:
+            each['RATIO'] =round( (((float(each['SLOTS BOOKED']) / each['SLOTS OPENED']) )*100), 2)
         else:
             each['RATIO'] = "-"
-    total_booked = sum(item['BOOKED'] for item in summary)
-    total_available = sum(item['AVAILABLE'] for item in summary)
+    total_booked = sum(item['SLOTS BOOKED'] for item in summary)
+    total_available = sum(item['SLOTS OPENED'] for item in summary)
     total_count_dict = {}
-    total_count_dict['AVAILABLE'] = "TOTAL-AVAILABLE: " + str(total_available) 
-    total_count_dict['BOOKED'] =  "TOTAL-BOOKED: " + str(total_booked)
+    total_count_dict['SLOTS OPENED'] = "TOTAL-OPENED: " + str(total_available) 
+    total_count_dict['SLOTS BOOKED'] =  "TOTAL-BOOKED: " + str(total_booked)
     if total_available > 0:
         total_count_dict['RATIO'] = "TOTAL-RATIO: " + str(round( (((float(total_booked) / total_available) )*100), 2))
     else:
