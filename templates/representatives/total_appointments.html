@@ -1066,6 +1066,22 @@ $('.arrow-down').css('display','none');
         $('#rlsa-count-link span').removeClass('tickMarkShow');
     });
 
+    $(document).on('click','#form_submit',function(){
+        if($('#rlsa-count-link a span').hasClass('tickMarkShow') == true){
+            $('#rlsa-count-link a span').removeClass('tickMarkShow')
+            return true
+            } 
+    });
+
+    $(document).on('click', '#processTypeBtn', function(){
+        if (($('#TAG a span').hasClass('tickMarkShow') == false &&
+                   $('#SHOPPING a span').hasClass('tickMarkShow') ==false &&
+                   $('#WPP a span').hasClass('tickMarkShow') == false )&&
+                   $('#rlsa-count-link a span').hasClass('tickMarkShow')) {
+            $('.teams-ul').hide();
+        }
+    });
+
     $(document).on('click', '#rlsa-count-link', function(){
          if (($('#TAG a span').hasClass('tickMarkShow') || 
                   $('#SHOPPING a span').hasClass('tickMarkShow') || 
@@ -1126,6 +1142,7 @@ $('.arrow-down').css('display','none');
                     $('#rlsa-table-main').css('display','');
                     $('#tag-shopping-table').css('display', 'none');
                     $('#rlsa-table ').css('display', 'none');
+                    $('.teams-ul').hide();
                  }
          else  {
                 $('#rlsa-table ').css('display', 'none');
@@ -1154,6 +1171,7 @@ $('.arrow-down').css('display','none');
                     $('#rlsa-table-main').css('display','');
                     $('#tag-shopping-table').css('display', 'none');
                     $('#rlsa-table ').css('display', 'none');
+                    $('.teams-ul').hide();
                 }
          else  {
                 $('#rlsa-table ').css('display', 'none');
@@ -1182,6 +1200,7 @@ $('.arrow-down').css('display','none');
                     $('#rlsa-table-main').css('display','');
                     $('#tag-shopping-table').css('display', 'none');
                     $('#rlsa-table ').css('display', 'none');
+                    $('.teams-ul').hide();
                     }
          else      {
                 $('#rlsa-table ').css('display', 'none');

@@ -19,7 +19,7 @@ from django.template import Context
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden
 
-from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType
+from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType, RegalixTeams
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam, ChromebookInventory
@@ -27,6 +27,16 @@ from main.models import UserDetails, WPPMasterList
 from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
 from lib.helpers import (send_mail)
 from models import RLSABulkUpload
+
+# utlization reports
+from leads.models import RegalixTeams
+from representatives.models import (
+                Availability,
+                ScheduleLog,
+                AvailabilityForTAT, AvailabilityForBoltTAT,
+    )
+from lib.salesforce import SalesforceApi
+from leads.models import RegalixTeams
 
 
 @login_required
@@ -2664,12 +2674,184 @@ def export_slot_utilization(request):
             path = write_utilization_report_to_csv(summary_with_ratio, excel_header, filename)
             response = DownloadLeads.get_downloaded_file_response(path)
             return response
+
+        elif request_type == "download_summary_day_time":
+
+            posted_from_date = request.POST.get('date_from')
+            posted_to_date = request.POST.get('date_to')
+            from_date = datetime.strptime(posted_from_date, '%m/%d/%Y')
+            to_date = datetime.strptime(posted_to_date, '%m/%d/%Y')
+            to_date = to_date + timedelta(days=1)
+
+            time_zone = 'IST'
+            tzone = Timezone.objects.get(zone_name=time_zone)
+            utc_start_date = SalesforceApi.get_utc_date(from_date, tzone.time_value)
+            utc_end_date = SalesforceApi.get_utc_date(to_date, tzone.time_value)
+
+            regalix_team_posted = request.POST.getlist('selectedTeams')
+            regalix_teams = RegalixTeams.objects.filter(id__in=regalix_team_posted)
+            
+            appointments_list = Availability.objects.filter(
+                                date_in_utc__range=(utc_start_date, utc_end_date),
+                                team__in=regalix_teams)
+            
+            monday_values = [] 
+            Tuesday_values = []
+            Wednusday_values = []
+            Thursday_values = []
+            Friday_values = []
+            Satdrady_values = []
+            Sunday_values = []
+
+            for each in appointments_list:
+                data = {}
+                ist_value = each.date_in_utc + timedelta(hours=5, minutes=30)
+                if ist_value.weekday() == 0: # Monday
+                    data['DAY'] = "MONDAY"
+                    data['TEAM'] = each.team.team_name
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    monday_values.append(data)
+                if ist_value.weekday() == 1: # Tuesday
+                    data['DAY'] = "TUESDAY"
+                    data['TEAM'] = each.team.team_name
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    Tuesday_values.append(data)
+                if ist_value.weekday() == 2: # Wednesday
+                    data['DAY'] = "WEDNESDAY"
+                    data['TEAM'] = each.team.team_name
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    Wednusday_values.append(data)
+                if ist_value.weekday() == 3: # Thursday
+                    data['DAY'] = "THURSDAY"
+                    data['TEAM'] = each.team.team_name 
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    Thursday_values.append(data)
+                if ist_value.weekday() == 4: # Friday
+                    data['DAY'] = "FRIDAY"
+                    data['TEAM'] = each.team.team_name
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    Friday_values.append(data)
+                if ist_value.weekday() == 5: # Satdurday
+                    data['DAY'] = "SATURDAY"
+                    data['TEAM'] = each.team.team_name
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    Satdrady_values.append(data)
+                if ist_value.weekday() == 6: # Sunday
+                    data['DAY'] = "SUNDAY"
+                    data['TEAM'] = each.team.team_name
+                    data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
+                    data['TIME'] = data['DATE and TIME in IST'].time()
+                    data['AVAILABLE'] = each.availability_count
+                    data['BOOKED'] = each.booked_count
+                    data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
+                    Sunday_values.append(data)
+
+            result = []
+            if len(monday_values) > 0:
+                monday = total_available_booked_time_based(monday_values)
+                result = result + monday
+            if len(Tuesday_values) > 0:
+                tuesday = total_available_booked_time_based(Tuesday_values)
+                result = result + tuesday
+            if len(Wednusday_values) > 0:
+                wednesday = total_available_booked_time_based(Wednusday_values)
+                result = result + wednesday
+            if len(Thursday_values) > 0:
+                thursday = total_available_booked_time_based(Thursday_values)
+                result = result + thursday
+            if len(Friday_values) > 0:
+                friday = total_available_booked_time_based(Friday_values)
+                result = result + friday
+            if len(Satdrady_values) > 0:
+                satdurday = total_available_booked_time_based(Satdrady_values)
+                result = result + satdurday
+            if len(Sunday_values) > 0:
+                sunday = total_available_booked_time_based(Sunday_values)
+                result = result + sunday
+
+            excel_header = ['TEAM' , 'DAY', 'TIME', 'AVAILABLE', 'BOOKED', 'RATIO']
+            from_date_str = time.strftime(posted_from_date)
+            to_date_str = time.strftime(posted_to_date)
+            filename = "Utiliztion Report Summary (DAY & TIME)"
+            path = write_utilization_report_to_csv(result, excel_header, filename)
+            response = DownloadLeads.get_downloaded_file_response(path)
+            return response
+
         else:
-            return render(request, 'reports/export_slot_utilization.html', {'tag_result_final':tag_result_final, 'shopp_result_final':shopp_result_final})
-    return render(request, 'reports/export_slot_utilization.html', {})
+            return render(request, 'reports/export_slot_utilization.html', {'error':'Server error in downloadng report !!!'})
+
+    default_process_type = ['TAG', 'SHOPPING', 'WPP']
+    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+    teams = RegalixTeams.objects.filter(process_type__in=process_types).exclude(team_name='default team')
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
+    return render(request, 'reports/export_slot_utilization.html', {'process_types':process_types,'default_teams':default_teams,'teams': teams,})
 
 
 def write_utilization_report_to_csv(result, collumn_attr, filename):
     path = "/tmp/%s.csv" % (filename)
     DownloadLeads.conver_to_csv(path, result, collumn_attr)
     return path
+
+def total_available_booked_time_based(data_sent):
+    unic_list = []      
+    for data in data_sent:
+        u_data = {}
+        sum_avalibilty = list()
+        booked_availabilty = list()
+        for value in data_sent:
+            if (data['UNIC KEY'] == value['UNIC KEY']):
+                u_data['TEAM'] = data['TEAM']
+                u_data['TIME'] = data['TIME']
+                u_data['DAY'] = data['DAY']
+                sum_avalibilty.append(value['AVAILABLE'])
+                booked_availabilty.append(value['BOOKED'])
+            u_data['AVAILABLE'] = sum(sum_avalibilty)
+            u_data['BOOKED'] = sum(booked_availabilty)
+            unic_list.append(u_data)
+    summary = sorted([dict(values) for values in set([tuple(data.items()) for data in unic_list])])
+    for each in summary:
+        if each['AVAILABLE'] > 0:
+            each['RATIO'] =round( (((float(each['BOOKED']) / each['AVAILABLE']) )*100), 2)
+        else:
+            each['RATIO'] = "-"
+    total_booked = sum(item['BOOKED'] for item in summary)
+    total_available = sum(item['AVAILABLE'] for item in summary)
+    total_count_dict = {}
+    total_count_dict['AVAILABLE'] = "TOTAL-AVAILABLE: " + str(total_available) 
+    total_count_dict['BOOKED'] =  "TOTAL-BOOKED: " + str(total_booked)
+    if total_available > 0:
+        total_count_dict['RATIO'] = "TOTAL-RATIO: " + str(round( (((float(total_booked) / total_available) )*100), 2))
+    else:
+        total_count_dict['RATIO'] = "-"
+    summary.append(total_count_dict)
+    return summary
+
+
+
+
+
+
