@@ -254,7 +254,7 @@ def get_selected_report_view(request):
             elif str(report_timeline[0]) == 'this_quarter':
                 tag = "Month On Month Trends"
 
-        report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type,
+        report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type, 
                           'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
                           'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
                           'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
@@ -574,7 +574,7 @@ def get_wpp_reports(request):
         wpp_report_detail['bar_chart_data'] = bar_chart_data
         wpp_report_details = {'reports': wpp_report_detail,
                               'report_type': report_type, 'report_timeline': report_timeline}
-
+        
         del wpp_report_details['reports']['wpp_lead_status_analysis']['nominated_leads']
         return HttpResponse(json.dumps(wpp_report_details))
 
@@ -1198,7 +1198,7 @@ def meeting_minutes(request):
         meeting_minutes.google_team = request.POST.get('google_team')
 
         meeting_minutes.meeting_audience = request.POST.get('meeting_audience')
-
+        
         if request.POST.get('meeting_audience') == 'internal_meeting':
             meeting_minutes.region = request.POST.get('internal_region')
             meeting_minutes.location = request.POST.get('internal_location')
@@ -1545,11 +1545,11 @@ def link_last_meeting(request, last_id):
                                                             'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list,
                                                             'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting,
                                                             'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date,
-                                                            'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2,
-                                                            'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5,
-                                                            'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3,
-                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience,
-                                                            'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4,
+                                                            'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
+                                                            'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
+                                                            'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
+                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience, 
+                                                            'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4, 
                                                             'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
                                                             'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5})
 
@@ -1631,7 +1631,7 @@ def export_action_items(request):
 
             attendees_list.append(str(update_status.meeting_minutes.google_poc))
             attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
-
+            
             remove_list = ['babla@regalix-inc.com', 'tkhan@regalix-inc.com','vsharan@regalix-inc.com','nvohra@regalix-inc.com','nsethi@regalix-inc.com']
             if request.POST.get('status') == 'Closed':
                 attendees_list = list(set(attendees_list) - set(remove_list))
@@ -1639,9 +1639,9 @@ def export_action_items(request):
                 mail_to = attendees_list
             else:
                 mail_to = attendees_list
+            
 
-
-
+ 
             if request.POST.get('status') == 'Closed':
                 status_changed_by = update_status.closed_by
             elif request.POST.get('status') == 'Reopened':
@@ -1683,12 +1683,12 @@ def export_action_items(request):
                 mail_from = 'PICASSO Build Team'
             else:
                 mail_from = 'PICASSO Team'
-
+            
             bcc = set(bcc_email_list)
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
-
+        
         if program != 'all':
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
                                                             program=program).values_list('id', flat=True)
@@ -1943,11 +1943,11 @@ def program_kick_off(request):
     for loc in locations:
             location_name = str(loc.location_name)
             location_based_zones[location_name] = [{'zone_name':str(tz['zone_name']), 'time_value':str(tz['time_value'])} for tz in loc.time_zone.values()]
-
+    
     google_email = list()
     all_mail = list()
     managers = User.objects.values_list('email', flat=True)
-    bcc_field = managers
+    bcc_field = managers 
     for manager in managers:
         if 'google.com' in manager:
             google_email.append(str(manager))
@@ -1974,7 +1974,7 @@ def program_kick_off(request):
 
     # timezone fetching
     #timezone = Timezone.objects.values_list('zone_name', 'time_value')
-
+    
     CodeTypevalues = CodeType.objects.all()
     final_codetypes = []
     for item in CodeTypevalues:
@@ -2318,7 +2318,7 @@ def kickoff_export_detail(request, program_id):
             bcc_list.pop(-1)
         get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
         tagteamkickoff.bcc_tagteam.add(*get_bcc_list)
-
+        
 
         tagteamkickoff.save()
 
@@ -2326,7 +2326,7 @@ def kickoff_export_detail(request, program_id):
         set_off_bcc_mails = list()
         for each_mail in bcc_list:
             set_off_bcc_mails.append(str(each_mail))
-
+       
         latest_program = KickoffTagteam.objects.filter(tagteam_added_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(get_kickoff_record.id)
 
@@ -2370,11 +2370,11 @@ def kickoff_export_detail(request, program_id):
                                                                   'type_of_connect_time': type_of_connect_time,
                                                                   'type_of_connect_timezone':type_of_connect_timezone,
                                                                   'matrix': json.dumps(success_matrix_dict),
-                                                                  'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2,
-                                                                  'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5,
-                                                                  'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3,
+                                                                  'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
+                                                                  'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
+                                                                  'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
                                                                   'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'media_url': media_url,
-                                                                  'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4,
+                                                                  'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4, 
                                                                   'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
                                                                   'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5,
                                                                   'all_mail': google_email,
@@ -2505,6 +2505,11 @@ def inventory_handler(request):
             emp_stat = True
         else:
             emp_stat = False
+        dev_stat = data.get('deviceStatus')
+        if dev_stat == 'assigned':
+            dev_stat = True
+        else:
+            dev_stat = False
         cbi.employee_status = emp_stat
         cbi.device_status = data.get('deviceStatus')
         cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
@@ -2537,6 +2542,11 @@ def inventory_handler(request):
             emp_stat = True
         else:
             emp_stat = False
+        dev_stat = data.get('deviceStatus')
+        if dev_stat == 'Assigned':
+            dev_stat = True
+        else:
+            dev_stat = False
         cbi.employee_status = emp_stat
         cbi.device_status = data.get('deviceStatus')
         issued_on = data.get('issuedOn')
@@ -2566,6 +2576,10 @@ def download_inventory_details(request):
             i.employee_status = 'Active'
         else:
             i.employee_status = 'Inactive'
+        if i.device_status:
+            i.device_status = 'Active'
+        else:
+            i.device_status = 'Returned'
         writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
     return response
 
@@ -2617,7 +2631,7 @@ def export_slot_utilization(request):
 
             for data in shopp_exclude_na:
                 data['date'] = from_date.date() - timedelta(days=1)
-                shopp_result.append(data)
+                shopp_result.append(data) 
             for data in shop_includ_na:
                 data['date'] = from_date.date() - timedelta(days=1)
                 shopp_result.append(data)
@@ -2637,7 +2651,7 @@ def export_slot_utilization(request):
                 initializer = "run-loop"
 
             from_date = from_date + timedelta(days=1)
-
+        
         tag_and_shopping_values_to_write = list()
         for data in tag_result_final:
             for each_dict in data:
@@ -2667,12 +2681,12 @@ def export_slot_utilization(request):
                     u_data['Availability Count'] = sum(sum_avalibilty)
                     u_data['Booked Count'] = sum(booked_availabilty)
                 unic_list.append(u_data)
-            summary_with_ratio = sorted([dict(t) for t in set([tuple(data.items()) for data in unic_list])])
+            summary_with_ratio = sorted([dict(t) for t in set([tuple(data.items()) for data in unic_list])])  
             for each in summary_with_ratio:
                 if each['Availability Count'] > 0:
                     each['Ratio'] =round( (((float(each['Booked Count']) / each['Availability Count']) )*100), 2)
                 else:
-                    each['Ratio'] = "-"
+                    each['Ratio'] = "-"      
             excel_header = ['Team Name' , 'Availability Count', 'Booked Count', 'Ratio']
             filename = "Utiliztion report summary"
             path = write_utilization_report_to_csv(summary_with_ratio, excel_header, filename)
@@ -2694,12 +2708,12 @@ def export_slot_utilization(request):
 
             regalix_team_posted = request.POST.getlist('selectedTeams')
             regalix_teams = RegalixTeams.objects.filter(id__in=regalix_team_posted)
-
+            
             appointments_list = Availability.objects.filter(
                                 date_in_utc__range=(utc_start_date, utc_end_date),
                                 team__in=regalix_teams)
-
-            monday_values = []
+            
+            monday_values = [] 
             Tuesday_values = []
             Wednusday_values = []
             Thursday_values = []
@@ -2715,8 +2729,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     monday_values.append(data)
                 if ist_value.weekday() == 1: # Tuesday
@@ -2724,8 +2738,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Tuesday_values.append(data)
                 if ist_value.weekday() == 2: # Wednesday
@@ -2733,17 +2747,17 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Wednusday_values.append(data)
                 if ist_value.weekday() == 3: # Thursday
                     data['DAY'] = "THURSDAY"
-                    data['TEAM'] = each.team.team_name
+                    data['TEAM'] = each.team.team_name 
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Thursday_values.append(data)
                 if ist_value.weekday() == 4: # Friday
@@ -2751,8 +2765,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Friday_values.append(data)
                 if ist_value.weekday() == 5: # Satdurday
@@ -2760,8 +2774,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Satdrady_values.append(data)
                 if ist_value.weekday() == 6: # Sunday
@@ -2769,8 +2783,8 @@ def export_slot_utilization(request):
                     data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
-                    data['AVAILABLE'] = each.availability_count
-                    data['BOOKED'] = each.booked_count
+                    data['SLOTS OPENED'] = each.availability_count
+                    data['SLOTS BOOKED'] = each.booked_count
                     data['UNIC KEY'] = str(data['TEAM'])+"_"+str(data['TIME'])+"_"+str(data['DAY'])
                     Sunday_values.append(data)
 
@@ -2797,10 +2811,10 @@ def export_slot_utilization(request):
                 sunday = total_available_booked_time_based(Sunday_values)
                 result = result + sunday
 
-            excel_header = ['TEAM' , 'DAY', 'TIME', 'AVAILABLE', 'BOOKED', 'RATIO']
+            excel_header = ['TEAM' , 'DAY', 'TIME', 'SLOTS OPENED', 'SLOTS BOOKED', 'RATIO']
             from_date_str = time.strftime(posted_from_date)
             to_date_str = time.strftime(posted_to_date)
-            filename = "Utiliztion Report Summary (DAY & TIME)"
+            filename = "Utiliztion Report Summary by DAY & TIME"
             path = write_utilization_report_to_csv(result, excel_header, filename)
             response = DownloadLeads.get_downloaded_file_response(path)
             return response
@@ -2821,7 +2835,7 @@ def write_utilization_report_to_csv(result, collumn_attr, filename):
     return path
 
 def total_available_booked_time_based(data_sent):
-    unic_list = []
+    unic_list = []      
     for data in data_sent:
         u_data = {}
         sum_avalibilty = list()
@@ -2831,22 +2845,22 @@ def total_available_booked_time_based(data_sent):
                 u_data['TEAM'] = data['TEAM']
                 u_data['TIME'] = data['TIME']
                 u_data['DAY'] = data['DAY']
-                sum_avalibilty.append(value['AVAILABLE'])
-                booked_availabilty.append(value['BOOKED'])
-            u_data['AVAILABLE'] = sum(sum_avalibilty)
-            u_data['BOOKED'] = sum(booked_availabilty)
+                sum_avalibilty.append(value['SLOTS OPENED'])
+                booked_availabilty.append(value['SLOTS BOOKED'])
+            u_data['SLOTS OPENED'] = sum(sum_avalibilty)
+            u_data['SLOTS BOOKED'] = sum(booked_availabilty)
             unic_list.append(u_data)
     summary = sorted([dict(values) for values in set([tuple(data.items()) for data in unic_list])])
     for each in summary:
-        if each['AVAILABLE'] > 0:
-            each['RATIO'] =round( (((float(each['BOOKED']) / each['AVAILABLE']) )*100), 2)
+        if each['SLOTS OPENED'] > 0:
+            each['RATIO'] =round( (((float(each['SLOTS BOOKED']) / each['SLOTS OPENED']) )*100), 2)
         else:
             each['RATIO'] = "-"
-    total_booked = sum(item['BOOKED'] for item in summary)
-    total_available = sum(item['AVAILABLE'] for item in summary)
+    total_booked = sum(item['SLOTS BOOKED'] for item in summary)
+    total_available = sum(item['SLOTS OPENED'] for item in summary)
     total_count_dict = {}
-    total_count_dict['AVAILABLE'] = "TOTAL-AVAILABLE: " + str(total_available)
-    total_count_dict['BOOKED'] =  "TOTAL-BOOKED: " + str(total_booked)
+    total_count_dict['SLOTS OPENED'] = "TOTAL-OPENED: " + str(total_available) 
+    total_count_dict['SLOTS BOOKED'] =  "TOTAL-BOOKED: " + str(total_booked)
     if total_available > 0:
         total_count_dict['RATIO'] = "TOTAL-RATIO: " + str(round( (((float(total_booked) / total_available) )*100), 2))
     else:
