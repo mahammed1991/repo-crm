@@ -1,4 +1,5 @@
 // lead form controls
+var argos = false
     $("#appointmentCheck1" ).click(function() {
       $( "#tag_appointment" ).animate({
       height: "toggle"
@@ -226,9 +227,10 @@
 /* end of RLSA bulk implimentation code*/
 
     /*Shopping Comapaign changes code starts here*/
-
     $('#Shopping_Campaign_Setup').click(function(){
       // Clearing current div values
+      argos = false;
+      $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
       $('#mcIdCheck').prop('checked', true);
       $('#shopping_trobleshooting_url').val('');
@@ -256,6 +258,8 @@
 
     $('#Shopping_Trobleshoot').click(function(){
       // Clearing all divs values
+      argos = false;
+      $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
       $('#mcIdCheck').prop('checked', true);
       $('#shopping_trobleshooting_url').val('');
@@ -283,6 +287,9 @@
 
      $('#Shopping_argos').click(function(){
       // Clearing current div values
+      argos = true;
+      $("#shoppingTerms").hide();
+      $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
       $('#mcIdCheck').prop('checked', true);
       $('#shopping_trobleshooting_url').val('');
@@ -518,10 +525,13 @@ function setLocationsForRegion(newLocations, countryIds){
    //shopping check 
     $("#is_shopping_policies" ).click(function() {
         $(".shopping-policy").removeClass('error-box');
-        $( "#shoppingTerms" ).animate({
-        height: "toggle"
-        }, 300, function() {
-        });
+        if(!argos){
+            $( "#shoppingTerms" ).animate({
+                height: "toggle"
+                }, 300, function() {
+            });
+        }
+
     }); 
 
 
@@ -740,7 +750,7 @@ function validatethis(frm) {
             // Mandatory Fields - #shoppping_argos_categories, #mc_id, #auth_case_id, #products_count,
             // #sheets_link, #area
             //Validate Business Type Validation
-            var argos_category = document.getElementById('shoppping_argos_categories');
+            var argos_category = document.getElementById('shopping_argos_categories');
             var mc_id = document.getElementById('argos_mc_id');
             var auth_case_id = document.getElementById('auth_case_id');
             var products_count = document.getElementById('products_count');

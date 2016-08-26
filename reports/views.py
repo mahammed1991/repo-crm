@@ -254,7 +254,7 @@ def get_selected_report_view(request):
             elif str(report_timeline[0]) == 'this_quarter':
                 tag = "Month On Month Trends"
 
-        report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type, 
+        report_details = {'report_split_detail': report_split_detail, 'report_timeline': report_timeline, 'report_type': report_type, 'report_view_type': report_view_type,
                           'lead_status_summary': lead_status_summary, 'lead_status_analysis_table_grp': sorted(lead_status_analysis_table_grp),
                           'pie_chart_dict': pie_chart_dict, 'timeline_chart_details': timeline_chart_details, 'tag': tag, 'code_types': code_types,
                           'table_header': settings.LEAD_STATUS_DICT, 'sort_keys': sorted(timeline_chart_details)}
@@ -574,7 +574,7 @@ def get_wpp_reports(request):
         wpp_report_detail['bar_chart_data'] = bar_chart_data
         wpp_report_details = {'reports': wpp_report_detail,
                               'report_type': report_type, 'report_timeline': report_timeline}
-        
+
         del wpp_report_details['reports']['wpp_lead_status_analysis']['nominated_leads']
         return HttpResponse(json.dumps(wpp_report_details))
 
@@ -1198,7 +1198,7 @@ def meeting_minutes(request):
         meeting_minutes.google_team = request.POST.get('google_team')
 
         meeting_minutes.meeting_audience = request.POST.get('meeting_audience')
-        
+
         if request.POST.get('meeting_audience') == 'internal_meeting':
             meeting_minutes.region = request.POST.get('internal_region')
             meeting_minutes.location = request.POST.get('internal_location')
@@ -1530,7 +1530,7 @@ def link_last_meeting(request, last_id):
     key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 'action_item_15', 'owner_15', 'action_date_15',])}
     action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
 
-    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5', 'topic_6', 'highlight_6', 'topic_7', 'highlight_7', 'topic_8', 'highlight_8', 'topic_9', 'highlight_9', 'topic_10', 'highlight_10', 'topic_11', 'highlight_11', 'topic_12', 'highlight_12', 'topic_13', 'highlight_13', 'topic_14', 'highlight_14', 'topic_15', 'highlight_15',])}    
+    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5', 'topic_6', 'highlight_6', 'topic_7', 'highlight_7', 'topic_8', 'highlight_8', 'topic_9', 'highlight_9', 'topic_10', 'highlight_10', 'topic_11', 'highlight_11', 'topic_12', 'highlight_12', 'topic_13', 'highlight_13', 'topic_14', 'highlight_14', 'topic_15', 'highlight_15',])}
     key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
 
     return render(request, 'reports/meeting_minutes.html', {'submit_disabled': submit_disabled,
@@ -1545,11 +1545,11 @@ def link_last_meeting(request, last_id):
                                                             'key_points_dict': json.dumps(key_points_dict), 'attendees_email_list': attendees_email_list,
                                                             'subject_timeline': json.dumps(subject_timeline), 'last_meeting': last_meeting,
                                                             'meeting_date': meeting_date, 'meeting_time': meeting_time, 'next_meeting_date': next_meeting_date,
-                                                            'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
-                                                            'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
-                                                            'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
-                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience, 
-                                                            'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4, 
+                                                            'next_meeting_time': next_meeting_time, 'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2,
+                                                            'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5,
+                                                            'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3,
+                                                            'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'bcc_email_list': bcc_email_list, 'media_url': media_url, 'meeting_audience': meeting_audience,
+                                                            'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4,
                                                             'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
                                                             'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5})
 
@@ -1631,7 +1631,7 @@ def export_action_items(request):
 
             attendees_list.append(str(update_status.meeting_minutes.google_poc))
             attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
-            
+
             remove_list = ['babla@regalix-inc.com', 'tkhan@regalix-inc.com','vsharan@regalix-inc.com','nvohra@regalix-inc.com','nsethi@regalix-inc.com']
             if request.POST.get('status') == 'Closed':
                 attendees_list = list(set(attendees_list) - set(remove_list))
@@ -1639,9 +1639,9 @@ def export_action_items(request):
                 mail_to = attendees_list
             else:
                 mail_to = attendees_list
-            
 
- 
+
+
             if request.POST.get('status') == 'Closed':
                 status_changed_by = update_status.closed_by
             elif request.POST.get('status') == 'Reopened':
@@ -1683,12 +1683,12 @@ def export_action_items(request):
                 mail_from = 'PICASSO Build Team'
             else:
                 mail_from = 'PICASSO Team'
-            
+
             bcc = set(bcc_email_list)
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
-        
+
         if program != 'all':
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
                                                             program=program).values_list('id', flat=True)
@@ -1943,11 +1943,11 @@ def program_kick_off(request):
     for loc in locations:
             location_name = str(loc.location_name)
             location_based_zones[location_name] = [{'zone_name':str(tz['zone_name']), 'time_value':str(tz['time_value'])} for tz in loc.time_zone.values()]
-    
+
     google_email = list()
     all_mail = list()
     managers = User.objects.values_list('email', flat=True)
-    bcc_field = managers 
+    bcc_field = managers
     for manager in managers:
         if 'google.com' in manager:
             google_email.append(str(manager))
@@ -1974,7 +1974,7 @@ def program_kick_off(request):
 
     # timezone fetching
     #timezone = Timezone.objects.values_list('zone_name', 'time_value')
-    
+
     CodeTypevalues = CodeType.objects.all()
     final_codetypes = []
     for item in CodeTypevalues:
@@ -2318,7 +2318,7 @@ def kickoff_export_detail(request, program_id):
             bcc_list.pop(-1)
         get_bcc_list = User.objects.filter(email__in=bcc_list).values_list('id', flat=True)
         tagteamkickoff.bcc_tagteam.add(*get_bcc_list)
-        
+
 
         tagteamkickoff.save()
 
@@ -2326,7 +2326,7 @@ def kickoff_export_detail(request, program_id):
         set_off_bcc_mails = list()
         for each_mail in bcc_list:
             set_off_bcc_mails.append(str(each_mail))
-       
+
         latest_program = KickoffTagteam.objects.filter(tagteam_added_by=request.user.email).last()
         acces_link = request.META['wsgi.url_scheme']+'://'+request.META['HTTP_HOST']+"/reports/kickoff-export-detail/"+str(get_kickoff_record.id)
 
@@ -2370,11 +2370,11 @@ def kickoff_export_detail(request, program_id):
                                                                   'type_of_connect_time': type_of_connect_time,
                                                                   'type_of_connect_timezone':type_of_connect_timezone,
                                                                   'matrix': json.dumps(success_matrix_dict),
-                                                                  'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2, 
-                                                                  'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5, 
-                                                                  'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3, 
+                                                                  'attach_link_1': attach_link_1, 'attach_link_2': attach_link_2,
+                                                                  'attach_link_3': attach_link_3, 'attach_link_4': attach_link_4, 'attach_link_5': attach_link_5,
+                                                                  'attach_file_1': attach_file_1, 'attach_file_2': attach_file_2, 'attach_file_3': attach_file_3,
                                                                   'attach_file_4': attach_file_4, 'attach_file_5': attach_file_5, 'media_url': media_url,
-                                                                  'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4, 
+                                                                  'attach_file_name_1': attach_file_name_1, 'attach_file_name_2': attach_file_name_2, 'attach_file_name_3': attach_file_name_3, 'attach_file_name_4': attach_file_name_4,
                                                                   'attach_file_name_5': attach_file_name_5, 'link_file_name_1': link_file_name_1, 'link_file_name_2': link_file_name_2,
                                                                   'link_file_name_3': link_file_name_3, 'link_file_name_4': link_file_name_4, 'link_file_name_5': link_file_name_5,
                                                                   'all_mail': google_email,
@@ -2460,6 +2460,9 @@ def inventory_handler(request):
                     returned_on = rec.returned_on
                     if returned_on:
                         returned_on = time.mktime(returned_on.timetuple())
+                    issued_on = rec.issued_on
+                    if issued_on:
+                        issued_on = time.mktime(issued_on.timetuple())
                     da = {
                         'employee_alias': rec.employee_alias,
                         'employee_name': rec.employee_name,
@@ -2470,7 +2473,7 @@ def inventory_handler(request):
                         'employee_status': rec.employee_status,
                         'device_status': rec.device_status,
                         'returned_on': returned_on,
-                        'issued_on': time.mktime(rec.issued_on.timetuple()),
+                        'issued_on': issued_on,
                         'id': rec.id
                     }
                     data.append(da)
@@ -2502,13 +2505,8 @@ def inventory_handler(request):
             emp_stat = True
         else:
             emp_stat = False
-        dev_stat = data.get('deviceStatus')
-        if dev_stat == 'assigned':
-            dev_stat = True
-        else:
-            dev_stat = False
         cbi.employee_status = emp_stat
-        cbi.device_status = dev_stat
+        cbi.device_status = data.get('deviceStatus')
         cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
         try:
             cbi.save()
@@ -2539,14 +2537,11 @@ def inventory_handler(request):
             emp_stat = True
         else:
             emp_stat = False
-        dev_stat = data.get('deviceStatus')
-        if dev_stat == 'Assigned':
-            dev_stat = True
-        else:
-            dev_stat = False
         cbi.employee_status = emp_stat
-        cbi.device_status = dev_stat
-        cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
+        cbi.device_status = data.get('deviceStatus')
+        issued_on = data.get('issuedOn')
+        if issued_on and issued_on != "-":
+            cbi.issued_on = datetime.strptime(issued_on, "%d-%m-%Y")
         returned_on = data.get('returnedOn', None)
         if returned_on and returned_on != "-":
             cbi.returned_on = datetime.strptime(returned_on, "%d-%m-%Y")
@@ -2562,20 +2557,18 @@ def download_inventory_details(request):
     response['Content-Disposition'] = 'attachment; filename="InventoryCountReport'+str(datetime.now().date())+'.csv"'
     data = ChromebookInventory.objects.all().order_by('employee_name')
     writer = csv.writer(response)
-    writer.writerow(['Name','LDAP','Alias','Project','Device type','MAC ID','Employ Status','Device Status','Issued on','Returned'])
+    writer.writerow(['Name','LDAP','Alias','Project','Device type','MAC ID','Employ Status','Device Status','Issued on','Returned On'])
     for i in data:
-        issued = str(i.issued_on)
-        i.issued_on = datetime.strptime(issued, '%Y-%m-%d %H:%M:%S').date()
+        issued = i.issued_on
+        if issued:
+            i.issued_on = datetime.strptime(str(issued), '%Y-%m-%d %H:%M:%S').date()
         if i.employee_status:
             i.employee_status = 'Active'
         else:
             i.employee_status = 'Inactive'
-        if i.device_status:
-            i.device_status = 'Active'
-        else:
-            i.device_status = 'Returned'
         writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
     return response
+
 
 
 def export_slot_utilization(request):
@@ -2597,15 +2590,15 @@ def export_slot_utilization(request):
         while initializer == "run-loop":
             tag_result = list()
             shopp_result = list()
-            
+
             tag_exclud_na = available_counts_booked_specific(['TAG'], from_date)
-           
+
             tag_includ_na = available_counts_booked_specific_in_na(['TAG'], from_date)
-           
+
             shopp_exclude_na = available_counts_booked_specific(['SHOPPING'], from_date)
-            
+
             shop_includ_na = available_counts_booked_specific_in_na(['SHOPPING'], from_date)
-            
+
             for data in tag_exclud_na:
                 data['date'] = from_date.date() - timedelta(days=1)
                 tag_result.append(data)
@@ -2624,7 +2617,7 @@ def export_slot_utilization(request):
 
             for data in shopp_exclude_na:
                 data['date'] = from_date.date() - timedelta(days=1)
-                shopp_result.append(data) 
+                shopp_result.append(data)
             for data in shop_includ_na:
                 data['date'] = from_date.date() - timedelta(days=1)
                 shopp_result.append(data)
@@ -2644,7 +2637,7 @@ def export_slot_utilization(request):
                 initializer = "run-loop"
 
             from_date = from_date + timedelta(days=1)
-        
+
         tag_and_shopping_values_to_write = list()
         for data in tag_result_final:
             for each_dict in data:
@@ -2674,12 +2667,12 @@ def export_slot_utilization(request):
                     u_data['Availability Count'] = sum(sum_avalibilty)
                     u_data['Booked Count'] = sum(booked_availabilty)
                 unic_list.append(u_data)
-            summary_with_ratio = sorted([dict(t) for t in set([tuple(data.items()) for data in unic_list])])  
+            summary_with_ratio = sorted([dict(t) for t in set([tuple(data.items()) for data in unic_list])])
             for each in summary_with_ratio:
                 if each['Availability Count'] > 0:
                     each['Ratio'] =round( (((float(each['Booked Count']) / each['Availability Count']) )*100), 2)
                 else:
-                    each['Ratio'] = "-"      
+                    each['Ratio'] = "-"
             excel_header = ['Team Name' , 'Availability Count', 'Booked Count', 'Ratio']
             filename = "Utiliztion report summary"
             path = write_utilization_report_to_csv(summary_with_ratio, excel_header, filename)
@@ -2701,12 +2694,12 @@ def export_slot_utilization(request):
 
             regalix_team_posted = request.POST.getlist('selectedTeams')
             regalix_teams = RegalixTeams.objects.filter(id__in=regalix_team_posted)
-            
+
             appointments_list = Availability.objects.filter(
                                 date_in_utc__range=(utc_start_date, utc_end_date),
                                 team__in=regalix_teams)
-            
-            monday_values = [] 
+
+            monday_values = []
             Tuesday_values = []
             Wednusday_values = []
             Thursday_values = []
@@ -2746,7 +2739,7 @@ def export_slot_utilization(request):
                     Wednusday_values.append(data)
                 if ist_value.weekday() == 3: # Thursday
                     data['DAY'] = "THURSDAY"
-                    data['TEAM'] = each.team.team_name 
+                    data['TEAM'] = each.team.team_name
                     data['DATE and TIME in IST'] = each.date_in_utc + timedelta(hours=5, minutes=30,)
                     data['TIME'] = data['DATE and TIME in IST'].time()
                     data['AVAILABLE'] = each.availability_count
@@ -2828,7 +2821,7 @@ def write_utilization_report_to_csv(result, collumn_attr, filename):
     return path
 
 def total_available_booked_time_based(data_sent):
-    unic_list = []      
+    unic_list = []
     for data in data_sent:
         u_data = {}
         sum_avalibilty = list()
@@ -2852,7 +2845,7 @@ def total_available_booked_time_based(data_sent):
     total_booked = sum(item['BOOKED'] for item in summary)
     total_available = sum(item['AVAILABLE'] for item in summary)
     total_count_dict = {}
-    total_count_dict['AVAILABLE'] = "TOTAL-AVAILABLE: " + str(total_available) 
+    total_count_dict['AVAILABLE'] = "TOTAL-AVAILABLE: " + str(total_available)
     total_count_dict['BOOKED'] =  "TOTAL-BOOKED: " + str(total_booked)
     if total_available > 0:
         total_count_dict['RATIO'] = "TOTAL-RATIO: " + str(round( (((float(total_booked) / total_available) )*100), 2))

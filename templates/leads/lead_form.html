@@ -237,15 +237,6 @@
      <!-- start RLSA bulk implimentation code -->
        <div class="rlsa-impl-section rlsa-codes" id="rlsa-impl-initial1">
             <div class="std-sub-title row">RLSA BULK implementation(No Call)</div>
-            <div class="row" style="padding-left: 35px;">
-              <span style="margin-left: -20px;"><strong>Pre-Submission Checkpoints:</strong>
-              <ul style="margin-left: 25px;">
-              <li style="list-style-type: disc;"><span >Obtain Authorisation from your advertiser using </span><span style=" font-weight: 700;">only</span> <a href="https://goo.gl/UNWxAo" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">these templates</span></a></li>
-              <li style="list-style-type: disc;"><span >E-mail that authorisation e-mail to </span><a href="mailto:implementation-support@google.com" target="_blank"><span style=" color: rgb(17, 85, 204); font-weight: 700; text-decoration: underline;">implementation-support@google.com</span></a><span> with </span><span style=" font-weight: 700;">[RLSA Authorisation]</span><span> in the subject line</span></li>
-              <li style="list-style-type: disc;"><span >Please ensure that you are aware of the </span><a href="{% url 'main.views.rlsa_limitations' %}" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">TagTeam’s RLSA Support Boundaries</span></a></li>
-              <li style="list-style-type: disc;"><span >Please ensure that the website meets the RLSA policies specified </span><a href="https://support.google.com/adwordspolicy/answer/6258407" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">here</span></a></li></ul>
-              </span>
-            </div>
              <div class="row" style="margin-bottom: 12px;">
                  <div class="col-md-12"><strong>
                     Add RLSA to:</strong>
@@ -797,6 +788,10 @@
         </div>
       </div>
       <div class="row shoppingInfo">
+        <div class="col-md-12 avg_time" style="">
+          <strong>Tasks Undertaken: </strong> Creating and configuring Google Mercahnt center, Creating and uploading data feeds and Creating Shopping campaigns.
+        </div>
+
         <div class="col-md-4">
         <input id="rbid" name="rbid" class="form-control" type="text" placeholder="Recommended Bid">
         <label>Recommended Mobile Bid Modifier</label>
@@ -831,6 +826,10 @@
 
       </div>
       <div id="shopping_trobleshooting" style="display:none;">
+        <div class="col-md-12 avg_time" style="">
+          <strong>Tasks Undertaken: </strong> Error rectification in the feed, adding more products in the feed, campaign management
+        </div>
+
         <div class="row" style="margin-bottom:10px;">
           <div class="col-md-12 " >
            <ul>
@@ -840,6 +839,7 @@
             </ul>
           </div>
         </div>
+
         <div class="row">
           <div class="col-md-12">
           </div>
@@ -866,16 +866,43 @@
       </div>
       <!-- Project Argos -->
       <div id="shopping_feed_optimisation" style="display:none;">
+        <div class="col-md-12 avg_time" style="">
+          <strong>Tasks Undertaken: </strong> Optimizing attributes like Title, Google product category and product type
+        </div>
+
         <div class="row" style="margin-bottom:10px;">
           <div class="col-md-12" >
            <p id="tatMsg" style="border-radius: 20px;text-align: center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 100%;margin-top: -10px;">
              Approximate TAT for this lead will be 30-Aug-2016</b> </p>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-          </div>
+        <div class="row" style="padding-left: 35px;">
+            <span style="margin-left: -20px;"><strong>Pre-requisites for Feed Optimization Argos:</strong>
+              <ul style="margin-left: 25px;">
+                  <li style="list-style-type: disc;"><span> We optimize data feeds which are made using Google Spreadsheets only. </span></li>
+                  <li style="list-style-type: disc;"><span> In case of CSV data feed, please upload it to your drive and share the link with us </span></li>
+                  <li style="list-style-type: disc;"><span> In case the advertiser is using an xml feed which needs to be optimized, Use </span><a href="https://pitchnow.corp.google.com/pitches/100697" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">Go/smb-feeds</span></a></li>
+                  <li style="list-style-type: disc;"><span> Product limitation: </span>
+                        <table style='border:1px solid black'>
+                          <tr style='border:1px solid black'>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>Method of Feed creation</td>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>API</td>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>XML</td>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>GSS/CSV</td>
+                          </tr>
+                          <tr style='border:1px solid black'>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>Expected number of products in the feed</td>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>30,000+</td>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>20,000-30,000</td>
+                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'><20,000</td>
+                          </tr>
+                        </table>
+                  </li>
+                  <li style="list-style-type: disc;"><span> Turn Around Time on feed optimization depends on number of products on the data feed and Number of attributes missing on the feed. </span></li>
+              </ul>
+            </span>
         </div>
+
           <div class="row">
             <div class="col-md-3">
               <select class="form-control bgicon" id="shopping_argos_categories" title="Select Business Type" name="shopping_argos_categories">
@@ -885,7 +912,7 @@
                 <option value="Baby & Toddler"> Baby & Toddler </option>
                 <option value="Business & Industrial"> Business & Industrial </option>
                 <option value="Electronics"> Electronics </option>
-                <option value="Clothing & Accessories"> Clothing & Accessories </option>
+                <option value="Apparels & Accessories">Apparels & Accessories </option>
                 <option value="Cameras & Optics"> Cameras & Optics </option>
                 <option value="Food, Beverages & Tobacco"> Food, Beverages & Tobacco </option>
                 <option value="Furniture"> Furniture </option>
