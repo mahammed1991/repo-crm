@@ -880,12 +880,12 @@ def update_leads_reports(lead):
 
 
 #+++++++++++ exclude overlapping regons +++++++++++++++++++
-def available_counts_booked_specific(process_type , date=None):
+def available_counts_booked_specific(process_type , date=None, overall=None):
     """ taking values from today 2AM to previous 3AM exclude_north_america"""
-    if date == None:
-        today_morning = datetime.today() #date value for dailr cron job email triggering
+    if date:
+        today_morning = date  # date value for daily cron job email triggering,Utilization report downloading
     else:
-        today_morning = date # date value comming from reports views page
+        today_morning = datetime.today() # date value comming from reports views page
     
     today = today_morning.replace(hour=2, minute=00, second=00)
     
@@ -916,16 +916,20 @@ def available_counts_booked_specific(process_type , date=None):
             if item2['team_name'] == item['team__team_name']:
                 item2['Availability Count'] = item['Availability_count']
                 item2['Booked Count'] = item['booked_count']
+   
+    if overall:
+        available_counts_teams = without_appointment_lead_fetching(process_type, available_counts_teams)
+        return available_counts_teams
 
     return available_counts_teams
 
 # +++++++++++++++++ include overlapping regions ++++++++++++++++++++++
-def available_counts_booked_specific_in_na(process_type , date=None):
+def available_counts_booked_specific_in_na(process_type , date=None, overall=None):
     """ previous day 4.30PM to today 7.30AM only for north america   """
-    if date == None:
-        date_for_north_america = datetime.today() #date value for dailr cron job email triggering
+    if date:
+        date_for_north_america = date # date value comming from reports views page, Utilization report downloading
     else:
-        date_for_north_america = date # date value comming from reports views page
+        date_for_north_america = datetime.today() #date value for daily cron job email triggering
 
     today_morning = date_for_north_america - timedelta(days=1)
     today = today_morning.replace(hour=16, minute=30, second=00)
@@ -956,6 +960,10 @@ def available_counts_booked_specific_in_na(process_type , date=None):
             if item2['team_name'] == item['team__team_name']:
                 item2['Availability Count'] = item['Availability_count']
                 item2['Booked Count'] = item['booked_count']
+    
+    if overall: 
+        available_counts_teams = without_appointment_lead_fetching(process_type, available_counts_teams)
+        return available_counts_teams
 
     return available_counts_teams
 
@@ -1204,4 +1212,127 @@ def fetching_future_utilized_slots():
     if len(tag_final) > 0 or len(shopping_final) > 0:
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
+
+@kronos.register('30 4 * * 2-6')
+def slots_open_booked_overall():
+    tag_bookings_exclude_na = available_counts_booked_specific(['TAG'], date=None, overall=True)
+    shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'], date=None, overall=True)
+    tag_bookings_in_na = available_counts_booked_specific_in_na(['TAG'], date=None, overall = True)
+    shopping_bookings_in_na = available_counts_booked_specific_in_na(['SHOPPING'], date=None, overall=True)
+
+    tag_all = list()
+    shopping_all = list()
+
+    tag_all = list(tag_bookings_exclude_na) + list(tag_bookings_in_na)
+    shopping_all = list(shopping_bookings_exclude_na) + list(shopping_bookings_in_na)
+
+    tag_final = ratio_calculator(tag_all)
+    tag_final.sort()
+    shopping_final = ratio_calculator(shopping_all)
+    shopping_final.sort()
+
+    tag_total_sum = total_sum_calculater(tag_all)
+    tag_total_sum_sorted = sorted(tag_total_sum.items())
+    shopping_total_sum = total_sum_calculater(shopping_all)
+    shopping_total_sum_sorted = sorted(shopping_total_sum.items())
+    
+    # mailing functionaliteis
+    specific_date = datetime.today() - timedelta(days=1)
+    specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
+    specific_date = specific_date.date()
+    logging.info("OVERALL UTILIZATION DASHBOARD MAILING FUNCTION")
+    mail_subject = "OVERALL [TAG & SHOPPING] UTILIZATION DASHBOARD-%s" % (specific_date)
+    mail_body = get_template('reports/email_templates/slot_detail_overall.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
+    mail_from = 'Google Overall Utilized <google@regalix-inc.com>'
+    mail_to = ['portalsupport@regalix-inc.com', 'srinivasans@regalix-inc.com']
+    bcc = set([])
+    attachments = list()
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+def ratio_calculator(data_all):
+    result_final = list()
+    for ordering in data_all:
+        keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count','Ratio', 'lead_w_o_appoinment'])}
+        each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+        result_final.append(each_one)
+
+    for ele in result_final:
+
+        if ( ele['Availability Count'] > 0):
+            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
+            ele['Ratio'] = ("%.2f"%value +" %" )
+            sum_booked_and_leads_w_o_appointment = int(ele['Booked Count']) + int(ele['lead_w_o_appoinment'])
+            ele['all Ratio'] = str(round((((((ele['Booked Count']) + (ele['lead_w_o_appoinment']))/ele['Availability Count']) )*100), 2))+" %"
+        else:
+            if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
+                ele['Ratio'] = "-"
+                ele['all Ratio'] = "-"
+
+    return result_final
+
+def total_sum_calculater(data_to_sum):
+    total_sum = dict()
+    total_sum['Availability_count'] =  sum(item['Availability Count'] for item in data_to_sum)
+    total_sum['Booked Count'] = sum(item['Booked Count'] for item in data_to_sum)
+    total_sum['Total lead w o appoinment'] = sum(item['lead_w_o_appoinment'] for item in data_to_sum)
+    
+    if  total_sum['Availability_count'] > 0:
+        limiting_the_float = ((float(total_sum['Booked Count'])/total_sum['Availability_count'])*100) 
+        total_sum['Total ratio'] = ("%.2f" %limiting_the_float +" %" )
+        limiting_the_float_ovarall = ((float(total_sum['Booked Count'] + total_sum['Total lead w o appoinment'] )/total_sum['Availability_count'])*100) 
+        total_sum['Total all ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
+    else:
+        total_sum['Total ratio'] = '-'
+        total_sum['Total all ratio'] = "-"
+
+    return total_sum
+
+def without_appointment_lead_fetching(process_type, available_counts_teams):
+        
+    time_zone = 'IST'
+    selected_tzone = Timezone.objects.get(zone_name=time_zone)
+
+    team_names = []
+    for each_value in available_counts_teams:
+        team_names.append(each_value.get('team_name'))
+
+    w_o_appointment_date = datetime.today() - timedelta(days=1) # OS running in UTC time
+    from_date_w_o_appointment = w_o_appointment_date.replace(hour=0, minute=00, second=00)
+    to_date_w_o_appointment = w_o_appointment_date.replace(hour=23, minute=59, second=00)
+    from_date_w_o_appointment_utc = SalesforceApi.get_utc_date(from_date_w_o_appointment, selected_tzone.time_value)
+    to_date_w_o_appointment_utc = SalesforceApi.get_utc_date(to_date_w_o_appointment, selected_tzone.time_value)
+    team_and_w_o_leads_list = list() 
+
+    for each_team in team_names:
+        team_and_w_o_lead_dict = dict()
+        
+        if process_type[0] =='SHOPPING':
+            all_active_teams = RegalixTeams.objects.filter(is_active=True,team_name=each_team, process_type='SHOPPING')
+            all_active_team_country = all_active_teams.values_list('location__location_name')
+            all_without_appointment_active_country = [ "%s" % data for data in all_active_team_country ]
+            shopping_leads_without_appointmnet = Leads.objects.filter(created_date__range=[from_date_w_o_appointment_utc, to_date_w_o_appointment_utc], \
+                    type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', ], country__in=all_without_appointment_active_country)
+            total_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(appointment_date__isnull=False).count()
+            #print each_team, total_leads_without_appointmnet_count
+
+        elif process_type[0] == 'TAG':
+            all_active_teams = RegalixTeams.objects.filter(is_active=True,team_name=each_team, process_type='TAG')
+            all_active_team_country = all_active_teams.values_list('location__location_name')
+            all_without_appointment_active_country = [ "%s" % data for data in all_active_team_country ]
+            tag_leads_without_appointment = Leads.objects.filter(created_date__range=[from_date_w_o_appointment_utc, to_date_w_o_appointment_utc] ,country__in=all_without_appointment_active_country )
+            tag_leads_without_appointment = tag_leads_without_appointment.exclude\
+                        (type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])
+            total_leads_without_appointmnet_count = tag_leads_without_appointment.exclude(appointment_date__isnull=False).count()               
+            #print each_team, total_leads_without_appointmnet_count
+
+        team_and_w_o_lead_dict['team_name'] = each_team
+        team_and_w_o_lead_dict['lead_w_o_appoinment'] = total_leads_without_appointmnet_count
+        team_and_w_o_leads_list.append(team_and_w_o_lead_dict)
+
+    for value in team_and_w_o_leads_list:
+        for data in available_counts_teams:
+            if data['team_name'] == value['team_name']:
+                data['lead_w_o_appoinment'] = value['lead_w_o_appoinment']
+
+    return available_counts_teams
 

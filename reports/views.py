@@ -1530,7 +1530,7 @@ def link_last_meeting(request, last_id):
     key_order_action = {k:v for v, k in enumerate(['action_item_1', 'owner_1', 'action_date_1', 'action_item_2', 'owner_2', 'action_date_2', 'action_item_3', 'owner_3', 'action_date_3', 'action_item_4', 'owner_4', 'action_date_4' ,'action_item_5', 'owner_5', 'action_date_5', 'action_item_6', 'owner_6', 'action_date_6', 'action_item_7', 'owner_7', 'action_date_7', 'action_item_8', 'owner_8', 'action_date_8', 'action_item_9', 'owner_9', 'action_date_9', 'action_item_10', 'owner_10', 'action_date_10', 'action_item_11', 'owner_11', 'action_date_11', 'action_item_12', 'owner_12', 'action_date_12', 'action_item_13', 'owner_13', 'action_date_13', 'action_item_14', 'owner_14', 'action_date_14', 'action_item_15', 'owner_15', 'action_date_15',])}
     action_plan_dict = OrderedDict(sorted(last_meeting.action_plan.items(), key=lambda i: key_order_action.get(i[0])))
 
-    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5', 'topic_6', 'highlight_6', 'topic_7', 'highlight_7', 'topic_8', 'highlight_8', 'topic_9', 'highlight_9', 'topic_10', 'highlight_10', 'topic_11', 'highlight_11', 'topic_12', 'highlight_12', 'topic_13', 'highlight_13', 'topic_14', 'highlight_14', 'topic_15', 'highlight_15',])}
+    key_order = {k:v for v, k in enumerate(['topic_1', 'highlight_1', 'topic_2', 'highlight_2', 'topic_3', 'highlight_3', 'topic_4', 'highlight_4','topic_5', 'highlight_5', 'topic_6', 'highlight_6', 'topic_7', 'highlight_7', 'topic_8', 'highlight_8', 'topic_9', 'highlight_9', 'topic_10', 'highlight_10', 'topic_11', 'highlight_11', 'topic_12', 'highlight_12', 'topic_13', 'highlight_13', 'topic_14', 'highlight_14', 'topic_15', 'highlight_15',])}    
     key_points_dict = OrderedDict(sorted(last_meeting.key_points.items(), key=lambda i: key_order.get(i[0])))
 
     return render(request, 'reports/meeting_minutes.html', {'submit_disabled': submit_disabled,
@@ -2460,9 +2460,6 @@ def inventory_handler(request):
                     returned_on = rec.returned_on
                     if returned_on:
                         returned_on = time.mktime(returned_on.timetuple())
-                    issued_on = rec.issued_on
-                    if issued_on:
-                        issued_on = time.mktime(issued_on.timetuple())
                     da = {
                         'employee_alias': rec.employee_alias,
                         'employee_name': rec.employee_name,
@@ -2473,7 +2470,7 @@ def inventory_handler(request):
                         'employee_status': rec.employee_status,
                         'device_status': rec.device_status,
                         'returned_on': returned_on,
-                        'issued_on': issued_on,
+                        'issued_on': time.mktime(rec.issued_on.timetuple()),
                         'id': rec.id
                     }
                     data.append(da)
@@ -2511,7 +2508,7 @@ def inventory_handler(request):
         else:
             dev_stat = False
         cbi.employee_status = emp_stat
-        cbi.device_status = data.get('deviceStatus')
+        cbi.device_status = dev_stat
         cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
         try:
             cbi.save()
@@ -2548,10 +2545,8 @@ def inventory_handler(request):
         else:
             dev_stat = False
         cbi.employee_status = emp_stat
-        cbi.device_status = data.get('deviceStatus')
-        issued_on = data.get('issuedOn')
-        if issued_on and issued_on != "-":
-            cbi.issued_on = datetime.strptime(issued_on, "%d-%m-%Y")
+        cbi.device_status = dev_stat
+        cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
         returned_on = data.get('returnedOn', None)
         if returned_on and returned_on != "-":
             cbi.returned_on = datetime.strptime(returned_on, "%d-%m-%Y")
@@ -2567,11 +2562,10 @@ def download_inventory_details(request):
     response['Content-Disposition'] = 'attachment; filename="InventoryCountReport'+str(datetime.now().date())+'.csv"'
     data = ChromebookInventory.objects.all().order_by('employee_name')
     writer = csv.writer(response)
-    writer.writerow(['Name','LDAP','Alias','Project','Device type','MAC ID','Employ Status','Device Status','Issued on','Returned On'])
+    writer.writerow(['Name','LDAP','Alias','Project','Device type','MAC ID','Employ Status','Device Status','Issued on','Returned'])
     for i in data:
-        issued = i.issued_on
-        if issued:
-            i.issued_on = datetime.strptime(str(issued), '%Y-%m-%d %H:%M:%S').date()
+        issued = str(i.issued_on)
+        i.issued_on = datetime.strptime(issued, '%Y-%m-%d %H:%M:%S').date()
         if i.employee_status:
             i.employee_status = 'Active'
         else:
@@ -2582,7 +2576,6 @@ def download_inventory_details(request):
             i.device_status = 'Returned'
         writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
     return response
-
 
 
 def export_slot_utilization(request):
@@ -2604,15 +2597,15 @@ def export_slot_utilization(request):
         while initializer == "run-loop":
             tag_result = list()
             shopp_result = list()
-
-            tag_exclud_na = available_counts_booked_specific(['TAG'], from_date)
-
-            tag_includ_na = available_counts_booked_specific_in_na(['TAG'], from_date)
-
-            shopp_exclude_na = available_counts_booked_specific(['SHOPPING'], from_date)
-
-            shop_includ_na = available_counts_booked_specific_in_na(['SHOPPING'], from_date)
-
+            
+            tag_exclud_na = available_counts_booked_specific(['TAG'], from_date, overall=None)
+           
+            tag_includ_na = available_counts_booked_specific_in_na(['TAG'], from_date, overall=None)
+           
+            shopp_exclude_na = available_counts_booked_specific(['SHOPPING'], from_date, overall=None)
+            
+            shop_includ_na = available_counts_booked_specific_in_na(['SHOPPING'], from_date, overall=None)
+            
             for data in tag_exclud_na:
                 data['date'] = from_date.date() - timedelta(days=1)
                 tag_result.append(data)
