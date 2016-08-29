@@ -661,9 +661,10 @@ $('#language_selector').change(function(){
   else if($('#picasso').hasClass('active')){
     if($('#language_selector').val().trim()=="Simplified Chinese"){
       $('#market_selector').html('<option>Select Market</option>'+
-      '<option value="Simplified Chinese - US">Simplified Chinese - US</option>'+
-      '<option value="Simplified Chinese - AUNZ">Simplified Chinese - AUNZ</option>'+
-      '<option value="Simplified Chinese - UKI">Simplified Chinese - UKI</option>');
+      '<option value="AUNZ">AUNZ</option>'+
+      '<option value="UKI">UKI</option>'+
+      '<option value="US">US</option>'
+      );
     }
     else{
       $('#market_selector').html('<option value="Generic Market">Generic Market</option>');
