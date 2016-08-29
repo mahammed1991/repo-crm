@@ -2598,13 +2598,13 @@ def export_slot_utilization(request):
             tag_result = list()
             shopp_result = list()
             
-            tag_exclud_na = available_counts_booked_specific(['TAG'], from_date)
+            tag_exclud_na = available_counts_booked_specific(['TAG'], from_date, overall=None)
            
-            tag_includ_na = available_counts_booked_specific_in_na(['TAG'], from_date)
+            tag_includ_na = available_counts_booked_specific_in_na(['TAG'], from_date, overall=None)
            
-            shopp_exclude_na = available_counts_booked_specific(['SHOPPING'], from_date)
+            shopp_exclude_na = available_counts_booked_specific(['SHOPPING'], from_date, overall=None)
             
-            shop_includ_na = available_counts_booked_specific_in_na(['SHOPPING'], from_date)
+            shop_includ_na = available_counts_booked_specific_in_na(['SHOPPING'], from_date, overall=None)
             
             for data in tag_exclud_na:
                 data['date'] = from_date.date() - timedelta(days=1)
