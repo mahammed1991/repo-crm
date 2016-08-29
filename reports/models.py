@@ -370,7 +370,7 @@ class ChromebookInventory(models.Model):
     device_type = models.CharField(max_length=100, null=True)
     mac_id = models.CharField(max_length=100, null=True)
     employee_status = models.BooleanField(default=True)
-    device_status = models.BooleanField(default=True)
+    device_status = models.CharField(max_length=100, null=True)
     issued_on = models.DateTimeField(null=True)
     returned_on = models.DateTimeField(null=True)
 

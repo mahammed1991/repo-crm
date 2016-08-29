@@ -1,4 +1,5 @@
 // lead form controls
+var argos = false
     $("#appointmentCheck1" ).click(function() {
       $( "#tag_appointment" ).animate({
       height: "toggle"
@@ -114,6 +115,8 @@
     });
     
     $("#shoppingSetup" ).click(function() {
+
+      showHideArgos();
       $('#Shopping_Campaign_Setup').attr('checked', true);
       if($(this).children().is(':visible')){
         if($( "#tagImplementation .check-icon" ).is(":visible") || $('#rlsaSetup .check-icon').is(":visible")){
@@ -224,13 +227,29 @@
 /* end of RLSA bulk implimentation code*/
 
     /*Shopping Comapaign changes code starts here*/
-
     $('#Shopping_Campaign_Setup').click(function(){
-      $('#description').val('');
-      $('#shopping_url').val('');
+      // Clearing current div values
+      argos = false;
+      $('#is_shopping_policies').attr('checked', false);
+      $('#issues_description').val('');
+      $('#mcIdCheck').prop('checked', true);
+      $('#shopping_trobleshooting_url').val('');
+      $('#rbid, #rbidmodifier, #rbudget, #shopping_url, #mc_id, #description').val('');
+      $('#shoppping_argos_categories').val('Business Type');
+      $('#auth_case_id, #products_count, #sheets_link, #area, #additional_description, #mc_id').val('');
+
+      // Uncheck checked option
       $('#Shopping_Trobleshoot').prop('checked', false);
-      $('#shopping_campaing_issues, #issues_description').val();
+      $('#Shopping_argos').prop('checked', false);
+
+      // Hide other divs
       $( "#shopping_trobleshooting" ).hide();
+      $("#shopping_feed_optimisation" ).hide();
+
+      // Hide Appointment Timing
+      $("#appointment_check_shopping").show();
+      $("#shopping_appointment").show();
+
       $( ".shoppingInfo" ).animate({
       height: "toggle"
       }, 300, function() {
@@ -238,16 +257,65 @@
     });
 
     $('#Shopping_Trobleshoot').click(function(){
+      // Clearing all divs values
+      argos = false;
+      $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
-      $('#rbid, #rbidmodifier, #rbudget, #shopping_url, #mc_id, #description').val('');
-      $('#Shopping_Campaign_Setup').prop('checked', false);
-      $('#shopping_trobleshooting_url').val('');
       $('#mcIdCheck').prop('checked', true);
-      $( ".shoppingInfo" ).hide();
+      $('#shopping_trobleshooting_url').val('');
+      $('#rbid, #rbidmodifier, #rbudget, #shopping_url, #mc_id, #description').val('');
+      $('#shoppping_argos_categories').val('Business Type');
+      $('#auth_case_id, #products_count, #sheets_link, #area, #additional_description, #mc_id').val('');
+
+      // Uncheck checked option
+      $('#Shopping_Campaign_Setup').prop('checked', false);
+      $('#Shopping_argos').prop('checked', false);
+
+      //Hide other divs
+      $(".shoppingInfo" ).hide();
+      $("#shopping_feed_optimisation" ).hide();
+
+      // Hide Appointment Timing
+      $("#appointment_check_shopping").show();
+      $("#shopping_appointment").show();
+
       $( "#shopping_trobleshooting" ).animate({
-      height: "toggle"
+          height: "toggle"
+          }, 300, function() {
+      });
+    });
+
+     $('#Shopping_argos').click(function(){
+      // Clearing current div values
+      argos = true;
+      $("#shoppingTerms").hide();
+      $('#is_shopping_policies').attr('checked', false);
+      $('#issues_description').val('');
+      $('#mcIdCheck').prop('checked', true);
+      $('#shopping_trobleshooting_url').val('');
+      $('#rbid, #rbidmodifier, #rbudget, #shopping_url, #mc_id, #description').val('');
+      $('#shoppping_argos_categories').val('Business Type');
+      $('#auth_case_id, #products_count, #sheets_link, #area, #additional_description, #mc_id').val('');
+
+      // Uncheck checked option
+      $('#Shopping_Trobleshoot').prop('checked', false);
+      $('#Shopping_Campaign_Setup').prop('checked', false);
+
+      // Hiding other divs
+      $( ".shoppingInfo" ).hide();
+      $( "#shopping_trobleshooting" ).hide();
+
+      // Hide Appointment Timing
+      $("#appointment_check_shopping").hide();
+      $("#shopping_appointment").hide();
+
+      $( "#shopping_feed_optimisation" ).animate({
+        height: "toggle"
       }, 300, function() {
       });
+
+      // Hide Appointment date
+
     });
 
     $('#shopping_trobleshooting_url').focusout(function(){
@@ -324,6 +392,7 @@
 
   $('#team').change(function(){
     var selectedTeam = $(this).val();
+    showHideArgos();
     $("#team_service_gce").hide();
     $('#g_cases_id').val('');
     $('#ldap').val('');
@@ -456,10 +525,13 @@ function setLocationsForRegion(newLocations, countryIds){
    //shopping check 
     $("#is_shopping_policies" ).click(function() {
         $(".shopping-policy").removeClass('error-box');
-        $( "#shoppingTerms" ).animate({
-        height: "toggle"
-        }, 300, function() {
-        });
+        if(!argos){
+            $( "#shoppingTerms" ).animate({
+                height: "toggle"
+                }, 300, function() {
+            });
+        }
+
     }); 
 
 
@@ -674,33 +746,54 @@ function validatethis(frm) {
           validateFiled(shoppingElem);
         }
 
-    // Hava an appointment 
-    if (document.getElementById("appointmentCheck2").checked == true) {
+        if($('#shopping_feed_optimisation').is(':visible')){
+            // Mandatory Fields - #shoppping_argos_categories, #mc_id, #auth_case_id, #products_count,
+            // #sheets_link, #area
+            //Validate Business Type Validation
+            var argos_category = document.getElementById('shopping_argos_categories');
+            var mc_id = document.getElementById('argos_mc_id');
+            var auth_case_id = document.getElementById('auth_case_id');
+            var products_count = document.getElementById('products_count');
+            var sheets_link = document.getElementById('sheets_link');
+            var area = document.getElementById('area');
 
-      // Contact Person Name Validation 
-      shopcontactElem = document.getElementById('shop_contact_person_name');
-      validateFiled(shopcontactElem);
+            validateShoppingFeedOptimisationFields(argos_category, true)
+            validateShoppingFeedOptimisationFields(mc_id, false)
+            validateShoppingFeedOptimisationFields(auth_case_id, false)
+            validateShoppingFeedOptimisationFields(products_count, false)
+            validateShoppingFeedOptimisationFields(sheets_link, false)
+            validateShoppingFeedOptimisationFields(area, false)
 
-      // Contact Person Role Validation 
-      shoproleElem = document.getElementById('shop_primary_role');
-      validateFiled(shoproleElem);
-
-      // Appointments Date and Time Validation
-      setupdateElem = document.getElementById('setup_datepick');
-      validateFiled(setupdateElem);
-
-        // If Setup Date Slot Selected
-        if(frm.setup_datepick.value != ''){
-            var slot = {
-              'type' : 'SHOPPING',
-              'time' : frm.setup_datepick.value
-            }
-          fix_slots.push(slot)
         }
-    }else{
-      frm.setup_datepick.value = '';
-    }
 
+    if(!$('#shopping_feed_optimisation').is(':visible')){
+        // Hava an appointment
+        if (document.getElementById("appointmentCheck2").checked == true) {
+
+          // Contact Person Name Validation
+          shopcontactElem = document.getElementById('shop_contact_person_name');
+          validateFiled(shopcontactElem);
+
+          // Contact Person Role Validation
+          shoproleElem = document.getElementById('shop_primary_role');
+          validateFiled(shoproleElem);
+
+          // Appointments Date and Time Validation
+          setupdateElem = document.getElementById('setup_datepick');
+          validateFiled(setupdateElem);
+
+            // If Setup Date Slot Selected
+            if(frm.setup_datepick.value != ''){
+                var slot = {
+                  'type' : 'SHOPPING',
+                  'time' : frm.setup_datepick.value
+                }
+              fix_slots.push(slot)
+            }
+        }else{
+          frm.setup_datepick.value = '';
+        }
+    }
       if($("#is_shopping_policies").is(":checked")){
           $("#is_shopping_policies").val(1);
           $(".shopping-policy").removeClass('error-box');
@@ -1026,7 +1119,6 @@ $(".is_ga_setup").click(function(){
 $('#region').change(function(){
   var regionId = $('option:selected', this).attr('region_id');
   countryList = regionWiseLocations[regionId];
-  console.log(countryList);
   setLocationsForRegion(window.locations, countryList);
 });
 
@@ -1177,5 +1269,54 @@ function checkID()
       // body...
     }
   });
+}
 
+$('#country').change(function(){
+    showHideArgos();
+});
+
+function showHideArgos(){
+    // Teams allowed for Feed Optimisation Argos
+    var allowedTeams = ['MMS One', 'MMS One Apollo', 'MMS Two', 'MMS Two Apollo'];
+    var allowedCountries = ['AU/NZ','United States'];
+
+    // Allow Feed optimisation argos only for the below teams
+    var allowed = allowedTeams.indexOf($('#team').val());
+    if(allowed >= 0)
+        allowed = allowedCountries.indexOf($("#country").val());
+
+    if(allowed >= 0){
+        $("#shopping_argos_option").show();
+    }else{
+        if($("#Shopping_argos").is(":checked")){
+            $("#Shopping_Campaign_Setup").trigger('click')
+        }
+        $("#shopping_argos_option").hide();
+        //$('#Shopping_Campaign_Setup').trigger("click");
+    }
+}
+
+function validateShoppingFeedOptimisationFields(elem, isDropdown){
+      var err = false;
+      if(isDropdown){
+           if($(elem).val() === "Business Type")
+                err = true;
+      }else{
+           if ($(elem).val() === "" || $(elem).val() == 0 || !$(elem).val())
+                 err = true;
+
+      }
+      if(err){
+            $(elem).addClass('error-box');
+            window.failedFields.push(elem);
+            window.is_error = true;
+            return false;
+      }
+}
+
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
 }

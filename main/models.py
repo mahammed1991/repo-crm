@@ -10,7 +10,7 @@ from PIL import Image
 from django.utils.translation import ugettext as _
 
 
-from leads.models import Location, Team, Leads, TreatmentType
+from leads.models import Location, Team, Leads, TreatmentType, Team
 from reports.models import Region
 from django.template.loader import get_template
 from django.template import Context
@@ -257,16 +257,24 @@ class Notification(models.Model):
 
     region = models.ManyToManyField(Region, blank=True, null=True)
     target_location = models.ManyToManyField(Location, blank=True, null=True)
+    team = models.ManyToManyField(Team, blank=True, null=True)
+
     is_visible = models.BooleanField(default=True)
+    is_draft = models.BooleanField(default=True)
+    from_date = models.DateTimeField(blank=True, null=True)
+    to_date = models.DateTimeField(blank=True, null=True)
+
+    # Display this message on Tag form
+    display_on_form = models.BooleanField(default=False)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
     def region_list(self):
-        return ", ".join(["%s" % (r.name) for r in self.region.all()])
+        return ", ".join(["%s" % r.name for r in self.region.all()])
 
     def location_list(self):
-        return ", ".join(["%s" % (l.location_name) for l in self.target_location.all()])
+        return ", ".join(["%s" % l.location_name for l in self.target_location.all()])
 
     class Meta:
         db_table = 'notifications'

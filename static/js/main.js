@@ -32,7 +32,6 @@ $(document).ready(function() {
         }
     });
 
-
     function displayLocations(locations) {
         elem = "";
         for (i = 0; i < locations.length; i++) {

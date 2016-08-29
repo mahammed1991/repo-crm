@@ -155,6 +155,9 @@ def lead_form(request):
             if request.POST.get('shopping_campaign_issues'):
                 setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
                 setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
+            elif request.POST.get('argos_mc_id'):
+                setup_data[shop_leads['ctype1']] = 'Feed Performance Optimization - Argos'
+                setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
             else:
                 setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
                 setup_data[shop_leads['comment1']] = request.POST.get('description')
@@ -279,6 +282,9 @@ def lead_form(request):
             if request.POST.get('shopping_campaign_issues'):
                 setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
                 setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
+            elif request.POST.get('argos_mc_id'):
+                setup_data[shop_leads['ctype1']] = 'Feed Performance Optimization - Argos'
+                setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
             else:
                 setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
                 setup_data[shop_leads['comment1']] = request.POST.get('description')
@@ -3809,7 +3815,7 @@ def picasso_build_submission_flow(request):
             master_data = PicassoEligibilityMasterUpload.objects.filter(url=filterd_url)            
             if master_data:
                 for data in master_data:
-                    if (data.buildeligible == "y") or  (data.buildeligible == "yes") or (data.buildeligible == "Y") or (data.buildeligible == "YES"):
+                    if (data.buildeligible == "y") or (data.buildeligible == "yes") or (data.buildeligible == "Y") or (data.buildeligible == "YES"):
                         returned_data['build_eligeble_in_master_data'] = True
                         return HttpResponse(json.dumps(returned_data), content_type='application/json')
                     elif (data.buildeligible == "n") or  (data.buildeligible == "no") or (data.buildeligible == "N") or (data.buildeligible == "NO"):
@@ -4302,7 +4308,7 @@ def is_bolt_treatment_eligible(request):
         cid = request.GET.get('cid')
         url = request.GET.get('url1')
         domain = url_filter(url)
-        bolt_eligibility = BuildsBoltEligibility.objects.filter(cid=cid, url=url).order_by('-last_assessed_date')[:1]
+        bolt_eligibility = BuildsBoltEligibility.objects.filter(cid=cid, domain=domain).order_by('-last_assessed_date')[:1]
         if not bolt_eligibility:
             resp = {"success": False, "msg": "URL is not eligible for Speed Optimization treatment"}
         else:
