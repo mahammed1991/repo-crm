@@ -396,6 +396,16 @@ def create_or_update_leads(records, sf):
         else:
             lead.customer_id = cid
 
+        if type_1 == "Feed Performance Optimization - Argos":
+            lead.feed_optimisation_status = rec.get("Feed_Optimization_Status__c")
+            lead.feed_optimisation_sub_status = rec.get('Feed_Optimization_Sub_Status__c')
+            lead.number_of_products = rec.get('of_Products_on_the_feed__c')
+            lead.additional_description = rec.get('Anything_else_we_should_know__c')
+            lead.area_tobe_improved = rec.get('Area_in_need_of_most_improvement__c')
+            lead.shopping_feed_link = rec.get('Shopping_Feed_Link_G_Sheet__c')
+            lead.authcase_id = rec.get('Authorization_Case_ID_for_Optimization__c')
+            lead.business_type = rec.get('Business_Type_Category__c')
+
         lead.first_name = unicode(rec.get('FirstName'))
         lead.last_name = unicode(rec.get('LastName'))
         lead.phone = unicode(rec.get('Phone'))
@@ -744,6 +754,17 @@ def create_or_update_picasso_leads(records, sf):
                 lead.is_build_eligible = True
             elif rec.get('PICASSO_build_eligible__c') == 'No':
                 lead.is_build_eligible = False
+
+        if type_1 == "Feed Performance Optimization - Argos":
+            lead.feed_optimisation_status = rec.get("Feed_Optimization_Status__c")
+            lead.feed_optimisation_sub_status = rec.get('Feed_Optimization_Sub_Status__c')
+            lead.number_of_products = rec.get('of_Products_on_the_feed__c')
+            lead.additional_description = rec.get('Anything_else_we_should_know__c')
+            lead.area_tobe_improved = rec.get('Area_in_need_of_most_improvement__c')
+            lead.shopping_feed_link = rec.get('Shopping_Feed_Link_G_Sheet__c')
+            lead.authcase_id = rec.get('Authorization_Case_ID_for_Optimization__c')
+            lead.business_type = rec.get('Business_Type_Category__c')
+
         try:
             lead.save()
             if is_new_lead:

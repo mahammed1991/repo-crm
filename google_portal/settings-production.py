@@ -316,7 +316,11 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     Rescheduled_Appointments__c, Time_Zone__c, Lead_Sub_Status__c, Q2_Manager__c, WPP_Lead_Status__c, WPP_Lead_Sub_Status__c, OwnerId, Reschedule_IST_Time__c,\
     Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c, Stage_URL_Credentials__c,\
     AB_Testing__c, GCSS_Status__c, Language__c,  All_Regalix_Comments__c, Picasso_Objective__c, Internal_CID_1__c, POD_Name__c,\
-    Picasso_Lead_Stage__c, PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c, Delivery_Date__c, IST_TIME_N__c"
+    Picasso_Lead_Stage__c, PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c, Delivery_Date__c, IST_TIME_N__c,\
+    Googler_Corporate_Email__c, Picasso_Advertiser_Email__c, Googler_Cases_Alias__c, Picasso_Market_Served__c,\
+    Additional_LDAP__c, Feed_Optimization_Status__c, Feed_Optimization_Sub_Status__c, of_Products_on_the_feed__c, \
+    Anything_else_we_should_know__c, Area_in_need_of_most_improvement__c, Shopping_Feed_Link_G_Sheet__c, \
+    Business_Type_Category__c, Authorization_Case_ID_for_Optimization__c"
 
 # SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1BPvGgYwxAWajVod3YXlnmX4gNVXGTEVTKnWHrFUfo04/edit#gid=782277640'
 

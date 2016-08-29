@@ -480,6 +480,7 @@ function resetPicasso() {
           $("#language_selector").append('<option value="English">English</option>');
           $("#language_selector").append('<option value="German">German</option>');
           $("#language_selector").append('<option value="French">French</option>');
+          $("#language_selector").append('<option value="Simplified Chinese">Simplified Chinese</option>');
 
   $("#advertiser_email").removeAttr("disabled");
     if(prevaluedict['aemail']){
@@ -529,6 +530,8 @@ function resetBolt() {
     '<option value="French">French</option>'+
     '<option value="German">German</option>'+
     '<option value="Japanese">Japanese</option>'+
+    '<option value="Portuguese (EMEA)">Portuguese (EMEA)</option>'+
+    '<option value="Portuguese (LATAM)">Portuguese (LATAM)</option>'+
     '<option value="Simplified Chinese">Simplified Chinese</option>'+
     '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
     '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');

@@ -380,6 +380,13 @@ class SalesforceLeads(object):
                              'shopping_url': '00Nd0000005WYhE',  # Shopping URL
                              'is_shopping_policies': '00Nd0000007esIw',  # Shopping policies
                              'shopping_campaign_issues': '00N7A000000Siv6',  # Field which store issue type
+                             'argos_mc_id': '00Nd00000077T9o', #Argos MC-IDf
+                             'shopping_argos_categories':'00N7A000000f3l7', # Business Type / Category
+                             'auth_case_id':'00N7A000000f3lH', # Authorization Case ID
+                             'sheets_link':'00N7A000000f3lR', # link to Shopping Feed (Google Sheets)
+                             'area':'00N7A000000f3lW', # Area
+                             'additional_description':'00N7A000000f3lb', # Anything else we should know
+                             'products_count':'00N7A000000f3lg', # Number of Products on the feed
                              }
     PRODUCTION_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',
                                 'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date
@@ -393,6 +400,13 @@ class SalesforceLeads(object):
                                 'shopping_url': '00Nd0000005WYhE',  # Shopping URL
                                 'is_shopping_policies': '00Nd0000007esIw',  # Shopping policies
                                 'shopping_campaign_issues': '00Nd00000082TgW',  # Field which store issue type
+                                'argos_mc_id': '00Nd00000077T9o',  # MC-ID
+                                'shopping_argos_categories': '00Nd0000008qGzJ',  # Business Type / Category
+                                'auth_case_id': '00Nd0000008qIBQ',  # Authorization Case ID
+                                'sheets_link': '00Nd0000008qIBV',  # link to Shopping Feed (Google Sheets)
+                                'area': '00Nd0000008qIBa',  # Area
+                                'additional_description': '00Nd0000008qIBf',  # Anything else we should know
+                                'products_count': '00Nd0000008qIBk',  # Number of Products on the feed
                                 }
     SANDBOX_RLSA_ARGS = {'user_list_id1': '00Nd0000008N42s',  # User List ID 1 for RLSA Bulk Implementation
                          'rsla_bid_adjustment1': '00Nd0000008N445',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation

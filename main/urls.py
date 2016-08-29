@@ -42,4 +42,7 @@ urlpatterns = patterns(
     url(r'^user/email/$', views.get_regalix_emails),
     url(r'^assign-feedback/$', views.assign_feedback),
 
+    # Notification Manager
+    url(r'^notifications/$', views.notification_manager),
+
 )

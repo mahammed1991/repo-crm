@@ -60,12 +60,17 @@ Inventory
                        <label for="employee-status">Employee Status</label>
                        <select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:40px;">
                            <option value="active"> Active </option>
+                           <option value="active"> InActive </option>
                        </select>
                    </div>
                    <div class="col-md-2">
                        <label for="device-status">Device Status</label>
                         <select type="text" class="form-control bgicon dropdown" id="device-status" style="height:40px;" name="device-status">
-                            <option value="assigned"> Assigned </option>
+                            <option value="Assigned"> Assigned </option>'
+                            <option value="Need to Return"> Need to Return </option>
+                            <option value="Not Assigned"> Not Assigned </option>
+                            <option value="Returned"> Returned </option>
+                            <option value="Reassigned"> Reassigned </option>
                         </select>
                    </div>
                    <div class="col-md-2">
@@ -94,9 +99,9 @@ Inventory
                                 <th>Edit</th>
                             </tr>
 					    </thead>
-					<tbody id="inventory_tbody"></tbody>
-				</table>
-            </div>
+                        <tbody id="inventory_tbody"></tbody>
+                    </table>
+                </div>
         </div>
     </section>
 </div>
@@ -142,13 +147,11 @@ $(document).ready(function(){
                             empColor = 'red';
                             margin = '5px';
                         }
-
-                        if(json[i].device_status){
-                            device_status = 'Assigned'
+                        device_status = json[i].device_status
+                        if(device_status == 'Assigned'){
                             deviceColor = 'green'
                         }
                         else{
-                            device_status = 'Returned'
                             deviceColor = '#a94442'
                         }
                         json[i][0] = json[i].employee_name;
@@ -272,11 +275,8 @@ $(document).ready(function(){
             empStatusOptions = empStatusOptions.replace('Inactive"', 'Inactive" selected');
 
         var dev_status = row.children().eq(7).text().trim();
-        var deviceStatusOptions =  '<option value="Assigned">Assigned</option><option value="Returned">Returned</option>';
-        if(dev_status === 'Assigned')
-            deviceStatusOptions = deviceStatusOptions.replace('Assigned"', 'Assigned" selected');
-        else
-            deviceStatusOptions = deviceStatusOptions.replace('Returned"', 'Returned" selected');
+        var deviceStatusOptions =  '<option value="Assigned"> Assigned </option> <option value="Need to Return"> Need to Return </option> <option value="Not Assigned"> Not Assigned </option> <option value="Returned"> Returned </option><option value="Reassigned"> Reassigned </option>';
+        deviceStatusOptions = deviceStatusOptions.replace(dev_status + '"', dev_status + '" selected');
 
 
         var dev_issued_on = row.children().eq(8).html().trim();
@@ -284,6 +284,8 @@ $(document).ready(function(){
 
         if(dev_returned_on === "-")
             dev_returned_on = ""
+        if(dev_issued_on === "-")
+            dev_issued_on = ""
         row.children().eq(0).html('<input class="input-sm" value="'+emp_name+'" style="width: 110%;">');
         row.children().eq(1).html('<input class="input-sm" value="'+emp_email+'" style="width: 110%;">');
         row.children().eq(2).html('<input class="input-sm" value="'+emp_alais+'" style="width: 120%;">');
@@ -368,11 +370,11 @@ $(document).ready(function(){
         var employee_macId = macId.val().trim()
 
         var deviceIssuedOn = issuedOn.val().trim()
-        if(deviceIssuedOn === ""){
+        /*if(deviceIssuedOn === ""){
             issuedOn.addClass('error-box');
             valid = false;
         }else
-            issuedOn.removeClass('error-box');
+            issuedOn.removeClass('error-box');*/
 
         var jsonData = {
                 row_id: row_id,
