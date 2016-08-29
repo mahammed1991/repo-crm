@@ -526,15 +526,14 @@ function resetBolt() {
   $('#comp_url_2').val('');
 
     $("#language_selector").html('');
-    $("#language_selector").append('<option value="English">English</option>'+
+    $("#language_selector").append('<option value="Dutch">Dutch</option> <option value="English">English</option>'+
     '<option value="French">French</option>'+
-    '<option value="German">German</option>'+
-    '<option value="Japanese">Japanese</option>'+
+    '<option value="German">German</option> <option value="Italian">Italian</option>'+
+    '<option value="Japanese">Japanese</option> <option value="Polish">Polish</option>'+
     '<option value="Portuguese (EMEA)">Portuguese (EMEA)</option>'+
-    '<option value="Portuguese (LATAM)">Portuguese (LATAM)</option>'+
+    '<option value="Portuguese (LATAM)">Portuguese (LATAM)</option> <option value="Russian">Russian</option>'+
     '<option value="Simplified Chinese">Simplified Chinese</option>'+
-    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>'+
-    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
+    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>');
 
   $("#advertiser_email").removeAttr("disabled");
     if(prevaluedict['aemail']){
