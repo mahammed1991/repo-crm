@@ -52,6 +52,10 @@ Inventory
                        <label for="device-type">Device Type</label>
                        <input type="text" class="form-control emp" id="device-type" name="device-type" placeholder="Device Type" style="height:40px;">
                     </div>
+                    <div class="col-md-2">
+                       <label for="device-type">Device Tag</label>
+                       <input type="text" class="form-control emp" id="device-tag" name="device-tag" placeholder="Device Tag" style="height:40px;">
+                    </div>
                    <div class="col-md-2">
                        <label for="mac-id">MAC Id</label>
                        <input type="text" class="form-control emp" id="mac-id" name="mac-id" placeholder="MAC-ID" style="height:40px;">
@@ -91,6 +95,7 @@ Inventory
                                 <th>Alias</th>
                                 <th>Project</th>
                                 <th>Device type</th>
+                                <th>Device tag</th>
                                 <th>MAC ID</th>
                                 <th>Employee Status</th>
                                 <th>Device Status</th>
@@ -128,6 +133,7 @@ $(document).ready(function(){
                 "url": "/reports/inventory/?inventory=true",
                 "dataSrc": function(json) {
                     json = json['data']
+                    
                     for(var i=0; i<json.length; i++){
                         var employee_alias = json[i].employee_alias;
                         if(employee_alias === "")
@@ -159,22 +165,29 @@ $(document).ready(function(){
                         json[i][2] = employee_alias;
                         json[i][3] = json[i].employee_project;
                         json[i][4] = json[i].device_type;
-                        json[i][5] = json[i].mac_id;
-                        json[i][6] = '<span> '+ employee_status + '<i class="fa fa-circle fa-1"'+
+                        json[i][5] = json[i].device_tag;
+                        var device_tag_val = json[i].device_tag;
+                        if (device_tag_val === null || device_tag_val === ""){
+                            json[i][5] = "-"
+                        }else{
+                            json[i][5] = json[i].device_tag;
+                        }
+                        json[i][6] = json[i].mac_id;
+                        json[i][7] = '<span> '+ employee_status + '<i class="fa fa-circle fa-1"'+
                                         'aria-hidden="true" style="color:'+empColor+';margin-left: '+margin+';"></i></span>';;
 
-                        json[i][7] = '<span style="display: block;width: 76px;"> '+ device_status + '<i class="fa fa-circle fa-1"'+
+                        json[i][8] = '<span style="display: block;width: 76px;"> '+ device_status + '<i class="fa fa-circle fa-1"'+
                                         'aria-hidden="true" style="color:'+deviceColor+';margin-left: 5px;"></i></span>';
-                        json[i][8] = formatTime(json[i].issued_on);
-                        json[i][9] = formatTime(json[i].returned_on);
-                        json[i][10] = '<a title="Edit" id="'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>';
+                        json[i][9] = formatTime(json[i].issued_on);
+                        json[i][10] = formatTime(json[i].returned_on);
+                        json[i][11] = '<a title="Edit" id="'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>';
                     }
                     return json;
                 }
             },
             columnDefs: [
                 {targets: [ 4 ], orderData: [ 4, 0 ]},
-                {bSortable: false,targets: [ 2, 5, 10 ]},
+                {bSortable: false,targets: [ 2, 10 ]},
                 { "width": "10%", "targets": 0 },
                 { "width": "8%", "targets": 1 },
                 { "width": "6%", "targets": 2 },
@@ -237,7 +250,7 @@ $(document).ready(function(){
 
         var row = $(this).parent().parent();
         $editingRow = $(this).parent().parent().html();
-        var row_id = row.children().eq(10).find('a').attr('id').trim();
+        var row_id = row.children().eq(11).find('a').attr('id').trim();
         var emp_name = row.children().eq(0).html().trim();
         var emp_email = row.children().eq(1).html().trim();
         var emp_alais = row.children().eq(2).html().trim();
@@ -265,8 +278,9 @@ $(document).ready(function(){
             projOptions = projOptions.replace('"Google Portal"', '"Google Portal" selected');
 
         var emp_device = row.children().eq(4).html().trim();
-        var emp_mac_id = row.children().eq(5).html().trim();
-        var emp_status = row.children().eq(6).text().trim();
+        var emp_device_tag = row.children().eq(5).html().trim();
+        var emp_mac_id = row.children().eq(6).html().trim();
+        var emp_status = row.children().eq(7).text().trim();
 
         var empStatusOptions = '<option value="Active">Active</option><option value="Inactive">Inactive</option>';
         if(emp_status === 'Active')
@@ -274,13 +288,13 @@ $(document).ready(function(){
         else
             empStatusOptions = empStatusOptions.replace('Inactive"', 'Inactive" selected');
 
-        var dev_status = row.children().eq(7).text().trim();
+        var dev_status = row.children().eq(8).text().trim();
         var deviceStatusOptions =  '<option value="Assigned"> Assigned </option> <option value="Need to Return"> Need to Return </option> <option value="Not Assigned"> Not Assigned </option> <option value="Returned"> Returned </option><option value="Reassigned"> Reassigned </option>';
         deviceStatusOptions = deviceStatusOptions.replace(dev_status + '"', dev_status + '" selected');
 
 
-        var dev_issued_on = row.children().eq(8).html().trim();
-        var dev_returned_on = row.children().eq(9).html().trim();
+        var dev_issued_on = row.children().eq(9).html().trim();
+        var dev_returned_on = row.children().eq(10).html().trim();
 
         if(dev_returned_on === "-")
             dev_returned_on = ""
@@ -293,35 +307,37 @@ $(document).ready(function(){
                                    projOptions +
                                   '</select>');
         row.children().eq(4).html('<input class="input-sm" value="'+emp_device+'" style="width: 90%;">');
-        row.children().eq(5).html('<input class="input-sm" value="'+emp_mac_id+'" style="width: 110%;">');
-        row.children().eq(6).html('<select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:31.5px;margin-bottom: 2px;width: 100%;">'+
+        row.children().eq(5).html('<input class="input-sm" value="'+emp_device_tag+'" style="width: 110%;">');
+        row.children().eq(6).html('<input class="input-sm" value="'+emp_mac_id+'" style="width: 110%;">');
+        row.children().eq(7).html('<select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:31.5px;margin-bottom: 2px;width: 100%;">'+
                                     empStatusOptions +
                                   '</select>');
-        row.children().eq(7).html('<select type="text" class="form-control bgicon dropdown" id="device-type" name="device-type" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+        row.children().eq(8).html('<select type="text" class="form-control bgicon dropdown" id="device-type" name="device-type" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
                                     deviceStatusOptions +
                                  '</select>');
-        row.children().eq(8).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" style="width: 100%;">');
-        row.children().eq(9).html('<input class="returned-on input-sm" id="returned-on-din" name="returned-on-din" value="'+dev_returned_on+'" style="width: 100%;">');
+        row.children().eq(9).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" style="width: 100%;">');
+        row.children().eq(10).html('<input class="returned-on input-sm" id="returned-on-din" name="returned-on-din" value="'+dev_returned_on+'" style="width: 100%;">');
 
-        row.children().eq(10).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
+        row.children().eq(11).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
                                     '<a title="Cancel" class="cancel" href="#" style="margin-left: 10px; color: #D83F34;"><span class="glyphicon glyphicon-remove"></span></a>');;
 
     });
 
     $('body').on('click', 'a.save', function(e) {
         var row = $(this).parent().parent();
-        var row_id = row.children().eq(10).find('a').attr('id');
+        var row_id = row.children().eq(11).find('a').attr('id');
 
         var name = row.children().eq(0).find('input');
         var ldap = row.children().eq(1).find('input');
         var alias = row.children().eq(2).find('input');
         var project = row.children().eq(3).find('select');
         var deviceType = row.children().eq(4).find('input');
-        var macId = row.children().eq(5).find('input');
-        var employeeStatus = row.children().eq(6).find('select');
-        var deviceStatus = row.children().eq(7).find('select');
-        var issuedOn = row.children().eq(8).find('input');
-        var returnedOn = row.children().eq(9).find('input');
+        var deviceTag = row.children().eq(5).find('input');
+        var macId = row.children().eq(6).find('input');
+        var employeeStatus = row.children().eq(7).find('select');
+        var deviceStatus = row.children().eq(8).find('select');
+        var issuedOn = row.children().eq(9).find('input');
+        var returnedOn = row.children().eq(10).find('input');
         valid = true;
         var employee_name = name.val().trim()
         if(employee_name === ""){
@@ -367,6 +383,14 @@ $(document).ready(function(){
         }else
             deviceType.removeClass('error-box');
 
+/*        var employee_deviceTag = deviceTag.val().trim()
+        if(employee_deviceTag === ""){
+            deviceTag.addClass('error-box');
+            valid = false;
+        }else
+            deviceTag.removeClass('error-box');*/
+        var employee_deviceTag = deviceTag.val().trim()
+
         var employee_macId = macId.val().trim()
 
         var deviceIssuedOn = issuedOn.val().trim()
@@ -383,6 +407,7 @@ $(document).ready(function(){
                 alias: alias_val,
                 project: employee_project,
                 deviceType: employee_deviceType,
+                deviceTag: employee_deviceTag,
                 macId: employee_macId,
                 employeeStatus: employeeStatus.val(),
                 deviceStatus: deviceStatus.val(),
@@ -431,6 +456,7 @@ $(document).ready(function(){
         var alias = $("#alias");
         var project = $("#project");
         var deviceType = $("#device-type");
+        var deviceTag = $("#device-tag");
         var macId = $("#mac-id");
         var employeeStatus = $("#employee-status");
         var deviceStatus = $("#device-status");
@@ -472,6 +498,14 @@ $(document).ready(function(){
         }else
             deviceType.removeClass('error-box');
 
+/*        var employee_deviceTag = deviceTag.val().trim()
+        if(employee_deviceTag === ""){
+            deviceTag.addClass('error-box');
+            valid = false;
+        }else
+            deviceTag.removeClass('error-box');*/
+        var employee_deviceTag = deviceTag.val().trim()
+
         var employee_macId = macId.val().trim()
 
         var deviceIssuedOn = issuedOn.val().trim()
@@ -497,6 +531,7 @@ $(document).ready(function(){
                 alias: alias,
                 project: employee_project,
                 deviceType: employee_deviceType,
+                deviceTag: employee_deviceTag,
                 macId: employee_macId,
                 employeeStatus: $("#employee-status").val(),
                 deviceStatus: $("#device-status").val(),
