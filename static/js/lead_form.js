@@ -230,6 +230,7 @@ var argos = false
     $('#Shopping_Campaign_Setup').click(function(){
       // Clearing current div values
       argos = false;
+      $(".shopping-policies").show();
       $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
       $('#mcIdCheck').prop('checked', true);
@@ -259,6 +260,7 @@ var argos = false
     $('#Shopping_Trobleshoot').click(function(){
       // Clearing all divs values
       argos = false;
+      $(".shopping-policies").show();
       $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
       $('#mcIdCheck').prop('checked', true);
@@ -288,7 +290,7 @@ var argos = false
      $('#Shopping_argos').click(function(){
       // Clearing current div values
       argos = true;
-      $("#shoppingTerms").hide();
+      $(".shopping-policies").hide();
       $('#is_shopping_policies').attr('checked', false);
       $('#issues_description').val('');
       $('#mcIdCheck').prop('checked', true);
@@ -794,14 +796,16 @@ function validatethis(frm) {
           frm.setup_datepick.value = '';
         }
     }
-      if($("#is_shopping_policies").is(":checked")){
-          $("#is_shopping_policies").val(1);
-          $(".shopping-policy").removeClass('error-box');
-      }else{
-          $(".shopping-policy").addClass('error-box');
-          window.failedFields.push($("#is_shopping_policies"));
-          window.is_error = true;
-          $("#is_shopping_policies").val(0);
+    if(!argos){
+          if($("#is_shopping_policies").is(":checked")){
+              $("#is_shopping_policies").val(1);
+              $(".shopping-policy").removeClass('error-box');
+          }else{
+              $(".shopping-policy").addClass('error-box');
+              window.failedFields.push($("#is_shopping_policies"));
+              window.is_error = true;
+              $("#is_shopping_policies").val(0);
+          }
       }
 
       isAgree = ensureAllPolicies()
@@ -1334,8 +1338,8 @@ $("#products_count").focusout(function(e){
                        estimated_date = localTime(resp.estimated_date);
                        total_inqueue_products = resp.products_in_queue;
                        $("#tatMsg").text('');
-                       $("#tatMsg").text("There are " + total_inqueue_products +
-                                        " products in-queue, estimated delivery date for this lead would be "+ estimated_date)
+                       $("#tatMsg").html("There are <strong>" + total_inqueue_products +
+                                        "</strong> products in-queue, estimated delivery date for this lead would be <strong>"+ estimated_date + "</strong>")
                        $("#tat-msg-block").show();
                 }
           },

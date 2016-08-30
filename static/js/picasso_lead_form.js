@@ -533,7 +533,8 @@ function resetBolt() {
     '<option value="Portuguese (EMEA)">Portuguese (EMEA)</option>'+
     '<option value="Portuguese (LATAM)">Portuguese (LATAM)</option> <option value="Russian">Russian</option>'+
     '<option value="Simplified Chinese">Simplified Chinese</option>'+
-    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>');
+    '<option value="Spanish (EMEA)">Spanish (EMEA)</option>' +
+    '<option value="Spanish (LATAM)">Spanish (LATAM)</option>');
 
   $("#advertiser_email").removeAttr("disabled");
     if(prevaluedict['aemail']){
