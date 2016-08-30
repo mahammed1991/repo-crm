@@ -870,12 +870,6 @@
           <strong>Tasks Undertaken: </strong> Optimizing attributes like Title, Google product category and product type
         </div>
 
-        <div class="row" style="margin-bottom:10px;">
-          <div class="col-md-12" >
-           <p id="tatMsg" style="border-radius: 20px;text-align: center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 100%;margin-top: -10px;">
-             Approximate TAT for this lead will be 30-Aug-2016</b> </p>
-          </div>
-        </div>
         <div class="row" style="padding-left: 35px;">
             <span style="margin-left: -20px;"><strong>Pre-requisites for Feed Optimization Argos:</strong>
               <ul style="margin-left: 25px;">
@@ -938,6 +932,11 @@
             </div>
             <div class="col-md-3">
               <input type="text" class="form-control" name="products_count" id="products_count" placeholder="Total Number of Products"  onkeypress="return isNumber(event)">
+            </div>
+          </div>
+          <div id="tat-msg-block" class="row" style="margin-bottom:10px;display:none">
+            <div class="col-md-12" >
+             <p id="tatMsg" style="border-radius: 20px;text-align: center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 100%;margin-top: -10px;"></b> </p>
             </div>
           </div>
           <div class="row">
@@ -1111,6 +1110,7 @@
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/lead_form.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/locations.js' %}"></script>
+<script src="{% static 'js/reports/moment.min.js' %}"></script>
 <script type="text/javascript">
 
 
@@ -1543,9 +1543,5 @@ $("#myModal").on("hidden.bs.modal", function () {
   submit = true;
   $("#ctl00").submit();
 });
-
-
-
-
 </script>
 {% endblock main_js %}
