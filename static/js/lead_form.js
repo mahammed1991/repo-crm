@@ -1320,3 +1320,37 @@ function isNumber(evt) {
     if (charCode > 31 && (charCode < 48 || charCode > 57))
         return false;
 }
+
+$("#products_count").focusout(function(e){
+    productsCount = $(this).val();
+    if(productsCount !== ""){
+        $.ajax({
+          'url': "/leads/tag/argos-tat/",
+          'dataType': "json",
+          'type': 'GET',
+          'data': {'products': productsCount},
+          success: function(resp) {
+                if(resp.success){
+                       estimated_date = localTime(resp.estimated_date);
+                       total_inqueue_products = resp.products_in_queue;
+                       $("#tatMsg").text('');
+                       $("#tatMsg").text("There are " + total_inqueue_products +
+                                        " products in-queue, estimated delivery date for this lead would be "+ estimated_date)
+                       $("#tat-msg-block").show();
+                }
+          },
+          error: function(errorThrown) {
+              alert('Something went wrong!. please try after some time');
+          }
+        });
+    }else{
+        $("#tat-msg-block").hide();
+        $("#tatMsg").text('');
+    }
+});
+
+function localTime(unixTimestamp){
+    var localTime  = moment.unix(unixTimestamp);
+    localTime = moment(localTime).format('DD-MM-YYYY');
+    return localTime;
+}

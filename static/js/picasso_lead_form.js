@@ -526,7 +526,7 @@ function resetBolt() {
   $('#comp_url_2').val('');
 
     $("#language_selector").html('');
-    $("#language_selector").append('<option value="Dutch">Dutch</option> <option value="English">English</option>'+
+    $("#language_selector").append('<option value="English">English</option> <option value="Dutch">Dutch</option> '+
     '<option value="French">French</option>'+
     '<option value="German">German</option> <option value="Italian">Italian</option>'+
     '<option value="Japanese">Japanese</option> <option value="Polish">Polish</option>'+
