@@ -2460,17 +2460,21 @@ def inventory_handler(request):
                     returned_on = rec.returned_on
                     if returned_on:
                         returned_on = time.mktime(returned_on.timetuple())
+                    issued_on = rec.issued_on
+                    if issued_on:
+                        issued_on = time.mktime(issued_on.timetuple())
                     da = {
                         'employee_alias': rec.employee_alias,
                         'employee_name': rec.employee_name,
                         'employee_ldap': rec.employee_ldap,
                         'employee_project': rec.employee_project,
                         'device_type': rec.device_type,
+                        'device_tag': rec.device_tag,
                         'mac_id': rec.mac_id,
                         'employee_status': rec.employee_status,
                         'device_status': rec.device_status,
                         'returned_on': returned_on,
-                        'issued_on': time.mktime(rec.issued_on.timetuple()),
+                        'issued_on': issued_on,
                         'id': rec.id
                     }
                     data.append(da)
@@ -2496,6 +2500,7 @@ def inventory_handler(request):
         cbi.employee_ldap = ldap
         cbi.employee_project = project
         cbi.device_type = data.get('deviceType')
+        cbi.device_tag = data.get('deviceTag')
         cbi.mac_id = data.get('macId', "")
         emp_stat = data.get('employeeStatus')
         if emp_stat == 'active':
@@ -2508,7 +2513,7 @@ def inventory_handler(request):
         else:
             dev_stat = False
         cbi.employee_status = emp_stat
-        cbi.device_status = dev_stat
+        cbi.device_status = data.get('deviceStatus')
         cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
         try:
             cbi.save()
@@ -2533,6 +2538,7 @@ def inventory_handler(request):
         cbi.employee_ldap = ldap
         cbi.employee_project = project
         cbi.device_type = data.get('deviceType')
+        cbi.device_tag = data.get('deviceTag')
         cbi.mac_id = data.get('macId', "")
         emp_stat = data.get('employeeStatus')
         if emp_stat == 'Active':
@@ -2545,8 +2551,10 @@ def inventory_handler(request):
         else:
             dev_stat = False
         cbi.employee_status = emp_stat
-        cbi.device_status = dev_stat
-        cbi.issued_on = datetime.strptime(data.get('issuedOn'), "%d-%m-%Y")
+        cbi.device_status = data.get('deviceStatus')
+        issued_on = data.get('issuedOn')
+        if issued_on and issued_on != "-":
+            cbi.issued_on = datetime.strptime(issued_on, "%d-%m-%Y")
         returned_on = data.get('returnedOn', None)
         if returned_on and returned_on != "-":
             cbi.returned_on = datetime.strptime(returned_on, "%d-%m-%Y")
@@ -2562,10 +2570,11 @@ def download_inventory_details(request):
     response['Content-Disposition'] = 'attachment; filename="InventoryCountReport'+str(datetime.now().date())+'.csv"'
     data = ChromebookInventory.objects.all().order_by('employee_name')
     writer = csv.writer(response)
-    writer.writerow(['Name','LDAP','Alias','Project','Device type','MAC ID','Employ Status','Device Status','Issued on','Returned'])
+    writer.writerow(['Name','LDAP','Alias','Project','Device type','Device tag','MAC ID','Employ Status','Device Status','Issued on','Returned'])
     for i in data:
-        issued = str(i.issued_on)
-        i.issued_on = datetime.strptime(issued, '%Y-%m-%d %H:%M:%S').date()
+        issued = i.issued_on
+        if issued:
+            i.issued_on = datetime.strptime(str(issued), '%Y-%m-%d %H:%M:%S').date()
         if i.employee_status:
             i.employee_status = 'Active'
         else:
@@ -2574,7 +2583,7 @@ def download_inventory_details(request):
             i.device_status = 'Active'
         else:
             i.device_status = 'Returned'
-        writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
+        writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.device_tag, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
     return response
 
 
