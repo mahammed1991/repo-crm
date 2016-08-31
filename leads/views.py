@@ -11,6 +11,8 @@ from random import randint
 from uuid import uuid4
 from urlparse import urlparse
 import logging
+from math import ceil
+import time
 
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
@@ -29,6 +31,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from django.template import Context
+from django.db import connection, transaction
 
 # Django and Custom Model imports
 from django.db.models import Count
@@ -4329,3 +4332,49 @@ def picasso_blacklist_cid_download(request):
     for i in data:
         writer.writerow([i.cid])
     return response
+
+
+def estimate_shopping_arogs_tat(request):
+    """
+    Current date + (Total Products processed per day per rep / total reps) +
+    buffer one day and handle saturday and sundays
+    Returns: Estimated Delivery date
+    """
+    current_products = request.GET.get('products', False)
+    start_date = datetime.utcnow()
+    start_date = datetime(start_date.year, 7, 1, 0, 0)
+    utc_now = datetime.utcnow()
+
+    products_processed_per_day = 4 * 500 # Reps * products_processed_per_day
+    raw_sql = "select sum(number_of_products) total_products_count from leads_leads " \
+              "where type_1='Feed Performance Optimization - Argos' and created_date >= '%s';" % start_date
+    cursor = connection.cursor()
+    cursor.execute(raw_sql)
+    total_products_inqueue = int(cursor.fetchone()[0])
+    if current_products:
+        total_products_inqueue += int(current_products)
+
+    # Estimated date clculation
+    days_tobe_added = ceil(total_products_inqueue/products_processed_per_day)
+    if days_tobe_added > 0:
+        estimated_date = utc_now + timedelta(days=days_tobe_added)
+    else:
+        estimated_date = utc_now
+
+    weekend_days = 0
+    while utc_now <= estimated_date:
+        if utc_now.weekday() == 5:
+            weekend_days += 2
+            utc_now += timedelta(days=2)
+        elif utc_now.weekday() == 6:
+            weekend_days += 1
+            utc_now += timedelta(days=1)
+        else:
+            utc_now += timedelta(days=1)
+    estimated_date = estimated_date + timedelta(days=weekend_days + 1) # +1 as buffer
+    tat = {
+            'products_in_queue': total_products_inqueue - int(current_products),
+            'estimated_date': time.mktime(estimated_date.timetuple()),
+            'success': True
+        }
+    return HttpResponse(json.dumps(tat), content_type='application/json')
