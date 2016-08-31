@@ -368,6 +368,7 @@ class ChromebookInventory(models.Model):
     employee_alias = models.CharField(max_length=100, null=True)
     employee_project = models.CharField(max_length=100, null=True)
     device_type = models.CharField(max_length=100, null=True)
+    device_tag = models.CharField(max_length=100, null=True)
     mac_id = models.CharField(max_length=100, null=True)
     employee_status = models.BooleanField(default=True)
     device_status = models.CharField(max_length=100, null=True)
