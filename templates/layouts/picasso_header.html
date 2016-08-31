@@ -25,6 +25,18 @@
             <li><a href="{% url 'main.views.list_feedback_picasso' %}" style="margin-top: 12px;">Feedback</a></li>
           </ul>
         </div>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color:white;padding:1px;">
+           <ul class="nav navbar-nav main-nav">
+            <li > 
+               <button style="font-size: 13px;padding: 4px;min-width: 100px; margin-top: 9px;"
+                class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_picasso_lead_summary' %}"'>Lead Status</button>
+            </li>
+           </ul>
+        </div>
+
+
+
         <ul class="nav navbar-nav navbar-right">
           <li class="submit-lead-btn">
               <button class="{% if 'edit-profile-info' in request.path %} btn std-btn sm-btn {% else %} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored {% endif %}" onclick='location.href="{% url 'leads.views.picasso_lead_form' %}"'>Submit Lead</button>
