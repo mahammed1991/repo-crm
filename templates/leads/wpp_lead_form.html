@@ -576,6 +576,7 @@ var checkBuildEligibility = function(cid, url, treatmentType){
                     var returned_data = data;
                     if (returned_data.build_eligeble_in_picasso_db == true ){
                         $('#formsubmit').prop('disabled', false);
+                        $("#ctl00 :input").removeAttr('disabled', false);
                     }
                     if(returned_data.build_eligeble_in_picasso_db == false ){
                         $('#not-eligible').removeAttr("style");
