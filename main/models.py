@@ -257,8 +257,7 @@ class Notification(models.Model):
 
     region = models.ManyToManyField(Region, blank=True, null=True)
     target_location = models.ManyToManyField(Location, blank=True, null=True)
-    team = models.ManyToManyField(Team, blank=True, null=True)
-
+    
     is_visible = models.BooleanField(default=True)
     is_draft = models.BooleanField(default=True)
     from_date = models.DateTimeField(blank=True, null=True)
@@ -269,6 +268,7 @@ class Notification(models.Model):
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+    modified_by = models.ForeignKey(User, blank=True, null=True, default=None)
 
     def region_list(self):
         return ", ".join(["%s" % r.name for r in self.region.all()])

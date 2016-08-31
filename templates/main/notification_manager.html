@@ -8,6 +8,14 @@ Notification Manager
 {% block main_css %}
     <link rel="stylesheet" href="{% static 'css/webapp/vendor/editor.css' %}">
     <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}">
+    <style type="text/css">
+      .delete{
+        width: 90px !important;
+      }
+      .edit {
+        width: 90px !important;
+      }
+    </style>
 {% endblock main_css %}
 {% block content %}
 <section class="content-region inner-page">
@@ -38,29 +46,62 @@ Notification Manager
                 </div>
             </div>
             <div class="modal-footer" style="padding-bottom:25px;">
-              <div class="col-md-2">
-                   <input type="text" class="start-date form-control" id="start-date" name="start-date" placeholder="Start Date" style="height:40px;">
+            <div class="col-md-12">
+              <div class="col-md-4">
+              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Region</label>
+                <select class="form-control" id="region" style="height:140px;" multiple>
+                  <option id="select-all-region">Select All</option>
+                  {% for reg in regions %}
+                    <option value="{{ reg.name }}">{{ reg.name }}</option>
+                  {% endfor %}
+                </select>
               </div>
-              <div class="col-md-2">
-                   <input type="text" class="end-date form-control" id="end-date" name="end-date" placeholder="End Date" style="height:40px;">
+
+              <div class="col-md-4">
+              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Country</label>
+                <select class="form-control" id="loc" style="height:140px;" multiple>
+                  <option id="select-all-country">Select All</option>
+                  {% for loc in locations %}
+                    <option value="{{ loc.location_name }}">{{ loc.location_name }}</option>
+                  {% endfor %}
+                </select>
               </div>
-              <div class="checkbox col-md-2">
-                   <label><input type="checkbox" /> Show on form</label>
+
+              <div class="col-md-4" >
+                <label style="float: left;margin-left: 20px;color:#9c9999;">Start Date</label>
+                <div class="col-md-12">
+                   <input type="text" class="start-date form-control" id="start-date" name="start-date" placeholder="Start Date">
+                </div>
+                <label style="float: left;margin-left: 20px;color:#9c9999;">End Date</label>
+                <div class="col-md-12">
+                     <input type="text" class="end-date form-control" id="end-date" name="end-date" placeholder="End Date">
+                </div>
               </div>
-              <button id="publish" class="btn std-btn sm-btn">Publish</button>
-              <button id="draft" class="btn std-btn sm-btn">Save as Draft</button>
+
+            </div>
+
+            <div class="col-md-12">
+              <!-- <label style="float:left;"><input id="check" type="checkbox" /> Show on form</label> -->
+              <div class="checkbox col-md-4">
+                   <label style="float:left;"><input id="check" type="checkbox" /> Show on form</label>
+              </div>
+
+              <button id="publish" class="btn std-btn sm-btn" onclick="publishNotification()">Publish</button>
+              <button id="draft" class="btn std-btn sm-btn" onclick="draftNotification()">Save as Draft</button>
+            </div>
+
             </div>
           </div>
         </div>
       </div>
         <div id="notification_wrapper" class="dataTables_wrapper no-footer" style="margin-bottom: 1%;">
-            <table id="notifications" class="display" cellspacing="0" width="100%">
+            <table id="notification-table" class="display" cellspacing="0" width="100%">
                 <thead>
                     <tr role="row">
                         <th>Created on</th>
                         <th>Content</th>
                         <th>Countries</th>
-                        <th>Teams</th>
+                        <th>Regions</th>
                         <th>Status</th>
                         <th>On Form</th>
                         <th>Duration</th>
@@ -80,24 +121,260 @@ Notification Manager
 <script src="{% static 'js/reports/moment.min.js' %}"></script>
 <script src="{% static 'js/webapp/vendor/editor.js' %}"></script>
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+<script src="{% static 'js/webapp/vendor/jquery.dataTables.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/webapp/vendor/jquery.dataTables.min.css' %}">
 
 <script>
+var edit_id = 0;
+
+function updateNotificationData(){
+  $('#notification-table').DataTable({
+      "ajax": {
+          "url": "/main/notifications/?notifications=true",
+          "dataSrc": function(json) {
+              json = json['data']
+              for(var i=0; i<json.length; i++){
+                  json[i][0] = formatTime(json[i].created_on);
+                  json[i][1] = json[i].content;
+                  json[i][2] = json[i].countries;
+                  json[i][3] = json[i].regions;
+
+                  json[i][4] = json[i].status;
+                  json[i][5] = json[i].display_on_form;
+                  json[i][6] = formatTime(json[i].start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(json[i].end_date);
+                  json[i][7] = json[i].modified_by;
+                  if(json[i].status == 'Published'){
+                    json[i][8] = "<button class='btn-sm btn btn-danger delete' data-id="+json[i].id+">UnPublish</button>";
+                  }
+                  else if(json[i].status == 'Drafted'){
+                    json[i][8] = "<button class='btn-sm btn btn-info edit' data-id="+json[i].id+"><span class='glyphicon glyphicon-edit'></span>Draft</button>";
+                  }
+                  else{
+                    json[i][8] = 'Expired';
+                  }
+              }
+              return json;
+          }
+      },
+      columnDefs: [
+          {bSortable: false,targets: [1,2,3,6,8]},
+          { "width": "8%", "targets": 0 },
+          { "width": "25%", "targets": 1 },
+          { "width": "11%", "targets": 2 },
+          { "width": "11%", "targets": 3 },
+          { "width": "8%", "targets": 4 },
+          { "width": "8%", "targets": 5 },
+          { "width": "8%", "targets": 6 },
+          { "width": "13%", "targets": 7 },
+          { "width": "8%", "targets": 8 },
+      ],
+  });
+}
+
+
+var formatTime = function(unixTimestamp){
+    if(unixTimestamp === null)
+        return "-"
+    else{
+        var datestamp = new Date(unixTimestamp*1000);
+        var date = datestamp.getDate();
+        var month = datestamp.getMonth() + 1;
+        var year =  datestamp.getFullYear();
+        var m = '0'
+        if(month < 10){
+          month = m + String(month)
+        }
+        if(date < 10){
+          date = m + String(date)
+        }
+        return date + "-" + month + "-" + year;
+    }
+};
+
+
 $(document).ready(function(){
-    olark('api.box.hide');
-    //$("#notification-editor").Editor();
+  olark('api.box.hide');
+  updateNotificationData();
 });
 
 
-
-// Publish the Notification
-$("#publish").on('click', function(e){
-    $("#editor-modal").toggle();
+$('#select-all-region').click(function(){
+  $('#region option').each(function(){
+    if($(this).val() == "Select All"){
+      $(this).prop('selected', false);
+    }
+    else{
+      $(this).prop('selected', true);
+    }
+  });
 });
 
-// Save the Notification as draft
-$("#draft").on('click', function(e){
-   $("#editor-modal").toggle();
+
+$('#select-all-country').click(function(){
+  $('#loc option').each(function(){
+    if($(this).val() == "Select All"){
+      $(this).prop('selected', false);
+    }
+    else{
+      $(this).prop('selected', true);
+    }
+  });
 });
+
+
+function validateThis()
+{
+  if($('#notification-editor').val() == ''){
+    $('#notification-editor').addClass('error-box');
+  }
+  else{
+    $('#notification-editor').removeClass('error-box');
+  }
+  if($('#start-date').val() == ''){
+    $('#start-date').addClass('error-box');
+  }
+  else{
+    $('#start-date').removeClass('error-box');
+  }
+
+  if($('#end-date').val() == ''){
+    $('#end-date').addClass('error-box');
+  }
+  else{
+    $('#end-date').removeClass('error-box');
+  }
+
+  if($('#region option:selected').text() == '' || $('#region option:selected').text() == 'Select All'){
+    $('#region').addClass('error-box');
+  }
+  else{
+    $('#region').removeClass('error-box');
+  }
+
+  if($('#loc option:selected').text() == '' || $('#loc option:selected').text() == 'Select All'){
+    $('#loc').addClass('error-box');
+  }
+  else{
+    $('#loc').removeClass('error-box');
+  }
+}
+
+
+function assignVal(task)
+{
+  var s_date = $('#start-date').val();
+  var e_date = $('#end-date').val();
+  var location = [];
+  var region = [];
+  $('#loc option:selected').each(function(){
+      location.push(String($(this).text()));
+  });
+
+  $('#region option:selected').each(function(){
+      region.push(String($(this).text()));
+  });
+
+  var publish_on_form = $("#check").is(':checked');
+  var text = $('#notification-editor').val();
+  var draft = false;
+  if(task == "draft"){
+    draft = true;
+  }
+  var data = {
+            text: text,
+            f_date: s_date.substr(3, 2)+"/"+s_date.substr(0, 2)+"/"+s_date.substr(6, 4),
+            t_date: e_date.substr(3, 2)+"/"+e_date.substr(0, 2)+"/"+e_date.substr(6, 4),
+            location: location,
+            region: region,
+            draft: draft,
+            on_form: publish_on_form,
+    }
+    return data
+}
+
+
+/*$('#publish').click(function(){*/
+function publishNotification()
+{
+  validateThis();
+  var jsonData = assignVal("publish");
+
+  if(!$("*").hasClass('error-box')){  
+    $.ajax({
+      type: "POST",
+      url: "/main/notifications/?id="+edit_id,
+      data: JSON.stringify(jsonData),
+      contentType: "application/json; charset=utf-8",
+      traditional: true,
+      success: function (data) {
+        if(data.success){       
+          var t = $('#notification-table').DataTable();
+          var duration = formatTime(data.start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(data.end_date);
+          var action = "<button class='btn-sm btn btn-danger delete' data-id="+data.id+">UnPublish</button>";
+
+          t.row.add([formatTime(data.created_date), data.content, data.countries, data.regions, data.status, data.display_on_form, duration, data.modified_by, action]).draw( false );
+        }
+        $("#editor-modal").toggle();
+        $('#notification-editor').val('');
+        $('#start-date').val('');
+        $('#end-date').val('');
+        $("#check").removeAttr('checked');
+        $('#loc option').removeAttr('selected');
+        $('#region option').removeAttr('selected');
+              
+      },
+      error: function(data){
+          alert("Something went wrong, please try after some time");
+      }
+    });
+  }
+  else
+  {
+    console.log(false);
+  }
+}
+
+
+/*$('#draft').click(function(){*/
+function draftNotification()
+{
+  validateThis();
+  var jsonData = assignVal("draft");
+  if(!$("*").hasClass('error-box')){
+    $.ajax({
+      type: "POST",
+      url: "/main/notifications/?id="+edit_id,
+      data: JSON.stringify(jsonData),
+      contentType: "application/json; charset=utf-8",
+      traditional: true,
+      success: function (data) {
+        if(data.success){       
+          var t = $('#notification-table').DataTable();
+          var duration = formatTime(data.start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(data.end_date);
+          var action = "<button class='btn-sm btn btn-info edit' data-id="+data.id+"><span class='glyphicon glyphicon-edit'></span>Draft</button>";
+
+          t.row.add([formatTime(data.created_date), data.content, data.countries, data.regions, data.status, data.display_on_form, duration, data.modified_by, action]).draw();
+        }
+        $("#editor-modal").toggle();
+        $("#editor-modal").toggle();
+        $('#notification-editor').val('');
+        $('#start-date').val('');
+        $('#end-date').val('');
+        $("#check").removeAttr('checked');
+        $('#loc option').removeAttr('selected');
+        $('#region option').removeAttr('selected');
+      },
+      error: function(data){
+          alert("Something went wrong, please try after some time");
+      }
+    });
+  }
+  else
+  {
+    console.log(false);
+  }
+}
+
 
 // close modal window
 $("#close-modal").on('click', function(e){
@@ -116,7 +393,77 @@ $("#new-notification").on('click', function(e){
 });
 
 
+$('body').on('click', '.delete', function(){
+  var $that = $(this);
+  var id = $that.data('id');
+  var table = $('#notification-table').DataTable();
+  var valid=confirm("Are you sure you want to unpublish Notification?");
+  if(valid){
+        $.ajax({
+        type: "PUT",
+        url: "/main/notifications/?id="+id,
+        success: function (data) {
+                if(data.success){
+                  table.row( $that.parents('tr')).draw();
+                }
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+        });
+        
+    }
+  });
 
+
+$('body').on('click', '.edit', function(){
+  var $that = $(this);
+  var id = $that.data('id');
+  edit_id = id;
+  $("#new-notification").click();
+
+  var row = $(this).parent().parent();
+  var created_date = row.children().eq(0).html();
+  var content = row.children().eq(1).html();
+  var countries= row.children().eq(2).html();
+  var regions = row.children().eq(3).html();
+  var status = row.children().eq(4).html();
+  var on_form= row.children().eq(5).html();
+  var duration = row.children().eq(6).text();
+  var modified_by = row.children().eq(7).html();
+
+  var tmp = countries.replace(/ /g,'')
+  var ctry = tmp.split(",");
+  tmp = regions.replace(/ /g,'')
+  var reg = tmp.split(",");
+  var time_period = duration.split(" ");
+  var i = time_period.indexOf("to");
+  if(i != -1) {
+    time_period.splice(i, 1);
+  }
+
+  
+  $('#notification-editor').val(content);
+
+  $('#start-date').val(time_period[0]);
+  $('#end-date').val(time_period[1]);
+
+  $('#region option').each(function(){
+    if(reg.indexOf($(this).text()) != -1){
+      $(this).prop('selected',true);
+    }
+  });
+
+  $('#loc option').each(function(){
+    if(ctry.indexOf($(this).text()) != -1){
+      $(this).prop('selected',true);
+    }
+  });
+  if(on_form == 'Yes'){
+    $("#check").prop('checked',true);
+  }
+
+});
 </script>
 
 {% endblock main_js %}

@@ -1015,6 +1015,10 @@ $('.arrow-down').css('display','none');
         $('.new_row_display').remove();
     });
 
+    $('#click-close').on('click', function(){
+        $('.new_row_display_total').hide();
+    });
+
 
     $(document).on('click', '.cubg4  input', function(){
         if($(this).val()==0){
