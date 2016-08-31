@@ -387,6 +387,8 @@ class SalesforceLeads(object):
                              'area':'00N7A000000f3lW', # Area
                              'additional_description':'00N7A000000f3lb', # Anything else we should know
                              'products_count':'00N7A000000f3lg', # Number of Products on the feed
+                             'feed_optimisation_status':'00N7A000000fAJA',
+                             'feed_optimisation_sub_status':'00N7A000000fAJF',
                              }
     PRODUCTION_SHOPPING_ARGS = {'shop_primary_role': '00Nd0000005WayR',
                                 'setup_datepick': '00Nd0000005WYlL',  # Shopping Appointment Date
@@ -407,6 +409,8 @@ class SalesforceLeads(object):
                                 'area': '00Nd0000008qIBa',  # Area
                                 'additional_description': '00Nd0000008qIBf',  # Anything else we should know
                                 'products_count': '00Nd0000008qIBk',  # Number of Products on the feed
+                                'feed_optimisation_status': '00Nd0000008qGz9',
+                                'feed_optimisation_sub_status': '00Nd0000008qGzE',
                                 }
     SANDBOX_RLSA_ARGS = {'user_list_id1': '00Nd0000008N42s',  # User List ID 1 for RLSA Bulk Implementation
                          'rsla_bid_adjustment1': '00Nd0000008N445',  # RLSA Bid Adjustment 1 for RLSA Bulk Implementation
