@@ -1282,7 +1282,8 @@ def ratio_calculator(data_all):
             value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
             ele['Ratio'] = ("%.2f"%value +" %" )
             sum_booked_and_leads_w_o_appointment = int(ele['Booked Count']) + int(ele['lead_w_o_appoinment'])
-            ele['all Ratio'] = str(round((((((ele['Booked Count']) + (ele['lead_w_o_appoinment']))/ele['Availability Count']) )*100), 2))+" %"
+            limiting_the_float_ovarall = ((float(ele['Booked Count'] + ele['lead_w_o_appoinment'] )/ele['Availability Count'])*100) 
+            ele['Total all ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
         else:
             if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
                 ele['Ratio'] = "-"
