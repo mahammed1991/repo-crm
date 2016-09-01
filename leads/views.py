@@ -161,6 +161,8 @@ def lead_form(request):
             elif request.POST.get('argos_mc_id'):
                 setup_data[shop_leads['ctype1']] = 'Feed Performance Optimization - Argos'
                 setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
+                setup_data[shop_leads.get('feed_optimisation_status')] = 'Feed Audit'
+                setup_data[shop_leads.get('feed_optimisation_sub_status')] = 'In Queue'
             else:
                 setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
                 setup_data[shop_leads['comment1']] = request.POST.get('description')
@@ -288,6 +290,8 @@ def lead_form(request):
             elif request.POST.get('argos_mc_id'):
                 setup_data[shop_leads['ctype1']] = 'Feed Performance Optimization - Argos'
                 setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
+                setup_data[shop_leads.get('feed_optimisation_status')] = 'Feed Audit'
+                setup_data[shop_leads.get('feed_optimisation_sub_status')] = 'In Queue'
             else:
                 setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
                 setup_data[shop_leads['comment1']] = request.POST.get('description')
@@ -4347,7 +4351,8 @@ def estimate_shopping_arogs_tat(request):
 
     products_processed_per_day = 4 * 500 # Reps * products_processed_per_day
     raw_sql = "select sum(number_of_products) total_products_count from leads_leads " \
-              "where type_1='Feed Performance Optimization - Argos' and created_date >= '%s';" % start_date
+              "where type_1='Feed Performance Optimization - Argos' and created_date >= '%s' " \
+              "and feed_optimisation_status in ('Feed Audit', 'Feed Optimization');" % start_date
     cursor = connection.cursor()
     cursor.execute(raw_sql)
     total_products_inqueue = int(cursor.fetchone()[0])
