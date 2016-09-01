@@ -397,16 +397,6 @@ def create_or_update_leads(records, sf):
             lead.customer_id = cid
 
         if type_1 == "Feed Performance Optimization - Argos":
-            print "1111111111111111111111111111111111"
-            print rec.get("Feed_Optimization_Status__c")
-            print rec.get('Feed_Optimization_Sub_Status__c')
-            print rec.get('of_Products_on_the_feed__c')
-            print rec.get('Anything_else_we_should_know__c')
-            print rec.get('Area_in_need_of_most_improvement__c')
-            print rec.get('Shopping_Feed_Link_G_Sheet__c')
-            print rec.get('Authorization_Case_ID_for_Optimization__c')
-            print rec.get('Business_Type_Category__c')
-            print "111111111111111111111111111111111111111111111"
             lead.feed_optimisation_status = rec.get("Feed_Optimization_Status__c")
             lead.feed_optimisation_sub_status = rec.get('Feed_Optimization_Sub_Status__c')
             lead.number_of_products = rec.get('of_Products_on_the_feed__c')
@@ -766,16 +756,6 @@ def create_or_update_picasso_leads(records, sf):
                 lead.is_build_eligible = False
 
         if type_1 == "Feed Performance Optimization - Argos":
-            print "222222222222222222222222222222222222"
-            print rec.get("Feed_Optimization_Status__c")
-            print rec.get('Feed_Optimization_Sub_Status__c')
-            print rec.get('of_Products_on_the_feed__c')
-            print rec.get('Anything_else_we_should_know__c')
-            print rec.get('Area_in_need_of_most_improvement__c')
-            print rec.get('Shopping_Feed_Link_G_Sheet__c')
-            print rec.get('Authorization_Case_ID_for_Optimization__c')
-            print rec.get('Business_Type_Category__c')
-            print "22222222222222222222222222222222222"
             lead.feed_optimisation_status = rec.get("Feed_Optimization_Status__c")
             lead.feed_optimisation_sub_status = rec.get('Feed_Optimization_Sub_Status__c')
             lead.number_of_products = rec.get('of_Products_on_the_feed__c')
@@ -1282,7 +1262,8 @@ def ratio_calculator(data_all):
             value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
             ele['Ratio'] = ("%.2f"%value +" %" )
             sum_booked_and_leads_w_o_appointment = int(ele['Booked Count']) + int(ele['lead_w_o_appoinment'])
-            ele['all Ratio'] = str(round((((((ele['Booked Count']) + (ele['lead_w_o_appoinment']))/ele['Availability Count']) )*100), 2))+" %"
+            limiting_the_float_ovarall = ((float(ele['Booked Count'] + ele['lead_w_o_appoinment'] )/ele['Availability Count'])*100) 
+            ele['Total all ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
         else:
             if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
                 ele['Ratio'] = "-"
