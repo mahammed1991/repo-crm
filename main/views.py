@@ -2316,17 +2316,197 @@ def assiging_feedback(request, assignee, id):
     return True
 
 
+@csrf_exempt
 # Notification Manager
 def notification_manager(request):
+    region = Region.objects.all()
+    location = Location.objects.all()   
+    if request.method == "GET":
+        notification = request.GET.get('notifications', False)
+        if notification:
+            data = []
+            records = Notification.objects.all()
+            for rec in records:
+                notify_status = ''
+                display_on_form_status = ''
+                if rec.is_visible:
+                    notify_status = 'Published'
+                elif rec.is_draft:
+                    notify_status = 'Drafted'
+                else:
+                    notify_status = 'Expired'
 
-    if request.method == "POST":
-        date_from = request.POST.get('date_from')
-        date_to = request.POST.get('date_to')
+                if rec.display_on_form:
+                    display_on_form_status = 'Yes'
+                else:
+                    display_on_form_status = 'No'
+                
+                created_on = rec.created_date
+                if created_on:
+                    created_on = time.mktime(created_on.timetuple())
+
+                start_date = rec.from_date
+                if start_date:
+                    start_date = time.mktime(start_date.timetuple())
+
+                end_date = rec.to_date
+                if end_date:
+                    end_date = time.mktime(end_date.timetuple())
+                
+                region_list = []
+                location_list = []
+                for i in rec.region.all():
+                    region_list.append('  '+str(i.name))
+
+                for i in rec.target_location.all():
+                    location_list.append('  '+str(i.location_name))
+                da = {
+                    'created_on': created_on,
+                    'content': rec.text,
+                    'countries': location_list,
+                    'regions': region_list,
+                    'status': notify_status,
+                    'display_on_form': display_on_form_status,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'modified_by':str(rec.modified_by.first_name) + ' ' + str(rec.modified_by.last_name),
+                    'id': rec.id,
+                }
+                data.append(da)
+            resp = {'success': True, 'data': data}
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+        return render(request, 'main/notification_manager.html',{'locations':location,'regions':region})
+
+    elif request.method == "POST":
+        data = json.loads(request.body)
+        text = data['text']
+        locations =  data['location']
+        regions =  data['region']
+        date_from =  data['f_date']
+        date_to =  data['t_date']
         from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
         to_date = datetime.strptime(str(date_to), '%m/%d/%Y')
+        on_form =  data['on_form']
+
+        region = Region.objects.filter(name__in=regions)
+        location = Location.objects.filter(location_name__in=locations)
+        
+        email = request.user.username
+        user = User.objects.get(email=email)
+
+        update = request.GET.get('id')
+
+        if update == '0':
+            notification = Notification()
+            notification.text = text
+
+            if data['draft']:
+                notification.is_visible = False
+                notification.is_draft = True
+            else:
+                notification.is_visible = True
+                notification.is_draft = False
+            notification.from_date = from_date
+            notification.to_date = to_date
+            notification.display_on_form = on_form
+            notification.modified_by = user
+            notification.save()
+
+            for reg in region:
+                notification.region.add(reg)
+            for loc in location:
+                notification.target_location.add(loc)
+
+        else:
+            notification = Notification.objects.get(id=update)
+            notification.text = text
+
+            if data['draft']:
+                notification.is_visible = False
+                notification.is_draft = True
+            else:
+                notification.is_visible = True
+                notification.is_draft = False
+            notification.from_date = from_date
+            notification.to_date = to_date
+            notification.display_on_form = on_form
+            notification.modified_by = user
+            notification.region.clear()
+            notification.target_location.clear()
+            notification.save()
+
+            for reg in region:
+                notification.region.add(reg)
+            for loc in location:
+                notification.target_location.add(loc)
+
+        created_on = notification.created_date
+        if created_on:
+            created_on = time.mktime(created_on.timetuple())
+
+        start_date = notification.from_date
+        if start_date:
+            start_date = time.mktime(start_date.timetuple())
+
+        end_date = notification.to_date
+        if end_date:
+            end_date = time.mktime(end_date.timetuple())
 
 
-    return render(request, 'main/notification_manager.html', {})
+        notify_status = ''
+        display_on_form_status = ''
+        if notification.is_visible:
+            notify_status = 'Published'
+        elif notification.is_draft:
+            notify_status = 'Drafted'
+
+        if notification.display_on_form:
+            display_on_form_status = 'Yes'
+        else:
+            display_on_form_status = 'No'
+
+
+        region_list = []
+        location_list = []
+        for i in notification.region.all():
+            region_list.append('  '+str(i.name))
+
+        for i in notification.target_location.all():
+            location_list.append('  '+str(i.location_name))
+
+
+
+        resp = {'success': True,
+        'id':notification.id,
+        'content':notification.text,
+        'countries':location_list,
+        'regions':region_list,
+        'display_on_form':display_on_form_status,
+        'modified_by':str(notification.modified_by.first_name) + ' ' + str(notification.modified_by.last_name),
+        'start_date':start_date,
+        'end_date':end_date,
+        'created_date':created_on,
+        'status':notify_status,
+        }
+        return HttpResponse(json.dumps(resp), content_type='application/json')
+    elif request.method == 'PUT':
+        row_id = request.GET.get('id')
+        notification = Notification.objects.get(id=row_id)
+        if notification:
+            notification.is_visible = False
+            notification.display_on_form = False
+            notification.save()
+            resp = {'success': True}
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+        else:
+            from django.core import exceptions
+            raise exceptions.PermissionDenied
+    
+    else:
+        from django.core import exceptions
+        raise exceptions.PermissionDenied
+
+    return render(request, 'main/notification_manager.html', {'locations':location,'regions':region})
 
 
 
