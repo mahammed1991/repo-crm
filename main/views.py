@@ -2329,6 +2329,8 @@ def notification_manager(request):
             for rec in records:
                 notify_status = ''
                 display_on_form_status = ''
+                modified_by = ''
+
                 if rec.is_visible:
                     notify_status = 'Published'
                 elif rec.is_draft:
@@ -2360,6 +2362,11 @@ def notification_manager(request):
 
                 for i in rec.target_location.all():
                     location_list.append('  '+str(i.location_name))
+
+                if rec.modified_by:
+                    modified_by = str(rec.modified_by.first_name) + ' ' + str(rec.modified_by.last_name)
+                else:
+                    modified_by = ''
                 da = {
                     'created_on': created_on,
                     'content': rec.text,
@@ -2369,7 +2376,7 @@ def notification_manager(request):
                     'display_on_form': display_on_form_status,
                     'start_date': start_date,
                     'end_date': end_date,
-                    'modified_by':str(rec.modified_by.first_name) + ' ' + str(rec.modified_by.last_name),
+                    'modified_by': modified_by,
                     'id': rec.id,
                 }
                 data.append(da)
@@ -2392,7 +2399,11 @@ def notification_manager(request):
         location = Location.objects.filter(location_name__in=locations)
         
         email = request.user.username
-        user = User.objects.get(email=email)
+
+        try:
+            user = User.objects.get(email=email)
+        except:
+            user = None
 
         update = request.GET.get('id')
 
