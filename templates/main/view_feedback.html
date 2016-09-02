@@ -1,0 +1,428 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Manage Help
+{% endblock title %}
+
+{% block main_css %}
+
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+    .table-container, .display_footer{ min-height:300px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+
+    .fixed{background: #5c5cd6;}
+    h1 {
+    font-size: 24px;
+    font-family: 'robotoblack';
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-family: 'robotoblack';
+    font-size: 21px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+    #no_data{
+        margin-left: 448px;
+    }
+    a {
+    color: #2763c9;
+    }
+
+    #assign-feedback-to{
+        width:250px;
+    }
+  </style>
+ 
+{% endblock main_css %}
+
+{% block content %}
+
+    {% if picasso %}
+      {% include 'layouts/picasso_header.html'%}
+    {% endif %}
+<!-- content-region -->
+
+{% if "FEEDBACK" in request.session.groups %} <!--user bellongs group/not-->
+
+<section class="content-region inner-page-wide">
+  <div class="container-fluid">
+  <h1>Feedback Details</h1>  
+  <div class="feedback-details-section">
+    <div class="std-sub-title">Feedback Info</div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Title :</label>
+                <div >{{feedback.title}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Feedback ID :</label>
+                <div  id='feedbackId'>Goog-{{feedback.id}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">CID :</label>
+                <div >{{feedback.cid}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Advertiser Name :</label>
+                <div >{{feedback.advertiser_name}}</div>
+            </div>
+        </div>    
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Google Acc. Manager :</label>
+                <div >{{feedback.google_account_manager.first_name}} {{feedback.google_account_manager.last_name}}</div>
+            </div></div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Email :</label>
+                <div >{{feedback.google_account_manager.email}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Lead Owner :</label>
+                <div >{{feedback.lead_owner.first_name}} {{feedback.lead_owner.last_name}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Lead Owner Email :</label>
+                <div >{{feedback.lead_owner.email}}</div>
+            </div>
+        </div>    
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Feedback Type :</label>
+                <div >{{feedback.feedback_type}}</div>
+            </div>
+            </div>
+            {% if picasso %}
+            {% else %}
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Location :</label>
+                <div >{{feedback.location.location_name}}</div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Language :</label>
+                <div >{{feedback.language}}</div>
+            </div>
+            </div>
+            {% endif %}
+            <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Created On :</label>
+                <div >{{feedback.created_date | date:"D, M d Y, f A" }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feedback-info-row">
+                <label class="value">Assigned To :</label>
+                {% if feedback.assigned_to == None  %}
+                    <div >Un Assigned</div>
+                {% else %}
+                    <div >{{feedback.assigned_to}}</div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>    
+  </div>
+  <div class="feedback-details-section">
+      <div class="std-sub-title">Feedback Description</div>
+      <p>{{feedback.description}}</p>
+  </div>
+
+  <div class="feedback-details-section">
+    {% if feedback.status == 'RESOLVED' %}
+        <div class="feedback-status resolved">Resolved</div>
+    {% endif %}
+
+    {% if feedback.status == 'IN PROGRESS' %}
+        <div class="feedback-status inprogress">In Progress</div>
+    {% endif %}
+
+    {% if feedback.status == 'FIXED' %}
+        <div class="feedback-status fixed">Fixed</div>
+    {% endif %}
+
+    {% if comments %}
+
+    <div class="feedback-comments">
+
+        <!-- commnet start here -->
+
+
+                    {% for c in comments %}
+                        {% if 'regalix' in c.comment_by.email %}
+                            <div class="feedback-comment regalix">
+                                <p>{{c.comment|linebreaks}}</p>
+                                
+                                 {% if c.feedback_status == 'RESOLVED' %}
+                                    <p></p>
+                                   <p class="feedback-auth"> Resolved By:- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% else %}
+                                    <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% endif %}
+                            </div>
+                        
+                         {% elif 'google' in c.comment_by.email %}
+                            <div class="feedback-comment google">
+                                <p>{{c.comment}}</p>
+                                {% if c.feedback_status == 'RESOLVED' %}
+                                    <p></p>
+                                    <p class="feedback-auth"> Resolved By:- <span> {{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% else %}
+                                    <p class="feedback-auth">- <span>{{c.comment_by.username}}</span> ({{c.comment_by.email}}) On <span>{{c.created_date | date:"D, M d Y, f A"}}</span></p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                         
+                    {% endfor %}
+           
+        <!--normal comments ends here  -->
+    </div>
+     {% endif %}
+    
+{% if feedback.status != 'RESOLVED' and can_resolve %}
+<!-- assigning functionalities for feedbak super user -->
+        {% if "FEEDBACK-SUPER-USER" in request.session.groups %}
+        
+        <form class="form-inline" id="assinee-form" action="{% url 'main.views.assign_feedback' %}" method="">
+        {% csrf_token %}
+            <div class="std-sub-title" id="msg-display" style="padding-bottom:1px;">
+               
+               {% if feedback.assigned_to == None  %}
+                 <label for="assign-feedback-to" style="font-family:'fantasy';margin-top: 10px;font-size:initial;width: inherit;color:black;">Please assign this feedback to a manager/TL for resolve:</label>
+                 <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
+                 placeholder="abc@regalix-inc.com" style="height: 38px;" >
+                 <input style="margin-top: -20px;height: 36px;margin-left: 11px; padding-top: 6px;" 
+                 class="btn std-btn sm-btn" type="button" name="" id="submit-assignee-form" value="Assign">
+                {% else %}
+                <label for="assign-feedback-to" style="font-family:'fantasy';margin-top: 10px;font-size:initial;width: inherit;color:black;">
+                This feedback is already assigned to <b>{{ feedback.assigned_to }}</b>, You can re-assign</label>
+                 <input class="form-control"  type="email" id="assign-feedback-to" name="assignee_mail" class="" 
+                 placeholder="abc@regalix-inc.com" style="height: 38px;" >
+                 <input style="margin-top: -20px;height: 36px;margin-left: 11px; padding-top: 6px;" 
+                 class="btn std-btn sm-btn" type="button" name="" id="submit-assignee-form" value="Assign">
+                 {% endif %}
+                
+            
+            </div>
+        
+                <!-- lead details -->
+                <input type="hidden" id="assign-feedback-title" name="assign_feedback_title" value="{{feedback.title}}">
+                <input type="hidden" id="assign-feedback-cid" name="assign_feedback_cid" value="{{feedback.cid}}">
+                <input type="hidden" id="assign-feedback-type" name="assign_feedback_type" value="{{feedback.feedback_type}}">
+                <input type="hidden" id="assign-feedback-location-name" name="assign_feedback_location_name" value="{{feedback.location.location_name}}">
+                <input type="hidden" id="assign-feedback-createdate" name="assign_feedback_createdate" value="{{feedback.created_date | date:'D, M d Y, f A' }}">
+                <input type="hidden" name="feedback_id" id="feedback_id" value="{{feedback.id}}">
+                <input type="hidden" name="feedback_description" id="feedback_description" value={{feedback.description}}>
+                <!-- end of lead details -->
+                
+            </form>
+            
+        {% endif %}
+
+  <!-- end of assigning functionality for feed back super user -->
+{% endif %}
+
+
+    
+
+        {% if feedback.status != 'RESOLVED' %}
+         <form action="{% url 'main.views.comment_feedback' feedback.id %}" method="post">
+                {% csrf_token %}
+            <input type="hidden" name='feedback' value="{{feedback.id}}">
+            <input type="hidden" name='feedback_action' value="" id='feedback_action'>
+            <textarea class="form-control feedback-commet-box" placeholder="Comments" name='comment' id='feedback_comment'></textarea>
+            <div class="btn-row">
+                <button class="btn std-btn" onclick="return validate(this);" id='AddComments'>Comment</button>
+
+            {% if feedback.status != 'FIXED' %}
+                <button class="btn std-btn" onclick="return validate(this);" id='feedbackfixed'>Fixed</button>
+             {% endif %}
+
+        {% if "FEEDBACK-SUPER-USER" in request.session.groups %}
+                 {% if feedback.status != 'RESOLVED' and can_resolve %}
+                    <button class="btn std-btn" onclick="return validate(this);" id='Resolved'>Resolved</button>
+                {% endif %}
+        {% endif %}
+
+            </div>
+            </form>
+        {% endif %}
+
+
+    {% if feedback.status == 'RESOLVED' and resolved_count < 3 %}
+        <form action="{% url 'main.views.reopen_feedback' feedback.id %}"  method="POST" onsubmit="return validateropen(this);">
+            {% csrf_token %}
+              <input type="hidden" name='feedback' value="{{feedback.id}}">
+              <textarea class="form-control feedback-commet-box" placeholder="Comments" name='reopencomment' id='reopencomment'></textarea>
+              <div class="btn-row">
+                <button class="btn std-btn">Reopen</button>
+              </div>
+        </form>
+    {% elif feedback.status == 'RESOLVED' and resolved_count == 3 %}
+            <div class="btn-row">
+                <button class="btn std-btn" id='finalreopenalert'>Reopen</button>
+              </div>
+    {% endif %}
+    
+  
+  </div>
+  </div>
+        <div id="preloaderOverlay" style='display:none;'>
+            <div class="preloader">
+            <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+            <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait</span>
+            </div>
+        </div>
+</section>
+
+{% else %} <!--  checking user bellongs group or not -->
+
+
+      
+      <section class="content-region inner-page-wide">
+            <div style="height:90vh; class="container-fluid">
+            <h2  style="">Sorry you are not authorized to view FEEDBACK</h2>
+            </div>
+      </section>
+{% endif %}<!--  checking user bellongs group or not -->
+
+<!-- content-region ends --> 
+{% endblock content %}
+
+{% block main_js %}
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+
+  <script type="text/javascript">
+    function validate(elem){
+        id = $(elem).attr("id");
+        if(id == 'AddComments'){
+            $("#feedback_action").val('AddComments');
+        }else if (id == 'feedbackfixed'){
+             $("#feedback_action").val('FIXED');
+        }
+        else{
+            $("#feedback_action").val('Resolved');
+        }
+        
+        $(".error-box").removeClass('error-box');
+        if($('#feedback_comment').val() == ''){
+            $('#feedback_comment').addClass('error-box')
+            return false
+        }
+        $('#preloaderOverlay').show();
+    }
+    function validateropen(frm){
+        $(".error-box").removeClass('error-box');
+        if(frm.reopencomment.value == ''){
+            $('#reopencomment').addClass('error-box')
+            return false
+        }
+        $('#preloaderOverlay').show();
+    }
+    $('#finalreopenalert').click(function(){
+        alert('This feedback has been re-opened thrice. If the issue is still not resolved, please reach out to implementation-support@google.com OR google@regalix-inc.com');
+    })
+
+
+
+/* displaying all mail ids to feedbaack super user*/
+$("#assign-feedback-to").autocomplete(
+{
+    search: function () {},
+    source: function (request, response)
+    {
+        $.ajax(
+        {
+            url: "/main/user/email/",
+            dataType: "json",
+            data:
+            {
+                search_key: request.term,
+            },
+            success: function (data)
+            {
+                response(data.data);
+            }
+        });
+    },
+    minLength: 1,
+});
+/* end of displaying all mail ids to feedbaack super user*/
+
+
+/*Getting values values of assignee*/
+$('#submit-assignee-form').click( function(){
+ var email = $("#assign-feedback-to").val();
+$("#assign-feedback-to").removeClass('error-box');
+ var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+    if (emailFilter.test(email) && ( email != "")) {
+    
+            datastring = {}
+            datastring['assign_feedback_title'] = $('#assign-feedback-title').val();
+            datastring['assign_feedback_cid'] = $('#assign-feedback-cid').val();
+            datastring['assign_feedback_type'] = $('#assign-feedback-type').val();
+            datastring['feedback_location_name'] = $('#assign-feedback-location-name').val();
+            datastring['assign_feedback_createddate'] = $('#assign-feedback-createdate').val();
+            datastring['assignee_mail'] = $('#assign-feedback-to').val();
+            datastring['feedback_id'] = $('#feedback_id').val();
+            datastring['feedback_description'] = $('#feedback_description').val();
+            $('#preloaderOverlay').show();
+            $.ajax({
+                'url': "/main/assign-feedback",
+                'type': 'GET',
+                'dataType': 'JSON',
+                'data':datastring,
+                success: function(data){
+                    $('#preloaderOverlay').hide();
+                    $('#msg-display').html('');
+                    $('#msg-display').append("<p style='color:green;font-family:sans-serif;'>"+ data.msg+"</p>");
+                },failure: function(data){
+                    $('#preloaderOverlay').hide();
+                    alert("Please refesh the page and re assign")
+                },
+            })
+         }
+    else {
+        alert("Email id is wrong or empty");
+        $("#assign-feedback-to").addClass('error-box');
+        }
+});
+/*end of posting values for assignee*/
+
+   
+</script>
+{% endblock main_js %}
+
+
