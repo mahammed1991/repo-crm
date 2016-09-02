@@ -1340,15 +1340,10 @@ def without_appointment_lead_fetching(process_type, available_counts_teams):
 
 @kronos.register('0 6 * * *')
 def updateNotifications():
-    print "----------------------------------"
-    print datetime.utcnow().strftime("%Y-%m-%d")
     current_date = datetime.utcnow().strftime("%Y-%m-%d")
     notifications = Notification.objects.all()
     for notify in notifications:
-        print notify.to_date.strftime("%Y-%m-%d")
         notification_to_date = notify.to_date.strftime("%Y-%m-%d")
         if current_date > notification_to_date:
-            print "Yup"
             notify.is_visible = False
             notify.save()
-            print "Done"
