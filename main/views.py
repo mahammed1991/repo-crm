@@ -198,19 +198,23 @@ def main_home(request):
         # notifications = Notification.objects.filter(is_visible=True)
         user = UserDetails.objects.get(user=request.user)
         notifications = list()
+        display_notifications = list()
+        
+        current_date = datetime.utcnow().strftime("%Y-%m-%d")
         if user.location:
             user_region = user.location.region_set.get()
-            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True, from_date__isnull=False, to_date__isnull=False, to_date__gte=current_date).order_by('-created_date')
         else:
-            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
+            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True,from_date__isnull=True,to_date__isnull=True, to_date__gte=current_date).order_by('-created_date')
 
         customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
+        display_notifications = notifications.filter(display_on_form=True)
 
         # feedback summary end here
         return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                        'user_profile': user_profile, 'no_leads': check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
                                                        'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
-                                                       'feedback_list': feedback_list, 'notifications': notifications})
+                                                       'feedback_list': feedback_list, 'notifications': notifications,'display_notifications':display_notifications})
 
     else:
         if request.user.groups.filter(name='SUPERUSER'):
@@ -2329,6 +2333,8 @@ def notification_manager(request):
             for rec in records:
                 notify_status = ''
                 display_on_form_status = ''
+                modified_by = ''
+
                 if rec.is_visible:
                     notify_status = 'Published'
                 elif rec.is_draft:
@@ -2360,6 +2366,11 @@ def notification_manager(request):
 
                 for i in rec.target_location.all():
                     location_list.append('  '+str(i.location_name))
+
+                if rec.modified_by:
+                    modified_by = str(rec.modified_by.first_name) + ' ' + str(rec.modified_by.last_name)
+                else:
+                    modified_by = ''
                 da = {
                     'created_on': created_on,
                     'content': rec.text,
@@ -2369,7 +2380,7 @@ def notification_manager(request):
                     'display_on_form': display_on_form_status,
                     'start_date': start_date,
                     'end_date': end_date,
-                    'modified_by':str(rec.modified_by.first_name) + ' ' + str(rec.modified_by.last_name),
+                    'modified_by': modified_by,
                     'id': rec.id,
                 }
                 data.append(da)
@@ -2392,7 +2403,11 @@ def notification_manager(request):
         location = Location.objects.filter(location_name__in=locations)
         
         email = request.user.username
-        user = User.objects.get(email=email)
+
+        try:
+            user = User.objects.get(email=email)
+        except:
+            user = None
 
         update = request.GET.get('id')
 

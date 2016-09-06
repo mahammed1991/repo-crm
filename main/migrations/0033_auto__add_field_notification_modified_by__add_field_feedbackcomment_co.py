@@ -8,51 +8,37 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Notification.is_draft'
-        db.add_column('notifications', 'is_draft',
-                      self.gf('django.db.models.fields.BooleanField')(default=True),
-                      keep_default=False)
+        pass
+        # Adding field 'Notification.modified_by'
+        '''db.add_column('notifications', 'modified_by',
+                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['auth.User'], null=True, blank=True),
+                      keep_default=False)'''
 
-        # Adding field 'Notification.from_date'
-        db.add_column('notifications', 'from_date',
-                      self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True),
-                      keep_default=False)
+        # Removing M2M table for field team on 'Notification'
+        #db.delete_table(db.shorten_name('notifications_team'))
 
-        # Adding field 'Notification.to_date'
-        db.add_column('notifications', 'to_date',
-                      self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'Notification.display_on_form'
-        db.add_column('notifications', 'display_on_form',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-
-        # Adding M2M table for field team on 'Notification'
-        m2m_table_name = db.shorten_name('notifications_team')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('notification', models.ForeignKey(orm[u'main.notification'], null=False)),
-            ('team', models.ForeignKey(orm[u'leads.team'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['notification_id', 'team_id'])
+        # Adding field 'FeedbackComment.comment_type'
+        '''db.add_column('feedback_comments', 'comment_type',
+                      self.gf('django.db.models.fields.CharField')(max_length=1, null=True, blank=True),
+                      keep_default=False)'''
 
 
     def backwards(self, orm):
-        # Deleting field 'Notification.is_draft'
-        db.delete_column('notifications', 'is_draft')
+        pass
+        # Deleting field 'Notification.modified_by'
+        # db.delete_column('notifications', 'modified_by_id')
 
-        # Deleting field 'Notification.from_date'
-        db.delete_column('notifications', 'from_date')
+        # Adding M2M table for field team on 'Notification'
+        #m2m_table_name = db.shorten_name('notifications_team')
+        # db.create_table(m2m_table_name, (
+        #     ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+        #     ('notification', models.ForeignKey(orm[u'main.notification'], null=False)),
+        #     ('team', models.ForeignKey(orm[u'leads.team'], null=False))
+        # ))
+        # db.create_unique(m2m_table_name, ['notification_id', 'team_id'])
 
-        # Deleting field 'Notification.to_date'
-        db.delete_column('notifications', 'to_date')
-
-        # Deleting field 'Notification.display_on_form'
-        db.delete_column('notifications', 'display_on_form')
-
-        # Removing M2M table for field team on 'Notification'
-        db.delete_table(db.shorten_name('notifications_team'))
+        # Deleting field 'FeedbackComment.comment_type'
+        #db.delete_column('feedback_comments', 'comment_type')
 
 
     models = {
@@ -151,7 +137,7 @@ class Migration(SchemaMigration):
         },
         u'main.contectlist': {
             'Meta': {'ordering': "['first_name']", 'object_name': 'ContectList', 'db_table': "'contact_list'"},
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 8, 16, 0, 0)', 'auto_now_add': 'True', 'blank': 'True'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 8, 30, 0, 0)', 'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '100', 'blank': 'True'}),
             'extn': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
@@ -159,7 +145,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'modified_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 8, 16, 0, 0)', 'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
+            'modified_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 8, 30, 0, 0)', 'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'position_type': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'profile_photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
@@ -170,7 +156,7 @@ class Migration(SchemaMigration):
         u'main.customertestimonials': {
             'Meta': {'ordering': "['-created_date']", 'object_name': 'CustomerTestimonials', 'db_table': "'customer_testimonials'"},
             'company_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 8, 16, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 8, 30, 0, 0)'}),
             'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '100'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
@@ -212,6 +198,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-created_date']", 'object_name': 'FeedbackComment', 'db_table': "'feedback_comments'"},
             'comment': ('django.db.models.fields.TextField', [], {}),
             'comment_by': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'comment_type': ('django.db.models.fields.CharField', [], {'max_length': '1', 'null': 'True', 'blank': 'True'}),
             'created_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'feedback': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['main.Feedback']"}),
             'feedback_status': ('django.db.models.fields.CharField', [], {'default': "'NEW'", 'max_length': '20'}),
@@ -225,10 +212,10 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_draft': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_visible': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'}),
             'modified_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
             'region': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['reports.Region']", 'null': 'True', 'blank': 'True'}),
             'target_location': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['leads.Location']", 'null': 'True', 'blank': 'True'}),
-            'team': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['leads.Team']", 'null': 'True', 'blank': 'True'}),
             'text': ('django.db.models.fields.TextField', [], {}),
             'to_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
         },

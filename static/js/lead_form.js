@@ -1337,9 +1337,8 @@ $("#products_count").focusout(function(e){
                 if(resp.success){
                        estimated_date = localTime(resp.estimated_date);
                        total_inqueue_products = resp.products_in_queue;
-                       $("#tatMsg").text('');
-                       $("#tatMsg").html("There are <strong>" + total_inqueue_products +
-                                        "</strong> products in-queue, estimated delivery date for this lead would be <strong>"+ estimated_date + "</strong>")
+                       $(".estimated-date").text('');
+                       $(".estimated-date").text(estimated_date)
                        $("#tat-msg-block").show();
                 }
           },
@@ -1349,7 +1348,7 @@ $("#products_count").focusout(function(e){
         });
     }else{
         $("#tat-msg-block").hide();
-        $("#tatMsg").text('');
+        $(".estimated-date").text('');
     }
 });
 
