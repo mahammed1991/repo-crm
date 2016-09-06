@@ -37,7 +37,7 @@ from django.db import connection, transaction
 from django.db.models import Count
 from django.db.models import Q
 from reports.models import RLSABulkUpload
-from main.models import UserDetails, PicassoEligibilityMasterUpload
+from main.models import UserDetails, PicassoEligibilityMasterUpload, Notification
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
                           BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID
@@ -337,7 +337,15 @@ def lead_form(request):
     elif 'Agency' in form_name:
         return redirect('leads.views.agency_lead_form')
 
-
+    user = UserDetails.objects.get(user=request.user)
+    notifications = list()
+    
+    current_date = datetime.utcnow().strftime("%Y-%m-%d")
+    if user.location:
+        user_region = user.location.region_set.get()
+        notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True, from_date__isnull=False, to_date__isnull=False, to_date__gte=current_date, display_on_form=True).order_by('-created_date')
+    else:
+        notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True,from_date__isnull=True,to_date__isnull=True, to_date__gte=current_date, display_on_form=True).order_by('-created_date')
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
@@ -347,6 +355,8 @@ def lead_form(request):
     for i in temp:
         picasso_programs.append(i.team_name)
     lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
+    lead_args['display_on_form'] = notifications
+
     return render(
         request,
         'leads/lead_form.html',

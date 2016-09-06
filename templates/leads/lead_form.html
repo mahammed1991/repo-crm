@@ -98,7 +98,15 @@
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
-    <!--div class="dynamic-message"><span>Dynamic messaging system</span></div-->
+    {% if display_on_form %}
+    <div style="margin-bottom:-40px;">
+      {% for onform in display_on_form %}
+      <div class="dynamic-message" style="margin-bottom:-10px;">
+        <span>{{ onform.text }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
   <h1>Submit Lead</h1>
 
   <!-- temproray survay -->
