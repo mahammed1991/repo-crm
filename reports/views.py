@@ -23,7 +23,7 @@ from leads.models import PicassoLeads, Leads, Team, Location, Timezone, CodeType
 from report_services import ReportService, DownloadLeads, TrendsReportServices
 from lib.helpers import get_quarter_date_slots, is_manager, get_user_under_manager, wpp_user_required, tag_user_required, logs_to_events, prev_quarter_date_range, get_unique_uuid
 from reports.models import LeadSummaryReports, KickOffProgram, KickoffTagteam, ChromebookInventory
-from main.models import UserDetails, WPPMasterList
+from main.models import UserDetails, WPPMasterList, PicassoEligibilityMasterUpload
 from reports.models import Region, CallLogAccountManager, MeetingMinutes, MeetingActionItems
 from lib.helpers import (send_mail)
 from models import RLSABulkUpload
@@ -2871,6 +2871,36 @@ def total_available_booked_time_based(data_sent):
     return summary
 
 
+def download_wpp_master_eligibily_data(request):
+    if request.method =='POST':
+        final_file_data = list()
+        all_eligibilty_checking_data = PicassoEligibilityMasterUpload.objects.all()
+        for each in all_eligibilty_checking_data:
+            each_dict = dict()
+            each_dict['URL'] = each.url
+            each_dict['DATE ASSES'] = each.date_assess
+            each_dict['ASSESMENT TYPE'] = each.assesment_type
+            each_dict['FRAMEWORK'] = each.framework
+            each_dict['MOBILE RESPONSIVENESS'] = each.mobile_responsivenes
+            each_dict['COMMENTS'] = each.comments
+            each_dict['BUILD ELIGIBILE'] = each.buildeligible
+            each_dict['DEVELOPMENT TIME'] = each.development_time
+            each_dict['PRIORITY NUMBER'] = each.priority_number
+            each_dict['HIGHEST PRIORITY NUMBER'] = each.highest_priority_number
+            each_dict['IS DUPLICATE'] = each.is_duplicate
+            final_file_data.append(each_dict)
+        excel_header = ['URL', 'DATE ASSES', 'ASSESMENT TYPE', 'FRAMEWORK', 'MOBILE RESPONSIVENESS', 'COMMENTS', 'BUILD ELIGIBILE', 'DEVELOPMENT TIME', 'PRIORITY NUMBER', 'HIGHEST PRIORITY NUMBER', 'IS DUPLICATE']
+        filename = "WPP_MASTER_ELIGIBILTY_PORTAL_DB_DATA"
+        path = write_eligiblity_report_to_csv(final_file_data, excel_header, filename)
+        response = DownloadLeads.get_downloaded_file_response(path)
+        return response
+
+    return render(request,'reports/download_wpp_master_eligibilty_data.html', {})
+
+def write_eligiblity_report_to_csv(result, collumn_attr, filename):
+    path = "/tmp/%s.csv" % (filename)
+    DownloadLeads.conver_to_csv(path, result, collumn_attr)
+    return path
 
 
 

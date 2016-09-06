@@ -8,23 +8,25 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        pass
         # Adding field 'Notification.modified_by'
-        db.add_column('notifications', 'modified_by',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['auth.User'], null=True, blank=True),
-                      keep_default=False)
+        #db.add_column('notifications', 'modified_by',
+        #              self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['auth.User'], null=True, blank=True),
+        #              keep_default=False)
 
         # Removing M2M table for field team on 'Notification'
         #db.delete_table(db.shorten_name('notifications_team'))
 
         # Adding field 'FeedbackComment.comment_type'
-        db.add_column('feedback_comments', 'comment_type',
-                      self.gf('django.db.models.fields.CharField')(max_length=1, null=True, blank=True),
-                      keep_default=False)
+        # db.add_column('feedback_comments', 'comment_type',
+        #               self.gf('django.db.models.fields.CharField')(max_length=1, null=True, blank=True),
+        #               keep_default=False)
 
 
     def backwards(self, orm):
+        pass
         # Deleting field 'Notification.modified_by'
-        db.delete_column('notifications', 'modified_by_id')
+        #db.delete_column('notifications', 'modified_by_id')
 
         # Adding M2M table for field team on 'Notification'
         #m2m_table_name = db.shorten_name('notifications_team')
@@ -36,7 +38,7 @@ class Migration(SchemaMigration):
         # db.create_unique(m2m_table_name, ['notification_id', 'team_id'])
 
         # Deleting field 'FeedbackComment.comment_type'
-        db.delete_column('feedback_comments', 'comment_type')
+        # db.delete_column('feedback_comments', 'comment_type')
 
 
     models = {
