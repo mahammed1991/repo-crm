@@ -1,0 +1,59 @@
+<div class="leftpanel">
+    
+    <div class="logopanel">
+        <h1 style="font-size:21px;"> UMM HYD DASHBOARD </h1>
+    </div><!-- logopanel -->
+        
+    <div class="leftpanelinner">    
+        
+        <!-- This is only visible to small devices -->
+        
+      
+      <h5 class="sidebartitle">Navigation</h5>
+      <ul class="nav nav-pills nav-stacked nav-bracket">
+      <li><a href="{% url 'umm.views.home' %}"><i class="fa fa-home"></i> <span> Overview </span></a></li>  
+
+
+        
+        
+        
+        <li   class="nav-parent"><a href="#"><i class="fa fa-file-text"></i> <span>INDIA</span></a>
+          <ul class="children">
+                       
+            <li class="active"><a href="{% url 'umm.views.umm_india' %}"><i class="fa fa-caret-right"></i> Overview</a></li>
+            
+            <li><a href="{% url 'umm.views.umm_india_quality' %}"><i class="fa fa-caret-right"></i> Quality</a></li>
+            
+            <li><a href="{% url 'umm.views.umm_india_productivity' %}"><i class="fa fa-caret-right"></i> Productivity</a></li>
+          </ul>
+        </li>
+        <li class="nav-parent"><a href="#"><i class="fa fa-file-text"></i> <span>SEA</span></a>
+          <ul class="children">
+                       
+            <li><a href="#"><i class="fa fa-caret-right"></i> Overview</a></li>
+            
+            <li><a href="#"><i class="fa fa-caret-right"></i> Quality</a></li>
+            
+            <li><a href="#"><i class="fa fa-caret-right"></i> Productivity</a></li>
+          </ul>
+        </li>
+        <li class="nav-parent"><a href="#"><i class="fa fa-file-text"></i> <span>UKI</span></a>
+          <ul class="children">
+                       
+             <li><a href="#"><i class="fa fa-caret-right"></i> Overview</a></li>
+            
+            <li><a href="#"><i class="fa fa-caret-right"></i> Quality</a></li>
+            
+            <li><a href="#"><i class="fa fa-caret-right"></i> Productivity</a></li>
+          </ul>
+        </li>
+        <li ><a href="{% url 'umm.views.umm_customized_analysis' %}"><i class="fa fa-edit"></i><span> Customized analysis</span></a>
+        <li ><a href="{% url 'umm.views.manage_excel' %}"><i class="fa fa-edit"></i><span> Upload Excel </span></a>
+ 
+        </li>
+      </ul>
+      
+      <!-- infosummary -->
+      
+    </div><!-- leftpanelinner -->
+  </div><!-- leftpanel -->
