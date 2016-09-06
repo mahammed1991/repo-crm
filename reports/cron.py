@@ -19,7 +19,7 @@ from django.template import Context
 from reports.models import Region, LeadsReport
 
 # utlizatyion dashboard
-from main.models import UserDetails
+from main.models import UserDetails, Notification
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
 from django.db.models import Sum, Count 
@@ -1337,3 +1337,13 @@ def without_appointment_lead_fetching(process_type, available_counts_teams):
 
     return available_counts_teams
 
+
+@kronos.register('0 6 * * *')
+def updateNotifications():
+    current_date = datetime.utcnow().strftime("%Y-%m-%d")
+    notifications = Notification.objects.all()
+    for notify in notifications:
+        notification_to_date = notify.to_date.strftime("%Y-%m-%d")
+        if current_date > notification_to_date:
+            notify.is_visible = False
+            notify.save()
