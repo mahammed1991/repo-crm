@@ -52,4 +52,6 @@ urlpatterns = patterns(
     url(r'^inventory/$', views.inventory_handler),
     url(r'^download/$', views.download_inventory_details),
 
+    url(r'^download-wpp-eligibilty-file/$', views.download_wpp_master_eligibily_data),
+
 )

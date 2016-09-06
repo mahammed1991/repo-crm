@@ -1279,12 +1279,12 @@ def total_sum_calculater(data_to_sum):
     
     if  total_sum['Availability_count'] > 0:
         limiting_the_float = ((float(total_sum['Booked Count'])/total_sum['Availability_count'])*100) 
-        total_sum['Total ratio'] = ("%.2f" %limiting_the_float +" %" )
+        total_sum['Total all ratio'] = ("%.2f" %limiting_the_float +" %" )
         limiting_the_float_ovarall = ((float(total_sum['Booked Count'] + total_sum['Total lead w o appoinment'] )/total_sum['Availability_count'])*100) 
-        total_sum['Total all ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
+        total_sum['Total ovreall ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
     else:
-        total_sum['Total ratio'] = '-'
-        total_sum['Total all ratio'] = "-"
+        total_sum['Total all ratio'] = '-'
+        total_sum['Total ovreall ratio'] = "-"
 
     return total_sum
 

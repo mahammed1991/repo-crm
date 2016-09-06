@@ -220,7 +220,7 @@ function resetBtn(elem){
 
 
 // Verify the CID and get the eligible picasso lead details for the given CID
-$('input[name=cid]').on('focusout', function(){
+/*$('input[name=cid]').on('focusout', function(){
         if(!$(this).val()){
             clearLeadDetails();
         }else{
@@ -253,7 +253,7 @@ $('input[name=cid]').on('focusout', function(){
                 }
             })
         }
-    });
+    });*/
 
 // Providing website URL to select elegible lead from Multiple lead with same CID
 function multiple_leads(details){
