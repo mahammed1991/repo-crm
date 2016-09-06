@@ -80,6 +80,19 @@
     background-color: rgb(182, 215, 168);
 }
 
+#hover-element {
+  border: 1px solid #ccc;
+  display: none;
+  font-size: 10px;
+  margin-top: 10px;
+  padding: 5px;
+  text-transform: uppercase;
+}
+
+#tooltip:hover #hover-element {
+  display: block;
+}
+
 </style>
 {% endblock main_css %}
 {% block content %}
@@ -799,7 +812,7 @@
       </div>
       <div class="row shoppingInfo">
         <div class="col-md-12 avg_time" style="">
-          <strong>Tasks Undertaken: </strong> Creating and configuring Google Mercahnt center, Creating and uploading data feeds and Creating Shopping campaigns.
+          <strong>Tasks Undertaken: </strong> Creating and Configuring Google Mercahnt Center, Creating and Uploading Data Feeds and Creating Shopping Campaigns.
         </div>
 
         <div class="col-md-4">
@@ -837,7 +850,7 @@
       </div>
       <div id="shopping_trobleshooting" style="display:none;">
         <div class="col-md-12 avg_time" style="margin-left:0px;">
-          <strong>Tasks Undertaken: </strong> Error rectification in the feed, adding more products in the feed, campaign management
+          <strong>Tasks Undertaken: </strong> Error Rectification In The Feed, Adding more products In The Feed, Campaign Management
         </div>
 
         <div class="row" style="margin-bottom:10px;">
@@ -877,32 +890,23 @@
       <!-- Project Argos -->
       <div id="shopping_feed_optimisation" style="display:none;">
         <div class="col-md-12 avg_time" style="margin-left:2px;">
-          <strong>Tasks Undertaken: </strong> Optimizing attributes like Title, Google product category and product type
+          <strong>Tasks Undertaken: </strong> Optimizing Attributes like Title, Google Product Category and Product Type
         </div>
 
         <div class="row" style="padding-left: 20px;margin-bottom: 15px;">
             <div class="form-heading">Pre-requisites for Feed Optimization Argos:</div>
               <ul style="margin-left: 35px;">
-                  <li style="list-style-type: disc;"><span> We optimize data feeds which are made using Google Spreadsheets only. </span></li>
-                  <li style="list-style-type: disc;"><span> In case of CSV data feed, please upload it to your drive and share the link with us </span></li>
-                  <li style="list-style-type: disc;"><span> In case the advertiser is using an xml feed which needs to be optimized, Use </span><a href="https://pitchnow.corp.google.com/pitches/100697" target="_blank"><span style=" color: rgb(17, 85, 204); text-decoration: underline;">Go/smb-feeds</span></a></li>
-                  <!--li style="list-style-type: disc;"><span> Product limitation: </span>
-                        <table style='border:1px solid black'>
-                          <tr style='border:1px solid black'>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>Method of Feed creation</td>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>API</td>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>XML</td>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>GSS/CSV</td>
-                          </tr>
-                          <tr style='border:1px solid black'>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>Expected number of products in the feed</td>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>30,000+</td>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'>20,000-30,000</td>
-                            <td style='border:1px solid black;padding-right: 5px;padding-left: 5px;'><20,000</td>
-                          </tr>
-                        </table>
-                  </li-->
-                  <li style="list-style-type: disc;"><span> Turn Around Time on feed optimization depends on number of products on the data feed and Number of attributes missing on the feed. </span></li>
+                  <li style="list-style-type: disc;">
+                    <span style="width: 88%;display: block;"> We optimize Data feeds made using Google Sheets,CSV and XLS only.
+                      Please upload the feed in your drive and share the link with <b style="font-style: italic;">gms-argos@google.com</b>
+                    </span>
+                  </li>
+                  <li style="list-style-type: disc;">
+                    <span> In case of XML feeds or API upload, please use
+                      <a href="https://pitchnow.corp.google.com/pitches/100697" target="_blank">Go/smb-feeds</a>
+                      and share insights with Client
+                    </span>
+                  </li>
               </ul>
         </div>
 
@@ -945,7 +949,10 @@
           </div>
           <div id="tat-msg-block" class="row" style="margin-bottom:10px;display:none">
             <div class="col-md-12" >
-             <p id="tatMsg" style="border-radius: 20px;text-align: center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 100%;margin-top: -10px;"></b> </p>
+             <p id="tatMsg" style="border-radius: 20px;text-align: center;font-size: 15px;padding: 6px;background-color: #FFF2CC;width: 100%;margin-top: -10px;"></b>
+              Estimated delivery date for this lead would be <strong class="estimated-date"></strong>
+              <span>( TAT is derived basis on the number of products in the feed )</span>
+             </p>
             </div>
           </div>
           <div class="row">

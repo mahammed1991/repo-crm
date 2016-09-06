@@ -144,7 +144,7 @@ TagTeam Google Portal
     </section>
     <section class="notifications">
       <div class="slick-slider container-fluid trans" id="marquee_notofication">
-        {% for notification in notifications %}
+        {% for notification in display_notifications %}
           <div>{{notification.text}} </div>
         {% endfor %}
       </div>
