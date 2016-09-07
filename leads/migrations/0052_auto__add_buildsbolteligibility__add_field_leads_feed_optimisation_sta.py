@@ -8,9 +8,8 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
         # Adding field 'Leads.feed_optimisation_status'
-        '''db.add_column(u'leads_leads', 'feed_optimisation_status',
+        db.add_column(u'leads_leads', 'feed_optimisation_status',
                       self.gf('django.db.models.fields.CharField')(max_length=300, null=True, blank=True),
                       keep_default=False)
 
@@ -47,12 +46,11 @@ class Migration(SchemaMigration):
         # Adding field 'Leads.authcase_id'
         db.add_column(u'leads_leads', 'authcase_id',
                       self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
-                      keep_default=False)'''
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        pass
-        '''# Deleting field 'Leads.feed_optimisation_status'
+        # Deleting field 'Leads.feed_optimisation_status'
         db.delete_column(u'leads_leads', 'feed_optimisation_status')
 
         # Deleting field 'Leads.feed_optimisation_sub_status'
@@ -74,7 +72,7 @@ class Migration(SchemaMigration):
         db.delete_column(u'leads_leads', 'business_type')
 
         # Deleting field 'Leads.authcase_id'
-        db.delete_column(u'leads_leads', 'authcase_id')'''
+        db.delete_column(u'leads_leads', 'authcase_id')
 
 
     models = {
