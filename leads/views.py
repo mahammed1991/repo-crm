@@ -37,7 +37,7 @@ from django.db import connection, transaction
 from django.db.models import Count
 from django.db.models import Q
 from reports.models import RLSABulkUpload
-from main.models import UserDetails, PicassoEligibilityMasterUpload
+from main.models import UserDetails, PicassoEligibilityMasterUpload, Notification
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
                           BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID
@@ -159,7 +159,7 @@ def lead_form(request):
                 setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
                 setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
             elif request.POST.get('argos_mc_id'):
-                setup_data[shop_leads['ctype1']] = 'Feed Performance Optimization - Argos'
+                setup_data[shop_leads['ctype1']] = 'Project Argos- Feed Performance Optimization'
                 setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
                 setup_data[shop_leads.get('feed_optimisation_status')] = 'Feed Audit'
                 setup_data[shop_leads.get('feed_optimisation_sub_status')] = 'In Queue'
@@ -288,7 +288,7 @@ def lead_form(request):
                 setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
                 setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
             elif request.POST.get('argos_mc_id'):
-                setup_data[shop_leads['ctype1']] = 'Feed Performance Optimization - Argos'
+                setup_data[shop_leads['ctype1']] = 'Project Argos- Feed Performance Optimization'
                 setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
                 setup_data[shop_leads.get('feed_optimisation_status')] = 'Feed Audit'
                 setup_data[shop_leads.get('feed_optimisation_sub_status')] = 'In Queue'
@@ -337,7 +337,15 @@ def lead_form(request):
     elif 'Agency' in form_name:
         return redirect('leads.views.agency_lead_form')
 
-
+    user = UserDetails.objects.get(user=request.user)
+    notifications = list()
+    
+    current_date = datetime.utcnow().strftime("%Y-%m-%d")
+    if user.location:
+        user_region = user.location.region_set.get()
+        notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True, from_date__isnull=False, to_date__isnull=False, to_date__gte=current_date, display_on_form=True).order_by('-created_date')
+    else:
+        notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True,from_date__isnull=True,to_date__isnull=True, to_date__gte=current_date, display_on_form=True).order_by('-created_date')
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
@@ -347,6 +355,8 @@ def lead_form(request):
     for i in temp:
         picasso_programs.append(i.team_name)
     lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
+    lead_args['display_on_form'] = notifications
+
     return render(
         request,
         'leads/lead_form.html',
@@ -4351,11 +4361,15 @@ def estimate_shopping_arogs_tat(request):
 
     products_processed_per_day = 4 * 500 # Reps * products_processed_per_day
     raw_sql = "select sum(number_of_products) total_products_count from leads_leads " \
-              "where type_1='Feed Performance Optimization - Argos' and created_date >= '%s' " \
+              "where type_1='Project Argos- Feed Performance Optimization' and created_date >= '%s' " \
               "and feed_optimisation_status in ('Feed Audit', 'Feed Optimization');" % start_date
     cursor = connection.cursor()
     cursor.execute(raw_sql)
-    total_products_inqueue = int(cursor.fetchone()[0])
+    total_products = cursor.fetchone()[0]
+    if total_products:
+        total_products_inqueue = int(total_products)
+    else:
+        total_products_inqueue = 0
     if current_products:
         total_products_inqueue += int(current_products)
 

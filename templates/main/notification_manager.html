@@ -15,6 +15,37 @@ Notification Manager
       .edit {
         width: 90px !important;
       }
+      .location-pick {
+      padding:10px;
+      border:1px solid #ccc;
+      height:140px;
+      overflow:auto;
+      margin-top: -13px;
+      }
+      .location-pick .checkbox {
+        margin:0;
+      }
+      .location-pick .checkbox label {
+        display:block;
+        text-align:left;
+        margin-bottom:5px;
+      }
+
+      .region-pick {
+        padding:10px;
+        border:1px solid #ccc;
+        height:140px;
+        overflow:auto;
+        margin-top: -13px;
+      }
+      .region-pick .checkbox {
+        margin:0;
+      }
+      .region-pick .checkbox label {
+        display:block;
+        text-align:left;
+        margin-bottom:5px;
+      }
     </style>
 {% endblock main_css %}
 {% block content %}
@@ -48,23 +79,31 @@ Notification Manager
             <div class="modal-footer" style="padding-bottom:25px;">
             <div class="col-md-12">
               <div class="col-md-4">
-              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Region</label>
-                <select class="form-control" id="region" style="height:140px;" multiple>
-                  <option id="select-all-region">Select All</option>
-                  {% for reg in regions %}
-                    <option value="{{ reg.name }}">{{ reg.name }}</option>
-                  {% endfor %}
-                </select>
+              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Region</label><br/><br/>
+                <div class="region-pick" id="filter_region">
+                  <div class="checkbox" id="region_checks">
+                      <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                      {% for reg in regions %}
+                          <label>
+                              <input type="checkbox" value="{{reg.name}}"> {{reg.name}}
+                          </label>
+                      {% endfor %}
+                  </div>
+                </div>
               </div>
 
               <div class="col-md-4">
-              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Country</label>
-                <select class="form-control" id="loc" style="height:140px;" multiple>
-                  <option id="select-all-country">Select All</option>
-                  {% for loc in locations %}
-                    <option value="{{ loc.location_name }}">{{ loc.location_name }}</option>
-                  {% endfor %}
-                </select>
+              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Country</label><br/><br/>
+                <div class="location-pick" id="filter_location">
+                  <div class="checkbox" id="location_checks">
+                      <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                    {% for loc in locations %}
+                          <label>
+                              <input type="checkbox" value="{{ loc.location_name }}">{{ loc.location_name }}
+                          </label>
+                      {% endfor %}
+                  </div>
+                </div>
               </div>
 
               <div class="col-md-4" >
@@ -198,7 +237,7 @@ $(document).ready(function(){
 });
 
 
-$('#select-all-region').click(function(){
+/*$('#select-all-region').click(function(){
   $('#region option').each(function(){
     if($(this).val() == "Select All"){
       $(this).prop('selected', false);
@@ -220,7 +259,24 @@ $('#select-all-country').click(function(){
     }
   });
 });
+*/
+$("#region_checks .checkbox_select_all").change(function() {
+    if(this.checked) {
+        $('#region_checks').find('input').prop('checked',true);
+    }
+    else{
+      $('#region_checks').find('input').prop('checked',false);
+    }
+});
 
+$("#location_checks .checkbox_select_all").change(function() {
+    if(this.checked) {
+        $('#location_checks').find('input').prop('checked',true);
+    }
+    else{
+      $('#location_checks').find('input').prop('checked',false);
+    }
+});
 
 function validateThis()
 {
@@ -230,20 +286,8 @@ function validateThis()
   else{
     $('#notification-editor').removeClass('error-box');
   }
-  if($('#start-date').val() == ''){
-    $('#start-date').addClass('error-box');
-  }
-  else{
-    $('#start-date').removeClass('error-box');
-  }
-
-  if($('#end-date').val() == ''){
-    $('#end-date').addClass('error-box');
-  }
-  else{
-    $('#end-date').removeClass('error-box');
-  }
-
+  
+/*
   if($('#region option:selected').text() == '' || $('#region option:selected').text() == 'Select All'){
     $('#region').addClass('error-box');
   }
@@ -256,7 +300,7 @@ function validateThis()
   }
   else{
     $('#loc').removeClass('error-box');
-  }
+  }*/
 }
 
 
@@ -266,12 +310,27 @@ function assignVal(task)
   var e_date = $('#end-date').val();
   var location = [];
   var region = [];
-  $('#loc option:selected').each(function(){
-      location.push(String($(this).text()));
+  if($('#start-date').val()){
+    s_date = $('#start-date').val();
+    s_date = s_date.substr(3, 2)+"/"+s_date.substr(0, 2)+"/"+s_date.substr(6, 4);
+  }
+  else{
+    s_date = '';
+  }
+
+  if($('#end-date').val()){
+    e_date = $('#end-date').val();
+    e_date = e_date.substr(3, 2)+"/"+e_date.substr(0, 2)+"/"+e_date.substr(6, 4);
+  }
+  else{
+    e_date = '';
+  }
+  $("#location_checks input:checked").each(function(){
+      location.push(String($(this).val()));
   });
 
-  $('#region option:selected').each(function(){
-      region.push(String($(this).text()));
+  $("#region_checks input:checked").each(function(){
+      region.push(String($(this).val()));
   });
 
   var publish_on_form = $("#check").is(':checked');
@@ -282,8 +341,8 @@ function assignVal(task)
   }
   var data = {
             text: text,
-            f_date: s_date.substr(3, 2)+"/"+s_date.substr(0, 2)+"/"+s_date.substr(6, 4),
-            t_date: e_date.substr(3, 2)+"/"+e_date.substr(0, 2)+"/"+e_date.substr(6, 4),
+            f_date: s_date,
+            t_date: e_date,
             location: location,
             region: region,
             draft: draft,
@@ -319,8 +378,8 @@ function publishNotification()
         $('#start-date').val('');
         $('#end-date').val('');
         $("#check").removeAttr('checked');
-        $('#loc option').removeAttr('selected');
-        $('#region option').removeAttr('selected');
+        $('#location_checks input').removeAttr('checked');
+        $('#region_checks input').removeAttr('checked');
               
       },
       error: function(data){
@@ -360,8 +419,8 @@ function draftNotification()
         $('#start-date').val('');
         $('#end-date').val('');
         $("#check").removeAttr('checked');
-        $('#loc option').removeAttr('selected');
-        $('#region option').removeAttr('selected');
+        $('#location_checks input').removeAttr('checked');
+        $('#region_checks input').removeAttr('checked');
       },
       error: function(data){
           alert("Something went wrong, please try after some time");
@@ -440,24 +499,25 @@ $('body').on('click', '.edit', function(){
   if(i != -1) {
     time_period.splice(i, 1);
   }
-
   
   $('#notification-editor').val(content);
 
   $('#start-date').val(time_period[0]);
   $('#end-date').val(time_period[1]);
 
-  $('#region option').each(function(){
-    if(reg.indexOf($(this).text()) != -1){
-      $(this).prop('selected',true);
+
+  $("#location_checks input").each(function(){
+    if(ctry.indexOf(String($(this).val())) != -1){
+      $(this).prop('checked',true);
     }
   });
 
-  $('#loc option').each(function(){
-    if(ctry.indexOf($(this).text()) != -1){
-      $(this).prop('selected',true);
+  $("#region_checks input").each(function(){
+    if(reg.indexOf(String($(this).val())) != -1){
+      $(this).prop('checked',true);
     }
   });
+
   if(on_form == 'Yes'){
     $("#check").prop('checked',true);
   }

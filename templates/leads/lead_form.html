@@ -98,7 +98,15 @@
 {% block content %}
 <section class="content-region inner-page">
   <div class="container-fluid">
-    <!--div class="dynamic-message"><span>Dynamic messaging system</span></div-->
+    {% if display_on_form %}
+    <div style="margin-bottom:-40px;">
+      {% for onform in display_on_form %}
+      <div class="dynamic-message" style="margin-bottom:-10px;">
+        <span>{{ onform.text }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
   <h1>Submit Lead</h1>
 
   <!-- temproray survay -->
@@ -806,7 +814,7 @@
           </label>
           <label style="font-family: 'robotoregular' !important;" id="shopping_argos_option">
             <input type="radio" id="Shopping_argos" value="Shopping_argos" style="margin-left:40px;">
-            New Feed Performance Optimization - Argos
+            Project Argos- Feed Performance Optimization
           </label>
         </div>
       </div>
