@@ -8,9 +8,8 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Notification.is_draft'
-        pass
-        '''db.add_column('notifications', 'is_draft',
+        # Adding field 'Notification.is_draft
+        db.add_column('notifications', 'is_draft',
                       self.gf('django.db.models.fields.BooleanField')(default=True),
                       keep_default=False)
 
@@ -36,12 +35,11 @@ class Migration(SchemaMigration):
             ('notification', models.ForeignKey(orm[u'main.notification'], null=False)),
             ('team', models.ForeignKey(orm[u'leads.team'], null=False))
         ))
-        db.create_unique(m2m_table_name, ['notification_id', 'team_id'])'''
+        db.create_unique(m2m_table_name, ['notification_id', 'team_id'])
 
 
     def backwards(self, orm):
-        pass
-        '''# Deleting field 'Notification.is_draft'
+        # Deleting field 'Notification.is_draft'
         db.delete_column('notifications', 'is_draft')
 
         # Deleting field 'Notification.from_date'
@@ -54,7 +52,7 @@ class Migration(SchemaMigration):
         db.delete_column('notifications', 'display_on_form')
 
         # Removing M2M table for field team on 'Notification'
-        db.delete_table(db.shorten_name('notifications_team'))'''
+        db.delete_table(db.shorten_name('notifications_team'))
 
 
     models = {
