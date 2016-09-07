@@ -198,7 +198,6 @@ def main_home(request):
         # notifications = Notification.objects.filter(is_visible=True)
         user = UserDetails.objects.get(user=request.user)
         notifications = list()
-        display_notifications = list()
         
         current_date = datetime.utcnow().strftime("%Y-%m-%d")
         if user.location:
@@ -208,13 +207,11 @@ def main_home(request):
             notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True,from_date__isnull=True,to_date__isnull=True, to_date__gte=current_date).order_by('-created_date')
 
         customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
-        display_notifications = notifications.filter(display_on_form=True)
-
         # feedback summary end here
         return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                        'user_profile': user_profile, 'no_leads': check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
                                                        'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
-                                                       'feedback_list': feedback_list, 'notifications': notifications,'display_notifications':display_notifications})
+                                                       'feedback_list': feedback_list, 'notifications': notifications})
 
     else:
         if request.user.groups.filter(name='SUPERUSER'):
@@ -1247,7 +1244,7 @@ def get_notifications(request):
     # Notifications list
     user = UserDetails.objects.get(user=request.user)
     notification = list()
-    if 'WPP' not in request.session['groups'] and 'wpp' not in request.get_host():
+    if 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
             #notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
