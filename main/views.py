@@ -2389,11 +2389,18 @@ def notification_manager(request):
         data = json.loads(request.body)
         text = data['text']
         locations =  data['location']
+        if data['f_date'] and data['f_date'] != '/-/':
+            from_date = datetime.strptime(str(data['f_date']), '%m/%d/%Y')
+        else:
+            from_date = None
+
+        if data['t_date'] and data['t_date'] != '/-/': 
+            to_date = datetime.strptime(str(data['t_date']), '%m/%d/%Y')
+        else:
+            to_date = None
+
         regions =  data['region']
-        date_from =  data['f_date']
-        date_to =  data['t_date']
-        from_date = datetime.strptime(str(date_from), '%m/%d/%Y')
-        to_date = datetime.strptime(str(date_to), '%m/%d/%Y')
+        
         on_form =  data['on_form']
 
         region = Region.objects.filter(name__in=regions)
