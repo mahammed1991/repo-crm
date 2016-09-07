@@ -247,9 +247,9 @@ var argos = false
       $( "#shopping_trobleshooting" ).hide();
       $("#shopping_feed_optimisation" ).hide();
 
-      // Hide Appointment Timing
-      $("#appointment_check_shopping").show();
-      $("#shopping_appointment").show();
+      // Show Appointment Timing
+      $(".appointment").show();
+      //$("#appointmentCheck2").attr('checked', true);
 
       $( ".shoppingInfo" ).animate({
       height: "toggle"
@@ -277,9 +277,11 @@ var argos = false
       $(".shoppingInfo" ).hide();
       $("#shopping_feed_optimisation" ).hide();
 
-      // Hide Appointment Timing
-      $("#appointment_check_shopping").show();
-      $("#shopping_appointment").show();
+      // Show Appointment Timing
+      $(".appointment").show();
+      //$("#appointmentCheck2").attr('checked', true);
+      // $("#appointment_check_shopping").show();
+      // $("#shopping_appointment").show();
 
       $( "#shopping_trobleshooting" ).animate({
           height: "toggle"
@@ -296,9 +298,9 @@ var argos = false
       $('#mcIdCheck').prop('checked', true);
       $('#shopping_trobleshooting_url').val('');
       $('#rbid, #rbidmodifier, #rbudget, #shopping_url, #mc_id, #description').val('');
-      $('#shoppping_argos_categories').val('Business Type');
-      $('#auth_case_id, #products_count, #sheets_link, #area, #additional_description, #mc_id').val('');
-
+      $('#shopping_argos_categories').val('Business Type');
+      $('#auth_case_id, #argos_mc_id, #products_count, #sheets_link, #area, #additional_description, #mc_id').val('');
+      $("#tat-msg-block").hide();
       // Uncheck checked option
       $('#Shopping_Trobleshoot').prop('checked', false);
       $('#Shopping_Campaign_Setup').prop('checked', false);
@@ -308,8 +310,9 @@ var argos = false
       $( "#shopping_trobleshooting" ).hide();
 
       // Hide Appointment Timing
-      $("#appointment_check_shopping").hide();
-      $("#shopping_appointment").hide();
+      $(".appointment").hide();
+      // $("#appointment_check_shopping").hide();
+      // $("#shopping_appointment").hide();
 
       $( "#shopping_feed_optimisation" ).animate({
         height: "toggle"
