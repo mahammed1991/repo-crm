@@ -378,8 +378,8 @@ function publishNotification()
         $('#start-date').val('');
         $('#end-date').val('');
         $("#check").removeAttr('checked');
-        $('#loc option').removeAttr('selected');
-        $('#region option').removeAttr('selected');
+        $('#location_checks input').removeAttr('checked');
+        $('#region_checks input').removeAttr('checked');
               
       },
       error: function(data){
@@ -419,8 +419,8 @@ function draftNotification()
         $('#start-date').val('');
         $('#end-date').val('');
         $("#check").removeAttr('checked');
-        $('#loc option').removeAttr('selected');
-        $('#region option').removeAttr('selected');
+        $('#location_checks input').removeAttr('checked');
+        $('#region_checks input').removeAttr('checked');
       },
       error: function(data){
           alert("Something went wrong, please try after some time");
