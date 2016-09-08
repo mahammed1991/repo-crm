@@ -357,15 +357,19 @@ def lead_form(request):
     lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
 
     for notif in notifications:
-        if notif.to_date and str(notif.to_date) >= curr_date:               
-            notif_dict = dict()
-            notif_dict['id'] = notif.id
-            notif_dict['text'] = notif.text
+        if notif.to_date:
+            if str(notif.from_date) <= curr_date and str(notif.to_date) >= curr_date:               
+                notif_dict = dict()
+                notif_dict['id'] = notif.id
+                notif_dict['text'] = notif.text
+                notification.append(notif_dict)
+            else:
+                pass
         else:
             notif_dict = dict()
             notif_dict['id'] = notif.id
             notif_dict['text'] = notif.text
-        notification.append(notif_dict)
+            notification.append(notif_dict)
     lead_args['display_on_form'] = notification
 
     return render(

@@ -207,15 +207,19 @@ def main_home(request):
             notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
 
         for notif in notifications:
-            if notif.to_date and str(notif.to_date) >= curr_date:               
-                notif_dict = dict()
-                notif_dict['id'] = notif.id
-                notif_dict['text'] = notif.text
+            if notif.to_date:
+                if str(notif.from_date) <= curr_date and str(notif.to_date) >= curr_date:               
+                    notif_dict = dict()
+                    notif_dict['id'] = notif.id
+                    notif_dict['text'] = notif.text
+                    notification.append(notif_dict)
+                else:
+                    pass
             else:
                 notif_dict = dict()
                 notif_dict['id'] = notif.id
                 notif_dict['text'] = notif.text
-            notification.append(notif_dict)
+                notification.append(notif_dict)
 
         customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
         # feedback summary end here
@@ -1265,15 +1269,19 @@ def get_notifications(request):
             notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
 
         for notif in notifications:
-            if notif.to_date and str(notif.to_date) >= curr_date:               
-                notif_dict = dict()
-                notif_dict['id'] = notif.id
-                notif_dict['text'] = notif.text
+            if notif.to_date:
+                if str(notif.from_date) <= curr_date and str(notif.to_date) >= curr_date:               
+                    notif_dict = dict()
+                    notif_dict['id'] = notif.id
+                    notif_dict['text'] = notif.text
+                    notification.append(notif_dict)
+                else:
+                    pass
             else:
                 notif_dict = dict()
                 notif_dict['id'] = notif.id
                 notif_dict['text'] = notif.text
-            notification.append(notif_dict)
+                notification.append(notif_dict)
 
     return HttpResponse(dumps(notification), content_type='application/json')
 
