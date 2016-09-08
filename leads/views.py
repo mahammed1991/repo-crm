@@ -358,7 +358,7 @@ def lead_form(request):
 
     for notif in notifications:
         if notif.to_date:
-            if str(notif.from_date) <= curr_date and str(notif.to_date) >= curr_date:               
+            if notif.from_date.strftime("%Y-%m-%d") <= curr_date and notif.to_date.strftime("%Y-%m-%d") >= curr_date:               
                 notif_dict = dict()
                 notif_dict['id'] = notif.id
                 notif_dict['text'] = notif.text
