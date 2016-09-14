@@ -2552,3 +2552,5 @@ def notification_manager(request):
 
     return render(request, 'main/notification_manager.html', {'locations':location,'regions':region})
 
+
+
