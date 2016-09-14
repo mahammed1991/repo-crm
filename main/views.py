@@ -199,7 +199,7 @@ def main_home(request):
         user = UserDetails.objects.get(user=request.user)
         notification = list()
         
-        curr_date = datetime.utcnow().strftime("%Y-%m-%d")
+        curr_date = datetime.utcnow().date()
         if user.location:
             user_region = user.location.region_set.get()
             notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
@@ -208,7 +208,7 @@ def main_home(request):
 
         for notif in notifications:
             if notif.to_date:
-                if str(notif.from_date) <= curr_date and str(notif.to_date) >= curr_date:               
+                if notif.from_date.date() <= curr_date and notif.to_date.date() >= curr_date:               
                     notif_dict = dict()
                     notif_dict['id'] = notif.id
                     notif_dict['text'] = notif.text
@@ -1259,7 +1259,7 @@ def get_notifications(request):
     # Notifications list
     user = UserDetails.objects.get(user=request.user)
     notification = list()
-    curr_date = datetime.utcnow().strftime("%Y-%m-%d")
+    curr_date = datetime.utcnow().date()
     if 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
@@ -1270,7 +1270,7 @@ def get_notifications(request):
 
         for notif in notifications:
             if notif.to_date:
-                if str(notif.from_date) <= curr_date and str(notif.to_date) >= curr_date:               
+                if notif.from_date.date() <= curr_date and notif.to_date.date() >= curr_date:               
                     notif_dict = dict()
                     notif_dict['id'] = notif.id
                     notif_dict['text'] = notif.text
@@ -2551,6 +2551,4 @@ def notification_manager(request):
         raise exceptions.PermissionDenied
 
     return render(request, 'main/notification_manager.html', {'locations':location,'regions':region})
-
-
 
