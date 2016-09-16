@@ -197,21 +197,36 @@ def main_home(request):
         # Notification Section
         # notifications = Notification.objects.filter(is_visible=True)
         user = UserDetails.objects.get(user=request.user)
-        notifications = list()
+        notification = list()
         
-        current_date = datetime.utcnow().strftime("%Y-%m-%d")
+        curr_date = datetime.utcnow().date()
         if user.location:
             user_region = user.location.region_set.get()
-            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True, from_date__isnull=False, to_date__isnull=False, to_date__gte=current_date).order_by('-created_date')
+            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
         else:
-            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True,from_date__isnull=True,to_date__isnull=True, to_date__gte=current_date).order_by('-created_date')
+            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
+
+        for notif in notifications:
+            if notif.to_date:
+                if notif.from_date.date() <= curr_date and notif.to_date.date() >= curr_date:               
+                    notif_dict = dict()
+                    notif_dict['id'] = notif.id
+                    notif_dict['text'] = notif.text
+                    notification.append(notif_dict)
+                else:
+                    pass
+            else:
+                notif_dict = dict()
+                notif_dict['id'] = notif.id
+                notif_dict['text'] = notif.text
+                notification.append(notif_dict)
 
         customer_testimonials = CustomerTestimonials.objects.all().order_by('-created_date')
         # feedback summary end here
         return render(request, 'main/tag_index.html', {'customer_testimonials': customer_testimonials, 'lead_status_dict': lead_status_dict,
                                                        'user_profile': user_profile, 'no_leads': check_lead_submitter_for_empty(top_performer), # 'question_list': question_list,
                                                        'top_performer': top_performer, 'report_summary': report_summary, 'title': title,
-                                                       'feedback_list': feedback_list, 'notifications': notifications})
+                                                       'feedback_list': feedback_list, 'notifications': notification})
 
     else:
         if request.user.groups.filter(name='SUPERUSER'):
@@ -1244,6 +1259,7 @@ def get_notifications(request):
     # Notifications list
     user = UserDetails.objects.get(user=request.user)
     notification = list()
+    curr_date = datetime.utcnow().date()
     if 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
@@ -1253,10 +1269,19 @@ def get_notifications(request):
             notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
 
         for notif in notifications:
-            notif_dict = dict()
-            notif_dict['id'] = notif.id
-            notif_dict['text'] = notif.text
-            notification.append(notif_dict)
+            if notif.to_date:
+                if notif.from_date.date() <= curr_date and notif.to_date.date() >= curr_date:               
+                    notif_dict = dict()
+                    notif_dict['id'] = notif.id
+                    notif_dict['text'] = notif.text
+                    notification.append(notif_dict)
+                else:
+                    pass
+            else:
+                notif_dict = dict()
+                notif_dict['id'] = notif.id
+                notif_dict['text'] = notif.text
+                notification.append(notif_dict)
 
     return HttpResponse(dumps(notification), content_type='application/json')
 

@@ -98,7 +98,7 @@ Notification Manager
                   <div class="checkbox" id="location_checks">
                       <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
                     {% for loc in locations %}
-                          <label>
+                          <label class="all-loc">
                               <input type="checkbox" value="{{ loc.location_name }}">{{ loc.location_name }}
                           </label>
                       {% endfor %}
@@ -165,6 +165,46 @@ Notification Manager
 
 <script>
 var edit_id = 0;
+var americas = ['Argentina', 'Belize', 'Brazil', 'Canada', 'Chile', 'Colombia', 'Costa Rica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama', 'Peru', 'Puerto Rico', 'SPLATAM', 'United States', 'Uruguay'];
+var apac = ['AU/NZ', 'China', 'Hong Kong', 'India', 'Japan', 'SEA', 'Taiwan'];
+var emea = ['Austria', 'Belgium', 'Denmark', 'Finland', 'France', 'Germany', 'Israel', 'Italy', 'MENA', 'Netherlands', 'Norway', 'Poland', 'Portugal', 'Russia', 'South Africa', 'Spain', 'Sub Saharan Africa', 'Sweden', 'Switzerland', 'UK/I', 'Ukraine'];
+var all = [];
+  $("#location_checks input").each(function(){
+    all.push(String($(this).val()));
+  });
+var i = all.indexOf("all");
+if(i != -1) {
+  all.splice(i, 1);
+}
+
+var k = []
+var l = []
+var m = []
+var n = []
+
+for(i=0;i<all.length;i++){
+  k+= '<label class="all-loc"><input type="checkbox" value="'+all[i]+'">'+all[i]+'</label>';
+}
+
+$('#location_checks').html('<label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>');
+$('#location_checks').append(k);
+
+for(i=0;i<apac.length;i++){
+  l+= '<label class="apac" style="display:none;"><input type="checkbox" value="'+apac[i]+'">'+apac[i]+'</label>';
+}
+$('#location_checks').append(l);
+
+for(i=0;i<emea.length;i++){
+  m+= '<label class="emea" style="display:none;"><input type="checkbox" value="'+emea[i]+'">'+emea[i]+'</label>';
+}
+$('#location_checks').append(m);
+
+for(i=0;i<americas.length;i++){
+  n+= '<label class="americas" style="display:none;"><input type="checkbox" value="'+americas[i]+'">'+americas[i]+'</label>';
+}
+$('#location_checks').append(n);
+
+
 
 function updateNotificationData(){
   $('#notification-table').DataTable({
@@ -237,47 +277,6 @@ $(document).ready(function(){
 });
 
 
-/*$('#select-all-region').click(function(){
-  $('#region option').each(function(){
-    if($(this).val() == "Select All"){
-      $(this).prop('selected', false);
-    }
-    else{
-      $(this).prop('selected', true);
-    }
-  });
-});
-
-
-$('#select-all-country').click(function(){
-  $('#loc option').each(function(){
-    if($(this).val() == "Select All"){
-      $(this).prop('selected', false);
-    }
-    else{
-      $(this).prop('selected', true);
-    }
-  });
-});
-*/
-$("#region_checks .checkbox_select_all").change(function() {
-    if(this.checked) {
-        $('#region_checks').find('input').prop('checked',true);
-    }
-    else{
-      $('#region_checks').find('input').prop('checked',false);
-    }
-});
-
-$("#location_checks .checkbox_select_all").change(function() {
-    if(this.checked) {
-        $('#location_checks').find('input').prop('checked',true);
-    }
-    else{
-      $('#location_checks').find('input').prop('checked',false);
-    }
-});
-
 function validateThis()
 {
   if($('#notification-editor').val() == ''){
@@ -286,21 +285,6 @@ function validateThis()
   else{
     $('#notification-editor').removeClass('error-box');
   }
-  
-/*
-  if($('#region option:selected').text() == '' || $('#region option:selected').text() == 'Select All'){
-    $('#region').addClass('error-box');
-  }
-  else{
-    $('#region').removeClass('error-box');
-  }
-
-  if($('#loc option:selected').text() == '' || $('#loc option:selected').text() == 'Select All'){
-    $('#loc').addClass('error-box');
-  }
-  else{
-    $('#loc').removeClass('error-box');
-  }*/
 }
 
 
@@ -339,6 +323,7 @@ function assignVal(task)
   if(task == "draft"){
     draft = true;
   }
+  
   var data = {
             text: text,
             f_date: s_date,
@@ -523,6 +508,72 @@ $('body').on('click', '.edit', function(){
   }
 
 });
+
+
+$("#region_checks .checkbox_select_all").change(function() {
+    if(this.checked) {
+        $('#region_checks').find('input').prop('checked',true);
+    }
+    else{
+      $('#region_checks').find('input').prop('checked',false);
+    }
+});
+
+
+$(document).on('click',function(){
+  $("#location_checks .checkbox_select_all").change(function() {
+      if(this.checked) {
+          $('#location_checks').find('input').prop('checked',true);
+      }
+      else{
+        $('#location_checks').find('input').prop('checked',false);
+      }
+  });
+});
+
+$("#region_checks input").click(function(){
+  if($(this).is(':checked')){
+    if($(this).val() == 'APAC'){
+      $('#location_checks .all-loc').hide();
+      $('#location_checks .apac').show();
+    }
+
+    if($(this).val() == 'EMEA'){
+      $('#location_checks .all-loc').hide();
+      $('#location_checks .emea').show();
+    }
+
+    if($(this).val() == 'Americas'){
+      $('#location_checks .all-loc').hide();
+      $('#location_checks .americas').show();
+    }
+  }
+});
+
+$("#region_checks input").click(function(){
+  if(!$(this).is(':checked')){
+    if($(this).val() == 'APAC'){
+      $('#location_checks .apac input').prop('checked',false);
+      $('#location_checks .apac').hide();
+    }
+
+    if($(this).val() == 'EMEA'){
+      $('#location_checks .emea input').prop('checked',false);
+      $('#location_checks .emea').hide();
+    }
+
+    if($(this).val() == 'Americas'){
+      $('#location_checks .americas input').prop('checked',false);
+      $('#location_checks .americas').hide();
+    }
+  }
+
+  if(!$("#region_checks input").is(':checked')){
+    $('#location_checks .all-loc').show();
+  }
+});
+
+
 </script>
 
 {% endblock main_js %}
