@@ -72,6 +72,39 @@
           <div class="sum-lbl">Total</div>
         </div>
       </div>
+
+
+      <div class="row" style="margin-left: 23%;margin-top: 1%;">
+            <div class="col-xs-4 col-sm-4 col-md-2">
+                  <button class="btn std-btn sm-btn" id="tag-button"
+                  {% if querry_value == None %}  
+                  style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
+                  style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
+                  onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}'">All</button>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-2">
+              <button class="btn std-btn sm-btn" id="tag-button"
+                  {% if querry_value == "tag"  %}  
+                  style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
+                  style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
+                  onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}?type=tag'">TAG</button>
+          </div>
+          <div class="col-xs-4 col-sm-4 col-md-2">
+          <button class="btn std-btn sm-btn" id="shopping-button"
+                  {% if querry_value == "shopping"  %}  
+                  style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
+                  style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
+                  onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}?type=shopping'">SHOPPING</button>
+          </div>
+          <div class="col-xs-4 col-sm-4 col-md-2">
+          <button class="btn std-btn sm-btn" id="rlsa-button"
+                  {% if querry_value == "rlsa"  %}  
+                  style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
+                  style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
+                  onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}?type=rlsa'">RLSA</button>
+          </div>
+      </div>
+
       <h1 class="lead_status">Leads Status</h1>
       {% if request.user.profile.team.team_name == 'Services' or  request.user.profile.team.team_name == 'Services Revenue Program (SRP)' or  request.user.profile.team.team_name == 'Services (Traverwood)'  or request.user.profile.team.team_name == 'Services/GCE'%}
         <div class="row" style="margin-top: -55px !important;margin-bottom: 20px; !important">
@@ -137,10 +170,11 @@
                   <th class="hidden-xs hidden-sm nthchild3">TagTeam Rep</th>
                   <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
                   <th class="hidden-xs hidden-sm nthchild3">Appointment Time</th>
-                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
-                  <th class="hidden-xs hidden-sm nthchild8">Reschedule Appointment</th>
+                  <th width="6%" class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
+                  <th width="10%" class="hidden-xs hidden-sm nthchild8">Reschedule Appointment</th>
                   <th class="hidden-xs hidden-sm nthchild8">TagTeam Comments</th>
                   <th class="nthchild3" id='StatusRow'>Status </th>
+                  <th class="nthchild3" id='StatusRow'>Sub Status </th>
                   <th width="6%" class="nthchild11 services_action">Action</th>
                 </tr>
             </thead>
@@ -195,19 +229,26 @@
                             </td>
                       {% endif %}
                      
-                      {% if l.lead_status == 'Implemented' %}
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
-                      {% elif l.lead_status == 'In Active'%}
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
-                      {% elif l.lead_status == 'In Progress' %}
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
-                      {% elif l.lead_status == 'Attempting Contact' %}
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
-                      {% elif l.lead_status == 'In Queue' %}
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
-                      {% else %}
-                        <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+
+                     {% if l.feed_optimisation_status %}
+                          <td><span class="status-txt-color">{{ l.feed_optimisation_status }}</span></td>
+                     {% else %}
+                          {% if l.lead_status == 'Implemented' %}
+                            <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+                          {% elif l.lead_status == 'In Active'%}
+                            <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+                          {% elif l.lead_status == 'In Progress' %}
+                            <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+                          {% elif l.lead_status == 'Attempting Contact' %}
+                            <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+                          {% elif l.lead_status == 'In Queue' %}
+                            <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+                          {% else %}
+                            <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
+                          {% endif %}
                       {% endif %}
+                       <td >{{ l.feed_optimisation_sub_status }}</td>
+
                       <td ><a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick='feedbackBycid({{l.id}})'></i></a></td>
                       
                     </tr>
@@ -271,6 +312,9 @@
         </div>
         <!-- feedback modal ends -->
       
+      <div>  <!-- induvisual process type, querry parameters saved to fetch same process leads on scroll window -->
+        <input type="hidden" value="{{querry_value}}" id="querry-value">
+      </div>
       
   {% endblock model_popup %}
 {% block main_js %}
@@ -579,14 +623,16 @@ $('#ldap').keypress(function (e) {
   }
 });
 
+
 $(window).scroll(function() {
    if($(window).scrollTop() + $(window).height() == $(document).height()) {
       if($('.services_action').is(':visible')){
+      var querry_value = $("#querry-value").val();
       var numOfLeads = $('#tableBody tr').length;
       uptoLeads = numOfLeads + 500
       $.ajax({
             url: "/leads/pagination-leads-summary",
-            data: {'from': numOfLeads, 'to': uptoLeads},
+            data: {'from': numOfLeads, 'to': uptoLeads, 'type':querry_value},
             type: 'GET',
             dataType: 'json',
             success: function(data){
@@ -597,6 +643,7 @@ $(window).scroll(function() {
       }
    }
 });
+
 
 </script>
 

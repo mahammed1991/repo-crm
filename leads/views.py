@@ -2424,39 +2424,39 @@ def send_calendar_invite_to_advertiser(advertiser_details, is_attachment):
     return 'Success'
 
 
-@login_required
-@tag_user_required
-def get_lead_summary(request, lid=None, page=None):
-    """ Lead Status page """
+# @login_required
+# @tag_user_required
+# def get_lead_summary(request, lid=None, page=None):
+#     """ Lead Status page """
+#     querry_value = request.GET.get('type')
+#     lead_status = settings.LEAD_STATUS
+#     email = request.user.email
+#     if request.user.groups.filter(name='SUPERUSER'):
+#         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
+#         start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+#         # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
+#         # start_date = first_day_of_month(datetime.utcnow())
+#         # end_date = datetime.utcnow()
+#         query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+#         leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
+#         lead_ids = Leads.objects.values_list('id', flat=True).exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')
+#         # lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
+#         lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
+#         del lead_status_dict['TAT']
+#     else:
+#         if is_manager(email):
+#             email_list = get_user_list_by_manager(email)
+#             email_list.append(email)
+#         else:
+#             email_list = [email]
 
-    lead_status = settings.LEAD_STATUS
-    email = request.user.email
-    if request.user.groups.filter(name='SUPERUSER'):
-        # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        # start_date, end_date = get_previous_month_start_end_days(datetime.utcnow())
-        # start_date = first_day_of_month(datetime.utcnow())
-        # end_date = datetime.utcnow()
-        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
-        leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
-        lead_ids = Leads.objects.values_list('id', flat=True).exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')
-        # lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=start_date, end_date=end_date)
-        lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
-        del lead_status_dict['TAT']
-    else:
-        if is_manager(email):
-            email_list = get_user_list_by_manager(email)
-            email_list.append(email)
-        else:
-            email_list = [email]
+#         # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
+#         cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
+#         leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
+#                                                            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
 
-        # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
-        cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
-        leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
-                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
-
-        lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
-    return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
+#         lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
+#     return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid})
 
 
 @login_required
@@ -3173,22 +3173,22 @@ def get_lead_form_for_rep(user):
     return l_form
 
 
-def get_pagination_lead_summary(request):
-    ''' Gives paginated data for lead summary page'''
-    if request.is_ajax:
-        if request.user.groups.filter(name='SUPERUSER'):
-            from_leads = request.GET.get('from')
-            upto_leads = request.GET.get('to')
-            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-            query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
-            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
-            lead_list = list()
-            for l in leads:
-                lead = convert_lead_to_dict(l)
-                lead_list.append(lead)
-            return HttpResponse(json.dumps(lead_list))
-        else:
-            return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))
+# def get_pagination_lead_summary(request):
+#     ''' Gives paginated data for lead summary page'''
+#     if request.is_ajax:
+#         if request.user.groups.filter(name='SUPERUSER'):
+#             from_leads = request.GET.get('from')
+#             upto_leads = request.GET.get('to')
+#             start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+#             query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
+#             leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
+#             lead_list = list()
+#             for l in leads:
+#                 lead = convert_lead_to_dict(l)
+#                 lead_list.append(lead)
+#             return HttpResponse(json.dumps(lead_list))
+#         else:
+#             return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))
 
 
 @login_required
@@ -4397,3 +4397,101 @@ def estimate_shopping_arogs_tat(request):
             'success': True
         }
     return HttpResponse(json.dumps(tat), content_type='application/json')
+
+
+@login_required
+@tag_user_required
+def get_lead_summary(request, lid=None, page=None):
+    """ Lead Summary Status page """
+
+    lead_status = settings.LEAD_STATUS
+    email = request.user.email
+    querry_value = request.GET.get('type')
+
+    if request.user.groups.filter(name='SUPERUSER'):
+        # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
+        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        if querry_value == "shopping":
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Project Argos- Feed Performance Optimization'])
+            leads = leads.filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
+            lead_ids = Leads.objects.exclude(type_1__in=['WPP']).filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Project Argos- Feed Performance Optimization'])
+            lead_ids = lead_ids.filter(**query).values_list('id', flat=True).order_by('-rescheduled_appointment_in_ist')
+        elif querry_value == "tag":
+            leads = Leads.objects.exclude(type_1__in=['WPP', 'Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])\
+                .filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000] #[from_leads:upto_leads]
+            lead_ids = Leads.objects.exclude(type_1__in=['WPP', 'Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation']).filter(**query).order_by('-rescheduled_appointment_in_ist')
+            lead_ids = lead_ids.values_list('id', flat=True)
+        elif querry_value == "rlsa":
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['RLSA Bulk Implementation'])
+            leads = leads.filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
+            lead_ids = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['RLSA Bulk Implementation'])
+            lead_ids = lead_ids.filter(**query).values_list('id', flat=True).order_by('-rescheduled_appointment_in_ist')
+        else:
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
+            lead_ids = Leads.objects.values_list('id', flat=True).exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')
+
+        lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
+        del lead_status_dict['TAT']
+    else:
+        if is_manager(email):
+            email_list = get_user_list_by_manager(email)
+            email_list.append(email)
+        else:
+            email_list = [email]
+
+        # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
+        cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
+        if querry_value == "shopping":
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), lead_status__in=lead_status, created_date__gte=cur_qtr_start_date)
+            leads = leads.filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).order_by('-rescheduled_appointment_in_ist')
+        elif querry_value == "tag":
+            leads = Leads.objects.exclude(type_1__in=['WPP', 'Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])\
+            .filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
+            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
+        elif querry_value == "rlsa":
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), type_1__in=['RLSA Bulk Implementation'],
+            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
+        else:
+            leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
+                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
+
+        lead_ids = leads.values_list('id', flat=True)
+        lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
+        del lead_status_dict['TAT']
+        # lead_status_dict = get_count_of_each_lead_status_by_rep(email, 'normal', start_date=None, end_date=None)
+        
+    return render(request, 'leads/lead_summary.html', {'leads': leads, 'lead_status_dict': lead_status_dict, 'lead_id': lid, 'querry_value':querry_value})
+
+
+def get_pagination_lead_summary(request):
+    ''' Gives paginated data for lead summary page'''
+    if request.is_ajax:
+        if request.user.groups.filter(name='SUPERUSER'):
+            from_leads = request.GET.get('from')
+            upto_leads = request.GET.get('to')
+            querry_value = request.GET.get('type')
+            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+            query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
+            if querry_value == "shopping":
+                leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Project Argos- Feed Performance Optimization'])
+                leads = leads.filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
+            elif querry_value == "tag":
+                leads = Leads.objects.exclude(type_1__in=['WPP', 'Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])\
+                    .filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
+            elif querry_value == "rlsa":
+                leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['RLSA Bulk Implementation'])
+                leads = leads.filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
+            else:
+                leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
+            
+            lead_list = list()
+            for l in leads:
+                lead = convert_lead_to_dict(l)
+                lead_list.append(lead)
+            return HttpResponse(json.dumps(lead_list))
+        else:
+            return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))
+
+
+
