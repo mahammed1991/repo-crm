@@ -338,14 +338,15 @@ def lead_form(request):
         return redirect('leads.views.agency_lead_form')
 
     user = UserDetails.objects.get(user=request.user)
-    notifications = list()
+    notification = list()
     
-    current_date = datetime.utcnow().strftime("%Y-%m-%d")
+    curr_date = datetime.utcnow().date()
+
     if user.location:
         user_region = user.location.region_set.get()
-        notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True, from_date__isnull=False, to_date__isnull=False, to_date__gte=current_date, display_on_form=True).order_by('-created_date')
+        notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True, display_on_form=True).order_by('-created_date')
     else:
-        notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True,from_date__isnull=True,to_date__isnull=True, to_date__gte=current_date, display_on_form=True).order_by('-created_date')
+        notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True, display_on_form=True).order_by('-created_date')
 
     # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
@@ -355,7 +356,22 @@ def lead_form(request):
     for i in temp:
         picasso_programs.append(i.team_name)
     lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
-    lead_args['display_on_form'] = notifications
+
+    for notif in notifications:
+        if notif.to_date:
+            if notif.from_date.date() <= curr_date and notif.to_date.date() >= curr_date:               
+                notif_dict = dict()
+                notif_dict['id'] = notif.id
+                notif_dict['text'] = notif.text
+                notification.append(notif_dict)
+            else:
+                pass
+        else:
+            notif_dict = dict()
+            notif_dict['id'] = notif.id
+            notif_dict['text'] = notif.text
+            notification.append(notif_dict)
+    lead_args['display_on_form'] = notification
 
     return render(
         request,
