@@ -170,8 +170,8 @@
                   <th class="hidden-xs hidden-sm nthchild3">TagTeam Rep</th>
                   <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
                   <th class="hidden-xs hidden-sm nthchild3">Appointment Time</th>
-                  <th width="6%" class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
-                  <th width="10%" class="hidden-xs hidden-sm nthchild8">Reschedule Appointment</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
+                  <th style="width:8%;" class="hidden-xs hidden-sm nthchild8">Reschedule Appointment</th>
                   <th class="hidden-xs hidden-sm nthchild8">TagTeam Comments</th>
                   <th class="nthchild3" id='StatusRow'>Status </th>
                   <th class="nthchild3" id='StatusRow'>Sub Status </th>
@@ -247,7 +247,11 @@
                             <td><span class="status-txt-color">{{ l.lead_status }}</span></td>
                           {% endif %}
                       {% endif %}
+                      {% if l.feed_optimisation_sub_status %}
                        <td >{{ l.feed_optimisation_sub_status }}</td>
+                       {% else %}
+                        <td > - </td>
+                      {% endif %}
 
                       <td ><a href="#" title="Write Feedback" class="action-item fb" data-toggle="modal" data-target="#feedbackModal"><i class="fa fa-pencil-square" onclick='feedbackBycid({{l.id}})'></i></a></td>
                       
