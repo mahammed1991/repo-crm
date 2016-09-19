@@ -1068,7 +1068,7 @@ def slots_open_booked():
     mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % (specific_date)
     mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
     mail_from = 'Google Slots Utilized <google@regalix-inc.com>'
-    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
+    mail_to = ['portalsupport@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -1244,7 +1244,7 @@ def slots_open_booked_overall():
     mail_subject = "OVERALL [TAG & SHOPPING] UTILIZATION DASHBOARD-%s" % (specific_date)
     mail_body = get_template('reports/email_templates/slot_detail_overall.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
     mail_from = 'Google Overall Utilized <google@regalix-inc.com>'
-    mail_to = ['portalsupport@regalix-inc.com', 'srinivasans@regalix-inc.com']
+    mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -1260,14 +1260,14 @@ def ratio_calculator(data_all):
 
         if ( ele['Availability Count'] > 0):
             value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
-            ele['Ratio'] = ("%.2f"%value +" %" )
+            ele['Ratio'] = ("%.f"%value +" %" )
             sum_booked_and_leads_w_o_appointment = int(ele['Booked Count']) + int(ele['lead_w_o_appoinment'])
             limiting_the_float_ovarall = ((float(ele['Booked Count'] + ele['lead_w_o_appoinment'] )/ele['Availability Count'])*100) 
-            ele['Total all ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
+            ele['Total all ratio'] = int("%.f" %limiting_the_float_ovarall)
         else:
             if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
                 ele['Ratio'] = "-"
-                ele['all Ratio'] = "-"
+                ele['Total all ratio'] = "-"
 
     return result_final
 
@@ -1279,9 +1279,9 @@ def total_sum_calculater(data_to_sum):
     
     if  total_sum['Availability_count'] > 0:
         limiting_the_float = ((float(total_sum['Booked Count'])/total_sum['Availability_count'])*100) 
-        total_sum['Total all ratio'] = ("%.2f" %limiting_the_float +" %" )
+        total_sum['Total all ratio'] = ("%.f" %limiting_the_float +" %" )
         limiting_the_float_ovarall = ((float(total_sum['Booked Count'] + total_sum['Total lead w o appoinment'] )/total_sum['Availability_count'])*100) 
-        total_sum['Total ovreall ratio'] = ("%.2f" %limiting_the_float_ovarall +" %" )
+        total_sum['Total ovreall ratio'] = ("%.f" %limiting_the_float_ovarall +" %" )
     else:
         total_sum['Total all ratio'] = '-'
         total_sum['Total ovreall ratio'] = "-"
