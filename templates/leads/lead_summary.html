@@ -77,28 +77,28 @@
       <div class="row" style="margin-left: 23%;margin-top: 1%;">
             <div class="col-xs-4 col-sm-4 col-md-2">
                   <button class="btn std-btn sm-btn" id="tag-button"
-                  {% if querry_value == None %}  
+                  {% if process_type == None %}  
                   style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
                   style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
                   onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}'">All</button>
             </div>
             <div class="col-xs-4 col-sm-4 col-md-2">
               <button class="btn std-btn sm-btn" id="tag-button"
-                  {% if querry_value == "tag"  %}  
+                  {% if process_type == "tag"  %}  
                   style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
                   style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
                   onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}?type=tag'">TAG</button>
           </div>
           <div class="col-xs-4 col-sm-4 col-md-2">
           <button class="btn std-btn sm-btn" id="shopping-button"
-                  {% if querry_value == "shopping"  %}  
+                  {% if process_type == "shopping"  %}  
                   style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
                   style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
                   onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}?type=shopping'">SHOPPING</button>
           </div>
           <div class="col-xs-4 col-sm-4 col-md-2">
           <button class="btn std-btn sm-btn" id="rlsa-button"
-                  {% if querry_value == "rlsa"  %}  
+                  {% if process_type == "rlsa"  %}  
                   style="font-size: 13px;padding: 4px;min-width: 100px;background-color:green;"{% else %}
                   style="font-size: 13px;padding: 4px;min-width: 100px;"{% endif %}
                   onclick="window.location.href='{% url 'leads.views.get_lead_summary' %}?type=rlsa'">RLSA</button>
@@ -317,7 +317,7 @@
         <!-- feedback modal ends -->
       
       <div>  <!-- induvisual process type, querry parameters saved to fetch same process leads on scroll window -->
-        <input type="hidden" value="{{querry_value}}" id="querry-value">
+        <input type="hidden" value="{{process_type}}" id="querry-value">
       </div>
       
   {% endblock model_popup %}
@@ -631,12 +631,12 @@ $('#ldap').keypress(function (e) {
 $(window).scroll(function() {
    if($(window).scrollTop() + $(window).height() == $(document).height()) {
       if($('.services_action').is(':visible')){
-      var querry_value = $("#querry-value").val();
+      var process_type = $("#querry-value").val();
       var numOfLeads = $('#tableBody tr').length;
       uptoLeads = numOfLeads + 500
       $.ajax({
             url: "/leads/pagination-leads-summary",
-            data: {'from': numOfLeads, 'to': uptoLeads, 'type':querry_value},
+            data: {'from': numOfLeads, 'to': uptoLeads, 'type':process_type},
             type: 'GET',
             dataType: 'json',
             success: function(data){
