@@ -1,0 +1,746 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Inventory
+{% endblock title %}
+{% block main_css %}
+    <link rel="stylesheet" href="{% static 'css/webapp/vendor/jquery.dataTables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}">
+    <style type="text/css">
+        tr td:first-child:before
+        {
+          list-style-type: decimal;     /* Increment the Serial counter */
+        }
+        .pac-container {
+            background-color: #FFF;
+            z-index: 20;
+            position: fixed;
+            display: inline-block;
+            float: left;
+        }
+        .modal{
+            z-index: 20;   
+        }
+    </style>
+}
+}
+{% endblock main_css %}
+
+{% block content %}
+
+<div class="wrapper">
+<!-- content-region -->
+    <section class="content-region inner-page">
+        <div class="container-fluid" style="max-width: 98%;">
+                <button id="download" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" ><span class="glyphicon glyphicon-download"></span>  DOWNLOAD</button>
+                <button id="add_emp" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" >+ Add</button>
+
+                <button id="assign" class="btn std-btn sm-btn" style="display:none;float:right;margin-top: 1%;margin-right: -0.5%;line-height: 90%;" data-toggle="modal" data-target="#assigneeMail">ASSIGN</button>
+                <h2>Google Asset Inventory</h2>
+                <div id="emp_entry" class="row" style="margin-bottom:1%;display:none;">
+                    {% csrf_token %}
+                    <div style="margin-bottom: 1%;margin-left: 1.2%;font-weight: bold;">
+                        <span id="msg-container"></span>
+                    </div>
+                   <div class="col-md-2">
+                       <label for="name">Employee Name</label>
+                        <input type="text" class="form-control emp" id="name" name="name" placeholder="Name" style="height:40px;">
+                    </div>
+                   <div class="col-md-2">
+                        <label for="ldap">Employee Ldap</label>
+                        <input type="text" class="form-control emp" id="ldap" name="ldap" placeholder="LDAP" style="height:40px;">
+                    </div>
+                   <div class="col-md-2">
+                       <label for="alias">Alias</label>
+                       <input type="text" class="form-control emp" id="alias" name="alias" placeholder="Alias" style="height:40px;">
+                    </div>
+                   <div class="col-md-2">
+                        <label for="project">Project</label>
+                        <select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:40px;">
+                            <option value="select project">Select project</option>
+                            <option value="Google Portal">Google Portal</option>
+                            <option value="Picasso Audits">Picasso Audits</option>
+                            <option value="Picasso Builds">Picasso Builds</option>
+                            <option value="RLSA">RLSA</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Tag">Tag</option>
+                        </select>
+                    </div>
+                   <div class="col-md-2">
+                       <label for="device-type">Device Type</label>
+                       <input type="text" class="form-control emp" id="device-type" name="device-type" placeholder="Device Type" style="height:40px;">
+                    </div>
+                    <div class="col-md-2">
+                       <label for="device-type">Device Tag</label>
+                       <input type="text" class="form-control emp" id="device-tag" name="device-tag" placeholder="Device Tag" style="height:40px;">
+                    </div>
+                   <div class="col-md-2">
+                       <label for="mac-id">MAC Id</label>
+                       <input type="text" class="form-control emp" id="mac-id" name="mac-id" placeholder="MAC-ID" style="height:40px;">
+                    </div>
+                   <div class="col-md-2">
+                       <label for="employee-status">Employee Status</label>
+                       <select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:40px;">
+                           <option value="active"> Active </option>
+                           <option value="active"> InActive </option>
+                       </select>
+                   </div>
+                   <div class="col-md-2">
+                       <label for="device-status">Device Status</label>
+                        <select type="text" class="form-control bgicon dropdown" id="device-status" style="height:40px;" name="device-status">
+                            <option value="Assigned"> Assigned </option>'
+                            <option value="Need to Return"> Need to Return </option>
+                            <option value="Not Assigned"> Not Assigned </option>
+                            <option value="Returned"> Returned </option>
+                            <option value="Reassigned"> Reassigned </option>
+                        </select>
+                   </div>
+                   <div class="col-md-2">
+                       <label for="issued-on">Issued On</label>
+                       <input type="text" class="issued-on form-control emp" id="issued-on" name="issued-on" placeholder="Issued Date" style="height:40px;">
+                   </div>
+                   <div class="col-md-2">
+                        <button id="submit" class="btn std-btn sm-btn" style="margin-top: 12%;height:40px;">Submit</button>
+                   </div>
+
+                </div>
+                <div id="inventory_wrapper" class="dataTables_wrapper no-footer" style="margin-bottom: 1%;">
+                    <table id="inventory" class="display" cellspacing="0" width="100%">
+                        <thead>
+                            <tr role="row">
+                                <th></th>
+                                <th>Name</th>
+                                <th>LDAP</th>
+                                <th>Alias</th>
+                                <th>Project</th>
+                                <th>Device type</th>
+                                <th>Device tag</th>
+                                <th>MAC ID</th>
+                                <th>Employee Status</th>
+                                <th>Device Status</th>
+                                <th>Issued on</th>
+                                <th>Returned on</th>
+                                <th>Edit</th>
+                            </tr>
+					    </thead>
+                        <tbody id="inventory_tbody"></tbody>
+                    </table>
+                </div>
+        </div>
+    </section>
+</div>
+
+
+<!-- Modal -->
+    <div class="modal fade" id="assigneeMail" role="dialog">
+    <div class="modal-dialog" style="width:50%;">
+      <div class="modal-content" style="width:100%;">
+        <div class="modal-header" style="width:100%;text-align:center;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" style="font-size:22px;">Send Mail</h3>
+        </div>
+        <div class="modal-body" id="eligible" style="width:100%;">
+
+            <label>To:</label>
+            <input class="form-control ui-autocomplete-input" type="email" id="assignee_mail" name="assignee_mail" placeholder="abc@regalix-inc.com" style="height: 38px;" autocomplete="off">
+
+            <label>Cc:</label>
+            <input class="form-control" type="text" id="bcc_mail" name="bcc_mail" value="kushalappa.theetharamada@regalix-inc.com, srinivasans@regalix-inc.com, portalsupport@regalix-inc.com, adminsupport@regalix-inc.com" style="height: 38px;" disabled>
+
+            <!-- <div id="device-info" style="display:none;">
+            </div> -->
+            <div id="content">
+                
+                <div class="mail-body">
+                    <table border="1" style="border-collapse: collapse;color: black;">
+                        <thead>
+                            <tr>
+                                <th style="padding:5px 40px 5px 5px;">Sl.No.</th>
+                                <th style="padding:5px 40px 5px 5px;">LDAP</th>
+                                <th style="padding:5px 40px 5px 5px;">Device Tag</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer" style="padding-bottom:25px;">
+          <button id="send" class="btn">Send</button>
+          <button id="cancel" class="btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div> 
+    </div>
+  </div>
+
+
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script src="{% static 'js/reports/moment.min.js' %}"></script>
+<script src="{% static 'js/webapp/vendor/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    olark('api.box.hide');
+    function updateInventoryData(){
+        $('#inventory').DataTable({
+            "ajax": {
+                "url": "/reports/inventory/?inventory=true",
+                "dataSrc": function(json) {
+                    json = json['data']
+                    
+                    for(var i=0; i<json.length; i++){
+                        var employee_alias = json[i].employee_alias;
+                        if(employee_alias === "")
+                            employee_alias = "-";
+                        else
+                            employee_alias = employee_alias.split("@")[0]
+
+                        employee_ldap = json[i].employee_ldap.split("@")[0];
+
+                        if(json[i].employee_status){
+                            employee_status = 'Active';
+                            empColor = 'green';
+                            margin = '15px';
+                        }
+                        else{
+                            employee_status = 'Inactive';
+                            empColor = 'red';
+                            margin = '5px';
+                        }
+                        device_status = json[i].device_status
+                        if(device_status == 'Assigned'){
+                            deviceColor = 'green'
+                        }
+                        else{
+                            deviceColor = '#a94442'
+                        }
+                        json[i][0] = '<span data-id="'+json[i].id+'" class="mail"><input id="'+ json[i].id +'" type="checkbox" value=""><span>';
+                        json[i][1] = json[i].employee_name;
+                        json[i][2] = employee_ldap;
+                        json[i][3] = employee_alias;
+                        json[i][4] = json[i].employee_project;
+                        json[i][5] = json[i].device_type;
+                        json[i][6] = json[i].device_tag;
+                        var device_tag_val = json[i].device_tag;
+                        if (device_tag_val === null || device_tag_val === ""){
+                            json[i][6] = "-"
+                        }else{
+                            json[i][6] = json[i].device_tag;
+                        }
+                        json[i][7] = json[i].mac_id;
+                        json[i][8] = '<span> '+ employee_status + '<i class="fa fa-circle fa-1"'+
+                                        'aria-hidden="true" style="color:'+empColor+';margin-left: '+margin+';"></i></span>';;
+
+                        json[i][9] = '<span style="display: block;width: 76px;"> '+ device_status + '<i class="fa fa-circle fa-1"'+
+                                        'aria-hidden="true" style="color:'+deviceColor+';margin-left: 5px;"></i></span>';
+                        json[i][10] = formatTime(json[i].issued_on);
+                        json[i][11] = formatTime(json[i].returned_on);
+                        json[i][12] = '<a title="Edit" id="'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>';
+                    }
+                    return json;
+                }
+            },
+            columnDefs: [
+                {targets: [ 5 ], orderData: [ 5, 1 ]},
+                {bSortable: false,targets: [ 0, 3, 6, 7, 12 ]},
+                { "width": "4%", "targets": 0 },
+                { "width": "10%", "targets": 1 },
+                { "width": "10%", "targets": 2 },
+                { "width": "6%", "targets": 3 },
+                { "width": "10%", "targets": 4 },
+                { "width": "7%", "targets": 5 },
+                { "width": "7%", "targets": 6 },
+                { "width": "10%", "targets": 7 },
+                { "width": "10%", "targets": 8 },
+                { "width": "10%", "targets": 9 },
+                { "width": "10%", "targets": 10 },
+                { "width": "2%", "targets": 11 },
+            ],
+            order: [[ 1, "asc" ]],
+            "bDestroy": true,
+        });
+    }
+
+    updateInventoryData();
+
+    var formatTime = function(unixTimestamp){
+        if(unixTimestamp === null)
+            return "-"
+        else{
+            var date = new Date(unixTimestamp*1000);
+            var month = date.getMonth() + 1;
+            return date.getDate() + "-" + month + "-" + date.getFullYear();
+        }
+    };
+
+    $("#add_emp").click(function(){
+        if($("#emp_entry").is(":visible"))
+            $("#add_emp").text("+ Add");
+        else
+            $("#add_emp").text("Close");
+
+         $("#emp_entry").toggle();
+    });
+
+    $(".issued-on, .returned-on").datetimepicker({
+          timepicker:false,
+          format:'d-m-Y',
+          scrollInput:false,
+    });
+
+
+    function validateGcaseEmail(val) {
+        domain = val.split("@");
+        if(domain.length > 1){
+            if(domain[1] != 'google.com')
+                return false;
+            else
+                return true;
+        }else{
+            return true;
+        }
+    }
+
+    $('body').on('click', 'a.edit', function(e) {
+        e.preventDefault();
+
+        var row = $(this).parent().parent();
+        $editingRow = $(this).parent().parent().html();
+        var row_id = row.children().eq(11).find('a').attr('id').trim();
+        var emp_name = row.children().eq(0).html().trim();
+        var emp_email = row.children().eq(1).html().trim();
+        var emp_alais = row.children().eq(2).html().trim();
+        if(emp_alais === "-")
+            emp_alais = ""
+
+        var emp_proj = row.children().eq(3).html().trim();
+        var projOptions = '<option value="Google Portal">Google Portal</option>'+
+                        '<option value="Picasso Audits">Picasso Audits</option>'+
+                        '<option value="Picasso Builds">Picasso Builds</option>'+
+                        '<option value="RLSA">RLSA</option>'+
+                        '<option value="Shopping">Shopping</option>'+
+                        '<option value="Tag">Tag</option>';
+        if(emp_proj === 'Tag')
+            projOptions = projOptions.replace('"Tag"', '"Tag" selected');
+        else if (emp_proj === 'Shopping')
+            projOptions = projOptions.replace('"Shopping"', '"Shopping" selected');
+        else if (emp_proj === 'RLSA')
+            projOptions = projOptions.replace('"RLSA"', '"RLSA" selected');
+        else if (emp_proj === 'Picasso Audits')
+            projOptions = projOptions.replace('"Picasso Audits"', '"Picasso Audits" selected');
+        else if (emp_proj === 'Picasso Builds')
+            projOptions = projOptions.replace('"Picasso Builds"', '"Picasso Builds" selected');
+        else if (emp_proj === 'Google Portal')
+            projOptions = projOptions.replace('"Google Portal"', '"Google Portal" selected');
+
+        var emp_device = row.children().eq(4).html().trim();
+        var emp_device_tag = row.children().eq(5).html().trim();
+        var emp_mac_id = row.children().eq(6).html().trim();
+        var emp_status = row.children().eq(7).text().trim();
+
+        var empStatusOptions = '<option value="Active">Active</option><option value="Inactive">Inactive</option>';
+        if(emp_status === 'Active')
+            empStatusOptions = empStatusOptions.replace('Active"', 'Active" selected');
+        else
+            empStatusOptions = empStatusOptions.replace('Inactive"', 'Inactive" selected');
+
+        var dev_status = row.children().eq(8).text().trim();
+        var deviceStatusOptions =  '<option value="Assigned"> Assigned </option> <option value="Need to Return"> Need to Return </option> <option value="Not Assigned"> Not Assigned </option> <option value="Returned"> Returned </option><option value="Reassigned"> Reassigned </option>';
+        deviceStatusOptions = deviceStatusOptions.replace(dev_status + '"', dev_status + '" selected');
+
+
+        var dev_issued_on = row.children().eq(9).html().trim();
+        var dev_returned_on = row.children().eq(10).html().trim();
+
+        if(dev_returned_on === "-")
+            dev_returned_on = ""
+        if(dev_issued_on === "-")
+            dev_issued_on = ""
+        row.children().eq(0).html('<input class="input-sm" value="'+emp_name+'" style="width: 110%;">');
+        row.children().eq(1).html('<input class="input-sm" value="'+emp_email+'" style="width: 110%;">');
+        row.children().eq(2).html('<input class="input-sm" value="'+emp_alais+'" style="width: 120%;">');
+        row.children().eq(3).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+                                   projOptions +
+                                  '</select>');
+        row.children().eq(4).html('<input class="input-sm" value="'+emp_device+'" style="width: 90%;">');
+        row.children().eq(5).html('<input class="input-sm" value="'+emp_device_tag+'" style="width: 110%;">');
+        row.children().eq(6).html('<input class="input-sm" value="'+emp_mac_id+'" style="width: 110%;">');
+        row.children().eq(7).html('<select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:31.5px;margin-bottom: 2px;width: 100%;">'+
+                                    empStatusOptions +
+                                  '</select>');
+        row.children().eq(8).html('<select type="text" class="form-control bgicon dropdown" id="device-type" name="device-type" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+                                    deviceStatusOptions +
+                                 '</select>');
+        row.children().eq(9).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" style="width: 100%;">');
+        row.children().eq(10).html('<input class="returned-on input-sm" id="returned-on-din" name="returned-on-din" value="'+dev_returned_on+'" style="width: 100%;">');
+
+        row.children().eq(11).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
+                                    '<a title="Cancel" class="cancel" href="#" style="margin-left: 10px; color: #D83F34;"><span class="glyphicon glyphicon-remove"></span></a>');;
+
+    });
+
+    $('body').on('click', 'a.save', function(e) {
+        var row = $(this).parent().parent();
+        var row_id = row.children().eq(11).find('a').attr('id');
+
+        var name = row.children().eq(0).find('input');
+        var ldap = row.children().eq(1).find('input');
+        var alias = row.children().eq(2).find('input');
+        var project = row.children().eq(3).find('select');
+        var deviceType = row.children().eq(4).find('input');
+        var deviceTag = row.children().eq(5).find('input');
+        var macId = row.children().eq(6).find('input');
+        var employeeStatus = row.children().eq(7).find('select');
+        var deviceStatus = row.children().eq(8).find('select');
+        var issuedOn = row.children().eq(9).find('input');
+        var returnedOn = row.children().eq(10).find('input');
+        valid = true;
+        var employee_name = name.val().trim()
+        if(employee_name === ""){
+            name.addClass('error-box');
+            valid = false;
+        }else
+            name.removeClass('error-box');
+
+        var employee_ldap = ldap.val().trim()
+        if(employee_ldap === ""){
+            ldap.addClass('error-box');
+            valid = false;
+        }else{
+            if(validateGcaseEmail(employee_ldap)){
+                ldap.removeClass('error-box');
+            }else{
+                ldap.addClass('error-box');
+                valid = false;
+            }
+        }
+
+        var alias_val = alias.val().trim();
+        if(alias_val.length > 0){
+            if(validateGcaseEmail(alias_val)){
+                alias.removeClass('error-box');
+            }else{
+                alias.addClass('error-box');
+                valid = false;
+            };
+        };
+
+        var employee_project = project.val().trim()
+        if(employee_project === "select project"){
+            project.addClass('error-box');
+            valid = false;
+        }else
+            project.removeClass('error-box');
+
+        var employee_deviceType = deviceType.val().trim()
+        if(employee_deviceType === ""){
+            deviceType.addClass('error-box');
+            valid = false;
+        }else
+            deviceType.removeClass('error-box');
+
+/*        var employee_deviceTag = deviceTag.val().trim()
+        if(employee_deviceTag === ""){
+            deviceTag.addClass('error-box');
+            valid = false;
+        }else
+            deviceTag.removeClass('error-box');*/
+        var employee_deviceTag = deviceTag.val().trim()
+
+        var employee_macId = macId.val().trim()
+
+        var deviceIssuedOn = issuedOn.val().trim()
+        /*if(deviceIssuedOn === ""){
+            issuedOn.addClass('error-box');
+            valid = false;
+        }else
+            issuedOn.removeClass('error-box');*/
+
+        var jsonData = {
+                row_id: row_id,
+                name: employee_name,
+                ldap: employee_ldap,
+                alias: alias_val,
+                project: employee_project,
+                deviceType: employee_deviceType,
+                deviceTag: employee_deviceTag,
+                macId: employee_macId,
+                employeeStatus: employeeStatus.val(),
+                deviceStatus: deviceStatus.val(),
+                issuedOn: deviceIssuedOn,
+                returnedOn: returnedOn.val().trim()
+        }
+
+        if(valid){
+            $.ajax({
+                type: "PUT",
+                url: '/reports/inventory/',
+                data: JSON.stringify(jsonData),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                success: function (data) {
+                    console.log(true);
+                    setTimeout(function(){updateInventoryData();},1000);
+                },
+                error: function(data){
+                    alert("Something went wrong, please try after some time");
+                }
+            });
+        }else
+            console.log(false);
+    });
+
+    $('body').on('click', 'a.cancel', function(e) {
+        e.preventDefault();
+        var row = $(this).parent().parent();
+        row.html($editingRow);
+        delete $editingRow;
+    });
+
+    $('body').on('focus',"#issued-on-din, #returned-on-din", function(){
+        $(this).datetimepicker({
+          timepicker:false,
+          format:'d-m-Y',
+          scrollInput:false,
+        });
+    });
+
+
+    $("#submit").click(function(e){
+        var name = $("#name");
+        var ldap = $("#ldap");
+        var alias = $("#alias");
+        var project = $("#project");
+        var deviceType = $("#device-type");
+        var deviceTag = $("#device-tag");
+        var macId = $("#mac-id");
+        var employeeStatus = $("#employee-status");
+        var deviceStatus = $("#device-status");
+        var issuedOn = $("#issued-on");
+
+        valid = true;
+
+        var employee_name = name.val().trim()
+        if(employee_name === ""){
+            name.addClass('error-box');
+            valid = false;
+        }else
+            name.removeClass('error-box');
+
+        var employee_ldap = ldap.val().trim()
+        if(employee_ldap === ""){
+            ldap.addClass('error-box');
+            valid = false;
+        }else{
+            if(validateGcaseEmail(employee_ldap)){
+                ldap.removeClass('error-box');
+            }else{
+                ldap.addClass('error-box');
+                valid = false;
+            }
+        }
+
+        var employee_project = project.val().trim()
+        if(employee_project === "select project"){
+            project.addClass('error-box');
+            valid = false;
+        }else
+            project.removeClass('error-box');
+
+        var employee_deviceType = deviceType.val().trim()
+        if(employee_deviceType === ""){
+            deviceType.addClass('error-box');
+            valid = false;
+        }else
+            deviceType.removeClass('error-box');
+
+/*        var employee_deviceTag = deviceTag.val().trim()
+        if(employee_deviceTag === ""){
+            deviceTag.addClass('error-box');
+            valid = false;
+        }else
+            deviceTag.removeClass('error-box');*/
+        var employee_deviceTag = deviceTag.val().trim()
+
+        var employee_macId = macId.val().trim()
+
+        var deviceIssuedOn = issuedOn.val().trim()
+        if(deviceIssuedOn === ""){
+            issuedOn.addClass('error-box');
+            valid = false;
+        }else
+            issuedOn.removeClass('error-box');
+
+        var alias = $("#alias").val().trim();
+        if(alias.length > 0){
+            if(validateGcaseEmail(alias)){
+                $("#alias").removeClass('error-box');
+            }else{
+                $("#alias").addClass('error-box');
+                valid = false;
+            };
+        };
+
+        var jsonData = {
+                name: employee_name,
+                ldap: employee_ldap,
+                alias: alias,
+                project: employee_project,
+                deviceType: employee_deviceType,
+                deviceTag: employee_deviceTag,
+                macId: employee_macId,
+                employeeStatus: $("#employee-status").val(),
+                deviceStatus: $("#device-status").val(),
+                issuedOn: deviceIssuedOn
+        }
+
+        if(valid){
+            $.ajax({
+                type: "POST",
+                url: location.href,
+                data: JSON.stringify(jsonData),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                success: function (data) {
+                    if(data.type === 'new'){
+                        $("#msg-container").html(data.msg);
+                        $("#msg-container").css('color', '#3c763d');
+                        $(".emp").val('');
+                        $("dropdown").find('option:eq(0)').prop('selected', true);
+                        setTimeout(function(){updateInventoryData();},1000);
+
+                    }
+                    else{
+                        $("#msg-container").html(data.msg);
+                        $("#msg-container").css('color', '#a94442');
+                        $(".emp").val('');
+                        $("dropdown").find('option:eq(0)').prop('selected', true);
+                    }
+                },
+                error: function(data){
+                    alert("Something went wrong, please try after some time");
+                }
+            });
+        }else
+            console.log(false);
+    });
+});
+
+$('#download').click(function(){
+     $.ajax({
+        type: "GET",
+        url: '/reports/download/',
+        success: function (data) {
+            location.replace('/reports/download/');
+        },
+        error: function(data){
+            alert("Something went wrong, please try after some time");
+        }
+    });
+});
+
+$('body').on('click', '.mail', function(){
+    var myboxes = $('.mail input[type=checkbox]')
+    for (var i=0; i<myboxes.length;i++) {
+        if (myboxes[i].checked) {
+            $('#assign').css('display','block'); 
+        }
+    }
+    if($(this).parent().find('input').is(':checked')) {
+      var $that = $(this);
+      var row = $that.parent().parent();
+      id = $that.data('id');
+      ldap = row.children().eq(2).html().toUpperCase();
+      device = row.children().eq(6).html().toUpperCase();
+      $('.mail-body table tbody').append('<tr id='+id+'><td class="slno" style="padding:5px 40px 5px 5px;"></td><td style="padding:5px 40px 5px 5px;">'+ldap+'</td><td style="padding:5px 40px 5px 5px;">'+device+'</td></tr>');
+    }
+});
+
+$('body').on('click','.mail input[type=checkbox]',function(){
+    var myboxes = $('.mail input[type=checkbox]')
+    for (var i=0; i<myboxes.length;i++) {
+        if (!myboxes[i].checked) {
+            $('#assign').css('display','none'); 
+        }
+    }
+    if(!$(this).is(':checked')) {
+         id = this.id; 
+         $('.mail-body table tr').each(function(){
+            if(this.id == id){
+                $(this).remove();
+            }
+         })
+    } 
+}); 
+
+$('body').on('click', '#send', function() {
+    var description = $('#content').html();
+    var user = $('#assignee_mail').val();
+    var bcc = $('#bcc_mail').val();
+    var path = '{{ request.META.HTTP_HOST }}';
+    if(user){
+        $('#assignee_mail').removeClass('error-box');
+        $.ajax({
+            type: "POST",
+            url: '/reports/mail/',
+            data: {'description':String(description),'user':String(user),'bcc':String(bcc),'path':String(path)},
+            success: function (data) {
+                  $('.mail-body table tbody').empty();
+                  $("#cancel").trigger('click');
+                  $('#assignee_mail').val('');
+                  $('input:checkbox').removeAttr('checked');
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+        });
+    }
+    else{
+        $('#assignee_mail').addClass('error-box');
+    }
+});
+
+
+$(".modal-body #assignee_mail").autocomplete(
+{
+    search: function () {},
+    source: function (request, response)
+    {
+        $.ajax(
+        {
+            url: "/main/user/email/",
+            dataType: "json",
+            data:
+            {
+                search_key: request.term,
+            },
+            success: function (data)
+            {
+                response(data.data);
+            }
+        });
+    },
+    minLength: 1,
+});
+
+$('body').on('click', '#assign', function(){
+    $('table .slno').each(function(i) {
+        $(this).html(i + 1 +'.');
+    });
+});
+
+</script>
+{% endblock main_js %}
