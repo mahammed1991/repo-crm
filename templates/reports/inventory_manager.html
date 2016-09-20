@@ -8,6 +8,24 @@ Inventory
 {% block main_css %}
     <link rel="stylesheet" href="{% static 'css/webapp/vendor/jquery.dataTables.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}">
+    <style type="text/css">
+        tr td:first-child:before
+        {
+          list-style-type: decimal;     /* Increment the Serial counter */
+        }
+        .pac-container {
+            background-color: #FFF;
+            z-index: 20;
+            position: fixed;
+            display: inline-block;
+            float: left;
+        }
+        .modal{
+            z-index: 20;   
+        }
+    </style>
+}
+}
 {% endblock main_css %}
 
 {% block content %}
@@ -16,8 +34,10 @@ Inventory
 <!-- content-region -->
     <section class="content-region inner-page">
         <div class="container-fluid" style="max-width: 98%;">
-                                <button id="download" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" ><span class="glyphicon glyphicon-download"></span>  DOWNLOAD</button>
+                <button id="download" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" ><span class="glyphicon glyphicon-download"></span>  DOWNLOAD</button>
                 <button id="add_emp" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;" >+ Add</button>
+
+                <button id="assign" class="btn std-btn sm-btn" style="display:none;float:right;margin-top: 1%;margin-right: -0.5%;line-height: 90%;" data-toggle="modal" data-target="#assigneeMail">ASSIGN</button>
                 <h2>Google Asset Inventory</h2>
                 <div id="emp_entry" class="row" style="margin-bottom:1%;display:none;">
                     {% csrf_token %}
@@ -90,6 +110,7 @@ Inventory
                     <table id="inventory" class="display" cellspacing="0" width="100%">
                         <thead>
                             <tr role="row">
+                                <th></th>
                                 <th>Name</th>
                                 <th>LDAP</th>
                                 <th>Alias</th>
@@ -110,6 +131,52 @@ Inventory
         </div>
     </section>
 </div>
+
+
+<!-- Modal -->
+    <div class="modal fade" id="assigneeMail" role="dialog">
+    <div class="modal-dialog" style="width:50%;">
+      <div class="modal-content" style="width:100%;">
+        <div class="modal-header" style="width:100%;text-align:center;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" style="font-size:22px;">Send Mail</h3>
+        </div>
+        <div class="modal-body" id="eligible" style="width:100%;">
+
+            <label>To:</label>
+            <input class="form-control ui-autocomplete-input" type="email" id="assignee_mail" name="assignee_mail" placeholder="abc@regalix-inc.com" style="height: 38px;" autocomplete="off">
+
+            <label>Cc:</label>
+            <input class="form-control" type="text" id="bcc_mail" name="bcc_mail" value="kushalappa.theetharamada@regalix-inc.com, srinivasans@regalix-inc.com, portalsupport@regalix-inc.com, adminsupport@regalix-inc.com" style="height: 38px;" disabled>
+
+            <!-- <div id="device-info" style="display:none;">
+            </div> -->
+            <div id="content">
+                
+                <div class="mail-body">
+                    <table border="1" style="border-collapse: collapse;color: black;">
+                        <thead>
+                            <tr>
+                                <th style="padding:5px 40px 5px 5px;">Sl.No.</th>
+                                <th style="padding:5px 40px 5px 5px;">LDAP</th>
+                                <th style="padding:5px 40px 5px 5px;">Device Tag</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer" style="padding-bottom:25px;">
+          <button id="send" class="btn">Send</button>
+          <button id="cancel" class="btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div> 
+    </div>
+  </div>
+
+
 <div id="preloaderOverlay" style='display:none;'>
   <div class="preloader">
     <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
@@ -122,7 +189,7 @@ Inventory
 <script src="{% static 'js/reports/moment.min.js' %}"></script>
 <script src="{% static 'js/webapp/vendor/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
-
+<script type="text/javascript" src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -160,47 +227,49 @@ $(document).ready(function(){
                         else{
                             deviceColor = '#a94442'
                         }
-                        json[i][0] = json[i].employee_name;
-                        json[i][1] = employee_ldap;
-                        json[i][2] = employee_alias;
-                        json[i][3] = json[i].employee_project;
-                        json[i][4] = json[i].device_type;
-                        json[i][5] = json[i].device_tag;
+                        json[i][0] = '<span data-id="'+json[i].id+'" class="mail"><input id="'+ json[i].id +'" type="checkbox" value=""><span>';
+                        json[i][1] = json[i].employee_name;
+                        json[i][2] = employee_ldap;
+                        json[i][3] = employee_alias;
+                        json[i][4] = json[i].employee_project;
+                        json[i][5] = json[i].device_type;
+                        json[i][6] = json[i].device_tag;
                         var device_tag_val = json[i].device_tag;
                         if (device_tag_val === null || device_tag_val === ""){
-                            json[i][5] = "-"
+                            json[i][6] = "-"
                         }else{
-                            json[i][5] = json[i].device_tag;
+                            json[i][6] = json[i].device_tag;
                         }
-                        json[i][6] = json[i].mac_id;
-                        json[i][7] = '<span> '+ employee_status + '<i class="fa fa-circle fa-1"'+
+                        json[i][7] = json[i].mac_id;
+                        json[i][8] = '<span> '+ employee_status + '<i class="fa fa-circle fa-1"'+
                                         'aria-hidden="true" style="color:'+empColor+';margin-left: '+margin+';"></i></span>';;
 
-                        json[i][8] = '<span style="display: block;width: 76px;"> '+ device_status + '<i class="fa fa-circle fa-1"'+
+                        json[i][9] = '<span style="display: block;width: 76px;"> '+ device_status + '<i class="fa fa-circle fa-1"'+
                                         'aria-hidden="true" style="color:'+deviceColor+';margin-left: 5px;"></i></span>';
-                        json[i][9] = formatTime(json[i].issued_on);
-                        json[i][10] = formatTime(json[i].returned_on);
-                        json[i][11] = '<a title="Edit" id="'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>';
+                        json[i][10] = formatTime(json[i].issued_on);
+                        json[i][11] = formatTime(json[i].returned_on);
+                        json[i][12] = '<a title="Edit" id="'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>';
                     }
                     return json;
                 }
             },
             columnDefs: [
-                {targets: [ 4 ], orderData: [ 4, 0 ]},
-                {bSortable: false,targets: [ 2, 5, 6, 10 ]},
-                { "width": "10%", "targets": 0 },
-                { "width": "8%", "targets": 1 },
-                { "width": "6%", "targets": 2 },
-                { "width": "10%", "targets": 3 },
+                {targets: [ 5 ], orderData: [ 5, 1 ]},
+                {bSortable: false,targets: [ 0, 3, 6, 7, 12 ]},
+                { "width": "4%", "targets": 0 },
+                { "width": "10%", "targets": 1 },
+                { "width": "10%", "targets": 2 },
+                { "width": "6%", "targets": 3 },
                 { "width": "10%", "targets": 4 },
-                { "width": "8%", "targets": 5 },
-                { "width": "12%", "targets": 6 },
+                { "width": "7%", "targets": 5 },
+                { "width": "7%", "targets": 6 },
                 { "width": "10%", "targets": 7 },
                 { "width": "10%", "targets": 8 },
                 { "width": "10%", "targets": 9 },
-                { "width": "4%", "targets": 10 },
+                { "width": "10%", "targets": 10 },
+                { "width": "2%", "targets": 11 },
             ],
-            order: [[ 0, "asc" ]],
+            order: [[ 1, "asc" ]],
             "bDestroy": true,
         });
     }
@@ -582,5 +651,96 @@ $('#download').click(function(){
         }
     });
 });
+
+$('body').on('click', '.mail', function(){
+    var myboxes = $('.mail input[type=checkbox]')
+    for (var i=0; i<myboxes.length;i++) {
+        if (myboxes[i].checked) {
+            $('#assign').css('display','block'); 
+        }
+    }
+    if($(this).parent().find('input').is(':checked')) {
+      var $that = $(this);
+      var row = $that.parent().parent();
+      id = $that.data('id');
+      ldap = row.children().eq(2).html().toUpperCase();
+      device = row.children().eq(6).html().toUpperCase();
+      $('.mail-body table tbody').append('<tr id='+id+'><td class="slno" style="padding:5px 40px 5px 5px;"></td><td style="padding:5px 40px 5px 5px;">'+ldap+'</td><td style="padding:5px 40px 5px 5px;">'+device+'</td></tr>');
+    }
+});
+
+$('body').on('click','.mail input[type=checkbox]',function(){
+    var myboxes = $('.mail input[type=checkbox]')
+    for (var i=0; i<myboxes.length;i++) {
+        if (!myboxes[i].checked) {
+            $('#assign').css('display','none'); 
+        }
+    }
+    if(!$(this).is(':checked')) {
+         id = this.id; 
+         $('.mail-body table tr').each(function(){
+            if(this.id == id){
+                $(this).remove();
+            }
+         })
+    } 
+}); 
+
+$('body').on('click', '#send', function() {
+    var description = $('#content').html();
+    var user = $('#assignee_mail').val();
+    var bcc = $('#bcc_mail').val();
+    var path = '{{ request.META.HTTP_HOST }}';
+    if(user){
+        $('#assignee_mail').removeClass('error-box');
+        $.ajax({
+            type: "POST",
+            url: '/reports/mail/',
+            data: {'description':String(description),'user':String(user),'bcc':String(bcc),'path':String(path)},
+            success: function (data) {
+                  $('.mail-body table tbody').empty();
+                  $("#cancel").trigger('click');
+                  $('#assignee_mail').val('');
+                  $('input:checkbox').removeAttr('checked');
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+        });
+    }
+    else{
+        $('#assignee_mail').addClass('error-box');
+    }
+});
+
+
+$(".modal-body #assignee_mail").autocomplete(
+{
+    search: function () {},
+    source: function (request, response)
+    {
+        $.ajax(
+        {
+            url: "/main/user/email/",
+            dataType: "json",
+            data:
+            {
+                search_key: request.term,
+            },
+            success: function (data)
+            {
+                response(data.data);
+            }
+        });
+    },
+    minLength: 1,
+});
+
+$('body').on('click', '#assign', function(){
+    $('table .slno').each(function(i) {
+        $(this).html(i + 1 +'.');
+    });
+});
+
 </script>
 {% endblock main_js %}

@@ -2478,9 +2478,11 @@ def inventory_handler(request):
                         'id': rec.id
                     }
                     data.append(da)
+                
                 resp = {'success': True, 'data': data}
                 return HttpResponse(json.dumps(resp), content_type='application/json')
-            return render(request, 'reports/inventory_manager.html')
+            users = User.objects.all()
+            return render(request, 'reports/inventory_manager.html',{'users':users})
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
@@ -2573,16 +2575,13 @@ def download_inventory_details(request):
     writer.writerow(['Name','LDAP','Alias','Project','Device type','Device tag','MAC ID','Employ Status','Device Status','Issued on','Returned'])
     for i in data:
         issued = i.issued_on
+        returned = i.returned_on
         if issued:
             i.issued_on = datetime.strptime(str(issued), '%Y-%m-%d %H:%M:%S').date()
-        if i.employee_status:
-            i.employee_status = 'Active'
-        else:
-            i.employee_status = 'Inactive'
-        if i.device_status:
-            i.device_status = 'Active'
-        else:
-            i.device_status = 'Returned'
+
+        if returned:
+            i.returned_on = datetime.strptime(str(returned), '%Y-%m-%d %H:%M:%S').date()
+
         writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.device_tag, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
     return response
 
@@ -2903,5 +2902,49 @@ def write_eligiblity_report_to_csv(result, collumn_attr, filename):
     return path
 
 
+import base64
+@csrf_exempt
+def send_inventory_mail(request):
+    description = request.POST.get('description')
+    encoded_desc = base64.encodestring(description)
+    path = request.build_absolute_uri(reverse('reports.views.acknowledgement_mail')) + '?desc=' + encoded_desc
+    if request.method == 'POST':
+        user = request.POST.get('user')
+        username = User.objects.get(username=user)
+        name = username.first_name + ' ' + username.last_name
+        cc_list = request.POST.get('bcc')
+        cc_list = cc_list.split(', ')
+        mail_body = get_template('reports/email_templates/inventory_mail.html').render(
+        Context({'description':description, 'username':name, 'path':path}))
+        mail_subject = '[Action Required] Acknowledge Receipt of Loaner Chromebooks Issued on ' + str(datetime.utcnow().date())
+        mail_from = 'gtrack@regalix-inc.com'
+        mail_to = user
+        bcc = ''
+        #cc = cc_list
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+    return redirect('reports.views.inventory_handler')
 
 
+def acknowledgement_mail(request):
+    encoded_desc = request.GET.get('desc')
+    encoded_desc = encoded_desc.replace(' ', '+')
+    description = base64.decodestring(encoded_desc)
+    if request.user.username:
+        user = request.user.username
+        username = User.objects.get(username=user)
+        name = username.first_name + ' ' + username.last_name
+        cc_list = ['kushalappa.theetharamada@regalix-inc.com', 'srinivasans@regalix-inc.com', 'portalsupport@regalix-inc.com', 'adminsupport@regalix-inc.com']
+        mail_body = get_template('reports/email_templates/acknowledgement_mail.html').render(
+        Context({'description':description,'name':name}))
+        mail_subject = 'Acknowledgement  Received for Loaner Chromebooks Issued on ' + str(datetime.utcnow().date())
+        #mail_from = user
+        mail_from = ''
+        mail_to = ''
+        bcc = ''
+        #cc = cc_list
+        attachments = list()
+        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+        resp = 'successfully acknowledged'
+        return HttpResponse(resp)
+    return redirect("/auth/login?next=/reports/acknowledgement-mail/")
