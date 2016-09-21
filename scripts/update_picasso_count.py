@@ -37,7 +37,7 @@ def get_all_picasso_leads():
 
         if index == 1:
             sql_query_all_leads = "select Id, Code_Type__c, Picasso_Lead_Stage__c, CreatedDate  from Lead WHERE " \
-                                  "(CreatedDate >= 2016-06-30T00:00:00-00:00 AND CreatedDate <= %s) " \
+                                  "(CreatedDate >= 2016-08-30T00:00:00-00:00 AND CreatedDate <= %s) " \
                                   "AND (Code_Type__c = 'Picasso' OR Code_Type__c = 'BOLT')  " \
                                   "ORDER BY CreatedDate LIMIT %s" % (end_date, limit)
         else:
