@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+		<div>
+			<span>Hello,</span>
+			<br>
+			<p>I {{ name }}, acknowledge receipt of below chromebooks and understand that I will be responsible for any damage and/or loss of these chromebooks.</p>
+			<br>
+			{{ description | safe }}
+			<br>
+		    <span>Regards,<br>
+		    {{ name }}</span>
+		</div>
+	</body>
+</html>
