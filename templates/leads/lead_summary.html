@@ -561,8 +561,16 @@ function setLeadSummary(lead_status){
         comment = '<td class="hidden-xs hidden-sm comments-container comments-container2"><p> </p>'
       }
 
-      status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
-      $('#tableBody').append(counter+other+comment+status)
+      if (leads[i].feed_optimisation_status){
+        status = '<td><span class="status-txt-color">'+ leads[i].feed_optimisation_status +'</span></td>'
+        substatus = '<td><span class="status-txt-color">'+ leads[i].feed_optimisation_sub_status +'</span></td></tr>'
+      }
+      else{
+        status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td>'
+        substatus = '<td><span class="status-txt-color">'+ '-' +'</span></td></tr>'
+      }
+
+      $('#tableBody').append(counter+other+comment+status+substatus)
       
     }
     $("#Leads").trigger("update"); 
