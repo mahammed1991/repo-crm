@@ -96,12 +96,6 @@ Notification Manager
               <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Country</label><br/><br/>
                 <div class="location-pick" id="filter_location">
                   <div class="checkbox" id="location_checks">
-                      <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
-                    {% for loc in locations %}
-                          <label class="all-loc">
-                              <input type="checkbox" value="{{ loc.location_name }}">{{ loc.location_name }}
-                          </label>
-                      {% endfor %}
                   </div>
                 </div>
               </div>
@@ -164,15 +158,14 @@ Notification Manager
 <link rel="stylesheet" href="{% static 'css/webapp/vendor/jquery.dataTables.min.css' %}">
 
 <script>
-var edit_id = 0;
+var edit_id = '0';
 var americas = ['Argentina', 'Belize', 'Brazil', 'Canada', 'Chile', 'Colombia', 'Costa Rica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama', 'Peru', 'Puerto Rico', 'SPLATAM', 'United States', 'Uruguay'];
 var apac = ['AU/NZ', 'China', 'Hong Kong', 'India', 'Japan', 'SEA', 'Taiwan'];
 var emea = ['Austria', 'Belgium', 'Denmark', 'Finland', 'France', 'Germany', 'Israel', 'Italy', 'MENA', 'Netherlands', 'Norway', 'Poland', 'Portugal', 'Russia', 'South Africa', 'Spain', 'Sub Saharan Africa', 'Sweden', 'Switzerland', 'UK/I', 'Ukraine'];
 var all = [];
-  $("#location_checks input").each(function(){
+$("#location_checks input").each(function(){
     all.push(String($(this).val()));
-  });
-var i = all.indexOf("all");
+  });var i = all.indexOf("all");
 if(i != -1) {
   all.splice(i, 1);
 }
@@ -225,11 +218,11 @@ function updateNotificationData(){
                   if(json[i].status == 'Published'){
                     json[i][8] = "<button class='btn-sm btn btn-danger delete' data-id="+json[i].id+">UnPublish</button>";
                   }
-                  else if(json[i].status == 'Drafted'){
+                  else if(json[i].status == 'Draft'){
                     json[i][8] = "<button class='btn-sm btn btn-info edit' data-id="+json[i].id+"><span class='glyphicon glyphicon-edit'></span>Draft</button>";
                   }
                   else{
-                    json[i][8] = 'Expired';
+                    json[i][8] = 'Un-Published';
                   }
               }
               return json;
@@ -247,6 +240,7 @@ function updateNotificationData(){
           { "width": "13%", "targets": 7 },
           { "width": "8%", "targets": 8 },
       ],
+      "bDestroy": true,
   });
 }
 
@@ -310,11 +304,14 @@ function assignVal(task)
     e_date = '';
   }
   $("#location_checks input:checked").each(function(){
-      location.push(String($(this).val()));
+      if($(this).val() !== "all" && $(this).is(':visible')){
+        location.push(String($(this).val()));
+      }
   });
 
   $("#region_checks input:checked").each(function(){
-      region.push(String($(this).val()));
+      if($(this).val() !== "all")
+        region.push(String($(this).val()));
   });
 
   var publish_on_form = $("#check").is(':checked');
@@ -351,12 +348,8 @@ function publishNotification()
       contentType: "application/json; charset=utf-8",
       traditional: true,
       success: function (data) {
-        if(data.success){       
-          var t = $('#notification-table').DataTable();
-          var duration = formatTime(data.start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(data.end_date);
-          var action = "<button class='btn-sm btn btn-danger delete' data-id="+data.id+">UnPublish</button>";
-
-          t.row.add([formatTime(data.created_date), data.content, data.countries, data.regions, data.status, data.display_on_form, duration, data.modified_by, action]).draw( false );
+        if(data.success){
+          setTimeout(function(){updateNotificationData();},1000);
         }
         $("#editor-modal").toggle();
         $('#notification-editor').val('');
@@ -393,11 +386,7 @@ function draftNotification()
       traditional: true,
       success: function (data) {
         if(data.success){       
-          var t = $('#notification-table').DataTable();
-          var duration = formatTime(data.start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(data.end_date);
-          var action = "<button class='btn-sm btn btn-info edit' data-id="+data.id+"><span class='glyphicon glyphicon-edit'></span>Draft</button>";
-
-          t.row.add([formatTime(data.created_date), data.content, data.countries, data.regions, data.status, data.display_on_form, duration, data.modified_by, action]).draw();
+          setTimeout(function(){updateNotificationData();},1000);
         }
         $("#editor-modal").toggle();
         $('#notification-editor').val('');
@@ -447,7 +436,7 @@ $('body').on('click', '.delete', function(){
         url: "/main/notifications/?id="+id,
         success: function (data) {
                 if(data.success){
-                  table.row( $that.parents('tr')).draw();
+                  setTimeout(function(){updateNotificationData();},1000);
                 }
             },
             error: function(data){
