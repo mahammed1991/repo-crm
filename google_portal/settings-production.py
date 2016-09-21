@@ -261,7 +261,7 @@ SITE_SRC_ROOT = BASE_DIR
 
 TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [('django.template.loaders.cached.Loader', template_loaders)]
 
-APP_URL = 'http://gtrack.regalix.com'
+APP_URL = 'https://gtrack.regalix.com'
 
 
 try:
