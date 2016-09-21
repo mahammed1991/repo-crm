@@ -1257,34 +1257,49 @@ def rep_details_download(request):
 def get_notifications(request):
     """ Get all Notifications """
     # Notifications list
+    notification = get_user_notifications(request)
+    return HttpResponse(dumps(notification), content_type='application/json')
+
+
+def get_user_notifications(request, only_on_form=False):
     user = UserDetails.objects.get(user=request.user)
-    notification = list()
+
     curr_date = datetime.utcnow().date()
     if 'wpp' not in request.get_host():
         if user.location:
             user_region = user.location.region_set.get()
-            #notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
-            notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+            # notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
+            if only_on_form:
+                notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location),
+                                                        is_visible=True, display_on_form=True).order_by('-modified_date')
+            else:
+                notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location),
+                                                            is_visible=True).order_by('-modified_date')
         else:
-            notifications = Notification.objects.filter(region=None, target_location=None, is_visible=True).order_by('-created_date')
-
+            if only_on_form:
+                notifications = Notification.objects.filter(region=None, target_location=None,
+                                                            is_visible=True).order_by('-modified_date')
+            else:
+                notifications = Notification.objects.filter(region=None, target_location=None,
+                                                            is_visible=True, display_on_form=True).order_by('-modified_date')
+        notification = list()
+        temp_id_list = []
         for notif in notifications:
-            if notif.to_date:
-                if notif.from_date.date() <= curr_date and notif.to_date.date() >= curr_date:               
+            if notif.id not in temp_id_list:
+                if notif.to_date:
+                    from_date = notif.from_date.date() <= curr_date if notif.from_date else True
+                    if from_date and notif.to_date.date() >= curr_date:
+                        notif_dict = dict()
+                        notif_dict['id'] = notif.id
+                        notif_dict['text'] = notif.text
+                        notification.append(notif_dict)
+                else:
                     notif_dict = dict()
                     notif_dict['id'] = notif.id
                     notif_dict['text'] = notif.text
                     notification.append(notif_dict)
-                else:
-                    pass
-            else:
-                notif_dict = dict()
-                notif_dict['id'] = notif.id
-                notif_dict['text'] = notif.text
-                notification.append(notif_dict)
-
-    return HttpResponse(dumps(notification), content_type='application/json')
-
+                temp_id_list.append(notif.id)
+    return notification
 
 @csrf_exempt
 @login_required
@@ -2351,18 +2366,14 @@ def notification_manager(request):
         notification = request.GET.get('notifications', False)
         if notification:
             data = []
-            records = Notification.objects.all()
+            records = Notification.objects.all().order_by('-modified_date')
             for rec in records:
-                notify_status = ''
-                display_on_form_status = ''
-                modified_by = ''
-
                 if rec.is_visible:
                     notify_status = 'Published'
                 elif rec.is_draft:
-                    notify_status = 'Drafted'
+                    notify_status = 'Draft'
                 else:
-                    notify_status = 'Expired'
+                    notify_status = 'Un-published'
 
                 if rec.display_on_form:
                     display_on_form_status = 'Yes'
@@ -2408,12 +2419,13 @@ def notification_manager(request):
                 data.append(da)
             resp = {'success': True, 'data': data}
             return HttpResponse(json.dumps(resp), content_type='application/json')
-        return render(request, 'main/notification_manager.html',{'locations':location,'regions':region})
+
+        return render(request, 'main/notification_manager.html', {'locations': location, 'regions': region})
 
     elif request.method == "POST":
         data = json.loads(request.body)
         text = data['text']
-        locations =  data['location']
+        locations = data['location']
         if data['f_date'] and data['f_date'] != '/-/':
             from_date = datetime.strptime(str(data['f_date']), '%m/%d/%Y')
         else:
@@ -2424,23 +2436,16 @@ def notification_manager(request):
         else:
             to_date = None
 
-        regions =  data['region']
+        regions = data['region']
         
-        on_form =  data['on_form']
+        on_form = data['on_form']
 
         region = Region.objects.filter(name__in=regions)
         location = Location.objects.filter(location_name__in=locations)
-        
-        email = request.user.username
 
-        try:
-            user = User.objects.get(email=email)
-        except:
-            user = None
+        update_id = request.GET.get('id')
 
-        update = request.GET.get('id')
-
-        if update == '0':
+        if update_id == '0':
             notification = Notification()
             notification.text = text
 
@@ -2453,16 +2458,15 @@ def notification_manager(request):
             notification.from_date = from_date
             notification.to_date = to_date
             notification.display_on_form = on_form
-            notification.modified_by = user
+            notification.modified_by = request.user
             notification.save()
-
             for reg in region:
                 notification.region.add(reg)
+
             for loc in location:
                 notification.target_location.add(loc)
-
         else:
-            notification = Notification.objects.get(id=update)
+            notification = Notification.objects.get(id=update_id)
             notification.text = text
 
             if data['draft']:
@@ -2474,7 +2478,7 @@ def notification_manager(request):
             notification.from_date = from_date
             notification.to_date = to_date
             notification.display_on_form = on_form
-            notification.modified_by = user
+            notification.modified_by = request.user
             notification.region.clear()
             notification.target_location.clear()
             notification.save()
@@ -2517,8 +2521,6 @@ def notification_manager(request):
 
         for i in notification.target_location.all():
             location_list.append('  '+str(i.location_name))
-
-
 
         resp = {'success': True,
         'id':notification.id,

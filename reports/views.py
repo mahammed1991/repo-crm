@@ -2909,7 +2909,7 @@ def send_inventory_mail(request):
     path = request.build_absolute_uri(reverse('reports.views.acknowledgement_mail')) + '?desc=' + encoded_desc
     if request.method == 'POST':
         user = request.POST.get('user')
-        username = User.objects.get(username=user)
+        username = User.objects.get(email=user)
         name = username.first_name + ' ' + username.last_name
         cc_list = request.POST.get('bcc')
         cc_list = cc_list.split(', ')
@@ -2931,7 +2931,7 @@ def acknowledgement_mail(request):
     description = base64.decodestring(encoded_desc)
     if request.user.username and encoded_desc:
         user = request.user.username
-        username = User.objects.get(username=user)
+        username = User.objects.get(email=user)
         name = username.first_name + ' ' + username.last_name
         cc_list = ['kushalappa.theetharamada@regalix-inc.com', 'srinivasans@regalix-inc.com', 'portalsupport@regalix-inc.com', 'adminsupport@regalix-inc.com']
         mail_body = get_template('reports/email_templates/acknowledgement_mail.html').render(
