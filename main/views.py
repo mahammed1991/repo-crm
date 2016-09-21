@@ -1299,7 +1299,6 @@ def get_user_notifications(request, only_on_form=False):
                     notif_dict['text'] = notif.text
                     notification.append(notif_dict)
                 temp_id_list.append(notif.id)
-        print notification
     return notification
 
 @csrf_exempt
