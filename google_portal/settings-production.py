@@ -307,6 +307,7 @@ TECH_TEAM_ID = '005d00000049PanAAE'
 
 API_KEY = 'AIzaSyAOjKRNRkAWs_--R5rK8I8eImBXdzIKqrk'
 
+# These were causing the errors - Googler_Corporate_Email__c, Picasso_Advertiser_Email__c, Googler_Cases_Alias__c, Picasso_Market_Served__c,\
 SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description, Status, CreatedDate,\
     gm_email__c, Customer_ID__c, First_Name_optional__c, Last_Name_optional__c, Phone_optional__c, Email_optional__c,\
     Code__c, URL__c, Code_Type__c, Regalix_Comment__c, Google_Comment__c, Code_2__c, Code_3__c, Code_4__c, Code_5__c,\
@@ -317,7 +318,6 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c, Stage_URL_Credentials__c,\
     AB_Testing__c, GCSS_Status__c, Language__c,  All_Regalix_Comments__c, Picasso_Objective__c, Internal_CID_1__c, POD_Name__c,\
     Picasso_Lead_Stage__c, PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c, Delivery_Date__c, IST_TIME_N__c,\
-    Googler_Corporate_Email__c, Picasso_Advertiser_Email__c, Googler_Cases_Alias__c, Picasso_Market_Served__c,\
     Additional_LDAP__c, Feed_Optimization_Status__c, Feed_Optimization_Sub_Status__c, of_Products_on_the_feed__c, \
     Anything_else_we_should_know__c, Area_in_need_of_most_improvement__c, Shopping_Feed_Link_G_Sheet__c, \
     Business_Type_Category__c, Authorization_Case_ID_for_Optimization__c"

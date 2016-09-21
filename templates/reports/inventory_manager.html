@@ -702,6 +702,7 @@ $('body').on('click', '#send', function() {
                   $("#cancel").trigger('click');
                   $('#assignee_mail').val('');
                   $('input:checkbox').removeAttr('checked');
+                  $('#assign').css('display','none');
             },
             error: function(data){
                 alert("Something went wrong, please try after some time");
