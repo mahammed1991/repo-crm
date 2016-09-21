@@ -2481,8 +2481,7 @@ def inventory_handler(request):
                 
                 resp = {'success': True, 'data': data}
                 return HttpResponse(json.dumps(resp), content_type='application/json')
-            users = User.objects.all()
-            return render(request, 'reports/inventory_manager.html',{'users':users})
+            return render(request, 'reports/inventory_manager.html',{})
         else:
             from django.core import exceptions
             raise exceptions.PermissionDenied
@@ -2930,7 +2929,7 @@ def acknowledgement_mail(request):
     encoded_desc = request.GET.get('desc')
     encoded_desc = encoded_desc.replace(' ', '+')
     description = base64.decodestring(encoded_desc)
-    if request.user.username:
+    if request.user.username and encoded_desc:
         user = request.user.username
         username = User.objects.get(username=user)
         name = username.first_name + ' ' + username.last_name
@@ -2947,4 +2946,4 @@ def acknowledgement_mail(request):
         send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
         resp = 'successfully acknowledged'
         return HttpResponse(resp)
-    return redirect("/auth/login?next=/reports/acknowledgement-mail/")
+    return redirect("/auth/login?next=/reports/acknowledgement-mail/?desc="+encoded_desc)

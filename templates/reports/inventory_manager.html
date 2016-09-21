@@ -319,14 +319,14 @@ $(document).ready(function(){
 
         var row = $(this).parent().parent();
         $editingRow = $(this).parent().parent().html();
-        var row_id = row.children().eq(11).find('a').attr('id').trim();
-        var emp_name = row.children().eq(0).html().trim();
-        var emp_email = row.children().eq(1).html().trim();
-        var emp_alais = row.children().eq(2).html().trim();
+        var row_id = row.children().eq(12).find('a').attr('id').trim();
+        var emp_name = row.children().eq(1).html().trim();
+        var emp_email = row.children().eq(2).html().trim();
+        var emp_alais = row.children().eq(3).html().trim();
         if(emp_alais === "-")
             emp_alais = ""
 
-        var emp_proj = row.children().eq(3).html().trim();
+        var emp_proj = row.children().eq(4).html().trim();
         var projOptions = '<option value="Google Portal">Google Portal</option>'+
                         '<option value="Picasso Audits">Picasso Audits</option>'+
                         '<option value="Picasso Builds">Picasso Builds</option>'+
@@ -346,10 +346,10 @@ $(document).ready(function(){
         else if (emp_proj === 'Google Portal')
             projOptions = projOptions.replace('"Google Portal"', '"Google Portal" selected');
 
-        var emp_device = row.children().eq(4).html().trim();
-        var emp_device_tag = row.children().eq(5).html().trim();
-        var emp_mac_id = row.children().eq(6).html().trim();
-        var emp_status = row.children().eq(7).text().trim();
+        var emp_device = row.children().eq(5).html().trim();
+        var emp_device_tag = row.children().eq(6).html().trim();
+        var emp_mac_id = row.children().eq(7).html().trim();
+        var emp_status = row.children().eq(8).text().trim();
 
         var empStatusOptions = '<option value="Active">Active</option><option value="Inactive">Inactive</option>';
         if(emp_status === 'Active')
@@ -357,56 +357,56 @@ $(document).ready(function(){
         else
             empStatusOptions = empStatusOptions.replace('Inactive"', 'Inactive" selected');
 
-        var dev_status = row.children().eq(8).text().trim();
+        var dev_status = row.children().eq(9).text().trim();
         var deviceStatusOptions =  '<option value="Assigned"> Assigned </option> <option value="Need to Return"> Need to Return </option> <option value="Not Assigned"> Not Assigned </option> <option value="Returned"> Returned </option><option value="Reassigned"> Reassigned </option>';
         deviceStatusOptions = deviceStatusOptions.replace(dev_status + '"', dev_status + '" selected');
 
 
-        var dev_issued_on = row.children().eq(9).html().trim();
-        var dev_returned_on = row.children().eq(10).html().trim();
+        var dev_issued_on = row.children().eq(10).html().trim();
+        var dev_returned_on = row.children().eq(11).html().trim();
 
         if(dev_returned_on === "-")
             dev_returned_on = ""
         if(dev_issued_on === "-")
             dev_issued_on = ""
-        row.children().eq(0).html('<input class="input-sm" value="'+emp_name+'" style="width: 110%;">');
-        row.children().eq(1).html('<input class="input-sm" value="'+emp_email+'" style="width: 110%;">');
-        row.children().eq(2).html('<input class="input-sm" value="'+emp_alais+'" style="width: 120%;">');
-        row.children().eq(3).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+        row.children().eq(1).html('<input class="input-sm" value="'+emp_name+'" style="width: 110%;">');
+        row.children().eq(2).html('<input class="input-sm" value="'+emp_email+'" style="width: 110%;">');
+        row.children().eq(3).html('<input class="input-sm" value="'+emp_alais+'" style="width: 120%;">');
+        row.children().eq(4).html('<select type="text" class="form-control bgicon dropdown" id="project" name="project" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
                                    projOptions +
                                   '</select>');
-        row.children().eq(4).html('<input class="input-sm" value="'+emp_device+'" style="width: 90%;">');
-        row.children().eq(5).html('<input class="input-sm" value="'+emp_device_tag+'" style="width: 110%;">');
-        row.children().eq(6).html('<input class="input-sm" value="'+emp_mac_id+'" style="width: 110%;">');
-        row.children().eq(7).html('<select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:31.5px;margin-bottom: 2px;width: 100%;">'+
+        row.children().eq(5).html('<input class="input-sm" value="'+emp_device+'" style="width: 90%;">');
+        row.children().eq(6).html('<input class="input-sm" value="'+emp_device_tag+'" style="width: 110%;">');
+        row.children().eq(7).html('<input class="input-sm" value="'+emp_mac_id+'" style="width: 110%;">');
+        row.children().eq(8).html('<select type="text" class="form-control bgicon dropdown" id="employee-status" name="employee-status" style="height:31.5px;margin-bottom: 2px;width: 100%;">'+
                                     empStatusOptions +
                                   '</select>');
-        row.children().eq(8).html('<select type="text" class="form-control bgicon dropdown" id="device-type" name="device-type" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
+        row.children().eq(9).html('<select type="text" class="form-control bgicon dropdown" id="device-type" name="device-type" style="height:31.5px;margin-bottom: 2px;width: 110%;">'+
                                     deviceStatusOptions +
                                  '</select>');
-        row.children().eq(9).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" style="width: 100%;">');
-        row.children().eq(10).html('<input class="returned-on input-sm" id="returned-on-din" name="returned-on-din" value="'+dev_returned_on+'" style="width: 100%;">');
+        row.children().eq(10).html('<input class="issued-on input-sm" id="issued-on-din" name="issued-on-din" value="'+dev_issued_on+'" style="width: 100%;">');
+        row.children().eq(11).html('<input class="returned-on input-sm" id="returned-on-din" name="returned-on-din" value="'+dev_returned_on+'" style="width: 100%;">');
 
-        row.children().eq(11).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
+        row.children().eq(12).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
                                     '<a title="Cancel" class="cancel" href="#" style="margin-left: 10px; color: #D83F34;"><span class="glyphicon glyphicon-remove"></span></a>');;
 
     });
 
     $('body').on('click', 'a.save', function(e) {
         var row = $(this).parent().parent();
-        var row_id = row.children().eq(11).find('a').attr('id');
+        var row_id = row.children().eq(12).find('a').attr('id');
 
-        var name = row.children().eq(0).find('input');
-        var ldap = row.children().eq(1).find('input');
-        var alias = row.children().eq(2).find('input');
-        var project = row.children().eq(3).find('select');
-        var deviceType = row.children().eq(4).find('input');
-        var deviceTag = row.children().eq(5).find('input');
-        var macId = row.children().eq(6).find('input');
-        var employeeStatus = row.children().eq(7).find('select');
-        var deviceStatus = row.children().eq(8).find('select');
-        var issuedOn = row.children().eq(9).find('input');
-        var returnedOn = row.children().eq(10).find('input');
+        var name = row.children().eq(1).find('input');
+        var ldap = row.children().eq(2).find('input');
+        var alias = row.children().eq(3).find('input');
+        var project = row.children().eq(4).find('select');
+        var deviceType = row.children().eq(5).find('input');
+        var deviceTag = row.children().eq(6).find('input');
+        var macId = row.children().eq(7).find('input');
+        var employeeStatus = row.children().eq(8).find('select');
+        var deviceStatus = row.children().eq(9).find('select');
+        var issuedOn = row.children().eq(10).find('input');
+        var returnedOn = row.children().eq(11).find('input');
         valid = true;
         var employee_name = name.val().trim()
         if(employee_name === ""){
