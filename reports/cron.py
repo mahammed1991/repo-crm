@@ -323,6 +323,8 @@ def create_or_update_leads(records, sf):
         # Google Representative email and name
         rep_email = rec.get('Email')
         rep_name = rec.get('Google_Rep__c')
+        if not rep_name:
+            rep_name = "Not Available"
 
         # Lead owner name
         owner_id = rec.get('OwnerId')
