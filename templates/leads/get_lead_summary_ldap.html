@@ -1,0 +1,205 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+  Lead Status
+{% endblock title %}
+
+{% block content %}
+
+
+   <!-- content-region -->
+  <section class="content-region">
+    <div class="auth-user-info" id="auth_user_info" style="display:block;" style="">
+      <label style="margin-left: 400px;">LDAP:</label>
+        <div class="value"><input type="text" class="form-control ldap" id="ldap" value=""><a href="#" class="ldap-update"></a>&nbsp; <button id='getLead'> Get Lead</button></div>
+    </div> 
+
+    <div class="container-fluid" id='leadstatus' style="display:none">
+      <h1>Leads Summary</h1>
+      <div class="row summary-container">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_green" id='implemented'></div>
+          <div class="sum-lbl">Wins</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_red" id='in_queue'></div>
+          <div class="sum-lbl">In Queue</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_blue" id="attemptingcontact"></div>
+          <div class="sum-lbl">Attempting Contact</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_yellow" id="in_progress"></div>
+          <div class="sum-lbl">In Progress </div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle" id="in_active"></div>
+          <div class="sum-lbl">Inactive</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_black" id="total_leads"></div>
+          <div class="sum-lbl">Total</div>
+        </div>
+      </div>
+      <h1 class="lead_status">Leads Status</h1>
+      <div class="row">
+          <div class="col-xs-9 col-sm-12 col-md-10">
+            <ul class="pagination pull-left">
+              <li><a class="tag" href="javascript:void(0);" id='all'>All</a></li>
+              <li><a class="page" href="javascript:void(0);" id='Inactive'>Inactive</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InQueue'>In Queue</a></li>
+              <li><a class="page" href="javascript:void(0);" id='AttemptingContact'>Attempting Contact</a></li>
+              <li><a class="page" href="javascript:void(0);" id='InProgress' >In Progress </a></li>
+              <li><a class="page" href="javascript:void(0);" id='Implemented'>Implemented</a></li>
+            </ul>
+            <div class="table-search">
+              <input type="text" class="form-control input-sm" id="inputValidation" placeholder="Search" onkeyup="filter(this, 'Leads')"/>
+              <span class="search-icon"><i class="fa fa-search" /></i></span>
+            </div>
+          </div>
+          <div class="col-xs-3 col-md-2">            
+              <ul class="filter-area navbar-right">
+                <li class="lbl">Sort by: </li>
+                <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span id='sortBy'>Recent</span> <i class="fa fa-angle-down"></i></a>
+                  <ul class="dropdown-menu light" role="menu">
+                    <li><a href="javascript:void(0);" id="RecentHeader">Recent</a></li>
+                    <li><a href="javascript:void(0);" id='CodeTypeHeader'>Code Type</a></li>
+                    <li><a href="javascript:void(0);" id="statusHeader">Status</a></li>
+                  </ul>
+                  </li>
+              </ul>
+            </div>
+          </div>
+        <div class="table-container">
+          <table class="table status-table tablesorter" id='Leads'>
+            <thead>
+                <tr class="table_bg">
+                  <th class="hidden-xs hidden-sm nthchild">No.</th>
+                  <th class="hidden-xs hidden-sm nthchild1">Advertiser</th>
+                  <th width="20%" class="nthchild2">CID </th>
+                  <th class="hidden-xs hidden-sm nthchild3" id="CodeTypeRow">Code Type </th>
+                  <th class="hidden-xs hidden-sm nthchild3">Google Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Regalix Rep</th>
+                  <th class="hidden-xs hidden-sm nthchild3" id="RecentRow">Date Created</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Appointment Time</th>
+                  <th class="hidden-xs hidden-sm nthchild3">Date of Installation</th>
+                  <!-- <th class="hidden-xs hidden-sm nthchild8">Google Comments</th> -->
+                  <th class="hidden-xs hidden-sm nthchild8">Regalix Comments</th>
+                  <th class="nthchild3" id='StatusRow'>Status </th>
+                  <!-- <th width="6%" class="nthchild11">Action</th> -->
+                </tr>
+            </thead>
+            <tbody id='tableBody' >
+                
+          </tbody>
+        </table>
+        <img src="{%static 'images/pre_loading.png' %}" alt=" " class="pre-load-img"/>
+        </div>
+    </div>
+  </section>
+  <!-- content-region ends --> 
+
+{% endblock content %}
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/lead_summary.js' %}"></script>
+
+<script type="text/javascript">
+  $('.ldap').focus(function() {
+  return $(this).autocomplete({
+    source: "/reports/get-user-name",
+    minLength: 2,
+    close: function(event) {
+    },
+    select: function(event, ui) {
+      if ($("#ldap").val() !== "") {
+        $("#ldap").val(ui.item.id + "-" + ui.item.username);
+        window.current_ldap = ui.item.id;
+        
+
+      }
+    }
+  });
+});
+</script>
+<script type="text/javascript">
+
+  function setLeadSummary(lead_status){
+    $('#implemented').text(lead_status['implemented'])
+    $('#in_queue').text(lead_status['in_queue'])
+    $('#attemptingcontact').text(lead_status['attempting_contact'])
+    $('#in_progress').text(lead_status['in_progress'])
+    $('#in_active').text(lead_status['in_active'])
+    $('#total_leads').text(lead_status['total_leads'])
+    
+  }
+  function setLeadSummaryTable(leads){
+    $('#tableBody').html('')
+    for(i=0; i<leads.length; i += 1){
+        c = i + 1
+        if(leads[i].lead_status == 'Implemented' ){
+          counter = '<tr class="status-implemented implemented searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+       }else if (leads[i].lead_status == 'In Active'){
+         counter =  '<tr class="status-inactive inactive searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if (leads[i].lead_status == 'In Progress'){
+        counter = '<tr class="status-inpro  inprogress searchable">' + '<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if (leads[i].lead_status == 'Attempting Contact') {
+        counter = '<tr class="status-attm-contact attemptingcontact searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">'+  c + '</span></td>'
+        }else if (leads[i].lead_status == 'In Queue') {
+        counter = '<tr class="status-inq inqueue searchable">'+' <td class="hidden-xs hidden-sm"><span class="status-bor-color">' +  c + '</span></td>'
+        }else{
+          counter = '<tr class="status-inq inqueue searchable">'+'<td class="hidden-xs hidden-sm"><span class="status-bor-color">' + c +'</span></td>' 
+        }
+
+
+       other =  '<td class="hidden-xs hidden-sm">' + leads[i].Advertiser + '</td>' +
+                '<td>' + leads[i].cid + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].code_type + '</td>' +
+                '<td class="hidden-xs hidden-sm">' + leads[i].google_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].regalix_rep + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].date_created + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].appointment_time + '</td>'+
+                '<td class="hidden-xs hidden-sm">' + leads[i].date_of_installation +'</td>'
+    
+      commnet = '<td class="hidden-xs hidden-sm comments-container"><p>' + leads[i].regalix_comment + '</p>' +
+                '<p class="comments-full"><img class="left-arrow" src="/static/images/comments-left-arrow.png">' + leads[i].regalix_comment + '</p> </td>'
+        
+      status = '<td><span class="status-txt-color">'+ leads[i].lead_status +'</span></td></tr>'
+      
+      $('#tableBody').append(counter+other+commnet+status)
+      
+    }
+  }
+  $('#getLead').click(function(){
+    user_id = window.current_ldap
+    $.ajax({
+        url: "/leads/lead-summary-by-user",
+        data: {'user_id': user_id},
+        type: 'GET',
+        dataType: 'json',
+        success: function(data){
+          console.log(data)
+          if(data){
+            setLeadSummary(data['lead_status_dict'])
+            setLeadSummaryTable(data['lead_list'])
+            $('#leadstatus').show();
+          }else{
+            alert('No leads Found')
+            $('#leadstatus').hide();
+          }
+        }
+    });
+
+  });
+
+
+
+
+</script>
+{% endblock main_js %}
