@@ -1632,6 +1632,10 @@ def export_action_items(request):
             attendees_list.append(str(update_status.meeting_minutes.google_poc))
             attendees_list.append(str(update_status.meeting_minutes.regalix_poc))
             
+            
+            on_close_mail_to = attendees_list
+            
+
             remove_list = ['babla@regalix-inc.com', 'tkhan@regalix-inc.com','vsharan@regalix-inc.com','nvohra@regalix-inc.com','nsethi@regalix-inc.com']
             if request.POST.get('status') == 'Closed':
                 attendees_list = list(set(attendees_list) - set(remove_list))
@@ -1639,7 +1643,6 @@ def export_action_items(request):
                 mail_to = attendees_list
             else:
                 mail_to = attendees_list
-            
 
  
             if request.POST.get('status') == 'Closed':
@@ -1684,6 +1687,31 @@ def export_action_items(request):
             else:
                 mail_from = 'PICASSO Team'
             
+            closed_action_items = MeetingActionItems.objects.filter(meeting_minutes=update_status.meeting_minutes)
+
+            pending_task_count = closed_action_items.filter(status__in=['Open', 'Reopened']).count();
+            if request.POST.get('status') == 'Closed':
+                if pending_task_count > 0:
+                    "It has got pending tasks"
+                else:
+                    "All done"
+                    mail_subject = "Meeting Minutes All Action Items CLosed"
+                    mail_body = get_template('reports/email_templates/minute_meeting_status_for_all_closed_action_items.html').render(
+                    Context({
+                        'subject_timeline': update_status.meeting_minutes.subject_timeline,
+                        'google_team': update_status.meeting_minutes.google_team,
+                        'program': update_status.meeting_minutes.program,
+                        'items':closed_action_items,
+                        'program_type': update_status.meeting_minutes.program_type,
+                        'other_subject': update_status.meeting_minutes.other_subject,
+                        })
+                    )
+                    bcc = set(bcc_email_list)
+                    attachments = list()
+                    mail_to = on_close_mail_to
+                    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
             bcc = set(bcc_email_list)
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
@@ -1720,6 +1748,7 @@ def export_action_items(request):
         for action_items in meeting_action_items:
             each_record_dict = dict()
             meeting_date = action_items.meeting_minutes.meeting_time_in_ist.date()
+            each_record_dict['Meeting Minute Id'] = action_items.meeting_minutes.id
             each_record_dict['Action Item Id'] = action_items.id
             each_record_dict['Meeting Date'] = datetime.strftime(meeting_date, '%m/%d/%Y')
             each_record_dict['Subject Timeline'] = action_items.meeting_minutes.program + ' ' + action_items.meeting_minutes.program_type + ' ' + action_items.meeting_minutes.subject_timeline + ' ' + action_items.meeting_minutes.other_subject

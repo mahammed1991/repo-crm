@@ -178,13 +178,16 @@ function removeDuplicates(){
   for(var i=0; i<1; i++){
       var startIndex = 0;
       var lastIndex = 0;
+      var className = $($(rows[0]).find("td")[i]);
       var startText = $($(rows[0]).find("td")[i]).text();
+      var className1 = className.attr('class');
       var startText1 = $($(rows[0]).find("td")[i+1]).text();
       for(var j=1; j<rows.length; j++){
           var cRow =$(rows[j]);
           var cCol = $(cRow.find("td")[i]);
+          var className2 = cCol.attr('class');
           var currentText = cCol.text();
-          if(currentText==startText && String(startText1) == String($($(rows[j]).find("td")[i+1]).text())){
+          if(className1==className2 && String(startText1) == String($($(rows[j]).find("td")[i+1]).text())){
               
               //console.log(cCol);
               removeLater.push(cCol);
@@ -202,6 +205,7 @@ function removeDuplicates(){
               lastIndex = j;
               startIndex = j;
               startText = currentText;
+              className1 = className2;
               startText1 = $($(rows[j]).find("td")[i+1]).text();
           }
               
@@ -223,13 +227,15 @@ function removeDuplicates(){
 }
 
 
+
+
 function display_all_record_table(all_meeting_records){
   $('#display_all_meeting_minutes').show();
   $('.display_all_meeting_minutes').html('');
   row = ''
   for(var i=0; i<all_meeting_records.length;i++){
       row += '<tr>'+
-           '<td class="links-default date_class">'+all_meeting_records[i]['Meeting Date']+'</td>'+
+           '<td class="links-default '+ all_meeting_records[i]['Meeting Minute Id'] + '">'+all_meeting_records[i]['Meeting Date']+'</td>'+
            '<td class="links-default">'+all_meeting_records[i]['Subject Timeline']+'</td>' +
            '<td class="links-default">'+all_meeting_records[i]['Action Items']+'</td>' +
            '<td class="links-default">'+all_meeting_records[i]['Owners']+'</td>' +
