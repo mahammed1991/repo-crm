@@ -38,9 +38,10 @@
               {% else %}
                   <li><a href="{% url 'reports.views.reports' %}">Reports</a></li>
               {% endif %}
-                {% if "OPERATIONS" in  request.session.groups %}
+              {% if "OPERATIONS" in  request.session.groups %}
                 <li><a href="{% url 'reports.views.export_slot_utilization' %}">Slot Utilization</a></li>
-                {% endif %}
+
+              {% endif %}
               </ul>
             </li>
             <!-- <li><a href="{% url 'main.views.sales_tasks' %}"> Sales Tasks</a></li>               -->
@@ -144,6 +145,9 @@
               
               {% if "PROGRAM-KICK-OFF" in request.session.groups %}
                 <li><a href="{% url 'reports.views.program_kick_off' %}" >Program Kick Off</a></li>
+              {% endif %}
+              {% if "OPERATIONS" in  request.session.groups %}
+                <li><a href="{% url 'main.views.notification_manager' %}">Manage Notifications</a></li>
               {% endif %}
               {% if "EXPORT-KICK-OFF" in request.session.groups %}
                 <li><a href="{% url 'reports.views.kickoff_export' %}" >Kick Off Export</a></li>
