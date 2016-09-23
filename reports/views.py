@@ -1687,8 +1687,13 @@ def export_action_items(request):
             else:
                 mail_from = 'PICASSO Team'
             
-            closed_action_items = MeetingActionItems.objects.filter(meeting_minutes=update_status.meeting_minutes)
 
+            bcc = set(bcc_email_list)
+            attachments = list()
+            send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+       
+       
+            closed_action_items = MeetingActionItems.objects.filter(meeting_minutes=update_status.meeting_minutes)
             pending_task_count = closed_action_items.filter(status__in=['Open', 'Reopened']).count();
             if request.POST.get('status') == 'Closed':
                 if pending_task_count > 0:
@@ -1712,11 +1717,6 @@ def export_action_items(request):
                     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
 
-            bcc = set(bcc_email_list)
-            attachments = list()
-            send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
-
-        
         if program != 'all':
             meeting_minutes = MeetingMinutes.objects.filter(meeting_time_in_ist__range=(meeting_date_from, meeting_date_to),
                                                             program=program).values_list('id', flat=True)
