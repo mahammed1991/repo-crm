@@ -9,18 +9,20 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding M2M table for field team on 'Notification'
-        m2m_table_name = db.shorten_name('notifications_team')
+        '''m2m_table_name = db.shorten_name('notifications_team')
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('notification', models.ForeignKey(orm[u'main.notification'], null=False)),
             ('team', models.ForeignKey(orm[u'leads.team'], null=False))
         ))
-        db.create_unique(m2m_table_name, ['notification_id', 'team_id'])
+        db.create_unique(m2m_table_name, ['notification_id', 'team_id'])'''
+        pass
 
 
     def backwards(self, orm):
         # Removing M2M table for field team on 'Notification'
-        db.delete_table(db.shorten_name('notifications_team'))
+        #db.delete_table(db.shorten_name('notifications_team'))
+        pass
 
 
     models = {
