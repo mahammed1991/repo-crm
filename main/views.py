@@ -1261,45 +1261,55 @@ def get_notifications(request):
     return HttpResponse(dumps(notification), content_type='application/json')
 
 
-def get_user_notifications(request, only_on_form=False):
+def get_user_notifications(request):
     user = UserDetails.objects.get(user=request.user)
+    user_loc = user.location
+    user_team = user.team
 
     curr_date = datetime.utcnow().date()
+    n_list = []
     if 'wpp' not in request.get_host():
-        if user.location:
-            user_region = user.location.region_set.get()
-            # notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location), is_visible=True).order_by('-created_date')
-            if only_on_form:
-                notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location),
-                                                        is_visible=True, display_on_form=True).order_by('-modified_date')
-            else:
-                notifications = Notification.objects.filter(Q(region=user_region) | Q(target_location=user.location),
-                                                            is_visible=True).order_by('-modified_date')
-        else:
-            if only_on_form:
-                notifications = Notification.objects.filter(region=None, target_location=None,
-                                                            is_visible=True).order_by('-modified_date')
-            else:
-                notifications = Notification.objects.filter(region=None, target_location=None,
-                                                            is_visible=True, display_on_form=True).order_by('-modified_date')
-        notification = list()
+        notifications = Notification.objects.filter(is_visible=True).order_by('-modified_date')
         temp_id_list = []
         for notif in notifications:
-            if notif.id not in temp_id_list:
-                if notif.to_date:
-                    from_date = notif.from_date.date() <= curr_date if notif.from_date else True
-                    if from_date and notif.to_date.date() >= curr_date:
+            from_date = notif.from_date.date() <= curr_date if notif.from_date else True
+            to_date = notif.to_date.date() >= curr_date if notif.to_date else True
+            if from_date and to_date and notif.id not in temp_id_list:
+                regions, locations, teams = notif.get_team_region_location_list
+                if locations and teams:
+                    if (user_loc and user_loc.location_name in locations) and (user_team and user_team.team_name in teams):
                         notif_dict = dict()
                         notif_dict['id'] = notif.id
                         notif_dict['text'] = notif.text
-                        notification.append(notif_dict)
+                        notif_dict['onform'] = notif.display_on_form
+                        n_list.append(notif_dict)
+                        temp_id_list.append(notif.id)
                 else:
-                    notif_dict = dict()
-                    notif_dict['id'] = notif.id
-                    notif_dict['text'] = notif.text
-                    notification.append(notif_dict)
-                temp_id_list.append(notif.id)
-    return notification
+                    if locations:
+                        if user_loc and user_loc.location_name in locations:
+                            notif_dict = dict()
+                            notif_dict['id'] = notif.id
+                            notif_dict['text'] = notif.text
+                            notif_dict['onform'] = notif.display_on_form
+                            n_list.append(notif_dict)
+                            temp_id_list.append(notif.id)
+                    elif teams:
+                        if user_team and user_team.team_name in teams:
+                            notif_dict = dict()
+                            notif_dict['id'] = notif.id
+                            notif_dict['text'] = notif.text
+                            notif_dict['onform'] = notif.display_on_form
+                            n_list.append(notif_dict)
+                            temp_id_list.append(notif.id)
+                    else:
+                        if user_loc and user_team and teams and locations:
+                            notif_dict = dict()
+                            notif_dict['id'] = notif.id
+                            notif_dict['text'] = notif.text
+                            notif_dict['onform'] = notif.display_on_form
+                            n_list.append(notif_dict)
+                            temp_id_list.append(notif.id)
+    return n_list
 
 @csrf_exempt
 @login_required
@@ -2362,11 +2372,12 @@ def assiging_feedback(request, assignee, id):
 def notification_manager(request):
     region = Region.objects.all()
     location = Location.objects.all()   
+    teams = Team.objects.filter(is_active=True, belongs_to__in=['TAG', 'ALL', 'TGA-PICASSO', 'TAG-WPP'])
     if request.method == "GET":
         notification = request.GET.get('notifications', False)
         if notification:
             data = []
-            records = Notification.objects.all().order_by('-modified_date')
+            records = Notification.objects.order_by('-is_visible', '-is_draft')
             for rec in records:
                 if rec.is_visible:
                     notify_status = 'Published'
@@ -2394,11 +2405,15 @@ def notification_manager(request):
                 
                 region_list = []
                 location_list = []
+                team_list = []
                 for i in rec.region.all():
                     region_list.append('  '+str(i.name))
 
                 for i in rec.target_location.all():
                     location_list.append('  '+str(i.location_name))
+
+                for i in rec.team.all():
+                    team_list.append('  ' + str(i.team_name))
 
                 if rec.modified_by:
                     modified_by = str(rec.modified_by.first_name) + ' ' + str(rec.modified_by.last_name)
@@ -2409,6 +2424,7 @@ def notification_manager(request):
                     'content': rec.text,
                     'countries': location_list,
                     'regions': region_list,
+                    'teams': team_list,
                     'status': notify_status,
                     'display_on_form': display_on_form_status,
                     'start_date': start_date,
@@ -2420,28 +2436,31 @@ def notification_manager(request):
             resp = {'success': True, 'data': data}
             return HttpResponse(json.dumps(resp), content_type='application/json')
 
-        return render(request, 'main/notification_manager.html', {'locations': location, 'regions': region})
+        return render(request, 'main/notification_manager.html', {'locations': location, 'regions': region, 'teams':teams})
 
     elif request.method == "POST":
         data = json.loads(request.body)
         text = data['text']
-        locations = data['location']
+        locations = data.get('location', '')
+        regions = data.get('region', '')
+        teams = data.get('teams', '')
+        on_form = data['on_form']
+
         if data['f_date'] and data['f_date'] != '/-/':
             from_date = datetime.strptime(str(data['f_date']), '%m/%d/%Y')
+            from_date = from_date.replace(hour=00, minute=00, second=00)
         else:
             from_date = None
 
         if data['t_date'] and data['t_date'] != '/-/': 
             to_date = datetime.strptime(str(data['t_date']), '%m/%d/%Y')
+            to_date = to_date.replace(hour=23, minute=59, second=59)
         else:
             to_date = None
 
-        regions = data['region']
-        
-        on_form = data['on_form']
-
         region = Region.objects.filter(name__in=regions)
         location = Location.objects.filter(location_name__in=locations)
+        teams = Team.objects.filter(team_name__in=teams)
 
         update_id = request.GET.get('id')
 
@@ -2465,6 +2484,9 @@ def notification_manager(request):
 
             for loc in location:
                 notification.target_location.add(loc)
+
+            for team in teams:
+                notification.team.add(team)
         else:
             notification = Notification.objects.get(id=update_id)
             notification.text = text
@@ -2487,6 +2509,8 @@ def notification_manager(request):
                 notification.region.add(reg)
             for loc in location:
                 notification.target_location.add(loc)
+            for team in teams:
+                notification.team.add(team)
 
         created_on = notification.created_date
         if created_on:
@@ -2516,16 +2540,21 @@ def notification_manager(request):
 
         region_list = []
         location_list = []
+        team_list = []
         for i in notification.region.all():
             region_list.append('  '+str(i.name))
 
         for i in notification.target_location.all():
             location_list.append('  '+str(i.location_name))
 
+        for i in notification.team.all():
+            team_list.append('  ' + str(i.team_name))
+
         resp = {'success': True,
         'id':notification.id,
         'content':notification.text,
         'countries':location_list,
+        'teams':team_list,
         'regions':region_list,
         'display_on_form':display_on_form_status,
         'modified_by':str(notification.modified_by.first_name) + ' ' + str(notification.modified_by.last_name),
