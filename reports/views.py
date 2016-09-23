@@ -2981,9 +2981,9 @@ def send_inventory_mail(request):
         mail_from = 'gtrack@regalix-inc.com'
         mail_to = user
         bcc = ''
-        #cc = cc_list
+        cc_list.append(user)
         attachments = list()
-        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+        send_mail(mail_subject, mail_body, mail_from, cc_list, list(bcc), attachments, template_added=True)
     return redirect('reports.views.inventory_handler')
 
 
