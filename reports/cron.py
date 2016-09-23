@@ -398,7 +398,7 @@ def create_or_update_leads(records, sf):
         else:
             lead.customer_id = cid
 
-        if type_1 == "Feed Performance Optimization - Argos":
+        if type_1 == "Project Argos- Feed Performance Optimization":
             lead.feed_optimisation_status = rec.get("Feed_Optimization_Status__c")
             lead.feed_optimisation_sub_status = rec.get('Feed_Optimization_Sub_Status__c')
             lead.number_of_products = rec.get('of_Products_on_the_feed__c')

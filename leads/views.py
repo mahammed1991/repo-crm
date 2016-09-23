@@ -352,8 +352,12 @@ def lead_form(request):
         picasso_programs.append(i.team_name)
     lead_args['picasso_programs'] = mark_safe(json.dumps(picasso_programs))
 
-
-    lead_args['display_on_form'] = get_user_notifications(request, only_on_form=True)
+    on_form = []
+    notifications = get_user_notifications(request);
+    for noti in notifications:
+        if noti.get('onform'):
+            on_form.append(noti)
+    lead_args['display_on_form'] = on_form
 
     return render(
         request,

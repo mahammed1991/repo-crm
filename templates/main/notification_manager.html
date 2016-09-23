@@ -76,10 +76,11 @@ Notification Manager
                     <textarea id="notification-editor" style="width: 100%;min-height: 100px;max-height: 150px;"></textarea>
                 </div>
             </div>
+
             <div class="modal-footer" style="padding-bottom:25px;">
             <div class="col-md-12">
-              <div class="col-md-4">
-              <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Region</label><br/><br/>
+              <div class="loc col-md-3">
+                <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Region</label><br/><br/>
                 <div class="region-pick" id="filter_region">
                   <div class="checkbox" id="region_checks">
                       <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
@@ -92,15 +93,35 @@ Notification Manager
                 </div>
               </div>
 
-              <div class="col-md-4">
+              <div class="loc col-md-3">
               <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Country</label><br/><br/>
                 <div class="location-pick" id="filter_location">
                   <div class="checkbox" id="location_checks">
+                      <label><input type="checkbox" value="all" class="checkbox_select_all"> Select All </label>
+                        {% for loc in locations %}
+                         <label class="all-loc">
+                             <input type="checkbox" value="{{ loc.location_name }}">{{ loc.location_name }}
+                         </label>
+                        {% endfor %}
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-4" >
+              <div class="team col-md-3">
+                  <label style="float: left;margin-top: 2px;margin-left: 5px;color:#9c9999;">Google Teams</label><br/><br/>
+                    <div class="region-pick" id="filter_teams">
+                      <div class="checkbox" id="team_checks">
+                          <label><input type="checkbox" value="all" class="team_select_all"> Select All </label>
+                          {% for team in teams %}
+                              <label>
+                                  <input class="team-check" type="checkbox" value="{{team.team_name}}"> {{team.team_name}}
+                              </label>
+                          {% endfor %}
+                      </div>
+                    </div>
+              </div>
+
+              <div class="col-md-3" >
                 <label style="float: left;margin-left: 20px;color:#9c9999;">Start Date</label>
                 <div class="col-md-12">
                    <input type="text" class="start-date form-control" id="start-date" name="start-date" placeholder="Start Date">
@@ -288,6 +309,7 @@ function assignVal(task)
   var e_date = $('#end-date').val();
   var location = [];
   var region = [];
+  var teams = [];
   if($('#start-date').val()){
     s_date = $('#start-date').val();
     s_date = s_date.substr(3, 2)+"/"+s_date.substr(0, 2)+"/"+s_date.substr(6, 4);
@@ -314,22 +336,41 @@ function assignVal(task)
         region.push(String($(this).val()));
   });
 
+  $(".team-check:checked").each(function(){
+      if($(this).val() !== "all")
+        teams.push(String($(this).val()));
+  });
+
   var publish_on_form = $("#check").is(':checked');
   var text = $('#notification-editor').val();
   var draft = false;
   if(task == "draft"){
     draft = true;
   }
-  
+  var locValid = true;
+  var teamValid = true;
+  if(location.length < 1){
+    locValid = false;
+  }
+
+  if(teams.length < 1){
+    teamValid = false;
+  }
+
+  if(!teamValid && !locValid){
+    return false;
+  }
+
   var data = {
             text: text,
             f_date: s_date,
             t_date: e_date,
-            location: location,
-            region: region,
             draft: draft,
             on_form: publish_on_form,
     }
+    data.teams = teams;
+    data.location = location;
+    data.region = region;
     return data
 }
 
@@ -339,35 +380,38 @@ function publishNotification()
 {
   validateThis();
   var jsonData = assignVal("publish");
+  if(!jsonData){
+    alert("Location or Team are mandatory");
+  }else{
+      if(!$("*").hasClass('error-box')){
+        $.ajax({
+          type: "POST",
+          url: "/main/notifications/?id="+edit_id,
+          data: JSON.stringify(jsonData),
+          contentType: "application/json; charset=utf-8",
+          traditional: true,
+          success: function (data) {
+            if(data.success){
+              setTimeout(function(){updateNotificationData();},1000);
+            }
+            $("#editor-modal").toggle();
+            $('#notification-editor').val('');
+            $('#start-date').val('');
+            $('#end-date').val('');
+            $("#check").removeAttr('checked');
+            $('#location_checks input').removeAttr('checked');
+            $('#region_checks input').removeAttr('checked');
 
-  if(!$("*").hasClass('error-box')){  
-    $.ajax({
-      type: "POST",
-      url: "/main/notifications/?id="+edit_id,
-      data: JSON.stringify(jsonData),
-      contentType: "application/json; charset=utf-8",
-      traditional: true,
-      success: function (data) {
-        if(data.success){
-          setTimeout(function(){updateNotificationData();},1000);
-        }
-        $("#editor-modal").toggle();
-        $('#notification-editor').val('');
-        $('#start-date').val('');
-        $('#end-date').val('');
-        $("#check").removeAttr('checked');
-        $('#location_checks input').removeAttr('checked');
-        $('#region_checks input').removeAttr('checked');
-              
-      },
-      error: function(data){
-          alert("Something went wrong, please try after some time");
+          },
+          error: function(data){
+              alert("Something went wrong, please try after some time");
+          }
+        });
       }
-    });
-  }
-  else
-  {
-    console.log(false);
+      else
+      {
+        console.log(false);
+      }
   }
 }
 
@@ -563,6 +607,12 @@ $("#region_checks input").click(function(){
 });
 
 
+$(".team_select_all").click(function(e){
+    if($(this).prop('checked'))
+        $(".team-check").prop("checked", true );
+    else
+        $(".team-check").prop( "checked", false );
+});
 </script>
 
 {% endblock main_js %}
