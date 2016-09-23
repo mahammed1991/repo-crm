@@ -106,7 +106,7 @@
         <ul class="nav navbar-nav navbar-right">
           <li style="margin-left: -15px;" class="submit-lead-btn">
             {% if "wpp" in request.META.HTTP_HOST %}
-              <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_nomination_form' %}"'>Nominate Advertiser Website</button>
+             <!--  <button class="btn std-btn sm-btn" onclick='location.href=""'>Nominate Advertiser Website</button> -->
               <button style="margin-left:0px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
