@@ -1657,29 +1657,63 @@ def export_action_items(request):
                 bcc_list.append(str(each_bcc['email']))
             bcc_email_list = ' ,  '.join(bcc_list)
             mail_subject = "Meeting Minutes: %s  %s  %s  %s  %s" % (update_status.meeting_minutes.program, update_status.meeting_minutes.program_type, update_status.meeting_minutes.subject_timeline, update_status.meeting_minutes.other_subject, update_status.meeting_minutes.meeting_time_in_ist.date())
-            mail_body = get_template('reports/email_templates/minute_meeting_status.html').render(
-            Context({
-                'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.meeting_minutes.ref_uuid),
-                'subject_timeline': update_status.meeting_minutes.subject_timeline,
-                'meeting_date': update_status.meeting_minutes.meeting_time_in_ist.date(),
-                'meeting_time': update_status.meeting_minutes.meeting_time_in_ist.time(),
-                'google_poc': update_status.meeting_minutes.google_poc,
-                'regalix_poc': update_status.meeting_minutes.regalix_poc,
-                'google_team': update_status.meeting_minutes.google_team,
-                'attendees': attendees_email_list,
-                'region': update_status.meeting_minutes.region,
-                'status': update_status.status,
-                'action_item': update_status.action_items,
-                'owner': update_status.owners,
-                'target_date': update_status.target_date,
-                'status_changed_by': status_changed_by,
-                'location': update_status.meeting_minutes.location,
-                'internal_meeting': update_status.meeting_minutes.meeting_audience,
-                'program': update_status.meeting_minutes.program,
-                'program_type': update_status.meeting_minutes.program_type,
-                'other_subject': update_status.meeting_minutes.other_subject,
-                })
-            )
+            
+            if request.POST.get('status') == 'Reopened' or request.POST.get('status') == 'Resolved':
+                mail_body = get_template('reports/email_templates/minute_meeting_status.html').render(
+                Context({
+                    'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.meeting_minutes.ref_uuid),
+                    'subject_timeline': update_status.meeting_minutes.subject_timeline,
+                    'meeting_date': update_status.meeting_minutes.meeting_time_in_ist.date(),
+                    'meeting_time': update_status.meeting_minutes.meeting_time_in_ist.time(),
+                    'google_poc': update_status.meeting_minutes.google_poc,
+                    'regalix_poc': update_status.meeting_minutes.regalix_poc,
+                    'google_team': update_status.meeting_minutes.google_team,
+                    'attendees': attendees_email_list,
+                    'region': update_status.meeting_minutes.region,
+                    'status': update_status.status,
+                    'closed': False,
+                    'action_item': update_status.action_items,
+                    'owner': update_status.owners,
+                    'target_date': update_status.target_date,
+                    'status_changed_by': status_changed_by,
+                    'location': update_status.meeting_minutes.location,
+                    'internal_meeting': update_status.meeting_minutes.meeting_audience,
+                    'program': update_status.meeting_minutes.program,
+                    'program_type': update_status.meeting_minutes.program_type,
+                    'other_subject': update_status.meeting_minutes.other_subject,
+                    })
+                )
+            else:
+                closed_action_items = MeetingActionItems.objects.filter(meeting_minutes=update_status.meeting_minutes)
+                mail_body = get_template('reports/email_templates/minute_meeting_status.html').render(
+                Context({
+                    'last_meeting_link_id': request.META['wsgi.url_scheme'] + '://' + request.META['HTTP_HOST'] + "/reports/link-last-meeting/" + str(update_status.meeting_minutes.ref_uuid),
+                    'subject_timeline': update_status.meeting_minutes.subject_timeline,
+                    'meeting_date': update_status.meeting_minutes.meeting_time_in_ist.date(),
+                    'meeting_time': update_status.meeting_minutes.meeting_time_in_ist.time(),
+                    'google_poc': update_status.meeting_minutes.google_poc,
+                    'regalix_poc': update_status.meeting_minutes.regalix_poc,
+                    'google_team': update_status.meeting_minutes.google_team,
+                    'attendees': attendees_email_list,
+                    'region': update_status.meeting_minutes.region,
+                    'status': update_status.status,
+                    # 'action_item': update_status.action_items,
+                    # 'owner': update_status.owners,
+                    # 'target_date': update_status.target_date,
+                    'closed_action_items': closed_action_items,
+                    'closed': True,
+                    'open':['Open', 'Reopened'],
+                    'status_changed_by': status_changed_by,
+                    'location': update_status.meeting_minutes.location,
+                    'internal_meeting': update_status.meeting_minutes.meeting_audience,
+                    'program': update_status.meeting_minutes.program,
+                    'program_type': update_status.meeting_minutes.program_type,
+                    'other_subject': update_status.meeting_minutes.other_subject,
+                    })
+                )
+
+
+
             if update_status.meeting_minutes.program == 'TAG Team':
                 mail_from = 'Google Implementation Team'
             elif update_status.meeting_minutes.program == 'WPP':
@@ -1687,12 +1721,11 @@ def export_action_items(request):
             else:
                 mail_from = 'PICASSO Team'
             
-
             bcc = set(bcc_email_list)
             attachments = list()
             send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
        
-       
+
             closed_action_items = MeetingActionItems.objects.filter(meeting_minutes=update_status.meeting_minutes)
             pending_task_count = closed_action_items.filter(status__in=['Open', 'Reopened']).count();
             if request.POST.get('status') == 'Closed':
@@ -2948,9 +2981,9 @@ def send_inventory_mail(request):
         mail_from = 'gtrack@regalix-inc.com'
         mail_to = user
         bcc = ''
-        #cc = cc_list
+        cc_list.append(user)
         attachments = list()
-        send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+        send_mail(mail_subject, mail_body, mail_from, cc_list, list(bcc), attachments, template_added=True)
     return redirect('reports.views.inventory_handler')
 
 
