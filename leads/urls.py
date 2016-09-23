@@ -46,7 +46,7 @@ urlpatterns = patterns(
     url(r'^get-eligible-picasso-lead-by-lid/$', views.get_eligible_picasso_lead_by_lid),
     url(r'^searh-leads/$', views.searh_leads),
     # Wpp Nominations Form
-    url(r'^wpp-nomination-form/$', views.wpp_nomination_form),
+    #url(r'^wpp-nomination-form/$', views.wpp_nomination_form),
     url(r'^wpp-lead-form/(?P<ref_id>[\w]+)$', views.wpp_lead_form),
     url(r'^wpp-whitelist-request/$', views.wpp_whitelist_request),
     url(r'^get-picasso-lead/$', views.get_picasso_lead),
