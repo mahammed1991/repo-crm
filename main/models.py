@@ -257,7 +257,8 @@ class Notification(models.Model):
 
     region = models.ManyToManyField(Region, blank=True, null=True)
     target_location = models.ManyToManyField(Location, blank=True, null=True)
-    
+    team = models.ManyToManyField(Team, blank=True, null=True)
+
     is_visible = models.BooleanField(default=True)
     is_draft = models.BooleanField(default=True)
     from_date = models.DateTimeField(blank=True, null=True)
@@ -271,10 +272,31 @@ class Notification(models.Model):
     modified_by = models.ForeignKey(User, blank=True, null=True, default=None)
 
     def region_list(self):
-        return ", ".join(["%s" % r.name for r in self.region.all()])
+        if self.region:
+            return ", ".join(["%s" % r.name for r in self.region.all()])
 
     def location_list(self):
-        return ", ".join(["%s" % l.location_name for l in self.target_location.all()])
+        if self.target_location:
+            return ", ".join(["%s" % l.location_name for l in self.target_location.all()])
+
+    def team_list(self):
+        if self.team:
+            return ", ".join(["%s" % l.team_name for l in self.team.all()])
+
+    @property
+    def get_team_region_location_list(self):
+        region = None
+        location = None
+        team = None
+        if self.region:
+            region = [r.name for r in self.region.all()]
+        if self.target_location:
+            location = [l.location_name for l in self.target_location.all()]
+        if self.team:
+            team = [l.team_name for l in self.team.all()]
+        return region, location, team
+
+
 
     class Meta:
         db_table = 'notifications'
