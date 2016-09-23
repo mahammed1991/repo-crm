@@ -1,0 +1,187 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load question_list_tags %}
+
+{% block title %}
+  Lead Status
+{% endblock title %}
+
+{% block main_css %}
+<style type="text/css">
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+}
+table.csv-table input[type="text"]{
+	border: none;
+	padding: 5px;
+	width: 100%;
+}
+table.csv-table input[type="text"]:focus{
+	border: 1px solid #000000;	
+}	
+</style>
+{% endblock main_css %}
+
+{% block content %}
+
+
+   <!-- content-region -->
+  <section class="content-region">
+    <div class="container-fluid">
+      <h1>Leads Summary</h1>
+      <div class="row summary-container">
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_green">{{lead_status_dict.implemented }}</div>
+          <div class="sum-lbl">Wins</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_red">{{lead_status_dict.in_queue}}</div>
+          <div class="sum-lbl">In Queue</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_blue">{{lead_status_dict.attempting_contact}}</div>
+          <div class="sum-lbl">Attempting Contact</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_yellow">{{lead_status_dict.in_progress}}</div>
+          <div class="sum-lbl">In Progress </div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle">{{lead_status_dict.in_active}}</div>
+          <div class="sum-lbl">Inactive</div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-2 placeholder">
+          <div class="circle_black">{{lead_status_dict.total_leads}}</div>
+          <div class="sum-lbl">Total</div>
+        </div>
+      </div>
+      <h1 class="lead_status">Leads Status</h1>
+      <div class="table-container">
+      <form action="{% url 'leads.views.download_agency_csv' %}">
+      	<input type="submit" value="Download CSV formate">
+      </form>
+      </div>
+      <div class="table-container">
+          <form action="{% url 'leads.views.read_file' %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+		    Select CSV file to upload:<br>
+		    <input type="file" name="csvfile" id="csvfile"><br>
+		    <input type="submit" value="Upload CSV" name="submit">
+			</form>
+      </div>
+      {% if data %}
+	        <div class="table-container">
+	          <form action="{% url 'leads.views.save_file' %}" method="post" enctype="multipart/form-data" onsubmit="return validateBulkForm(this)">
+				<table style="width:100%" class="csv-table">
+					  <tr> 
+					    <th>Customer ID</th>
+					    <th>Code Type</th>
+					    <th>URL</th>
+					    <th>Special Instructions</th>
+					  </tr>
+					  {% for rec in data %}
+					  <tr>
+						  <td><input type="text" value="{{rec.customer_id }}" name="customer_id{{forloop.counter}}" id="customer_id{{forloop.counter}}"></td>
+						  <td><!-- <input type="text" value="{{rec.code_types}}"> -->
+						  <select name="code_type{{forloop.counter}}" id="code_type{{forloop.counter}}">
+						  		<option value="">Choose an Code type</option>
+							  {% for type in code_types %}
+							  	{% if rec.code_type == type %}
+							  		<option value="{{rec.code_type}}" selected>{{type}}</option>
+							  	{% else %}
+							  		<option value="{{type}}">{{type}}</option>
+							  	{% endif %}
+							  {% endfor %}
+						  </select>
+
+						  </td>
+						  <td><input type="text" value="{{rec.url}}" name="url{{forloop.counter}}" id="url{{forloop.counter}}"></td>
+						  <td><input type="text" value="{{rec.special_instructions}}" name="special_instructions{{forloop.counter}}" id="special_instructions{{forloop.counter}}"></td>
+					  </tr>
+					  {% endfor %}
+					  <input type="hidden" value="{{data|length}}" name="paramcounts">
+				</table>
+					<input type="submit" value="Submit">
+			</form>
+	      </div>
+	   {% endif %}
+    </div>
+  </section>
+  <!-- content-region ends --> 
+
+{% endblock content %}
+{% block main_js %}
+<script src="{% static 'js/lead_summary.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    window.lead_id = '{{lead_id|safe}}';
+    if(window.lead_id != 'None'){
+      $("#lead_id-"+ window.lead_id).trigger("click");
+      chat(window.lead_id);
+    }
+});
+
+ function validateBulkForm(frm) {
+    $(".error-txt").remove();
+    $(".lead-form .form-control").removeClass('error-box');
+    var fix_slots = new Array();
+
+    window.is_error = false;
+
+    agency_name = document.getElementById('agency_name');
+    validateFiled(agency_name);
+    country = document.getElementById('country');
+    validateFiled(country)
+    appointment_date = document.getElementById('set_appointment');
+    validateFiled(appointment_date)
+    timezone = document.getElementById('tzone');
+    validateFiled(timezone)
+    language = document.getElementById('language');
+    validateFiled(language)
+    contact_person = document.getElementById('contact_person_name_1');
+    validateFiled(contact_person)
+    phone = document.getElementById('contact_telephone_1');
+    validateFiled(phone)
+    email = document.getElementById('agency_email_1');
+    validateFiled(email);
+
+    window.poc_count = 0;
+    for (i=2; i<=5; i++){
+      if($("#poc_" + i).is(":visible")){
+        window.poc_count = poc_count + 1;
+        contact_person = document.getElementById('contact_person_name_' + i);
+        validateFiled(contact_person)
+        phone = document.getElementById('contact_telephone_' + i);
+        validateFiled(phone)
+        email = document.getElementById('agency_email_' + i);
+        validateFiled(email);
+      }
+    }
+
+    if(window.is_error){
+      return false;
+    }else{
+      $("#poc_count").val(window.poc_count);
+      $('form input[type=submit]').attr('disabled', 'disabled');
+      leadSubmit();
+    }
+  }
+
+function validateFiled(elem){
+  // Google Manager details validation
+    if (elem.value == "" || elem.value == "0" || !elem.value) {
+      $(elem).addClass('error-box');
+      $(elem).focus();
+      window.is_error = true;
+      return false;
+    }
+}
+
+</script>
+
+{% endblock main_js %}
