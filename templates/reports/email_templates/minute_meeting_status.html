@@ -36,12 +36,22 @@
                     <th style=" padding: 5px; text-align: center; width: 35%;">Action Item(s):</th>
                     <th style=" padding: 5px; text-align: center; width: 15%;">Owner:</th>
                     <th style=" padding: 5px; text-align: center; width: 25%;">Target Date: </th>
-                  </tr>  
-                  <tr>
-                    <td style="padding:5px;">{{action_item}}</td>
-                    <td style="padding:5px;">{{owner}}</td>
-                    <td style="padding:5px;">{{target_date}}</td>
-                  </tr>               
+                  </tr>
+                  {% if closed %}
+                    {% for i in closed_action_items %}
+                    <tr>
+                      <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.action_items}}</td>
+                      <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.owners}}</td>
+                      <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.target_date}}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td style="padding:5px;">{{action_item}}</td>
+                      <td style="padding:5px;">{{owner}}</td>
+                      <td style="padding:5px;">{{target_date}}</td>
+                    </tr>               
+                  {% endif %}    
                 </table>
                 <br> from the Meeting <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>, is being {{status|lower}} by {{status_changed_by}}.</p> 
 
@@ -70,6 +80,18 @@
     </table>
 
 
-
+<script type="text/javascript">
+  $(document).ready(function() {
+    // body...
+    $('table tr').each(function(){
+      if(this.ClassName == 'Closed' || this.ClassName == 'Reopened' || $this.ClassName == 'Resolved'){
+        $(this).find('td').css('text-decoration','line-through');
+      }
+      else{
+        $(this).find('td').css('text-decoration','none');
+      }
+    });
+  });
+</script>
 </body>
 </html>
