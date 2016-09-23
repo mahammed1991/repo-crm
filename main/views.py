@@ -2371,8 +2371,8 @@ def assiging_feedback(request, assignee, id):
 # Notification Manager
 def notification_manager(request):
     region = Region.objects.all()
-    location = Location.objects.all()   
-    teams = Team.objects.filter(is_active=True, belongs_to__in=['TAG', 'ALL', 'TGA-PICASSO', 'TAG-WPP'])
+    location = Location.objects.filter(is_active=True)
+    teams = Team.objects.filter(is_active=True, belongs_to__in=['TAG', 'ALL', 'TAG-PICASSO', 'TAG-WPP'])
     if request.method == "GET":
         notification = request.GET.get('notifications', False)
         if notification:
@@ -2581,7 +2581,7 @@ def notification_manager(request):
         from django.core import exceptions
         raise exceptions.PermissionDenied
 
-    return render(request, 'main/notification_manager.html', {'locations':location,'regions':region})
+    return render(request, 'main/notification_manager.html', {'locations':location,'regions':region, 'teams':teams})
 
 
 
