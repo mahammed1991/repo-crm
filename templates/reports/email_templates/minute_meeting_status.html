@@ -79,19 +79,5 @@
       </tr>
     </table>
 
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    // body...
-    $('table tr').each(function(){
-      if(this.ClassName == 'Closed' || this.ClassName == 'Reopened' || $this.ClassName == 'Resolved'){
-        $(this).find('td').css('text-decoration','line-through');
-      }
-      else{
-        $(this).find('td').css('text-decoration','none');
-      }
-    });
-  });
-</script>
 </body>
 </html>
