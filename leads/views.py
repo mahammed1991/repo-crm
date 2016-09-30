@@ -2874,9 +2874,12 @@ def convert_lead_to_dict(model):
     else:
         lead['rescheduled_appointment_in_ist'] = ''
     lead['regalix_comment'] = model.regalix_comment
-    if model.feed_optimisation_status:
-        lead['feed_optimisation_status'] = model.feed_optimisation_status
-        lead['feed_optimisation_sub_status'] = model.feed_optimisation_sub_status
+    try:
+        if model.feed_optimisation_status:
+            lead['feed_optimisation_status'] = model.feed_optimisation_status
+            lead['feed_optimisation_sub_status'] = model.feed_optimisation_sub_status
+    except:
+        pass
     lead['lead_status'] = model.lead_status
     if model.type_1 == 'WPP':
         lead['treatment_type'] = model.treatment_type
