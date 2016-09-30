@@ -154,6 +154,7 @@ Notification Manager
                     <tr role="row">
                         <th>Created on</th>
                         <th>Content</th>
+                        <th>Teams</th>
                         <th>Countries</th>
                         <th>Regions</th>
                         <th>Status</th>
@@ -184,6 +185,7 @@ var americas = ['Argentina', 'Belize', 'Brazil', 'Canada', 'Chile', 'Colombia', 
 var apac = ['AU/NZ', 'China', 'Hong Kong', 'India', 'Japan', 'SEA', 'Taiwan'];
 var emea = ['Austria', 'Belgium', 'Denmark', 'Finland', 'France', 'Germany', 'Israel', 'Italy', 'MENA', 'Netherlands', 'Norway', 'Poland', 'Portugal', 'Russia', 'South Africa', 'Spain', 'Sub Saharan Africa', 'Sweden', 'Switzerland', 'UK/I', 'Ukraine'];
 var all = [];
+
 $("#location_checks input").each(function(){
     all.push(String($(this).val()));
   });var i = all.indexOf("all");
@@ -229,21 +231,22 @@ function updateNotificationData(){
               for(var i=0; i<json.length; i++){
                   json[i][0] = formatTime(json[i].created_on);
                   json[i][1] = json[i].content;
-                  json[i][2] = json[i].countries;
-                  json[i][3] = json[i].regions;
+                  json[i][2] = json[i].teams;
+                  json[i][3] = json[i].countries;
+                  json[i][4] = json[i].regions;
 
-                  json[i][4] = json[i].status;
-                  json[i][5] = json[i].display_on_form;
-                  json[i][6] = formatTime(json[i].start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(json[i].end_date);
-                  json[i][7] = json[i].modified_by;
+                  json[i][5] = json[i].status;
+                  json[i][6] = json[i].display_on_form;
+                  json[i][7] = formatTime(json[i].start_date)+'<br/><span style="padding-left:25px;"> to <span><br>'+formatTime(json[i].end_date);
+                  json[i][8] = json[i].modified_by;
                   if(json[i].status == 'Published'){
-                    json[i][8] = "<button class='btn-sm btn btn-danger delete' data-id="+json[i].id+">UnPublish</button>";
+                    json[i][9] = "<button class='btn-sm btn btn-danger delete' data-id="+json[i].id+">UnPublish</button>";
                   }
                   else if(json[i].status == 'Draft'){
-                    json[i][8] = "<button class='btn-sm btn btn-info edit' data-id="+json[i].id+"><span class='glyphicon glyphicon-edit'></span>Draft</button>";
+                    json[i][9] = "<button class='btn-sm btn btn-info edit' data-id="+json[i].id+"><span class='glyphicon glyphicon-edit'></span>Draft</button>";
                   }
                   else{
-                    json[i][8] = 'Un-Published';
+                    json[i][9] = 'Un-Published';
                   }
               }
               return json;
@@ -358,7 +361,27 @@ function assignVal(task)
   }
 
   if(!teamValid && !locValid){
+    alert("Location or Team must be selected.");
     return false;
+  }
+
+  var isValid = true;
+  if(region.length){
+        for (var i = 0; i < region.length; i++) {
+            reg = region[i];
+            location = location.sort();
+            if( reg === 'Americas'){
+                commonElements = array_intersection(americas,location);
+            }else if(reg === 'APAC'){
+                commonElements = array_intersection(apac,location);
+            }else{
+                commonElements = array_intersection(emea,location);
+            }
+            if(commonElements.length < 1){
+                alert("Please select at-least one country for the Region '"+reg.toUpperCase() +"'.")
+                return false;
+            }
+        }
   }
 
   var data = {
@@ -375,13 +398,34 @@ function assignVal(task)
 }
 
 
+function array_intersection(a, b)
+{
+  var ai=0, bi=0;
+  var result = [];
+
+  while( ai < a.length && bi < b.length )
+  {
+     if(a[ai] < b[bi] ){ ai++; }
+     else if (a[ai] > b[bi] ){ bi++; }
+     else /* they're equal */
+     {
+       result.push(a[ai]);
+       ai++;
+       bi++;
+     }
+  }
+
+  return result;
+}
+
+
 /*$('#publish').click(function(){*/
 function publishNotification()
 {
   validateThis();
   var jsonData = assignVal("publish");
   if(!jsonData){
-    alert("Location or Team are mandatory");
+    console.log(false);
   }else{
       if(!$("*").hasClass('error-box')){
         $.ajax({
