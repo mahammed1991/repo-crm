@@ -4418,8 +4418,9 @@ def get_lead_summary(request, lid=None, page=None):
 
     if request.user.groups.filter(name='SUPERUSER'):
         # start_date, end_date = first_day_of_month(datetime.utcnow()), last_day_of_month(datetime.utcnow())
-        start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-        query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+        # query = {'lead_status__in': lead_status, 'created_date__gte': start_date, 'created_date__lte': end_date}
+        query = {'lead_status__in': settings.LEAD_STATUS,}
         if process_type == "shopping":
             leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Project Argos- Feed Performance Optimization'])
             leads = leads.filter(**query).order_by('-rescheduled_appointment_in_ist')[:1000]
@@ -4449,20 +4450,20 @@ def get_lead_summary(request, lid=None, page=None):
             email_list = [email]
 
         # prev_quarter_start_date, prev_quarter_end_date = prev_quarter_date_range(datetime.utcnow())
-        cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow())
+        # cur_qtr_start_date, cur_qtr_end_date = get_quarter_date_slots(datetime.utcnow()) //put in filter (created_date__gte=cur_qtr_start_date
         if process_type == "shopping":
-            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), lead_status__in=lead_status, created_date__gte=cur_qtr_start_date)
+            leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), lead_status__in=lead_status, )
             leads = leads.filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).order_by('-rescheduled_appointment_in_ist')
         elif process_type == "tag":
             leads = Leads.objects.exclude(type_1__in=['WPP', 'Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])\
             .filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
-            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
+            lead_status__in=lead_status, ).order_by('-rescheduled_appointment_in_ist')
         elif process_type == "rlsa":
             leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list), type_1__in=['RLSA Bulk Implementation'],
-            lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
+            lead_status__in=lead_status, ).order_by('-rescheduled_appointment_in_ist')
         else:
             leads = Leads.objects.exclude(type_1='WPP').filter(Q(google_rep_email__in=email_list) | Q(lead_owner_email__in=email_list),
-                                                           lead_status__in=lead_status, created_date__gte=cur_qtr_start_date).order_by('-rescheduled_appointment_in_ist')
+                                                           lead_status__in=lead_status, ).order_by('-rescheduled_appointment_in_ist')
 
         lead_ids = leads.values_list('id', flat=True)
         lead_status_dict = ReportService.get_leads_status_summary(lead_ids)
@@ -4479,8 +4480,9 @@ def get_pagination_lead_summary(request):
             from_leads = request.GET.get('from')
             upto_leads = request.GET.get('to')
             process_type = request.GET.get('type')
-            start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
-            query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
+            # start_date, end_date = date_range_by_quarter(ReportService.get_current_quarter(datetime.utcnow()))
+            # query = {'lead_status__in': settings.LEAD_STATUS, 'created_date__gte': start_date, 'created_date__lte': end_date}
+            query = {'lead_status__in': settings.LEAD_STATUS,}
             if process_type == "shopping":
                 leads = Leads.objects.exclude(type_1__in=['WPP', '']).filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Project Argos- Feed Performance Optimization'])
                 leads = leads.filter(**query).order_by('-rescheduled_appointment_in_ist')[from_leads:upto_leads]
