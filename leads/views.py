@@ -1820,7 +1820,7 @@ def thankyou(request):
         '5': reverse('leads.views.agent_bulk_upload'),
         '6': reverse('leads.views.picasso_lead_form'),
         # '7': reverse('leads.views.picasso_build_wpp_form'),
-        '8': reverse('leads.views.wpp_nomination_form'),
+        #'8': reverse('leads.views.wpp_nomination_form'),
     }
 
     if redirect_page in redirect_page_source.keys():
@@ -1876,7 +1876,7 @@ def lead_error(request):
         '5': reverse('leads.views.agent_bulk_upload'),
         '6': reverse('leads.views.picasso_lead_form'),
         # '7': reverse('leads.views.picasso_build_wpp_form'),
-        '8': reverse('leads.views.wpp_nomination_form'),
+        #'8': reverse('leads.views.wpp_nomination_form'),
     }
 
     if redirect_page in redirect_page_source.keys():

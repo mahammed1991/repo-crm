@@ -1477,7 +1477,7 @@ def migrate_user_data(request):
         google_manager_email = str(google_manager) + '@google.com' if google_manager else ''
         #region = sheet.cell(r_i, get_col_index(sheet, 'region')).value
         country = sheet.cell(r_i, get_col_index(sheet, 'market')).value
-        country1 = sheet.cell(r_i, get_col_index(sheet, 'country')).value
+        #country1 = sheet.cell(r_i, get_col_index(sheet, 'country')).value
         podname = sheet.cell(r_i, get_col_index(sheet, 'podname')).value
         if valid_string(program) and valid_string(country):
             try:
@@ -1517,7 +1517,7 @@ def migrate_user_data(request):
                     new_region.append(region.name)
                     user_details.region_id = region.id
             from django.db import IntegrityError
-            try:
+            '''try:
                 location = Location.objects.get(location_name=country)
                 location.location_name = country1
                 location.save()
@@ -1531,6 +1531,7 @@ def migrate_user_data(request):
                 except IntegrityError:
                     print country1
                     pass
+            '''
 
             user_details.location_id = location.id
             '''try:
@@ -2366,7 +2367,7 @@ def assiging_feedback(request, assignee, id):
     #return redirect('main.views.view_feedback', id=id)
     return True
 
-
+@login_required
 @csrf_exempt
 # Notification Manager
 def notification_manager(request):
