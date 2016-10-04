@@ -1,0 +1,147 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% block title %}
+	Argos Management
+{% endblock title %}
+
+ {% block main_css %}
+ <style type="text/css">
+ body{
+  overflow-x:hidden;
+ }
+ 	table th{
+ 		text-align: center !important;
+ 	}
+ </style>
+ {% endblock main_css %}
+
+ {% block content %}
+ <section class="content-region inner-page">
+ 	 <div class="container" style="">
+ 	 	<button id="argos_entry_button" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;">+ Add</button>
+ 		<h2>Argos Management</h2>
+ 	 </div>
+
+ 	 <div id="argos_entry_form" class="container-fluid" style="display:none; margin-bottom:30px;">
+		 	 	<div class="row">
+
+		 	 	  <div class="col-md-4">
+		 	 	  	<label for="name">CID :</label>
+		 	 	  	<input type="text" class="form-control" id="cid_field" name="" placeholder="CID" style="">
+		 	 	  </div>
+		 	 	  <div class="col-md-4">
+		 	 	  		  	<label for="name">Rep Name :</label>
+		 	 	  	<input type="text" class="form-control" id="rep_name" name="" placeholder="Rep Name" style="">
+		 	 	  </div>
+		 	 	  <div class="col-md-4">
+		 	 	  		  	<label for="name">Products Count :</label>
+		 	 	  	<input type="number" min="0" class="form-control" id="product_count" name="" placeholder="Products Count" style="">
+		 	 	  </div>
+		 	 	</div>
+ 	 	<div class="row">
+	 	 	  <div class="col-md-12">
+	 	 	  		<label for="name">Attributes :</label>
+	 	 	  <textarea type="text" class="form-control" id="name" name="" placeholder="Attributese area" style=""></textarea>
+	 	 	  </div>
+	 	</div>
+	 	<div class="row">
+     	 	  <div class="col-md-5">
+     	 	  </div>
+ 	 	  <div class="col-md-4">
+ 	 	  		<label for="name"></label><br>
+          <button id="argos_submit_button" class="btn std-btn sm-btn" style="" >SUBMIT</button>
+ 	 	  </div>
+ 	 	  <div class="col-md-3">
+ 	 	  </div>
+ 	 	</div>
+ 	 </div>
+
+ 	 <!-- TABLE START FROM HERE -->
+ 	 	<div class="row" class="container-fluid">
+ 	 	
+                    <table id="" class="table" width="100%" style="">
+                        <thead>
+                            <tr >
+                                <th>CID</th>
+                                <th>Rep Name</th>
+                                <th>Products Count</th>
+                                <th>Attributes</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Action</th>
+                            </tr>
+					    </thead>
+                        <tbody id=""></tbody>
+                    </table>
+                
+ 	 	</div>
+
+ 	  
+
+
+
+ </section>
+  {% endblock content %}
+
+  {% block main_js %}
+  <script type="text/javascript">
+  	    $("#argos_entry_button").click(function(){
+        if($("#argos_entry_form").is(":visible"))
+            $("#argos_entry_button").text("+ Add");
+        else
+            $("#argos_entry_button").text("Close");
+
+         $("#argos_entry_form").toggle();
+    });
+
+       
+      
+
+
+  /*form validation code*/
+  valid = true;
+  $("#argos_submit_button").click(function(){
+    var cid_field = $("#cid_field").val().trim();
+    var rep_name = $("#rep_name").val().trim();
+    var product_count = $("#product_count").val().trim();
+    var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+         
+      if(cid_field === ""){
+        $("#cid_field").addClass('error-box');
+        valid = false;
+      }else{
+            /* cid formate validation*/
+            var res = cidFormat.test(cid_field);
+            if(res){
+              $("#cid_field").removeClass('error-box');
+              valid = true;
+            }
+              else{
+              alert("CID-formate XXX-XXX-XXXX does not match");
+                $("#cid_field").addClass('error-box');
+                 valid = false;
+            }
+      }
+          
+      if(rep_name === ""){
+        $("#rep_name").addClass('error-box');
+        valid = false;
+      }else{
+        $("#rep_name").removeClass('error-box');
+        valid = true;
+      }
+
+      if(product_count === ""){
+        $("#product_count").addClass('error-box');
+        valid = false;
+      }else{
+        $("#product_count").removeClass('error-box');
+        valid = true;
+      }
+
+  })
+
+  </script>
+  {% endblock %}
+

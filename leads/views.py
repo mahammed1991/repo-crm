@@ -4504,4 +4504,5 @@ def get_pagination_lead_summary(request):
             return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))
 
 
-
+def argos_management(request):
+    return render(request, 'leads/argos_management.html', {})
