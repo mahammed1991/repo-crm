@@ -59,4 +59,6 @@ urlpatterns = patterns(
     url(r'^download/$', views.picasso_blacklist_cid_download),
     url(r'^builds/bolt-eligible/$', views.is_bolt_treatment_eligible),
     url(r'^tag/argos-tat/$', views.estimate_shopping_arogs_tat),
+
+    url(r'argos-management/$', views.argos_management),
 )
