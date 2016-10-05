@@ -698,3 +698,16 @@ class WhiteListedAuditCID(models.Model):
     opportunity_type = models.CharField(max_length=100)
     created_date = models.DateTimeField(default=datetime.utcnow())
     modified_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+
+
+class ArgosProcessTimeTracker(models.Model):
+    lid = models.ForeignKey(Leads)
+    rep_name = models.CharField(max_length=100)
+    products_count = models.IntegerField()
+    attributes = models.TextField(blank=True)
+    start_time = models.TimeField(blank=True, null=True)
+    end_time = models.TimeField(blank=True, null=True)
+    paused_on = models.TimeField(blank=True, null=True)
+    time_spent = models.FloatField(blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

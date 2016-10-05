@@ -41,7 +41,7 @@ from main.models import UserDetails, PicassoEligibilityMasterUpload
 from main.views import get_user_notifications
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
-                          BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID
+                          BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID, ArgosProcessTimeTracker
                           )
 from reports.models import Region
 from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
@@ -4504,5 +4504,37 @@ def get_pagination_lead_summary(request):
             return HttpResponse(json.dumps({'msg': 'Not a Superuser'}))
 
 
+@csrf_exempt
 def argos_management(request):
-    return render(request, 'leads/argos_management.html', {})
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        argos = ArgosProcessTimeTracker()
+        cid = data['cid']
+        rep_name = data['rep_name']
+        attributes = data['attributes']
+        products_count = data['product_count']
+        lead = Leads.objects.get(customer_id=cid,type_1='Feed Performance Optimization - Argos')
+        argos.lid = lead
+        argos.rep_name = rep_name
+        argos.attributes = attributes
+        argos.products_count = products_count
+        argos.save()
+    return render(request,'leads/argos_management.html',{})
+
+def argos(request):
+    if request.method == 'GET':
+        argos = ArgosProcessTimeTracker.objects.all()
+        data = []
+        for i in argos:
+            da = {
+                'id':i.id,
+                'lid':i.lid.customer_id,
+                'rep_name':i.rep_name,
+                'attributes':i.attributes,
+                'products_count':i.products_count,
+                'start_time':i.start_time,
+                'end_time':i.end_time
+            }
+            data.append(da)
+        return HttpResponse(json.dumps({'data': data}), content_type='application/json')
+    return render(request,'leads/argos_management.html',{})

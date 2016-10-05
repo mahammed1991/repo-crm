@@ -61,4 +61,5 @@ urlpatterns = patterns(
     url(r'^tag/argos-tat/$', views.estimate_shopping_arogs_tat),
 
     url(r'argos-management/$', views.argos_management),
+    url(r'get-argos/$', views.argos),
 )
