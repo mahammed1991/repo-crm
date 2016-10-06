@@ -13,7 +13,7 @@ from urlparse import urlparse
 import logging
 from math import ceil
 import time
-
+import pytz
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from icalendar import Calendar, Event, vCalAddress, vText
@@ -4513,7 +4513,7 @@ def argos_management(request):
         rep_name = data['rep_name']
         attributes = data['attributes']
         products_count = data['product_count']
-        lead = Leads.objects.get(customer_id=cid,type_1='Feed Performance Optimization - Argos')
+        lead = Leads.objects.get(customer_id=cid,type_1='Project Argos- Feed Performance Optimization')
         argos.lid = lead
         argos.rep_name = rep_name
         argos.attributes = attributes
@@ -4521,20 +4521,71 @@ def argos_management(request):
         argos.save()
     return render(request,'leads/argos_management.html',{})
 
+
+@csrf_exempt
 def argos(request):
     if request.method == 'GET':
         argos = ArgosProcessTimeTracker.objects.all()
         data = []
         for i in argos:
+            start_time = i.start_time
+            if start_time:
+                start_time  = datetime.strftime(start_time,"%d-%m-%Y %I:%M:%S %p")
+
+            end_time = i.end_time
+            if end_time:
+                end_time  = datetime.strftime(end_time,"%d-%m-%Y %I:%M:%S %p")
+                
+
+            seconds = i.time_spent
+            if seconds:
+                m, s = divmod(seconds, 60)
+                h, m = divmod(m, 60)
+                seconds = "%d:%02d:%02d" % (h, m, s)
+
             da = {
                 'id':i.id,
                 'lid':i.lid.customer_id,
                 'rep_name':i.rep_name,
                 'attributes':i.attributes,
                 'products_count':i.products_count,
-                'start_time':i.start_time,
-                'end_time':i.end_time
+                'start_time':start_time,
+                'time_spent':seconds,
+                'end_time':end_time
             }
             data.append(da)
         return HttpResponse(json.dumps({'data': data}), content_type='application/json')
     return render(request,'leads/argos_management.html',{})
+
+
+@csrf_exempt
+def update_argos_timestamp(request):
+    if request.method == 'PUT':
+        utc = datetime.utcnow() + timedelta(hours=5) + timedelta(minutes=30)
+        data = json.loads(request.body)
+        argos_id = data['id']
+        t_type = data['time']
+        if t_type == 'Start Time':
+            argos = ArgosProcessTimeTracker.objects.get(id=argos_id)
+            argos.start_time = utc
+            argos.save()
+        elif t_type == 'End Time':
+            argos = ArgosProcessTimeTracker.objects.get(id=argos_id)
+            argos.end_time = utc
+            total_spent = utc - argos.start_time
+            argos.time_spent = total_spent.seconds
+            argos.save()
+        else:
+            rep_name = data['rep_name']
+            product_count = data['product_count']
+            attributes = data['attributes']
+            argos = ArgosProcessTimeTracker.objects.get(id=argos_id)
+            argos.rep_name = rep_name
+            argos.products_count = product_count
+            argos.attributes = attributes
+            argos.save()
+
+        return HttpResponse(json.dumps({'success': True}), content_type='application/json')
+    else:
+        from django.core import exceptions
+        raise exceptions.PermissionDenied
