@@ -8,15 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        Adding model 'WhiteListedAuditCID'
-        db.create_table(u'leads_whitelistedauditcid', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('external_customer_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
-            ('opportunity_type', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('created_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2016, 10, 4, 0, 0))),
-            ('modified_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2016, 10, 4, 0, 0), auto_now=True, blank=True)),
-        ))
-        db.send_create_signal(u'leads', ['WhiteListedAuditCID'])
+        # Adding model 'WhiteListedAuditCID'
+        # db.create_table(u'leads_whitelistedauditcid', (
+        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        #     ('external_customer_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
+        #     ('opportunity_type', self.gf('django.db.models.fields.CharField')(max_length=100)),
+        #     ('created_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2016, 10, 4, 0, 0))),
+        #     ('modified_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2016, 10, 4, 0, 0), auto_now=True, blank=True)),
+        # ))
+        # db.send_create_signal(u'leads', ['WhiteListedAuditCID'])
 
         #Adding model 'ArgosProcessTimeTracker'
         db.create_table(u'leads_argosprocesstimetracker', (
