@@ -43,6 +43,7 @@
    </div>
 
    <div id="argos_entry_form" class="container-fluid" style="display:none; margin-bottom:30px;">
+    <label id="error-msg"></label>
         <div class="row">
 
           <div class="col-md-4">
@@ -345,8 +346,20 @@ $('body').on('click', 'a.edit', function(e) {
           contentType: "application/json; charset=utf-8",
           traditional: true,
           success: function (data) {
-            $('#argos_entry_button').trigger('click');
-            updateArgosData();
+            if(data.msg == 'No Lead'){
+              $('#error-msg').text('There is no Argos Lead associated with this CID');
+              $('#error-msg').show();
+              $('#error-msg').css('color','red');
+            }
+            else{
+              $('#error-msg').hide();
+              $('#argos_entry_button').trigger('click');
+              $("#cid_field").val('');
+              $("#rep_name").val('');
+              $("#product_count").val('');
+              $('#attributes').val('');
+              updateArgosData();
+            }
           },
           error: function(data){
               alert("Something went wrong, please try after some time");
