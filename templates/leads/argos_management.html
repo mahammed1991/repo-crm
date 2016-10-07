@@ -118,7 +118,12 @@ function deleteFunction(id){
     contentType: "application/json; charset=utf-8",
     traditional: true,
     success: function (data) {
-      setTimeout(function(){updateArgosData();},1000);
+      if(data['success']){
+        setTimeout(function(){updateArgosData();},1000);
+      }
+      else{
+        alert("We are unable to delete the record now, please try after sometime.");
+      }
     },
     error: function(data){
         alert("Something went wrong, please try after some time");
