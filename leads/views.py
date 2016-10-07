@@ -4512,7 +4512,11 @@ def argos_management(request):
         rep_name = data['rep_name']
         attributes = data['attributes']
         products_count = data['product_count']
-        lead = Leads.objects.get(customer_id=cid,type_1='Project Argos- Feed Performance Optimization')
+        try:
+            lead = Leads.objects.get(customer_id=cid,type_1='Project Argos- Feed Performance Optimization')
+        except:
+            resp = {'msg':'No Lead'}
+            return HttpResponse(json.dumps(resp),content_type='application/json')
         argos.lid = lead
         argos.rep_name = rep_name
         argos.attributes = attributes
