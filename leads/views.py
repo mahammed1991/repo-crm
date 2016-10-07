@@ -4525,8 +4525,8 @@ def argos_management(request):
     if request.method == 'DELETE':
         data = json.loads(request.body)
         try:
-            response = {'success': True}
             ArgosProcessTimeTracker.objects.filter(id=data['id']).delete()
+            response = {'success': True}
         except:
             response = {'success': False}
         return HttpResponse(json.dumps(response), content_type='application/json')
