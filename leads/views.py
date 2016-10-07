@@ -13,7 +13,6 @@ from urlparse import urlparse
 import logging
 from math import ceil
 import time
-import pytz
 # Thirdpart imports
 from xlrd import open_workbook, XL_CELL_DATE, xldate_as_tuple
 from icalendar import Calendar, Event, vCalAddress, vText
@@ -4536,7 +4535,6 @@ def argos(request):
             if end_time:
                 end_time  = datetime.strftime(end_time,"%d-%m-%Y %I:%M:%S %p")
                 
-
             seconds = i.time_spent
             if seconds:
                 m, s = divmod(seconds, 60)
@@ -4545,7 +4543,7 @@ def argos(request):
 
             da = {
                 'id':i.id,
-                'lid':i.lid.customer_id,
+                'cid':i.lid.customer_id,
                 'rep_name':i.rep_name,
                 'attributes':i.attributes,
                 'products_count':i.products_count,
@@ -4561,20 +4559,23 @@ def argos(request):
 @csrf_exempt
 def update_argos_timestamp(request):
     if request.method == 'PUT':
-        utc = datetime.utcnow() + timedelta(hours=5) + timedelta(minutes=30)
+        utc = datetime.utcnow() + timedelta(hours=5, minutes=30)
         data = json.loads(request.body)
         argos_id = data['id']
         t_type = data['time']
+        #update start time
         if t_type == 'Start Time':
             argos = ArgosProcessTimeTracker.objects.get(id=argos_id)
             argos.start_time = utc
             argos.save()
+        #update end time
         elif t_type == 'End Time':
             argos = ArgosProcessTimeTracker.objects.get(id=argos_id)
             argos.end_time = utc
             total_spent = utc - argos.start_time
             argos.time_spent = total_spent.seconds
             argos.save()
+        #genral update
         else:
             rep_name = data['rep_name']
             product_count = data['product_count']
