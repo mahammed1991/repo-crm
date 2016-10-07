@@ -63,5 +63,4 @@ urlpatterns = patterns(
     url(r'argos-management/$', views.argos_management),
     url(r'get-argos/$', views.argos),
     url(r'update-argos/$', views.update_argos_timestamp),
-    url(r'delet-argos/$', views.delet_argos_data ),
 )

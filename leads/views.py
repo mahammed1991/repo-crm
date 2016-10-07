@@ -4522,6 +4522,10 @@ def argos_management(request):
         argos.attributes = attributes
         argos.products_count = products_count
         argos.save()
+    if request.method == 'DELETE':
+        data = json.loads(request.body)
+        ArgosProcessTimeTracker.objects.filter(id=data['id']).delete()
+        return render(request,'leads/argos_management.html',{})
     return render(request,'leads/argos_management.html',{})
 
 
@@ -4581,7 +4585,6 @@ def update_argos_timestamp(request):
             argos.save()
         #genral update
         else:
-            print data['rep_name']
             rep_name = data['rep_name']
             product_count = data['product_count']
             attributes = data['attributes']
@@ -4597,11 +4600,11 @@ def update_argos_timestamp(request):
         raise exceptions.PermissionDenied
 
 
-@csrf_exempt
-def delet_argos_data(request):
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        argos_id = data['id']
-        ArgosProcessTimeTracker.objects.filter(id=argos_id).delete()
-        return render(request,'leads/argos_management.html',{})
-    return render(request,'leads/argos_management.html',{})
+# @csrf_exempt
+# def delete_argos_data(request):
+#     if request.method == "PUT":
+
+#         data = json.loads(request.body)
+#         ArgosProcessTimeTracker.objects.filter(id=data['id']).delete()
+#         return render(request,'leads/argos_management.html',{})
+#     return render(request,'leads/argos_management.html',{})

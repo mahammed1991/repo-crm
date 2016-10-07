@@ -108,12 +108,12 @@
 <script type="text/javascript" src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
 <script type="text/javascript">
 
-function deletFunction(id){
+function deleteFunction(id){
   var jsonData = {id:id};
-  alert("are you sure want to delete");
+  alert("Are you sure, you want to delete this?");
   $.ajax({
-    type: "PUT",
-    url: '/leads/delet-argos/',
+    type: "DELETE",
+    url: '/leads/argos-management/',
     data: JSON.stringify(jsonData),
     contentType: "application/json; charset=utf-8",
     traditional: true,
@@ -126,7 +126,6 @@ function deletFunction(id){
   });
   
 }
-
 
 
 function updateArgosData(){
@@ -184,7 +183,7 @@ function updateArgosData(){
                       json[i][8] ='<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Start" style="background: #407ee6;color:white;">';
                     }
                                   
-                    json[i][9] = '<p onclick="deletFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
+                    json[i][9] = '<p onclick="deleteFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
                 }
                 return json;
             }
@@ -319,7 +318,6 @@ $('body').on('click', 'a.edit', function(e) {
         var attributes = row.children().eq(4).html();
    
         var jsonData = {cid:cid_field,rep_name:rep_name,product_count:product_count,attributes:attributes};
-        console.log(jsonData);
          
         $.ajax({
           type: "POST",
