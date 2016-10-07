@@ -7,6 +7,7 @@
 
  {% block main_css %}
  <style type="text/css">
+
   body{
     overflow-x:hidden;
   }
@@ -75,9 +76,10 @@
    <!-- TABLE START FROM HERE -->
     <div id="argos_wrapper" class="dataTables_wrapper no-footer" style="margin-bottom: 1%;">
   
-      <table id="argos" class="display" cellspacing="0" width="92%" style="text-align:center">
+      <table id="argos" class="display" cellspacing="0" width="94%" style="text-align:center">
           <thead>
               <tr >
+                  <th>Edit/Copy</th>
                   <th>CID</th>
                   <th>Rep Name</th>
                   <th>Products Count</th>
@@ -86,6 +88,7 @@
                   <th>End Time</th>
                   <th>Duration</th>
                   <th style="width:94px !important;">Action</th>
+                  <th style="width:94px !important;">Delete</th>
               </tr>
         </thead>
           <tbody id="argos_tbody"></tbody>
@@ -104,6 +107,27 @@
 <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/reports/jquery-ui.min.js' %}"></script>
 <script type="text/javascript">
+
+function deletFunction(id){
+  var jsonData = {id:id};
+  alert("are you sure want to delete");
+  $.ajax({
+    type: "PUT",
+    url: '/leads/delet-argos/',
+    data: JSON.stringify(jsonData),
+    contentType: "application/json; charset=utf-8",
+    traditional: true,
+    success: function (data) {
+      setTimeout(function(){updateArgosData();},1000);
+    },
+    error: function(data){
+        alert("Something went wrong, please try after some time");
+    }
+  });
+  
+}
+
+
 
 function updateArgosData(){
     $('#argos').DataTable({
@@ -133,41 +157,51 @@ function updateArgosData(){
                     if(total_time_value === null)
                         total_time_value = "-";
 
-                    json[i][0] = json[i].cid;
-                    json[i][1] = json[i].rep_name;
-                    json[i][2] = json[i].products_count;
-                    json[i][3] = json[i].attributes;
-                    json[i][4] = start_time_value;
-                    json[i][5] = end_time_value;
-                    json[i][6] = total_time_value;
+                    if(start_time === null ){
+                      json[i][0] = '<a title="Edit" id="edit_link'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>   '+
+                      '<a title="Duplicate" id="duplicate_link'+json[i].id+'" class="copy" href="#"><span class="glyphicon glyphicon-file"></span></a>';
+                    }else{
+                      json[i][0] = ' -';
+                    }
+
+                    
+                    json[i][1] = json[i].cid;
+                    json[i][2] = json[i].rep_name;
+                    json[i][3] = json[i].products_count;
+                    json[i][4] = json[i].attributes;
+                    json[i][5] = start_time_value;
+                    json[i][6] = end_time_value;
+                    json[i][7] = total_time_value;
+
                     
                     if(start_time != null && end_time != null){
-                      json[i][7] ='<span id="completed'+json[i].id+'" style="color:green;">Completed</span>';
+                      json[i][8] ='<span id="completed'+json[i].id+'" style="color:green;">Completed</span>';
                     }
                     else if(start_time != null && end_time == null){
-                      json[i][7] = '<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Stop" style="background: #407ee6;color:white;">';
+                      json[i][8] = '<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Stop" style="background: #407ee6;color:white;">';
                     }
                     else{
-                      json[i][7] ='<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Start" style="background: #407ee6;color:white;"> <a title="Edit" id="edit_link'+json[i].id+'" class="edit" href="#">&nbsp;&nbsp;<span class="glyphicon glyphicon-edit"></span></a>';
+                      json[i][8] ='<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Start" style="background: #407ee6;color:white;">';
                     }
                                   
+                    json[i][9] = '<p onclick="deletFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
                 }
                 return json;
             }
         },
         columnDefs: [
-            {targets: [ 0 ], orderData: [ 0 ]},
-            {bSortable: false,targets: [ 0, 3 ]},
-            { "width": "10%", "targets": 0 },
-            { "width": "12%", "targets": 1 },
-            { "width": "08%", "targets": 2 },
-            { "width": "30%", "targets": 3 },
-            { "width": "10%", "targets": 4 },
+            {targets: [ 1 ], orderData: [ 1 ]},
+            {bSortable: false,targets: [ 1, 4, 8, 9 ]},
+            { "width": "10%", "targets": 1 },
+            { "width": "12%", "targets": 2 },
+            { "width": "08%", "targets": 3 },
+            { "width": "30%", "targets": 4 },
             { "width": "10%", "targets": 5 },
             { "width": "10%", "targets": 6 },
-            { "width": "20%", "targets": 7 },
+            { "width": "10%", "targets": 7 },
+            { "width": "10%", "targets": 8 },
         ],
-        order: [[ 0, "asc" ]],
+        order: [[ 1, "asc" ]],
         "bDestroy": true,
     });
 }
@@ -188,7 +222,7 @@ function startFunction(id){
    time=(hr+':'+minutes+':'+seconds);
   if($('#statusButton'+id).val() === "Start" ){
     time_type = "Start Time";
-    $("#edit_link"+id).remove('a[href^="' +id+ '"]').remove("");
+    $("#edit_link"+id).remove('a[href^=""]').remove("");
     document.getElementById('start_time_field'+id).innerHTML = time +" "+ampm;
     document.getElementById('statusButton'+id).value= "Stop";
     document.getElementById('statusButton'+id).style.color = "white"
@@ -218,22 +252,24 @@ function startFunction(id){
   });
 }
 
+
+
 $('body').on('click', 'a.edit', function(e) {
         e.preventDefault();
 
         var row = $(this).parent().parent();
         $editingRow = $(this).parent().parent().html();
-        var row_id = row.children().eq(7).find('a').attr('id').trim();
+        var row_id = row.children().eq(0).find('a').attr('id').trim();
         /*var cid = row.children().eq(0).html().trim();*/
-        var rep_name = row.children().eq(1).html().trim();
-        var product_count = row.children().eq(2).html().trim();
-        var attributes = row.children().eq(3).html().trim();
+        var rep_name = row.children().eq(2).html().trim();
+        var product_count = row.children().eq(3).html().trim();
+        var attributes = row.children().eq(4).html().trim();
             
-        row.children().eq(1).html('<input class="input-sm" value="'+rep_name+'" style="width: 100%;">');
-        row.children().eq(2).html('<input class="input-sm" value="'+product_count+'" style="width: 100%;">');
-        row.children().eq(3).html('<input class="input-sm" value="'+attributes+'" style="width: 61.9%;">');
+        row.children().eq(2).html('<input class="input-sm" value="'+rep_name+'" style="width: 100%;">');
+        row.children().eq(3).html('<input class="input-sm" value="'+product_count+'" style="width: 100%;">');
+        row.children().eq(4).html('<input class="input-sm" value="'+attributes+'" style="width: 61.9%;">');
         
-        row.children().eq(7).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
+        row.children().eq(0).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
                                     '<a title="Cancel" class="cancel" href="#" style="margin-left: 10px; color: #D83F34;"><span class="glyphicon glyphicon-remove"></span></a>');
 
     });
@@ -242,11 +278,11 @@ $('body').on('click', 'a.edit', function(e) {
 
     $('body').on('click', 'a.save', function(e) {
         var row = $(this).parent().parent();
-        var row_id = row.children().eq(7).find('a').attr('id');
+        var row_id = row.children().eq(0).find('a').attr('id');
         var id = row_id.replace( /^\D+/g, '');
-        var rep_name = row.children().eq(1).find('input').val();
-        var product_count = row.children().eq(2).find('input').val();
-        var attributes = row.children().eq(3).find('input').val();
+        var rep_name = row.children().eq(2).find('input').val();
+        var product_count = row.children().eq(3).find('input').val();
+        var attributes = row.children().eq(4).find('input').val();
 
         var jsonData = {
                 time: '-',
@@ -270,6 +306,50 @@ $('body').on('click', 'a.edit', function(e) {
                 alert("Something went wrong, please try after some time");
             }
         });
+    });
+
+        $('body').on('click', 'a.copy', function(e) {
+
+        var row = $(this).parent().parent();
+        var row_id = row.children().eq(0).find('a').attr('id');
+        var id = row_id.replace( /^\D+/g, '');
+        var cid_field = row.children().eq(1).html();
+        var rep_name = row.children().eq(2).html();
+        var product_count = row.children().eq(3).html();
+        var attributes = row.children().eq(4).html();
+   
+        var jsonData = {cid:cid_field,rep_name:rep_name,product_count:product_count,attributes:attributes};
+        console.log(jsonData);
+         
+        $.ajax({
+          type: "POST",
+          url: '/leads/argos-management/',
+          data: JSON.stringify(jsonData),
+          contentType: "application/json; charset=utf-8",
+          traditional: true,
+          success: function (data) {
+            if(data.msg == 'No Lead'){
+              $('#error-msg').text('There is no Argos Lead associated with this CID');
+              $('#error-msg').show();
+              $('#error-msg').css('color','red');
+            }
+            else{
+              $('#error-msg').hide();
+              
+              $("#cid_field").val('');
+              $("#rep_name").val('');
+              $("#product_count").val('');
+              $('#attributes').val('');
+              updateArgosData();
+            }
+          },
+          error: function(data){
+              alert("Something went wrong, please try after some time");
+          }
+        });
+
+
+
     });
 
 
