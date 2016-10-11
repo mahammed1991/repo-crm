@@ -96,6 +96,15 @@
                 
     </div>
 
+<!-- Checking user bellongs to argos admin or not -->
+<div>
+      {% if "ARGOS-ADMIN" in  request.session.groups %}
+          <input type="checkbox" id="argos_user_group" style="display:none" checked> 
+        {% else %}     
+        <input type="checkbox" id="argos_user_group" style="display:none">   
+      {% endif %}
+</div>
+
 
  </section>
   {% endblock content %}
@@ -134,6 +143,8 @@ function deleteFunction(id){
 
 
 function updateArgosData(){
+  var checking_argos_admin=document.getElementById('argos_user_group');
+    
     $('#argos').DataTable({
         "ajax": {
             "url": "/leads/get-argos/",
@@ -161,11 +172,11 @@ function updateArgosData(){
                     if(total_time_value === null)
                         total_time_value = "-";
 
-                    if(start_time === null ){
+                    if(start_time === null && checking_argos_admin.checked){
                       json[i][0] = '<a title="Edit" id="edit_link'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>   '+
                       '<a title="Duplicate" id="duplicate_link'+json[i].id+'" class="copy" href="#"><span class="glyphicon glyphicon-file"></span></a>';
                     }else{
-                      json[i][0] = ' -';
+                      json[i][0] = ' -'; 
                     }
 
                     
@@ -187,8 +198,12 @@ function updateArgosData(){
                     else{
                       json[i][8] ='<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Start" style="background: #407ee6;color:white;">';
                     }
-                                  
+                    
+                    if(checking_argos_admin.checked){              
                     json[i][9] = '<p onclick="deleteFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
+                    }else{
+                      json[i][9] ='-'
+                    }
                 }
                 return json;
             }
@@ -230,16 +245,15 @@ function startFunction(id){
     document.getElementById('start_time_field'+id).innerHTML = time +" "+ampm;
     document.getElementById('statusButton'+id).value= "Stop";
     document.getElementById('statusButton'+id).style.color = "white"
-
+  }else if ($('#statusButton'+id).val() === "Stop" ){
+      time_type = "End Time"
+      document.getElementById('end_time_field'+id).innerHTML = time +" "+ ampm;
+      document.getElementById('statusButton'+id).disabled = true;
+      document.getElementById('statusButton'+id).style.display = "none";
+      document.getElementById('completed'+id).innerHTML = "Completed";
+      document.getElementById('completed'+id).style.color = "green";
   }
-  else if($('#statusButton'+id).val() === "Stop" ){
-    time_type = "End Time"
-    document.getElementById('end_time_field'+id).innerHTML = time +" "+ ampm;
-    document.getElementById('statusButton'+id).disabled = true;
-    document.getElementById('statusButton'+id).style.display = "none";
-    document.getElementById('completed'+id).innerHTML = "Completed";
-    document.getElementById('completed'+id).style.color = "green";
-  }
+  
   var jsonData = {id:id,time:time_type};
   $.ajax({
     type: "PUT",
