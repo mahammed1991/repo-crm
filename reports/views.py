@@ -1697,6 +1697,7 @@ def export_action_items(request):
                     'attendees': attendees_email_list,
                     'region': update_status.meeting_minutes.region,
                     'status': update_status.status,
+                    'current_closed_action_item': update_status,
                     # 'action_item': update_status.action_items,
                     # 'owner': update_status.owners,
                     # 'target_date': update_status.target_date,

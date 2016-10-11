@@ -28,8 +28,12 @@
           <table style="width:600px;text-align: left;" border="0" cellpadding="0" cellspacing="0">
             <tr>
               <td style="padding: 10px; border-top: 1px solid #3369e8;color: #6f6f6f; font-family: Arial;font-size: 14px; line-height: 18px; vertical-align: top;">
-                 Hello Team,<br/>
+              Hello Team,<br/>
+              {% if closed %}
+                <p>Below action item striked out in Red was closed by {{status_changed_by}},
+              {% else %}
                 <p>This is to inform you that the below mentioned action item:
+              {% endif %}
 
                 <table style="width:600px;text-align: left;" border="1" cellpadding="0" cellspacing="0">
                   <tr>
@@ -38,12 +42,20 @@
                     <th style=" padding: 5px; text-align: center; width: 25%;">Target Date: </th>
                   </tr>
                   {% if closed %}
-                    {% for i in closed_action_items %}
                     <tr>
-                      <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.action_items}}</td>
-                      <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.owners}}</td>
-                      <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.target_date}}</td>
+                      <td style="{% if current_closed_action_item.status in open%} padding:5px; {%else%} padding:5px;text-decoration: line-through; color: red; {%endif%}"><span style="color: #6f6f6f;">{{current_closed_action_item.action_items}}</span></td>
+                      <td style="{% if current_closed_action_item.status in open%} padding:5px; {%else%} padding:5px;text-decoration: line-through; color: red; {%endif%}"><span style="color: #6f6f6f;">{{current_closed_action_item.owners}}</span></td>
+                      <td style="{% if current_closed_action_item.status in open%} padding:5px; {%else%} padding:5px;text-decoration: line-through; color: red; {%endif%}"><span style="color: #6f6f6f;">{{current_closed_action_item.target_date}}</span></td>
                     </tr>
+
+                    {% for i in closed_action_items %}
+                      {% if i.action_items != current_closed_action_item.action_items %}
+                      <tr>
+                        <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.action_items}}</td>
+                        <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.owners}}</td>
+                        <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.target_date}}</td>
+                      </tr>
+                      {% endif %}
                     {% endfor %}
                   {% else %}
                     <tr>
@@ -53,7 +65,11 @@
                     </tr>               
                   {% endif %}    
                 </table>
+              {% if closed %}
+                <br><a href="{{last_meeting_link_id}}">Click here</a> to view status of all action items from this meeting - <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>.</p>
+              {% else %}
                 <br> from the Meeting <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>, is being {{status|lower}} by {{status_changed_by}}.</p> 
+              {% endif %}
 
                 <p>Thanks,<br />
                 {% if 'TAG Team' in program %}

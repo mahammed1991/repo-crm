@@ -481,6 +481,7 @@ function resetPicasso() {
           $("#language_selector").append('<option value="German">German</option>');
           $("#language_selector").append('<option value="French">French</option>');
           $("#language_selector").append('<option value="Simplified Chinese">Simplified Chinese</option>');
+          $("#language_selector").append('<option value="Traditional Chinese">Traditional Chinese</option>');
 
   $("#advertiser_email").removeAttr("disabled");
     if(prevaluedict['aemail']){
