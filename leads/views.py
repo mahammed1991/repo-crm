@@ -4522,13 +4522,21 @@ def argos_management(request):
         argos.attributes = attributes
         argos.products_count = products_count
         argos.save()
+    if request.method == 'DELETE':
+        data = json.loads(request.body)
+        try:
+            ArgosProcessTimeTracker.objects.filter(id=data['id']).delete()
+            response = {'success': True}
+        except:
+            response = {'success': False}
+        return HttpResponse(json.dumps(response), content_type='application/json')
     return render(request,'leads/argos_management.html',{})
 
 
 @csrf_exempt
 def argos(request):
     if request.method == 'GET':
-        argos = ArgosProcessTimeTracker.objects.all()
+        argos = ArgosProcessTimeTracker.objects.all().order_by('-created_date')
         data = []
         for i in argos:
             start_time = i.start_time
@@ -4594,3 +4602,6 @@ def update_argos_timestamp(request):
     else:
         from django.core import exceptions
         raise exceptions.PermissionDenied
+
+
+
