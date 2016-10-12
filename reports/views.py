@@ -2647,7 +2647,7 @@ def download_inventory_details(request):
         writer.writerow([i.employee_name, i.employee_ldap, i.employee_alias, i.employee_project, i.device_type, i.device_tag, i.mac_id, i.employee_status, i.device_status, i.issued_on, i.returned_on])
     return response
 
-
+@login_required
 def export_slot_utilization(request):
     from datetime import datetime, timedelta
     from cron import (available_counts_booked_specific_in_na, available_counts_booked_specific)
@@ -2965,6 +2965,7 @@ def write_eligiblity_report_to_csv(result, collumn_attr, filename):
 
 
 import base64
+@login_required
 @csrf_exempt
 def send_inventory_mail(request):
     description = request.POST.get('description')
@@ -2987,7 +2988,7 @@ def send_inventory_mail(request):
         send_mail(mail_subject, mail_body, mail_from, cc_list, list(bcc), attachments, template_added=True)
     return redirect('reports.views.inventory_handler')
 
-
+@login_required
 def acknowledgement_mail(request):
     encoded_desc = request.GET.get('desc')
     encoded_desc = encoded_desc.replace(' ', '+')

@@ -32,16 +32,37 @@
   table th{
     text-align: center !important;
   }
+  .glyphicon {
+    font-size: 22px;
+    margin-right: 2px;
+  }
+  [class^="icon-"], [class*=" icon-"]{
+    background:none;
+  }
+
+  .icon {background:none;}
  </style>
  <link rel="stylesheet" href="{% static 'css/webapp/vendor/jquery.dataTables.min.css' %}">
  {% endblock main_css %}
 
  {% block content %}
  <section class="content-region inner-page">
-   <div class="container" style="">
-    <button id="argos_entry_button" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;">+ Add</button>
-    <h2>Argos Management</h2>
-   </div>
+
+      <div class="container" style="">
+          {% if "ARGOS-ADMIN" in  request.session.groups %}
+            <button id="argos_entry_button" class="btn std-btn sm-btn" style="float:right;margin-top: 1%;margin-right: 2%;line-height: 90%;">+ Add</button>
+            <script>
+                argosAdmin = true;
+            </script>
+          {%else%}
+            <script>
+                argosAdmin = false;
+            </script>
+          {% endif %}
+        <h2>Argos Management</h2>
+       </div>
+
+
 
    <div id="argos_entry_form" class="container-fluid" style="display:none; margin-bottom:30px;">
     <label id="error-msg"></label>
@@ -52,8 +73,9 @@
             <input type="text" class="form-control" id="cid_field" name="" placeholder="CID" style="">
           </div>
           <div class="col-md-4">
-                  <label for="name">Rep Name :</label>
-            <input type="text" class="form-control" id="rep_name" name="" placeholder="Rep Name" style="">
+                  <label for="name">Rep Email :</label>
+              <input class="form-control"  type="email" id="rep_name" name="rep_name" class=""
+                 placeholder="xyz@abc.com" >
           </div>
           <div class="col-md-4">
                   <label for="name">Products Count :</label>
@@ -96,15 +118,6 @@
                 
     </div>
 
-<!-- Checking user bellongs to argos admin or not -->
-<div>
-      {% if "ARGOS-ADMIN" in  request.session.groups %}
-          <input type="checkbox" id="argos_user_group" style="display:none" checked> 
-        {% else %}     
-        <input type="checkbox" id="argos_user_group" style="display:none">   
-      {% endif %}
-</div>
-
 
  </section>
   {% endblock content %}
@@ -141,29 +154,24 @@ function deleteFunction(id){
   }
 }
 
-
 function updateArgosData(){
-  var checking_argos_admin=document.getElementById('argos_user_group');
-    
     $('#argos').DataTable({
         "ajax": {
             "url": "/leads/get-argos/",
             'type':'GET',
             "dataSrc": function(json) {
-  
                 json = json['data']
-               
                 for(var i=0; i<json.length; i++){
                   
                     var start_time = json[i].start_time;
                     if(start_time === null){
-                    start_time_value = '<span id="start_time_field'+json[i].id+'">-</span>' 
+                        start_time_value = '<span id="start_time_field'+json[i].id+'">-</span>'
                     }else{
                       start_time_value = '<span id="start_time_field'+json[i].id+'">'+start_time+'</span>'
                     }
                     var end_time = json[i].end_time;
                     if(end_time === null){
-                    end_time_value = '<span id="end_time_field'+json[i].id+'">-</span>' 
+                        end_time_value = '<span id="end_time_field'+json[i].id+'">-</span>'
                     }else{
                       end_time_value = '<span id="end_time_field'+json[i].id+'">'+end_time+'</span>'
                     }
@@ -172,9 +180,9 @@ function updateArgosData(){
                     if(total_time_value === null)
                         total_time_value = "-";
 
-                    if(start_time === null && checking_argos_admin.checked){
+                    if(start_time === null && argosAdmin){
                       json[i][0] = '<a title="Edit" id="edit_link'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>   '+
-                      '<a title="Duplicate" id="duplicate_link'+json[i].id+'" class="copy" href="#"><span class="glyphicon glyphicon-file"></span></a>';
+                      '<a title="Duplicate" data-email="'+json[i].rep_email+'" id="duplicate_link'+json[i].id+'" class="copy" href="#"><span class="glyphicon glyphicon-retweet"></span></a>';
                     }else{
                       json[i][0] = ' -'; 
                     }
@@ -189,18 +197,27 @@ function updateArgosData(){
                     json[i][7] = total_time_value;
 
                     
-                    if(start_time != null && end_time != null){
-                      json[i][8] ='<span id="completed'+json[i].id+'" style="color:green;">Completed</span>';
+                    if(json[i].status === 'Completed'){
+                      json[i][8] ='<span style="color:green;">Completed</span>';
                     }
-                    else if(start_time != null && end_time == null){
-                      json[i][8] = '<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Stop" style="background: #407ee6;color:white;">';
+                    else if(json[i].status === 'Start'){
+                        json[i][8] ='<input class="auditAction btn" data-id="'+json[i].id+'" '+
+                      ' type="button" data-status="start" value="Start" style="background: #407ee6;color:white;">';
+                    }
+                    else if(json[i].status === 'Paused'){
+                      json[i][8] = '<span class="auditAction glyphicon glyphicon-play" title="Resume" style="cursor: pointer;color:green"'+
+                      ' data-status="resume" data-id="'+json[i].id+'"></span> <span class="auditAction glyphicon glyphicon-stop"'+
+                      ' title="Paused" data-status="stop" data-id="'+json[i].id+'" style="cursor: pointer;color:red", ></span>';
                     }
                     else{
-                      json[i][8] ='<span id="completed'+json[i].id+'"></span><input class="btn" id="statusButton'+json[i].id+'"onclick="startFunction('+json[i].id+')" type="button" value="Start" style="background: #407ee6;color:white;">';
+                        // Resumed or Started
+                        json[i][8] = '<span class="auditAction glyphicon glyphicon-pause" title="Pause"'+
+                      ' data-status="pause" data-id="'+json[i].id+'" style="cursor: pointer;"></span><span class="auditAction glyphicon glyphicon-stop" title="Paused"'+
+                      ' data-status="stop" data-id="'+json[i].id+'" style="cursor: pointer;color:red"></span>';
                     }
                     
-                    if(checking_argos_admin.checked){              
-                    json[i][9] = '<p onclick="deleteFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
+                    if(argosAdmin){
+                        json[i][9] = '<p onclick="deleteFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
                     }else{
                       json[i][9] ='-'
                     }
@@ -229,46 +246,22 @@ function updateArgosData(){
   });
 
 
-function startFunction(id){
-    var time = new Date(); // for now
-   var hr = time.getHours();
-   var hr = hr < 10 ? '0'+hr : hr;
-   var minutes = time.getMinutes();
-   var minutes = minutes < 10 ? '0'+minutes : minutes;
-   var seconds = time.getSeconds();
-   var seconds = seconds < 10 ? '0'+seconds : seconds;
-   var ampm = hr < 12 ? "am" : "pm";
-   time=(hr+':'+minutes+':'+seconds);
-  if($('#statusButton'+id).val() === "Start" ){
-    time_type = "Start Time";
-    $("#edit_link"+id).remove('a[href^=""]').remove("");
-    document.getElementById('start_time_field'+id).innerHTML = time +" "+ampm;
-    document.getElementById('statusButton'+id).value= "Stop";
-    document.getElementById('statusButton'+id).style.color = "white"
-  }else if ($('#statusButton'+id).val() === "Stop" ){
-      time_type = "End Time"
-      document.getElementById('end_time_field'+id).innerHTML = time +" "+ ampm;
-      document.getElementById('statusButton'+id).disabled = true;
-      document.getElementById('statusButton'+id).style.display = "none";
-      document.getElementById('completed'+id).innerHTML = "Completed";
-      document.getElementById('completed'+id).style.color = "green";
-  }
-  
-  var jsonData = {id:id,time:time_type};
-  $.ajax({
-    type: "PUT",
-    url: '/leads/update-argos/',
-    data: JSON.stringify(jsonData),
-    contentType: "application/json; charset=utf-8",
-    traditional: true,
-    success: function (data) {
-      setTimeout(function(){updateArgosData();},1000);
-    },
-    error: function(data){
-        alert("Something went wrong, please try after some time");
-    }
-  });
-}
+$("body").on('click', '.auditAction', function(e){
+      var jsonData = {'id': $(this).data('id'), 'status': $(this).data('status')};
+      $.ajax({
+        type: "PUT",
+        url: '/leads/update-argos/',
+        data: JSON.stringify(jsonData),
+        contentType: "application/json; charset=utf-8",
+        traditional: true,
+        success: function (data) {
+          setTimeout(function(){updateArgosData();},1000);
+        },
+        error: function(data){
+            alert("Something went wrong, please try after some time");
+        }
+      });
+});
 
 
 
@@ -283,13 +276,13 @@ $('body').on('click', 'a.edit', function(e) {
         var product_count = row.children().eq(3).html().trim();
         var attributes = row.children().eq(4).html().trim();
             
-        row.children().eq(2).html('<input class="input-sm" value="'+rep_name+'" style="width: 100%;">');
+        row.children().eq(2).html('<input class="rep_name input-sm" value="'+rep_name+'" style="width: 100%;">');
         row.children().eq(3).html('<input class="input-sm" value="'+product_count+'" style="width: 100%;">');
         row.children().eq(4).html('<input class="input-sm" value="'+attributes+'" style="width: 61.9%;">');
         
         row.children().eq(0).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
                                     '<a title="Cancel" class="cancel" href="#" style="margin-left: 10px; color: #D83F34;"><span class="glyphicon glyphicon-remove"></span></a>');
-
+        bindAutoComplete()
     });
 
 
@@ -327,42 +320,41 @@ $('body').on('click', 'a.edit', function(e) {
     });
 
         $('body').on('click', 'a.copy', function(e) {
+            var row = $(this).parent().parent();
+            var row_id = row.children().eq(0).find('a').attr('id');
+            var id = row_id.replace( /^\D+/g, '');
+            var cid_field = row.children().eq(1).html();
+            var rep_name = $(this).attr('data-email');
+            var product_count = row.children().eq(3).html();
+            var attributes = row.children().eq(4).html();
 
-        var row = $(this).parent().parent();
-        var row_id = row.children().eq(0).find('a').attr('id');
-        var id = row_id.replace( /^\D+/g, '');
-        var cid_field = row.children().eq(1).html();
-        var rep_name = row.children().eq(2).html();
-        var product_count = row.children().eq(3).html();
-        var attributes = row.children().eq(4).html();
-   
-        var jsonData = {cid:cid_field,rep_name:rep_name,product_count:product_count,attributes:attributes};
-         
-        $.ajax({
-          type: "POST",
-          url: '/leads/argos-management/',
-          data: JSON.stringify(jsonData),
-          contentType: "application/json; charset=utf-8",
-          traditional: true,
-          success: function (data) {
-            if(data.msg == 'No Lead'){
-              $('#error-msg').text('There is no Argos Lead associated with this CID');
-              $('#error-msg').show();
-              $('#error-msg').css('color','red');
-            }
-            else{
-              $('#error-msg').hide();
-              
-              $("#cid_field").val('');
-              $("#rep_name").val('');
-              $("#product_count").val('');
-              $('#attributes').val('');
-              updateArgosData();
-            }
-          },
-          error: function(data){
-              alert("Something went wrong, please try after some time");
-          }
+            var jsonData = {cid:cid_field,rep_name:rep_name,product_count:product_count,attributes:attributes};
+
+            $.ajax({
+              type: "POST",
+              url: '/leads/argos-management/',
+              data: JSON.stringify(jsonData),
+              contentType: "application/json; charset=utf-8",
+              traditional: true,
+              success: function (data) {
+                if(data.msg == 'No Lead'){
+                  $('#error-msg').text('There is no Argos Lead associated with this CID');
+                  $('#error-msg').show();
+                  $('#error-msg').css('color','red');
+                }
+                else{
+                  $('#error-msg').hide();
+
+                  $("#cid_field").val('');
+                  $("#rep_name").val('');
+                  $("#product_count").val('');
+                  $('#attributes').val('');
+                  updateArgosData();
+                }
+              },
+              error: function(data){
+                  alert("Something went wrong, please try after some time");
+              }
         });
 
 
@@ -464,7 +456,51 @@ $('body').on('click', 'a.edit', function(e) {
         });
       }
 
-  })
+  });
+
+$("#rep_name").autocomplete(
+{
+    search: function () {},
+    source: function (request, response)
+    {
+        $.ajax(
+        {
+            url: "/main/user/email/",
+            dataType: "json",
+            data:
+            {
+                search_key: request.term,
+            },
+            success: function (data)
+            {
+                response(data.data);
+            }
+        });
+    },
+    minLength: 1,
+});
+
+function bindAutoComplete(){
+    $(".rep_name").autocomplete({
+        source: function (request, response)
+        {
+            $.ajax(
+            {
+                url: "/main/user/email/",
+                dataType: "json",
+                data:
+                {
+                    search_key: request.term,
+                },
+                success: function (data)
+                {
+                    response(data.data);
+                }
+            });
+        },
+        minLength: 1,
+    });
+};
 
   </script>
   {% endblock %}
