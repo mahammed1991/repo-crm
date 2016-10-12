@@ -1285,7 +1285,7 @@ $('#country').change(function(){
 function showHideArgos(){
     // Teams allowed for Feed Optimisation Argos
     var allowedTeams = ['MMS One', 'MMS One Apollo', 'MMS Two', 'MMS Two Apollo'];
-    var allowedCountries = ['AU/NZ','United States'];
+    var allowedCountries = ['AU/NZ','United States', 'Canada'];
 
     // Allow Feed optimisation argos only for the below teams
     var allowed = allowedTeams.indexOf($('#team').val());
