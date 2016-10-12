@@ -4532,7 +4532,10 @@ def argos_management(request):
         argos.modified_date = ist
         argos.save()
     elif request.method == 'GET' and request.is_ajax():
-        argos_leads = ArgosProcessTimeTracker.objects.all().order_by('-created_date')
+        if request.user.groups.filter(name='ARGOS-ADMIN'):
+            argos_leads = ArgosProcessTimeTracker.objects.all().order_by('-created_date')
+        else:
+            argos_leads = ArgosProcessTimeTracker.objects.filter(assignee=request.user).order_by('-created_date')
         data = []
         for i in argos_leads:
             start_time = i.start_time
