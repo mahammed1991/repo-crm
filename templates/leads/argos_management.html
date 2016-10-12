@@ -34,13 +34,9 @@
   }
   .glyphicon {
     font-size: 22px;
-    margin-right: 2px;
-  }
-  [class^="icon-"], [class*=" icon-"]{
-    background:none;
+    margin-right: 10px;
   }
 
-  .icon {background:none;}
  </style>
  <link rel="stylesheet" href="{% static 'css/webapp/vendor/jquery.dataTables.min.css' %}">
  {% endblock main_css %}
@@ -207,16 +203,16 @@ function updateArgosData(){
                     else if(json[i].status === 'Paused'){
                       json[i][8] = '<span class="auditAction glyphicon glyphicon-play" title="Resume" style="cursor: pointer;color:green"'+
                       ' data-status="resume" data-id="'+json[i].id+'"></span> <span class="auditAction glyphicon glyphicon-stop"'+
-                      ' title="Paused" data-status="stop" data-id="'+json[i].id+'" style="cursor: pointer;color:red", ></span>';
+                      ' title="Stop" data-status="stop" data-id="'+json[i].id+'" style="cursor: pointer;color:red", ></span>';
                     }
                     else{
                         // Resumed or Started
                         json[i][8] = '<span class="auditAction glyphicon glyphicon-pause" title="Pause"'+
-                      ' data-status="pause" data-id="'+json[i].id+'" style="cursor: pointer;"></span><span class="auditAction glyphicon glyphicon-stop" title="Paused"'+
+                      ' data-status="pause" data-id="'+json[i].id+'" style="cursor: pointer;"></span><span class="auditAction glyphicon glyphicon-stop" title="Stop"'+
                       ' data-status="stop" data-id="'+json[i].id+'" style="cursor: pointer;color:red"></span>';
                     }
                     
-                    if(argosAdmin){
+                    if(json[i].status === "Start" && argosAdmin){
                         json[i][9] = '<p onclick="deleteFunction('+json[i].id+')" ><span class="glyphicon glyphicon-trash"></span></p>';
                     }else{
                       json[i][9] ='-'
@@ -356,12 +352,7 @@ $('body').on('click', 'a.edit', function(e) {
                   alert("Something went wrong, please try after some time");
               }
         });
-
-
-
     });
-
-
 
     $('body').on('click', 'a.cancel', function(e) {
         e.preventDefault();
@@ -370,15 +361,13 @@ $('body').on('click', 'a.edit', function(e) {
         delete $editingRow;
     });
 
-
-
     $("#argos_entry_button").click(function(){
-    if($("#argos_entry_form").is(":visible"))
-        $("#argos_entry_button").text("+ Add");
-    else
-        $("#argos_entry_button").text("Close");
+        if($("#argos_entry_form").is(":visible"))
+            $("#argos_entry_button").text("+ Add");
+        else
+            $("#argos_entry_button").text("Close");
 
-     $("#argos_entry_form").toggle();
+         $("#argos_entry_form").toggle();
     });
 
        
