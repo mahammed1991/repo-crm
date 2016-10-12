@@ -75,7 +75,7 @@
           </div>
           <div class="col-md-4">
                   <label for="name">Products Count :</label>
-            <input type="number" min="0" class="form-control" id="product_count" name="" placeholder="Products Count" style="">
+            <input type="number" min="0" class="form-control" id="product_count" name="" placeholder="Products Count" style="" onkeypress="return isNumber(event)">
           </div>
         </div>
     <div class="row">
@@ -177,7 +177,7 @@ function updateArgosData(){
                         total_time_value = "-";
 
                     if(start_time === null && argosAdmin){
-                      json[i][0] = '<a title="Edit" id="edit_link'+json[i].id+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>   '+
+                      json[i][0] = '<a title="Edit" id="edit_link'+json[i].id+'" data-email="'+json[i].rep_email+'" class="edit" href="#"><span class="glyphicon glyphicon-edit"></span></a>   '+
                       '<a title="Duplicate" data-email="'+json[i].rep_email+'" id="duplicate_link'+json[i].id+'" class="copy" href="#"><span class="glyphicon glyphicon-retweet"></span></a>';
                     }else{
                       json[i][0] = ' -'; 
@@ -243,20 +243,30 @@ function updateArgosData(){
 
 
 $("body").on('click', '.auditAction', function(e){
-      var jsonData = {'id': $(this).data('id'), 'status': $(this).data('status')};
-      $.ajax({
-        type: "PUT",
-        url: '/leads/update-argos/',
-        data: JSON.stringify(jsonData),
-        contentType: "application/json; charset=utf-8",
-        traditional: true,
-        success: function (data) {
-          setTimeout(function(){updateArgosData();},1000);
-        },
-        error: function(data){
-            alert("Something went wrong, please try after some time");
-        }
-      });
+      var status = $(this).data('status');
+      var flag = true;
+      if(status === "stop"){
+        flag = confirm("Are you sure, you want to complete this?")
+      }
+      if(status === "start"){
+        flag = confirm("Are you sure, you want to start Auditing?")
+      }
+      var jsonData = {'id': $(this).data('id'), 'status': status };
+      if(flag){
+          $.ajax({
+            type: "PUT",
+            url: '/leads/update-argos/',
+            data: JSON.stringify(jsonData),
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: function (data) {
+              setTimeout(function(){updateArgosData();},1000);
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+          });
+      }
 });
 
 
@@ -268,12 +278,12 @@ $('body').on('click', 'a.edit', function(e) {
         $editingRow = $(this).parent().parent().html();
         var row_id = row.children().eq(0).find('a').attr('id').trim();
         /*var cid = row.children().eq(0).html().trim();*/
-        var rep_name = row.children().eq(2).html().trim();
+        var rep_name = $(this).attr('data-email');
         var product_count = row.children().eq(3).html().trim();
         var attributes = row.children().eq(4).html().trim();
             
         row.children().eq(2).html('<input class="rep_name input-sm" value="'+rep_name+'" style="width: 100%;">');
-        row.children().eq(3).html('<input class="input-sm" value="'+product_count+'" style="width: 100%;">');
+        row.children().eq(3).html('<input onkeypress="return isNumber(event)" class="input-sm" value="'+product_count+'" style="width: 100%;">');
         row.children().eq(4).html('<input class="input-sm" value="'+attributes+'" style="width: 61.9%;">');
         
         row.children().eq(0).html('<a title="Save" class="save" id="'+row_id+'" href="#" style="color: green;"><span class="glyphicon glyphicon-ok"></span></a>'+
@@ -291,6 +301,13 @@ $('body').on('click', 'a.edit', function(e) {
         var product_count = row.children().eq(3).find('input').val();
         var attributes = row.children().eq(4).find('input').val();
 
+        try{
+            product_count = parseInt(product_count)
+        }catch(err){
+            console.log(err);
+            alert("Product count must be number.");
+        }
+
         var jsonData = {
                 time: '-',
                 id: id,
@@ -298,7 +315,6 @@ $('body').on('click', 'a.edit', function(e) {
                 product_count: product_count,
                 attributes: attributes,
         }
-        
         $.ajax({
             type: "PUT",
             url: '/leads/update-argos/',
@@ -490,6 +506,15 @@ function bindAutoComplete(){
         minLength: 1,
     });
 };
+
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
 
   </script>
   {% endblock %}

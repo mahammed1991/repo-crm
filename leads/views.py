@@ -4380,7 +4380,7 @@ def estimate_shopping_arogs_tat(request):
     if current_products:
         total_products_inqueue += int(current_products)
 
-    # Estimated date clculation
+    # Estimated date calculation
     days_tobe_added = ceil(total_products_inqueue/products_processed_per_day)
     if days_tobe_added > 0:
         estimated_date = utc_now + timedelta(days=days_tobe_added)
