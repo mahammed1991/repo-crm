@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'reports',
     'kronos',
     'umm',
+    'mini_crm',
 )
 
 MIDDLEWARE_CLASSES = [
