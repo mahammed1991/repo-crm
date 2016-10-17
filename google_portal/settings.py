@@ -405,6 +405,7 @@ LEAD_STATUS_SUB_STATUS_MAPPING = {
         "Rework Fixed - Win": ["Rework Fixed - Win"],
         "Rework Fixed - Inactive": ["Rework Fixed - Inactive"],
         "Inactive": ["Inactive"],
+        "Pending QC - Dead Lead": ["Pending QC - Dead Lead"],
     },
     "Shopping": {
         "In Queue": ["In Queue"],
