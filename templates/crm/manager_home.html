@@ -1,69 +1,23 @@
+
 {% extends 'layouts/main.html' %}
+{% load static %}
 {% load staticfiles %}
+
 {% block title %}
   Agency Lead Form
 {% endblock title %}
 
-{% block main_css %}
-  <style type="text/css">
-  </style>
-{% endblock main_css %}
-  <head>
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+  <head>
+{% block main_css %}
+  <style type="text/css"></style>
+  <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+{% endblock main_css %}
   </head>
   {% block content %}
   <body>
-        
-        
-<!--         <header class="top-nav navbar-fixed-top">
-        	<div class="container-fluid">
-            	<div class="row">
-                	<div class="col-md-2"><a href="#" class="logo"><img src="images/tag-logo.png" alt=""></a></div>
-                    <div class="col-md-3">
-                    	<ul class="top-menu">
-                        	<li><a href="#">All Leads</a></li>
-                            <li><a href="#">Reports</a></li>
-                            <li><a href="#">Lead Status</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3">
-                    <div class="search">
-                        <input type="text" placeholder="Search">
-                        <i class="fa fa-search"></i>
-					</div>
-                    </div>
-                    <div class="col-md-4">
-                    	<div class="my-account">
-                        	<ul>
-                                <li><button class="btn std-btn sm-btn" onclick='location.href="/leads/lead-form/"' style="background:#e24136;color:white;">+ New Lead</button></li>
-                            	<li class="notification"><a href="#"><i class="fa fa-bell" aria-hidden="true"></i></a></li>
-                            	<li class="user-area dropdown"> 
-            						<a href="#" type="button" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    	<img src="images/profile-img.jpg" alt="">
-             							<span class="user-name">Mark William</span> 
-              							<i class="fa fa-angle-down"></i>
-             						</a>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                        <li><a href="#">Action</a></li>
-                                        <li><a href="#">Another action</a></li>
-                                        <li><a href="#">Something else here</a></li>
-                                        <li role="separator" class="divider"></li>
-                                        <li><a href="#"><i class="fa fa-power-off" aria-hidden="true"></i> Sign Out</a></li>
-                                      </ul>
-         						 </li>
-                                 
-                            </ul>
-                        </div>
-                        
-                    </div>
-            	</div>
-        	</div>
-        </header> -->
-        
+                
         <section class="top-margin wfm">
        		<div class="container-fluid">
             	<div class="white-section">
@@ -314,8 +268,9 @@
         </section>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery.min.js"></script>
+    
+
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    
   </body>
   {% endblock content %}

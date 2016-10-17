@@ -1,8 +1,9 @@
 from django.conf.urls import url, patterns
 import views
+from django.views.generic import RedirectView, TemplateView
 
 urlpatterns = patterns(
     '',
-    url(r'^portal-crm/agent/$', views.crm_management),
-    url(r'^portal-crm/manager/$', views.manager_home),
+    (r'^$', RedirectView.as_view(url='/crm/management/')),
+    url(r'^management/$', views.crm_management),
 )
