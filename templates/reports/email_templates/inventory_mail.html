@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+	<div>
+		<span>Hello {{ username | safe }},</span><br>
+        <p>Please <a href="{{ path | safe }}"> click here </a></span> to acknowledge receipt of below chromebooks that was issued today {% now "jS F Y" %}.</p>
+	<!-- {% autoescape off %}{{ description }}{% endautoescape %} -->
+		{{ description | safe }}
+
+		<br>
+		<p>Kindly note that you will be liable for any damage and/or loss of these chromebooks.</p>
+		<br>
+	    <span>Regards,<br>
+	    IT Team</span>
+	</div>
+	</body>
+</html>
