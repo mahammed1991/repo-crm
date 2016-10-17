@@ -589,6 +589,15 @@ class SfdcUsers(models.Model):
     full_name = models.CharField(max_length=255, null=False)
     email = models.CharField(max_length=255, null=False)
     username = models.CharField(max_length=255, null=False)
+    process_type = models.CharField(max_length=50, blank=False, choices=(
+        ('TAG', 'TAG'),
+        ('SHOPPING', 'SHOPPING'),
+        ('RLSA', 'RLSA'),
+        ('WPP', 'WPP'),
+        ('Picasso Audits', 'Picasso Audits'),))
+    shift_start = models.TimeField(blank=True, null=True)
+    shift_end = models.TimeField(blank=True, null=True)
+    location = models.CharField(max_length=255, null=False)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

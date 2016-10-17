@@ -4511,7 +4511,7 @@ def argos_management(request):
         data = json.loads(request.body)
         argos = ArgosProcessTimeTracker()
         cid = data['cid']
-        rep_email = data['rep_name']
+        rep_email = data.get('rep_name', None)
         if rep_email:
             assignee = User.objects.get(email=rep_email)
         else:

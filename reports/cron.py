@@ -544,7 +544,11 @@ def create_sfdc_user(details):
         user = SfdcUsers.objects.get(user_id=details.get('user_id'))
     except ObjectDoesNotExist:
         user = SfdcUsers()
-    user.user_id = details.get('user_id')
+    user_id = details.get('user_id', None)
+    if not user_id:
+        import uuid
+        user_id = uuid.uuid4()
+    user.user_id = user_id
     user.full_name = details.get('full_name')
     user.email = details.get('email')
     user.username = details.get('username')
