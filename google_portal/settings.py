@@ -170,6 +170,7 @@ INSTALLED_APPS = (
     'reports',
     'kronos',
     'umm',
+    'mini_crm',
 
 )
 

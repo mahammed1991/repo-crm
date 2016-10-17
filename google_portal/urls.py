@@ -21,4 +21,5 @@ urlpatterns = patterns(
     url(r'^forums/', include('forum.urls')),
     url(r'^umm/', include('umm.urls')),
     url(r'^robots\.txt', TemplateView.as_view(template_name='robots.txt')),
+    url(r'^crm/', include('mini_crm.urls')),
 )
