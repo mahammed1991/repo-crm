@@ -49,8 +49,13 @@ def home(request):
     # check if user logged in
     if not request.user.is_authenticated():
         return redirect('auth.views.user_login')
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        return redirect('mini_crm.views.crm_management')
+    elif request.user.groups.filter(name='CRM-AGENT'):
+        return redirect('mini_crm.views.crm_management')
 
     return redirect('main.views.main_home')
+
 
 
 @manager_info_required

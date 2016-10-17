@@ -1,4 +1,23 @@
 {% load static %}
+{% block main_css %}
+<style type="text/css">
+  .inner-addon {
+  position: relative;
+}
+.inner-addon .glyphicon {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+.right-addon .glyphicon { right: 0px;}
+.right-addon input { padding-right: 30px; }
+
+.main-nav {width:150% !important;}
+
+.navbar-right{margin-left:-40px !important;}
+</style>
+
+{% endblock main_css %}
 <header class="header">
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid"> 
@@ -17,7 +36,12 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav main-nav">
-            <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
+          {% if "CRM-MANAGER" in  request.session.groups %}
+            <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">All Leads</a>
+          {% elif "CRM-AGENT" in  request.session.groups %}
+            <li><a href="#">My Leads</a></li>
+          {% else %}             
+             <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
               {% if "wpp" in request.META.HTTP_HOST %}
                   <li><a href="{% url 'leads.views.wpp_lead_form' %}">Submit  Lead</a></li>
@@ -28,8 +52,22 @@
               {% endif %}
                 
               </ul> 
+            </li> 
+          {% endif %}
             </li>
             <!-- <li><a href="{% url 'reports.views.reports' %}">Reports</a></li> -->
+          {% if "CRM-MANAGER" in  request.session.groups %}
+          <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">CRM Reports links <i class="fa fa-angle-down"></i></a>
+            <ul class="dropdown-menu" role="menu">
+             
+            <li><a href="{% url 'reports.views.wpp_reports' %}"> Report 1</a></li>
+            <li><a href="{% url 'reports.views.wpp_master_list' %}"> Report 2</a></li>
+             
+            <li><a href="{% url 'reports.views.reports' %}">Reports 3</a></li>  
+            </ul>
+            </li>
+              {% elif "CRM-AGENT" not in  request.session.groups %}
+          
             <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Reports <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
               {% if "wpp" in request.META.HTTP_HOST %}
@@ -41,7 +79,7 @@
               {% if "OPERATIONS" in  request.session.groups %}
                 <li><a href="{% url 'reports.views.export_slot_utilization' %}">Slot Utilization</a></li>
 
-              {% endif %}
+                {% endif %}
               </ul>
             </li>
             <!-- <li><a href="{% url 'main.views.sales_tasks' %}"> Sales Tasks</a></li>               -->
@@ -54,55 +92,83 @@
                 <li><a href="#">Shopping</a></li>
               </ul>
             </li> -->
-
-              {% if "wpp" in request.META.HTTP_HOST %}
-                <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Team<i class="fa fa-angle-down"></i></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">Meet the Team</a></li>
-                    <li><a href="{% url 'main.views.list_feedback_wpp' %}">Feedback</a></li>
-                  </ul>
-                </li>
-              {% else %}
-                <li style="margin-left: -15px;"><a href="{% url 'main.views.resources' %}"> Resources</a></li>
-                <li style="margin-left: -10px;"class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Team<i class="fa fa-angle-down"></i></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'main.views.team' %}">Meet the Team</a></li>
-                    <li><a href="{% url 'main.views.list_feedback' %}">Feedback</a></li>
-                  </ul>
-                </li>
-              {% endif %}
-
-          </ul>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color:white;padding:1px;">
-          {% if "wpp" in request.META.HTTP_HOST %}
-           <ul class="nav navbar-nav main-nav">
-            <li style="margin-left: -6px;"> 
-               <button style="font-size: 13px;padding: 4px;min-width: 100px;"
-                class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"'>Lead Status</button>
-            </li>
-           </ul>
-           {% else %}
-          <ul class="nav navbar-nav main-nav">
-            <li style="margin-left: -6px;"> 
-               <button style="font-size: 13px;padding: 4px;min-width: 100px;" 
-               class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"'>Lead Status</button>
-            </li>
-           </ul>
           {% endif %}
-        </div>
 
-        <!-- /.navbar-collapse -->
-        <ul class="nav navbar-nav live-transfer" >
-          <li style="margin-left: -26px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-            <img src="" id="loc_img">
-            <i class="fa fa-angle-down"></i></a>
-            <ul class="dropdown-menu" role="menu" id="loc_list">
-            </ul>
-          </li>
-          <li class="live-transfer-number" style="margin-left: -9px;font-size: 13px;margin-top: 5px;"><i class="fa fa-phone"></i><span class="location_number">8669997725</span></li>
-        </ul>
+
+          {% if "CRM-MANAGER" in  request.session.groups %}
+          
+                      <div class="col-md-4">
+                          <div class="inner-addon right-addon">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search" />
+                          </div>
+                       </div>
+                    
+                    
+                        
+                    {% elif "CRM-AGENT" in  request.session.groups %}
+                  
+                      <div class="col-md-6">
+                        <div class="inner-addon right-addon">
+                          <i class="glyphicon glyphicon-search"></i>
+                          <input type="text" class="form-control" placeholder="Search" />
+                        </div>
+                      </div>
+                  
+                    {% else %}
+                        {% if "wpp" in request.META.HTTP_HOST %}
+                          <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Team<i class="fa fa-angle-down"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                              <li><a href="#">Meet the Team</a></li>
+                              <li><a href="{% url 'main.views.list_feedback_wpp' %}">Feedback</a></li>
+                            </ul>
+                          </li>
+                        {% else %}
+                          <li style="margin-left: -15px;"><a href="{% url 'main.views.resources' %}"> Resources</a></li>
+                          <li style="margin-left: -10px;"class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Team<i class="fa fa-angle-down"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                              <li><a href="{% url 'main.views.team' %}">Meet the Team</a></li>
+                              <li><a href="{% url 'main.views.list_feedback' %}">Feedback</a></li>
+                            </ul>
+                          </li>
+                    </ul>
+                  </div>
+
+                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color:white;padding:1px;">
+                    {% if "wpp" in request.META.HTTP_HOST %}
+                     <ul class="nav navbar-nav main-nav">
+                      <li style="margin-left: -6px;"> 
+                         <button style="font-size: 13px;padding: 4px;min-width: 100px;"
+                          class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_wpp_lead_summary' %}"'>Lead Status</button>
+                      </li>
+                     </ul>
+                     {% else %}
+                    <ul class="nav navbar-nav main-nav">
+                      <li style="margin-left: -6px;"> 
+                         <button style="font-size: 13px;padding: 4px;min-width: 100px;" 
+                         class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.get_lead_summary' %}"'>Lead Status</button>
+                      </li>
+                     </ul>
+                    {% endif %}
+                  </div>
+
+              <!-- /.navbar-collapse -->
+                  <ul class="nav navbar-nav live-transfer" >
+                    <li style="margin-left: -26px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                      <img src="" id="loc_img">
+                      <i class="fa fa-angle-down"></i></a>
+                      <ul class="dropdown-menu" role="menu" id="loc_list">
+                      </ul>
+                    </li>
+                    <li class="live-transfer-number" style="margin-left: -9px;font-size: 13px;margin-top: 5px;"><i class="fa fa-phone"></i><span class="location_number">8669997725</span></li>
+                  </ul>
+              {% endif %}
+        {% endif %}
+
+
+
+
+
         <ul class="nav navbar-nav navbar-right">
           <li style="margin-left: -15px;" class="submit-lead-btn">
             {% if "wpp" in request.META.HTTP_HOST %}
