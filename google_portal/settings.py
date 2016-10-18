@@ -463,13 +463,16 @@ LEAD_STATUS_SUB_STATUS_MAPPING = {
         "Inactive": ["Inactive"],
     },
     "WPP": {
-
+        
     },
-    "Picasso Audits - Bolt": {
-
-    },
-    "Picasso Audits - Mobile UI/UX": {
-
+    "Picasso Audits": {
+        "In Queue": ["In Queue"],
+        "Case Categorization": ["Case Categorization"],
+        "Design Required": ["Design Required"],
+        "Mocks Ready": ["Mocks Ready"],
+        "Design Rework Required": ["Design Rework Required"],
+        "Delivered": ["Delivered"],
+        "Rework Required": ["Rework Required"]
     },
     "Shopping Argos": {
         "In Queue": ["In Queue"],
@@ -495,6 +498,14 @@ LEAD_STATUS_SUB_STATUS_MAPPING = {
         "Rework Fixed - Inactive": ["Rework Fixed - Inactive"],
         "Inactive": ["Inactive"],
     },
+}
+
+process_type_mapping = {
+    "picasso_audits" : ["Picasso", "BOLT"],
+    "WPP": ["WPP", "WPP - Nomination"],
+    "RLSA": ["RLSA Bulk Implementation"],
+    "Shopping":["Existing Datafeed Optimization", "Google Shopping Setup"],
+    "Shopping Argos":["Project Argos- Feed Performance Optimization"], #Tag is anything other than RLSA and Shopping from leads table
 }
 
 
