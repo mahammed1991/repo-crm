@@ -169,14 +169,16 @@
 
 
 
-        <ul class="nav navbar-nav navbar-right">
+        <ul class="nav navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style="width: 37%;" {% endif %}>
           <li style="margin-left: -15px;" class="submit-lead-btn">
+           {% if "CRM-MANAGER" in  request.session.groups %}
             {% if "wpp" in request.META.HTTP_HOST %}
              <!--  <button class="btn std-btn sm-btn" onclick='location.href=""'>Nominate Advertiser Website</button> -->
               <button style="margin-left:0px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
             {% endif %}
+          {% endif %}
           </li>
           <li class="dropdown notification"> 
           <a {% if "wpp" in request.META.HTTP_HOST %} style="margin-right: 28px;margin-left: -34px;" {% endif %}
