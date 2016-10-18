@@ -202,7 +202,6 @@ class WPPLeads(models.Model):
     is_build_eligible = models.CharField(max_length=10, blank=True, null=True)
 
     # CRM fields
-
     actual_deployment_date = models.DateTimeField(blank=True, null=True)
     actual_mock_review_date = models.DateTimeField(blank=True, null=True)
     actual_stage_review_date = models.DateTimeField(blank=True, null=True)
@@ -216,10 +215,10 @@ class WPPLeads(models.Model):
     conversion_goal = models.TextField(blank=True, null=True)
     dead_lead_date = models.DateTimeField(blank=True, null=True)
     delivery_pod = models.CharField(max_length=50, blank=True, null=True)
-    design_effort = models.FloatField(default=0) # Doubt 1
+    design_effort = models.FloatField(blank=True, null=True) 
     design_owner = models.CharField(max_length=50, blank=True, null=True)
     dev_owner = models.CharField(max_length=50, blank=True, null=True)
-    development_effort = models.FloatField(default=0) # Doubt 2
+    development_effort = models.FloatField(blank=True, null=True) 
     email_mandatory = models.CharField(max_length=80, blank=True, null=True)
     engagement_effort = models.CharField(max_length=80, blank=True, null=True)
     first_name_3 = models.CharField(max_length=50, blank=True, null=True)
@@ -231,7 +230,7 @@ class WPPLeads(models.Model):
     lead_via_live_transfer = models.CharField(max_length=50, blank=True, null=True)
     lead_source = models.CharField(max_length=50, blank=True, null=True)
     advertiser_location = models.CharField(max_length=80, blank=True, null=True)
-    no_of_pages = models.FloatField(default=0) 
+    no_of_pages = models.FloatField(blank=True, null=True) 
     planned_deployment_date = models.DateTimeField(blank=True, null=True)
     planned_stage_review_date = models.DateTimeField(blank=True, null=True)
     priority = models.CharField(max_length=80, blank=True, null=True)
@@ -243,7 +242,7 @@ class WPPLeads(models.Model):
     role_others2 = models.TextField(blank=True, null=True)
     role_others = models.TextField(blank=True, null=True)
     technology = models.CharField(max_length=80, blank=True, null=True)
-    testing_effort = models.FloatField(default=0) 
+    testing_effort = models.FloatField(blank=True, null=True) 
     tracking_codes = models.TextField(blank=True, null=True)
     screenshare_scheduled = models.CharField(max_length=80, blank=True, null=True)
     why_deferred = models.TextField(blank=True, null=True)
@@ -731,7 +730,7 @@ class PicassoLeads(models.Model):
     design_completion_date = models.DateTimeField(blank=True, null=True)
     designer = models.CharField(max_length=50, blank=True, null=True)
     designer_email = models.CharField(max_length=50, blank=True, null=True)
-    desktop_score = models.FloatField(default=0, blank=True)
+    desktop_score = models.FloatField(blank=True, null=True)
     gcases_id = models.CharField(max_length=50, blank=True, null=True)
     gdrive_link = models.CharField(max_length=100, blank=True, null=True)
     googler_cases_alias = models.CharField(max_length=80, blank=True, null=True)
@@ -739,19 +738,19 @@ class PicassoLeads(models.Model):
     invision_link = models.CharField(max_length=80, blank=True, null=True)
     invision_password = models.CharField(max_length=80, blank=True, null=True)
     link_to_mocks_drive_internal = models.CharField(max_length=200, blank=True, null=True)
-    no_of_mocks_delivered = models.FloatField(default=0, blank=True)
-    picasso_lead_age_days = models.FloatField(default=0, blank=True)
+    no_of_mocks_delivered = models.FloatField(blank=True, null=True)
+    picasso_lead_age_days = models.FloatField(blank=True, null=True)
     picasso_lead_source = models.CharField(max_length=80, blank=True, null=True)
     picasso_lead_stage = models.CharField(max_length=80, blank=True, null=True)
     picasso_market_served = models.TextField(blank=True, null=True)
     picasso_program_categorization = models.TextField(blank=True, null=True)
     picasso_reference_id = models.TextField(blank=True, null=True)
     email_p = models.CharField(max_length=80, blank=True, null=True)
-    speed_score = models.FloatField(default=0, blank=True)
+    speed_score = models.FloatField(blank=True, null=True)
     standardised_template_link = models.CharField(max_length=100, blank=True, null=True)
     url_2 = models.CharField(max_length=100, blank=True, null=True)
     url_3 = models.CharField(max_length=100, blank=True, null=True)
-    user_experience_score = models.FloatField(default=0, blank=True)
+    user_experience_score = models.FloatField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Picasso Leads"
