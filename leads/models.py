@@ -224,7 +224,7 @@ class WPPLeads(models.Model):
     first_name_3 = models.CharField(max_length=50, blank=True, null=True)
     google_account_manager = models.CharField(max_length=50, blank=True, null=True)
     invision_links = models.TextField(blank=True, null=True)
-    appointment_time_in_ist = models.DateTimeField(blank=True, null=True) # ist time date
+    appointment_time_in_ist = models.DateTimeField(blank=True, null=True) 
     last_name_3 = models.CharField(max_length=50, blank=True, null=True)
     lead_source_c = models.CharField(max_length=50, blank=True, null=True)
     lead_via_live_transfer = models.CharField(max_length=50, blank=True, null=True)
@@ -235,7 +235,7 @@ class WPPLeads(models.Model):
     planned_stage_review_date = models.DateTimeField(blank=True, null=True)
     priority = models.CharField(max_length=80, blank=True, null=True)
     qa_owner = models.CharField(max_length=80, blank=True, null=True)
-    reschedule_email_schedule_time = models.DateTimeField(blank=True, null=True) # Doubt 3
+    reschedule_email_schedule_time = models.DateTimeField(blank=True, null=True) 
     role_2 = models.TextField(blank=True, null=True)
     role_3 = models.TextField(blank=True, null=True)
     role_others1 = models.TextField(blank=True, null=True)
