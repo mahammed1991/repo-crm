@@ -498,8 +498,8 @@ LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Fixed - Win"] = ["Rewor
 LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
 LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Inactive"] = ["Inactive"]
 
-process_type_mapping = {
-    "picasso_audits" : ["Picasso", "BOLT"],
+PROCESS_TYPE_MAPPING = {
+    "Picasso Audits" : ["Picasso", "BOLT"],
     "WPP": ["WPP", "WPP - Nomination"],
     "RLSA": ["RLSA Bulk Implementation"],
     "Shopping":["Existing Datafeed Optimization", "Google Shopping Setup"],
