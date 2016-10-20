@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!-- <p>Hi,</p>
+<p>A new feedback - <b>{{feedback.title}}</b> has been added.</p>
+<p>Feedback Details are below:</p>
+<p>Feedback By: {{ feedback.user.get_full_name }} ({{ feedback.user.email}})</p>
+<p>Feedback To: {{ feedback.lead_owner.first_name }} {{ feedback.lead_owner.last_name }} ({{ feedback.lead_owner.email }})</p>
+<p>CID: {{ feedback.cid }}</p>
+<p>Name of the Advertiser: {{ feedback.advertiser_name }}</p>
+<p>Feedback Type: {{ feedback.feedback_type }}</p>
+<p>Language: {{ feedback.language }}</p>
+<p>Location: {{ feedback.location.location_name }}</p>
+<p>Description: {{ feedback.description }}</p>
+
+<a href="{{ feedback_url }}">Go To Feedback</a>
+<br /><br />
+<p>Thanks,</p>
+<p>{{signature}}</p> -->
+
+<p style="margin-top: 0px;">Hello,</p>
+
+<p>Please assign following customer feedback to concerned owner(s) for action.</p>
+<div>
+	<span><b>ID</b> - <a href="{{ feedback_url }}">{{ feedback.cid }}</a><br>
+	<b>Title</b> - {{feedback.title}}<br>
+	<b>Feedback Type</b> - {{ feedback.feedback_type }}<br>
+	<b>Description</b> - {{ feedback.description }}<br> </span>
+	<p><a href="{{ feedback_url }}">Click here</a> to assign feedback.</p>
+</div>
+<div>
+	Regards,<br>
+	Portal Team/CX Team
+</div>
+
+</body>
+</html>
