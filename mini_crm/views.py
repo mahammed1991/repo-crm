@@ -6,14 +6,13 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
-
-#import datetime
 import json
 from leads.models import Leads, WPPLeads, PicassoLeads
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
-import pytz 
+import pytz
+from reports.models import Region 
 
 from django.http import Http404
 
@@ -30,6 +29,7 @@ def crm_management(request):
         else:
             offset = limit * on_page - 1 
 
+        regions = Region.objects.all()
         if request.is_ajax():
             process_type = ''
             lead_status =  ''
@@ -130,11 +130,11 @@ def get_leads(leads, leads_list):
         try:
             appointment_date = datetime.strftime(lead['appointment_date'], "%d/%m/%Y %I:%M %P")
         except:
-            appointment_date = ''
+            appointment_date = None
         try:
             phone_optional = lead['phone_optional']
         except:
-            phone_optional = ''
+            phone_optional = None
         
         lead_dict = {'c_id':lead['customer_id'],
                      'company':lead['company'], 
