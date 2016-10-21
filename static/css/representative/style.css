@@ -1,0 +1,93 @@
+/******  Time Zone  *****/
+.time_zone {
+  width: 705px;
+  background: #fff;
+  border-radius: 5px;
+  z-index: 9999;
+  padding-bottom: 15px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: 0;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+.time_zone .title {
+  padding: 10px 0;
+  text-align: center;
+  width: 100%;
+  height: auto;
+  background: #e3e2e2;
+  color: #060707;
+  border-radius: 5px 5px 0 0;
+}
+.time_zone .title .prev {
+  float: left;
+  text-decoration: none;
+  font-size: 12px;
+  padding-left: 10px;
+}
+.time_zone .title .next {
+  float: right;
+  text-decoration: none;
+  font-size: 12px;
+  padding-right: 10px;
+}
+.time_zone .title .close {
+  position: relative;
+  float: right;
+  background: url("/static/images/boxclose.png") no-repeat;
+  width: 30px;
+  height: 30px;
+  margin-right: -85px;
+  margin-top: -22px;
+  cursor: pointer;
+}
+.time_zone table {
+  cellpadding: 0;
+  cellspacing: 0;
+  border: 0;
+}
+.time_zone table tr th .header {
+  /*width: 135px;*/
+  padding: 5px 0;
+  font-size: 14px color :#000000;
+  background: #9a9cff;
+  border-radius: 5px;
+}
+.time_zone table tr td.content_block {
+  font-size: 14px;
+  color: #000000;
+  text-align: center;
+  z-index: 99;
+}
+.time_zone table tr td .time_slot {  
+  position: relative;
+  z-index: 999;
+  /*width: 137px;*/
+  height: 22px !important;
+}
+.time_zone table tr td.content_block .time_slot_avi {
+  background: #96fd92;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 22px;
+}
+.popupbackground {
+  background: #000;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+  display: block;
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+  display: none;
+}
+
+/******  End Time Zone  *****/
