@@ -15,72 +15,11 @@
   <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
 {% endblock main_css %}
-
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Google Portel</title>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
   {% block content %}
   <body>
         
-        
-        <header class="top-nav navbar-fixed-top">
-        	<div class="container-fluid">
-            	<div class="row">
-                	<div class="col-md-2"><a href="#" class="logo"><img src="{% static 'images/tag-logo.png'%}" alt=""></a></div>
-                    <div class="col-md-3">
-                    	<ul class="top-menu">
-                        	<li><a href="#">My Leads</a></li>
-                            <li><a href="#">Reports</a></li>
-                            <li><a href="#">Lead Status</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3">
-                    <div class="search">
-                        <input type="text" placeholder="Search">
-                        <i class="fa fa-search"></i>
-					</div>
-                    </div>
-                    <div class="col-md-4">
-                    	<div class="my-account">
-                        	<ul>
-                            	<li class="notification"><a href="#"><i class="fa fa-bell" aria-hidden="true"></i></a></li>
-                            	<li class="user-area dropdown"> 
-            						<a href="#" type="button" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    	<img src="{% static 'images/profile-img.jpg'%}" alt="">
-             							<span class="user-name">Mark William</span> 
-              							<i class="fa fa-angle-down"></i>
-             						</a>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                        <li><a href="#">Action</a></li>
-                                        <li><a href="#">Another action</a></li>
-                                        <li><a href="#">Something else here</a></li>
-                                        <li role="separator" class="divider"></li>
-                                        <li><a href="#"><i class="fa fa-power-off" aria-hidden="true"></i> Sign Out</a></li>
-                                      </ul>
-         						 </li>
-                                 
-                            </ul>
-                        </div>
-                        
-                    </div>
-            	</div>
-        	</div>
-        </header>
-        
-        <section class="top-margin">
-       		<div class="left-panel first-canvas-nav top-margin">
+        <section class="top-margin" >
+       		<div class="left-panel first-canvas-nav top-margin" style="margin-top: 8%;">
                 <select class="form-control" id='status'>
                   <option>In Queue</option>
                   <option>Rescheduled</option>
@@ -303,13 +242,11 @@
               url: '/crm/lead_history/',
               data: data,
               success: function(response) {
-                      //debugger;
                       if (response.length) {
                         $('.side-menu').html('')
                         ajax_response = response
-                        debugger;
                         for(var i=0;i<response.length;i++){
-                          $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div>Lead one") +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span><span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
+                          $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div>Lead one") +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
                           $('.side-menu li:first a').addClass('active')
                           lead_id_selected = parseInt($('.side-menu li:first').attr('id'))
                           var result = ajax_response.filter(function( obj ) {
@@ -353,13 +290,11 @@
 
     if (result){
       lead_data = result[0]
-      console.log(result[0])
       update_lead_data(lead_data);
     }
   })
 
 $(document).ready(function() {
-  //debugger;
   status = $('#status').val('In Queue')
   call_lead_history()
 });

@@ -4,10 +4,12 @@ from django.conf import settings
 from datetime import datetime, timedelta
 import logging
 from lib.salesforce import SalesforceApi
-from leads.models import Leads, SfdcUsers, WPPLeads, PicassoLeads, Timezone, RegalixTeams, Location, TimezoneMapping, CodeType
+from leads.models import Leads, SfdcUsers, WPPLeads, PicassoLeads, Timezone, RegalixTeams, Location, TimezoneMapping, \
+    CodeType
 from django.core.exceptions import ObjectDoesNotExist
 import pytz
-from representatives.models import GoogeRepresentatives, RegalixRepresentatives, Availability, ScheduleLog, AvailabilityForTAT
+from representatives.models import GoogeRepresentatives, RegalixRepresentatives, Availability, ScheduleLog, \
+    AvailabilityForTAT
 import json
 import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
@@ -22,7 +24,7 @@ from reports.models import Region, LeadsReport
 from main.models import UserDetails, Notification
 from reports.report_services import DownloadLeads
 from lib.salesforce import SalesforceApi
-from django.db.models import Sum, Count 
+from django.db.models import Sum, Count
 from collections import OrderedDict
 
 logging.basicConfig(filename='/tmp/cronjob.log',
@@ -31,10 +33,11 @@ logging.basicConfig(filename='/tmp/cronjob.log',
                     datefmt='%d/%b/%Y %H:%M:%S',
                     level=logging.DEBUG)
 
+
 @kronos.register('*/10 * * * *')
 def get_updated_leads():
     """ Get Current Quarter updated Leads from SFDC """
-    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    end_date = datetime.now(pytz.UTC)  # we need to use UTC as salesforce API requires this
     start_date = end_date - timedelta(days=1)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
@@ -51,10 +54,10 @@ def get_updated_leads():
 
     where_clause_all = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) AND LastModifiedById != '%s' " \
                        "AND Code_Type__c not in ('%s', '%s') order by LastModifiedDate desc " % (
-                        start_date, end_date, tech_team_id, code_type_picasso, code_type_bolt)
+                           start_date, end_date, tech_team_id, code_type_picasso, code_type_bolt)
     where_clause_picasso = "WHERE (LastModifiedDate >= %s AND LastModifiedDate <= %s) " \
                            "AND Code_Type__c = '%s' order by LastModifiedDate desc " % (
-                            start_date, end_date,  code_type_picasso)
+                               start_date, end_date, code_type_picasso)
     where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) " \
                                 "AND Code_Type__c = '%s'  order by LastModifiedDate desc  " % (
                                     start_date, end_date, code_type_bolt)
@@ -81,7 +84,7 @@ def get_updated_leads():
 @kronos.register('43 0 * * *')
 def get_last_day_leads():
     """ Get Previous Day Leads from SFDC """
-    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    end_date = datetime.now(pytz.UTC)  # we need to use UTC as salesforce API requires this
     start_date = end_date - timedelta(days=1)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
     end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
@@ -91,10 +94,13 @@ def get_last_day_leads():
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
     code_type = 'Picasso'
-    code_type_for_Bolt = 'Bolt'
-    where_clause = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c != '%s'" % (start_date, end_date, code_type)
-    where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type)
-    where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (start_date, end_date, code_type_for_Bolt)
+    code_type_for_Bolt = 'BOLT'
+    where_clause = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c != '%s'" % (
+    start_date, end_date, code_type)
+    where_clause_picasso = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (
+    start_date, end_date, code_type)
+    where_clause_picasso_bolt = "WHERE (CreatedDate >= %s AND CreatedDate <= %s) AND Code_Type__c = '%s'" % (
+    start_date, end_date, code_type_for_Bolt)
     sql_query_all = "select %s from Lead %s" % (select_items, where_clause)
     sql_query_picasso = "select %s from Lead %s" % (select_items, where_clause_picasso)
     sql_query_picasso_bolt = "select %s from Lead %s" % (select_items, where_clause_picasso_bolt)
@@ -115,7 +121,7 @@ def get_last_day_leads():
 @kronos.register('1 * * * *')
 def get_reschedule_leads():
     """ Get Current Quarter updated Leads from SFDC """
-    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    end_date = datetime.now(pytz.UTC)  # we need to use UTC as salesforce API requires this
     start_date = end_date - timedelta(minutes=419)
     end_date = end_date + timedelta(days=1)
     start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
@@ -126,7 +132,8 @@ def get_reschedule_leads():
     logging.info("Connect Successfully")
     select_items = settings.SFDC_FIELDS
     tech_team_id = settings.TECH_TEAM_ID
-    where_clause = "WHERE (Rescheduled_Appointments__c >= %s AND Rescheduled_Appointments__c <= %s) AND Rescheduled_Appointments__c != null AND LastModifiedById != '%s'" % (start_date, end_date, tech_team_id)
+    where_clause = "WHERE (Rescheduled_Appointments__c >= %s AND Rescheduled_Appointments__c <= %s) AND Rescheduled_Appointments__c != null AND LastModifiedById != '%s'" % (
+    start_date, end_date, tech_team_id)
     sql_query = "select %s from Lead %s" % (select_items, where_clause)
     try:
         all_leads = sf.query_all(sql_query)
@@ -141,7 +148,7 @@ def get_reschedule_leads():
 @kronos.register('55 0 * * *')
 def get_deleted_leads():
     """ Get Current Quarter updated Leads from SFDC """
-    end_date = datetime.now(pytz.UTC)    # we need to use UTC as salesforce API requires this
+    end_date = datetime.now(pytz.UTC)  # we need to use UTC as salesforce API requires this
     start_date = end_date - timedelta(days=29)
     logging.info("Current Quarted Deleted Leads from %s to %s" % (start_date, end_date))
     logging.info("Connecting to SFDC %s" % (datetime.utcnow()))
@@ -158,34 +165,33 @@ def get_deleted_leads():
             WPPLeads.objects.filter(sf_lead_id__in=ids).delete()
             PicassoLeads.objects.filter(sf_lead_id__in=ids).delete()
             logging.info("Deleted Successfully")
-        # start_date, end_date = get_quarter_date_slots(datetime.utcnow())
-        # start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
-        # end_date = end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
-        # portal_lead_ids = list(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date).values_list(
-        #     'sf_lead_id', flat=True).distinct())
-        # logging.info("No of Portal Leads on Current Quarter %s" % (len(portal_lead_ids)))
-        # start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
-        # end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
-        # where_clause = "WHERE CreatedDate >= %s AND CreatedDate <= %s" % (start_date, end_date)
-        # sql_query = "select Id from Lead %s" % (where_clause)
-        # try:
-        #     all_leads = sf.query_all(sql_query)
-        #     logging.info("No of Lead Ids from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
-        #     sf_lead_ids = [sf_id.get('Id') for sf_id in all_leads['records']]
-        #     logging.info("No of Salesforce Leads on Current Quarter %s" % (len(sf_lead_ids)))
-        #     if len(portal_lead_ids) > len(sf_lead_ids):
-        #         extra_leads = set(portal_lead_ids) - set(sf_lead_ids)
-        #         logging.info("No of Current Quarter leads deleted on portal %s" % (len(extra_leads)))
-        #         Leads.objects.filter(sf_lead_id__in=list(extra_leads)).delete()
-        # except Exception as e:
-        #     print e
-        #     logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
-        #     logging.info("%s" % (e))
+            # start_date, end_date = get_quarter_date_slots(datetime.utcnow())
+            # start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+            # end_date = end_date = datetime(end_date.year, end_date.month, end_date.day, 23, 59, 59)
+            # portal_lead_ids = list(Leads.objects.filter(created_date__gte=start_date, created_date__lte=end_date).values_list(
+            #     'sf_lead_id', flat=True).distinct())
+            # logging.info("No of Portal Leads on Current Quarter %s" % (len(portal_lead_ids)))
+            # start_date = SalesforceApi.convert_date_to_salesforce_format(start_date)
+            # end_date = SalesforceApi.convert_date_to_salesforce_format(end_date)
+            # where_clause = "WHERE CreatedDate >= %s AND CreatedDate <= %s" % (start_date, end_date)
+            # sql_query = "select Id from Lead %s" % (where_clause)
+            # try:
+            #     all_leads = sf.query_all(sql_query)
+            #     logging.info("No of Lead Ids from %s to %s is: %s" % (start_date, end_date, len(all_leads['records'])))
+            #     sf_lead_ids = [sf_id.get('Id') for sf_id in all_leads['records']]
+            #     logging.info("No of Salesforce Leads on Current Quarter %s" % (len(sf_lead_ids)))
+            #     if len(portal_lead_ids) > len(sf_lead_ids):
+            #         extra_leads = set(portal_lead_ids) - set(sf_lead_ids)
+            #         logging.info("No of Current Quarter leads deleted on portal %s" % (len(extra_leads)))
+            #         Leads.objects.filter(sf_lead_id__in=list(extra_leads)).delete()
+            # except Exception as e:
+            #     print e
+            #     logging.info("Fail to get leads from %s to %s" % (start_date, end_date))
+            #     logging.info("%s" % (e))
 
 
 @kronos.register('0 */1 * * 1-5')
 def implemented_leads_count_report():
-
     # Leads based on Region based
     logging.info("Implemeted Leads Count Mail Details")
     specific_date_time = datetime.today()
@@ -193,23 +199,31 @@ def implemented_leads_count_report():
     total_count_tag = list()
     total_count_shopping = list()
     total_count_rlsa = list()
-    final_dict = {'TAG': 0, 'SHOPPING': 0, 'RLSA':0 }
+    final_dict = {'TAG': 0, 'SHOPPING': 0, 'RLSA': 0}
     all_regions = Region.objects.all()
     for region in all_regions:
         each_region_tag = {region.name: 0}
         each_region_shopping = {region.name: 0}
         each_region_rlsa = {region.name: 0}
         location_list = [loc.location_name for loc in region.location.all()]
-        leads_count_tag = Leads.objects.exclude(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_tag = Leads.objects.exclude(
+            type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(
+            country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'],
+            date_of_installation=specific_date).count()
         each_region_tag[region.name] = leads_count_tag
         total_count_tag.append(each_region_tag)
         final_dict['TAG'] = total_count_tag
-        leads_count_shopping = Leads.objects.filter(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_shopping = Leads.objects.filter(
+            type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration'],
+            country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'],
+            date_of_installation=specific_date).count()
         each_region_shopping[region.name] = leads_count_shopping
         total_count_shopping.append(each_region_shopping)
         final_dict['SHOPPING'] = total_count_shopping
 
-        leads_count_rlsa = Leads.objects.filter(type_1__in=['RLSA Bulk Implementation'], country__in=location_list, lead_status__in=['Pending QC - WIN', 'Implemented'], date_of_installation=specific_date).count()
+        leads_count_rlsa = Leads.objects.filter(type_1__in=['RLSA Bulk Implementation'], country__in=location_list,
+                                                lead_status__in=['Pending QC - WIN', 'Implemented'],
+                                                date_of_installation=specific_date).count()
         each_region_rlsa[region.name] = leads_count_rlsa
         total_count_rlsa.append(each_region_rlsa)
         final_dict['RLSA'] = total_count_rlsa
@@ -271,7 +285,7 @@ def create_or_update_leads(records, sf):
         sf_lead_id = rec.get('Id')
         type_1 = rec.get('Code_Type__c')
         # if type_1 == 'WPP':
-        if type_1 in ['WPP', 'WPP - Nomination']:
+        if type_1 in ['WPP', 'WPP - Nomination', 'Bolt Build']:
             total_wpp_leads += 1
             try:
                 lead = WPPLeads.objects.get(sf_lead_id=sf_lead_id)
@@ -292,10 +306,12 @@ def create_or_update_leads(records, sf):
             lead.stage_url = rec.get('Stage_URL__c')
             lead.stage_password = rec.get('Stage_URL_Credentials__c')
             # Storing obectives and pod name in comment5 & url5 fields
-            lead.comment_5 = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
+            lead.comment_5 = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get(
+                'Picasso_Objective__c') else ''
             lead.url_5 = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
             if type_1 == 'WPP':
-                lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
+                lead.treatment_type = rec.get('Treatment_Type__c') if rec.get(
+                    'Treatment_Type__c') else 'Full Desktop/Mobile Optimization'
             else:
                 lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else 'NA'
             lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
@@ -444,7 +460,8 @@ def create_or_update_leads(records, sf):
 
         # Rescheduled Appointments in IST
         rescheduled_appointment_in_ist = rec.get('Reschedule_IST__c')
-        rescheduled_appointment_in_ist = SalesforceApi.salesforce_date_to_datetime_format(rescheduled_appointment_in_ist)
+        rescheduled_appointment_in_ist = SalesforceApi.salesforce_date_to_datetime_format(
+            rescheduled_appointment_in_ist)
         lead.rescheduled_appointment_in_ist = rescheduled_appointment_in_ist
 
         time_zone = rec.get('Time_Zone__c') if rec.get('Time_Zone__c') else ''
@@ -479,7 +496,7 @@ def create_or_update_leads(records, sf):
                 tat = ReportService.get_tat_by_implemented(
                     lead.date_of_installation, lead.appointment_date, lead.created_date)
         else:
-            if lead.type_1 in ['WPP', 'WPP - Nomination']:
+            if lead.type_1 in ['WPP', 'WPP - Nomination', 'Bolt Build']:
                 tat = ReportService.get_tat_by_implemented(
                     lead.date_of_installation, lead.appointment_date, lead.created_date)
             else:
@@ -586,7 +603,8 @@ def create_sfdc_user(details):
 def update_sfdc_leads(records, sf):
     """ Update Appointment and Rescheduled Appointment IN IST Time """
     sf.headers.update({"Sforce-Auto-Assign": 'FALSE'})
-    logging.info("Updating Leads count on SFDC - %s: %s" % (datetime.strftime(datetime.now(), '%d/%b/%Y'), len(records)))
+    logging.info(
+        "Updating Leads count on SFDC - %s: %s" % (datetime.strftime(datetime.now(), '%d/%b/%Y'), len(records)))
     for lead in records:
         location = lead.get('Location__c')
         time_zone = lead.get('Time_Zone__c')
@@ -743,7 +761,8 @@ def create_or_update_picasso_leads(records, sf):
         lead.additional_notes = rec.get('Additional_Notes_if_any__c') if rec.get('Additional_Notes_if_any__c') else ''
         lead.ref_uuid = rec.get('Picasso_Reference_Id__c') if rec.get('Picasso_Reference_Id__c') else ''
         lead.crop_email = rec.get('Googler_Corporate_Email__c') if rec.get('Googler_Corporate_Email__c') else ''
-        lead.my_advitiser_email = rec.get('Picasso_Advertiser_Email__c') if rec.get('Picasso_Advertiser_Email__c') else ''
+        lead.my_advitiser_email = rec.get('Picasso_Advertiser_Email__c') if rec.get(
+            'Picasso_Advertiser_Email__c') else ''
         lead.my_cases_alias = rec.get('Googler_Cases_Alias__c') if rec.get('Googler_Cases_Alias__c') else ''
         lead.market_selector = rec.get('Picasso_Market_Served__c') if rec.get('Picasso_Market_Served__c') else ''
         lead.language_selector = rec.get('Language_Selector__c') if rec.get('Language_Selector__c') else ''
@@ -751,7 +770,8 @@ def create_or_update_picasso_leads(records, sf):
 
         lead.team = team
         lead.sf_lead_id = sf_lead_id
-        lead.picasso_objective = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
+        lead.picasso_objective = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get(
+            'Picasso_Objective__c') else ''
         # lead.picasso_multiple_objectives = (rec.get('Picasso_Objective__c')).replace(';', ',') if rec.get('Picasso_Objective__c') else ''
         lead.pod_name = rec.get('POD_Name__c') if rec.get('POD_Name__c') else ''
         lead.treatment_type = rec.get('Treatment_Type__c') if rec.get('Treatment_Type__c') else ''
@@ -843,7 +863,6 @@ def create_or_update_picasso_leads(records, sf):
 
 
 def update_leads_reports(lead):
-
     """ Create a new leads or update existing lead to generate reports """
     try:
         report_lead = LeadsReport.objects.get(sf_lead_id=lead.sf_lead_id)
@@ -859,12 +878,12 @@ def update_leads_reports(lead):
     report_lead.location = lead.country
     report_lead.tat = lead.tat
     report_lead.sf_lead_id = lead.sf_lead_id
-    if lead.type_1 not in ['WPP', 'WPP - Nomination']:
+    if lead.type_1 not in ['WPP', 'WPP - Nomination', 'Bolt Build']:
         report_lead.language = lead.language
     else:
         report_lead.language = ''
     report_lead.date_of_installation = lead.date_of_installation
-    if lead.type_1 not in ['WPP', 'WPP - Nomination']:
+    if lead.type_1 not in ['WPP', 'WPP - Nomination', 'Bolt Build']:
         if lead.type_1 in settings.CODE_TYPE_MAPPING:
             report_lead.code_type = settings.CODE_TYPE_MAPPING[lead.type_1]
         else:
@@ -885,77 +904,87 @@ def update_leads_reports(lead):
         logging.error("Exception: %s" % (e))
 
 
-#+++++++++++ exclude overlapping regons +++++++++++++++++++
-def available_counts_booked_specific(process_type , date=None, overall=None):
+# +++++++++++ exclude overlapping regons +++++++++++++++++++
+def available_counts_booked_specific(process_type, date=None, overall=None):
     """ taking values from today 2AM to previous 3AM exclude_north_america"""
     if date:
         today_morning = date  # date value for daily cron job email triggering,Utilization report downloading
     else:
-        today_morning = datetime.today() # date value comming from reports views page
-    
+        today_morning = datetime.today()  # date value comming from reports views page
+
     today = today_morning.replace(hour=2, minute=00, second=00)
-    
+
     previous_day_time = today_morning - timedelta(days=1)
     previous_day = previous_day_time.replace(hour=3, minute=00, second=00)
-    
+
     time_zone = 'IST'
-    
-    exclude_north_america = ['default team', 'TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
+
+    exclude_north_america = ['default team', 'TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese',
+                             'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish',
+                             'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
     selected_tzone = Timezone.objects.get(zone_name=time_zone)
     from_utc_date = SalesforceApi.get_utc_date(previous_day, selected_tzone.time_value)
     to_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
-    
+
     default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True)
     default_teams = default_teams.exclude(team_name__in=exclude_north_america)
     available_counts_teams = default_teams.values('team_name')
 
-    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team').filter(
+        team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(
+        Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    # available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[previous_day, today]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+
     for item in available_counts_teams:
         item['Availability Count'] = 0
         item['Ratio'] = 0
         item['Booked Count'] = 0
-    
+
     for item in available_counts_booked:
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
                 item2['Availability Count'] = item['Availability_count']
                 item2['Booked Count'] = item['booked_count']
-   
+
     if overall:
         available_counts_teams = without_appointment_lead_fetching(process_type, available_counts_teams)
         return available_counts_teams
 
     return available_counts_teams
 
+
 # +++++++++++++++++ include overlapping regions ++++++++++++++++++++++
-def available_counts_booked_specific_in_na(process_type , date=None, overall=None):
+def available_counts_booked_specific_in_na(process_type, date=None, overall=None):
     """ previous day 4.30PM to today 7.30AM only for north america   """
     if date:
-        date_for_north_america = date # date value comming from reports views page, Utilization report downloading
+        date_for_north_america = date  # date value comming from reports views page, Utilization report downloading
     else:
-        date_for_north_america = datetime.today() #date value for daily cron job email triggering
+        date_for_north_america = datetime.today()  # date value for daily cron job email triggering
 
     today_morning = date_for_north_america - timedelta(days=1)
     today = today_morning.replace(hour=16, minute=30, second=00)
-    
+
     next_day_time = today_morning + timedelta(days=1)
     next_day = next_day_time.replace(hour=7, minute=30, second=00)
-    
+
     time_zone = 'IST'
-    
+
     selected_tzone = Timezone.objects.get(zone_name=time_zone)
     from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
     to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
-    only_north_america = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
-    
-    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True, team_name__in=only_north_america).exclude(team_name='default team' )
+    only_north_america = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish',
+                          'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese',
+                          'SHOPPING - NA - English']
+
+    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True,
+                                                team_name__in=only_north_america).exclude(team_name='default team')
     available_counts_teams = default_teams.values('team_name')
-   
-    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    #available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[today, next_day]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    
+
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team').filter(
+        team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(
+        Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+    # available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[today, next_day]).values('team__team_name').annotate(Availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+
     for item in available_counts_teams:
         item['Availability Count'] = 0
         item['Ratio'] = 0
@@ -966,12 +995,13 @@ def available_counts_booked_specific_in_na(process_type , date=None, overall=Non
             if item2['team_name'] == item['team__team_name']:
                 item2['Availability Count'] = item['Availability_count']
                 item2['Booked Count'] = item['booked_count']
-    
-    if overall: 
+
+    if overall:
         available_counts_teams = without_appointment_lead_fetching(process_type, available_counts_teams)
         return available_counts_teams
 
     return available_counts_teams
+
 
 @kronos.register('0 4 * * 2-6')
 def slots_open_booked():
@@ -997,18 +1027,18 @@ def slots_open_booked():
 
     tag_final = list()
     for ordering in tag_all:
-        keyorder = {k:v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
-        each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+        keyorder = {k: v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        each_one = OrderedDict(sorted(ordering.items(), key=lambda i: keyorder.get(i[0])))
         tag_final.append(each_one)
 
     for ele in tag_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
+            value = ((float(ele['Booked Count']) / ele['Availability Count']) * 100)
             if value < 80.00:
-                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['Ratio'] = ("%.2f" % value + "%")
                 ele['greater'] = True
             else:
-                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['Ratio'] = ("%.2f" % value + "%")
         else:
             if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
                 ele['Ratio'] = "-"
@@ -1018,18 +1048,18 @@ def slots_open_booked():
 
     shopping_final = list()
     for ordering in shopping_all:
-        keyorder = {k:v for v, k in enumerate(['greater','team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
-        each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+        keyorder = {k: v for v, k in enumerate(['greater', 'team_name', 'Availability Count', 'Booked Count', 'Ratio'])}
+        each_one = OrderedDict(sorted(ordering.items(), key=lambda i: keyorder.get(i[0])))
         shopping_final.append(each_one)
 
     for ele in shopping_final:
         if (ele['Booked Count'] > 0 and ele['Availability Count'] > 0):
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100) 
+            value = ((float(ele['Booked Count']) / ele['Availability Count']) * 100)
             if value < 80.00:
-                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['Ratio'] = ("%.2f" % value + "%")
                 ele['greater'] = True
             else:
-                ele['Ratio'] = ("%.2f"%value +"%" )
+                ele['Ratio'] = ("%.2f" % value + "%")
         else:
             if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
                 ele['Ratio'] = "-"
@@ -1038,41 +1068,44 @@ def slots_open_booked():
                 ele['greater'] = True
 
     tag_total_sum = dict()
-    tag_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in tag_all)
+    tag_total_sum['Availability_count'] = sum(item['Availability Count'] for item in tag_all)
     tag_total_sum['Booked Count'] = sum(item['Booked Count'] for item in tag_all)
     if tag_total_sum['Booked Count'] > 0 and tag_total_sum['Availability_count'] > 0:
-        limiting_the_float = ((float(tag_total_sum['Booked Count'])/tag_total_sum['Availability_count'])*100) 
-        tag_total_sum['Total ratio'] = ("%.2f" %limiting_the_float +"%" )
+        limiting_the_float = ((float(tag_total_sum['Booked Count']) / tag_total_sum['Availability_count']) * 100)
+        tag_total_sum['Total ratio'] = ("%.2f" % limiting_the_float + "%")
     else:
         tag_total_sum['Total ratio'] = '-'
 
     tag_total_sum_sorted = sorted(tag_total_sum.items())
-    
+
     shopping_total_sum = dict()
-    shopping_total_sum['Availability_count'] =  sum(item['Availability Count'] for item in shopping_all)
+    shopping_total_sum['Availability_count'] = sum(item['Availability Count'] for item in shopping_all)
     shopping_total_sum['Booked Count'] = sum(item['Booked Count'] for item in shopping_all)
     if shopping_total_sum['Booked Count'] > 0 and shopping_total_sum['Availability_count'] > 0:
-        limiting_the_float = ((float(shopping_total_sum['Booked Count'])/shopping_total_sum['Availability_count'])*100)
-        shopping_total_sum['Total ratio'] = ("%.2f" %limiting_the_float +"%" )
+        limiting_the_float = (
+        (float(shopping_total_sum['Booked Count']) / shopping_total_sum['Availability_count']) * 100)
+        shopping_total_sum['Total ratio'] = ("%.2f" % limiting_the_float + "%")
     else:
-        shopping_total_sum['Total ratio'] = '-' 
+        shopping_total_sum['Total ratio'] = '-'
 
     shopping_total_sum_sorted = sorted(shopping_total_sum.items())
 
     tag_final.sort()
     shopping_final.sort()
 
-    all_bookings = zip(tag_final,shopping_final)
+    all_bookings = zip(tag_final, shopping_final)
 
     # mailing functionaliteis
     specific_date = datetime.today() - timedelta(days=1)
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
-    #specific_date_time = datetime.today()
-    #specific_time = datetime.strftime(specific_date_time, '%H:%M:%S')
+    # specific_date_time = datetime.today()
+    # specific_time = datetime.strftime(specific_date_time, '%H:%M:%S')
     logging.info("UTILIZATION DASHBOARD MAILING FUNCTION")
     mail_subject = "[TAG & SHOPPING] SLOT UTILIZATION DASHBOARD-%s" % (specific_date)
-    mail_body = get_template('reports/email_templates/slots_detail.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
+    mail_body = get_template('reports/email_templates/slots_detail.html').render(Context(
+        {'tag': tag_final, 'shopp': shopping_final, 'tag_total_sum_sorted': tag_total_sum_sorted,
+         'shopping_total_sum_sorted': shopping_total_sum_sorted, 'mail_trigerring_date': specific_date}))
     mail_from = 'Google Slots Utilized <google@regalix-inc.com>'
     mail_to = ['portalsupport@regalix-inc.com']
     bcc = set([])
@@ -1080,76 +1113,36 @@ def slots_open_booked():
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
 
-
 def available_counts_booked_not_na(present_day, process_type):
-    """ 
-    Normally it is taking values from today 2AM to previous day 3AM 
+    """
+    Normally it is taking values from today 2AM to previous day 3AM
     exclude overlapping regions such as north america but in this
     function  we are fetching data from future slots so tomorrow 2AM to present day 3AM
     """
     today_morning = present_day
     today = today_morning.replace(hour=3, minute=00, second=00)
-    
+
     next_day_time = today_morning + timedelta(days=1)
     next_day = next_day_time.replace(hour=2, minute=00, second=00)
-    
+
     time_zone = 'IST'
-    
-    exclude_north_america = ['default team', 'TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
+
+    exclude_north_america = ['default team', 'TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese',
+                             'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish',
+                             'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
     selected_tzone = Timezone.objects.get(zone_name=time_zone)
     to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
     from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
-    
+
     default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True)
 
     default_teams = default_teams.exclude(team_name__in=exclude_north_america)
     available_counts_teams = default_teams.values('team_name')
-    
-    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-    
-    max_utilized_regions = dict()
 
-    for item in available_counts_booked:
-        item['date'] = present_day.date() 
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team').filter(
+        team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(
+        availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
 
-    for item in available_counts_booked:
-        for item2 in available_counts_teams:
-            if item2['team_name'] == item['team__team_name']:
-                if item['booked_count'] > 0 and item['availability_count'] > 0:
-                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 95:
-                        max_utilized_regions['date'] = item['date']
-                        max_utilized_regions['team name'] = item['team__team_name']
-                        max_utilized_regions['total availability count'] = item['availability_count']
-                        max_utilized_regions['total booked count'] = item['booked_count']
-                        # max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
-                        max_utilized_regions['utilized ratio'] = ("%.2f" %((float(item['booked_count']) / (item['availability_count']) )*100) +" %" )
-    return max_utilized_regions
-
-
-def available_counts_booked_in_na(present_day, process_type):
-    """ 
-    Normally previous day 4.30PM to today 7.30AM only for North America,  in this 
-    function We are fetching from future so today 4.30PM to tomorrow 7.30AM only for NA
-    """
-    
-    today_morning = present_day
-    today = today_morning.replace(hour=16, minute=30, second=00)
-    
-    next_day_time = today_morning + timedelta(days=1)
-    next_day = next_day_time.replace(hour=7, minute=30, second=00)
-    
-    time_zone = 'IST'
-    
-    selected_tzone = Timezone.objects.get(zone_name=time_zone)
-    from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
-    to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
-    only_north_america = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
-    
-    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True, team_name__in=only_north_america).exclude(team_name='default team' )
-    available_counts_teams = default_teams.values('team_name')
-   
-    available_counts_booked = Availability.objects.exclude(team__team_name='default team' ).filter(team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
-  
     max_utilized_regions = dict()
 
     for item in available_counts_booked:
@@ -1159,13 +1152,63 @@ def available_counts_booked_in_na(present_day, process_type):
         for item2 in available_counts_teams:
             if item2['team_name'] == item['team__team_name']:
                 if item['booked_count'] > 0 and item['availability_count'] > 0:
-                    if ( ( (float(item['booked_count']) / (item['availability_count']) )*100)) >= 95:
+                    if (((float(item['booked_count']) / (item['availability_count'])) * 100)) >= 95:
                         max_utilized_regions['date'] = item['date']
                         max_utilized_regions['team name'] = item['team__team_name']
                         max_utilized_regions['total availability count'] = item['availability_count']
                         max_utilized_regions['total booked count'] = item['booked_count']
-                        #max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
-                        max_utilized_regions['utilized ratio'] = ("%.2f" %((float(item['booked_count']) / (item['availability_count']) )*100) +" %" )
+                        # max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                        max_utilized_regions['utilized ratio'] = (
+                        "%.2f" % ((float(item['booked_count']) / (item['availability_count'])) * 100) + " %")
+    return max_utilized_regions
+
+
+def available_counts_booked_in_na(present_day, process_type):
+    """
+    Normally previous day 4.30PM to today 7.30AM only for North America,  in this
+    function We are fetching from future so today 4.30PM to tomorrow 7.30AM only for NA
+    """
+
+    today_morning = present_day
+    today = today_morning.replace(hour=16, minute=30, second=00)
+
+    next_day_time = today_morning + timedelta(days=1)
+    next_day = next_day_time.replace(hour=7, minute=30, second=00)
+
+    time_zone = 'IST'
+
+    selected_tzone = Timezone.objects.get(zone_name=time_zone)
+    from_utc_date = SalesforceApi.get_utc_date(today, selected_tzone.time_value)
+    to_utc_date = SalesforceApi.get_utc_date(next_day, selected_tzone.time_value)
+    only_north_america = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish',
+                          'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese',
+                          'SHOPPING - NA - English']
+
+    default_teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True,
+                                                team_name__in=only_north_america).exclude(team_name='default team')
+    available_counts_teams = default_teams.values('team_name')
+
+    available_counts_booked = Availability.objects.exclude(team__team_name='default team').filter(
+        team__in=default_teams, date_in_utc__range=[from_utc_date, to_utc_date]).values('team__team_name').annotate(
+        availability_count=Sum('availability_count'), booked_count=Sum('booked_count'))
+
+    max_utilized_regions = dict()
+
+    for item in available_counts_booked:
+        item['date'] = present_day.date()
+
+    for item in available_counts_booked:
+        for item2 in available_counts_teams:
+            if item2['team_name'] == item['team__team_name']:
+                if item['booked_count'] > 0 and item['availability_count'] > 0:
+                    if (((float(item['booked_count']) / (item['availability_count'])) * 100)) >= 95:
+                        max_utilized_regions['date'] = item['date']
+                        max_utilized_regions['team name'] = item['team__team_name']
+                        max_utilized_regions['total availability count'] = item['availability_count']
+                        max_utilized_regions['total booked count'] = item['booked_count']
+                        # max_utilized_regions['utilized ratio'] = ((float(item['booked_count']) / (item['availability_count']) )*100)
+                        max_utilized_regions['utilized ratio'] = (
+                        "%.2f" % ((float(item['booked_count']) / (item['availability_count'])) * 100) + " %")
     return max_utilized_regions
 
 
@@ -1177,13 +1220,13 @@ def fetching_future_utilized_slots():
     count = 0
     tag_all = list()
     shopping_all = list()
-  
+
     if (datetime.today().weekday() < 5):
         present_day = datetime.today()
         while (count < 5):
-            tag_bookings_exclude_na = available_counts_booked_not_na( present_day,process_type=['TAG'])
+            tag_bookings_exclude_na = available_counts_booked_not_na(present_day, process_type=['TAG'])
             shopping_bookings_exclude_na = available_counts_booked_not_na(present_day, ['SHOPPING'])
-            tag_bookings_in_na = available_counts_booked_in_na( present_day,process_type=['TAG'])
+            tag_bookings_in_na = available_counts_booked_in_na(present_day, process_type=['TAG'])
             shopping_bookings_in_na = available_counts_booked_in_na(present_day, ['SHOPPING'])
             present_day = datetime.today() + timedelta(days=(count + 1))
             count = count + 1
@@ -1195,21 +1238,23 @@ def fetching_future_utilized_slots():
 
         tag_final = list()
         for ordering in tag_all:
-            keyorder = {k:v for v, k in enumerate(['team name', 'total availability count', 'total booked count', 'utilized ratio', 'date'])}
-            each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+            keyorder = {k: v for v, k in enumerate(
+                ['team name', 'total availability count', 'total booked count', 'utilized ratio', 'date'])}
+            each_one = OrderedDict(sorted(ordering.items(), key=lambda i: keyorder.get(i[0])))
             if each_one:
                 tag_final.append(each_one)
 
         shopping_final = list()
         for ordering in shopping_all:
-            keyorder = {k:v for v, k in enumerate(['team name', 'total availability count', 'total booked count', 'utilized ratio', 'date'])}
-            each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+            keyorder = {k: v for v, k in enumerate(
+                ['team name', 'total availability count', 'total booked count', 'utilized ratio', 'date'])}
+            each_one = OrderedDict(sorted(ordering.items(), key=lambda i: keyorder.get(i[0])))
             if each_one:
                 shopping_final.append(each_one)
 
     logging.info("future slot utilization data fetching")
     mail_subject = "ALERT - SLOT UTILIZATION NEARING 100% :"
-    mail_body = get_template('reports/email_templates/future_slot_details.html').\
+    mail_body = get_template('reports/email_templates/future_slot_details.html'). \
         render(Context({'tag': tag_final, 'shopp': shopping_final}))
     mail_from = 'Google Slots Utilization <google@regalix-inc.com>'
     mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com', 'rwieker@google.com', 'sabinaa@google.com']
@@ -1223,7 +1268,7 @@ def fetching_future_utilized_slots():
 def slots_open_booked_overall():
     tag_bookings_exclude_na = available_counts_booked_specific(['TAG'], date=None, overall=True)
     shopping_bookings_exclude_na = available_counts_booked_specific(['SHOPPING'], date=None, overall=True)
-    tag_bookings_in_na = available_counts_booked_specific_in_na(['TAG'], date=None, overall = True)
+    tag_bookings_in_na = available_counts_booked_specific_in_na(['TAG'], date=None, overall=True)
     shopping_bookings_in_na = available_counts_booked_specific_in_na(['SHOPPING'], date=None, overall=True)
 
     tag_all = list()
@@ -1241,35 +1286,40 @@ def slots_open_booked_overall():
     tag_total_sum_sorted = sorted(tag_total_sum.items())
     shopping_total_sum = total_sum_calculater(shopping_all)
     shopping_total_sum_sorted = sorted(shopping_total_sum.items())
-    
+
     # mailing functionaliteis
     specific_date = datetime.today() - timedelta(days=1)
     specific_date = datetime(specific_date.year, specific_date.month, specific_date.day)
     specific_date = specific_date.date()
     logging.info("OVERALL UTILIZATION DASHBOARD MAILING FUNCTION")
     mail_subject = "OVERALL [TAG & SHOPPING] UTILIZATION DASHBOARD-%s" % (specific_date)
-    mail_body = get_template('reports/email_templates/slot_detail_overall.html').render(Context({'tag':tag_final,'shopp':shopping_final,'tag_total_sum_sorted':tag_total_sum_sorted, 'shopping_total_sum_sorted':shopping_total_sum_sorted, 'mail_trigerring_date':specific_date }))
+    mail_body = get_template('reports/email_templates/slot_detail_overall.html').render(Context(
+        {'tag': tag_final, 'shopp': shopping_final, 'tag_total_sum_sorted': tag_total_sum_sorted,
+         'shopping_total_sum_sorted': shopping_total_sum_sorted, 'mail_trigerring_date': specific_date}))
     mail_from = 'Google Overall Utilized <google@regalix-inc.com>'
     mail_to = ['portalsupport@regalix-inc.com', 'g-crew@regalix-inc.com']
     bcc = set([])
     attachments = list()
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
+
 def ratio_calculator(data_all):
     result_final = list()
     for ordering in data_all:
-        keyorder = {k:v for v, k in enumerate(['team_name', 'Availability Count', 'Booked Count','Ratio', 'lead_w_o_appoinment'])}
-        each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+        keyorder = {k: v for v, k in
+                    enumerate(['team_name', 'Availability Count', 'Booked Count', 'Ratio', 'lead_w_o_appoinment'])}
+        each_one = OrderedDict(sorted(ordering.items(), key=lambda i: keyorder.get(i[0])))
         result_final.append(each_one)
 
     for ele in result_final:
 
-        if ( ele['Availability Count'] > 0):
-            value = ((float(ele['Booked Count'])/ele['Availability Count'])*100)
-            ele['Ratio'] = ("%.f"%value +" %" )
+        if (ele['Availability Count'] > 0):
+            value = ((float(ele['Booked Count']) / ele['Availability Count']) * 100)
+            ele['Ratio'] = ("%.f" % value + " %")
             sum_booked_and_leads_w_o_appointment = int(ele['Booked Count']) + int(ele['lead_w_o_appoinment'])
-            limiting_the_float_ovarall = ((float(ele['Booked Count'] + ele['lead_w_o_appoinment'] )/ele['Availability Count'])*100) 
-            ele['Total all ratio'] = int("%.f" %limiting_the_float_ovarall)
+            limiting_the_float_ovarall = (
+            (float(ele['Booked Count'] + ele['lead_w_o_appoinment']) / ele['Availability Count']) * 100)
+            ele['Total all ratio'] = int("%.f" % limiting_the_float_ovarall)
         else:
             if (ele['Booked Count'] == 0 and ele['Availability Count'] == 0):
                 ele['Ratio'] = "-"
@@ -1277,25 +1327,27 @@ def ratio_calculator(data_all):
 
     return result_final
 
+
 def total_sum_calculater(data_to_sum):
     total_sum = dict()
-    total_sum['Availability_count'] =  sum(item['Availability Count'] for item in data_to_sum)
+    total_sum['Availability_count'] = sum(item['Availability Count'] for item in data_to_sum)
     total_sum['Booked Count'] = sum(item['Booked Count'] for item in data_to_sum)
     total_sum['Total lead w o appoinment'] = sum(item['lead_w_o_appoinment'] for item in data_to_sum)
-    
-    if  total_sum['Availability_count'] > 0:
-        limiting_the_float = ((float(total_sum['Booked Count'])/total_sum['Availability_count'])*100) 
-        total_sum['Total all ratio'] = ("%.f" %limiting_the_float +" %" )
-        limiting_the_float_ovarall = ((float(total_sum['Booked Count'] + total_sum['Total lead w o appoinment'] )/total_sum['Availability_count'])*100) 
-        total_sum['Total ovreall ratio'] = ("%.f" %limiting_the_float_ovarall +" %" )
+
+    if total_sum['Availability_count'] > 0:
+        limiting_the_float = ((float(total_sum['Booked Count']) / total_sum['Availability_count']) * 100)
+        total_sum['Total all ratio'] = ("%.f" % limiting_the_float + " %")
+        limiting_the_float_ovarall = ((float(total_sum['Booked Count'] + total_sum['Total lead w o appoinment']) /
+                                       total_sum['Availability_count']) * 100)
+        total_sum['Total ovreall ratio'] = ("%.f" % limiting_the_float_ovarall + " %")
     else:
         total_sum['Total all ratio'] = '-'
         total_sum['Total ovreall ratio'] = "-"
 
     return total_sum
 
+
 def without_appointment_lead_fetching(process_type, available_counts_teams):
-        
     time_zone = 'IST'
     selected_tzone = Timezone.objects.get(zone_name=time_zone)
 
@@ -1303,34 +1355,41 @@ def without_appointment_lead_fetching(process_type, available_counts_teams):
     for each_value in available_counts_teams:
         team_names.append(each_value.get('team_name'))
 
-    w_o_appointment_date = datetime.today() - timedelta(days=1) # OS running in UTC time
+    w_o_appointment_date = datetime.today() - timedelta(days=1)  # OS running in UTC time
     from_date_w_o_appointment = w_o_appointment_date.replace(hour=0, minute=00, second=00)
     to_date_w_o_appointment = w_o_appointment_date.replace(hour=23, minute=59, second=00)
     from_date_w_o_appointment_utc = SalesforceApi.get_utc_date(from_date_w_o_appointment, selected_tzone.time_value)
     to_date_w_o_appointment_utc = SalesforceApi.get_utc_date(to_date_w_o_appointment, selected_tzone.time_value)
-    team_and_w_o_leads_list = list() 
+    team_and_w_o_leads_list = list()
 
     for each_team in team_names:
         team_and_w_o_lead_dict = dict()
-        
-        if process_type[0] =='SHOPPING':
-            all_active_teams = RegalixTeams.objects.filter(is_active=True,team_name=each_team, process_type='SHOPPING')
+
+        if process_type[0] == 'SHOPPING':
+            all_active_teams = RegalixTeams.objects.filter(is_active=True, team_name=each_team, process_type='SHOPPING')
             all_active_team_country = all_active_teams.values_list('location__location_name')
-            all_without_appointment_active_country = [ "%s" % data for data in all_active_team_country ]
-            shopping_leads_without_appointmnet = Leads.objects.filter(created_date__range=[from_date_w_o_appointment_utc, to_date_w_o_appointment_utc], \
-                    type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', ], country__in=all_without_appointment_active_country)
-            total_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(appointment_date__isnull=False).count()
-            #print each_team, total_leads_without_appointmnet_count
+            all_without_appointment_active_country = ["%s" % data for data in all_active_team_country]
+            shopping_leads_without_appointmnet = Leads.objects.filter(
+                created_date__range=[from_date_w_o_appointment_utc, to_date_w_o_appointment_utc], \
+                type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', ],
+                country__in=all_without_appointment_active_country)
+            total_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(
+                appointment_date__isnull=False).count()
+            # print each_team, total_leads_without_appointmnet_count
 
         elif process_type[0] == 'TAG':
-            all_active_teams = RegalixTeams.objects.filter(is_active=True,team_name=each_team, process_type='TAG')
+            all_active_teams = RegalixTeams.objects.filter(is_active=True, team_name=each_team, process_type='TAG')
             all_active_team_country = all_active_teams.values_list('location__location_name')
-            all_without_appointment_active_country = [ "%s" % data for data in all_active_team_country ]
-            tag_leads_without_appointment = Leads.objects.filter(created_date__range=[from_date_w_o_appointment_utc, to_date_w_o_appointment_utc] ,country__in=all_without_appointment_active_country )
-            tag_leads_without_appointment = tag_leads_without_appointment.exclude\
-                        (type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])
-            total_leads_without_appointmnet_count = tag_leads_without_appointment.exclude(appointment_date__isnull=False).count()               
-            #print each_team, total_leads_without_appointmnet_count
+            all_without_appointment_active_country = ["%s" % data for data in all_active_team_country]
+            tag_leads_without_appointment = Leads.objects.filter(
+                created_date__range=[from_date_w_o_appointment_utc, to_date_w_o_appointment_utc],
+                country__in=all_without_appointment_active_country)
+            tag_leads_without_appointment = tag_leads_without_appointment.exclude \
+                (type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration',
+                             'RLSA Bulk Implementation'])
+            total_leads_without_appointmnet_count = tag_leads_without_appointment.exclude(
+                appointment_date__isnull=False).count()
+            # print each_team, total_leads_without_appointmnet_count
 
         team_and_w_o_lead_dict['team_name'] = each_team
         team_and_w_o_lead_dict['lead_w_o_appoinment'] = total_leads_without_appointmnet_count
