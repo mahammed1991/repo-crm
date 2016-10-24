@@ -6,5 +6,5 @@ urlpatterns = patterns(
     '',
     url(r'^all-leads/$', views.crm_management),
     url(r'^myleads/$', views.crm_agent),
-    url(r'^lead_history/$',views.lead_history)
+    url(r'^lead-history/$',views.lead_history)
 )

@@ -128,20 +128,13 @@ def crm_management(request):
 
 def get_leads(leads, leads_list):
 	for lead in leads:
-		
-		try:
-			appointment_date = datetime.strftime(lead['appointment_date'], "%d/%m/%Y %I:%M %P")
-		except:
-			appointment_date = None
-		try:
-			phone_optional = lead['phone_optional']
-		except:
-			phone_optional = None
+		appointment_date = datetime.strftime(lead.get('appointment_date'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date') else lead.get('appointment_date') ,
+		phone_optional =  lead.get('phone_optional')
 		
 		lead_dict = {'c_id':lead['customer_id'],
 					 'company':lead['company'], 
 					 'customer_name':lead['first_name'],
-					 'created_date':datetime.strftime(lead['created_date'], "%d/%m/%Y %I:%M %P") if lead['created_date'] else '',  
+					 'created_date':datetime.strftime(lead.get('created_date'), "%d/%m/%Y %I:%M %P") if lead.get('created_date') else lead.get('created_date'),  
 					 'appointment_time': appointment_date,
 					 'phone_number':lead['phone'], 
 					 'additional_phone_number':phone_optional, 
@@ -172,7 +165,7 @@ def crm_agent(request):
 			leads = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment)
 			leads_data = get_json_leads(leads)
 			response_json = leads_data
-			res = HttpResponse(json.dumps(response_json, indent=4), content_type="application/json")
+			res = HttpResponse(json.dumps(response_json), content_type="application/json")
 			return res
 		context ={
 			'lead_status':settings.LEAD_STATUS_SUB_STATUS_MAPPING['TAG'].keys(),
@@ -277,13 +270,10 @@ def lead_history(request):
 				leads = Leads.objects.filter(lead_status=lead_status)
 			else:
 				leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'])
-			print leads.count(),'count'
 			leads_data = get_json_leads(leads)
 			response_json = leads_data
-			res = HttpResponse(json.dumps(response_json, indent=4), content_type="application/json")
-			#print res,'res'
+			res = HttpResponse(json.dumps(response_json), content_type="application/json")
 			return res
-		context = {}
-		return render(request,'crm/lead_and_history.html',context)
+		return render(request,'crm/lead_and_history.html')
 	else:
 		raise Http404		
