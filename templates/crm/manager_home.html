@@ -18,7 +18,7 @@
   {% block content %}
   <body>
     <section class="top-margin wfm">
-      <div class="container-fluid">
+      <div class="container-fluid" style="max-width:100%;">
         <div class="white-section">
           <div class="blue-bg">
 
@@ -211,7 +211,6 @@
       }
     })
     function LeadsDataTable(data){
-        debugger;
         $("#leads_table_body").html('')
         tabledata = data['leads_list']
         if(tabledata.length != 0){
