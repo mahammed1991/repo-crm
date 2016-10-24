@@ -16,6 +16,8 @@ from reports.models import Region
 
 from django.http import Http404
 
+from django.db.models import Q
+
 # Create your views here.
 @login_required
 def crm_management(request):
@@ -242,3 +244,52 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values('customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country')
 
     return leads
+
+
+def datamaker(data):
+    leads_data = list()
+    for each_searched_lead in data:
+		serched_lead = dict()
+		serched_lead['cid'] = each_searched_lead.customer_id
+		serched_lead['code_type'] = each_searched_lead.type_1
+		serched_lead['url'] = each_searched_lead.url_1
+		serched_lead['lead_status'] = each_searched_lead.lead_status
+		leads_data.append(serched_lead)
+    return leads_data
+
+
+@login_required
+def search_leads(request):
+	searching_lead_id = request.GET.get('q')
+	returning_data = list()
+	try:
+		normal_leads = Leads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		if normal_leads:
+			normal_leads_data = datamaker(normal_leads)
+			returning_data = returning_data + normal_leads_data
+	except:
+		pass
+
+	try:
+		picasso_leads = PicassoLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		if picasso_leads:
+			picasso_leads_data = datamaker(picasso_leads)
+			returning_data = returning_data + picasso_leads_data
+	except:
+		pass
+
+	try:
+		wpp_leads = WPPLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		if wpp_leads:
+			wpp_leads_data = datamaker(wpp_leads)
+			returning_data = returning_data + wpp_leads_data
+	except:
+		pass
+
+	final_result = list()
+	for ordering in returning_data:
+		keyorder = {k:v for v, k in enumerate(['cid', 'code_type', 'url', 'lead_status'])}
+		each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+		final_result.append(each_one)
+
+	return render(request,'crm/search_result.html',{'returning_data':final_result, 'resultcount':len(final_result),'q_id':searching_lead_id})

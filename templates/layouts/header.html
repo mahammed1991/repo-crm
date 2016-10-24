@@ -1,20 +1,11 @@
 {% load static %}
 {% block main_css %}
 <style type="text/css">
-  .inner-addon {
-  position: relative;
-}
-.inner-addon .glyphicon {
-  position: absolute;
-  padding: 10px;
-  pointer-events: none;
-}
-.right-addon .glyphicon { right: 0px;}
-.right-addon input { padding-right: 30px; }
 
 .main-nav {width:150% !important;}
 
 .navbar-right{margin-left:-40px !important;}
+
 </style>
 
 {% endblock main_css %}
@@ -98,22 +89,26 @@
           {% if "CRM-MANAGER" in  request.session.groups %}
           
                       <div class="col-md-4">
-                          <div class="inner-addon right-addon">
-                                    <i class="glyphicon glyphicon-search"></i>
-                                    <input type="text" class="form-control" placeholder="Search" />
-                          </div>
-                       </div>
-                    
-                    
+                          <div class="input-group" style="display: flex;">
+                          
+                          <input style="width:65%;height:36px;" type="text" class="form-control" placeholder="Search cid / sf-id" id="search-field" />
+                          <span><button class="btn btn-default" type="button"onclick="searchValidation();" id="search-btn">Search</button></span>
+                        </div>
                         
+                       </div>
+              
                     {% elif "CRM-AGENT" in  request.session.groups %}
                   
-                      <div class="col-md-6">
-                        <div class="inner-addon right-addon">
-                          <i class="glyphicon glyphicon-search"></i>
-                          <input type="text" class="form-control" placeholder="Search" />
+                      <div class="col-md-4">
+                          <div class="input-group" style="display: flex;">
+                          
+                          <input style="width:65%;height:36px;" type="text" class="form-control" placeholder="Search cid /sf-id" id="search-field" />
+                          <span><button class="btn btn-default" type="button"onclick="searchValidation();"  id="search-btn">Search</button></span>
                         </div>
-                      </div>
+                       
+                       </div>
+
+
                   
                     {% else %}
                         {% if "wpp" in request.META.HTTP_HOST %}
@@ -240,6 +235,7 @@
       <!-- /.container-fluid --> 
     </nav>
   </header>
+
   <script type="text/javascript">
     window.user_location = "{{request.session.profile.location.id}}";
     function getRedirectDomain(){
@@ -259,6 +255,32 @@
               }
             });
   }
+
+
+var keypress = document.getElementById("search-field");
+keypress.addEventListener("keydown", function (e) {
+    if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+       searchValidation()
+     
+    }
+});
+
+function searchValidation(){
+      var searchValue = $("#search-field").val().trim();  
+      if(searchValue == ""){
+        $("#search-field").addClass('error-box');
+        
+      }else{
+        $("#search-field").removeClass('error-box');
+         window.location.href='/crm/search-leads/?q='+searchValue;
+      }
+}
+
+window.addEventListener("click", function(evt){
+     if(!((evt.target.id == 'search-field') | (evt.target.id == 'search-btn'))){
+      $('#search-field').removeClass('error-box');
+      }
+});
 
   </script>
 
