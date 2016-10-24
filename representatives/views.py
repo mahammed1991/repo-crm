@@ -112,7 +112,9 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                 try:
                     availability = Availability.objects.get(date_in_utc=utc_date, team=selected_team)
                     if availability.availability_count != data_in_a_day:
-                        updated_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone, availability.availability_count, data_in_a_day)
+                        updated_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone,
+                                                                           availability.availability_count,
+                                                                           data_in_a_day)
                         changed_reords_in_slot.append(updated_slot)
                         desc = availability.availability_count
                         availability.availability_count = data_in_a_day
@@ -132,7 +134,8 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
                         availability.availability_count = data_in_a_day
                         availability.date_in_utc = utc_date
                         availability.team = selected_team
-                        new_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone, 0, data_in_a_day)
+                        new_slot = get_created_or_updated_slot_details(selected_team, utc_date, selected_tzone, 0,
+                                                                       data_in_a_day)
                         changed_reords_in_slot.append(new_slot)
                         availability.save()
 
@@ -158,17 +161,22 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         if not request.user.groups.filter(Q(name='WPP') | Q(name='TAG-AND-WPP')):
             exclude_types.append('WPP')
         teams = RegalixTeams.objects.filter(process_type=process_type, is_active=True).exclude(team_name='default team')
-        process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
+        process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type',
+                                                                                                 flat=True).distinct().order_by()
     else:
         process_types = RegalixTeams.objects.exclude(
-            process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), is_active=True).values_list('process_type', flat=True).distinct().order_by()
+            process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]),
+                                             is_active=True).values_list('process_type',
+                                                                         flat=True).distinct().order_by()
 
         if process_type == 'TAG' and process_type not in process_types:
             if 'SHOPPING' in process_types:
                 process_type = 'SHOPPING'
             else:
                 process_type = 'WPP'
-        teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type=process_type, is_active=True).exclude(team_name='default team').distinct().order_by()
+        teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]),
+                                            process_type=process_type, is_active=True).exclude(
+            team_name='default team').distinct().order_by()
     if not teams:
         # if team is not specified, select first team by default
         return render(
@@ -233,6 +241,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
     # create date from week start day
     plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    plan_date += timedelta(hours=5, minutes=30)
 
     # if week start day is not monday, select appropriate start week day of given date
     if plan_date.weekday():
@@ -278,11 +287,13 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
             if today >= location.daylight_start and today <= location.daylight_end:
                 date_difference = location.daylight_end.date() - today.date()
                 if date_difference.days <= 15:
-                    daylight_marquee_msg += 'Daylight Saving ends on %s for %s::' %(location.daylight_end.strftime("%B %d, %Y"), location.location_name)
+                    daylight_marquee_msg += 'Daylight Saving ends on %s for %s::' % (
+                    location.daylight_end.strftime("%B %d, %Y"), location.location_name)
             if today < location.daylight_start:
                 date_difference = location.daylight_start.date() - today.date()
                 if date_difference.days <= 15:
-                    daylight_marquee_msg += 'Daylight Saving starts on %s for %s::' % (location.daylight_start.strftime("%B %d, %Y"), location.location_name)
+                    daylight_marquee_msg += 'Daylight Saving starts on %s for %s::' % (
+                    location.daylight_start.strftime("%B %d, %Y"), location.location_name)
 
     diff = divmod((utc_date - plan_date).total_seconds(), 60)
     diff_in_minutes = diff[0]
@@ -325,7 +336,7 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
         apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
         key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-            '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
+              '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
         appointments[key]['value'] = int(apptmnt.availability_count)
         appointments[key]['booked'] = int(apptmnt.booked_count)
         total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(int(apptmnt.availability_count))
@@ -357,7 +368,8 @@ def plan_schedule(request, plan_month=0, plan_day=0, plan_year=0, process_type='
 
 
 @login_required
-def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process_type='TAG', location_id=0, time_zone='IST'):
+def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process_type='TAG', location_id=0,
+                      time_zone='IST'):
     # if month is not specified, select current month
     if not int(avail_month):
         today = datetime.today()
@@ -466,8 +478,10 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
     try:
         location = Location.objects.get(id=location_id)
         if location.daylight_start and location.daylight_end:
-            daylight_start = datetime(location.daylight_start.year, location.daylight_start.month, location.daylight_start.day, 0, 0, 0)
-            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day, 0, 0, 0)
+            daylight_start = datetime(location.daylight_start.year, location.daylight_start.month,
+                                      location.daylight_start.day, 0, 0, 0)
+            daylight_end = datetime(location.daylight_end.year, location.daylight_end.month, location.daylight_end.day,
+                                    0, 0, 0)
             daylight_start = SalesforceApi.get_utc_date(daylight_start, tz.time_value)
             daylight_end = SalesforceApi.get_utc_date(daylight_end, tz.time_value)
             std_time_zones_list = TimezoneMapping.objects.values_list('standard_timezone', flat=True).distinct()
@@ -585,7 +599,7 @@ def availability_list(request, avail_month=0, avail_day=0, avail_year=0, process
 
         slot_diff = apptmnt.date_in_utc.minute
         key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-            '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
+              '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute)
         if apptmnt.availability_count > apptmnt.booked_count:
             appointments[key] = int(apptmnt.availability_count - apptmnt.booked_count)
         else:
@@ -701,9 +715,11 @@ def export_appointments(request):
     """ Export Appointments by Availability/Booked """
 
     default_process_type = ['TAG', 'SHOPPING', 'WPP']
-    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type',
+                                                                                       flat=True).distinct().order_by()
     teams = RegalixTeams.objects.filter(process_type__in=process_types).exclude(team_name='default team')
-    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(
+        team_name='default team')
 
     tag_by_team = dict()
     for team in teams:
@@ -816,12 +832,14 @@ def export_appointments(request):
 
             for _date_ele in total_appointments:
                 if _date_ele in total_dict:
-                    total_dict[_date_ele] = "%s|%s" % (str(total_appointments[_date_ele]['booked_count']), str(total_appointments[_date_ele]['availability_count']))
+                    total_dict[_date_ele] = "%s|%s" % (str(total_appointments[_date_ele]['booked_count']),
+                                                       str(total_appointments[_date_ele]['availability_count']))
 
             total_result.extend(result)
             total_result.append(total_dict)
 
-        filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
+        filename = "appointments-%s-to-%s" % (
+        datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
         path = write_appointments_to_csv(total_result, collumn_attr, filename)
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
@@ -830,7 +848,8 @@ def export_appointments(request):
                                                                         'default_teams': default_teams,
                                                                         'process_types': process_types,
                                                                         'default_process_type': default_process_type,
-                                                                        'post_result_dict': json.dumps(post_result_dict),
+                                                                        'post_result_dict': json.dumps(
+                                                                            post_result_dict),
                                                                         'tag_by_team': tag_by_team})
 
 
@@ -839,9 +858,11 @@ def export_appointments_with_schedule_appointments(request):
     """ Export Appointments by Availability/Booked """
 
     default_process_type = ['TAG', 'SHOPPING', 'WPP']
-    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type', flat=True).distinct().order_by()
+    process_types = RegalixTeams.objects.exclude(process_type='MIGRATION').values_list('process_type',
+                                                                                       flat=True).distinct().order_by()
     teams = RegalixTeams.objects.filter(process_type__in=process_types).exclude(team_name='default team')
-    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(
+        team_name='default team')
 
     tag_by_team = dict()
     for team in teams:
@@ -901,16 +922,22 @@ def export_appointments_with_schedule_appointments(request):
                 schedule_data = Leads.objects.exclude(rescheduled_appointment_in_ist=None).filter(
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
                     country__in=rglx_team.location.values_list('location_name'),
-                    type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+                    type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization',
+                                'Google Shopping Migration']).values('rescheduled_appointment_in_ist').annotate(
+                    dcount=Count('rescheduled_appointment_in_ist'))
             elif process_type == 'TAG':
                 schedule_data = Leads.objects.exclude(rescheduled_appointment_in_ist=None)
-                schedule_data = schedule_data.exclude(type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration']).filter(
+                schedule_data = schedule_data.exclude(
+                    type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization',
+                                'Google Shopping Migration']).filter(
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
-                    country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+                    country__in=rglx_team.location.values_list('location_name')).values(
+                    'rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
             else:
                 schedule_data = WPPLeads.objects.exclude(rescheduled_appointment_in_ist=None).filter(
                     rescheduled_appointment_in_ist__range=(from_date, to_date),
-                    country__in=rglx_team.location.values_list('location_name')).values('rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
+                    country__in=rglx_team.location.values_list('location_name')).values(
+                    'rescheduled_appointment_in_ist').annotate(dcount=Count('rescheduled_appointment_in_ist'))
 
             slots_data = Availability.objects.filter(
                 date_in_utc__range=(from_utc_date, to_utc_date),
@@ -945,7 +972,7 @@ def export_appointments_with_schedule_appointments(request):
             total_appointments = dict()
             for data in schedule_data:
                 requested_date = data.get('rescheduled_appointment_in_ist')
-                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' Rescheduled')
+                _date = (datetime.strftime(requested_date, "%d/%m/%Y") + ' Rescheduled')
                 _time = datetime.strftime(requested_date, "%H:%M")
                 booked_count = data.get('dcount')
                 if _date in total_appointments:
@@ -963,7 +990,7 @@ def export_appointments_with_schedule_appointments(request):
                 # time zone conversion
                 requested_date = slot.date_in_utc
                 requested_date -= timedelta(minutes=diff_in_minutes)
-                _date = (datetime.strftime(requested_date, "%d/%m/%Y")+ ' Booked|Opened')
+                _date = (datetime.strftime(requested_date, "%d/%m/%Y") + ' Booked|Opened')
                 _time = datetime.strftime(requested_date, "%H:%M")
                 availability_count = slot.availability_count
                 booked_count = slot.booked_count
@@ -989,7 +1016,8 @@ def export_appointments_with_schedule_appointments(request):
 
             for _date_ele in total_schedule:
                 if _date_ele in total_dict:
-                    total_dict[_date_ele] = "%s|%s" % (str(total_schedule[_date_ele]['booked_count']), str(total_schedule[_date_ele]['availability_count']))
+                    total_dict[_date_ele] = "%s|%s" % (str(total_schedule[_date_ele]['booked_count']),
+                                                       str(total_schedule[_date_ele]['availability_count']))
 
             for _date_ele in total_appointments:
                 if _date_ele in total_dict:
@@ -1012,7 +1040,8 @@ def export_appointments_with_schedule_appointments(request):
             if each_result in total_result:
                 total_result.remove(each_result)
 
-        filename = "appointments-%s-to-%s" % (datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
+        filename = "appointments-%s-to-%s" % (
+        datetime.strftime(from_date, "%d-%m-%Y"), datetime.strftime(to_date, "%d-%m-%Y"))
         path = write_appointments_to_csv(total_result, collumn_attr, filename)
         response = DownloadLeads.get_downloaded_file_response(path)
         return response
@@ -1021,7 +1050,8 @@ def export_appointments_with_schedule_appointments(request):
                                                                                                    'default_teams': default_teams,
                                                                                                    'process_types': process_types,
                                                                                                    'default_process_type': default_process_type,
-                                                                                                   'post_result_dict': json.dumps(post_result_dict),
+                                                                                                   'post_result_dict': json.dumps(
+                                                                                                       post_result_dict),
                                                                                                    'tag_by_team': tag_by_team})
 
 
@@ -1085,13 +1115,19 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
     if request.user.groups.filter(name='OPERATIONS'):
         if not request.user.groups.filter(Q(name='WPP') | Q(name='TAG-AND-WPP')):
             exclude_types.append('WPP')
-        teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team')
-        process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
+        teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(
+            team_name='default team')
+        process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type',
+                                                                                                 flat=True).distinct().order_by()
     else:
         process_types = RegalixTeams.objects.exclude(
-            process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), is_active=True).values_list('process_type', flat=True).distinct().order_by()
+            process_type='MIGRATION').filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]),
+                                             is_active=True).values_list('process_type',
+                                                                         flat=True).distinct().order_by()
 
-        teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]), process_type__in=process_types, is_active=True).exclude(team_name='default team').distinct().order_by()
+        teams = RegalixTeams.objects.filter(Q(team_lead__in=[request.user.id]) | Q(team_manager__in=[request.user.id]),
+                                            process_type__in=process_types, is_active=True).exclude(
+            team_name='default team').distinct().order_by()
     if not teams:
         # if team is not specified, select first team by default
         return render(
@@ -1102,9 +1138,11 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
              }
         )
 
-    teams_dict = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team')
+    teams_dict = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(
+        team_name='default team')
     name_id_dict = {team.id: team.team_name for team in teams_dict}
-    team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team').values('id')
+    team_ids = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(
+        team_name='default team').values('id')
     time_zone = 'IST'
     post_result_dict = {}
     if request.method == 'POST':
@@ -1135,8 +1173,10 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
                 post_result_dict[team.process_type].append(int(team.id))
 
     teams = RegalixTeams.objects.filter(process_type__in=process_type, is_active=True).exclude(team_name='default team')
-    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(team_name='default team')
-    process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type', flat=True).distinct().order_by()
+    default_teams = RegalixTeams.objects.filter(process_type__in=default_process_type, is_active=True).exclude(
+        team_name='default team')
+    process_types = RegalixTeams.objects.exclude(process_type__in=exclude_types).values_list('process_type',
+                                                                                             flat=True).distinct().order_by()
 
     if not int(plan_month):
         # if month is not specified, select current month
@@ -1179,6 +1219,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
 
     # create date from week start day
     plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    plan_date += timedelta(hours=5, minutes=30)
     # if week start day is not monday, select appropriate start week day of given date
     if plan_date.weekday():
         plan_date -= timedelta(days=plan_date.weekday())
@@ -1290,24 +1331,25 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             appointments[odd_key]['team_count'] = dict()
             appointments[odd_key]['team_booked'] = dict()
 
-    north_teams = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English', 'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
+    north_teams = ['TAG - SPLATAM - Spanish', 'TAG - SPLATAM - Portuguese', 'TAG - NA - Spanish', 'TAG - NA - English',
+                   'SHOPPING - SPLATAM - Spanish', 'SHOPPING - SPLATAM - Portuguese', 'SHOPPING - NA - English']
     for apptmnt in appointments_list:
         if name_id_dict[apptmnt.team_id] in north_teams and apptmnt.availability_count:
             apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
             if int(apptmnt.date_in_utc.hour) < 12:
                 apptmnt.date_in_utc -= timedelta(days=1)
                 key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-                    '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'next'
+                      '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'next'
 
             else:
                 key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-                    '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
+                      '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
 
         else:
             apptmnt.date_in_utc -= timedelta(minutes=diff_in_minutes)
 
             key = 'input_' + datetime.strftime(apptmnt.date_in_utc, '%d_%m_%Y') + \
-                '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
+                  '_' + str(apptmnt.date_in_utc.hour) + '_' + str(apptmnt.date_in_utc.minute) + '_' + 'cur'
 
         if key in appointments:
             team_name = str(apptmnt.team.team_name)
@@ -1317,7 +1359,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             appointments[key]['value'] += available_count
             appointments[key]['booked'] += booked_count
             appointments[key]['team_count'].update({team_name: '%s' % (available_count)})
-            
+
             if booked_count != 0L:
                 appointments[key]['team_booked'].update({team_name: '%s' % (booked_count)})
                 # Grouping all team with booked count
@@ -1325,12 +1367,12 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
                 tn_dict = team_names.get(striped_time)
                 if tn_dict:
                     tm_count = tn_dict.get(team_name, None)
-                    if tm_count: 
+                    if tm_count:
                         tn_dict[team_name] = tm_count + booked_count
                     else:
                         tn_dict[team_name] = booked_count
                 else:
-                    team_names[striped_time]={team_name : booked_count}
+                    team_names[striped_time] = {team_name: booked_count}
             total_available[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(available_count)
             total_booked[datetime.strftime(apptmnt.date_in_utc, '%Y_%m_%d')].append(booked_count)
     total_slots = list()
@@ -1340,8 +1382,8 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             team_count = 0
         else:
             team_count = team_names.get(key)
-        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key]), 'team_counts':team_count})
-    
+        total_slots.append({'available': sum(value), 'booked': sum(total_booked[key]), 'team_counts': team_count})
+
     # Without appointment total lead count, code start from here
     plan_dates_without_appointment = {
         'day1': plan_date,
@@ -1352,44 +1394,44 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         'day6': plan_date + timedelta(days=5)
     }
 
-    without_appointmnet_total_list = list() 
+    without_appointmnet_total_list = list()
     rlsa_total_count = list()
     for day_key, date_value in sorted(plan_dates_without_appointment.items()):
 
         from_day = date_value.replace(hour=00, minute=00, second=00)
-        to_date = date_value.replace(hour=23, minute=59, second=59 )
+        to_date = date_value.replace(hour=23, minute=59, second=59)
 
-        time_zone = 'IST'    
+        time_zone = 'IST'
         selected_tzone = Timezone.objects.get(zone_name=time_zone)
         from_day = SalesforceApi.get_utc_date(from_day, selected_tzone.time_value)
         to_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
 
         all_active_teams = RegalixTeams.objects.filter(is_active=True)
         all_active_team_country = all_active_teams.values_list('location__location_name')
-        all_without_appointment_active_country = [ "%s" % data for data in all_active_team_country ]
+        all_without_appointment_active_country = ["%s" % data for data in all_active_team_country]
 
-        total_leads_without_appointmnet = Leads.objects.exclude(appointment_date__isnull=False)\
-         .filter(created_date__range=[from_day, to_date], country__in=all_without_appointment_active_country)
-        total_leads_without_appointmnet_count = total_leads_without_appointmnet.exclude(type_1__in=['RLSA Bulk Implementation']).count()
-        
+        total_leads_without_appointmnet = Leads.objects.exclude(appointment_date__isnull=False) \
+            .filter(created_date__range=[from_day, to_date], country__in=all_without_appointment_active_country)
+        total_leads_without_appointmnet_count = total_leads_without_appointmnet.exclude(
+            type_1__in=['RLSA Bulk Implementation']).count()
+
         try:
-            without_appointmnet_total_list.append({'total':total_leads_without_appointmnet_count})
+            without_appointmnet_total_list.append({'total': total_leads_without_appointmnet_count})
         except:
-            without_appointmnet_total_list.append({'total':'error'})
+            without_appointmnet_total_list.append({'total': 'error'})
 
         # RLSA count without appointment
-        rlsa_total_leads = Leads.objects.\
-         filter(created_date__range=[from_day, to_date], country__in=all_without_appointment_active_country)
+        rlsa_total_leads = Leads.objects. \
+            filter(created_date__range=[from_day, to_date], country__in=all_without_appointment_active_country)
         rlsa_total_leads_count = rlsa_total_leads.filter(type_1__in=['RLSA Bulk Implementation']).count()
-        
-        try:
-            rlsa_total_count.append({'total_rlsa':rlsa_total_leads_count})
-        except:
-            rlsa_total_count.append({'total_rlsa':'error'})
 
+        try:
+            rlsa_total_count.append({'total_rlsa': rlsa_total_leads_count})
+        except:
+            rlsa_total_count.append({'total_rlsa': 'error'})
 
     if request.method == 'POST':
-    
+
         if 'prev_week_start_date' in request.POST:
             team_ids = request.POST.get('prevselectedTeams')
             process_type = request.POST.get('prevselectedProcessType')
@@ -1407,7 +1449,7 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         without_appointmnet_list = list()
         shopping_leads_without_appointmnet_count = 0
         tag_leads_without_appointment_count = 0
-        
+
         tag_total = list()
         shopp_total = list()
         wpp_total = list()
@@ -1415,45 +1457,60 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
             if process == "TAG":
                 for day_key, date_value in sorted(plan_dates_without_appointment.items()):
                     from_day = date_value.replace(hour=00, minute=00, second=00)
-                    to_date = date_value.replace(hour=23, minute=59, second=59 )
+                    to_date = date_value.replace(hour=23, minute=59, second=59)
 
-                    time_zone = 'IST'    
+                    time_zone = 'IST'
                     selected_tzone = Timezone.objects.get(zone_name=time_zone)
                     from_day = SalesforceApi.get_utc_date(from_day, selected_tzone.time_value)
                     to_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
 
-                    without_appointment_selected_teams = RegalixTeams.objects.filter(id__in=team_ids, process_type__in=process_type, is_active=True,)
-                    without_appointment_selected_country = without_appointment_selected_teams.values_list('location__location_name')
-                    without_appointment_selected_country = [ "%s" % data for data in without_appointment_selected_country ]
-                    
-                    tag_leads_without_appointment = Leads.objects.filter(created_date__range=[from_day, to_date] ,country__in=without_appointment_selected_country )
-                    tag_leads_without_appointment = tag_leads_without_appointment.exclude\
-                                (type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', 'Google Shopping Migration', 'RLSA Bulk Implementation'])
-                    tag_leads_without_appointment = tag_leads_without_appointment.exclude(appointment_date__isnull=False)                   
-                    
+                    without_appointment_selected_teams = RegalixTeams.objects.filter(id__in=team_ids,
+                                                                                     process_type__in=process_type,
+                                                                                     is_active=True, )
+                    without_appointment_selected_country = without_appointment_selected_teams.values_list(
+                        'location__location_name')
+                    without_appointment_selected_country = ["%s" % data for data in
+                                                            without_appointment_selected_country]
+
+                    tag_leads_without_appointment = Leads.objects.filter(created_date__range=[from_day, to_date],
+                                                                         country__in=without_appointment_selected_country)
+                    tag_leads_without_appointment = tag_leads_without_appointment.exclude \
+                        (type_1__in=['Google Shopping Setup', 'Project Argos- Feed Performance Optimization',
+                                     'Existing Datafeed Optimization', 'Google Shopping Migration',
+                                     'RLSA Bulk Implementation'])
+                    tag_leads_without_appointment = tag_leads_without_appointment.exclude(
+                        appointment_date__isnull=False)
+
                     tag_leads_without_appointment_count = tag_leads_without_appointment.count()
                     tag_total.append(tag_leads_without_appointment_count)
 
             elif process == "SHOPPING":
                 for day_key, date_value in sorted(plan_dates_without_appointment.items()):
-                    
                     from_day = date_value.replace(hour=00, minute=00, second=00)
-                    to_date = date_value.replace(hour=23, minute=59, second=59 )
+                    to_date = date_value.replace(hour=23, minute=59, second=59)
 
-                    time_zone = 'IST'    
+                    time_zone = 'IST'
                     selected_tzone = Timezone.objects.get(zone_name=time_zone)
                     from_day = SalesforceApi.get_utc_date(from_day, selected_tzone.time_value)
                     to_date = SalesforceApi.get_utc_date(to_date, selected_tzone.time_value)
 
-                    without_appointment_selected_teams = RegalixTeams.objects.filter(id__in=team_ids, process_type__in=process_type, is_active=True,)
-                    without_appointment_selected_country = without_appointment_selected_teams.values_list('location__location_name')
-                    without_appointment_selected_country = [ "%s" % data for data in without_appointment_selected_country ]
+                    without_appointment_selected_teams = RegalixTeams.objects.filter(id__in=team_ids,
+                                                                                     process_type__in=process_type,
+                                                                                     is_active=True, )
+                    without_appointment_selected_country = without_appointment_selected_teams.values_list(
+                        'location__location_name')
+                    without_appointment_selected_country = ["%s" % data for data in
+                                                            without_appointment_selected_country]
 
                     shopping_leads_without_appointmnet = Leads.objects.filter(created_date__range=[from_day, to_date], \
-                            type_1__in=['Google Shopping Setup', 'Existing Datafeed Optimization', ], country__in=without_appointment_selected_country)
-                    shopping_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(appointment_date__isnull=False).count()
+                                                                              type_1__in=['Google Shopping Setup',
+                                                                                          'Project Argos- Feed Performance Optimization',
+                                                                                          'Existing Datafeed Optimization', ],
+                                                                              country__in=without_appointment_selected_country)
+                    shopping_leads_without_appointmnet_count = shopping_leads_without_appointmnet.exclude(
+                        appointment_date__isnull=False).count()
                     shopp_total.append(shopping_leads_without_appointmnet_count)
-            
+
             elif process == "WPP":
                 for day_key, date_value in sorted(plan_dates_without_appointment.items()):
                     wpp_total.append(0)
@@ -1461,21 +1518,21 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
         without_appointmnet_total_list = list()
 
         if (len(tag_total) > 0) and (len(shopp_total) > 0):
-            for i in range(0,6):
+            for i in range(0, 6):
                 resulted_sum = tag_total[i] + shopp_total[i]
-                without_appointmnet_total_list.append({'total':resulted_sum})
+                without_appointmnet_total_list.append({'total': resulted_sum})
         elif (len(tag_total) > 0) and len(shopp_total) == 0:
             for each in tag_total:
-                without_appointmnet_total_list.append({'total':each})
+                without_appointmnet_total_list.append({'total': each})
         elif (len(shopp_total) > 0) and (len(tag_total) == 0):
             for each in shopp_total:
-                without_appointmnet_total_list.append({'total':each})
+                without_appointmnet_total_list.append({'total': each})
         elif (len(wpp_total) > 0) and (len(tag_total) == 0) and (len(shopp_total) == 0):
             for each in wpp_total:
-                without_appointmnet_total_list.append({'total':'NA'})
+                without_appointmnet_total_list.append({'total': 'NA'})
         else:
-            without_appointmnet_total_list.append({'total':'error'})
-            
+            without_appointmnet_total_list.append({'total': 'error'})
+
     return render(
         request,
         'representatives/total_appointments.html',
@@ -1493,8 +1550,8 @@ def total_appointments(request, plan_month=0, plan_day=0, plan_year=0):
          'process_type': process_type,
          'process_types': process_types,
          'total_slots': total_slots,
-         'without_appointmnet_list':without_appointmnet_total_list,
-         'rlsa_total_count':rlsa_total_count,
+         'without_appointmnet_list': without_appointmnet_total_list,
+         'rlsa_total_count': rlsa_total_count,
          'result_dict': json.dumps(result_dict),
          'process': process,
          'default_process_type': default_process_type,
@@ -1508,18 +1565,21 @@ def appointments_calendar(request):
     from leads.models import Leads
     from django.db.models import Count
     total_events = list()
-    leads_dict = Leads.objects.exclude(rescheduled_appointment_in_ist=None).values('rescheduled_appointment_in_ist', 'customer_id').annotate(count=Count('pk'))
+    leads_dict = Leads.objects.exclude(rescheduled_appointment_in_ist=None).values('rescheduled_appointment_in_ist',
+                                                                                   'customer_id').annotate(
+        count=Count('pk'))
     for res_time in leads_dict:
         if res_time['rescheduled_appointment_in_ist']:
             res_dict = dict()
             res_dict['title'] = ' CID - %s, Total Resch - %s' % (str(res_time['customer_id']), res_time['count'])
             res_dict['start'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'], "%Y-%m-%dT%H:%M:%S")
-            res_dict['end'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'] + timedelta(minutes=20), "%Y-%m-%dT%H:%M:%S")
+            res_dict['end'] = datetime.strftime(res_time['rescheduled_appointment_in_ist'] + timedelta(minutes=20),
+                                                "%Y-%m-%dT%H:%M:%S")
             total_events.append(res_dict)
     return render(request, 'representatives/appointments_calendar.html', {'events': total_events})
 
 
-#Picasso TAT details
+# Picasso TAT details
 @login_required
 def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
     """ Manage scheduling appointments"""
@@ -1559,6 +1619,7 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
 
     # create date from week start day
     plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    plan_date += timedelta(hours=5, minutes=30)
     # if week start day is not monday, select appropriate start week day of given date
     if plan_date.weekday():
         plan_date -= timedelta(days=plan_date.weekday())
@@ -1620,7 +1681,8 @@ def tat_details(request, plan_month=0, plan_day=0, plan_year=0):
 
     week_start = plan_date
     week_end = plan_date + timedelta(4)
-    details = AvailabilityForTAT.objects.filter(date_in_ist__gte=week_start, date_in_ist__lte=week_end).order_by('date_in_ist')
+    details = AvailabilityForTAT.objects.filter(date_in_ist__gte=week_start, date_in_ist__lte=week_end).order_by(
+        'date_in_ist')
     for detail in details:
         _date = detail.date_in_ist
         count_key = 'input_'
@@ -1693,6 +1755,7 @@ def bolt_tat_details(request, plan_month=0, plan_day=0, plan_year=0):
 
     # create date from week start day
     plan_date = datetime(int(plan_year), int(plan_month), int(plan_day))
+    plan_date += timedelta(hours=5, minutes=30)
     # if week start day is not monday, select appropriate start week day of given date
     if plan_date.weekday():
         plan_date -= timedelta(days=plan_date.weekday())
@@ -1754,7 +1817,8 @@ def bolt_tat_details(request, plan_month=0, plan_day=0, plan_year=0):
 
     week_start = plan_date
     week_end = plan_date + timedelta(4)
-    details = AvailabilityForBoltTAT.objects.filter(date_in_ist__gte=week_start, date_in_ist__lte=week_end).order_by('date_in_ist')
+    details = AvailabilityForBoltTAT.objects.filter(date_in_ist__gte=week_start, date_in_ist__lte=week_end).order_by(
+        'date_in_ist')
     for detail in details:
         _date = detail.date_in_ist
         count_key = 'input_'
