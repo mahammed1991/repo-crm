@@ -29,13 +29,14 @@
 
                     <div class="col-sm-6">
                       <label for="exampleInputEmail1">Region</label>
-                        <select id="region" name="region" class="form-control bgicon" >
+                        <select id="region" name="region" onchange="" class="form-control bgicon" >
                           
                         </select>
                     </div>
 
                     <div class="col-sm-6">
                       <label for="exampleInputEmail1">Process</label>
+                        <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
                         <select id="process" name="process" onchange="LoadTheTableContent(false);GetStatus();" class="form-control bgicon">
                           <!-- <option value="process_default">Process</option> -->
@@ -114,7 +115,14 @@
     $(document).ready(function(){
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
         objdata_process = Object.keys(JSON.parse(status_mapping.replace(/&quot;/g,'"')))
-        
+        objdata_region = JSON.parse(regions.replace(/&quot;/g,'"'))
+        $('#region').append('<option value="all">All</option>')
+        for(i=0; i< objdata_region.length; i += 1){
+
+            option_region = '<option value="'+ objdata_region[i]['name'] +'">'+ objdata_region[i]['name'] +'</option>'
+            
+            $("#region").append(option_region); 
+        }
 
         for(i=0; i< objdata_process.length; i += 1){
             if (objdata_process[i] == "TAG"){
@@ -161,7 +169,9 @@
       }
       LoadTheTableContent(false);    
     }
-
+    $('#region').on('change',function(){
+      LoadTheTableContent(false)
+    })
     $('#status').on('change',function(){
       populate_sub_status()
     })
@@ -170,11 +180,12 @@
       LoadTheTableContent(false);
     })
     function LoadTheTableContent(freshAppointment){
+        region = $('#region').val()
         process_name = $('#process').val()
         status = $('#status').val()
         sub_status = $('#sub_status').val()
         appointment = $('#appointment').val()
-        data = {'process':process_name,'status':status, 'sub_status':sub_status}
+         data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status}
         
         if(freshAppointment){
           data = {'appointment': appointment}
@@ -186,6 +197,13 @@
           }
           $('#sub_status').val('In Queue')
           $('#process').val('TAG')
+        }
+        if (appointment != 'Fresh Appointment'){
+          data = {'appointment': appointment, 'region':region, 'process':process_name}
+        }
+
+        if (status != 'In Queue'){
+          $('#appointment').val('Fresh Appointment')
         }
 
         //data = {'process': $('#process').val()}
@@ -210,6 +228,10 @@
         LoadTheTableContent(true);
       }
     })
+    appointment = $('#appointment').val()
+    if (appointment != 'Fresh Appointment'){
+        LoadTheTableContent(true);
+      }
     function LeadsDataTable(data){
         $("#leads_table_body").html('')
         tabledata = data['leads_list']
