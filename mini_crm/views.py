@@ -274,14 +274,6 @@ def lead_history(request):
 	else:
 		raise Http404		
 
-	final_result = list()
-	for ordering in returning_data:
-		keyorder = {k:v for v, k in enumerate(['cid', 'code_type', 'url', 'lead_status'])}
-		each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
-		final_result.append(each_one)
-
-	return render(request,'crm/search_result.html',{'returning_data':final_result, 'resultcount':len(final_result),'q_id':searching_lead_id})
-
 
 def datamaker(data):
     leads_data = list()
@@ -306,7 +298,6 @@ def search_leads(request):
 			returning_data = returning_data + normal_leads_data
 	except:
 		pass
-
 	try:
 		picasso_leads = PicassoLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if picasso_leads:
@@ -314,7 +305,6 @@ def search_leads(request):
 			returning_data = returning_data + picasso_leads_data
 	except:
 		pass
-
 	try:
 		wpp_leads = WPPLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if wpp_leads:
@@ -322,11 +312,4 @@ def search_leads(request):
 			returning_data = returning_data + wpp_leads_data
 	except:
 		pass
-
-	final_result = list()
-	for ordering in returning_data:
-		keyorder = {k:v for v, k in enumerate(['cid', 'code_type', 'url', 'lead_status'])}
-		each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
-		final_result.append(each_one)
-
-	return render(request,'crm/search_result.html',{'returning_data':final_result, 'resultcount':len(final_result),'q_id':searching_lead_id})
+	return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
