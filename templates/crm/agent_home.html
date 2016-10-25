@@ -14,28 +14,25 @@
   <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
 {% endblock main_css %}
-  <head>
-  
 
-  </head>
   {% block content %}
   <body>
         
         <section class="top-margin wfm">
-       		<div class="container-fluid">
+       		<div class="container-fluid" style="max-width:100%;">
             	<div class="white-section">
                 	<div class="blue-bg2">
-                                 <select class="form-control" id='status'>
+                                 <select class="form-control bgicon" id='status'>
                                    {% if lead_status %}
                                     {% for status in lead_status %}
                                      <option>{{status}}</option>
                                      {% endfor %}
                                    {% endif %}
                                  </select>
-                                 <select class="form-control" id='sub_status'>
+                                 <select class="form-control bgicon" id='sub_status'>
                                  </select> 
                                  <div class="or">OR</div> 
-                                  <select class="form-control" id='appointment' >
+                                  <select class="form-control bgicon" id='appointment' >
                                    <option>Fresh Appointment</option>
                                    <option>30 minutes</option>
                                    <option>1 hour</option>

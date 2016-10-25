@@ -18,7 +18,7 @@
   {% block content %}
   <body>
     <section class="top-margin wfm">
-      <div class="container-fluid">
+      <div class="container-fluid" style="max-width:100%;">
         <div class="white-section">
           <div class="blue-bg">
 
@@ -29,7 +29,7 @@
 
                     <div class="col-sm-6">
                       <label for="exampleInputEmail1">Region</label>
-                        <select id="region" name="region" class="form-control" >
+                        <select id="region" name="region" class="form-control bgicon" >
                           
                         </select>
                     </div>
@@ -37,7 +37,7 @@
                     <div class="col-sm-6">
                       <label for="exampleInputEmail1">Process</label>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
-                        <select id="process" name="process" onchange="LoadTheTableContent(false);GetStatus();" class="form-control">
+                        <select id="process" name="process" onchange="LoadTheTableContent(false);GetStatus();" class="form-control bgicon">
                           <!-- <option value="process_default">Process</option> -->
                         </select>
                     </div> 
@@ -51,7 +51,7 @@
 
                     <div class="col-sm-3">
                       <label for="exampleInputEmail1">Fresh Appointment</label>
-                        <select id="appointment" name="appointment" onchange="" class="form-control" >
+                        <select id="appointment" name="appointment" onchange="" class="form-control bgicon" >
                           <option>Fresh Appointment</option>
                           <option>30 minutes</option>
                           <option>1 hour</option>
@@ -67,14 +67,14 @@
 
                     <div class="col-sm-4">
                       <label for="exampleInputEmail1">Status</label>
-                        <select id="status" name="status" onchange="" class="form-control" >
+                        <select id="status" name="status" onchange="" class="form-control bgicon" >
                           <!-- <option value="status_default">Status</option> -->
                         </select>
                     </div>
 
                     <div class="col-sm-4">
                       <label for="exampleInputEmail1">Sub Status</label>
-                        <select id="sub_status" name="sub_status" onchange="" class="form-control" >
+                        <select id="sub_status" name="sub_status" onchange="" class="form-control bgicon" >
                           <!-- <option value="sub_status_default">Sub Status</option> -->
                         </select> 
                     </div>
@@ -211,7 +211,6 @@
       }
     })
     function LeadsDataTable(data){
-        debugger;
         $("#leads_table_body").html('')
         tabledata = data['leads_list']
         if(tabledata.length != 0){

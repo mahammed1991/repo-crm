@@ -39,7 +39,7 @@ ul.top-menu li a:hover{ color:#4d7dbe;-webkit-transition:  all 0.5s ease 0s;
 .my-account .dropdown-menu>li>a{ font-weight:300}
 .my-account .new-leads-button a{ background:#e24136; color:#fff !important; padding:5px 10px; display:block; text-align:center; text-decoration:none; border-radius:2px}
 
-.top-margin{ margin-top:70px}
+.top-margin{ margin-top:2%}
 .left-panel{position: fixed; top: 0; bottom: 0;overflow-y: auto; border-radius: 0; background:#fff; border-right:1px solid #cdcdcd;}
 .white-section{ padding:0px; background:#fff; border:1px solid #cdcdcd;  margin-top:20px; overflow:visible}
 .first-canvas-nav { width:310px ; padding:20px 15px 20px; color:#000 }
@@ -120,9 +120,9 @@ a.accordion-head span{ background:#f2f2f2; border:1px solid #cdcdcd; border-radi
 .wfm .blue-bg  label{ color:#fff; padding:0px 0px 5px}
 .wfm .blue-bg p{ color:#fff; padding-top:27px}
 .arrow-box-blue {
-	position: relative;
-	background: #548dda;
-	border: 4px solid #6faafa; padding:5px 15px 10px
+    background: #548dda;
+    border: 4px solid #6faafa;
+    padding: 7px 12px 1px;
 }
 .arrow-box-blue:after, .arrow-box-blu:before {
 	left: 100%;
@@ -148,7 +148,7 @@ a.accordion-head span{ background:#f2f2f2; border:1px solid #cdcdcd; border-radi
 	margin-top: -36px;
 }
 .wfm .blue-bg .duble-line{  height:30px; width:1px; background:#5695eb; margin:0 auto}
-.wfm .blue-bg2{ background:#4d7dbe; padding:10px 100px 10px 150px;}
+.wfm .blue-bg2{ background:#4d7dbe; padding:8px 100px 1px 100px;}
 .wfm .blue-bg2 .form-control { height:30px; border: 0px solid #eaeaea; border-radius: 2px;-webkit-box-shadow: inset 0 0px 0px rgba(0,0,0,.075); box-shadow: inset 0 0px 0px rgba(0,0,0,.075);outline:none; width:30%; float:left; margin-right:15px}
 .wfm .or{ width:20px; float:left; color:#fff; margin-right:15px; margin-top:5px}
 .wfm-body-table{ zoom: 1; position: relative; 
