@@ -256,6 +256,33 @@ def get_json_leads(leads):
 			lead_dict['apmnt_date'] = date_time[0]
 			lead_dict['apmnt_time'] = date_time[1] + ' ' + date_time[2]	
 
+
+@login_required
+def lead_history(request):
+	if request.user.groups.filter(name='CRM-AGENT'):
+		lead_status = request.GET.get('status')
+		if request.is_ajax():
+			if lead_status == 'In Queue':
+				leads = Leads.objects.filter(lead_status=lead_status)
+			else:
+				leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'])
+			leads_data = get_json_leads(leads)
+			response_json = leads_data
+			res = HttpResponse(json.dumps(response_json), content_type="application/json")
+			return res
+		return render(request,'crm/lead_and_history.html')
+	else:
+		raise Http404		
+
+	final_result = list()
+	for ordering in returning_data:
+		keyorder = {k:v for v, k in enumerate(['cid', 'code_type', 'url', 'lead_status'])}
+		each_one = OrderedDict(sorted(ordering.items(), key=lambda i:keyorder.get(i[0])))
+		final_result.append(each_one)
+
+	return render(request,'crm/search_result.html',{'returning_data':final_result, 'resultcount':len(final_result),'q_id':searching_lead_id})
+
+
 def datamaker(data):
     leads_data = list()
     for each_searched_lead in data:
@@ -267,9 +294,6 @@ def datamaker(data):
 		leads_data.append(serched_lead)
     return leads_data
 
-		
-		leads_data.append(lead_dict)
-	return leads_data
 
 @login_required
 def search_leads(request):
@@ -291,22 +315,13 @@ def search_leads(request):
 	except:
 		pass
 
-@login_required
-def lead_history(request):
-	if request.user.groups.filter(name='CRM-AGENT'):
-		lead_status = request.GET.get('status')
-		if request.is_ajax():
-			if lead_status == 'In Queue':
-				leads = Leads.objects.filter(lead_status=lead_status)
-			else:
-				leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'])
-			leads_data = get_json_leads(leads)
-			response_json = leads_data
-			res = HttpResponse(json.dumps(response_json), content_type="application/json")
-			return res
-		return render(request,'crm/lead_and_history.html')
-	else:
-		raise Http404		
+	try:
+		wpp_leads = WPPLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		if wpp_leads:
+			wpp_leads_data = datamaker(wpp_leads)
+			returning_data = returning_data + wpp_leads_data
+	except:
+		pass
 
 	final_result = list()
 	for ordering in returning_data:
