@@ -275,41 +275,27 @@ def lead_history(request):
 		raise Http404		
 
 
-def datamaker(data):
-    leads_data = list()
-    for each_searched_lead in data:
-		serched_lead = dict()
-		serched_lead['cid'] = each_searched_lead.customer_id
-		serched_lead['code_type'] = each_searched_lead.type_1
-		serched_lead['url'] = each_searched_lead.url_1
-		serched_lead['lead_status'] = each_searched_lead.lead_status
-		leads_data.append(serched_lead)
-    return leads_data
-
-
 @login_required
 def search_leads(request):
 	searching_lead_id = request.GET.get('q')
 	returning_data = list()
 	try:
-		normal_leads = Leads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if normal_leads:
-			normal_leads_data = datamaker(normal_leads)
-			returning_data = returning_data + normal_leads_data
+			returning_data = returning_data + list(normal_leads)
 	except:
 		pass
 	try:
-		picasso_leads = PicassoLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if picasso_leads:
-			picasso_leads_data = datamaker(picasso_leads)
-			returning_data = returning_data + picasso_leads_data
+			returning_data = returning_data + list(picasso_leads)
 	except:
 		pass
 	try:
-		wpp_leads = WPPLeads.objects.filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+		wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if wpp_leads:
-			wpp_leads_data = datamaker(wpp_leads)
-			returning_data = returning_data + wpp_leads_data
+			returning_data = returning_data + list(wpp_leads)
 	except:
 		pass
+
 	return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
