@@ -19,6 +19,7 @@ from reports.models import Region
 from django.http import Http404
 
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 @login_required
@@ -282,20 +283,20 @@ def search_leads(request):
 	try:
 		normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if normal_leads:
-			returning_data = returning_data + list(normal_leads)
-	except:
+			returning_data += list(normal_leads)
+	except ObjectDoesNotExist:
 		pass
 	try:
 		picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if picasso_leads:
-			returning_data = returning_data + list(picasso_leads)
-	except:
+			returning_data += list(picasso_leads)
+	except ObjectDoesNotExist:
 		pass
 	try:
 		wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
 		if wpp_leads:
-			returning_data = returning_data + list(wpp_leads)
-	except:
+			returning_data += list(wpp_leads)
+	except ObjectDoesNotExist:
 		pass
 
 	return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
