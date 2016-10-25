@@ -11,103 +11,199 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # Create your models here.
 class Leads(models.Model):
-    # ref_google_rep_user = models.ForeignKey(User)
+    # Lead Owner Details and Lead Information
+    lead_owner_name = models.CharField(max_length=255, null=False) # cannot be changed by REP
+    lead_owner_email = models.CharField(max_length=255, null=False)
+
+    # Google Manager Details
     google_rep_name = models.CharField(max_length=255)
     google_rep_email = models.CharField(max_length=255)
+    google_rep_location = models.CharField(max_length=100, null=True, blank=True)
+    google_rep_manager_email = models.CharField(max_length=100, null=True, blank=True)
+    google_rep_manager_name = models.CharField(max_length=100, null=True, blank=True)
+    team = models.CharField(max_length=100)
 
-    ecommerce = models.IntegerField(default=0)
-    lead_owner_name = models.CharField(max_length=255, null=False)
-    lead_owner_email = models.CharField(max_length=255, null=False)
-    company = models.CharField(max_length=255)
-    lead_status = models.CharField(max_length=50)
-    country = models.CharField(max_length=255)
-
+    # Advertiser Contact Details
     customer_id = models.CharField(max_length=50)
+    company = models.CharField(max_length=255)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
-
     first_name_optional = models.CharField(max_length=50)
     last_name_optional = models.CharField(max_length=100)
     phone_optional = models.CharField(max_length=100)
     email_optional = models.CharField(max_length=100)
-
-    date_of_installation = models.DateTimeField(blank=True, null=True)
-
+    country = models.CharField(max_length=255)  # Advertaiser Location
     time_zone = models.CharField(max_length=75)
+    language = models.CharField(max_length=50, blank=True, null=True)
+    primary_contact_role = models.CharField(max_length=100, blank=True, null=True)
+    webmaster_phone = models.CharField(max_length=255, blank=True, null=True)
+    webmaster_name = models.CharField(max_length=255, blank=True, null=True)
+    webmaster_email = models.CharField(max_length=255, blank=True, null=True)
+    appointment_date = models.DateTimeField(blank=True, null=True) # In advertaiser Timezone
+    appointment_date_in_ist = models.DateTimeField(blank=True, null=True)
+    rescheduled_appointment = models.DateTimeField(blank=True, null=True)
+    rescheduled_appointment_in_ist = models.DateTimeField(blank=True, null=True)
+    first_contacted_on = models.DateTimeField(blank=True, null=True)
 
+    # Lead Processing information
+    lead_status = models.CharField(max_length=50)
+    lead_sub_status = models.CharField(max_length=100, null=True)
+    ecommerce = models.IntegerField(default=0)
+    date_of_installation = models.DateTimeField(blank=True, null=True)
     regalix_comment = models.TextField()
     google_comment = models.TextField()
+    eto_ldap = models.CharField(max_length=100, blank=True, null=True, default='')
+    tat = models.IntegerField(default=0)
+    gcss = models.CharField(max_length=50, blank=True, null=True)
 
-    code_1 = models.TextField()
-    url_1 = models.CharField(max_length=255)
-    type_1 = models.CharField(max_length=150)
-    comment_1 = models.TextField()
-
-    code_2 = models.TextField()
-    url_2 = models.CharField(max_length=255)
-    type_2 = models.CharField(max_length=150)
-    comment_2 = models.TextField()
-
-    code_3 = models.TextField()
-    url_3 = models.CharField(max_length=255)
-    type_3 = models.CharField(max_length=150)
-    comment_3 = models.TextField()
-
-    code_4 = models.TextField()
-    url_4 = models.CharField(max_length=255)
-    type_4 = models.CharField(max_length=150)
-    comment_4 = models.TextField()
-
-    code_5 = models.TextField()
-    url_5 = models.CharField(max_length=255)
-    type_5 = models.CharField(max_length=150)
-    comment_5 = models.TextField()
-
+    # Automated??
     no_of_calls_inbound = models.CharField(max_length=150)
     no_of_calls_outbound = models.CharField(max_length=150)
     emails_sent = models.CharField(max_length=150)
     emails_received = models.CharField(max_length=150)
     call_recordings = models.CharField(max_length=150)
     email_logs = models.CharField(max_length=150)
-    team = models.CharField(max_length=100)
     is_active = models.IntegerField(default=1)
-
-    appointment_date = models.DateTimeField(blank=True, null=True)
-    first_contacted_on = models.DateTimeField(blank=True, null=True)
-    appointment_date_in_ist = models.DateTimeField(blank=True, null=True)
-
-    # Rescheduled Appointments
-    rescheduled_appointment = models.DateTimeField(blank=True, null=True)
-    rescheduled_appointment_in_ist = models.DateTimeField(blank=True, null=True)
-    eto_ldap = models.CharField(max_length=100, blank=True, null=True, default='')
-
-    dials = models.IntegerField(default=0)
-    lead_sub_status = models.CharField(max_length=100, null=True)
-
-    tat = models.IntegerField(default=0)
-
-    created_date = models.DateTimeField(default=datetime.utcnow())
-    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
-
     sf_lead_id = models.CharField(max_length=50, unique=True)
-    wpp_treatment_type = models.CharField(max_length=100, blank=True, null=True)
-    language = models.CharField(max_length=50, blank=True, null=True)
-    gcss = models.CharField(max_length=50, blank=True, null=True)
+    dials = models.IntegerField(default=0)
 
-    # New fields for Argos Project
+    # Code 1 to 5
+    code_1 = models.TextField()
+    url_1 = models.CharField(max_length=255)
+    type_1 = models.CharField(max_length=150)
+    comment_1 = models.TextField()
+    user_list_id_1 = models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_bid_adjustment_1 =models.CharField(max_length=100, blank=True, null=True, default='')
+    internale_cid_1 = models.CharField(max_length=100, blank=True, null=True, default='')
+    override_existing_bid_modifiers_1 = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_id_1 = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    code_2 = models.TextField()
+    url_2 = models.CharField(max_length=255)
+    type_2 = models.CharField(max_length=150)
+    comment_2 = models.TextField()
+    user_list_id_2 = models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_bid_adjustment_2 = models.CharField(max_length=100, blank=True, null=True, default='')
+    internale_cid_2 = models.CharField(max_length=100, blank=True, null=True, default='')
+    override_existing_bid_modifiers_2 = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_id_2 = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    code_3 = models.TextField()
+    url_3 = models.CharField(max_length=255)
+    type_3 = models.CharField(max_length=150)
+    comment_3 = models.TextField()
+    user_list_id_3= models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_bid_adjustment_3 = models.CharField(max_length=100, blank=True, null=True, default='')
+    internale_cid_3= models.CharField(max_length=100, blank=True, null=True, default='')
+    override_existing_bid_modifiers_3 = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_id_3 = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    code_4 = models.TextField()
+    url_4 = models.CharField(max_length=255)
+    type_4 = models.CharField(max_length=150)
+    comment_4 = models.TextField()
+    user_list_id_4 = models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_bid_adjustment_4 = models.CharField(max_length=100, blank=True, null=True, default='')
+    internale_cid_4 = models.CharField(max_length=100, blank=True, null=True, default='')
+    override_existing_bid_modifiers_4 = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_id_4= models.CharField(max_length=100, blank=True, null=True, default='')
+
+    code_5 = models.TextField()
+    url_5 = models.CharField(max_length=255)
+    type_5 = models.CharField(max_length=150)
+    comment_5 = models.TextField()
+    user_list_id_5 = models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_bid_adjustment_5 = models.CharField(max_length=100, blank=True, null=True, default='')
+    internale_cid_5 = models.CharField(max_length=100, blank=True, null=True, default='')
+    override_existing_bid_modifiers_5 = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_id_5 = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    # Project Argos
     feed_optimisation_status = models.CharField(max_length=300, blank=True, null=True)
     feed_optimisation_sub_status = models.CharField(max_length=300, blank=True, null=True)
     number_of_products = models.CharField(max_length=100, blank=True, null=True)
-    additional_description = models.CharField(max_length=3000, blank=True, null=True)
-    area_tobe_improved = models.CharField(max_length=3000, blank=True, null=True)
+    additional_description = models.CharField(max_length=1000, blank=True, null=True)
+    area_tobe_improved = models.CharField(max_length=1000, blank=True, null=True)
     shopping_feed_link = models.CharField(max_length=1000, blank=True, null=True)
     business_type = models.CharField(max_length=100, blank=True, null=True)
     authcase_id = models.CharField(max_length=100, blank=True, null=True)
+    additional_support_beyond_case = models.CharField(max_length=1000, blank=True, null=True)
+
+
+
+    # System Information
+    created_date = models.DateTimeField(default=datetime.utcnow())
+    updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
 
     class Meta:
         verbose_name_plural = "Leads"
 
+class TagLeadDetail(models.Model):
+    lead_id = models.ForeignKey(Leads)
+    # QC
+    qc_on = models.DateTimeField(blank=True, null=True)
+    qc_by = models.CharField(max_length=100, blank=True, null=True)
+    qc_comments = models.TextField(blank=True, null=True)
+
+    # New Mandatory Fields
+    auth_email_sent = models.NullBooleanField(blank=True, null=True)
+    live_transfer = models.NullBooleanField(blank=True, null=True)
+    appointment_sub_status = models.CharField(max_length=80, blank=True, null=True, default='')
+    cms_platform = models.CharField(max_length=80, blank=True, null=True, default='')
+    appointment_sub_status = models.CharField(max_length=100, blank=True, null=True, default='')
+    gcase_id = models.CharField(max_length=80, blank=True, null=True, default='')
+    gcss_status = models.CharField(max_length=80, blank=True, null=True, default='')
+    gcss_status_approved_by = models.CharField(max_length=100, blank=True, null=True, default='')
+    mouse_control_taken = models.NullBooleanField(blank=True, null=True)
+    mouse_control_approved_by = models.CharField(max_length=100, blank=True, null=True, default='')
+    list_type = models.CharField(max_length=100, blank=True, null=True, default='')
+    lead_difficulty_level = models.CharField(max_length=100, blank=True, null=True, default='')
+    regalix_sme = models.CharField(max_length=100, blank=True, null=True, default='')
+    lead_difficulty_level = models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_tag_team_contacted = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_created_by_gsr = models.NullBooleanField(blank=True, null=True)
+    adwords_cid_submitted = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    # New Fields
+    implemented_code_is = models.CharField(max_length=80, blank=True, null=True, default='')
+    number_of_dails = models.IntegerField(default=0)
+    pla_sub_status = models.CharField(max_length=80, blank=True, null=True, default='')
+    dynamic_variable_set = models.CharField(max_length=100, blank=True, null=True, default='')
+    dead_lead_date = models.DateTimeField(blank=True, null=True)
+    last_contacted_on = models.DateTimeField(blank=True, null=True)
+    dead_lead_date = models.DateTimeField(blank=True, null=True)
+    is_backup_taken = models.NullBooleanField(blank=True, null=True)
+    tag_via_gtm = models.NullBooleanField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    service_segment = models.CharField(max_length=100, blank=True, null=True, default='')
+    rlsa_auth_approval = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    # Agency Details
+    agency_poc = models.CharField(max_length=80, blank=True, null=True, default='')
+    agency_name = models.CharField(max_length=100, blank=True, null=True, default='')
+    agency_phone = models.CharField(max_length=80, blank=True, null=True, default='')
+    agency_email = models.CharField(max_length=100, blank=True, null=True, default='')
+    agency_bundle_number = models.CharField(max_length=100, blank=True, null=True, default='')
+    agency_service_case_id = models.CharField(max_length=100, blank=True, null=True, default='')
+
+    # New - Shopping Details
+    mc_id = models.CharField(max_length=100, blank=True, null=True, default='')
+    opt_in_percent = models.CharField(max_length=100, blank=True, null=True, default='')
+    client_web_inventory = models.CharField(max_length=100, blank=True, null=True, default='')
+    recommended_bid = models.CharField(max_length=100, blank=True, null=True, default='')
+    recommended_budget= models.CharField(max_length=100, blank=True, null=True, default='')
+    sqo_sto_comments = models.CharField(max_length=1000, blank=True, null=True, default='')
+    secured_checkout = models.CharField(max_length=100, blank=True, null=True, default='')
+    payment_gateway = models.CharField(max_length=100, blank=True, null=True, default='')
+    recommended_mobile_bid_modifier = models.CharField(max_length=100, blank=True, null=True, default='')
+    shopping_polices_verified = models.NullBooleanField(blank=True, null=True)
+    type_of_policy_violation = models.CharField(max_length=100, blank=True, null=True, default='')
+    shopping_troubleshoot_issue_type = models.CharField(max_length=100, blank=True, null=True, default='')
+    products_uploaded = models.CharField(max_length=100, blank=True, null=True, default='')
+    campaign_id = models.CharField(max_length=100, blank=True, null=True, default='')
+    feed_upload_method = models.CharField(max_length=100, blank=True, null=True, default='')
+    recommended_bid = models.CharField(max_length=100, blank=True, null=True, default='')
 
 # Create your models here.
 class WPPLeads(models.Model):
@@ -230,7 +326,7 @@ class WPPLeads(models.Model):
     lead_via_live_transfer = models.CharField(max_length=50, blank=True, null=True)
     lead_source = models.CharField(max_length=50, blank=True, null=True)
     advertiser_location = models.CharField(max_length=80, blank=True, null=True)
-    no_of_pages = models.FloatField(blank=True, null=True) 
+    no_of_pages = models.FloatField(blank=True, null=True)
     planned_deployment_date = models.DateTimeField(blank=True, null=True)
     planned_stage_review_date = models.DateTimeField(blank=True, null=True)
     priority = models.CharField(max_length=80, blank=True, null=True)
@@ -635,7 +731,7 @@ class SfdcUsers(models.Model):
     full_name = models.CharField(max_length=255, null=False)
     email = models.CharField(max_length=255, null=False)
     username = models.CharField(max_length=255, null=False)
-    process_type = models.CharField(max_length=50, blank=False, choices=(
+    process_type = models.CharField(max_length=50, blank=True, choices=(
         ('TAG', 'TAG'),
         ('SHOPPING', 'SHOPPING'),
         ('RLSA', 'RLSA'),
@@ -643,7 +739,7 @@ class SfdcUsers(models.Model):
         ('Picasso Audits', 'Picasso Audits'),))
     shift_start = models.TimeField(blank=True, null=True)
     shift_end = models.TimeField(blank=True, null=True)
-    location = models.CharField(max_length=255, null=False)
+    location = models.CharField(max_length=255, blank=True, null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
