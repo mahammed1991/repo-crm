@@ -269,7 +269,7 @@ def get_json_leads(leads):
 def lead_history(request):
 	if request.user.groups.filter(name='CRM-AGENT'):
 		lead_status = request.GET.get('status')
-		process_type = 'RLSA'
+		process_type = 'TAG'
 		if request.is_ajax():
 			if lead_status == 'In Queue':
 				if process_type == 'TAG':
@@ -294,14 +294,12 @@ def lead_history(request):
 				elif process_type == 'RLSA':
 					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"))
 				elif process_type == 'WPP':
-					leads = WPPLeads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'])
+					leads = WPPLeads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"))
 				elif process_type == 'Picasso Audits':
-					leads = PicassoLeads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'])
+					leads = list()
 				else:
 					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"))
 
-
-			print leads.count()
 			leads_data = get_json_leads(leads)
 			response_json = leads_data
 			res = HttpResponse(json.dumps(response_json), content_type="application/json")
