@@ -245,12 +245,12 @@
       var lead_type = $('#type').text();
       var lead_id = {{ lead.id }};
       var send_mail = false;
-      var override_appointment = false;
+      var override_appointment = 'False';
       /*if($('#sendmail').is(':checked')){
         send_mail = true;
       }*/
       if($('#override').is(':checked')){
-        override_appointment = true;
+        override_appointment = 'True';
       }
 
       if(lead_owner != ''){
