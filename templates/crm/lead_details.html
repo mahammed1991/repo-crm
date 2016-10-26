@@ -46,7 +46,7 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead Owner</td>
-                                        <td class="table-right smile"><i class="fa fa-smile-o" aria-hidden="true"></i> {{ lead.lead_owner_name }} [<a href="#" id="assign-lead-popup">Change </a>] 
+                                        <td class="table-right smile"><i class="fa fa-smile-o" aria-hidden="true"></i> <span id="lon">{{ lead.lead_owner_name }}</span> [<a href="#" id="assign-lead-popup">Change </a>] 
                                         <div class="arrow-box" style="display:none;">
                                           <div class="padding-20">
                                               <h2 class="pull-left">Lead Owner</h2> 
@@ -252,26 +252,36 @@
       if($('#override').is(':checked')){
         override_appointment = true;
       }
-      
-      $.ajax({
+
+      if(lead_owner != ''){
+       $('#exampleInputEmail1').css('border-color','#cccccc')
+       $.ajax({
             url: "/crm/lead-owner-email/",
             type: 'GET',
             data: {'lead_owner_email':lead_owner,'id':lead_id,'type':lead_type,'override_appointment':override_appointment},
             dataType: "json",
             success: function(data) {
               if(data['success']){
-                setTimeout(function(){// wait for 5 secs(2)
+                $('#lon').html(data['name']);
+                $('#exampleInputEmail1').val('');
+                $('.arrow-box').hide();
+                /*setTimeout(function(){// wait for 5 secs(2)
                   location.reload(); // then reload the page.(3)
-                }, 2000); 
+                }, 2000); */
               }
               else{
-                alert('Lead owner already have the lead assigned with this appointment date')
+                alert(data['name'] + ' is booked for an other appointment at the same time')
               }
             },
             error: function(xhr){
                 alert('Request Status: ' + xhr.status);
             }
         });
+     }
+     else{
+      $('#exampleInputEmail1').css('border-color','red')
+     }
+
     });
 
     $('#assign-lead-popup').click(function(){
