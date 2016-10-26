@@ -71,259 +71,325 @@ def lead_form(request):
     if request.method == 'POST' and request.is_ajax():
         # Google form Posting Starts here
         post_lead_to_google_form(request.POST, 'normal')
-        if settings.SFDC == 'STAGE':
-
-            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
-            # oid = '00DZ000000MjkJO'
-            oid = '00D7A0000008nBH'
-        elif settings.SFDC == 'PRODUCTION':
-            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
-            oid = '00Dd0000000fk18'
-
         ret_url = ''
         # error_url = ''
 
         if request.POST.get('is_tag_lead') == 'yes':
+            data = request.POST
+            basic_data = {}
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
-                basic_data = get_common_sandbox_lead_data(request.POST)
-            else:
-                basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-            basic_data['oid'] = oid
-            ret_url = basic_data['retURL']
             # error_url = basic_data['errorURL']
+            try:
+                lead = Leads()
+                lead.lead_owner_name = data['manager_name']
+                lead.lead_owner_email = data['manager_email']
+                lead.google_rep_name = data['gref']
+                lead.google_rep_email = data['emailref']
+                lead.customer_id = data['cid']
+                lead.url_1 = data['url1']
+                lead.type_1 = data['ctype1']
+                lead.team = data['team']
+                lead.lead_status = 'In Queue'
+                lead.language = data['language']
+                lead.country = data['country']
+                lead.time_zone = data['tzone']
+                lead.sf_lead_id = get_unique_uuid('TAG')
+                lead.company = data['company']
+                if data.get('code1'):
+                    lead.code_1 = data['code1']
+                if data.get('code2'):
+                    lead.code_2 = data['code2']
+                if data.get('code3'):
+                    lead.code_3 = data['code3']
+                if data.get('code4'):
+                    lead.code_4 = data['code4']
+                if data.get('code5'):
+                    lead.code_5 = data['code5']
 
-            tag_data = basic_data
-            for key, value in tag_leads.items():
-                tag_data[value] = request.POST.get(key)
+                if data.get('comment1'):
+                    lead.comment_1 = data['comment1']
+                if data.get('comment2'):
+                    lead.comment_2 = data['comment2']
+                if data.get('comment3'):
+                    lead.comment_3 = data['comment3']
+                if data.get('comment4'):
+                    lead.comment_4 = data['comment4']
+                if data.get('comment5'):
+                    lead.comment_5 = data['comment5']
+                if 'tag_contact_person_name' in data:
+                    full_name = request.POST.get('tag_contact_person_name')
+                else:
+                    full_name = request.POST.get('advertiser_name')
+                first_name, last_name = split_fullname(full_name)
+                lead.first_name = first_name
+                lead.first_name = last_name
+                lead.phone = data['phone']
+                if str(data.get('setup_datepick')):
+                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
+                lead.save()
+                ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+            except:
+                ret_url = basic_data['errorURL']
 
-            for i in range(1, 6):
-                i = str(i)
-                rbid_key = 'rbid' + i
-                rbudget_key = 'rbudget' + i
-                ga_setup_key = 'ga_setup' + i
-                analytics_code_key = 'analytics_code' + i
-                call_extension_key = 'call_extension' + i
-                product_behaviour_key = 'product_behaviour' + i
-                cartpage_behaviour_key = 'cartpage_behaviour' + i
-                checkout_process_key = 'checkout_process' + i
-                transaction_behaviour_key = 'transaction_behaviour' + i
-
-                tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
-                tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
-                tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
-                tag_data[tag_leads[analytics_code_key]] = request.POST.get(analytics_code_key)
-                tag_data[tag_leads[call_extension_key]] = request.POST.get(call_extension_key)
-                tag_data[tag_leads[product_behaviour_key]] = request.POST.get(product_behaviour_key)
-                tag_data[tag_leads[cartpage_behaviour_key]] = request.POST.get(cartpage_behaviour_key)
-                tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
-                tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
-
-            # Split Tag Contact Person Name to First and Last Name
-            if request.POST.get('tag_contact_person_name'):
-                full_name = request.POST.get('tag_contact_person_name')
-            else:
-                full_name = request.POST.get('advertiser_name')
-            first_name, last_name = split_fullname(full_name)
-            tag_data['first_name'] = first_name
-            tag_data['last_name'] = last_name
-            submit_lead_to_sfdc(sf_api_url, tag_data)
 
         if request.POST.get('is_shopping_lead') == 'yes':
+            data = request.POST
+            basic_data = {}
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
-                basic_data = get_common_sandbox_lead_data(request.POST)
-            else:
-                basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-            basic_data['oid'] = oid
-            ret_url = basic_data['retURL']
             # error_url = basic_data['errorURL']
+            try:
+                lead = Leads()
+                lead.lead_owner_name = data['manager_name']
+                lead.lead_owner_email = data['manager_email']
+                lead.google_rep_name = data['gref']
+                lead.google_rep_email = data['emailref']
+                lead.customer_id = data['cid']
+                lead.url_1 = data['shopping_url']
+                lead.team = data['team']
+                lead.lead_status = 'In Queue'
+                lead.language = data['language']
+                lead.country = data['country']
+                lead.time_zone = data['tzone']
+                lead.sf_lead_id = get_unique_uuid('SHOPPING')
+                lead.company = data['company']               
+                if data.get('setup_datepick'):
+                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %H:%M %p')
+                if request.POST.get('shop_contact_person_name'):
+                    full_name = request.POST.get('shop_contact_person_name')
+                    first_name, last_name = split_fullname(full_name)
+                    lead.first_name = first_name  # Primary Contact First Name
+                    lead.last_name = last_name  # Primary Contact Last Name
+                if request.POST.get('shopping_campaign_issues'):
+                    lead.type_1 = 'Existing Datafeed Optimization'
+                    lead.comment_1 = request.POST.get('issues_description')
+                elif request.POST.get('argos_mc_id'):
+                    print "called argos"
+                    lead.type_1 = 'Project Argos- Feed Performance Optimization'
+                    lead.lead_status = 'Feed Audit'
+                    lead.lead_sub_status = 'In Queue'
+                    # lead.feed_optimisation_status = data.get("Feed_Optimization_Status__c")
+                    # lead.feed_optimisation_sub_status = data.get('Feed_Optimization_Sub_Status__c')
+                    lead.number_of_products = data.get('products_count')
+                    lead.additional_description = data.get('additional_description')
+                    lead.area_tobe_improved = data.get('area')
+                    lead.shopping_feed_link = data.get('sheets_link')
+                    lead.authcase_id = data.get('auth_case_id')
+                    lead.business_type = data.get('shopping_argos_categories')
+                    print "saved"
+                else:
+                    lead.type_1 = 'Google Shopping Setup'
+                    lead.comment_1 = request.POST.get('description')
+                lead.lead_status = 'In Queue'
+                lead.save()
+                ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+            except:
+                ret_url = basic_data['errorURL']
 
-            setup_data = basic_data
-            for key, value in shop_leads.items():
-                setup_data[value] = request.POST.get(key)
 
-            # Split Shopping Contact Person Name to First and Last Name
-            if request.POST.get('shop_contact_person_name'):
-                full_name = request.POST.get('shop_contact_person_name')
-                first_name, last_name = split_fullname(full_name)
-                setup_data['first_name'] = first_name  # Primary Contact First Name
-                setup_data['last_name'] = last_name  # Primary Contact Last Name
-            if request.POST.get('shopping_campaign_issues'):
-                setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
-                setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
-            elif request.POST.get('argos_mc_id'):
-                setup_data[shop_leads['ctype1']] = 'Project Argos- Feed Performance Optimization'
-                setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
-                setup_data[shop_leads.get('feed_optimisation_status')] = 'Feed Audit'
-                setup_data[shop_leads.get('feed_optimisation_sub_status')] = 'In Queue'
-            else:
-                setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
-                setup_data[shop_leads['comment1']] = request.POST.get('description')
-            submit_lead_to_sfdc(sf_api_url, setup_data)
-
-        basic_data = dict()
         if request.POST.get('is_rlsa_lead') == 'yes':
+            data = request.POST
+            basic_data = {}
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
-                basic_data = get_common_sandbox_lead_data(request.POST)
-            else:
-                basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-            basic_data['oid'] = oid
             ret_url = basic_data['retURL']
             # error_url = basic_data['errorURL']
+            try:
+                lead = Leads()
+                lead.lead_owner_name = data['manager_name']
+                lead.lead_owner_email = data['manager_email']
+                lead.google_rep_name = data['gref']
+                lead.google_rep_email = data['emailref']
+                lead.customer_id = data['cid']
+                lead.team = data['team']
+                lead.lead_status = 'In Queue'
+                lead.language = data['language']
+                lead.country = data['country']
+                lead.time_zone = data['tzone']
+                lead.sf_lead_id = get_unique_uuid('RLSA')
+                lead.company = data['company']
+                lead.type_1 = 'RLSA Bulk Implementation'
+                lead.code_1 = data['authEmail']
+                lead.comment_1 = data['comments']
+                if 'tag_contact_person_name' in data:
+                    full_name = request.POST.get('tag_contact_person_name')
+                else:
+                    full_name = request.POST.get('advertiser_name')
+                first_name, last_name = split_fullname(full_name)
+                lead.first_name = first_name
+                lead.first_name = last_name
+                lead.lead_status = 'In Queue'
+                lead.save()
+                ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+            except:
+                ret_url = basic_data['errorURL']
 
-            rlsa_data = basic_data
-            for key, value in rlsa_leads.items():
-                rlsa_data[value] = request.POST.get(key)
-            if request.POST.get('tag_contact_person_name'):
-                full_name = request.POST.get('tag_contact_person_name')
-            else:
-                full_name = request.POST.get('advertiser_name')
-            first_name, last_name = split_fullname(full_name)
-            rlsa_data['first_name'] = first_name
-            rlsa_data['last_name'] = last_name
-            rlsa_data['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
-            rlsa_data[tag_leads['comment1']] = request.POST.get('comments')
-            rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
-            submit_lead_to_sfdc(sf_api_url, rlsa_data)
+            
         resp = {'success':True, 'redirect':True}
         return HttpResponse(json.dumps(resp))
     elif request.method == 'POST':
         # Google form Posting Starts here
         post_lead_to_google_form(request.POST, 'normal')
-        if settings.SFDC == 'STAGE':
-
-            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
-            # oid = '00DZ000000MjkJO'
-            oid = '00D7A0000008nBH'
-        elif settings.SFDC == 'PRODUCTION':
-            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
-            oid = '00Dd0000000fk18'
-
         ret_url = ''
         # error_url = ''
 
         if request.POST.get('is_tag_lead') == 'yes':
+            data = request.POST
+            basic_data = {}
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
-                basic_data = get_common_sandbox_lead_data(request.POST)
-            else:
-                basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-            basic_data['oid'] = oid
-            ret_url = basic_data['retURL']
             # error_url = basic_data['errorURL']
+            try:
+                lead = Leads()
+                lead.lead_owner_name = data['manager_name']
+                lead.lead_owner_email = data['manager_email']
+                lead.google_rep_name = data['gref']
+                lead.google_rep_email = data['emailref']
+                lead.customer_id = data['cid']
+                lead.url_1 = data['url1']
+                lead.type_1 = data['ctype1']
+                lead.team = data['team']
+                lead.lead_status = 'In Queue'
+                lead.language = data['language']
+                lead.country = data['country']
+                lead.time_zone = data['tzone']
+                lead.sf_lead_id = get_unique_uuid('TAG')
+                lead.company = data['company']
+                if data.get('code1'):
+                    lead.code_1 = data['code1']
+                if data.get('code2'):
+                    lead.code_2 = data['code2']
+                if data.get('code3'):
+                    lead.code_3 = data['code3']
+                if data.get('code4'):
+                    lead.code_4 = data['code4']
+                if data.get('code5'):
+                    lead.code_5 = data['code5']
 
-            tag_data = basic_data
-            for key, value in tag_leads.items():
-                tag_data[value] = request.POST.get(key)
+                if data.get('comment1'):
+                    lead.comment_1 = data['comment1']
+                if data.get('comment2'):
+                    lead.comment_2 = data['comment2']
+                if data.get('comment3'):
+                    lead.comment_3 = data['comment3']
+                if data.get('comment4'):
+                    lead.comment_4 = data['comment4']
+                if data.get('comment5'):
+                    lead.comment_5 = data['comment5']
 
-            for i in range(1, 6):
-                i = str(i)
-                rbid_key = 'rbid' + i
-                rbudget_key = 'rbudget' + i
-                ga_setup_key = 'ga_setup' + i
-                analytics_code_key = 'analytics_code' + i
-                call_extension_key = 'call_extension' + i
-                product_behaviour_key = 'product_behaviour' + i
-                cartpage_behaviour_key = 'cartpage_behaviour' + i
-                checkout_process_key = 'checkout_process' + i
-                transaction_behaviour_key = 'transaction_behaviour' + i
+                if 'tag_contact_person_name' in data:
+                    full_name = request.POST.get('tag_contact_person_name')
+                else:
+                    full_name = request.POST.get('advertiser_name')
+                first_name, last_name = split_fullname(full_name)
+                lead.first_name = first_name
+                lead.first_name = last_name
+                lead.phone = data['phone']
+                if str(data.get('setup_datepick')):
+                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
+                lead.save()
+                ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+            except:
+                ret_url = basic_data['errorURL']
 
-                tag_data[tag_leads[rbid_key]] = request.POST.get(rbid_key)
-                tag_data[tag_leads[rbudget_key]] = request.POST.get(rbudget_key)
-                tag_data[tag_leads[ga_setup_key]] = request.POST.get(ga_setup_key)
-                tag_data[tag_leads[analytics_code_key]] = request.POST.get(analytics_code_key)
-                tag_data[tag_leads[call_extension_key]] = request.POST.get(call_extension_key)
-                tag_data[tag_leads[product_behaviour_key]] = request.POST.get(product_behaviour_key)
-                tag_data[tag_leads[cartpage_behaviour_key]] = request.POST.get(cartpage_behaviour_key)
-                tag_data[tag_leads[checkout_process_key]] = request.POST.get(checkout_process_key)
-                tag_data[tag_leads[transaction_behaviour_key]] = request.POST.get(transaction_behaviour_key)
-
-            # Split Tag Contact Person Name to First and Last Name
-            if request.POST.get('tag_contact_person_name'):
-                full_name = request.POST.get('tag_contact_person_name')
-            else:
-                full_name = request.POST.get('advertiser_name')
-            first_name, last_name = split_fullname(full_name)
-            tag_data['first_name'] = first_name
-            tag_data['last_name'] = last_name
-            submit_lead_to_sfdc(sf_api_url, tag_data)
 
         if request.POST.get('is_shopping_lead') == 'yes':
+            data = request.POST
+            basic_data = {}
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
-                basic_data = get_common_sandbox_lead_data(request.POST)
-            else:
-                basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-            basic_data['oid'] = oid
-            ret_url = basic_data['retURL']
             # error_url = basic_data['errorURL']
+            try:
+                lead = Leads()
+                lead.lead_owner_name = data['manager_name']
+                lead.lead_owner_email = data['manager_email']
+                lead.google_rep_name = data['gref']
+                lead.google_rep_email = data['emailref']
+                lead.customer_id = data['cid']
+                lead.url_1 = data['shopping_url']
+                lead.team = data['team']
+                lead.lead_status = 'In Queue'
+                lead.language = data['language']
+                lead.country = data['country']
+                lead.time_zone = data['tzone']
+                lead.sf_lead_id = get_unique_uuid('SHOPPING')
+                lead.company = data['company']               
+                if data.get('setup_datepick'):
+                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %H:%M %p')
+                if request.POST.get('shop_contact_person_name'):
+                    full_name = request.POST.get('shop_contact_person_name')
+                    first_name, last_name = split_fullname(full_name)
+                    lead.first_name = first_name  # Primary Contact First Name
+                    lead.last_name = last_name  # Primary Contact Last Name
+                if request.POST.get('shopping_campaign_issues'):
+                    lead.type_1 = 'Existing Datafeed Optimization'
+                    lead.comment_1 = request.POST.get('issues_description')
+                elif request.POST.get('argos_mc_id'):
+                    lead.type_1 = 'Project Argos- Feed Performance Optimization'
+                    lead.lead_status = 'Feed Audit'
+                    lead.lead_sub_status = 'In Queue'
+                    # lead.feed_optimisation_status = data.get("Feed_Optimization_Status__c")
+                    # lead.feed_optimisation_sub_status = data.get('Feed_Optimization_Sub_Status__c')
+                    lead.number_of_products = data.get('products_count')
+                    lead.additional_description = data.get('additional_description')
+                    lead.area_tobe_improved = data.get('area')
+                    lead.shopping_feed_link = data.get('sheets_link')
+                    lead.authcase_id = data.get('auth_case_id')
+                    lead.business_type = data.get('shopping_argos_categories')
+                else:
+                    lead.type_1 = 'Google Shopping Setup'
+                    lead.comment_1 = request.POST.get('description')
+                lead.lead_status = 'In Queue'
+                lead.save()
+                ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+            except:
+                ret_url = basic_data['errorURL']
 
-            setup_data = basic_data
-            for key, value in shop_leads.items():
-                setup_data[value] = request.POST.get(key)
 
-            # Split Shopping Contact Person Name to First and Last Name
-            if request.POST.get('shop_contact_person_name'):
-                full_name = request.POST.get('shop_contact_person_name')
-                first_name, last_name = split_fullname(full_name)
-                setup_data['first_name'] = first_name  # Primary Contact First Name
-                setup_data['last_name'] = last_name  # Primary Contact Last Name
-            if request.POST.get('shopping_campaign_issues'):
-                setup_data[shop_leads['ctype1']] = 'Existing Datafeed Optimization'
-                setup_data[shop_leads['comment1']] = request.POST.get('issues_description')
-            elif request.POST.get('argos_mc_id'):
-                setup_data[shop_leads['ctype1']] = 'Project Argos- Feed Performance Optimization'
-                setup_data['00Nd00000077T9o'] = request.POST.get('argos_mc_id')
-                setup_data[shop_leads.get('feed_optimisation_status')] = 'Feed Audit'
-                setup_data[shop_leads.get('feed_optimisation_sub_status')] = 'In Queue'
-            else:
-                setup_data[shop_leads['ctype1']] = 'Google Shopping Setup'
-                setup_data[shop_leads['comment1']] = request.POST.get('description')
-            submit_lead_to_sfdc(sf_api_url, setup_data)
 
-        basic_data = dict()
         if request.POST.get('is_rlsa_lead') == 'yes':
+            data = request.POST
+            basic_data = {}
             # Get Basic/Common form field data
-            if settings.SFDC == 'STAGE':
-                basic_data = get_common_sandbox_lead_data(request.POST)
-            else:
-                basic_data = get_common_salesforce_lead_data(request.POST)
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-            basic_data['oid'] = oid
             ret_url = basic_data['retURL']
             # error_url = basic_data['errorURL']
-
-            rlsa_data = basic_data
-            for key, value in rlsa_leads.items():
-                rlsa_data[value] = request.POST.get(key)
-            if request.POST.get('tag_contact_person_name'):
-                full_name = request.POST.get('tag_contact_person_name')
-            else:
-                full_name = request.POST.get('advertiser_name')
-            first_name, last_name = split_fullname(full_name)
-            rlsa_data['first_name'] = first_name
-            rlsa_data['last_name'] = last_name
-            rlsa_data['00Nd0000005WYhJ'] = 'RLSA Bulk Implementation'
-            rlsa_data[tag_leads['comment1']] = request.POST.get('comments')
-            rlsa_data[tag_leads['code1']] = request.POST.get('authEmail')
-            submit_lead_to_sfdc(sf_api_url, rlsa_data)
+            try:
+                lead = Leads()
+                lead.lead_owner_name = data['manager_name']
+                lead.lead_owner_email = data['manager_email']
+                lead.google_rep_name = data['gref']
+                lead.google_rep_email = data['emailref']
+                lead.customer_id = data['cid']
+                lead.team = data['team']
+                lead.lead_status = 'In Queue'
+                lead.language = data['language']
+                lead.country = data['country']
+                lead.time_zone = data['tzone']
+                lead.sf_lead_id = get_unique_uuid('RLSA')
+                lead.company = data['company']
+                lead.type_1 = 'RLSA Bulk Implementation'
+                lead.code_1 = data['authEmail']
+                lead.comment_1 = data['comments']
+                if 'tag_contact_person_name' in data:
+                    full_name = request.POST.get('tag_contact_person_name')
+                else:
+                    full_name = request.POST.get('advertiser_name')
+                first_name, last_name = split_fullname(full_name)
+                lead.first_name = first_name
+                lead.first_name = last_name
+                lead.lead_status = 'In Queue'
+                lead.save()
+                ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+            except:
+                ret_url = basic_data['errorURL']
 
         return redirect(ret_url)
 
@@ -374,47 +440,62 @@ def wpp_lead_form(request, ref_id=None):
     Lead Submission to Salesforce
     """
     # Check The Rep Status and redirect
-    if request.method == 'POST':
-        
+    basic_data = {}
+    basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+    basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+    
+    if request.method == 'POST':    
         post_lead_to_google_form(request.POST, 'picasso_build')
-        if settings.SFDC == 'STAGE':
-            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
-            oid = '00D7A0000008nBH'
-        elif settings.SFDC == 'PRODUCTION':
-            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
-            oid = '00Dd0000000fk18'
-
         ret_url = ''
-        # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE':
-            basic_data = get_common_sandbox_lead_data(request.POST)
-        else:
-            basic_data = get_common_salesforce_lead_data(request.POST)
-        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
-        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-        basic_data['oid'] = oid
-        basic_data['Campaign_ID'] = None
-        ret_url = basic_data['retURL']
-        wpp_data = basic_data
-        for key, value in tag_leads.items():
-            if key == 'picasso_objective_list[]':
-                wpp_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
-            elif key == 'unique_ref_id':
-                wpp_data[value] = get_unique_uuid('Wpp')
-            else:
-                wpp_data[value] = request.POST.get(key)
-        submit_lead_to_sfdc(sf_api_url, wpp_data)
-        advirtiser_details = get_advertiser_details(sf_api_url, wpp_data)
-        user_groups = [group.name for group in request.user.groups.all()]
-        if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
-            advirtiser_details['whitelist_requested_user'] = 'Yes'
-        else:
-            advirtiser_details['whitelist_requested_user'] = 'No'
-        send_calendar_invite_to_advertiser(advirtiser_details, False)
-
+        data = request.POST
+        try:
+            usr = User.objects.get(username=data['emailref'])
+            user = UserDetails.objects.get(user_id=usr)
+            wpp_lead = WPPLeads()
+            wpp_lead.google_rep_name = user.user.first_name + ' ' + user.user.last_name
+            wpp_lead.google_rep_email = user.user.username
+            wpp_lead.lead_owner_name = user.user_manager_name
+            wpp_lead.lead_owner_email = user.user_manager_email
+            wpp_lead.customer_id = data['cid']
+            wpp_lead.url_1 = data['url1']
+            wpp_lead.company = data['company']
+            wpp_lead.treatment_type = data['treatment_type']
+            wpp_lead.team = data['team']
+            wpp_lead.is_ab_test = data['ab_testing']
+            wpp_lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
+            wpp_lead.country = data['country']
+            wpp_lead.type_1 = data['ctype1']
+            wpp_lead.additional_notes = data['additional_notes']
+            wpp_lead.sf_lead_id = get_unique_uuid('WPP')
+            wpp_lead.url_5 = data['picasso_pod']
+            wpp_lead.comment_5 = ''.join('%s,' % pair for pair in data.getlist('picasso_objective_list[]'))
+            wpp_lead.lead_status = data['wpp_lead_status']
+            wpp_lead.first_name = data['first_name']
+            wpp_lead.last_name = data['last_name']
+            wpp_lead.phone = data['phone']
+            if 'first_name2' in data:
+                wpp_lead.first_name_optional = data['first_name2']
+            if 'last_name2' in data:
+                wpp_lead.last_name_optional = data['last_name2']
+            if 'phone2' in data:
+                wpp_lead.phone_optional = data['phone2']
+            if 'wpp_aemail2' in data:
+                wpp_lead.email_optional = data['wpp_aemail2']
+            wpp_lead.save()
+            ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
+        except:
+            ret_url = basic_data['errorURL']
+            
         return redirect(ret_url)
+
+        # Get Basic/Common form field data
+        
+        # user_groups = [group.name for group in request.user.groups.all()]
+        # if 'TAG-AND-WPP' not in user_groups and 'WPP' not in user_groups:
+        #     advirtiser_details['whitelist_requested_user'] = 'Yes'
+        # else:
+        #     advirtiser_details['whitelist_requested_user'] = 'No'
+        # send_calendar_invite_to_advertiser(advirtiser_details, False)
 
     # Get all location, teams codetypes
 
@@ -517,7 +598,7 @@ def picasso_lead_form(request):
             ret_url = basic_data['errorURL']
         return redirect(ret_url)
 
-    # Get all location, teams codetypes
+    # # Get all location, teams codetypes
     lead_args = get_basic_lead_data(request)
     lead_args['teams'] = Team.objects.filter(belongs_to__in=['PICASSO', 'TAG-PICASSO', 'WPP-PICASSO', 'ALL'], is_active=True)
     # lead_args['teams'] = Team.objects.exclude(team_name__in=['Managed Agency (AS)', 'MMS Two Apollo', 'MMS Two Apollo Optimizer']).filter(belongs_to__in=['BOTH', 'PICASSO', 'WPP'], is_active=True).order_by('team_name')
@@ -3539,75 +3620,52 @@ def picasso_bolt_lead_form(request):
     """
     Picasso Lead Submission to Salesforce
     """
-    # Check The Rep Status and redirect
-    if request.method == 'POST':
-        
+    basic_data = {}
+    basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
+    basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
+    if request.method == 'POST':   
         post_lead_to_google_form(request.POST, 'mobile_site')
-        if settings.SFDC == 'STAGE':
-            sf_api_url = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('sandbox')
-            oid = '00D7A0000008nBH'
-        elif settings.SFDC == 'PRODUCTION':
-            sf_api_url = 'https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8'
-            basic_leads, tag_leads, shop_leads, rlsa_leads = get_all_sfdc_lead_ids('production')
-            oid = '00Dd0000000fk18'
-
+        data = request.POST
         ret_url = ''
-        # Get Basic/Common form field data
-        if settings.SFDC == 'STAGE':
-            basic_data = get_common_sandbox_lead_data(request.POST)
-        else:
-            basic_data = get_common_salesforce_lead_data(request.POST)
-        basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
-        basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
-        basic_data['oid'] = oid
-        basic_data['Campaign_ID'] = None
-        picasso_data = basic_data
-
         estimated_tat = ""
-        estimated_bolt_tat = ""
-        
         tat_dict = get_tat_for_picasso('portal')
-        bolt_tat_dict = get_tat_for_bolt('portal')
-
-
         if tat_dict['estimated_date']:
             estimated_tat = tat_dict['estimated_date'].date()
             request.session[str(request.user.email) + 'estimated_tat'] = estimated_tat
             request.session[str(request.user.email) + 'no_of_inqueue_leads'] = tat_dict['no_of_inqueue_leads']
-
-        if bolt_tat_dict['estimated_date']:
-            estimated_bolt_tat = bolt_tat_dict['estimated_date'].date()
-            request.session[str(request.user.email) + 'estimated_tat_bolt'] = estimated_bolt_tat
-            request.session[str(request.user.email) + 'no_of_inqueue_leads_bolt'] = bolt_tat_dict['no_of_inqueue_leads']
-
-        for key, value in tag_leads.items():
-            if key == 'picasso_objective_list[]':
-                picasso_data[value] = (';').join(request.POST.getlist('picasso_objective_list[]'))
-            elif key == 'unique_ref_id':
-                picasso_data[value] = get_unique_uuid('Picasso')
-            elif key == 'picasso_tat':
-                if request.POST.get('ctype1') == 'BOLT':
-                    picasso_data[value] = datetime.strftime(estimated_bolt_tat, '%m/%d/%Y')
-                else:    
-                    picasso_data[value] = datetime.strftime(estimated_tat, '%m/%d/%Y')
-            elif key == 'picasso_auto_number':
-                picasso_data[value] = PicassoLeads.objects.all().count()
-            else:
-                picasso_data[value] = request.POST.get(key)
-            if key == 'url2':
-                picasso_data[value] = request.POST.get('url2')
-            if key == 'url3':
-                picasso_data[value] = request.POST.get('url3')
-       
-        response = submit_lead_to_sfdc(sf_api_url, picasso_data)
-        advirtiser_details = get_advertiser_details(sf_api_url, picasso_data)
-        # send_calendar_invite_to_advertiser(advirtiser_details, False)
         
-        if response.status_code == 200:
+        if data['url2'] or data['url3']:
+            picasso_data['url2'] = data['url2']
+            picasso_data['url3'] = data['url3']
+
+        try:
+            usr = User.objects.get(username=data['corp_email'])
+            user = UserDetails.objects.get(user_id=usr)
+            picasso_lead = PicassoLeads()
+            picasso_lead.google_rep_name = user.user.first_name + ' ' + user.user.last_name
+            picasso_lead.google_rep_email = user.user.username
+            picasso_lead.lead_owner_name = user.user_manager_name
+            picasso_lead.lead_owner_email = user.user_manager_email
+            picasso_lead.company = data['company']
+            picasso_lead.pod_name = data['picasso_pod']
+            picasso_lead.crop_email = data['corp_email']
+            picasso_lead.my_advitiser_email = data['advertiser_email']
+            picasso_lead.my_cases_alias = data['cases_alias']
+            picasso_lead.market_selector = data['market_selector']
+            picasso_lead.language_selector = data['language']
+            picasso_lead.type_1 = data['ctype1']
+            picasso_lead.sf_lead_id = get_unique_uuid('PICASSO')
+            picasso_lead.customer_id = data['cid']
+            picasso_lead.lead_status = data['picasso_lead_status']
+            picasso_lead.url_1 = data['url1']
+            picasso_lead.team = data['team']
+            picasso_lead.additional_notes = data['additional_notes']
+            picasso_lead.picasso_objective = ''.join('%s,' % pair for pair in data.getlist('picasso_objective_list[]'))
+            picasso_lead.save()
             ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
-        else:
+        except:
             ret_url = basic_data['errorURL']
+            
         return redirect(ret_url)
 
     # Get all location, teams codetypes
@@ -4510,8 +4568,8 @@ def argos_management(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         argos = ArgosProcessTimeTracker()
-        cid = data['cid']
-        rep_email = data.get('rep_name', None)
+        cid = str(data['cid'])
+        rep_email = data.get('rep_name')
         if rep_email:
             assignee = User.objects.get(email=rep_email)
         else:
@@ -4519,7 +4577,7 @@ def argos_management(request):
         attributes = data['attributes']
         products_count = data['product_count']
         try:
-            lead = Leads.objects.get(customer_id=cid, type_1='Project Argos- Feed Performance Optimization')
+            lead = Leads.objects.get(sf_lead_id__contains=cid, type_1='Project Argos- Feed Performance Optimization')
         except:
             resp = {'msg':'No Lead'}
             return HttpResponse(json.dumps(resp),content_type='application/json')
@@ -4601,7 +4659,7 @@ def argos_management(request):
                     total_spent = ist - argos.start_time
                     argos.time_spent = total_spent.seconds
         else:
-            rep_email = data['rep_name']
+            rep_email = data.get('rep_name')
             if rep_email:
                 assignee = User.objects.get(email=rep_email)
             else:

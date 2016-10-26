@@ -20,6 +20,7 @@ from django.http import Http404
 
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User, Group
 
 # Create your views here.
 @login_required
@@ -59,7 +60,7 @@ def crm_management(request):
 					# print settings.PROCESS_TYPE_MAPPING.get(process_type), lead_status, lead_sub_status
 
 					leads = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).values(
-						'customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
+						'id', 'sf_lead_id', 'customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
 						)[offset:limit]
 					leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
 					# print "WPP", leads_count
@@ -68,7 +69,7 @@ def crm_management(request):
 					# print settings.PROCESS_TYPE_MAPPING.get(process_type), lead_status, lead_sub_status
 
 					leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), lead_status = lead_status).values(
-						'customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
+						'id', 'sf_lead_id', 'customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
 					leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), lead_status = lead_status).count()
 					# print "Picasso Audits", leads_count
 
@@ -76,7 +77,7 @@ def crm_management(request):
 					# print settings.PROCESS_TYPE_MAPPING.get(process_type), lead_status, lead_sub_status
 
 					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
-						'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+						'id', 'sf_lead_id', 'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
 						).order_by('-created_date')[offset:limit]
 					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
 					# print "RLSA", leads_count
@@ -85,7 +86,7 @@ def crm_management(request):
 					# print settings.PROCESS_TYPE_MAPPING.get(process_type), lead_status, lead_sub_status
 
 					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
-						'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+						'id', 'sf_lead_id', 'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
 						)[offset:limit]
 					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
 					# print "Shopping", leads_count
@@ -94,7 +95,7 @@ def crm_management(request):
 					# print settings.PROCESS_TYPE_MAPPING.get(process_type), lead_status, lead_sub_status
 
 					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
-						'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+						'id', 'sf_lead_id', 'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
 						)[offset:limit]
 					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
 					# print "Shopping Argos", leads_count
@@ -102,7 +103,7 @@ def crm_management(request):
 				else: # Tag
 					exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
 					# print exclude_types, lead_status, lead_sub_status
-					leads = Leads.objects.exclude(type_1__in = exclude_types, **query).values('customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country'
+					leads = Leads.objects.exclude(type_1__in = exclude_types, **query).values('id', 'sf_lead_id', 'customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country'
 						)[offset:limit]
 					leads_count = Leads.objects.exclude(type_1__in = exclude_types, **query).count()
 					# print "TAG",leads_count
@@ -134,7 +135,10 @@ def get_leads(leads, leads_list):
 		appointment_date = datetime.strftime(lead.get('appointment_date'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date') else lead.get('appointment_date') ,
 		phone_optional =  lead.get('phone_optional')
 		
-		lead_dict = {'c_id':lead['customer_id'],
+		lead_dict = {
+                     'id':lead['id'],
+                     'sf_lead_id':lead['sf_lead_id'],
+                     'c_id':lead['customer_id'],
 					 'company':lead['company'], 
 					 'customer_name':lead['first_name'],
 					 'created_date':datetime.strftime(lead.get('created_date'), "%d/%m/%Y %I:%M %P") if lead.get('created_date') else lead.get('created_date'),  
@@ -309,25 +313,83 @@ def lead_history(request):
 
 @login_required
 def search_leads(request):
-	searching_lead_id = request.GET.get('q')
-	returning_data = list()
-	try:
-		normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
-		if normal_leads:
-			returning_data += list(normal_leads)
-	except ObjectDoesNotExist:
-		pass
-	try:
-		picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
-		if picasso_leads:
-			returning_data += list(picasso_leads)
-	except ObjectDoesNotExist:
-		pass
-	try:
-		wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
-		if wpp_leads:
-			returning_data += list(wpp_leads)
-	except ObjectDoesNotExist:
-		pass
+    searching_lead_id = request.GET.get('q')
+    returning_data = list()
+    try:
+        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        if normal_leads:
+            returning_data += list(normal_leads)
+    except ObjectDoesNotExist:
+        pass
+    try:
+        picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        if picasso_leads:
+            returning_data += list(picasso_leads)
+    except ObjectDoesNotExist:
+        pass
+    try:
+        wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        if wpp_leads:
+            returning_data += list(wpp_leads)
+    except ObjectDoesNotExist:
+        pass
 
-	return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
+    return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
+
+
+@login_required
+def lead_details(request, lid, sf_lead_id, ctype):
+    lead = None
+    if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+        lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+    elif ctype == 'WPP':
+        lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+    else:
+        lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+
+    return render(request,'crm/lead_details.html',{'lead':lead})
+
+
+def lead_owner_avalibility(request):
+    lead_owner = request.GET.get('lead_owner_email')
+    lead_id = request.GET.get('id')
+    lead_type = request.GET.get('type')
+    
+    user = User.objects.get(email=lead_owner)
+
+    if lead_type in ['Picasso','BOLT']:
+        assignee_lead = PicassoLeads.objects.get(id=lead_id)
+    
+    elif lead_type in ['WPP','Bolt Build','WPP - Nomination']:
+        assignee_lead = WPPLeads.objects.get(id=lead_id)
+        leads = WPPLeads.objects.filter(id=lead_id)
+
+    else: 
+        assignee_lead = Leads.objects.get(id=lead_id)
+        leads = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'])
+   
+    resp = {}
+
+    if assignee_lead.type_1 in ['Picasso','BOLT'] or assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment'):
+        assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
+        assignee_lead.lead_owner_email = user.email
+        assignee_lead.save()
+        resp['success'] = True
+        resp['name'] = assignee_lead.lead_owner_name
+        resp['email'] = assignee_lead.lead_owner_email 
+    else:
+        if leads:
+            for i in leads:
+                if assignee_lead.appointment_date_in_ist == i.appointment_date_in_ist:
+                    resp['success'] = False
+
+                else:
+                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
+                    assignee_lead.lead_owner_email = user.email
+                    assignee_lead.save()
+                    resp['success'] = True
+                    resp['name'] = assignee_lead.lead_owner_name
+                    resp['email'] = assignee_lead.lead_owner_email 
+                    break;
+        
+    return HttpResponse(json.dumps(resp))
