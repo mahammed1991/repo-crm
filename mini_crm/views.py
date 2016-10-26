@@ -3,10 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from main import views
 from django.http import HttpResponse
-from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
-from django.views.decorators.csrf import csrf_exempt
 
 #import datetime
 import json
@@ -400,45 +398,44 @@ def lead_details(request, lid, sf_lead_id, ctype):
 
 @login_required
 def lead_owner_avalibility(request):
-    lead_owner = request.GET.get('lead_owner_email')
-    lead_id = request.GET.get('id')
-    lead_type = request.GET.get('type')
-    
-    user = User.objects.get(email=lead_owner)
-
-    if lead_type in ['Picasso','BOLT']:
-        assignee_lead = PicassoLeads.objects.get(id=lead_id)
-    
-    elif lead_type in ['WPP','Bolt Build','WPP - Nomination']:
-        assignee_lead = WPPLeads.objects.get(id=lead_id)
-        leads = WPPLeads.objects.filter(id=lead_id)
-
-    else: 
-        assignee_lead = Leads.objects.get(id=lead_id)
-        leads = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'])
-   
-    resp = {}
-    
-    if assignee_lead.type_1 in ['Picasso','BOLT'] or assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment') == 'True':
-        assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
-        assignee_lead.lead_owner_email = user.email
-        assignee_lead.save()
-        resp['success'] = True
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        lead_owner = request.GET.get('lead_owner_email')
+        lead_id = request.GET.get('id')
+        lead_type = request.GET.get('type')
         
+        user = User.objects.get(email=lead_owner)
+        assignee_name = user.first_name + ' ' + user.last_name
+        resp = {}
+        assign = False
+
+        if lead_type in ['Picasso','BOLT']:
+            assign = True        
+        else:
+            if request.GET.get('override_appointment', 'False') == 'True':
+                assign = True
+            if lead_type in ['WPP','Bolt Build','WPP - Nomination']:
+                current_lead = WPPLeads.objects.get(id=lead_id)
+                if not assign:
+                    appointment_conflict = WPPLeads.objects.filter(
+                        appointment_date_in_ist=current_lead.appointment_date_in_ist, 
+                        lead_owner_email=lead_owner)
+                    assign = False if appointment_conflict else True
+            else: 
+                current_lead = Leads.objects.get(id=lead_id)
+                if not assign:
+                    appointment_conflict = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,
+                        lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'], 
+                        appointment_date_in_ist=current_lead.appointment_date_in_ist)
+                    assign = False if appointment_conflict else True        
+        if assign:
+            current_lead.lead_owner_name = assignee_name
+            current_lead.lead_owner_email = lead_owner
+            current_lead.save()
+            resp['success'] = True
+        else:
+            resp['success'] = False   
+        resp['name'] = assignee_name
+        resp['email'] = lead_owner
+        return HttpResponse(json.dumps(resp))
     else:
-        if leads:
-            for i in leads:
-                if assignee_lead.appointment_date_in_ist == i.appointment_date_in_ist:
-                    resp['success'] = False
-
-                else:
-                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
-                    assignee_lead.lead_owner_email = user.email
-                    assignee_lead.save()
-                    resp['success'] = True
-                    break;
-
-    resp['name'] = assignee_lead.lead_owner_name
-    resp['email'] = assignee_lead.lead_owner_email 
-        
-    return HttpResponse(json.dumps(resp))
+        raise Http403
