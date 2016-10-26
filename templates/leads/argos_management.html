@@ -65,8 +65,8 @@
         <div class="row">
 
           <div class="col-md-4">
-            <label for="name">CID :</label>
-            <input type="text" class="form-control" id="cid_field" name="" placeholder="CID" style="">
+            <label for="name">LEAD ID :</label>
+            <input type="text" class="form-control" id="cid_field" name="" placeholder="LEAD ID" style="">
           </div>
           <div class="col-md-4">
                   <label for="name">Rep Email :</label>
@@ -396,23 +396,22 @@ $('body').on('click', 'a.edit', function(e) {
     var cid_field = $("#cid_field").val().trim();
     var rep_name = $("#rep_name").val().trim();
     var product_count = $("#product_count").val().trim();
-    var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+    /*var cidFormat = /^\d{3}-\d{3}-\d{4}$/;*/
          
       if(cid_field === ""){
         $("#cid_field").addClass('error-box');
         valid = false;
       }else{
             /* cid formate validation*/
-            var res = cidFormat.test(cid_field);
+            /*var res = cidFormat.test(cid_field);
             if(res){
               $("#cid_field").removeClass('error-box');
               valid = true;
             }
-              else{
-              alert("CID-formate XXX-XXX-XXXX does not match");
+              else{*/
                 $("#cid_field").addClass('error-box');
                  valid = false;
-            }
+            /*}*/
       }
           
       if(rep_name === ""){

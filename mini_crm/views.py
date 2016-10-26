@@ -20,10 +20,20 @@ from django.http import Http404
 
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User, Group
 
 # Create your views here.
 @login_required
 def crm_management(request):
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        # import ipdb; ipdb.set_trace()
+        leads_list = list()
+        limit = 10
+        on_page = request.GET.get('page', 1)
+        if on_page == 1:
+            offset = 0
+        else:
+            offset = limit * on_page - 1 
 
     if request.user.groups.filter(name='CRM-MANAGER'):
         
@@ -87,7 +97,7 @@ def crm_management(request):
                     # print settings.PROCESS_TYPE_MAPPING.get("WPP"), query
 
                     leads = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).values(
-                        'customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
+                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
                         )[offset:limit]
                     leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
                     # print "WPP", leads_count
@@ -101,7 +111,7 @@ def crm_management(request):
                         query = {'lead_status': lead_status}
 
                     leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
-                        'customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
+                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
                     leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
                     # print "Picasso Audits", leads_count
 
@@ -109,7 +119,7 @@ def crm_management(request):
                     # print settings.PROCESS_TYPE_MAPPING.get("RLSA"), query
                     
                     leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
-                        'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
                         ).order_by('-created_date')[offset:limit]
                     
                     leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
@@ -119,7 +129,7 @@ def crm_management(request):
                     # print settings.PROCESS_TYPE_MAPPING.get("Shopping"), query
 
                     leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
-                        'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
                         )[offset:limit]
                     leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
                     # print "Shopping", leads_count
@@ -127,7 +137,7 @@ def crm_management(request):
                 elif process_type == "Shopping Argos":
                     # print settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), query
                     leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
-                        'customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
                         )[offset:limit]
                     leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
                     # print "Shopping Argos", leads_count
@@ -136,7 +146,7 @@ def crm_management(request):
 
                     exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                     # print exclude_types, query
-                    leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country'
+                    leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country'
                         )[offset:limit]
                     leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
                     # print "TAG",leads_count
@@ -168,7 +178,9 @@ def get_leads(leads, leads_list):
         appointment_date = datetime.strftime(lead.get('appointment_date'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date') else lead.get('appointment_date') ,
         phone_optional =  lead.get('phone_optional')
         
-        lead_dict = {'c_id':lead['customer_id'],
+        lead_dict = {'id':lead['id'],
+                     'sf_lead_id':lead['sf_lead_id'],
+                     'c_id':lead['customer_id'],
                      'company':lead['company'], 
                      'customer_name':lead['first_name'],
                      'created_date':datetime.strftime(lead.get('created_date'), "%d/%m/%Y %I:%M %P") if lead.get('created_date') else lead.get('created_date'),  
@@ -199,7 +211,7 @@ def crm_agent(request):
             if request.GET.get('appointment'):
                 lead_appointment = request.GET.get('appointment')
             user_group = request.user.groups.filter(name='CRM-AGENT')
-            leads = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment)
+            leads = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,'','','','')
             leads_data = get_json_leads(leads)
             response_json = leads_data
             res = HttpResponse(json.dumps(response_json), content_type="application/json")
@@ -399,3 +411,61 @@ def search_leads(request):
         pass
 
     return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
+
+
+@login_required
+def lead_details(request, lid, sf_lead_id, ctype):
+    lead = None
+    if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+        lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+    elif ctype == 'WPP':
+        lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+    else:
+        lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+
+    return render(request,'crm/lead_details.html',{'lead':lead})
+
+
+def lead_owner_avalibility(request):
+    lead_owner = request.GET.get('lead_owner_email')
+    lead_id = request.GET.get('id')
+    lead_type = request.GET.get('type')
+    
+    user = User.objects.get(email=lead_owner)
+
+    if lead_type in ['Picasso','BOLT']:
+        assignee_lead = PicassoLeads.objects.get(id=lead_id)
+    
+    elif lead_type in ['WPP','Bolt Build','WPP - Nomination']:
+        assignee_lead = WPPLeads.objects.get(id=lead_id)
+        leads = WPPLeads.objects.filter(id=lead_id)
+
+    else: 
+        assignee_lead = Leads.objects.get(id=lead_id)
+        leads = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'])
+   
+    resp = {}
+
+    if assignee_lead.type_1 in ['Picasso','BOLT'] or assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment'):
+        assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
+        assignee_lead.lead_owner_email = user.email
+        assignee_lead.save()
+        resp['success'] = True
+        resp['name'] = assignee_lead.lead_owner_name
+        resp['email'] = assignee_lead.lead_owner_email 
+    else:
+        if leads:
+            for i in leads:
+                if assignee_lead.appointment_date_in_ist == i.appointment_date_in_ist:
+                    resp['success'] = False
+
+                else:
+                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
+                    assignee_lead.lead_owner_email = user.email
+                    assignee_lead.save()
+                    resp['success'] = True
+                    resp['name'] = assignee_lead.lead_owner_name
+                    resp['email'] = assignee_lead.lead_owner_email 
+                    break;
+        
+    return HttpResponse(json.dumps(resp))
