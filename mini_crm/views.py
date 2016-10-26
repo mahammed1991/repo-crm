@@ -363,20 +363,35 @@ def search_leads(request):
     searching_lead_id = request.GET.get('q')
     returning_data = list()
     try:
-        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
         if normal_leads:
+            for each in list(normal_leads):
+            	if each['type_1'] in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration']:
+            		each['process_type'] = 'Shopping'
+            	elif each['type_1'] in ['RLSA Bulk Implementation']:
+            		each['process_type'] = 'RLSA'
+            	else:
+            		each['process_type'] = 'TAG'
             returning_data += list(normal_leads)
     except ObjectDoesNotExist:
         pass
     try:
-        picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
         if picasso_leads:
+            for each in list(picasso_leads):
+            	if each['type_1'] in ['BOLT']:
+            		each['process_type'] = 'BOLT'
+            	else:
+            		each['process_type'] = 'Picasso' 
             returning_data += list(picasso_leads)
+
     except ObjectDoesNotExist:
         pass
     try:
-        wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
         if wpp_leads:
+            for each in list(wpp_leads):
+            		each['process_type'] = 'WPP'
             returning_data += list(wpp_leads)
     except ObjectDoesNotExist:
         pass
