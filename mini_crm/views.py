@@ -319,6 +319,7 @@ def get_json_leads(leads):
 		'lead_status':lead.lead_status,
 		'lead_sub_status':lead.lead_sub_status if hasattr(lead, 'lead_sub_status') and lead.lead_sub_status else '',
 		'lead_id':lead.id,
+		'sf_lead_id':lead.sf_lead_id,
 		'customer_id':lead.customer_id,
 		'company':lead.company,
 		'customer_name':lead.first_name + '' + lead.last_name,
@@ -378,9 +379,7 @@ def lead_history(request):
 				else:
 					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"))
 
-			leads_data = get_json_leads(leads)
-			response_json = leads_data
-			res = HttpResponse(json.dumps(response_json), content_type="application/json")
+			res = HttpResponse(json.dumps(get_json_leads(leads)), content_type="application/json")
 			return res
 		return render(request,'crm/lead_and_history.html')
 	else:
