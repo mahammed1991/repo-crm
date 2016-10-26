@@ -10,4 +10,5 @@ urlpatterns = patterns(
     url(r'^lead-owner-email',views.lead_owner_avalibility),
     url(r'^lead-history/$',views.lead_history),
     url(r'^search-leads/', views.search_leads),
+    url(r'^crm-agents/emails/$',views.get_crm_agents_emails),
 )

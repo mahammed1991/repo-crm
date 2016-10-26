@@ -442,3 +442,13 @@ def lead_owner_avalibility(request):
                     break;
         
     return HttpResponse(json.dumps(resp))
+
+
+def get_crm_agents_emails(request):
+    agents_email_list = list()
+    search_keyword = request.GET.get('search_key')
+    all_emails = User.objects.values('email').filter(email__icontains = search_keyword, groups__name='CRM-AGENT')[:20]
+    for each in all_emails:
+        agents_email_list.append(each['email'])
+    response = {'data':agents_email_list}
+    return HttpResponse(json.dumps(response))
