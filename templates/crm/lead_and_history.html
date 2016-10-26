@@ -46,7 +46,7 @@
                                 	<div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
                                     <div class="col-md-6">
                                     	<ul class="lead-menu">
-                                            <li><a href="#">Edit </a></li>         
+                                            <li id='edit_lead'><a href="#">Edit </a></li>         
                                         </ul>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead Owner</td>
-                                        <td class="table-right smile"><i class="fa fa-smile-o lead_owner" aria-hidden="true"></i><span id='lead_owner'></span> [Change]</td>
+                                        <td class="table-right smile"><i class="fa fa-smile-o lead_owner" aria-hidden="true"></i><span id='lead_owner'></span></td>
                                         <td class="table-left">Change Lead Owner</td>
                                         <td class="table-right"><input type="checkbox"> </td>
                                        </tr>
@@ -255,6 +255,13 @@
                       }
                       else{
                         $('.side-menu').html('')
+                        $('#lead_owner').text('')
+                        $('#lead_status').text('')
+                        $('#lead_sub_status').text('')
+                        $('#team').text('')
+                        $('#date_of_installation').text('')
+                        $('#dials').text('')
+                        $('#first_contacted_on').text('')
                       }
               },
       });    
@@ -287,6 +294,7 @@
       update_lead_data(lead_data);
     }
   })
+
 
 $(document).ready(function() {
   status = $('#status').val('In Queue')
