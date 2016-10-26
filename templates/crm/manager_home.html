@@ -214,7 +214,7 @@ WFM Home
         tabledata = data['leads_list']
         if(tabledata.length != 0){
             for(i=0; i< tabledata.length; i += 1){
-                row = '<tr><td><a href="/crm/lead-details/' + tabledata[i]['id'] + '/'+ tabledata[i]['sf_lead_id'] + '" target="_blank">'+ tabledata[i]['c_id'] + '</a></td>' +
+                row = '<tr><td><a onclick="addURL(this)" href="/crm/lead-details/' + tabledata[i]['id'] + '/'+ tabledata[i]['sf_lead_id'] + '" target="_blank">'+ tabledata[i]['c_id'] + '</a></td>' +
                 '<td>' + tabledata[i]['company'] + '</td>' +
                 '<td>' + tabledata[i]['customer_name'] +'</td>'+
                 '<td>' + tabledata[i]['created_date'] +'</td>'+
@@ -227,6 +227,14 @@ WFM Home
                 $("#leads_table_body").append(row)
             }
         }
+    }
+
+    function addURL(element)
+    {
+      var type = $('#process option:selected').text().replace(" ","");
+        $(element).attr('href', function() {
+            return this.href + '/' + type;
+        });
     }
 
     </script>

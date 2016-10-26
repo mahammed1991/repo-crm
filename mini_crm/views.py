@@ -307,28 +307,17 @@ def search_leads(request):
 
 
 @login_required
-def lead_details(request, lid, sf_lead_id):
-    context = {}
+def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
-    picassolead = None
-    wpplead = None
-
-    try:
+    if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        wpplead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        picassolead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        
-    except ObjectDoesNotExist:
-        print "no leads"
-    
-    if lead:
-        context['lead'] = lead
-    elif wpplead:
-        context['lead'] = wpplead
+    elif ctype in ['WPP','Bolt Build','WPP - Nomination']:
+        lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
-        context['lead'] = picassolead
+        lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',context)
+    return render(request,'crm/lead_details.html',{'lead':lead})
+
 
 def lead_owner_avalibility(request):
     lead_owner = request.GET.get('lead_owner_email')
@@ -336,20 +325,21 @@ def lead_owner_avalibility(request):
     lead_type = request.GET.get('type')
     
     user = User.objects.get(email=lead_owner)
-    assignee_lead = Leads.objects.get(id=lead_id)   
-    assignee_wpp_lead = Leads.objects.get(id=lead_id)   
-    assignee_picasso_lead = Leads.objects.get(id=lead_id)
 
-    try:
-        leads = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'])
-        wppleads = WPPLeads.objects.filter(id=lead_id,type_1=lead_type)
-        picassoleads = PicassoLeads.objects.filter(id=lead_id,type_1=lead_type)        
-    except ObjectDoesNotExist:
-        print "no leads"
+    if lead_type in ['Picasso','BOLT']:
+        assignee_lead = PicassoLeads.objects.get(id=lead_id)
     
+    elif lead_type in ['WPP','Bolt Build','WPP - Nomination']:
+        assignee_lead = WPPLeads.objects.get(id=lead_id)
+        leads = WPPLeads.objects.filter(id=lead_id)
+
+    else: 
+        assignee_lead = Leads.objects.get(id=lead_id)
+        leads = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'])
+   
     resp = {}
 
-    if assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment'):
+    if assignee_lead.type_1 in ['Picasso','BOLT'] or assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment'):
         assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
         assignee_lead.lead_owner_email = user.email
         assignee_lead.save()
@@ -359,36 +349,12 @@ def lead_owner_avalibility(request):
             for i in leads:
                 if assignee_lead.appointment_date_in_ist == i.appointment_date_in_ist:
                     resp['success'] = False
-                else:
-                    resp['success'] = True
-                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
-                    assignee_lead.lead_owner_email = user.email
-                    assignee_lead.save()
-                    break;
-        elif wppleads:
-            for i in wppleads:
-                if assignee_wpp_lead.appointment_date_in_ist == i.appointment_date_in_ist:
-                    resp['success'] = False
-                else:
-                    resp['success'] = True
-                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
-                    assignee_lead.lead_owner_email = user.email
-                    assignee_lead.save()
-                    break;
-        elif picassoleads:
-            for i in picassoleads:
-                if assignee_picasso_lead.appointment_date_in_ist == i.appointment_date_in_ist:
-                    resp['success'] = False
-                else:
-                    resp['success'] = True
-                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
-                    assignee_lead.lead_owner_email = user.email
-                    assignee_lead.save()
-                    break;
-        # else:
-        #     resp['success'] = True
-        #     assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
-        #     assignee_lead.lead_owner_email = user.email
-        #     assignee_lead.save()
 
+                else:
+                    resp['success'] = True
+                    assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
+                    assignee_lead.lead_owner_email = user.email
+                    assignee_lead.save()
+                    break;
+        
     return HttpResponse(json.dumps(resp))
