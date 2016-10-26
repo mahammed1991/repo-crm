@@ -311,7 +311,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-    elif ctype in ['WPP','Bolt Build','WPP - Nomination']:
+    elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
