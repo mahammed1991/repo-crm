@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
+from django.views.decorators.csrf import csrf_exempt
 
 #import datetime
 import json
@@ -223,13 +224,13 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
 			leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time)
 		else:
 			#manager
-			leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values('customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country')
+			leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values('id','sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country')
 	else:
 		if  user_group[0].name == 'CRM-AGENT':
 			leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status)
 		else:
 			#manager
-			leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values('customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country')
+			leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values('id','sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country')
 
 	return leads
 
@@ -319,6 +320,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
     return render(request,'crm/lead_details.html',{'lead':lead})
 
 
+@login_required
 def lead_owner_avalibility(request):
     lead_owner = request.GET.get('lead_owner_email')
     lead_id = request.GET.get('id')
@@ -338,14 +340,13 @@ def lead_owner_avalibility(request):
         leads = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'])
    
     resp = {}
-
-    if assignee_lead.type_1 in ['Picasso','BOLT'] or assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment'):
+    
+    if assignee_lead.type_1 in ['Picasso','BOLT'] or assignee_lead.appointment_date_in_ist is None or request.GET.get('override_appointment') == 'True':
         assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
         assignee_lead.lead_owner_email = user.email
         assignee_lead.save()
         resp['success'] = True
-        resp['name'] = assignee_lead.lead_owner_name
-        resp['email'] = assignee_lead.lead_owner_email 
+        
     else:
         if leads:
             for i in leads:
@@ -357,8 +358,9 @@ def lead_owner_avalibility(request):
                     assignee_lead.lead_owner_email = user.email
                     assignee_lead.save()
                     resp['success'] = True
-                    resp['name'] = assignee_lead.lead_owner_name
-                    resp['email'] = assignee_lead.lead_owner_email 
                     break;
+
+    resp['name'] = assignee_lead.lead_owner_name
+    resp['email'] = assignee_lead.lead_owner_email 
         
     return HttpResponse(json.dumps(resp))
