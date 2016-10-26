@@ -1,0 +1,321 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  Lead Details
+{% endblock title %}
+
+
+  <head>
+{% block main_css %}
+  <style type="text/css"></style>
+    <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+{% endblock main_css %}
+  </head>
+  {% block content %}
+  <body>
+    <section class="top-margin wfm">
+      <div class=" container-fluid ">
+                    <div class="white-section">
+                        <!-- Nav tabs -->
+                      <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#lead" aria-controls="home" role="tab" data-toggle="tab">Lead</a></li>
+                        <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
+                      </ul>
+                    
+                      <!-- Tab panes -->
+                      <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="lead">
+                          <div class="padding-20 lead-history">
+                              <div class="row">
+                                  <div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
+                                    <div class="col-md-6">
+                                      <ul class="lead-menu">
+                                            <li><a href="#">Edit </a></li>         
+                                            <li><a href="#">Delete</a></li>         
+                                            <li><a href="#">Clone</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="yellow-line"></div>
+                                <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
+                              <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Lead Owner</td>
+                                        <td class="table-right smile"><i class="fa fa-smile-o" aria-hidden="true"></i> <span id="lon">{{ lead.lead_owner_name }}</span> [<a href="#" id="assign-lead-popup">Change </a>] 
+                                        <div class="arrow-box" style="display:none;">
+                                          <div class="padding-20">
+                                              <h2 class="pull-left">Lead Owner</h2> 
+                                              <div>
+                                                <input class="form-control" type="email" id="exampleInputEmail1">
+                                              </div>
+                                              <div>
+                                                <label>
+                                                  <input id="sendmail" type="checkbox" checked="checked"> Send Email Notification
+                                                </label>
+                                              </div>
+                                              <div>
+                                                <label>
+                                                  <input id="override" type="checkbox"> Override existing appointment
+                                                </label>
+                                              </div>
+                                              <input type="button" id="check-availability" class="btn btn-primary" value="Submit" style="margin-top:20px;float:right;background:#4385f5">
+                                              <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                        </td>
+                                        
+                                        <td class="table-left">Change Lead Owner</td>
+                                        <td class="table-right"><input type="checkbox"> </td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Status  </td>
+                                        <td class="table-right">{{ lead.lead_status }}</td>
+                                        <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead.lead_sub_status }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">On Call Win</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left">Not Interested Cases RCA</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Team</td>
+                                        <td class="table-right">{{ lead.team }}</td>
+                                        <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Date of installation</td>
+                                        <td class="table-right">{{ lead.date_of_installation }}</td>
+                                        <td class="table-left">Regalix Webmaster</td>
+                                        <td class="table-right">Saurabh Santra</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Type</td>
+                                        <td class="table-right" id="type">{{ lead.type_1 }}</td>
+                                        <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Implemented Code is</td>
+                                        <td class="table-right">Same as specified by the Google rep</td>
+                                        <td class="table-left">Dynamic Variable Set</td>
+                                        <td class="table-right">No</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">LastCallTime</td>
+                                        <td class="table-right">10/4/2016 4:44 AM</td>
+                                        <td class="table-left">Website Backup Taken?</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">No of Dials</td>
+                                        <td class="table-right">{{ lead.dials }}</td>
+                                        <td class="table-left">Dynamic Value</td>
+                                        <td class="table-right">Yes</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left qstn">1st Contacted on <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">10/3/2016 4:59 PM
+</td>
+                                       </tr>
+                                       
+                                     </table>
+                                 </div>
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Lead Information</a>
+                              <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Google Accounts Manager(D)</td>
+                                        <td class="table-right smile">{{ lead.google_rep_name }}</td>
+                                        <td class="table-left">Googler Location</td>
+                                        <td class="table-right">Ranga Reddy, Telangana, India </td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Email </td>
+                                        <td class="table-right">{{ lead.google_rep_email }} [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-left qstn">Additional LDAP</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Google Manager(D)</td>
+                                        <td class="table-right">surabhi verma</td>
+                                        <td class="table-left">Number Of Codes  </td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Google Manager Email</td>
+                                        <td class="table-right">vasagoni@google.com [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-left qstn">Lead Bundle#</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                     </table>
+                                 </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="history">
+                          <div class="padding-20 lead-history upld-lnk-section">
+                              <a href="#" class="upload-file"><i class="fa fa-file-text" aria-hidden="true"></i> Upload File</a>
+                                <div class="or-left">OR</div>
+                                <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Frist Name *" style="height:34px;">
+                              </div>
+                              <a href="#" class="save-button">Save</a>
+                                <div class="clearfix"></div>
+                              <div class="yellow-line"></div>
+                              <div class="row">
+                                  <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                      <img src="images/smile-pic.jpg" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                      <p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> changed Lead Status from Pending QC - WIN to Implemented and Lead QC'ed by from a blank value to Priyadarshani Rai.</p>
+                                        <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                      <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                      <img src="images/smile-pic.jpg" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                      <p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> Kanag Thara changed Lead Status from In Progress to Pending QC - WIN, Lead Sub-Status from IP - Code Sent to a blank value, and gCases ID from 0 to 3-2335000013751.</p>
+                                        <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                      <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                       <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                      <img src="images/smile-pic.jpg" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                      <p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> posted a file </p>
+                                        <div class="download-box">
+                                          <div class="media">
+                                              <div class="media-left">
+                                                <a href="#">
+                                                  <img class="media-object" src="images/print-screen.jpg" alt="">
+                                                </a>
+                                              </div>
+                                              <div class="media-body">
+                                                <h4 class="media-heading">Screenshot 2016-10-04 at 2.52.31 PM</h4>
+                                                <a href="#" class="screen-dwld"><i class="fa fa-download" aria-hidden="true"></i> Download png  <span>(208 KB)</span></a>
+                                              </div>
+                                            </div>
+                                        </div>
+                                         <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                      <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+
+                    </div>
+                </div><!--container-fluid-->
+                <div style="margin-top:80px;"></div> 
+    </section>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/reports/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script type="text/javascript">
+
+
+    $('#check-availability').click(function(){
+      var lead_owner = $("#exampleInputEmail1").val();
+      var lead_type = $('#type').text();
+      var lead_id = {{ lead.id }};
+      var send_mail = false;
+      var override_appointment = 'False';
+      /*if($('#sendmail').is(':checked')){
+        send_mail = true;
+      }*/
+      if($('#override').is(':checked')){
+        override_appointment = 'True';
+      }
+
+      if(lead_owner != ''){
+       $('#exampleInputEmail1').css('border-color','#cccccc')
+       $.ajax({
+            url: "/crm/lead-owner-email/",
+            type: 'GET',
+            data: {'lead_owner_email':lead_owner,'id':lead_id,'type':lead_type,'override_appointment':override_appointment},
+            dataType: "json",
+            success: function(data) {
+              if(data['success']){
+                $('#lon').html(data['name']);
+                $('#exampleInputEmail1').val('');
+                $('.arrow-box').hide();
+                /*setTimeout(function(){// wait for 5 secs(2)
+                  location.reload(); // then reload the page.(3)
+                }, 2000); */
+              }
+              else{
+                alert(data['name'] + ' is booked for an other appointment at the same time')
+              }
+            },
+            error: function(xhr){
+                alert('Request Status: ' + xhr.status);
+            }
+        });
+     }
+     else{
+      $('#exampleInputEmail1').css('border-color','red')
+     }
+
+    });
+
+    $('#assign-lead-popup').click(function(){
+      $('.arrow-box').toggle();
+    });
+
+    $("#exampleInputEmail1").autocomplete(
+    {
+        search: function () {},
+        source: function (request, response)
+        {
+            $.ajax(
+            {
+                url: "/main/user/email/",
+                dataType: "json",
+                data:
+                {
+                    search_key: request.term,
+                },
+                success: function (data)
+                {
+                    response(data.data);
+                }
+            });
+        },
+        minLength: 1,
+    });
+
+    </script>
+    
+
+    
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    
+  </body>
+  {% endblock content %}
