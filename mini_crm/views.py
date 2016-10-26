@@ -344,6 +344,8 @@ def lead_owner_avalibility(request):
         assignee_lead.lead_owner_email = user.email
         assignee_lead.save()
         resp['success'] = True
+        resp['name'] = assignee_lead.lead_owner_name
+        resp['email'] = assignee_lead.lead_owner_email 
     else:
         if leads:
             for i in leads:
@@ -351,10 +353,12 @@ def lead_owner_avalibility(request):
                     resp['success'] = False
 
                 else:
-                    resp['success'] = True
                     assignee_lead.lead_owner_name = user.first_name + ' ' + user.last_name
                     assignee_lead.lead_owner_email = user.email
                     assignee_lead.save()
+                    resp['success'] = True
+                    resp['name'] = assignee_lead.lead_owner_name
+                    resp['email'] = assignee_lead.lead_owner_email 
                     break;
         
     return HttpResponse(json.dumps(resp))
