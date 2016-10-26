@@ -46,7 +46,7 @@
                                 	<div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
                                     <div class="col-md-6">
                                     	<ul class="lead-menu">
-                                            <li><a href="#">Edit </a></li>         
+                                            <li id='edit_lead'><a onclick="addURL(this)" href="#">Edit </a></li>         
                                         </ul>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead Owner</td>
-                                        <td class="table-right smile"><i class="fa fa-smile-o lead_owner" aria-hidden="true"></i><span id='lead_owner'></span> [Change]</td>
+                                        <td class="table-right smile"><i class="fa fa-smile-o lead_owner" aria-hidden="true"></i><span id='lead_owner'></span></td>
                                         <td class="table-left">Change Lead Owner</td>
                                         <td class="table-right"><input type="checkbox"> </td>
                                        </tr>
@@ -240,6 +240,7 @@
                         $('.side-menu').html('')
                         ajax_response = response
                         for(var i=0;i<response.length;i++){
+                          $('#edit_lead a').attr('href','/crm/lead-details/' + response[i]['lead_id'] + '/'+ response[i]['sf_lead_id'])
                           $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div>Lead one") +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
                           $('.side-menu li:first a').addClass('active')
                           lead_id_selected = parseInt($('.side-menu li:first').attr('id'))
@@ -255,11 +256,26 @@
                       }
                       else{
                         $('.side-menu').html('')
+                        $('#lead_owner').text('')
+                        $('#lead_status').text('')
+                        $('#lead_sub_status').text('')
+                        $('#team').text('')
+                        $('#date_of_installation').text('')
+                        $('#dials').text('')
+                        $('#first_contacted_on').text('')
                       }
               },
       });    
   }
 
+  function addURL(element)
+  {
+    //var type = $('#process option:selected').text().replace(" ","");
+    process_type = 'TAG'
+    $(element).attr('href', function() {
+        return this.href + '/' + process_type;
+    });
+  }
   $('#status').on('change',function(){
     call_lead_history()
   })
@@ -287,6 +303,7 @@
       update_lead_data(lead_data);
     }
   })
+
 
 $(document).ready(function() {
   status = $('#status').val('In Queue')
