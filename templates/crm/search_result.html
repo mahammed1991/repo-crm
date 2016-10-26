@@ -82,9 +82,9 @@
                                 {% for data in returning_data %}
                                <tbody> 
                                    <tr> 
-                                       <td><a href="#">{{data.customer_id}}   <i class="fa fa-external-link-square" aria-hidden="true"></i></a></td> 
+                                       <td><a href="../lead-details/{{data.id}}/{{data.sf_lead_id}}/{{data.process_type}}">{{data.customer_id}}   <i class="fa fa-external-link-square" aria-hidden="true"></i></a></td> 
                                        <td>{{data.type_1}}</td> 
-                                       <td><a  href="{{data.url}}" target="_blank">{{data.url_1}}</a></td> 
+                                       <td>>{{data.url_1}}</td> 
                                        <td>{{data.lead_status}}</td> 
 
                                     </tr>
