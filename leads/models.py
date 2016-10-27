@@ -734,7 +734,8 @@ class SfdcUsers(models.Model):
         ('SHOPPING', 'SHOPPING'),
         ('RLSA', 'RLSA'),
         ('WPP', 'WPP'),
-        ('Picasso Audits', 'Picasso Audits'),))
+        ('Picasso Audits', 'Picasso Audits'),
+        ('Shopping Argos','Shopping Argos')))
     shift_start = models.TimeField(blank=True, null=True)
     shift_end = models.TimeField(blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
