@@ -9,7 +9,7 @@ from django.template import Context
 
 #import datetime
 import json
-from leads.models import Leads, WPPLeads, PicassoLeads
+from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
@@ -17,7 +17,8 @@ import pytz
 from reports.models import Region
 
 from django.http import Http404
-from django.conf import settings
+from django.http import HttpResponseForbidden
+
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
@@ -432,14 +433,17 @@ def search_leads(request):
 @login_required
 def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
+    lead_detail = None
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        #lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+
     elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',{'lead':lead})
+    return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail})
 
 
 @login_required
@@ -484,7 +488,7 @@ def lead_owner_avalibility(request):
         resp['email'] = lead_owner
         return HttpResponse(json.dumps(resp))
     else:
-        raise Http403
+        return HttpResponseForbidden()
 
 
 def get_crm_agents_emails(request):
