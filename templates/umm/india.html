@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load staticfiles %}
+
+<head>
+  <meta charset="utf-8">
+ 
+  <title>Google Portal</title>
+
+  <link href="{% static  'css/umm/css/style.default.css' %}" rel="stylesheet">
+  <link href="{% static  'css/umm/css/jquery.datatables.css' %}" rel="stylesheet">
+   <link href="{% static  'css/umm/zb_datepicker/css/default.css' %}" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.js' %}"></script>
+  <script src="js/respond.min.js' %}"></script>
+  <![endif]-->
+</head>
+
+<body>
+    
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<section>
+  
+  {% include "umm/left_nav.html" %}
+  
+  <div class="mainpanel">
+    
+    <div class="headerbar">
+      
+      <a class="menutoggle"><i class="fa fa-bars"></i></a>
+      
+      
+      
+      
+      
+    </div><!-- headerbar -->
+    
+    <div class="pageheader">
+     
+      <h2  style="height: 51px;"><a href="{% url 'umm.views.home' %}"><i class="fa fa-home"></i></a> INDIA / Overview</h2>
+      </div>
+              <div class="pageheader">
+              <div class="panel-body">
+              
+                          
+              <div class="input-group" style="float:left; margin-right:10px;">
+               <label style="float:left; margin-top:10px; margin-left:10px;  margin-left:10px; padding-right:8px;">Select From Date: </label>
+                <input type="text" id="datepicker4" placeholder="mm/dd/yyyy" class="form-control hasDatepicker">
+                </div>
+             
+              <div class="input-group" style="float:left; margin-right:10px; ">
+                 <label style="float:left; margin-top:10px;margin-left:10px; padding-right:8px;">Select To Date:</label>
+                <input type="text" id="datepicker5" placeholder="mm/dd/yyyy" class="form-control hasDatepicker">
+               
+              </div>
+          <button class="btn btn-primary" style=" margin-top:3px;" type="submit">Submit</button>
+                         
+              
+              
+            </div>
+           <!-- contentpanel -->
+    
+    <div class="row">
+                        <div class="col-md-12">
+                            
+                            <div class="panel panel-dark panel-alt panel-success1">
+                                <div class="panel-heading">
+                                    <div class="panel-btns">
+                                       
+                                        <a class="minimize" href="">−</a>
+                                    </div><!-- panel-btns -->
+                                    <h2 class="panel-title">Regional Analysis</h2>
+                                </div><!-- panel-heading -->
+                                <div class="panel-body panel-table">
+                                    <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr class="table-head-alt">
+                                                <th width="27%">Metrics</th>
+                                                <th width="49%">Percentage</th>
+                                                
+                                                <th width="8%">&nbsp;</th>
+                                                <th width="16%">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><a href="">UAA</a></td>
+                                                <td>
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" style="width: 2%">
+                                                          <span class="sr-only">2% Complete (success)</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>2% </td>
+                                                <td>87</td>
+                                            </tr>
+                                            <tr>
+                                                <td><a href="">Points</a></td>
+                                                <td>
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="width: 15%">
+                                                          <span class="sr-only">15% Complete (success)</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>15%</td>
+                                                <td>150</td>
+                                            </tr>
+                                            <tr>
+                                                <td><a href="">Run Rate</a></td>
+                                                <td>
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100" style="width: 52%">
+                                                          <span class="sr-only">52% Complete (success)</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>52%</td>
+                                                <td>56</td>
+                                            </tr>
+                                            <tr>
+                                                <td><a href="">Calling Hours</a></td>
+                                                <td>
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                                          <span class="sr-only">20% Complete (success)</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>20%</td>
+                                                <td>20</td>
+                                            </tr>
+                                            <tr>
+                                              <td><a href=""> Quality</a></td>
+                                              <td><div class="progress">
+                                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100" style="width: 6%"> <span class="sr-only">6% Complete (success)</span> </div>
+                                              </div></td>
+                                              <td>6%</td>
+                                              <td>90</td>
+                                            </tr>
+                                            <tr>
+                                              <td><a href=""> Percentage to traget (UAA)</a></td>
+                                              <td><div class="progress">
+                                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100" style="width: 6%"> <span class="sr-only">6% Complete (success)</span> </div>
+                                              </div></td>
+                                              <td>6%</td>
+                                              <td>80</td>
+                                            </tr>
+                                            <tr>
+                                                <td><a href=""> Percentage to traget (Points)</a></td>
+                                                <td>
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100" style="width: 6%">
+                                                          <span class="sr-only">6% Complete (success)</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>6%</td>
+                                                <td>90</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </div><!-- table-responsive -->
+                                </div><!-- panel-body -->
+                            </div><!-- panel -->
+                            
+                        </div><!-- col-md-6 -->
+                        
+                        <!-- col-md-6 -->
+                        
+                </div> 
+                    
+                    
+                       
+                    
+                   <div class="row">
+        <div class="col-md-12" style="border-top:1px #CCCCCC solid; ">
+          <div class="form-group" style="margin-top:10px;">
+                        <label class="col-sm-2"  style="margin-top: 10px; width:100px;">Agent LDAP</label>
+                        <div class="btn-group mr5">
+                <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button">
+                  Vtalari <span class="caret"></span>
+                </button>
+                <ul role="menu" class="dropdown-menu">
+                  <li><a href="#">Vtalari</a></li>
+                  <li><a href="#">Vtalari</a></li>
+                  <li><a href="#">Vtalari</a></li>
+                  
+                </ul>
+              </div>
+                      </div>
+          <div class="panel-body">
+          <div class="row" style="background:#fff;  padding-top: 23px;">
+            <div class="col-md-11">
+              <h5 class="subtitle">UAA Week on Week Analysis</h5>
+              
+              <img src="{% static  'images/umm/images/png;base64ae8dd1be53fdab2f.png' %}" width="95%" height="291" />
+            </div>
+            
+            <div class="col-md-11">
+            </br>
+            </br>
+              <h5 class="subtitle"> Points Week on Week Analysis</h5>
+              <img src="{% static  'images/umm/images/png;base646e7e6dc41b62acbe.png' %}" width="95%" height="291" />
+               </br>
+            </br>
+              
+            </div>
+            
+          </div><!-- row -->
+          
+         
+          
+        </div>
+          
+          <div class="table-responsive">
+          <table class="table table-bordered mb30">
+            <thead>
+              <tr >
+                <th style="background:#4fb001;" colspan="5">Performance</th>
+                <th style="background:#4fb001;" colspan="2">Quality Scores</th>
+                <th style="background:#4fb001;" colspan="2">Productivity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#d9e0ed;">
+                <td>Week</td>
+                <td>UAAs </td>
+                <td>Points </td>
+                <td>UAA RR</td>
+                <td> Points RR</td>
+                <td>Quality Scores </td>
+                <td>CXS</td>
+                <td>Number of Calls</td>
+                <td>Calling Hours</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Jacob</td>
+                <td>Mark</td>
+                <td>Mark</td>
+                <td>Mark</td>
+                <td>Thornton</td>
+                <td>Mark</td>
+                <td>@fat</td>
+                <td>Mark</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Larry</td>
+                <td>Mark</td>
+                <td>Mark</td>
+                <td>Mark</td>
+                <td>the Bird</td>
+                <td>Mark</td>
+                <td>@twitter</td>
+                <td>Mark</td>
+              </tr>
+            </tbody>
+          </table>
+          </div><!-- table-responsive -->
+        </div><!-- col-md-6 -->
+        
+        <!-- col-md-6 -->
+        
+      </div> 
+                    
+        
+        
+                    
+                    
+    </div>  
+    </div>
+    
+  </div><!-- mainpanel -->
+  
+  <div class="rightpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a href="#rp-alluser" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+        <li><a href="#rp-favorites" data-toggle="tab"><i class="fa fa-heart"></i></a></li>
+        <li><a href="#rp-history" data-toggle="tab"><i class="fa fa-clock-o"></i></a></li>
+        <li><a href="#rp-settings" data-toggle="tab"><i class="fa fa-gear"></i></a></li>
+    </ul>
+        
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="rp-alluser">
+            <h5 class="sidebartitle">Online Users</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/userprofile.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <span class="pull-right badge badge-danger">2</span>
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+            
+            <div class="mb30"></div>
+            
+            <h5 class="sidebartitle">Offline Users</h5>
+            <ul class="chatuserlist">
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-favorites">
+            <h5 class="sidebartitle">Favorites</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Los Angeles, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user1.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>San Francisco, CA</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Bangkok, Thailand</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Renov Leongal</strong>
+                            <small>Cebu City, Philippines</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user5.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Weno Carasbong</strong>
+                            <small>Tokyo, Japan</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="rp-history">
+            <h5 class="sidebartitle">History</h5>
+            <ul class="chatuserlist">
+                <li class="online">
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user4.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Eileen Sideways</strong>
+                            <small>Hi hello, ctc?... would you mind if I go to your...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user2.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Zaham Sindilmaca</strong>
+                            <small>This is to inform you that your product that we...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+                <li>
+                    <div class="media">
+                        <a href="#" class="pull-left media-thumb">
+                            <img alt="" src="{% static  'images/umm/images/photos/user3.png' %}" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <strong>Nusja Nawancali</strong>
+                            <small>Are you willing to have a long term relat...</small>
+                        </div>
+                    </div><!-- media -->
+                </li>
+            </ul>
+        </div>
+        <div class="tab-pane pane-settings" id="rp-settings">
+            
+            <h5 class="sidebartitle mb20">Settings</h5>
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Offline Users</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Enable History</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Full Name</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle-chat1 toggle-success"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-8 control-label">Show Location</label>
+                <div class="col-xs-4 control-label">
+                    <div class="toggle toggle-success"></div>
+                </div>
+            </div>
+            
+        </div><!-- tab-pane -->
+        
+    </div><!-- tab-content -->
+  </div><!-- rightpanel -->
+  
+  
+</section>
+
+
+<script src="{% static 'js/umm/js/jquery-1.10.2.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery-migrate-1.2.1.min.js' %}"></script>
+<script src="{% static 'js/umm/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/umm/js/modernizr.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.sparkline.min.js' %}"></script>
+<script src="{% static 'js/umm/js/toggles.min.js' %}"></script>
+<script src="{% static 'js/umm/js/retina.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.cookies.js' %}"></script>
+
+<script src="{% static 'js/umm/js/bootstrap-wizard.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/umm/js/jquery.datatables.min.js' %}"></script>
+<script src="{% static 'css/umm/zb_datepicker/javascript/zebra_datepicker.js' %}"></script>
+
+<script src="{% static 'js/umm/js/custom.js' %}"></script>
+<script>
+jQuery(document).ready(function(){
+$('#datepicker4').Zebra_DatePicker();
+$('#datepicker5').Zebra_DatePicker();
+jQuery('.nav-parent').eq(0).addClass('active')
+  // Basic Wizard
+  jQuery('#basicWizard').bootstrapWizard();
+  
+  // Progress Wizard
+  $('#progressWizard').bootstrapWizard({
+    'nextSelector': '.next',
+    'previousSelector': '.previous',
+    onNext: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    },
+    onPrevious: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    },
+    onTabShow: function(tab, navigation, index) {
+      var $total = navigation.find('li').length;
+      var $current = index+1;
+      var $percent = ($current/$total) * 100;
+      jQuery('#progressWizard').find('.progress-bar').css('width', $percent+'%');
+    }
+  });
+  
+  // Disabled Tab Click Wizard
+  jQuery('#disabledTabWizard').bootstrapWizard({
+    tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+    onTabClick: function(tab, navigation, index) {
+      return false;
+    }
+  });
+  
+  // With Form Validation Wizard
+  var $validator = jQuery("#firstForm").validate({
+    highlight: function(element) {
+      jQuery(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+    },
+    success: function(element) {
+      jQuery(element).closest('.form-group').removeClass('has-error');
+    }
+  });
+  
+  jQuery('#validationWizard').bootstrapWizard({
+    tabClass: 'nav nav-pills nav-justified nav-disabled-click',
+    onTabClick: function(tab, navigation, index) {
+      return false;
+    },
+    onNext: function(tab, navigation, index) {
+      var $valid = jQuery('#firstForm').valid();
+      if(!$valid) {
+        
+        $validator.focusInvalid();
+        return false;
+      }
+    }
+  });	  
+  
+  
+});
+</script>
+
+
+<script>
+  jQuery(document).ready(function() {
+    
+    jQuery('#table1').dataTable();
+    
+    jQuery('#table2').dataTable({
+      "sPaginationType": "full_numbers"
+    });
+    
+    // Chosen Select
+    jQuery("select").chosen({
+      'min-width': '100px',
+      'white-space': 'nowrap',
+      disable_search_threshold: 10
+    });
+    
+    // Delete row in a table
+    jQuery('.delete-row').click(function(){
+      var c = confirm("Continue delete?");
+      if(c)
+        jQuery(this).closest('tr').fadeOut(function(){
+          jQuery(this).remove();
+        });
+        
+        return false;
+    });
+    
+    // Show aciton upon row hover
+    jQuery('.table-hidaction tbody tr').hover(function(){
+      jQuery(this).find('.table-action-hide a').animate({opacity: 1});
+    },function(){
+      jQuery(this).find('.table-action-hide a').animate({opacity: 0});
+    });
+  
+  
+  });
+</script>
+
+</body>
+
+<!-- Mirrored from themepixels.com/demo/webpage/bracket/index.html by HTTrack Website Copier/3.x [XR&CO'2013], Fri, 28 Mar 2014 14:23:40 GMT -->
+</html>
