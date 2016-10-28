@@ -112,6 +112,7 @@ WFM Home
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script type="text/javascript">
     $(document).ready(function(){
+        initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
         objdata_process = Object.keys(JSON.parse(status_mapping.replace(/&quot;/g,'"')))
         objdata_region = JSON.parse(regions.replace(/&quot;/g,'"'))
@@ -179,9 +180,15 @@ WFM Home
       LoadTheTableContent(false);
     })
     function LoadTheTableContent(freshAppointment){
-      
         region = $('#region').val()
+        var ptype = getParameterByName('ptype')
         process_name = $('#process').val()
+        if(initial_load && ptype != null){
+          if(ptype === "ShoppingArgos") ptype  = "Shopping Argos";
+          if(ptype === "PicassoAudits") ptype  = "Picasso Audits";
+          $('#process').val(ptype)
+          process_name = ptype
+        }
         status = $('#status').val()
         sub_status = $('#sub_status').val()
         appointment = $('#appointment').val()
@@ -216,6 +223,7 @@ WFM Home
             dataType: "json",
             success: function(data) {
                 LeadsDataTable(data)
+                initial_load = false;
             },
             error: function(xhr){
                 alert('Request Status: ' + xhr.status);
@@ -261,6 +269,19 @@ WFM Home
             return this.href + '/' + type;
         });
     }
+
+    function getParameterByName(name, url) {
+      if (!url) {
+        url = window.location.href;
+      }
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
 
     </script>
     
