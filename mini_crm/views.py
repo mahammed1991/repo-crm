@@ -516,6 +516,7 @@ def clone_lead(request):
         obj.additional_notes = ""
         obj.first_contacted_on = None
         obj.lead_sub_status = None
+        obj.dials = 0
         obj.created_date = datetime.datetime.now()
         obj.save()
         cloned_obj = WPPLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
