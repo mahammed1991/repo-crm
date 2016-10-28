@@ -266,7 +266,14 @@ WFM Home
     {
       var type = $('#process option:selected').text().replace(" ","");
         $(element).attr('href', function() {
+          var url = this.href;
+          if(url.includes(type))
+          {
+            return this.href;
+          }
+          else{
             return this.href + '/' + type;
+          }
         });
     }
 

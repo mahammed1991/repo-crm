@@ -51,7 +51,7 @@
                                           <div class="padding-20">
                                               <h2 class="pull-left">Lead Owner</h2> 
                                               <div>
-                                                <input class="form-control" type="email" id="exampleInputEmail1">
+                                                <input class="form-control" type="email" id="exampleInputEmail1" autofocus>
                                               </div>
                                               <div>
                                                 <label>
@@ -245,12 +245,12 @@
       var lead_type = $('#type').text();
       var lead_id = {{ lead.id }};
       var send_mail = false;
-      var override_appointment = false;
+      var override_appointment = 'False';
       /*if($('#sendmail').is(':checked')){
         send_mail = true;
       }*/
       if($('#override').is(':checked')){
-        override_appointment = true;
+        override_appointment = 'True';
       }
 
       if(lead_owner != ''){
@@ -264,6 +264,7 @@
               if(data['success']){
                 $('#lon').html(data['name']);
                 $('#exampleInputEmail1').val('');
+                $('#override').prop('checked',false);
                 $('.arrow-box').hide();
                 /*setTimeout(function(){// wait for 5 secs(2)
                   location.reload(); // then reload the page.(3)
