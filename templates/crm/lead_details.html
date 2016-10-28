@@ -24,6 +24,9 @@
                       <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#lead" aria-controls="home" role="tab" data-toggle="tab">Lead</a></li>
                         <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
+                       
+                        <p style="display:none;color:green;text-transform:none;font-size:25px;text-align: center;" id="clone-info">Lead Cloned Successfully - You are on the cloned lead now.</p>
+                        
                       </ul>
                     
                       <!-- Tab panes -->
@@ -36,7 +39,8 @@
                                       <ul class="lead-menu">
                                             <li><a href="#">Edit </a></li>         
                                             <li><a href="#">Delete</a></li>         
-                                            <li><a href="#">Clone</a></li>
+                                            <!-- <li><a href="#">Clone</a></li> -->
+                                            <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
                                         </ul>
                                     </div>
                                 </div>
@@ -310,12 +314,45 @@
         minLength: 1,
     });
 
+
+/*lead cloinig functionality*/
+function cloneLead(){
+  if(confirm("Are you sure, want to clone this lead ?")){
+  var pathArray = window.location.pathname.split( '/' );
+  var lead_id = pathArray[3];
+  var sf_id = pathArray[4];
+  var process_type = pathArray[5];
+   $.ajax({
+            url: "/crm/clone-lead/",
+            type: 'POST',
+            data: {'lead_id':lead_id, 'process_type':process_type},
+            dataType: "json",
+            success: function(data) {
+
+            if(data.msg == 'Failed to clone'){
+            alert("Server error failed to clone");
+            }
+            else{
+            window.location.href='/crm/lead-details/'+data.id+'/'+data.sf_id+'/'+data.process_type+'?clone=true'
+            }
+                
+                
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+        });
+  }
+}
+
+(function(){ 
+  if(window.location.href.split('=')[1] === 'true'){
+   $("#clone-info").show(); 
+  }
+})();
+
+
     </script>
     
-
-    
-
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    
-  </body>
+</body>
   {% endblock content %}
