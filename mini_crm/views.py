@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from main import views
 from django.http import HttpResponse
 from django.conf import settings
@@ -9,7 +10,7 @@ from django.template import Context
 
 #import datetime
 import json
-from leads.models import Leads, WPPLeads, PicassoLeads
+from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
@@ -439,7 +440,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',{'lead':lead})
+    return render(request,'crm/lead_details.html',{'lead':lead, 'ctype':ctype})
 
 
 @login_required
@@ -495,3 +496,23 @@ def get_crm_agents_emails(request):
         agents_email_list.append(each['email'])
     response = {'data':agents_email_list}
     return HttpResponse(json.dumps(response))
+
+def delete_lead(request, lid, ctype):
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        if ctype == "WPP":
+            if WPPLeads.objects.all().count():
+                lead = WPPLeads.objects.get(id=lid)
+                lead.delete()
+        elif ctype == "PicassoAudits":
+            if PicassoLeads.objects.all().count():
+                lead = PicassoLeads.objects.get(id=lid)
+                lead.delete()
+        elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
+            
+            if TagLeadDetail.objects.all().count():
+                lead = TagLeadDetail.objects.get(lead_id=lid)
+                lead.delete()
+            if Leads.objects.all().count():
+                lead = Leads.objects.get(id=lid)
+                lead.delete()
+        return redirect(reverse("all-leads") + "?ptype=" + ctype)

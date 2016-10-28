@@ -35,7 +35,7 @@
                                     <div class="col-md-6">
                                       <ul class="lead-menu">
                                             <li><a href="#">Edit </a></li>         
-                                            <li><a href="#">Delete</a></li>         
+                                            <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
                                             <li><a href="#">Clone</a></li>
                                         </ul>
                                     </div>
@@ -311,11 +311,15 @@
         minLength: 1,
     });
 
+    $("#delete-lead").click(function(e){
+      e.preventDefault();
+      if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
+        location.href = $(this).data("href");
+    });
+
     </script>
     
-
     
-
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
   </body>
