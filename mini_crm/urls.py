@@ -11,4 +11,5 @@ urlpatterns = patterns(
     url(r'^lead-history/$',views.lead_history),
     url(r'^search-leads/', views.search_leads),
     url(r'^crm-agents/emails/$',views.get_crm_agents_emails),
+    url(r'^clone-lead/$', views.clone_lead),
 )

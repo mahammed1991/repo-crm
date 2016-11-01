@@ -22,6 +22,9 @@ from django.http import HttpResponseForbidden
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
+from django.views.decorators.csrf import csrf_exempt
+from lib.helpers import (get_unique_uuid)
+import datetime
 
 # Create your views here.
 @login_required
@@ -499,3 +502,70 @@ def get_crm_agents_emails(request):
         agents_email_list.append(each['email'])
     response = {'data':agents_email_list}
     return HttpResponse(json.dumps(response))
+
+
+@csrf_exempt
+def clone_lead(request):
+    process_type = request.POST.get('process_type')
+    lead_id = request.POST.get('lead_id')
+    if process_type in ['WPP']:
+        obj = WPPLeads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.additional_notes = ""
+        obj.first_contacted_on = None
+        obj.lead_sub_status = None
+        obj.dials = 0
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = WPPLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    elif process_type in ['Picasso', 'BOLT']:
+        obj = PicassoLeads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.additional_notes = ""
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = PicassoLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    elif process_type in ['TAG', 'Sopping', 'RLSA']:
+        obj = Leads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.first_contacted_on = None
+        obj.appointment_date_in_ist = None
+        obj.comment_1 = ""
+        obj.code_1 = ""
+        obj.dials = 0
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = Leads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    else:
+        responce = {'msg':'Failed to clone'}
+        return HttpResponse(json.dumps(responce),content_type='application/json')
+
+
+
+
+
+
