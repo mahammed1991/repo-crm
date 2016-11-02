@@ -351,72 +351,74 @@ def get_json_leads(leads):
 
 @login_required
 def lead_history(request):
-	if request.user.groups.filter(name='CRM-AGENT'):
-		lead_status = request.GET.get('status')
-		process_type = 'TAG'
-		if request.is_ajax():
-			if lead_status == 'In Queue':
-				if process_type == 'TAG':
-					exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
-					leads = Leads.objects.filter(lead_status=lead_status).exclude(type_1__in=exclude_types)
-				elif process_type == 'SHOPPING':
-					leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"))
-				elif process_type == 'RLSA':
-					leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"))
-				elif process_type == 'WPP':
-					leads = WPPLeads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"))
-				elif process_type == 'Picasso Audits':
-					leads = PicassoLeads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"))
-				else:
-					leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"))
-			else:
-				exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
-				if process_type == 'TAG':
-					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent']).exclude(type_1__in = exclude_types)
-				elif process_type == 'SHOPPING':
-					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"))
-				elif process_type == 'RLSA':
-					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"))
-				elif process_type == 'WPP':
-					leads = WPPLeads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"))
-				elif process_type == 'Picasso Audits':
-					leads = list()
-				else:
-					leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"))
+    if request.user.groups.filter(name='CRM-AGENT'):
+        lead_status = request.GET.get('status')
+        process_type = 'TAG'
+        if request.is_ajax():
+            if lead_status == 'In Queue':
+                if process_type == 'TAG':
+                    exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
+                    leads = Leads.objects.filter(lead_status=lead_status).exclude(type_1__in=exclude_types)
+                elif process_type == 'SHOPPING':
+                    leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"))
+                elif process_type == 'RLSA':
+                    leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"))
+                elif process_type == 'WPP':
+                    leads = WPPLeads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"))
+                elif process_type == 'Picasso Audits':
+                    leads = PicassoLeads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"))
+                else:
+                    leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"))
+            else:
+                exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
+                if process_type == 'TAG':
+                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent']).exclude(type_1__in = exclude_types)
+                elif process_type == 'SHOPPING':
+                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"))
+                elif process_type == 'RLSA':
+                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"))
+                elif process_type == 'WPP':
+                    leads = WPPLeads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"))
+                elif process_type == 'Picasso Audits':
+                    leads = list()
+                else:
+                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"))
 
-			res = HttpResponse(json.dumps(get_json_leads(leads)), content_type="application/json")
-			return res
-		return render(request,'crm/lead_and_history.html')
-	else:
-		raise Http404		
+            res = HttpResponse(json.dumps(get_json_leads(leads)), content_type="application/json")
+            return res
+        return render(request,'crm/lead_and_history.html')
+    else:
+        raise Http404
 
 
 @login_required
 def search_leads(request):
-    searching_lead_id = request.GET.get('q')
-    returning_data = list()
+    search_query = request.GET.get('q')
+    results = list()
     try:
-        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+            Q(customer_id= search_query) | Q(sf_lead_id= search_query))
         if normal_leads:
             for each in list(normal_leads):
-            	if each['type_1'] in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration']:
-            		each['process_type'] = 'Shopping'
-            	elif each['type_1'] in ['RLSA Bulk Implementation']:
-            		each['process_type'] = 'RLSA'
-            	else:
-            		each['process_type'] = 'TAG'
-            returning_data += list(normal_leads)
+                if each['type_1'] in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration']:
+                    each['process_type'] = 'Shopping'
+                elif each['type_1'] in ['RLSA Bulk Implementation']:
+                    each['process_type'] = 'RLSA'
+                else:
+                    each['process_type'] = 'TAG'
+            results += list(normal_leads)
     except ObjectDoesNotExist:
         pass
     try:
-        picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+            Q(customer_id= search_query) | Q(sf_lead_id= search_query))
         if picasso_leads:
             for each in list(picasso_leads):
-            	if each['type_1'] in ['BOLT']:
-            		each['process_type'] = 'BOLT'
-            	else:
-            		each['process_type'] = 'Picasso' 
-            returning_data += list(picasso_leads)
+                if each['type_1'] in ['BOLT']:
+                    each['process_type'] = 'BOLT'
+                else:
+                    each['process_type'] = 'Picasso'
+            results += list(picasso_leads)
 
     except ObjectDoesNotExist:
         pass
@@ -424,12 +426,14 @@ def search_leads(request):
         wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
         if wpp_leads:
             for each in list(wpp_leads):
-            		each['process_type'] = 'WPP'
-            returning_data += list(wpp_leads)
+                each['process_type'] = 'WPP'
+            results += list(wpp_leads)
     except ObjectDoesNotExist:
         pass
 
-    return render(request,'crm/search_result.html',{'returning_data':returning_data, 'resultcount':len(returning_data),'q_id':searching_lead_id})
+    return render(request, 'crm/search_result.html', {'returning_data': results,
+                                                      'resultcount': len(results),
+                                                      'q_id': search_query})
 
 
 @login_required
