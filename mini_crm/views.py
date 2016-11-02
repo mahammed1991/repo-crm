@@ -21,6 +21,11 @@ from django.conf import settings
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
+import uuid, os
+from lib.helpers import save_file
 
 # Create your views here.
 @login_required
@@ -495,3 +500,76 @@ def get_crm_agents_emails(request):
         agents_email_list.append(each['email'])
     response = {'data':agents_email_list}
     return HttpResponse(json.dumps(response))
+
+
+def get_lead_history(request):
+	"""
+	lead_id = request.GET.get('lead_id')
+	if request.GET.get('lead_id'):
+		lead = LeadHistory.objects.get(lead_id=lead_id)
+		if lead:
+			response = {
+				lead_id:lead.lead_id,
+			    modified_by:lead.modified_by,
+			    modified_type:lead.modified_type,
+			    modifications:lead.modifications,
+			    image_guid:lead.image_guid,
+			    original_image_name:lead.original_image_name,
+			    previous_owner:lead.previous_owner,
+			    current_owner:lead.current_owner
+			}
+		return HttpResponse(json.dumps(response))
+	"""
+	return HttpResponse(json.dumps({}))
+
+
+@receiver(pre_save, sender=Leads)
+@receiver(pre_save, sender=WPPLeads)
+@receiver(pre_save, sender=PicassoLeads)
+def lead_pre_save(sender, **kwargs):
+	print sender.__name__
+
+	"""
+	if kwargs['instance'].id:
+		instance = kwargs['instance'].id
+		try:
+			if sender.__name__ == 'Leads':
+				existing_lead = Leads.objects.get(id=instance.id)
+			elif sender.__name == 'WppLeads':
+				existing_lead = WppLeads.objects.get(id=instance.id)
+			else:
+				existing_lead = PicassoLeads.objects.get(id=instance.id)
+
+			# if old lead value and new lead value not same create entry in lead history table
+			if (True):
+				lead_history = LeadHistory()
+				lead_history.lead_id = instance.lead_id,
+			    lead_history.modified_by = instance.modified_by,
+			    lead_history.modified_type = instance.modified_type,
+			    lead_history.modifications = instance.modifications,
+			    lead_history.image_guid = instance.image_guid,
+			    lead_history.original_image_name = instance.original_image_name,
+			    lead_history.previous_owner = existing_lead.lead_owner,
+			    lead_history.current_owner = instance.lead_owner
+			    lead_history.save()
+		except Exception as e:
+			print e,'e'
+		print 'in'
+	"""
+
+def save_image_file(request):
+    print uuid.uuid4()
+    print request.POST
+    file = request.FILES['file']
+    fileName = request.FILES['file'].name if request.FILES['file'] else ''
+    imageLink = request.POST.get('image_link')
+    print fileName
+    if fileName:
+        filePath = os.path.join(settings.MEDIA_ROOT,fileName)
+        if not os.path.isfile(filePath) :
+            save_file(file,filePath)
+
+        else:
+            pass
+
+    return HttpResponse(json.dumps({}))

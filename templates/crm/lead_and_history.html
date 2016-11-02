@@ -152,12 +152,16 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="history">
                         	<div class="padding-20 lead-history upld-lnk-section">
-                            	<a href="#" class="upload-file"><i class="fa fa-file-text" aria-hidden="true"></i> Upload File</a>
+                              <form action="" id="image_save" method="post" enctype="multipart/form-data">
+                              {% csrf_token %}
+                            	<input type="file" name="img_file" id="img_f" onChange="fileChange();" >Upload File
                                 <div class="or-left">OR</div>
                                 <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
-                                <input type="text" class="form-control" name="name" id="name" placeholder="Frist Name *">
+                                <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Frist Name *" value="" >
                               </div>
-                              <a href="#" class="save-button">Save</a>
+                              <input type="submit" name="submit" class="save-button" value="Save">
+                              </form>
+                              <div id="file_status"></div>
                                 <div class="clearfix"></div>
                             	<div class="yellow-line"></div>
                             	<div class="row">
@@ -304,6 +308,91 @@
     }
   })
 
+  $("li a[href='#history']").click(function(){
+    debugger;
+    $.ajax(
+    {
+        url: "/crm/get-lead-history/",
+        dataType: "json",
+        data:
+        {
+            lead_id: '{{lead.id}}',
+        },
+        success: function (data)
+        {
+            console.log(data)
+        }
+    });
+    /* call method to get values from lead history table and append to */
+
+  })
+
+  /*$('input[type=file]').on('change', function(){
+    debugger;
+
+  })*/
+
+  $('input[type=file]').on('change', prepareUpload);
+
+  // Grab the files and set them to our variable
+  function prepareUpload(event)
+  {
+    files = event.target.files;
+  }
+
+  var fileChange = function(){
+      $("#file_status").empty();
+      var file = $('input[name^="img_file"]')[0].files[0]
+      var errState = document.getElementById("file_status");
+      if(file){
+        filename = file.name;
+        var allowedFiles = ["gif,jpg,jpeg,tiff,png,bmp"];
+        debugger;
+        console.log(filename,(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename))
+        if (!(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename)) {
+          // inputted file path is not an image of one of the above types
+          $(".save-button").prop("disabled",true);
+          alert("inputted file path is not an image!");
+
+          errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please upload files only with extension<b>" + allowedFiles.join(', ') + "</b></div>";
+          return false;
+        }
+        $(".save-button").prop("disabled",false);
+        return true;
+      }
+  }
+
+
+  $("form#image_save").submit(function(e) {
+      e.preventDefault();
+      debugger;
+      var $form = $('#image_save');
+      //file = $('input[name^="img_file"]')[0].files[0].name
+      //form = $form.serialize() + "&file="+files
+
+      var formData = new FormData();
+      var file = $('input[name^="img_file"]')[0].files[0];
+      console.log(file,'file')
+      if (file) {
+          formData.append('file',  file);
+      }
+      formData.append('image_link', $('#image_link').val());
+      formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
+      $.ajax({
+          url: '/crm/save-image-file/',
+          type: 'POST',
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+              alert(data)
+          },
+      });
+
+      return false;
+  });
 
 $(document).ready(function() {
   status = $('#status').val('In Queue')
