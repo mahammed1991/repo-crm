@@ -1,0 +1,65 @@
+Sl#,NAME,ROLE,EMAIL,CONTACT #,GOOGLE ID,REGION / LANGUAGE,LDAP,IMAGE
+1,Vikas Sharan,MGMT,vsharan@regalix-inc.com,1-650-483-8499,-,GLOBAL,,vikas.png
+2,Babla Sharan,MGMT,babla@regalix-inc.com ,1-866-999-7725,-,GLOBAL,,babla.png
+3,Brendan Farnell,MGMT,bfarnell@regalix-inc.com,1-650-784-3124,-,GLOBAL,,brendan.png
+4,Tabish Khan,MGMT,tkhan@regalix-inc.com,00 91 9986479140,tabishk@google.com,GLOBAL,tabishk,tab.png
+5,Nidhi Prakash,MGMT,prakashn@regalix-inc.com,1-866-999-7725,-,GLOBAL,,nidhi.png
+6,Leon Celestine Dave,MGMT,leon@regalix-inc.com,1-866-999-7725,ldave@google.com,GLOBAL,ldave,Leon Dave.png
+7,Suri Kamat,MGMT,skamat@regalix-inc.com,1-866-999-7725,sureshkamath@google.com,GLOBAL,sureshkamath,Suri.png
+8,Vaibhav Gupta,MGMT,vgupta@regalix-inc.com,1-866-999-7725,vaibhavgu@google.com,GLOBAL,vaibhavgu,
+9,Haleema Sadia Shariff,TL,hshareef@regalix-inc.com,44-207-097-1392,hshariff@google.com,APAC & EMEA,hshariff,Haleema.png
+10,Linda Joseph,TL,ljoseph@regalix-inc.com,1-650-681-9760,lindaj@google.com,LATAM & NA,lindaj,Linda.png
+11,Vishal Jha,QA,vjha@regalix-inc.com,44-207-097-1356,vishalkumar@google.com,APAC & EMEA,vishalkumar,Vishal.png
+12,Sijo Varkey,QA,svarkey@regalix-inc.com,1-650-319-7324,svarkey@google.com,LATAM & NA,svarkey,Sijo.png
+13,Rajkumar S,TECH,rkumar@regalix-inc.com,1-866-999-7725,NA,APAC & EMEA,,raj.png
+14,Abraham Abraham,TAG,abraham@regalix-inc.com,1-866-999-7725,edemas@google.com,LATAM & NA,edemas,
+15,Aidalin Chyne Khongwir,SHOPPING,ida@regalix-inc.com,1-866-999-7725,achyne@google.com,LATAM & NA,achyne,
+16,Akash Prabhu,TAG,akash.prab@gmail.com,1-650-319-7363,akashprabhu@google.com,APAC & EMEA,akashprabhu,akash.png
+17,Amaefula Chukwuebuka,TAG,achukwuebuka@regalix-inc.com,1-866-999-7725,achukwuebuka@google.com,LATAM & NA,achukwuebuka,
+18,Anirudh Venkat,TAG,apvenkat@regalix-inc.com,1-866-999-7725,avenkataratnam@google.com,LATAM & NA,avenkataratnam,
+19,Ankit Bhardwaj,TAG,abhardwaj@regalix-inc.com,1-650-276-0600,bhardwaja@google.com,LATAM & NA,bhardwaja,Ankit.png
+20,Aurora Baldessin,TAG,abaldessin@regalix-inc.com,-,abaldessin@google.com,ITALIAN,abaldessin,
+21,BP Lohith,TAG,lohithp@regalix-inc.com,1-866-999-7725,lohith@google.com,LATAM & NA,lohith,
+22,Darshan Blon,TAG,dblon@regalix-inc.com,1-866-999-7725,dblon@google.com,LATAM & NA,dblon,
+23,Divya Shenoy,SHOPPING,dshenoy@regalix-inc.com,1-866-999-7725,dshenoy@google.com,LATAM & NA,dshenoy,
+24,Emmuhot Mawroh,TAG,emawroh@regalix-inc.com,1-866-999-7725,emawroh@google.com,LATAM & NA,emawroh,
+25,Eugene Ambassadur Gospel,TAG,egospel@regalix-inc.com,1-866-999-7725,egospel@google.com,LATAM & NA,egospel,
+26,Geetanjali Lele,TAG,geetanjali@regalix-inc.com,49-693-650-65577,glele@google.com,GERMAN,glele,
+27,Janno Martens,TAG,jmartens@regalix-inc.com,-,jmartens@google.com,DUTCH,jmartens,
+28,Jerin George Mathews,TAG,jmathews@regalix-inc.com,1-866-999-7725,jerinm@google.com,LATAM & NA,jerinm,
+29,Joshua Ajay,TAG,jajay@regalix-inc.com,1-650-319-8860,jajay@google.com,LATAM & NA,jajay,Joshua.png
+30,Joshua Daniel,TAG,jdaniel@regalix-inc.com,1-650-681-9760,joshuadaniel@google.com,LATAM & NA,joshuadaniel,jdaniel.png
+31,Konan Daniel,TAG,kdaniel@regalix-inc.com,1-650-681-9629,kdaniel@google.com,FRENCH,kdaniel,daniel.png
+32,Manju Manhoran,TAG,mmanoharan@regalix-inc.com,1-866-999-7725,mmanhoran@google.com,LATAM & NA,mmanhoran,
+33,Murtuza Ali Baig,SHOPPING,murtuza@regalix-inc.com,44-800-066-4313,murtuzab@google.com,APAC & EMEA,murtuzab,
+34,Nadir Nawab,SHOPPING,nnawab@regalix-inc.com,1-866-999-7725,nadirn@google.com,LATAM & NA,nadirn,
+35,Nanda Kishore,SHOPPING,nkishore@regalix-inc.com,44-800-066-4313,nandag@google.com,APAC & EMEA,nandag,
+36,Naomi De Mello Alfonso,TAG,nalfonso@regalix-inc.com,34-901848016,nalfonso@google.com,SPANISH,nalfonso,
+37,Nathan Regis,TAG,nregis@regalix-inc.com,33-805080097,nregis@google.com,FRENCH,nregis,nathan.png
+38,Pankaj kumar Singh,TAG,psingh@regalix-inc.com,1-650-681-9741,pankajsingh@google.com,PORTUGUESE,pankajsingh,pankaj.png
+39,Pintu Kumar,TAG,pintu@regalix-inc.com,-,pintuk@google.com,RUSSIAN,pintuk,
+40,Priyanka Rai,TAG,prai@regalix-inc.com,1-866-999-7725,prrai@google.com,LATAM & NA,prrai,
+41,Ranjeeth Belliappa,SHOPPING,rbaliappa@regalix-inc.com,1-866-999-7725,rbelliappa@google.com,LATAM & NA,rbelliappa,
+42,Richard Uttam Raj,TAG,rraj@regalix-inc.com,1-866-999-7725,NA,LATAM & NA,,
+43,Rupa Sen,TAG,rsen@regalix-inc.com,49-693-650-65577,rsen@google.com,GERMAN,rsen,rupa.png
+44,Saaniya Asma Burhaan,TAG,sburhaan@regalix-inc.com,1-866-999-7725,sburhaan@google.com,LATAM & NA,sburhaan,
+45,Sagar KN,TAG,knsagar@regalix-inc.com,44-800-066-4313,sagarn@google.com,APAC & EMEA,sagarn,
+46,Sahadev J,TAG,jsahadev@regalix-inc.com,61-130-065-5402,sjagadeesh@google.com,AU/NZ,sjagadeesh,
+47,Sam Preeth,PLA,sampd@regalix-inc.com,1-800-993-3483,spreeth@google.com,LATAM & NA,spreeth,sam.png
+48,Samuel Jebaraj M,TAG,sjebaraj@regalix-inc.com,1-866-999-7725,NA,LATAM & NA,,
+49,Shashidharan Saikumar,TAG,shashidharan@regalix-inc.com,1-650-209-8263,ssaikumar@google.com,AU/NZ,ssaikumar,
+50,Sneha AM,SHOPPING,amsneha@regalix-inc.com,1-866-999-7725,muralidharans@google.com,LATAM & NA,muralidharans,
+51,Sushil Christopher,PLA,schristopher@regalix-inc.com,1-800-993-3483,sushilc@google.com,LATAM & NA,sushilc,sushil.png
+52,Syed Saifullah,TAG,ssaifullah@regalix-inc.com,1-650-276-0400,saifullahs@google.com,LATAM & NA,saifullahs,Saif.png
+53,Terry Larsen G,TAG,,1-866-999-7725,tlarsen@google.com,LATAM & NA,tlarsen,
+54,Vanessa Priscille,TAG,vpriscille@regalix-inc.com,1-650-681-9741,vpriscille@google.com,SPANISH,vpriscille,vanessa.png
+55,Vinay Suresh,TAG,vinay skumar@regalix-inc.com,1-866-999-7725,vinaysuresh@google.com,LATAM & NA,vinaysuresh,
+56,Williams N,TAG,wnwadiugwu@regalix-inc.com,1-866-999-7725,wnwadiugwu@google.com,LATAM & NA,wnwadiugwu,
+57,Vishu Grover,TECH,vgrover@regalix-inc.com,1-866-999-7725,vishu@google.com,GLOBAL,vishu,vishu.png
+58,Krishnaprasad KP,TECH,krishnaprasad@regalix-inc.com,1-866-999-7725,NA,GLOBAL,,krishna.png
+59,Karuppusamy V,TECH,vkaruppusamy@regalix-inc.com,1-866-999-7725,NA,GLOBAL,,samy.png
+60,Mohammad Yaseen,MIS,myaseen@regalix-inc.com,1-866-999-7725,NA,GLOBAL,,
+61,Momin Khan,MIS,mkhan@regalix-inc.com,1-866-999-7725,momin@google.com,GLOBAL,momin,momin.png
+62,Sridhar K,DESIGN,ksridhar@regalix-inc.com,1-866-999-7725,NA,GLOBAL,,
+63,Jianping Du (Tom),TAG,tom@regalix-inc.com,1-510-708-9543,,CHINA,,
+64,Clement,TAG,dclement@regalix-inc.com,1-650-681-9629,,French,,
