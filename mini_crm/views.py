@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from main import views
-from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
@@ -17,7 +16,7 @@ from leads.models import Location, Timezone
 import pytz 
 from reports.models import Region
 
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -446,7 +445,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',{'lead':lead, 'ctype':ctype})
+    return render(request,'crm/lead_details.html',{'lead':lead, 'ctype':ctype, 'lead_detail':lead_detail})
 
 
 @login_required
@@ -522,3 +521,63 @@ def delete_lead(request, lid, ctype):
                 lead = Leads.objects.get(id=lid)
                 lead.delete()
         return redirect(reverse("all-leads") + "?ptype=" + ctype)
+
+@csrf_exempt
+def clone_lead(request):
+    process_type = request.POST.get('process_type')
+    lead_id = request.POST.get('lead_id')
+    if process_type in ['WPP']:
+        obj = WPPLeads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.additional_notes = ""
+        obj.first_contacted_on = None
+        obj.lead_sub_status = None
+        obj.dials = 0
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = WPPLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    elif process_type in ['Picasso', 'BOLT']:
+        obj = PicassoLeads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.additional_notes = ""
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = PicassoLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    elif process_type in ['TAG', 'Sopping', 'RLSA']:
+        obj = Leads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.first_contacted_on = None
+        obj.appointment_date_in_ist = None
+        obj.comment_1 = ""
+        obj.code_1 = ""
+        obj.dials = 0
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = Leads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    else:
+        response = {'msg':'Failed to clone'}
+        return HttpResponse(json.dumps(response),content_type='application/json')
