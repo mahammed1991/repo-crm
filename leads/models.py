@@ -147,7 +147,6 @@ class TagLeadDetail(models.Model):
     # New Mandatory Fields
     auth_email_sent = models.NullBooleanField(blank=True, null=True)
     live_transfer = models.NullBooleanField(blank=True, null=True)
-    appointment_sub_status = models.CharField(max_length=80, blank=True, null=True, default='')
     cms_platform = models.CharField(max_length=80, blank=True, null=True, default='')
     appointment_sub_status = models.CharField(max_length=100, blank=True, null=True, default='')
     gcase_id = models.CharField(max_length=80, blank=True, null=True, default='')
@@ -156,7 +155,6 @@ class TagLeadDetail(models.Model):
     mouse_control_taken = models.NullBooleanField(blank=True, null=True)
     mouse_control_approved_by = models.CharField(max_length=100, blank=True, null=True, default='')
     list_type = models.CharField(max_length=100, blank=True, null=True, default='')
-    lead_difficulty_level = models.CharField(max_length=100, blank=True, null=True, default='')
     regalix_sme = models.CharField(max_length=100, blank=True, null=True, default='')
     lead_difficulty_level = models.CharField(max_length=100, blank=True, null=True, default='')
     rlsa_tag_team_contacted = models.CharField(max_length=100, blank=True, null=True, default='')
@@ -170,7 +168,6 @@ class TagLeadDetail(models.Model):
     dynamic_variable_set = models.CharField(max_length=100, blank=True, null=True, default='')
     dead_lead_date = models.DateTimeField(blank=True, null=True)
     last_contacted_on = models.DateTimeField(blank=True, null=True)
-    dead_lead_date = models.DateTimeField(blank=True, null=True)
     is_backup_taken = models.NullBooleanField(blank=True, null=True)
     tag_via_gtm = models.NullBooleanField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -201,7 +198,6 @@ class TagLeadDetail(models.Model):
     products_uploaded = models.CharField(max_length=100, blank=True, null=True, default='')
     campaign_id = models.CharField(max_length=100, blank=True, null=True, default='')
     feed_upload_method = models.CharField(max_length=100, blank=True, null=True, default='')
-    recommended_bid = models.CharField(max_length=100, blank=True, null=True, default='')
 
 # Create your models here.
 class WPPLeads(models.Model):
