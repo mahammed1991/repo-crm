@@ -124,7 +124,8 @@ def lead_form(request):
                     full_name = request.POST.get('advertiser_name')
                 first_name, last_name = split_fullname(full_name)
                 lead.first_name = first_name
-                lead.first_name = last_name
+                lead.last_name = last_name
+                lead.email_optional = data['aemail']
                 lead.phone = data['phone']
                 if str(data.get('setup_datepick')):
                     lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
@@ -167,7 +168,6 @@ def lead_form(request):
                     lead.type_1 = 'Existing Datafeed Optimization'
                     lead.comment_1 = request.POST.get('issues_description')
                 elif request.POST.get('argos_mc_id'):
-                    print "called argos"
                     lead.type_1 = 'Project Argos- Feed Performance Optimization'
                     lead.lead_status = 'Feed Audit'
                     lead.lead_sub_status = 'In Queue'
@@ -179,11 +179,11 @@ def lead_form(request):
                     lead.shopping_feed_link = data.get('sheets_link')
                     lead.authcase_id = data.get('auth_case_id')
                     lead.business_type = data.get('shopping_argos_categories')
-                    print "saved"
                 else:
                     lead.type_1 = 'Google Shopping Setup'
                     lead.comment_1 = request.POST.get('description')
                 lead.lead_status = 'In Queue'
+                lead.email_optional = data['aemail']
                 lead.save()
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -221,8 +221,9 @@ def lead_form(request):
                     full_name = request.POST.get('advertiser_name')
                 first_name, last_name = split_fullname(full_name)
                 lead.first_name = first_name
-                lead.first_name = last_name
+                lead.last_name = last_name
                 lead.lead_status = 'In Queue'
+                lead.email_optional = data['aemail']
                 lead.save()
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -288,7 +289,8 @@ def lead_form(request):
                     full_name = request.POST.get('advertiser_name')
                 first_name, last_name = split_fullname(full_name)
                 lead.first_name = first_name
-                lead.first_name = last_name
+                lead.last_name = last_name
+                lead.email_optional = data['aemail']
                 lead.phone = data['phone']
                 if str(data.get('setup_datepick')):
                     lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
@@ -346,6 +348,7 @@ def lead_form(request):
                     lead.type_1 = 'Google Shopping Setup'
                     lead.comment_1 = request.POST.get('description')
                 lead.lead_status = 'In Queue'
+                lead.email_optional = data['aemail']
                 lead.save()
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -384,8 +387,9 @@ def lead_form(request):
                     full_name = request.POST.get('advertiser_name')
                 first_name, last_name = split_fullname(full_name)
                 lead.first_name = first_name
-                lead.first_name = last_name
+                lead.last_name = last_name
                 lead.lead_status = 'In Queue'
+                lead.email_optional = data['aemail']
                 lead.save()
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:

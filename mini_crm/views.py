@@ -22,6 +22,9 @@ from django.conf import settings
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
+from django.views.decorators.csrf import csrf_exempt
+from lib.helpers import (get_unique_uuid)
+import datetime
 
 # Create your views here.
 @login_required
@@ -433,8 +436,11 @@ def search_leads(request):
 @login_required
 def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
+    lead_detail = None
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        #lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+
     elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
@@ -485,7 +491,7 @@ def lead_owner_avalibility(request):
         resp['email'] = lead_owner
         return HttpResponse(json.dumps(resp))
     else:
-        raise Http403
+        return HttpResponseForbidden()
 
 
 def get_crm_agents_emails(request):
