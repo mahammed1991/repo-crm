@@ -892,3 +892,15 @@ class ArgosProcessTimeTracker(models.Model):
     assigner = models.ForeignKey(User, related_name="assigner", default='', blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
+
+
+class LeadHistory(models.Model):
+    lead_id = models.IntegerField(default=0)
+    modified_by = models.CharField(max_length=255)
+    action_type = models.CharField(max_length=255) #OwnerChange, edited, image,imagelink 
+    modifications = models.TextField() # json encoded old values [{field_name: field_value_old}]
+    image_guid = models.CharField(max_length=255,blank=True, null=True)
+    original_image_name = models.CharField(max_length=255,blank=True, null=True)
+    image_link = models.CharField(max_length=600,blank=True, null=True)
+    previous_owner = models.CharField(max_length=255,blank=True, null=True)
+    current_owner = models.CharField(max_length=255,blank=True, null=True)

@@ -13,4 +13,6 @@ urlpatterns = patterns(
     url(r'^crm-agents/emails/$',views.get_crm_agents_emails),
     url(r'^clone-lead/$', views.clone_lead),
     url(r'^delete-lead/(?P<lid>[0-9]+)/(?P<ctype>\w+)$', views.delete_lead),
+    url(r'^get-lead-history/$',views.get_lead_history),
+    url(r'^save-image-file/$',views.save_image_file)
 )
