@@ -1,0 +1,314 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  Lead history
+{% endblock title %}
+
+{% block main_css %}
+  <!-- Bootstrap -->
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+{% endblock main_css %}
+  {% block content %}
+  <body>
+        
+        <section class="top-margin" >
+       		<div class="left-panel first-canvas-nav top-margin" style="margin-top: 8%;">
+                <select class="form-control bgicon" id='status'>
+                  <option>In Queue</option>
+                  <option>Rescheduled</option>
+                </select>
+
+                <ul class="side-menu">
+                </ul>
+                
+            </div><!--left-panel-->
+            
+            <div class="page-pull-left">
+                <div class=" container-fluid ">
+                    <div class="white-section">
+                        <!-- Nav tabs -->
+                      <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#lead" aria-controls="home" role="tab" data-toggle="tab">Lead</a></li>
+                        <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
+                      </ul>
+                    
+                      <!-- Tab panes -->
+                      <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="lead">
+                        	<div class="padding-20 lead-history">
+                            	<div class="row">
+                                	<div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
+                                    <div class="col-md-6">
+                                    	<ul class="lead-menu">
+                                            <li id='edit_lead'><a onclick="addURL(this)" href="#">Edit </a></li>         
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="yellow-line"></div>
+                                <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
+                            	<div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Lead Owner</td>
+                                        <td class="table-right smile"><i class="fa fa-smile-o lead_owner" aria-hidden="true"></i><span id='lead_owner'></span></td>
+                                        <td class="table-left">Change Lead Owner</td>
+                                        <td class="table-right"><input type="checkbox"> </td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Status  </td>
+                                        <td class="table-right" id='lead_status'></td>
+                                        <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id='lead_sub_status'></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">On Call Win</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left">Not Interested Cases RCA</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Team</td>
+                                        <td class="table-right" id='team'></td>
+                                        <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Date of installation</td>
+                                        <td class="table-right" id='date_of_installation'></td>
+                                        <td class="table-left">Regalix Webmaster</td>
+                                        <td class="table-right">Saurabh Santra</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Type</td>
+                                        <td class="table-right" id='lead_type'>Normal Lead</td>
+                                        <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Implemented Code is</td>
+                                        <td class="table-right">Same as specified by the Google rep</td>
+                                        <td class="table-left">Dynamic Variable Set</td>
+                                        <td class="table-right">No</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">LastCallTime</td>
+                                        <td class="table-right">10/4/2016 4:44 AM</td>
+                                        <td class="table-left">Website Backup Taken?</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">No of Dials</td>
+                                        <td class="table-right" id='dials'></td>
+                                        <td class="table-left">Dynamic Value</td>
+                                        <td class="table-right">Yes</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left qstn">1st Contacted on <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id='first_contacted_on'>
+<td>
+                                       </tr>
+                                       
+                                     </table>
+                                 </div>
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Lead Information</a>
+                            	<div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Google Accounts Manager(D)</td>
+                                        <td class="table-right smile">Vikas Chimthala Vasagoni</td>
+                                        <td class="table-left">Googler Location</td>
+                                        <td class="table-right">Ranga Reddy, Telangana, India </td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Email </td>
+                                        <td class="table-right">vasagoni@google.com [ <img src="{% static 'images/gmail.png'%}" alt="">   Gmail]</td>
+                                        <td class="table-left qstn">Additional LDAP</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Google Manager(D)</td>
+                                        <td class="table-right">surabhi verma</td>
+                                        <td class="table-left">Number Of Codes	</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Google Manager Email</td>
+                                        <td class="table-right">vasagoni@google.com [ <img src="{% static 'images/gmail.png'%}" alt="">   Gmail]</td>
+                                        <td class="table-left qstn">Lead Bundle#</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                     </table>
+                                 </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="history">
+                        	<div class="padding-20 lead-history upld-lnk-section">
+                            	<a href="#" class="upload-file"><i class="fa fa-file-text" aria-hidden="true"></i> Upload File</a>
+                                <div class="or-left">OR</div>
+                                <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Frist Name *">
+                              </div>
+                              <a href="#" class="save-button">Save</a>
+                                <div class="clearfix"></div>
+                            	<div class="yellow-line"></div>
+                            	<div class="row">
+                                	<div class="col-lg-1 col-md-1 col-sm-1 ">
+                                    	<img src="{% static 'images/smile-pic.jpg'%}" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                    	<p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> changed Lead Status from Pending QC - WIN to Implemented and Lead QC'ed by from a blank value to Priyadarshani Rai.</p>
+                                        <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                    	<a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                    	<img src="{% static 'images/smile-pic.jpg'%}" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                    	<p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> Kanag Thara changed Lead Status from In Progress to Pending QC - WIN, Lead Sub-Status from IP - Code Sent to a blank value, and gCases ID from 0 to 3-2335000013751.</p>
+                                        <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                    	<a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                       <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                    	<img src="{% static 'images/smile-pic.jpg'%}" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                    	<p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> posted a file </p>
+                                        <div class="download-box">
+                                        	<div class="media">
+                                              <div class="media-left">
+                                                <a href="#">
+                                                  <img class="media-object" src="{% static 'images/print-screen.jpg'%}" alt="">
+                                                </a>
+                                              </div>
+                                              <div class="media-body">
+                                                <h4 class="media-heading">Screenshot 2016-10-04 at 2.52.31 PM</h4>
+                                                <a href="#" class="screen-dwld"><i class="fa fa-download" aria-hidden="true"></i> Download png  <span>(208 KB)</span></a>
+                                              </div>
+                                            </div>
+                                        </div>
+                                         <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                    	<a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+
+                    </div>
+                </div><!--container-fluid-->   
+         	</div><!--page-pull-left-->
+        </section>
+  </body>
+{% endblock content %}
+
+
+{% block main_js %}
+<script type="text/javascript">
+  var ajax_response = ''
+  function call_lead_history(){
+      status = $('#status').val()
+      data = {'status':status}
+      $.ajax({
+              type: "GET",
+              url: '/crm/lead-history/',
+              data: data,
+              success: function(response) {
+                      if (response.length) {
+                        $('.side-menu').html('')
+                        ajax_response = response
+                        for(var i=0;i<response.length;i++){
+                          $('#edit_lead a').attr('href','/crm/lead-details/' + response[i]['lead_id'] + '/'+ response[i]['sf_lead_id'])
+                          $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div>Lead one") +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
+                          $('.side-menu li:first a').addClass('active')
+                          lead_id_selected = parseInt($('.side-menu li:first').attr('id'))
+                          var result = ajax_response.filter(function( obj ) {
+                            return obj.lead_id == lead_id_selected;
+                          });   
+
+                          if (result){
+                            lead_data = result[0]
+                            update_lead_data(lead_data);
+                          }                        
+                        }
+                      }
+                      else{
+                        $('.side-menu').html('')
+                        $('#lead_owner').text('')
+                        $('#lead_status').text('')
+                        $('#lead_sub_status').text('')
+                        $('#team').text('')
+                        $('#date_of_installation').text('')
+                        $('#dials').text('')
+                        $('#first_contacted_on').text('')
+                      }
+              },
+      });    
+  }
+
+  function addURL(element)
+  {
+    //var type = $('#process option:selected').text().replace(" ","");
+    process_type = 'TAG'
+    $(element).attr('href', function() {
+        return this.href + '/' + process_type;
+    });
+  }
+  $('#status').on('change',function(){
+    call_lead_history()
+  })
+
+  function update_lead_data(lead_data){
+    $('#lead_owner').text(lead_data['lead_owner'])
+    $('#lead_status').text(lead_data['lead_status'])
+    $('#lead_sub_status').text(lead_data['lead_sub_status'])
+    $('#team').text(lead_data['team'])
+    $('#date_of_installation').text(lead_data['date_of_installation'])
+    $('#dials').text(lead_data['dials'])
+    $('#first_contacted_on').text(lead_data['first_contacted_on'])
+  } 
+
+  $(".side-menu").on('click','li a', function(){
+    $('.side-menu li a.active').removeClass('active')
+    $(this).addClass('active')
+    lead_id_selected = parseInt($(this).parent().attr('id'))
+    var result = ajax_response.filter(function( obj ) {
+      return obj.lead_id == lead_id_selected;
+    });   
+
+    if (result){
+      lead_data = result[0]
+      update_lead_data(lead_data);
+    }
+  })
+
+
+$(document).ready(function() {
+  status = $('#status').val('In Queue')
+  call_lead_history()
+});
+</script>
+{% endblock main_js %}
+</html>
