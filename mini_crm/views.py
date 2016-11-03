@@ -423,7 +423,7 @@ def search_leads(request):
     except ObjectDoesNotExist:
         pass
     try:
-        wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=searching_lead_id) | Q(sf_lead_id=searching_lead_id))
+        wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
         if wpp_leads:
             for each in list(wpp_leads):
                 each['process_type'] = 'WPP'
@@ -545,8 +545,7 @@ def clone_lead(request):
         obj.dials = 0
         obj.created_date = datetime.datetime.now()
         obj.save()
-        cloned_obj = WPPLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
-        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        cloned_obj = {'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}
         return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
     elif process_type in ['Picasso', 'BOLT']:
         obj = PicassoLeads.objects.get(pk=lead_id)
@@ -560,8 +559,7 @@ def clone_lead(request):
         obj.additional_notes = ""
         obj.created_date = datetime.datetime.now()
         obj.save()
-        cloned_obj = PicassoLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
-        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        cloned_obj = {'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}
         return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
     elif process_type in ['TAG', 'Sopping', 'RLSA']:
         obj = Leads.objects.get(pk=lead_id)
@@ -579,8 +577,7 @@ def clone_lead(request):
         obj.dials = 0
         obj.created_date = datetime.datetime.now()
         obj.save()
-        cloned_obj = Leads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
-        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        cloned_obj = {'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}
         return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
     else:
         response = {'msg':'Failed to clone'}
