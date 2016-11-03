@@ -155,9 +155,10 @@
                             	<a href="#" class="upload-file"><i class="fa fa-file-text" aria-hidden="true"></i> Upload File</a>
                                 <div class="or-left">OR</div>
                                 <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
-                                <input type="text" class="form-control" name="name" id="name" placeholder="Frist Name *">
+                                <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Frist Name *" value="" >
                               </div>
                               <a href="#" class="save-button">Save</a>
+                              <div id="file_status"></div>
                                 <div class="clearfix"></div>
                             	<div class="yellow-line"></div>
                             	<div class="row">
@@ -303,7 +304,6 @@
       update_lead_data(lead_data);
     }
   })
-
 
 $(document).ready(function() {
   status = $('#status').val('In Queue')

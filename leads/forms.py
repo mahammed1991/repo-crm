@@ -1,5 +1,5 @@
 from django import forms
-from leads.models import Location, LeadFormAccessControl, TimezoneMapping
+from leads.models import Location, LeadFormAccessControl, TimezoneMapping, LeadHistory
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 
@@ -85,3 +85,8 @@ class LeadFormAccessControlAdminForm(forms.ModelForm):
             raise ValidationError('Selected Google Rep is already mapped in Other Lead Form Access Control')
 
         return self.cleaned_data
+
+
+class LeadHistoryForm(forms.ModelForm):
+    class Meta:
+        model = LeadHistory
