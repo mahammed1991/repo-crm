@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from main import views
 from django.http import HttpResponse
 from django.conf import settings
@@ -9,18 +10,22 @@ from django.template import Context
 
 #import datetime
 import json
-from leads.models import Leads, WPPLeads, PicassoLeads
+from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
 import pytz 
 from reports.models import Region
 
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
+from django.views.decorators.csrf import csrf_exempt
+from lib.helpers import (get_unique_uuid)
+#import datetime
+
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -437,14 +442,17 @@ def search_leads(request):
 @login_required
 def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
+    lead_detail = None
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        #lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+
     elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',{'lead':lead})
+    return render(request,'crm/lead_details.html',{'lead':lead, 'ctype':ctype, 'lead_detail':lead_detail})
 
 
 @login_required
@@ -489,7 +497,7 @@ def lead_owner_avalibility(request):
         resp['email'] = lead_owner
         return HttpResponse(json.dumps(resp))
     else:
-        raise Http403
+        return HttpResponseForbidden()
 
 
 def get_crm_agents_emails(request):
@@ -501,75 +509,125 @@ def get_crm_agents_emails(request):
     response = {'data':agents_email_list}
     return HttpResponse(json.dumps(response))
 
+def delete_lead(request, lid, ctype):
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        if ctype == "WPP":
+            if WPPLeads.objects.all().count():
+                lead = WPPLeads.objects.get(id=lid)
+                lead.delete()
+        elif ctype == "PicassoAudits":
+            if PicassoLeads.objects.all().count():
+                lead = PicassoLeads.objects.get(id=lid)
+                lead.delete()
+        elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
+            
+            if TagLeadDetail.objects.all().count():
+                lead = TagLeadDetail.objects.get(lead_id=lid)
+                lead.delete()
+            if Leads.objects.all().count():
+                lead = Leads.objects.get(id=lid)
+                lead.delete()
+        return redirect(reverse("all-leads") + "?ptype=" + ctype)
 
-def get_lead_history(request):
-	"""
-	lead_id = request.GET.get('lead_id')
-	if request.GET.get('lead_id'):
-		lead = LeadHistory.objects.get(lead_id=lead_id)
-		if lead:
-			response = {
-				lead_id:lead.lead_id,
-			    modified_by:lead.modified_by,
-			    modified_type:lead.modified_type,
-			    modifications:lead.modifications,
-			    image_guid:lead.image_guid,
-			    original_image_name:lead.original_image_name,
-			    previous_owner:lead.previous_owner,
-			    current_owner:lead.current_owner
-			}
-		return HttpResponse(json.dumps(response))
-	"""
-	return HttpResponse(json.dumps({}))
-
-
-@receiver(pre_save, sender=Leads)
-@receiver(pre_save, sender=WPPLeads)
-@receiver(pre_save, sender=PicassoLeads)
-def lead_pre_save(sender, **kwargs):
-	print sender.__name__
-
-	"""
-	if kwargs['instance'].id:
-		instance = kwargs['instance'].id
-		try:
-			if sender.__name__ == 'Leads':
-				existing_lead = Leads.objects.get(id=instance.id)
-			elif sender.__name == 'WppLeads':
-				existing_lead = WppLeads.objects.get(id=instance.id)
-			else:
-				existing_lead = PicassoLeads.objects.get(id=instance.id)
-
-			# if old lead value and new lead value not same create entry in lead history table
-			if (True):
-				lead_history = LeadHistory()
-				lead_history.lead_id = instance.lead_id,
-			    lead_history.modified_by = instance.modified_by,
-			    lead_history.modified_type = instance.modified_type,
-			    lead_history.modifications = instance.modifications,
-			    lead_history.image_guid = instance.image_guid,
-			    lead_history.original_image_name = instance.original_image_name,
-			    lead_history.previous_owner = existing_lead.lead_owner,
-			    lead_history.current_owner = instance.lead_owner
-			    lead_history.save()
-		except Exception as e:
-			print e,'e'
-		print 'in'
-	"""
+@csrf_exempt
+def clone_lead(request):
+    process_type = request.POST.get('process_type')
+    lead_id = request.POST.get('lead_id')
+    if process_type in ['WPP']:
+        obj = WPPLeads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.additional_notes = ""
+        obj.first_contacted_on = None
+        obj.lead_sub_status = None
+        obj.dials = 0
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = WPPLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    elif process_type in ['Picasso', 'BOLT']:
+        obj = PicassoLeads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.additional_notes = ""
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = PicassoLeads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    elif process_type in ['TAG', 'Sopping', 'RLSA']:
+        obj = Leads.objects.get(pk=lead_id)
+        obj.pk = None
+        obj.date_of_installation = None
+        obj.sf_lead_id = get_unique_uuid(process_type)
+        obj.lead_status = 'In Queue'
+        obj.lead_owner_name = 'Suri Kamat'
+        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.regalix_comment = ""
+        obj.first_contacted_on = None
+        obj.appointment_date_in_ist = None
+        obj.comment_1 = ""
+        obj.code_1 = ""
+        obj.dials = 0
+        obj.created_date = datetime.datetime.now()
+        obj.save()
+        cloned_obj = Leads.objects.values('id').get(sf_lead_id=obj.sf_lead_id)
+        cloned_obj.update({'process_type': process_type, 'sf_id':obj.sf_lead_id})
+        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+    else:
+        response = {'msg':'Failed to clone'}
+        return HttpResponse(json.dumps(response),content_type='application/json')
 
 def save_image_file(request):
-    print uuid.uuid4()
-    print request.POST
-    file = request.FILES['file']
-    fileName = request.FILES['file'].name if request.FILES['file'] else ''
-    imageLink = request.POST.get('image_link')
-    print fileName
-    if fileName:
-        filePath = os.path.join(settings.MEDIA_ROOT,fileName)
-        if not os.path.isfile(filePath) :
-            save_file(file,filePath)
+    lh = LeadHistory()
+    if request.FILES:
+        file = request.FILES['file']
+        original_file_name, file_extension = file.name.split(".")
+        new_file_name = str(uuid.uuid4()) + "." + file_extension
+        file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
+        save_file(file, file_path)
+        lh.original_image_name = file.name
+        lh.image_guid = new_file_name
+        lh.action_type = 'image'
+        '''
+            update file_path and file.name as Original File name in the DB
+        '''
+    else:
+        lh.image_link = request.POST.get('image_link')
+        lh.action_type = 'image_link'
+    lh.lead_id = request.POST['lead_id']
+    lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+    lh.save()
+    return HttpResponse(json.dumps({}))
 
-        else:
-            pass
 
+def get_lead_history(request):
+    """
+    lead_id = request.GET.get('lead_id')
+    if request.GET.get('lead_id'):
+        lead = LeadHistory.objects.get(lead_id=lead_id)
+        if lead:
+            response = {
+                lead_id:lead.lead_id,
+                modified_by:lead.modified_by,
+                modified_type:lead.modified_type,
+                modifications:lead.modifications,
+                image_guid:lead.image_guid,
+                original_image_name:lead.original_image_name,
+                previous_owner:lead.previous_owner,
+                current_owner:lead.current_owner
+            }
+        return HttpResponse(json.dumps(response))
+    """
     return HttpResponse(json.dumps({}))
