@@ -904,3 +904,5 @@ class LeadHistory(models.Model):
     image_link = models.CharField(max_length=600,blank=True, null=True)
     previous_owner = models.CharField(max_length=255,blank=True, null=True)
     current_owner = models.CharField(max_length=255,blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)

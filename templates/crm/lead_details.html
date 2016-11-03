@@ -26,6 +26,7 @@
                         <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
                        
                         <p style="display:none;color:green;text-transform:none;font-size:25px;text-align: center;" id="clone-info">Lead Cloned Successfully - You are on the cloned lead now.</p>
+                        <div id="file_status"></div>
                         
                       </ul>
                     
@@ -946,18 +947,18 @@
                           <div class="padding-20 lead-history upld-lnk-section">
                               <form action="" id="image_save" method="post" enctype="multipart/form-data">
                               {% csrf_token %}
-                              <input type="file" name="img_file" id="img_f" onChange="fileChange();" >Upload File
+                              <a href="#" class="upload-file"><i class="fa fa-file-text" aria-hidden="true"></i>
+                              <input type="file" name="img_file" id="img_f" onChange="fileChange();" >Upload File</a>
                                 <div class="or-left">OR</div>
                                 <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
                                 <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Frist Name *" value="" >
                               </div>
                               <input type="submit" name="submit" class="save-button" value="Save">
                               </form>
-                              <div id="file_status"></div>
                                 <div class="clearfix"></div>
                               <div class="yellow-line"></div>
-                              <div class="row">
-                                  <div class="col-lg-1 col-md-1 col-sm-1 ">
+                              <div class="row" id=lead_history_changed>
+                                  <!--<div class="col-lg-1 col-md-1 col-sm-1 ">
                                       <img src="images/smile-pic.jpg" alt="">
                                     </div> 
                                     <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
@@ -1005,7 +1006,7 @@
                                       <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                     </div> 
                                     <div class="clearfix"></div>
-                                     <div class="margin-top-20"></div>
+                                     <div class="margin-top-20"></div>-->
                                     
                                     
                                 </div>
@@ -1105,7 +1106,6 @@
 
 
     $("li a[href='#history']").click(function(){
-      debugger;
       $.ajax(
       {
           url: "/crm/get-lead-history/",
@@ -1116,6 +1116,25 @@
           },
           success: function (data)
           {
+            if (data.length) {
+              $('#lead_history_changed').html('')
+              for(var i=0;i<data.length;i++){
+                action_type = data[i]['action_type']
+                if (action_type == 'OwnerChange'){
+                  changed = ' changed Lead Owner from Pending QC - WIN to Implemented'
+                }
+                else if(action_type == 'edited'){
+                  changed = ''
+                }
+                else if(action_type == 'image'){
+                  changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt=''></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download png  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
+                }
+                else{
+                  changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link']
+                }
+                $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='col-lg-1 col-md-1 col-sm-1'><a href='#' class='trash'><i class='fa fa-trash-o' aria-hidden='true'></i></a></div> <div class='clearfix'></div><div class='margin-top-20'></div>")
+              }
+            }
           }
       });
       /* call method to get values from lead history table and append to */
@@ -1174,12 +1193,9 @@ function cloneLead(){
       if(file){
         filename = file.name;
         var allowedFiles = ["gif,jpg,jpeg,tiff,png,bmp"];
-        debugger;
-        console.log(filename,(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename))
         if (!(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename)) {
           // inputted file path is not an image of one of the above types
           $(".save-button").prop("disabled",true);
-          alert("inputted file path is not an image!");
 
           errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
                            aria-label='close'>&times;</a> Please upload files only with extension<b>" + allowedFiles.join(', ') + "</b></div>";
@@ -1193,29 +1209,43 @@ function cloneLead(){
 
   $("form#image_save").submit(function(e) {
       e.preventDefault();
-      debugger;
       var $form = $('#image_save');
 
       var formData = new FormData();
       var file = $('input[name^="img_file"]')[0].files[0];
-      console.log(file,'file')
       if (file) {
           formData.append('file',  file);
       }
       formData.append('image_link', $('#image_link').val());
       formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
       formData.append('lead_id', window.location.pathname.split( '/' )[3]);
-      $.ajax({
-          url: '/crm/save-image-file/',
-          type: 'POST',
-          data: formData,
-          cache: false,
-          contentType: false,
-          processData: false,
-          success: function (data) {
-              alert(data)
-          },
-      });
+      var errState = document.getElementById("file_status");
+      /*file_selected = true
+      for (var key of formData.keys()) {
+        if ((key =='image_link' && formData['image_link'] == undefined)){
+            file_selected = false
+          }
+      }
+      debugger*/
+      //if (file_selected){
+        $.ajax({
+            url: '/crm/save-image-file/',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+              if(data['msg'] != ''){
+                errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
+              }
+            },
+            error: function(data){
+              alert("Something went wrong, please try after some time");
+            }
+        });
+      //}
 
       return false;
   });
