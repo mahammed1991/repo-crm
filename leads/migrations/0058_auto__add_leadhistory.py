@@ -20,6 +20,8 @@ class Migration(SchemaMigration):
             ('image_link', self.gf('django.db.models.fields.CharField')(max_length=600, null=True, blank=True)),
             ('previous_owner', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
             ('current_owner', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('created_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('modified_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'leads', ['LeadHistory'])
 
@@ -69,7 +71,7 @@ class Migration(SchemaMigration):
         u'leads.agencydetails': {
             'Meta': {'object_name': 'AgencyDetails', 'db_table': "'agency_details'"},
             'agency_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'appointment_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)'}),
+            'appointment_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)'}),
             'created_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'google_rep': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -99,10 +101,10 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'BlackListedCID'},
             'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'cid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': "''", 'related_name': "'modified_by_user'", 'null': 'True', 'blank': 'True', 'to': u"orm['auth.User']"}),
-            'modified_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)', 'auto_now': 'True', 'blank': 'True'})
+            'modified_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)', 'auto_now': 'True', 'blank': 'True'})
         },
         u'leads.buildsbolteligibility': {
             'Meta': {'object_name': 'BuildsBoltEligibility', 'db_table': "'builds_bolt_eligibility'"},
@@ -172,6 +174,7 @@ class Migration(SchemaMigration):
         u'leads.leadhistory': {
             'Meta': {'object_name': 'LeadHistory'},
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'current_owner': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image_guid': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
@@ -179,6 +182,7 @@ class Migration(SchemaMigration):
             'lead_id': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'modifications': ('django.db.models.fields.TextField', [], {}),
             'modified_by': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'modified_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
             'original_image_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'previous_owner': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
         },
@@ -209,7 +213,7 @@ class Migration(SchemaMigration):
             'comment_5': ('django.db.models.fields.TextField', [], {}),
             'company': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)'}),
             'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'date_of_installation': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'dials': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
@@ -274,7 +278,7 @@ class Migration(SchemaMigration):
             'type_3': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'type_4': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'type_5': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
+            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
             'url_1': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url_2': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url_3': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
@@ -323,7 +327,7 @@ class Migration(SchemaMigration):
             'comment_1': ('django.db.models.fields.TextField', [], {}),
             'company': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)'}),
             'crop_email': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'}),
             'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'date_of_installation': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
@@ -377,7 +381,7 @@ class Migration(SchemaMigration):
             'team': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'treatment_type': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'type_1': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
+            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
             'url_1': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url_2': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'url_3': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
@@ -503,10 +507,10 @@ class Migration(SchemaMigration):
         },
         u'leads.whitelistedauditcid': {
             'Meta': {'object_name': 'WhiteListedAuditCID'},
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)'}),
             'external_customer_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
+            'modified_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
             'opportunity_type': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'leads.wppleads': {
@@ -539,7 +543,7 @@ class Migration(SchemaMigration):
             'company': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'conversion_goal': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)'}),
             'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'date_of_installation': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'dead_lead_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
@@ -617,7 +621,7 @@ class Migration(SchemaMigration):
             'type_3': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'type_4': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'type_5': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 2, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
+            'updated_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2016, 11, 3, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
             'url_1': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url_2': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url_3': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
