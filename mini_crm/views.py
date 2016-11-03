@@ -545,8 +545,7 @@ def clone_lead(request):
         obj.dials = 0
         obj.created_date = datetime.datetime.now()
         obj.save()
-        cloned_obj = {'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}
-        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+        return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['Picasso', 'BOLT']:
         obj = PicassoLeads.objects.get(pk=lead_id)
         obj.pk = None
@@ -559,8 +558,7 @@ def clone_lead(request):
         obj.additional_notes = ""
         obj.created_date = datetime.datetime.now()
         obj.save()
-        cloned_obj = {'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}
-        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+        return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['TAG', 'Sopping', 'RLSA']:
         obj = Leads.objects.get(pk=lead_id)
         obj.pk = None
@@ -577,8 +575,7 @@ def clone_lead(request):
         obj.dials = 0
         obj.created_date = datetime.datetime.now()
         obj.save()
-        cloned_obj = {'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}
-        return HttpResponse(json.dumps(cloned_obj), content_type="application/json")
+        return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     else:
         response = {'msg':'Failed to clone'}
         return HttpResponse(json.dumps(response),content_type='application/json')
