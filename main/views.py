@@ -486,6 +486,9 @@ def edit_profile_info(request):
             manager_details[str(user.email)] = str(full_name)
 
     # sfdc model
+    shift_strat = None
+    shift_end = None
+    process_type = None
     try:
         sfdc_user = SfdcUsers.objects.get(email=request.user.email)
         shift_strat = sfdc_user.shift_start
@@ -493,10 +496,7 @@ def edit_profile_info(request):
         process_type = sfdc_user.process_type
         request.process_type = sfdc_user.process_type
     except ObjectDoesNotExist:
-        shift_strat = None
-        shift_end = None
-        process_type = None
-    
+        pass
 
     if request.method == 'POST':
         next_url = request.POST.get('next_url', None)
@@ -517,45 +517,39 @@ def edit_profile_info(request):
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
         user_details.pod_name = request.POST.get('pod_name', None)
 
-        
-        if ((request.user.groups.filter(name='CRM-MANAGER')) or (request.user.groups.filter(name='CRM-AGENT'))):
-
+        if request.user.groups.filter(name='CRM-MANAGER') or request.user.groups.filter(name='CRM-AGENT'):
+            full_name = request.POST.get('user_full_name', None)
+            username = request.POST.get('user_full_name', None)
+            process_type = request.POST.get('process_type', None)
+            shift_from_time = request.POST.get('shift_from', None)
+            shift_to_time = request.POST.get('shift_to', None)
+            location = request.POST.get('rep_location', None)
+            request.process_type = process_type
             try:
                 sfdc_user = SfdcUsers.objects.get(email=request.user.email)
-                sfdc_user.user_id = request.user.id
-                sfdc_user.full_name = request.POST.get('user_full_name', None)
-                sfdc_user.email = request.user.email
-                sfdc_user.username = request.POST.get('user_full_name', None)
-                sfdc_user.process_type = request.POST.get('process_type', None)
-                shift_from_time = request.POST.get('shift_from', None)
-                sfdc_user.shift_start = datetime.strptime(shift_from_time, '%H:%M %p')
-                shift_to_time = request.POST.get('shift_to', None)
-                sfdc_user.shift_end = datetime.strptime(shift_to_time, '%H:%M %p')
-                sfdc_user.location = request.POST.get('rep_location', None)
-                sfdc_user.save()
-                request.process_type = sfdc_user.process_type
-                
-                shift_strat = sfdc_user.shift_start
-                shift_end = sfdc_user.shift_end
-                process_type = sfdc_user.process_type
-
+                sfdc_user.full_name = full_name
+                sfdc_user.username = username
+                sfdc_user.process_type = process_type
+                if shift_from_time:
+                    sfdc_user.shift_start = datetime.strptime(shift_from_time, '%H:%M %p')
+                if shift_to_time:
+                    sfdc_user.shift_end = datetime.strptime(shift_to_time, '%H:%M %p')
+                sfdc_user.location = location
             except ObjectDoesNotExist:
-                
-                sfdcUsers = SfdcUsers()
-                sfdcUsers.user_id = request.user.id
-                sfdcUsers.full_name = request.POST.get('user_full_name', None)
-                sfdcUsers.email = request.user.email
-                sfdcUsers.username = request.POST.get('user_full_name', None)
-                sfdcUsers.process_type = request.POST.get('process_type', None)
-                sfdcUsers.shift_start = request.POST.get('shift_from', None)
-                sfdcUsers.shift_end = request.POST.get('shift_to', None)
-                sfdcUsers.location = request.POST.get('rep_location', None)
-                sfdcUsers.save()
-                request.process_type = sfdcUsers.process_type
-                
-                shift_strat = sfdcUsers.shift_start
-                shift_end = sfdcUsers.shift_end
-                process_type = sfdcUsers.process_type
+                sfdc_user = SfdcUsers()
+                sfdc_user.full_name = full_name
+                sfdc_user.username = username
+                sfdc_user.process_type = process_type
+                if shift_from_time:
+                    sfdc_user.shift_start = datetime.strptime(shift_from_time, '%H:%M %p')
+                if shift_to_time:
+                    sfdc_user.shift_end = datetime.strptime(shift_to_time, '%H:%M %p')
+                sfdc_user.location = location
+
+            sfdc_user.save()
+            shift_start = sfdc_user.shift_start
+            shift_end = sfdc_user.shift_end
+            process_type = sfdc_user.process_type
 
         if '@google.com' in request.user.email:
             user_details.team_id = request.POST.get('user_team', None)
@@ -573,7 +567,7 @@ def edit_profile_info(request):
     api_key = settings.API_KEY
     return render(request, 'main/edit_profile_info.html', {'podname': podname, 'locations': locations, 'managers': managers, 'regions': regions, 'api_key': api_key,
                                                            'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details, 'picasso_header' : picasso_header,
-                                                           'shift_strat':shift_strat, 'shift_end':shift_end, 'process_type':process_type, "processes":["TAG","SHOPPING","RLSA","WPP","Picasso Audits","Shopping Argos"]})
+                                                           'shift_start':shift_start, 'shift_end':shift_end, 'process_type':process_type, "processes":["TAG","SHOPPING","RLSA","WPP","Picasso Audits","Shopping Argos"]})
 
 
 @login_required
