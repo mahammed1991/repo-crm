@@ -2,9 +2,9 @@ from django.contrib import admin
 from leads.models import (Leads, Timezone, RegalixTeams, TreatmentType, WPPLeads,
                           Location, Team, CodeType, Language, LeadForm,
                           LeadFormAccessControl, TimezoneMapping, PicassoLeads, PicassoLeadGroupType, BlackListedCID,
-                          BuildsBoltEligibility, WhiteListedAuditCID, #ArgosProcessTimeTracker
+                          BuildsBoltEligibility, WhiteListedAuditCID, LeadHistory #ArgosProcessTimeTracker
                           )
-from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm
+from leads.forms import LocationForm, LeadFormAccessControlAdminForm, TimezoneMappingForm, LeadHistoryForm
 from lib.admin_helpers import CustomAdmin
 
 
@@ -295,3 +295,9 @@ class WhiteListedAuditCIDAdmin(admin.ModelAdmin):
 
 admin.site.register(WhiteListedAuditCID, WhiteListedAuditCIDAdmin)
 # admin.site.register(ArgosProcessTimeTracker)
+
+
+class LeadHistoryAdmin(admin.ModelAdmin):
+    list_display = ('lead_id','modified_by','action_type','modifications','image_guid','original_image_name','image_link','previous_owner','current_owner')
+
+admin.site.register(LeadHistory, LeadHistoryAdmin)
