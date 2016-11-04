@@ -644,7 +644,7 @@ def download_image_file(request):
     lead = LeadHistory.objects.get(image_guid=request.GET.get('image_guid'))
     image_path = os.path.join(settings.MEDIA_ROOT,lead.image_guid)
     mimetype, encoding = mimetypes.guess_type(image_path)
-    response = HttpResponse(mimetype=mimetype)
+    response = HttpResponse(content_type=mimetype)
     response['Content-Disposition'] = 'attachment; filename=%s' % lead.original_image_name
     response.write(file(image_path, "rb").read())
     return response
