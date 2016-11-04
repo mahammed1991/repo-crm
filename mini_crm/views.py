@@ -492,19 +492,18 @@ def lead_owner_avalibility(request):
                         appointment_date_in_ist=current_lead.appointment_date_in_ist)
                     assign = False if appointment_conflict else True 
         if assign:
+            # Store this action as part of history
             lh = LeadHistory()
             lh.lead_id = current_lead.id
             lh.modified_by = request.user.first_name + ' ' +request.user.last_name
             lh.action_type = 'owner_change'
             lh.previous_owner = current_lead.lead_owner_name
-
+            lh.current_owner = lead_owner
+            lh.save()
+            # Assigning to the new owner
             current_lead.lead_owner_name = assignee_name
             current_lead.lead_owner_email = lead_owner
-            
-            lh.current_owner = current_lead.lead_owner_name
             current_lead.save()
-            lh.save()
-
             resp['success'] = True
         else:
             resp['success'] = False   
