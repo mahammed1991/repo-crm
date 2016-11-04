@@ -1137,7 +1137,6 @@
             }
           }
       });
-      /* call method to get values from lead history table and append to */
 
     })
     
@@ -1180,7 +1179,6 @@ function cloneLead(){
 
   $('input[type=file]').on('change', prepareUpload);
 
-  // Grab the files and set them to our variable
   function prepareUpload(event)
   {
     files = event.target.files;
@@ -1220,32 +1218,23 @@ function cloneLead(){
       formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
       formData.append('lead_id', window.location.pathname.split( '/' )[3]);
       var errState = document.getElementById("file_status");
-      /*file_selected = true
-      for (var key of formData.keys()) {
-        if ((key =='image_link' && formData['image_link'] == undefined)){
-            file_selected = false
-          }
-      }
-      debugger*/
-      //if (file_selected){
-        $.ajax({
-            url: '/crm/save-image-file/',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-              if(data['msg'] != ''){
-                errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
-              }
-            },
-            error: function(data){
-              alert("Something went wrong, please try after some time");
+      $.ajax({
+          url: '/crm/save-image-file/',
+          type: 'POST',
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+            if(data['msg'] != ''){
+              errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                             aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
             }
-        });
-      //}
+          },
+          error: function(data){
+            alert("Something went wrong, please try after some time");
+          }
+      });
 
       return false;
   });

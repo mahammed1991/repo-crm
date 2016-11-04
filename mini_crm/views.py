@@ -638,7 +638,6 @@ def get_lead_history(request):
             }
             lead_history_list.append(lead_history_dict)
         return HttpResponse(json.dumps(lead_history_list),content_type='application/json')
-    #return HttpResponse(json.dumps({}))
 
 
 def download_image_file(request):
