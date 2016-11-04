@@ -1130,7 +1130,7 @@
                   changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt=''></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download png  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
                 }
                 else{
-                  changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link']
+                  changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
                 }
                 $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='col-lg-1 col-md-1 col-sm-1'><a href='#' class='trash'><i class='fa fa-trash-o' aria-hidden='true'></i></a></div> <div class='clearfix'></div><div class='margin-top-20'></div>")
               }
