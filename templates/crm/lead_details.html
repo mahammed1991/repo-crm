@@ -947,11 +947,16 @@
                           <div class="padding-20 lead-history upld-lnk-section">
                               <form action="" id="image_save" method="post" enctype="multipart/form-data">
                               {% csrf_token %}
-                              <a href="#" class="upload-file"><i class="fa fa-file-text" aria-hidden="true"></i>
-                              <input type="file" name="img_file" id="img_f" onChange="fileChange();" >Upload File</a>
+                              
+                              <label class="input-group-btn upload-file">
+                              <span class="btn btn-primary load-file">
+                              <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
+                                  <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;">Upload File
+                              </span>
+                              </label>
                                 <div class="or-left">OR</div>
                                 <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
-                                <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Frist Name *" value="" >
+                                <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Image link" value="" >
                               </div>
                               <input type="submit" name="submit" class="save-button" value="Save">
                               </form>
@@ -1105,39 +1110,42 @@
     });
 
 
-    $("li a[href='#history']").click(function(){
-      $.ajax(
+function get_lead_history(){
+  $.ajax(
+  {
+      url: "/crm/get-lead-history/",
+      dataType: "json",
+      data:
       {
-          url: "/crm/get-lead-history/",
-          dataType: "json",
-          data:
-          {
-              lead_id: '{{lead.id}}',
-          },
-          success: function (data)
-          {
-            if (data.length) {
-              $('#lead_history_changed').html('')
-              for(var i=0;i<data.length;i++){
-                action_type = data[i]['action_type']
-                if (action_type == 'OwnerChange'){
-                  changed = ' changed Lead Owner from Pending QC - WIN to Implemented'
-                }
-                else if(action_type == 'edited'){
-                  changed = ''
-                }
-                else if(action_type == 'image'){
-                  changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt=''></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
-                }
-                else{
-                  changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
-                }
-                $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='col-lg-1 col-md-1 col-sm-1'><a href='#' class='trash'><i class='fa fa-trash-o' aria-hidden='true'></i></a></div> <div class='clearfix'></div><div class='margin-top-20'></div>")
-              }
+          lead_id: '{{lead.id}}',
+      },
+      success: function (data)
+      {
+        if (data.length) {
+          $('#lead_history_changed').html('')
+          for(var i=0;i<data.length;i++){
+            action_type = data[i]['action_type']
+            if (action_type == 'owner_change'){
+              changed = ' changed Lead Owner from ' + data[i]['previous_owner'] +  ' to ' + data[i]['current_owner'] + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
             }
+            else if(action_type == 'edited'){
+              changed = ''
+            }
+            else if(action_type == 'image'){
+              changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
+            }
+            else{
+              changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
+            }
+            $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='col-lg-1 col-md-1 col-sm-1'><a href='#' class='trash'><i class='fa fa-trash-o' aria-hidden='true'></i></a></div> <div class='clearfix'></div><div class='margin-top-20'></div>")
           }
-      });
+        }
+      }
+  });
+}
 
+    $("li a[href='#history']").click(function(){
+      get_lead_history();
     })
     
 
@@ -1196,7 +1204,7 @@ function cloneLead(){
           $(".save-button").prop("disabled",true);
 
           errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Please upload files only with extension<b>" + allowedFiles.join(', ') + "</b></div>";
+                           aria-label='close'>&times;</a> Please upload files only with extension<b> " + allowedFiles.join(', ') + "</b></div>";
           return false;
         }
         $(".save-button").prop("disabled",false);
@@ -1204,6 +1212,26 @@ function cloneLead(){
       }
   }
 
+  $('#image_link').change(function(){
+    validateUrl();
+  })
+
+  var validateUrl= function(){
+      var image_link = $('#image_link').val()
+      var errState = document.getElementById("file_status");
+      if(image_link){
+        var regUrl = (/^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i);
+        if (regUrl.test(image_link) == false) {
+          $(".save-button").prop("disabled",true);
+
+          errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please add a valid url</div>";
+          return false;
+        }
+        $(".save-button").prop("disabled",false);
+        return true;
+      }
+  }
 
   $("form#image_save").submit(function(e) {
       e.preventDefault();
@@ -1218,23 +1246,29 @@ function cloneLead(){
       formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
       formData.append('lead_id', window.location.pathname.split( '/' )[3]);
       var errState = document.getElementById("file_status");
-      $.ajax({
-          url: '/crm/save-image-file/',
-          type: 'POST',
-          data: formData,
-          cache: false,
-          contentType: false,
-          processData: false,
-          success: function (data) {
-            if(data['msg'] != ''){
-              errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                             aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
+      debugger;
+      if (file != undefined || $('#image_link').val() != ''){
+        $.ajax({
+            url: '/crm/save-image-file/',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+              if(data['success']){
+                errState.innerHTML = "<div class='alert alert-success'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
+                get_lead_history();
+                $('#image_save')[0].reset()
+
+              }
+            },
+            error: function(data){
+              alert("Something went wrong, please try after some time");
             }
-          },
-          error: function(data){
-            alert("Something went wrong, please try after some time");
-          }
-      });
+        });
+      }
 
       return false;
   });
