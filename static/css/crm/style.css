@@ -108,7 +108,18 @@ a.accordion-head span{ background:#f2f2f2; border:1px solid #cdcdcd; border-radi
 .lead-history .media .media-body a.screen-dwld{ color:#4d7dbe; text-decoration:none}
 .lead-history .media .media-body a.screen-dwld span{ color:#999999}
 .lead-history .media .media-body .fa{ color:#15a95e}
-.upld-lnk-section a.upload-file{ display:inline-block; color:#fff; background:#afc9ec; padding:8px 20px; float:left; text-decoration:none; border-radius:2px}
+.upld-lnk-section .upload-file{ width:auto; display:inline-block; color:#fff; background:#afc9ec; padding:8px 20px; float:left; text-decoration:none; border-radius:2px}
+.load-file,.load-file:hover{
+	width: auto;
+    display: inline-block;
+    color: #fff;
+    background: #afc9ec;
+    border:0;
+    box-shadow: none;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
 .upld-lnk-section .or-left{float:left;display:inline-block; margin:5px 15px 0px}
 .upld-lnk-section .form-group{ width:300px; float:left;padding-right:15px;}
 .upld-lnk-section .form-group .form-control{padding: 0px 20px 0px 40px; background:#f2f2f2; border:0;border-radius: 0px;
@@ -226,3 +237,4 @@ and (orientation : portrait) {
 .table-right{
 	text-align: left !important;
 }
+

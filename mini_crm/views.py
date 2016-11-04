@@ -490,11 +490,21 @@ def lead_owner_avalibility(request):
                     appointment_conflict = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,
                         lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'], 
                         appointment_date_in_ist=current_lead.appointment_date_in_ist)
-                    assign = False if appointment_conflict else True        
+                    assign = False if appointment_conflict else True 
         if assign:
+            lh = LeadHistory()
+            lh.lead_id = current_lead.id
+            lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+            lh.action_type = 'owner_change'
+            lh.previous_owner = current_lead.lead_owner_name
+
             current_lead.lead_owner_name = assignee_name
             current_lead.lead_owner_email = lead_owner
+            
+            lh.current_owner = current_lead.lead_owner_name
             current_lead.save()
+            lh.save()
+
             resp['success'] = True
         else:
             resp['success'] = False   
@@ -597,9 +607,9 @@ def save_image_file(request):
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
             save_file(file, file_path)
-            response = {'msg':'file uploaded successfully'}
-        except Exception as e:
-            response = {'msg':e}
+            response = {'msg':'file uploaded successfully','success':True}
+        except:
+            response = {'msg':'Failed to upload file, please try after sometime.','success':False}
         lh.original_image_name = file.name
         lh.image_guid = new_file_name
         lh.action_type = 'image'
@@ -609,7 +619,7 @@ def save_image_file(request):
     else:
         lh.image_link = request.POST.get('image_link')
         lh.action_type = 'image_link'
-        response = {'msg':'image link added successfully' if request.POST.get('image_link') else ''}
+        response = {'msg':'image link added successfully' ,'success':True}
     lh.lead_id = request.POST['lead_id']
     lh.modified_by = request.user.first_name + ' ' +request.user.last_name
     lh.save()
@@ -632,7 +642,7 @@ def get_lead_history(request):
                 'original_image_name':lead.original_image_name,
                 'previous_owner':lead.previous_owner,
                 'current_owner':lead.current_owner,
-                'image_path':os.path.join(settings.MEDIA_ROOT,lead.image_guid) if lead.image_guid else '',
+                'image_path':"/static/uploads/"+lead.image_guid if lead.image_guid else '',
                 'image_size':round(float(os.path.getsize(os.path.join(settings.MEDIA_ROOT,lead.image_guid))) /(1024*1024),2) if lead.image_guid else '',
                 'created_date':datetime.strftime(lead.created_date, "%d-%m-%Y %I:%M %P"),
             }
