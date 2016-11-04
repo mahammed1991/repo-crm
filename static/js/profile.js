@@ -19,6 +19,10 @@ $(document).ready(function(){
         $(".allow-edit").removeClass('non-edit');
         $(".allow-edit").attr('disabled', false);
         $(".rep_cur_loc").css({"display":"inline-block"});
+        $("#shift_from").attr('disabled', false);
+        $("#shift_to").attr('disabled', false);
+        $("#process-type-id").css("display", "none");
+        $("#process-type-options").show();
         return false;
     });
 
@@ -36,6 +40,10 @@ $(document).ready(function(){
         $(".allow-edit").addClass('non-edit');
         $(".allow-edit").attr('disabled', true);
         $(".rep_cur_loc").hide();
+        $("#shift_from").attr('disabled', true);
+        $("#shift_to").attr('disabled', true);
+        $("#process-type-id").css("display", "");
+        $("#process-type-options").hide();
         return false;
     });
 });
@@ -116,6 +124,34 @@ function validateProfile(){
        $(region).focus();   
         return false;
     }
+
+
+// shift from time validation
+    shift_from = $("#shift_from");
+    if (shift_from.val() == "") {
+       $(shift_from).addClass('error-box');
+       $(shift_from).focus();   
+        return false;
+    }
+
+// shift To time validation
+    shift_to = $("#shift_to");
+    if (shift_to.val() == "") {
+       $(shift_to).addClass('error-box');
+       $(shift_to).focus();   
+        return false;
+    }
+
+    // user process 
+    process_type = $("#process-type-options");
+    if (process_type.val() == "Choose") {
+       $(process_type).addClass('error-box');
+       $(process_type).focus();   
+        return false;
+    }
+
+
+
 }
 
 function showErrorMessage(errMsg){

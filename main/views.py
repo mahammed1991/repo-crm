@@ -23,7 +23,7 @@ from lib.helpers import send_mail, manager_info_required, wpp_user_required, che
 
 from main.models import (UserDetails, Feedback, FeedbackComment, CustomerTestimonials, ContectList, WPPMasterList,
                          Notification, PortalFeedback, ResourceFAQ, PicassoEligibilityMasterUpload)
-from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads, WhiteListedAuditCID
+from leads.models import Location, Leads, Team, Language, TreatmentType, WPPLeads, PicassoLeads, WhiteListedAuditCID, SfdcUsers
 from django.db.models import Count
 from lib.helpers import (get_week_start_end_days, first_day_of_month, get_user_profile, get_quarter_date_slots,
                          last_day_of_month, previous_quarter, get_count_of_each_lead_status_by_rep, get_rep_details_from_leads,
@@ -440,7 +440,9 @@ def get_top_performer_by_date_range(start_date, end_date, lead_type):
 @login_required
 @csrf_exempt
 def edit_profile_info(request):
+
     """ Profile information for user """
+    
     picasso_header = False
     referer = request.META.get('HTTP_REFERER', None)
     if referer:
@@ -483,6 +485,19 @@ def edit_profile_info(request):
                 full_name = ''
             manager_details[str(user.email)] = str(full_name)
 
+    # sfdc model
+    try:
+        sfdc_user = SfdcUsers.objects.get(email=request.user.email)
+        shift_strat = sfdc_user.shift_start
+        shift_end = sfdc_user.shift_end
+        process_type = sfdc_user.process_type
+        request.process_type = sfdc_user.process_type
+    except ObjectDoesNotExist:
+        shift_strat = None
+        shift_end = None
+        process_type = None
+    
+
     if request.method == 'POST':
         next_url = request.POST.get('next_url', None)
         if next_url != 'home':
@@ -502,6 +517,46 @@ def edit_profile_info(request):
         user_details.user_manager_email = request.POST.get('user_manager_email', None)
         user_details.pod_name = request.POST.get('pod_name', None)
 
+        
+        if ((request.user.groups.filter(name='CRM-MANAGER')) or (request.user.groups.filter(name='CRM-AGENT'))):
+
+            try:
+                sfdc_user = SfdcUsers.objects.get(email=request.user.email)
+                sfdc_user.user_id = request.user.id
+                sfdc_user.full_name = request.POST.get('user_full_name', None)
+                sfdc_user.email = request.user.email
+                sfdc_user.username = request.POST.get('user_full_name', None)
+                sfdc_user.process_type = request.POST.get('process_type', None)
+                shift_from_time = request.POST.get('shift_from', None)
+                sfdc_user.shift_start = datetime.strptime(shift_from_time, '%H:%M %p')
+                shift_to_time = request.POST.get('shift_to', None)
+                sfdc_user.shift_end = datetime.strptime(shift_to_time, '%H:%M %p')
+                sfdc_user.location = request.POST.get('rep_location', None)
+                sfdc_user.save()
+                request.process_type = sfdc_user.process_type
+                
+                shift_strat = sfdc_user.shift_start
+                shift_end = sfdc_user.shift_end
+                process_type = sfdc_user.process_type
+
+            except ObjectDoesNotExist:
+                
+                sfdcUsers = SfdcUsers()
+                sfdcUsers.user_id = request.user.id
+                sfdcUsers.full_name = request.POST.get('user_full_name', None)
+                sfdcUsers.email = request.user.email
+                sfdcUsers.username = request.POST.get('user_full_name', None)
+                sfdcUsers.process_type = request.POST.get('process_type', None)
+                sfdcUsers.shift_start = request.POST.get('shift_from', None)
+                sfdcUsers.shift_end = request.POST.get('shift_to', None)
+                sfdcUsers.location = request.POST.get('rep_location', None)
+                sfdcUsers.save()
+                request.process_type = sfdcUsers.process_type
+                
+                shift_strat = sfdcUsers.shift_start
+                shift_end = sfdcUsers.shift_end
+                process_type = sfdcUsers.process_type
+
         if '@google.com' in request.user.email:
             user_details.team_id = request.POST.get('user_team', None)
             if request.POST.get('region', None) == '0':
@@ -517,7 +572,8 @@ def edit_profile_info(request):
             return redirect('main.views.home')
     api_key = settings.API_KEY
     return render(request, 'main/edit_profile_info.html', {'podname': podname, 'locations': locations, 'managers': managers, 'regions': regions, 'api_key': api_key,
-                                                           'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details, 'picasso_header' : picasso_header})
+                                                           'all_locations': all_locations, 'region_locations': region_locations, 'teams': teams, 'manager_details': manager_details, 'picasso_header' : picasso_header,
+                                                           'shift_strat':shift_strat, 'shift_end':shift_end, 'process_type':process_type, "processes":["TAG","SHOPPING","RLSA","WPP","Picasso Audits","Shopping Argos"]})
 
 
 @login_required
