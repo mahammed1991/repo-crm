@@ -3,13 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from main import views
+from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
 
 #import datetime
 import json
-from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail
+from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
@@ -23,7 +24,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
-import datetime
+#import datetime
+
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
+import uuid, os
+from lib.helpers import save_file
+import mimetypes
 
 # Create your views here.
 @login_required
@@ -482,11 +490,21 @@ def lead_owner_avalibility(request):
                     appointment_conflict = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,
                         lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'], 
                         appointment_date_in_ist=current_lead.appointment_date_in_ist)
-                    assign = False if appointment_conflict else True        
+                    assign = False if appointment_conflict else True 
         if assign:
+            lh = LeadHistory()
+            lh.lead_id = current_lead.id
+            lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+            lh.action_type = 'owner_change'
+            lh.previous_owner = current_lead.lead_owner_name
+
             current_lead.lead_owner_name = assignee_name
             current_lead.lead_owner_email = lead_owner
+            
+            lh.current_owner = current_lead.lead_owner_name
             current_lead.save()
+            lh.save()
+
             resp['success'] = True
         else:
             resp['success'] = False   
@@ -579,3 +597,64 @@ def clone_lead(request):
     else:
         response = {'msg':'Failed to clone'}
         return HttpResponse(json.dumps(response),content_type='application/json')
+
+def save_image_file(request):
+    lh = LeadHistory()
+    if request.FILES:
+        file = request.FILES['file']
+        original_file_name, file_extension = file.name.split(".")
+        new_file_name = str(uuid.uuid4()) + "." + file_extension
+        file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
+        try:
+            save_file(file, file_path)
+            response = {'msg':'file uploaded successfully','success':True}
+        except:
+            response = {'msg':'Failed to upload file, please try after sometime.','success':False}
+        lh.original_image_name = file.name
+        lh.image_guid = new_file_name
+        lh.action_type = 'image'
+        '''
+            update file_path and file.name as Original File name in the DB
+        '''
+    else:
+        lh.image_link = request.POST.get('image_link')
+        lh.action_type = 'image_link'
+        response = {'msg':'image link added successfully' ,'success':True}
+    lh.lead_id = request.POST['lead_id']
+    lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+    lh.save()
+    return HttpResponse(json.dumps(response),content_type="application/json")
+
+
+def get_lead_history(request):
+    lead_id = request.GET.get('lead_id')
+    lead_history_list = list()
+    if lead_id:
+        leads = LeadHistory.objects.filter(lead_id=lead_id).order_by('-modified_date')
+        for lead in leads:
+            lead_history_dict = {
+                'lead_id':lead.lead_id,
+                'modified_by':lead.modified_by,
+                'action_type':lead.action_type,
+                'modifications':lead.modifications,
+                'image_link':lead.image_link,
+                'image_guid':lead.image_guid,
+                'original_image_name':lead.original_image_name,
+                'previous_owner':lead.previous_owner,
+                'current_owner':lead.current_owner,
+                'image_path':"/static/uploads/"+lead.image_guid if lead.image_guid else '',
+                'image_size':round(float(os.path.getsize(os.path.join(settings.MEDIA_ROOT,lead.image_guid))) /(1024*1024),2) if lead.image_guid else '',
+                'created_date':datetime.strftime(lead.created_date, "%d-%m-%Y %I:%M %P"),
+            }
+            lead_history_list.append(lead_history_dict)
+        return HttpResponse(json.dumps(lead_history_list),content_type='application/json')
+
+
+def download_image_file(request):
+    lead = LeadHistory.objects.get(image_guid=request.GET.get('image_guid'))
+    image_path = os.path.join(settings.MEDIA_ROOT,lead.image_guid)
+    mimetype, encoding = mimetypes.guess_type(image_path)
+    response = HttpResponse(content_type=mimetype)
+    response['Content-Disposition'] = 'attachment; filename=%s' % lead.original_image_name
+    response.write(file(image_path, "rb").read())
+    return response
