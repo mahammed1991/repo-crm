@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse
 from main import views
 from django.http import HttpResponse
 from django.conf import settings
@@ -10,7 +9,7 @@ from django.template import Context
 
 #import datetime
 import json
-from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory
+from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory, Language, Team
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
@@ -450,14 +449,31 @@ def lead_details(request, lid, sf_lead_id, ctype):
     lead_detail = None
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        #lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+        lead_status = settings.LEAD_STATUS
+        primary_role = ['Owner','Marketing','Webmaster']
+        language = Language.objects.filter(is_active=True)
+        team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+        team_list = []
+        language_list = []
+        for i in language:
+            language_list.append(str(i.language_name))
+        for i in team:
+            team_list.append(str(i.team_name))
+            try:
+                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+            except:
+                lead_detail = None
 
     elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',{'lead':lead, 'ctype':ctype, 'lead_detail':lead_detail})
+    return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
+        'status':lead_status,'role':primary_role,
+        'language':language_list,'team':team_list,
+        'ctype':ctype,
+        })
 
 
 @login_required
@@ -657,3 +673,36 @@ def download_image_file(request):
     response['Content-Disposition'] = 'attachment; filename=%s' % lead.original_image_name
     response.write(file(image_path, "rb").read())
     return response
+
+
+@csrf_exempt
+def update_lead(request):
+    resp = {}
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            lead = Leads.objects.get(id=data['id'])
+            lead.lead_status = data['lead_status']
+            lead.team = data['team']
+            lead.save()
+
+            try:
+                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+            except:
+                lead_detail = TagLeadDetail()
+
+            lead_detail.lead_id = lead
+            if data['qc_on']:
+                temp_qc_on = data['qc_on']
+                temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
+                lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
+            if data['qc_by'] == '--None--':
+                lead_detail.qc_by = None
+            if data['qc_comments']:
+                lead_detail.qc_comments = data['qc_comments']
+            lead_detail.save()
+
+            resp['success'] = True
+        except:
+            resp['success'] = False
+    return HttpResponse(json.dumps(resp))
