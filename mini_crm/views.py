@@ -620,6 +620,10 @@ def save_image_file(request):
         file = request.FILES['file']
         original_file_name, file_extension = file.name.split(".")
         new_file_name = str(uuid.uuid4()) + "." + file_extension
+        
+        if not os.path.isdir(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+            
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
             save_file(file, file_path)
