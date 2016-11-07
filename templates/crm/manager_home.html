@@ -21,7 +21,7 @@ WFM Home
       <div class="container-fluid" style="max-width:100%;">
         <div class="white-section">
           <div class="blue-bg">
-
+          <div id="delete_lead_msg"></div>
             <div class="row">
               <div class="col-md-5">
                 <div class="arrow-box-blue">
@@ -182,8 +182,13 @@ WFM Home
     function LoadTheTableContent(freshAppointment){
         region = $('#region').val()
         var ptype = getParameterByName('ptype')
+        var c_id = getParameterByName('customer_id')
         process_name = $('#process').val()
         if(initial_load && ptype != null){
+          $("#delete_lead_msg").empty();
+          var successState = document.getElementById("delete_lead_msg");
+          successState.innerHTML = "<div class='alert alert-success'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Lead with customer ID " + c_id + " deleted sucessfully.<b> "  + "</b></div>";
           if(ptype === "ShoppingArgos") ptype  = "Shopping Argos";
           if(ptype === "PicassoAudits") ptype  = "Picasso Audits";
           $('#process').val(ptype)
@@ -264,6 +269,7 @@ WFM Home
 
     function addURL(element)
     {
+
       var type = $('#process option:selected').text().replace(" ","");
         $(element).attr('href', function() {
           var url = this.href;

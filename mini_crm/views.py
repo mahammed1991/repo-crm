@@ -545,20 +545,24 @@ def delete_lead(request, lid, ctype):
         if ctype == "WPP":
             if WPPLeads.objects.all().count():
                 lead = WPPLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
         elif ctype == "PicassoAudits":
             if PicassoLeads.objects.all().count():
                 lead = PicassoLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
         elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
             
             if TagLeadDetail.objects.all().count():
                 lead = TagLeadDetail.objects.get(lead_id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
             if Leads.objects.all().count():
                 lead = Leads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
-        return redirect(reverse("all-leads") + "?ptype=" + ctype)
+        return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
 
 @csrf_exempt
 def clone_lead(request):
