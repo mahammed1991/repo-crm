@@ -1,0 +1,123 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  Agency Lead Form
+{% endblock title %}
+
+{% block main_css %}
+  <style type="text/css">
+
+{% if returning_data %} 
+.footer{ margin-left: -28px;}
+{% endif %} 
+
+.top-margin{ margin-top:40px}
+
+.search_rseult{
+  font-size: 18px;
+    font-weight: 600;
+    color: #15a95e;
+    margin-bottom: 20px;margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    text-align: left;
+    text-transform:none !important;
+    font-weight: bold;
+    letter-spacing: 0.4px;
+}
+.search-result span {
+    font-size: 14px;
+    font-weight: 400;
+    color: #999;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    font-weight: normal;
+
+}
+.no_rseult{
+  font-size: 26px;
+    color: #e24136;
+    margin-bottom: 20px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+    text-transform:none !important;
+    font-weight: normal;
+}
+ 
+  </style>
+
+{% endblock main_css %}
+ 
+  {% block content %}
+  <body>
+                
+        <section class="top-margin ">
+          <div class="container-fluid">
+              <div class="white-section">
+                  <div class="padding-20 search-result">
+                      
+                    {% if returning_data %}  
+                    
+                    <h2 class="search_rseult">Search Result for "{{q_id}}" <span>({{resultcount}} results)</span></h2>
+                        <table class="table "> 
+                             <thead> 
+                                <tr> 
+                                        <th>CID </th> 
+                                        <th>Code Type</th> 
+                                        <th>URL</th> 
+                                        <th>Lead Status</th> 
+                                  </tr> 
+                              </thead> 
+                                {% for data in returning_data %}
+                               <tbody> 
+                                   <tr> 
+                                       <td><a href="../lead-details/{{data.id}}/{{data.sf_lead_id}}/{{data.process_type}}">{{data.customer_id}}   <i class="fa fa-external-link-square" aria-hidden="true"></i></a></td> 
+                                       <td>{{data.type_1}}</td> 
+                                       <td>{{data.url_1}}</td> 
+                                       <td>{{data.lead_status}}</td> 
+
+                                    </tr>
+                              </tbody>     
+                                {% endfor %}
+                      {% else %}
+                         <section class="top-margin ">
+                            <div class="container-fluid">
+                                <div class="white-section">
+                                    <div class="padding-20 search-result img-center">
+                                        <div class="row">
+                                            <div class="col-md-6 col-md-offset-3">
+                                                  <h2 class="text-center no_rseult">No results found for "{{ q_id }}"</h2>
+                                                  
+                                                  <img style="margin-left: 30%;" src="{% static 'images/no-work-ing.png' %}" alt="NO RESULT"/>
+                                            </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </section>
+                      {% endif %}
+                          
+                           
+                    </div>
+                </div>
+            </div>
+        </section>
+  </body>
+
+{% endblock content %}
+
+{% block main_js %}
+
+{% endblock main_js %}
+
