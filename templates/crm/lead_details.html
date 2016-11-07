@@ -13,6 +13,7 @@
   <style type="text/css"></style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" type="text/css">
 {% endblock main_css %}
   </head>
   {% block content %}
@@ -38,7 +39,10 @@
                                   <div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
                                     <div class="col-md-6">
                                       <ul class="lead-menu">
-                                            <li><a href="#">Edit </a></li>         
+                                            <li>
+                                              <a href="#" id="edit-lead">Edit </a>
+                                              <a href="#" id="save-lead" style="display:none;">Save </a>
+                                            </li>             
                                             <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
                                             <!-- <li><a href="#">Clone</a></li> -->
                                             <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
@@ -75,35 +79,29 @@
                                         </td>
                                         
                                         <td class="table-left">Email</td>
-                                        <td class="table-right">{{ lead.lead_owner_email }}</td>
+                                        <td class="table-right" id='mail'><span>{{ lead.lead_owner_email }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Status  </td>
-                                        <td class="table-right">{{ lead.lead_status }}</td>
+                                        <td class="table-right" id="lead-status">{{ lead.lead_status }}</td>
                                         <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead.lead_sub_status }}</td>
-                                       </tr>
-                                       <tr>
-                                        <td class="table-left">On Call Win</td>
-                                        <td class="table-right"></td>
-                                        <td class="table-left">Not Interested Cases RCA</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right" id="lead-sub-status">{{ lead.lead_sub_status }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Team</td>
-                                        <td class="table-right">{{ lead.team }}</td>
+                                        <td class="table-right" id="team">{{ lead.team }}</td>
                                         <td class="table-left">Not Interested Cases RCA</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Date of installation</td>
-                                        <td class="table-right">{{ lead.date_of_installation|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date">{{ lead.date_of_installation|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead_detail.pla_sub_status }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Type</td>
-                                        <td class="table-right" id="type">{{ lead.type_1 }}</td>
+                                        <td class="table-right edit" id="type">{{ lead.type_1 }}</td>
                                         <td class="table-left">Regalix Webmaster</td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -115,7 +113,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">LastCallTime</td>
-                                        <td class="table-right">{{ lead.last_contacted_on|time }}</td>
+                                        <td class="table-right edit-date">{{ lead.last_contacted_on|time }}</td>
                                         <td class="table-left">Dynamic Variable Set</td>
                                         <td class="table-right">{{ lead.dynamic_variable_set }}</td>
                                        </tr>
@@ -128,7 +126,7 @@
 
                                        <tr>
                                         <td class="table-left">On Call Win</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-date"></td>
                                         <td class="table-left">Dynamic Value</td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -146,33 +144,33 @@
                                  <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Lead Information</a>
                               <div class="table-responsive">
-                                     <table class="table table-condensed">
+                                     <table class="table table-condensed info">
                                        <tr>
                                         <td class="table-left">Google Accounts Manager(D)</td>
                                         <td class="table-right smile">{{ lead.google_rep_name }}</td>
                                         <td class="table-left">Googler Location</td>
-                                        <td class="table-right">{{ lead.google_rep_location }}</td>
+                                        <td class="table-right edit"><span>{{ lead.google_rep_location }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Email </td>
-                                        <td class="table-right">{{ lead.google_rep_email }} [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span>{{ lead.google_rep_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                         <td class="table-left qstn">Number Of Codes</td>
-                                        <td class="table-right">{{ lead.number_of_products }} </td>
+                                        <td class="table-right edit"><span>{{ lead.number_of_products }}</span></td>
                                        </tr>
 
                                         <tr>
                                         <td class="table-left">Google Manager(D)</td>
                                         <td class="table-right">{{ lead.google_rep_manager_name }}</td>
                                         <td class="table-left">Lead Bundle#</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                        </tr>
                                        
 
                                        <tr>
                                         <td class="table-left">Google Manager Email</td>
-                                        <td class="table-right">{{ lead.google_rep_manager_email }} [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span>{{ lead.google_rep_manager_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                         <td class="table-left">Additional LDAP</td>
-                                        <td class="table-right">{{ lead.eto_ldap }}</td>
+                                        <td class="table-right edit"><span>{{ lead.eto_ldap }}</span></td>
                                        </tr>
                                        
                                      </table>
@@ -184,40 +182,40 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Name</td>
-                                        <td class="table-right smile">{{ lead.first_name }} {{ lead.last_name }}</td>
+                                        <td class="table-right smile edit"><span>{{ lead.first_name }} {{ lead.last_name }}</span></td>
                                         <td class="table-left">Phone</td>
-                                        <td class="table-right">{{ lead.phone }}</td>
+                                        <td class="table-right edit"><span>{{ lead.phone }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Company</td>
-                                        <td class="table-right">{{ lead.company }}</td>
+                                        <td class="table-right edit"><span>{{ lead.company }}</span></td>
                                         <td class="table-left qstn">Email (P)</td>
-                                        <td class="table-right">{{ lead.email_optional }} [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span>{{ lead.email_optional }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Location</td>
                                         <td class="table-right">{{ lead.county }}</td>
                                         <td class="table-left">Language</td>
-                                        <td class="table-right">{{ lead.language }}</td>
+                                        <td class="table-right" id="language">{{ lead.language }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Full Name</td>
-                                        <td class="table-right">{{ lead.first_name }} {{ lead.last_name }}</td>
+                                        <td class="table-right edit"><span>{{ lead.first_name }} {{ lead.last_name }}</span></td>
                                         <td class="table-left qstn">Contact Primary</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Primary Contact Role</td>
-                                        <td class="table-right">{{ lead.primary_contact_role }}</td>
+                                        <td class="table-right" id="primary-role">{{ lead.primary_contact_role }}</td>
                                         <td class="table-left">Webmaster Phone</td>
-                                        <td class="table-right">{{ lead.webmaster_phone }}</td>
+                                        <td class="table-right edit"><span>{{ lead.webmaster_phone}}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Webmaster Name</td>
-                                        <td class="table-right">{{ lead.webmaster_name }}</td>
+                                        <td class="table-right edit"><span>{{ lead.webmaster_name}}</span></td>
                                         <td class="table-left qstn">Webmaster E-mail</td>
-                                        <td class="table-right">{{ lead.webmaster_email }}</td>
+                                        <td class="table-right edit"><span>{{ lead.webmaster_email}}</span></td>
                                        </tr>
 
                                      </table>
@@ -230,20 +228,20 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">First Name - optional</td>
-                                        <td class="table-right">{{ lead.first_name_optional }}</td>
+                                        <td class="table-right edit"><span>{{ lead.first_name_optional }}</span></td>
                                         <td class="table-left">Last Name - optional</td>
-                                        <td class="table-right">{{ lead.last_name_optional }}</td>
+                                        <td class="table-right edit"><span>{{ lead.last_name_optional }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Phone - optional</td>
-                                        <td class="table-right">{{ lead.phone_optional }}</td>
+                                        <td class="table-right edit"><span>{{ lead.phone_optional }}</span></td>
                                         <td class="table-left">Email - optional</td>
-                                        <td class="table-right">{{ lead.email_optional }}</td>
+                                        <td class="table-right edit"><span>{{ lead.email_optional }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">Alternate Contact Role</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right primary-role"><span></span></td>
                                         <td class="table-left">Contact Alternate</td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -258,7 +256,7 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Customer ID</td>
-                                        <td class="table-right">{{ lead.customer_id }}</td>
+                                        <td class="table-right" id="cid">{{ lead.customer_id }}</td>
                                         <td class="table-left">Ecommerce</td>
                                         <td class="table-right">{{ lead.ecommerce }}</td>
                                        </tr>
@@ -308,22 +306,22 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Agency POC</td>
-                                        <td class="table-right">{{ lead_detail.agency_poc }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.agency_poc }}</span></td>
                                         <td class="table-left">Agency Name</td>
-                                        <td class="table-right">{{ lead_detail.agency_name }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.agency_name }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Agency Phone</td>
-                                        <td class="table-right">{{ lead_detail.agency_phone }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.agency_phone }}</span></td>
                                         <td class="table-left">Agency Email</td>
-                                        <td class="table-right">{{ lead_detail.agency_email }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.agency_email }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">Agency Bundle#</td>
-                                        <td class="table-right">{{ lead_detail.agency_bundle_number }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.agency_bundle_number }}</span></td>
                                         <td class="table-left">Services Case ID</td>
-                                        <td class="table-right">{{ lead_detail.agency_service_case_id }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.agency_service_case_id }}</span></td>
                                        </tr>
 
                                      </table>
@@ -336,33 +334,33 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">MC-ID</td>
-                                        <td class="table-right">{{ lead_detail.mc_id }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.mc_id }}</span></td>
                                         <td class="table-left">Client's Web inventory</td>
                                         <td class="table-right">{{ lead_detail.client_web_inventory }}</td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"{{ lead_detail.opt_in_percent }}></td>
+                                        <td class="table-right edit"><span>{{ lead_detail.opt_in_percent }}></span></td>
                                         <td class="table-left">SQO / STO Comments</td>
-                                        <td class="table-right">{{ lead_detail.sqo_sto_comments }}</td>
+                                        <td class="table-right edit-textarea">{{ lead_detail.sqo_sto_comments }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Bid</td>
-                                        <td class="table-right">{{ lead_detail.recommended_bid }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.recommended_bid }}</span></td>
                                         <td class="table-left">Secured Checkout</td>
                                         <td class="table-right">{{ lead_detail.secured_checkout }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Budget</td>
-                                        <td class="table-right">{{ lead_detail.recommended_budget }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.recommended_budget }}</span></td>
                                         <td class="table-left">Payment Gateway</td>
                                         <td class="table-right">{{ lead_detail.payment_gateway }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Recommended Mobile Bid modifier</td>
-                                        <td class="table-right">{{ lead_detail.recommended_mobile_bid_modifier }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
                                         <td class="table-left">Shopping Policies, verified?</td>
                                         <td class="table-right">{{ lead_detail.shopping_polices_verified }}</td>
                                        </tr>
@@ -371,21 +369,21 @@
                                         <td class="table-left">Type of Policy violation</td>
                                         <td class="table-right">{{ lead_detail.type_of_policy_violation }}</td>
                                         <td class="table-left">Shopping Troubleshoot Issue Type</td>
-                                        <td class="table-right">{{ lead_detail.shopping_troubleshoot_issue_type }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Please specify if others</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Number of Products uploaded</td>
-                                        <td class="table-right">{{ lead_detail.products_uploaded }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.products_uploaded }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Method used for feed upload</td>
                                         <td class="table-right">{{ lead_detail.feed_upload_method }}</td>
                                         <td class="table-left">Shopping Campaign ID</td>
-                                        <td class="table-right">{{ lead_detail.campaign_id }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.campaign_id }}</span></td>
                                        </tr>
 
                                      </table>
@@ -400,32 +398,32 @@
                                         <td class="table-left">Feed Optimization Status</td>
                                         <td class="table-right">{{ lead.feed_optimisation_status }}</td>
                                         <td class="table-left">Business Type / Category:</td>
-                                        <td class="table-right">{{ lead.business_type }}</td>
+                                        <td class="table-right edit"><span>{{ lead.business_type }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Additional support (Beyond the scope)<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead.additional_support_beyond_case }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.additional_support_beyond_case }}</td>
                                         <td class="table-left">Feed Optimization Sub Status</td>
                                         <td class="table-right">{{ lead.feed_optimisation_sub_status }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Authorization Case ID for Optimization</td>
-                                        <td class="table-right">{{ lead.authcase_id }}</td>
+                                        <td class="table-right edit"><span>{{ lead.authcase_id }}</span></td>
                                         <td class="table-left">Shopping Feed Link (G.Sheet)</td>
-                                        <td class="table-right">{{ lead.shopping_feed_link }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.shopping_feed_link }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left"># of Products on the feed</td>
-                                        <td class="table-right">{{ lead.number_of_products }}</td>
+                                        <td class="table-right edit"><span>{{ lead.number_of_products }}</span></td>
                                         <td class="table-left">Area in need of most improvement:</td>
-                                        <td class="table-right">{{ lead.area_tobe_improved }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.area_tobe_improved }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Anything else we should know?</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-textarea"></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -450,7 +448,7 @@
                                         <td class="table-left qstn">Appointment Sub-Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead_detail.appointment_sub_status }}</td>
                                         <td class="table-left qstn">gCases ID<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.gcase_id }}</td>
+                                        <td class="table-right edit"><span>{{ lead_detail.gcase_id }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -462,7 +460,7 @@
 
                                        <tr>
                                         <td class="table-left qstn">Other CMS<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left qstn">GCSS Exception Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -514,18 +512,18 @@
                                         <td class="table-left">Tag Team Comments</td>
                                         <td class="table-right"></td>
                                         <td class="table-left">Google Comments</td>
-                                        <td class="table-right">{{ lead.google_comment }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.google_comment }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">New Comments Area</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-textarea"></td>
                                         <td class="table-left">Regalix Chat Comments</td>
-                                        <td class="table-right">{{ lead.regalix_comment }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.regalix_comment }}</td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">Regalix Email Comments</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-textarea"></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -539,10 +537,10 @@
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
-                                        <td class="table-left">Code</td>
-                                        <td class="table-right">{{ lead.code_1 }}</td>
-                                        <td class="table-left">URL</td>
-                                        <td class="table-right">{{ lead.url_1 }}</td>
+                                        <td class="table-left">Code 1</td>
+                                        <td class="table-right edit-textarea">{{ lead.code_1 }}</td>
+                                        <td class="table-left">URL 1</td>
+                                        <td class="table-right edit" id="url-1"><span>{{ lead.url_1 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -553,35 +551,35 @@
                                        
                                        <tr>
                                         <td class="table-left qstn">Analytics Code is Setup 1 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Reporting Status</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Analytics account ID 1</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Created Call Extension 1</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Product Behaviour 1</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Cart Page Behaviour 1</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Check Out Process 1</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Transaction Behaviour 1</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">User List ID 1</td>
-                                        <td class="table-right">{{ lead.user_list_id_1 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.user_list_id_1 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 1</td>
-                                        <td class="table-right">{{ lead.rlsa_bid_adjustment_1 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_1 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -593,7 +591,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 1</td>
-                                        <td class="table-right">{{ lead.campaign_id_1 }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.campaign_id_1 }}</td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -603,13 +601,13 @@
 
                                  <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 2</a>
-                                <div class="table-responsive">
+                                 <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
-                                        <td class="table-left">Code</td>
-                                        <td class="table-right">{{ lead.code_2 }}</td>
-                                        <td class="table-left">URL</td>
-                                        <td class="table-right">{{ lead.url_2 }}</td>
+                                        <td class="table-left">Code 2</td>
+                                        <td class="table-right edit-textarea">{{ lead.code_2 }}</td>
+                                        <td class="table-left">URL 2</td>
+                                        <td class="table-right edit" id="url-2"><span>{{ lead.url_2 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -620,35 +618,35 @@
                                        
                                        <tr>
                                         <td class="table-left qstn">Analytics Code is Setup 2 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Reporting Status</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Analytics account ID 2</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Created Call Extension 2</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Product Behaviour 2</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Cart Page Behaviour 2</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Check Out Process 2</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Transaction Behaviour 2</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">User List ID 2</td>
-                                        <td class="table-right">{{ lead.user_list_id_2 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.user_list_id_2 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 2</td>
-                                        <td class="table-right">{{ lead.rlsa_bid_adjustment_2 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_2 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -660,7 +658,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 2</td>
-                                        <td class="table-right">{{ lead.campaign_id_2 }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.campaign_id_2 }}</td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -673,10 +671,10 @@
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
-                                        <td class="table-left">Code</td>
-                                        <td class="table-right">{{ lead.code_3 }}</td>
-                                        <td class="table-left">URL</td>
-                                        <td class="table-right">{{ lead.url_3 }}</td>
+                                        <td class="table-left">Code 3</td>
+                                        <td class="table-right edit-textarea">{{ lead.code_3 }}</td>
+                                        <td class="table-left">URL 3</td>
+                                        <td class="table-right edit" id="url-3"><span>{{ lead.url_3 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -687,35 +685,35 @@
                                        
                                        <tr>
                                         <td class="table-left qstn">Analytics Code is Setup 3 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Reporting Status</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Analytics account ID 3</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Created Call Extension 3</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Product Behaviour 3</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Cart Page Behaviour 3</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Check Out Process 3</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Transaction Behaviour 3</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">User List ID 3</td>
-                                        <td class="table-right">{{ lead.user_list_id_3 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.user_list_id_3 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 3</td>
-                                        <td class="table-right">{{ lead.rlsa_bid_adjustment_3 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_3 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -727,7 +725,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 3</td>
-                                        <td class="table-right">{{ lead.campaign_id_3 }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.campaign_id_3 }}</td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -741,10 +739,10 @@
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
-                                        <td class="table-left">Code</td>
-                                        <td class="table-right">{{ lead.code_4 }}</td>
-                                        <td class="table-left">URL</td>
-                                        <td class="table-right">{{ lead.url_4 }}</td>
+                                        <td class="table-left">Code 4</td>
+                                        <td class="table-right edit-textarea">{{ lead.code_4 }}</td>
+                                        <td class="table-left">URL 4</td>
+                                        <td class="table-right edit" id="url-4"><span>{{ lead.url_4 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -755,35 +753,35 @@
                                        
                                        <tr>
                                         <td class="table-left qstn">Analytics Code is Setup 4 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Reporting Status</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Analytics account ID 4</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Created Call Extension 4</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Product Behaviour 4</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Cart Page Behaviour 4</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Check Out Process 4</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Transaction Behaviour 4</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">User List ID 4</td>
-                                        <td class="table-right">{{ lead.user_list_id_4 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.user_list_id_4 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 4</td>
-                                        <td class="table-right">{{ lead.rlsa_bid_adjustment_4 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_4 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -795,7 +793,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 4</td>
-                                        <td class="table-right">{{ lead.campaign_id_4 }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.campaign_id_4 }}</td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -804,15 +802,16 @@
                                  </div>
 
 
+
                                 <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 5</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
-                                        <td class="table-left">Code</td>
-                                        <td class="table-right">{{ lead.code_5 }}</td>
-                                        <td class="table-left">URL</td>
-                                        <td class="table-right">{{ lead.url_5 }}</td>
+                                        <td class="table-left">Code 5</td>
+                                        <td class="table-right edit-textarea">{{ lead.code_5 }}</td>
+                                        <td class="table-left">URL 5</td>
+                                        <td class="table-right edit" id="url-5"><span>{{ lead.url_5 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -823,35 +822,35 @@
                                        
                                        <tr>
                                         <td class="table-left qstn">Analytics Code is Setup 5 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Reporting Status</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Analytics account ID 5</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Created Call Extension 5</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Product Behaviour 5</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Cart Page Behaviour 5</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Check Out Process 5</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                         <td class="table-left">Transaction Behaviour 5</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">User List ID 5</td>
-                                        <td class="table-right">{{ lead.user_list_id_5 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.user_list_id_5 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 5</td>
-                                        <td class="table-right">{{ lead.rlsa_bid_adjustment_5 }}</td>
+                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_5 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -863,7 +862,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 5</td>
-                                        <td class="table-right">{{ lead.campaign_id_5 }}</td>
+                                        <td class="table-right edit-textarea">{{ lead.campaign_id_5 }}</td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -871,29 +870,28 @@
                                      </table>
                                  </div>
 
-
                                  <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>QUALITY ASSURANCE</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead QC'ed on</td>
-                                        <td class="table-right">{{ lead_detail.qc_on }}</td>
+                                        <td class="table-right edit-date" id="qcOn">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left qstn">Spend (Cost from creation<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right" id="spend-cfc"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead QC'ed by</td>
-                                        <td class="table-right">{{ lead_detail.qc_by }}</td>
+                                        <td class="table-right" id="qc-by">{{ lead_detail.qc_by }}</td>
                                         <td class="table-left">Reason For Conversion Not Reporting</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">QC Comments</td>
-                                        <td class="table-right">{{ lead_detail.qc_comments }}</td>
+                                        <td class="table-right edit-textarea" id="qc-comment">{{ lead_detail.qc_comments }}</td>
                                         <td class="table-left">Unethical WIN</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Do Not QC Exception</td>
@@ -907,20 +905,6 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>WPP section for TAG agents</a>
-                                 <div class="table-responsive">
-                                     <table class="table table-condensed">
-                                       <tr>
-                                        <td class="table-left">WPP Lead Status</td>
-                                        <td class="table-right"></td>
-                                        <td class="table-left"></td>
-                                        <td class="table-right"></td>
-                                       </tr>
-
-                                     </table>
-                                 </div>
-
-                                 <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>System Information</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
@@ -930,11 +914,9 @@
                                         <td class="table-left">Last Modified By</td>
                                         <td class="table-right">{{ lead.updated_date|date:'d-m-Y g:i a' }}</td>
                                        </tr>
-                                       <tr>
-                                        <td class="table-left">Lead Number</td>
-                                        <td class="table-right">{{ lead.id }}</td>
+                                       <tr style="display:none;">
                                         <td class="table-left"></td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right" id="row-id">{{ lead.id }}</td>
                                        </tr>
                                        
                                      </table>
@@ -1023,10 +1005,16 @@
                 </div><!--container-fluid-->
                 <div style="margin-top:80px;"></div> 
     </section>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    
+  </body>
+  {% endblock content %}
 
+  {% block main_js %}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
     <script type="text/javascript">
 
 
@@ -1053,6 +1041,7 @@
             success: function(data) {
               if(data['success']){
                 $('#lon').html(data['name']);
+                $('#mail').html(data['email']);
                 $('#exampleInputEmail1').val('');
                 $('#override').prop('checked',false);
                 $('.arrow-box').hide();
@@ -1103,12 +1092,197 @@
         minLength: 1,
     });
 
+
+
+$('#edit-lead').on('click',function() {
+  var lead_status = {{ status|safe }};
+  var primary_role = {{ role|safe }};
+  var language = {{ language|safe }};
+  var team = {{ team|safe }};
+  
+    $('td.edit span').each(function(){
+
+        var html = $(this).html();
+        var input = $('<input type="text" style="width:200px;"/>');
+        input.val(html);
+        $(this).html(input);
+    });
+
+    $('td.edit-textarea').each(function(){
+        var html = $(this).html();
+        var tarea = $('<textarea style="width:200px;">' + html + '</textarea>');
+        $(this).html(tarea);
+    });
+
+    $('td.edit-checkbox').each(function(){
+        var html = $(this).html();
+        var tarea = $('<input type="checkbox"/>');
+        $(this).html(tarea);
+    });
+
+
+    var curr_status = $("#lead-status").html();
+    $("#lead-status").html("<select id='status' style='width:200px;'></select>");
+    $("#lead-status select").append("<option value='None'>--None--</option>");
+    for(var i=0;i<lead_status.length; i++){
+      if(curr_status == 'None'){
+        $("#team select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_status == lead_status[i]){
+        $("#lead-status select").append("<option selected>"+ lead_status[i] +"</option>");
+      }
+      else{
+        $("#lead-status select").append("<option>"+ lead_status[i] +"</option>");
+      }
+    }
+
+
+    var curr_team = $("#team").html();
+    $("#team").html("<select id='team' style='width:200px;'></select>");
+    $("#team select").append("<option value='None'>--None--</option>");
+    for(var i=0;i<team.length; i++){
+      if(curr_team == 'None'){
+        $("#team select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_team == team[i]){
+        $("#team select").append("<option selected>"+ team[i] +"</option>");
+      }
+      else{
+        $("#team select").append("<option>"+ team[i] +"</option>");
+      }
+    }
+
+
+    var curr_prole = $("#primary-role").html();
+    $("#primary-role").html("<select style='width:200px;'></select>");
+    $("#primary-role select").append("<option value='None'>--None--</option>");
+    for(var i=0;i<primary_role.length; i++){
+      if(curr_prole == 'None'){
+        $("#primary-role select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_prole == primary_role[i]){
+        $("#primary-role select").append("<option selected>"+ primary_role[i] +"</option>");
+      }
+      else{
+        $("#primary-role select").append("<option>"+ primary_role[i] +"</option>");
+      }
+    }
+
+
+    var curr_language = $("#language").html();
+    $("#language").html("<select style='width:200px;'></select>");
+    $("#language select").append("<option value='None'>--None--</option>");
+    for(var i=0;i<language.length; i++){
+      if(curr_language == 'None'){
+        $("#language select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_language == language[i]){
+        $("#language select").append("<option selected>"+ language[i] +"</option>");
+      }
+      else{
+        $("#language select").append("<option>"+ language[i] +"</option>");
+      }
+    }
+
+    
+
+    var qc_by_list = ["Vishal Kumar Jha","Anto Santosh","Raphael Martin","Joshua Ajay Stanislaus","Varun B","Lohith BP","Saurabh Agarwal"];
+    var curr_qc_by = $('#qc-by').html();
+    $('#qc-by').html('<select id="qcBy" style="width:200px;"></select>');
+    $("#qc-by select").append("<option>--None--</option>");        
+    for(var i=0;i<qc_by_list.length; i++){
+      if(curr_qc_by == 'None'){
+        $("#qc-by select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_qc_by == qc_by_list[i]){
+        $("#qc-by select").append("<option selected>"+ qc_by_list[i] +"</option>");
+      }
+      else{
+        $("#qc-by select").append("<option>"+ qc_by_list[i] +"</option>");
+      }
+    }
+
+
+    var spend_cfc_list = ["$0", "<= $2,000", "<=$5,000", "<=$10,000", "<=$20,000", ">$20,000"];
+    var curr_cfc = $('#spend-cfc').html();
+    $('#spend-cfc').html('<select id="spendCfc" style="width:200px;"></select>');
+    $("#spend-cfc select").append("<option>--None--</option>");        
+    for(var i=0;i<spend_cfc_list.length; i++){
+      if(curr_cfc == 'None'){
+        $("#spend-cfc select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_cfc == spend_cfc_list[i]){
+        $("#spend-cfc select").append("<option selected>"+ spend_cfc_list[i] +"</option>");
+      }
+      else{
+        $("#spend-cfc select").append("<option>"+ spend_cfc_list[i] +"</option>");
+      }
+    }
+
+    $('td.edit-date').each(function(){
+
+        var html = $(this).html();
+        var input = $('<input type="text" class="editdateinput" style="width:200px;"/>');
+        input.val(html);
+        $(this).html(input);
+    });
+   
+    $(".editdateinput").datetimepicker({
+      timepicker : false,
+      format: 'd/m/Y g:i A',
+      formatTime: 'g:i A',
+      scrollInput : true,
+          
+    });
+    $('#edit-lead').hide();
+    $('#save-lead').show();
+});
+
+  $('#save-lead').click(function(){
+    var id = $('#row-id').text();
+    var lead_status = $('#status option:selected').val(); 
+    var team = $('#team option:selected').val();
+    var qc_by = $('#qcBy option:selected').val();
+    var spend_cfc = $('#spendCfc option:selected').val();
+    var u1 = $('#url-1 span input').val();
+    var qc_comments = $('#qc-comment textarea').val();
+    var qc_on = $('#qcOn input').val();
+    alert(qc_on)
+    var data = {
+                'id':id,
+                'lead_status':lead_status,
+                'team':team,
+                'qc_by':qc_by,
+                'qc_comments':qc_comments,
+                'qc_on':qc_on,
+              };
+    $.ajax({
+      url: "/crm/update-lead/",
+      type: 'POST',
+      data: data,
+      dataType: "json",
+      success:function(data){
+        if(data['success']){
+          setTimeout(function(){// wait for 5 secs(2)
+           location.reload(); // then reload the page.(3)
+          }, 1000); 
+        }
+      },
+      error:function(xhr){
+
+      }
+    })
+  })
+
+
+
     $("#delete-lead").click(function(e){
       e.preventDefault();
       if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
         location.href = $(this).data("href");
     });
 
+  
 
 function get_lead_history(){
   $.ajax(
@@ -1246,7 +1420,6 @@ function cloneLead(){
       formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
       formData.append('lead_id', window.location.pathname.split( '/' )[3]);
       var errState = document.getElementById("file_status");
-      debugger;
       if (file != undefined || $('#image_link').val() != ''){
         $.ajax({
             url: '/crm/save-image-file/',
@@ -1281,5 +1454,4 @@ function cloneLead(){
 
     </script>
     
-  </body>
-  {% endblock content %}
+  {% endblock main_js %}
