@@ -39,7 +39,7 @@
                                     <div class="col-md-6">
                                       <ul class="lead-menu">
                                             <li><a href="#">Edit </a></li>         
-                                            <li><a href="#">Delete</a></li>         
+                                            <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
                                             <!-- <li><a href="#">Clone</a></li> -->
                                             <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
                                         </ul>

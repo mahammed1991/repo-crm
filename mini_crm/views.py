@@ -657,3 +657,22 @@ def download_image_file(request):
     response['Content-Disposition'] = 'attachment; filename=%s' % lead.original_image_name
     response.write(file(image_path, "rb").read())
     return response
+
+def delete_lead(request, lid, ctype):
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        if ctype == "WPP":
+            if WPPLeads.objects.all().count():
+                lead = WPPLeads.objects.get(id=lid)
+                lead.delete()
+        elif ctype == "PicassoAudits":
+            if PicassoLeads.objects.all().count():
+                lead = PicassoLeads.objects.get(id=lid)
+                lead.delete()
+        elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
+            if TagLeadDetail.objects.all().count():
+                lead = TagLeadDetail.objects.get(lead_id=lid)
+                lead.delete()
+            if Leads.objects.all().count():
+                lead = Leads.objects.get(id=lid)
+                lead.delete()
+        return redirect(reverse("all-leads") + "?ptype=" + ctype)
