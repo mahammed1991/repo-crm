@@ -486,12 +486,12 @@ def edit_profile_info(request):
             manager_details[str(user.email)] = str(full_name)
 
     # sfdc model
-    shift_strat = None
+    shift_start = None
     shift_end = None
     process_type = None
     try:
         sfdc_user = SfdcUsers.objects.get(email=request.user.email)
-        shift_strat = sfdc_user.shift_start
+        shift_start = sfdc_user.shift_start
         shift_end = sfdc_user.shift_end
         process_type = sfdc_user.process_type
         request.process_type = sfdc_user.process_type
