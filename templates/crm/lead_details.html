@@ -1263,6 +1263,12 @@ function cloneLead(){
                 $('#image_save')[0].reset()
 
               }
+              else{
+                errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
+                get_lead_history();
+                $('#image_save')[0].reset()
+              }
             },
             error: function(data){
               alert("Something went wrong, please try after some time");
