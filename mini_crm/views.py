@@ -545,20 +545,24 @@ def delete_lead(request, lid, ctype):
         if ctype == "WPP":
             if WPPLeads.objects.all().count():
                 lead = WPPLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
         elif ctype == "PicassoAudits":
             if PicassoLeads.objects.all().count():
                 lead = PicassoLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
         elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
             
             if TagLeadDetail.objects.all().count():
                 lead = TagLeadDetail.objects.get(lead_id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
             if Leads.objects.all().count():
                 lead = Leads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
-        return redirect(reverse("all-leads") + "?ptype=" + ctype)
+        return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
 
 @csrf_exempt
 def clone_lead(request):
@@ -620,6 +624,10 @@ def save_image_file(request):
         file = request.FILES['file']
         original_file_name, file_extension = file.name.split(".")
         new_file_name = str(uuid.uuid4()) + "." + file_extension
+        
+        if not os.path.isdir(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+            
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
             save_file(file, file_path)
