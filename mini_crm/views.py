@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
+from django.core.urlresolvers import reverse
 
 #import datetime
 import json
@@ -682,22 +683,51 @@ def update_lead(request):
         data = request.POST
         try:
             lead = Leads.objects.get(id=data['id'])
+            lh = LeadHistory()
+            lh.lead_id = lead.id
+            edited_list = []
+            edited_dict = {}
+            if lead.lead_status != data['lead_status']:
+                edited_dict['lead_status'] = [lead.lead_status,data['lead_status']]
+            if lead.team != data['team']:
+                edited_dict['team'] = [lead.team,data['team']]
+
+
             lead.lead_status = data['lead_status']
             lead.team = data['team']
             lead.save()
-
             try:
                 lead_detail = TagLeadDetail.objects.get(lead_id=lead)
             except:
                 lead_detail = TagLeadDetail()
 
             lead_detail.lead_id = lead
+
+            qc_by = None if data['qc_by'] == '--None--' else data['qc_by']
+            if data['qc_on']:
+                qc_on = datetime.strptime(str(data['qc_on'].replace('.','').replace('-','/')), '%d/%m/%Y %I:%M %p')
+                if lead_detail.qc_on != qc_on:
+                    edited_dict['qc_on'] = [datetime.strftime(lead_detail.qc_on, '%d-%m-%Y %I:%M %p') if lead_detail.qc_on else None,data['qc_on'].replace('.','').replace('/','-')]
+            if data['qc_by'] and lead_detail.qc_by != qc_by:
+                edited_dict['qc_by'] = [lead_detail.qc_by,qc_by]
+            if data['qc_comments'] and lead_detail.qc_comments != data['qc_comments']:
+                edited_dict['qc_comments'] = [lead_detail.qc_comments,data['qc_comments']]
+
+            edited_list.append(edited_dict)
+            if edited_dict:
+                lh.action_type = 'edited'
+                lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+                lh.modifications = json.dumps(edited_list)
+                lh.save()
+
             if data['qc_on']:
                 temp_qc_on = data['qc_on']
                 temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
                 lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
             if data['qc_by'] == '--None--':
                 lead_detail.qc_by = None
+            else:
+                lead_detail.qc_by = data['qc_by']
             if data['qc_comments']:
                 lead_detail.qc_comments = data['qc_comments']
             lead_detail.save()

@@ -1247,7 +1247,7 @@ $('#edit-lead').on('click',function() {
     var u1 = $('#url-1 span input').val();
     var qc_comments = $('#qc-comment textarea').val();
     var qc_on = $('#qcOn input').val();
-    alert(qc_on)
+    //alert(qc_on)
     var data = {
                 'id':id,
                 'lead_status':lead_status,
@@ -1269,6 +1269,7 @@ $('#edit-lead').on('click',function() {
         }
       },
       error:function(xhr){
+       
 
       }
     })
@@ -1282,7 +1283,6 @@ $('#edit-lead').on('click',function() {
         location.href = $(this).data("href");
     });
 
-  
 
 function get_lead_history(){
   $.ajax(
@@ -1303,7 +1303,41 @@ function get_lead_history(){
               changed = ' changed Lead Owner from ' + data[i]['previous_owner'] +  ' to ' + data[i]['current_owner'] + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
             }
             else if(action_type == 'edited'){
-              changed = ''
+              edited = JSON.parse(data[i]['modifications'])[0]
+              changed = ' changed '
+              edited_fields = Object.keys(edited)
+              if (edited){
+                for(var j=0;j<edited_fields.length;j++){
+                  field = edited_fields[j]
+                  if (field == "lead_status"){
+                    chg = ' Lead Status from '
+                  }
+                  if (field == "team"){
+                    chg = ' Team from ' 
+                  }
+                  if (field == "qc_on"){
+                    chg = " QC'ed on from "
+
+                  }
+                  if (field == "qc_by"){
+                    chg = " QC'ed by from "
+
+                  }
+                  if (field == "qc_comments"){
+                    chg = ' QC comments from '
+
+                  }
+                  add_by = ','
+                  if (edited_fields.length == 1 && edited_fields.indexOf(field) == 0 || edited_fields[edited_fields.length-1] == field){
+                    add_by = '.'
+                  }
+                  if (edited_fields.length > 1 && edited_fields[edited_fields.length-2] == field){
+                    add_by = ' and'
+                  }
+                  changed = changed + chg + edited[field][0] +  ' to ' + edited[field][1] + add_by
+                }
+                changed  = changed + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'                 
+              }
             }
             else if(action_type == 'image'){
               changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
