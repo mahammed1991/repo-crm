@@ -9,6 +9,7 @@ urlpatterns = patterns(
     url(r'^lead-details/(?P<lid>[0-9]+)/(?P<sf_lead_id>\w+)/(?P<ctype>\w+)$',views.lead_details),
     url(r'^lead-owner-email',views.lead_owner_avalibility),
     url(r'^update-lead/$',views.update_lead),
+    url(r'^add-lead-comment/$',views.add_lead_comment),
     url(r'^lead-history/$',views.lead_history),
     url(r'^search-leads/', views.search_leads),
     url(r'^crm-agents/emails/$',views.get_crm_agents_emails),

@@ -474,6 +474,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
         'status':lead_status,'role':primary_role,
         'language':language_list,'team':team_list,
         'ctype':ctype,
+        'comment':lead.regalix_comment.split('--------------------\n')
         })
 
 
@@ -710,6 +711,63 @@ def update_lead(request):
             if data['qc_comments']:
                 lead_detail.qc_comments = data['qc_comments']
             lead_detail.save()
+
+            resp['success'] = True
+        except:
+            resp['success'] = False
+    return HttpResponse(json.dumps(resp))
+
+@csrf_exempt
+def update_lead(request):
+    resp = {}
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            lead = Leads.objects.get(id=data['id'])
+            lead.lead_status = data['lead_status']
+            lead.team = data['team']
+            lead.save()
+
+            try:
+                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+            except:
+                lead_detail = TagLeadDetail()
+
+            lead_detail.lead_id = lead
+            if data['qc_on']:
+                temp_qc_on = data['qc_on']
+                temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
+                lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
+            if data['qc_by'] == '--None--':
+                lead_detail.qc_by = None
+            if data['qc_comments']:
+                lead_detail.qc_comments = data['qc_comments']
+            lead_detail.save()
+
+            resp['success'] = True
+        except:
+            resp['success'] = False
+    return HttpResponse(json.dumps(resp))
+
+@csrf_exempt
+def add_lead_comment(request):
+    # import ipdb; ipdb.set_trace()
+    resp = {}
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            lead = Leads.objects.get(id=data['id'])
+            if lead.regalix_comment:
+                if not (lead.regalix_comment.startswith( '-' ) and lead.regalix_comment.endswith( '\n' )):
+                    lead.regalix_comment = '--------------------\n' + lead.regalix_comment + '\n--------------------\n'
+            
+            lead.regalix_comment += data['regalix_comment']
+            lead.save()
+
+            try:
+                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+            except:
+                lead_detail = TagLeadDetail()
 
             resp['success'] = True
         except:
