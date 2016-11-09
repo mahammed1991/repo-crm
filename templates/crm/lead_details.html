@@ -19,6 +19,7 @@
   {% block content %}
   <body>
     <section class="top-margin wfm">
+    <div id="fakeTextarea" style="display: none;"></div>
       <div class=" container-fluid ">
                     <div class="white-section">
                         <!-- Nav tabs -->
@@ -512,9 +513,8 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Tag Team Comments</td>
-                                        <td class="table-right" id="comment">{% for i in comment %}
-                                          <p>{{i}}</p>----------------------------------------
-                                        {% endfor %}</td>
+                                        <td class="table-right" id="comment">
+                                        </td>
                                         <td class="table-left">Google Comments</td>
                                         <td class="table-right edit-textarea">{{ lead.google_comment }}</td>
                                        </tr>
@@ -1036,6 +1036,16 @@
     <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
     <script type="text/javascript">
 
+    $(document).ready(function(e) {
+        var cmt = "{{ comment }}";
+        cmt = replaceAll(cmt, "On Call :", "</br>----------------------------------------</br>On Call :");
+        cmt = replaceAll(cmt, "Next Course Of Action :", "</br>Next Course Of Action :");
+        $("#comment").html(cmt + "</br>----------------------------------------");
+    });
+
+    function replaceAll(str, find, replace) {
+      return str.replace(new RegExp(find, 'g'), replace);
+    }
 
     $('#check-availability').click(function(){
       var lead_owner = $("#exampleInputEmail1").val();
@@ -1134,7 +1144,7 @@ $('#edit-lead').on('click',function() {
     });
     
     $('td.edit-textarea-for-comment').html('<textarea style="width:200px;" id="add-comment"></textarea>');
-    $('#add-comment').html("On Call : \nNext Course Of Action : ")
+    $("#add-comment").html('On Call : \nNext Course Of Action :');
 
     $('td.edit-checkbox').each(function(){
         var html = $(this).html();
@@ -1299,26 +1309,27 @@ $('#edit-lead').on('click',function() {
     })
   })
 
-    $('#save-lead-comment').click(function(){
-    var previous_comment_and_present = '--------------------\n' +$('#add-comment').val() + '\n--------------------\n'
-    data = {'id': $('#row-id').text(), 'regalix_comment':previous_comment_and_present}
-    $.ajax({
-      url: "/crm/add-lead-comment/",
-      type: 'POST',
-      data: data,
-      dataType: "json",
-      success:function(data){
-        if(data['success']){
-          setTimeout(function(){// wait for 5 secs(2)
-           location.reload(); // then reload the page.(3)
-          }, 1000); 
-        }
-      },
-      error:function(xhr){
+    $('#save-lead-comment').click(function(e){
+      e.preventDefault();
+      var comment = $('#add-comment').val().replace("\n", "");
+      data = {'id': $('#row-id').text(), 'regalix_comment':comment}
+      $.ajax({
+        url: "/crm/add-lead-comment/",
+        type: 'POST',
+        data: data,
+        dataType: "json",
+        success:function(data){
+          if(data['success']){
+            setTimeout(function(){// wait for 5 secs(2)
+             location.reload(); // then reload the page.(3)
+            }, 1000); 
+          }
+        },
+        error:function(xhr){
 
-      }
-    })
-  })
+        }
+    });
+  });
 
     $("#delete-lead").click(function(e){
       e.preventDefault();

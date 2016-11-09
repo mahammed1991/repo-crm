@@ -470,11 +470,13 @@ def lead_details(request, lid, sf_lead_id, ctype):
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
+
+
     return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
         'status':lead_status,'role':primary_role,
         'language':language_list,'team':team_list,
         'ctype':ctype,
-        'comment':lead.regalix_comment.split('--------------------\n')
+        'comment':lead.regalix_comment
         })
 
 
@@ -785,19 +787,9 @@ def add_lead_comment(request):
     if request.method == 'POST':
         data = request.POST
         try:
-            lead = Leads.objects.get(id=data['id'])
-            if lead.regalix_comment:
-                if not (lead.regalix_comment.startswith( '-' ) and lead.regalix_comment.endswith( '\n' )):
-                    lead.regalix_comment = '--------------------\n' + lead.regalix_comment + '\n--------------------\n'
-            
+            lead = Leads.objects.get(id=data['id']) 
             lead.regalix_comment += data['regalix_comment']
             lead.save()
-
-            try:
-                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-            except:
-                lead_detail = TagLeadDetail()
-
             resp['success'] = True
         except:
             resp['success'] = False
