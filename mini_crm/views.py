@@ -1,16 +1,16 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse
 from main import views
 from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
+from django.core.urlresolvers import reverse
 
 #import datetime
 import json
-from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory
+from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory, Language, Team
 from datetime import datetime,timedelta
 from collections import OrderedDict
 from leads.models import Location, Timezone
@@ -453,14 +453,31 @@ def lead_details(request, lid, sf_lead_id, ctype):
     lead_detail = None
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        #lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+        lead_status = settings.LEAD_STATUS
+        primary_role = ['Owner','Marketing','Webmaster']
+        language = Language.objects.filter(is_active=True)
+        team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+        team_list = []
+        language_list = []
+        for i in language:
+            language_list.append(str(i.language_name))
+        for i in team:
+            team_list.append(str(i.team_name))
+            try:
+                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+            except:
+                lead_detail = None
 
     elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
     else:
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
-    return render(request,'crm/lead_details.html',{'lead':lead, 'ctype':ctype, 'lead_detail':lead_detail})
+    return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
+        'status':lead_status,'role':primary_role,
+        'language':language_list,'team':team_list,
+        'ctype':ctype,
+        })
 
 
 @login_required
@@ -561,20 +578,24 @@ def delete_lead(request, lid, ctype):
         if ctype == "WPP":
             if WPPLeads.objects.all().count():
                 lead = WPPLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
         elif ctype == "PicassoAudits":
             if PicassoLeads.objects.all().count():
                 lead = PicassoLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
         elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
             
             if TagLeadDetail.objects.all().count():
                 lead = TagLeadDetail.objects.get(lead_id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
             if Leads.objects.all().count():
                 lead = Leads.objects.get(id=lid)
+                lead_cid = lead.customer_id
                 lead.delete()
-        return redirect(reverse("all-leads") + "?ptype=" + ctype)
+        return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
 
 @csrf_exempt
 def clone_lead(request):
@@ -636,6 +657,10 @@ def save_image_file(request):
         file = request.FILES['file']
         original_file_name, file_extension = file.name.split(".")
         new_file_name = str(uuid.uuid4()) + "." + file_extension
+        
+        if not os.path.isdir(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+            
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
             save_file(file, file_path)
@@ -690,3 +715,65 @@ def download_image_file(request):
     response['Content-Disposition'] = 'attachment; filename=%s' % lead.original_image_name
     response.write(file(image_path, "rb").read())
     return response
+
+
+@csrf_exempt
+def update_lead(request):
+    resp = {}
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            lead = Leads.objects.get(id=data['id'])
+            lh = LeadHistory()
+            lh.lead_id = lead.id
+            edited_list = []
+            edited_dict = {}
+            if lead.lead_status != data['lead_status']:
+                edited_dict['lead_status'] = [lead.lead_status,data['lead_status']]
+            if lead.team != data['team']:
+                edited_dict['team'] = [lead.team,data['team']]
+
+
+            lead.lead_status = data['lead_status']
+            lead.team = data['team']
+            lead.save()
+            try:
+                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+            except:
+                lead_detail = TagLeadDetail()
+
+            lead_detail.lead_id = lead
+
+            qc_by = None if data['qc_by'] == '--None--' else data['qc_by']
+            if data['qc_on']:
+                qc_on = datetime.strptime(str(data['qc_on'].replace('.','').replace('-','/')), '%d/%m/%Y %I:%M %p')
+                if lead_detail.qc_on != qc_on:
+                    edited_dict['qc_on'] = [datetime.strftime(lead_detail.qc_on, '%d-%m-%Y %I:%M %p') if lead_detail.qc_on else None,data['qc_on'].replace('.','').replace('/','-')]
+            if data['qc_by'] and lead_detail.qc_by != qc_by:
+                edited_dict['qc_by'] = [lead_detail.qc_by,qc_by]
+            if data['qc_comments'] and lead_detail.qc_comments != data['qc_comments']:
+                edited_dict['qc_comments'] = [lead_detail.qc_comments,data['qc_comments']]
+
+            edited_list.append(edited_dict)
+            if edited_dict:
+                lh.action_type = 'edited'
+                lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+                lh.modifications = json.dumps(edited_list)
+                lh.save()
+
+            if data['qc_on']:
+                temp_qc_on = data['qc_on']
+                temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
+                lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
+            if data['qc_by'] == '--None--':
+                lead_detail.qc_by = None
+            else:
+                lead_detail.qc_by = data['qc_by']
+            if data['qc_comments']:
+                lead_detail.qc_comments = data['qc_comments']
+            lead_detail.save()
+
+            resp['success'] = True
+        except:
+            resp['success'] = False
+    return HttpResponse(json.dumps(resp))
