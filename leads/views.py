@@ -130,6 +130,7 @@ def lead_form(request):
                 if str(data.get('setup_datepick')):
                     lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
                 lead.save()
+                mail_on_new_lead(request.POST, 'TAG', request.META['wsgi.url_scheme'], request.META['HTTP_HOST']) 
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
@@ -185,6 +186,7 @@ def lead_form(request):
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
                 lead.save()
+                mail_on_new_lead(request.POST, 'SHOPPING', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
@@ -225,6 +227,7 @@ def lead_form(request):
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
                 lead.save()
+                mail_on_new_lead(request.POST, 'RLSA', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
@@ -235,6 +238,7 @@ def lead_form(request):
     elif request.method == 'POST':
         # Google form Posting Starts here
         post_lead_to_google_form(request.POST, 'normal')
+        
         ret_url = ''
         # error_url = ''
 
@@ -295,6 +299,7 @@ def lead_form(request):
                 if str(data.get('setup_datepick')):
                     lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
                 lead.save()
+                mail_on_new_lead(request.POST, 'TAG', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
@@ -350,6 +355,7 @@ def lead_form(request):
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
                 lead.save()
+                mail_on_new_lead(request.POST, 'SHOPPING', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
@@ -391,6 +397,7 @@ def lead_form(request):
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
                 lead.save()
+                mail_on_new_lead(request.POST, 'RLSA', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
@@ -486,6 +493,7 @@ def wpp_lead_form(request, ref_id=None):
             if 'wpp_aemail2' in data:
                 wpp_lead.email_optional = data['wpp_aemail2']
             wpp_lead.save()
+            mail_on_new_lead(request.POST, 'WPP', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
             ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
         except:
             ret_url = basic_data['errorURL']
@@ -4687,3 +4695,34 @@ def argos_management(request):
 
 
 
+def mail_on_new_lead(lead_data, process, url_scheme, http_host):
+    data = {'cid':lead_data['cid'], 'company':lead_data['company'],'phone':lead_data['phone'],'tzone':lead_data['tzone'], 'tag_datepick':lead_data['tag_datepick'],\
+            'url1':lead_data['url1'], 'url2':lead_data['url2'], 'url3':lead_data['url3'], 'url4':lead_data['url4'], 'url5':lead_data['url5'],\
+            'comment1':lead_data['comment1'], 'comment2':lead_data['comment2'], 'comment3':lead_data['comment3'], 'comment4':lead_data['comment4'], 'comment5':lead_data['comment5'],\
+            'ctype1':lead_data['ctype1'], 'ctype2':lead_data['ctype2'],'ctype3':lead_data['ctype3'], 'ctype4':lead_data['ctype4'],'ctype5':lead_data['ctype5'],\
+            'code1':lead_data['code1'], 'code2':lead_data['code2'], 'code3':lead_data['code3'], 'code4':lead_data['code4'], 'code5':lead_data['code5'],\
+            'company_name':lead_data['company'],'ctype1':lead_data['ctype1'],'country':lead_data['country'] , \
+            'comments':lead_data['comments'],'gref':lead_data['gref'], 'advertiser_name':lead_data['advertiser_name'] }
+            
+    
+    data['link_url'] = str(url_scheme)+"://"+str(http_host)+"/leads/lead-summary/"
+    
+    mail_subject = "Thank you! Received advertiser details"
+    mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':data}))
+    mail_from = 'New lead <google@regalix-inc.com>'
+    mail_to = list(lead_data['emailref'])
+    bcc = set([])
+    attachments = list()
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    crm_managers_mails = User.objects.values_list('email').filter(groups__name='CRM-MANAGER')
+    mail_subject = "New "+ str(process) +" Lead Received"
+    mail_to = list()
+    for mail_id in crm_managers_mails:
+        mail_to.append(mail_id)
+    data['crm_managers'] = True
+    data['process'] = process
+    mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':data}))
+    send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+    

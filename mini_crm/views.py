@@ -33,6 +33,9 @@ import uuid, os
 from lib.helpers import save_file
 import mimetypes
 
+from django.template.loader import get_template
+from lib.helpers import send_mail
+
 # Create your views here.
 @login_required
 def crm_management(request):
@@ -504,6 +507,36 @@ def lead_owner_avalibility(request):
             current_lead.lead_owner_name = assignee_name
             current_lead.lead_owner_email = lead_owner
             current_lead.save()
+
+            
+            if request.GET.get('send_mail', 'False') == 'True':
+                if lead_type in ['WPP','Bolt Build','WPP - Nomination']:
+                    assigning_lead_info = WPPLeads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_time_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
+                    assigning_lead_info['process'] = 'WPP'                
+                else:
+                    assigning_lead_info = Leads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_date_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
+                    assigning_lead_info['process'] = 'TAG'
+
+                assigning_lead_info['lead_url'] = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(assigning_lead_info['id'])+"/"+str(assigning_lead_info['sf_lead_id'])+"/"+str(assigning_lead_info['process'])
+
+                # Mail to assignee
+                mail_subject = "New Lead Assigned to you - "+str(assigning_lead_info['customer_id'])
+                mail_from = str(request.user.email)
+                mail_to = request.GET.get('lead_owner_email')
+                bcc = set([])
+                attachments = list()
+                mail_body = get_template('leads/email_templates/lead_assigning_mail.html').render(Context({'data':assigning_lead_info}))
+                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+                # Notification to manager
+                mail_subject = "You Assigned Lead - "+str(assigning_lead_info['customer_id'])+" to "+str(current_lead.lead_owner_name)
+                assigning_lead_info['assignee_name'] = str(current_lead.lead_owner_name)
+                mail_to = request.user.email
+                assigning_lead_info['manager'] =request.user.first_name + ' ' +request.user.last_name
+                mail_body = get_template('leads/email_templates/lead_assigning_mail.html').render(Context({'data':assigning_lead_info}))
+                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
             resp['success'] = True
         else:
             resp['success'] = False   
@@ -560,7 +593,7 @@ def clone_lead(request):
         obj.first_contacted_on = None
         obj.lead_sub_status = None
         obj.dials = 0
-        obj.created_date = datetime.datetime.now()
+        obj.created_date = datetime.now()
         obj.save()
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['Picasso', 'BOLT']:
@@ -573,7 +606,7 @@ def clone_lead(request):
         obj.lead_owner_email = 'skamat@regalix-inc.com'
         obj.regalix_comment = ""
         obj.additional_notes = ""
-        obj.created_date = datetime.datetime.now()
+        obj.created_date = datetime.now()
         obj.save()
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['TAG', 'Sopping', 'RLSA']:
@@ -590,7 +623,7 @@ def clone_lead(request):
         obj.comment_1 = ""
         obj.code_1 = ""
         obj.dials = 0
-        obj.created_date = datetime.datetime.now()
+        obj.created_date = datetime.now()
         obj.save()
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     else:
