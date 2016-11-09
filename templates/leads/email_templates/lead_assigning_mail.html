@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>New Lead mail html</title>
+    <style type="text/css">
+       /* .tblmain {
+            font-size: 12px;
+            font: Trebuchet MS;
+            color: #4D4E4E;
+            line-height: 18px;
+            padding-left: 40px;
+            valign: top;
+            border-right: 10px outset #999999;
+        }
+        .tblcmb {
+            font-size: 12px;
+            font: Trebuchet MS;
+            color: #4D4E4E;
+            line-height: 18px;
+            padding-left: 20px;
+            valign: top;
+        }
+        .tblsub {
+            font-size: 12px;
+            font: Trebuchet MS;
+            color: #4D4E4E;
+            line-height: 18px;
+            padding-left: 20px;
+            valign: top;
+        }
+        .tblaref {
+            font-size: 12px;
+            font: Trebuchet MS;
+            color: #4D4E4E;
+            line-height: 18px;
+        }*/
+    </style>
+</head>
+
+<body>
+    <div>
+        <table align="center" style="border:5px Solid navy;">
+            <tr>
+                <td>
+                    <table align="center" width="660" border="0" cellpadding="0" cellspacing="0">
+
+                        <!-- <tr>
+                            <td height="10px" colspan="2">
+                            </td>
+                        </tr> -->
+                        <div>
+                            <br>
+                        </div>
+                        <div>
+                            <div style="font-family: arial, sans-serif; font-size: small;"><span style="font-size: 14.6667px; font-family: Arial; vertical-align: baseline; white-space: pre-wrap;"><img src="https://c.na14.content.force.com/servlet/servlet.ImageServer?id=015d0000008PHGF&oid=00Dd0000000fk18&lastMod=1443439392000" width="182" height="42" alt="Team Logo.png" style="border: none; margin-right: 0px;"></span><b><br></b>
+                            </div>
+                            <div style="font-family: arial, sans-serif; font-size: small;">
+                                <br>
+                            </div>
+                            <div style="font-family: arial, sans-serif; font-size: small;">
+                                <table cellspacing="0" cellpadding="0" dir="ltr"  style="table-layout:fixed;font-size:13px;font-family:arial,sans,sans-serif;border-collapse:collapse;border:0px solid #ccc">
+                                    <colgroup>
+                                        <col width="158">
+                                            <col width="100">
+                                                <col width="100">
+                                                    <col width="136">
+                                                        <col width="181">
+                                                            <col width="100">
+                                                                <col width="256">
+                                    </colgroup>
+                                    <tbody>
+                     
+
+                    {% if data.manager %}
+                    <tr style="height:27px;">
+                        <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(255, 255, 255); font-size: 100%; white-space: nowrap; vertical-align: bottom;" rowspan="1" colspan="7"> Hello {{data.manager}},</td>
+                    </tr>
+                     <tr style="height:27px;">
+                        <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(255, 255, 255); font-size: 100%; white-space: nowrap; vertical-align: bottom;" rowspan="1" colspan="7"> You assigned Lead - <a href="{{data.lead_url}}">{{data.customer_id}} </a> to {{ data.assignee_name }}.</td>
+                    </tr>
+                    {% else  %}
+                     <tr style="height:27px;">
+                        <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(255, 255, 255); font-size: 100%; white-space: nowrap; vertical-align: bottom;" rowspan="1" colspan="7">Hello,</td>
+                    </tr> 
+                    <tr style="height:27px;">
+                        <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(255, 255, 255); font-size: 100%; white-space: nowrap; vertical-align: bottom;" rowspan="1" colspan="7"> You are been assigned a  
+                        <a href="{{data.lead_url}}">new lead ( {{data.customer_id}})</a>.</td>
+                    </tr>
+                    {% endif%}
+
+                     
+                      <tr style="height:27px;">
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-left:1px solid #ffffff;border-bottom:1px solid #3c78d8;"></td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;width: 3%;"></td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;"></td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;"></td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;"></td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;width: 3%;"></td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;"></td>
+                                        </tr>
+
+                      <tr style="height:27px;">
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;Customer ID&quot;]">Customer ID</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;:&quot;]">:</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" >{{data.customer_id}}</td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;background-color:#ffffff;border-right:1px solid #ffffff;border-bottom:1px solid #ffffff;"></td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;Country&quot;]">Phone</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;:&quot;]">:</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(60, 120, 216); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" >{{data.phone}}</td>
+                        </tr>
+                          <tr style="height:27px;">
+
+                         <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;Name&quot;]">Name</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;:&quot;]">:</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" >{{data.first_name}} {{data.last_name}}</td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;background-color:#ffffff;border-right:1px solid #ffffff;border-bottom:1px solid #ffffff;"></td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;Name&quot;]">URL</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;:&quot;]">:</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(60, 120, 216); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(255, 255, 255); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" > {{data.url1}}</td>
+
+                        </tr>
+                        <tr style="height:27px;">
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(60, 120, 216); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;Company&quot;]">Company</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;:&quot;]">:</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" >{{data.company}}</td>
+                                            <td style="padding:2px 3px 2px 3px;vertical-align:bottom;background-color:#ffffff;border-right:1px solid #ffffff;border-bottom:1px solid #3c78d8;"></td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;E-commerce&quot;]">Appointment Date in IST</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(255, 255, 255); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);" data-sheets-value="[null,2,&quot;:&quot;]">:</td>
+                                            <td style="padding: 2px 3px; border-right-width: 1px; border-right-style: solid; border-right-color: rgb(60, 120, 216); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(60, 120, 216); font-size: 100%; font-weight: bold; vertical-align: middle; background-color: rgb(255, 255, 255);">
+                                            {% if data.appointment_date_in_ist %}{{data.appointment_date_in_ist}}{% else %}
+                                            {{data.appointment_time_in_ist}}{% endif %}</td>
+                                            
+                                        </tr>
+                                        <tr style="height:15px;">
+                                         
+                                        </tr>
+                                    </tbody>
+                                </table>
+</body>
