@@ -4696,19 +4696,11 @@ def argos_management(request):
 
 
 def mail_on_new_lead(lead_data, process, url_scheme, http_host):
-    data = {'cid':lead_data['cid'], 'company':lead_data['company'],'phone':lead_data['phone'],'tzone':lead_data['tzone'], 'tag_datepick':lead_data['tag_datepick'],\
-            'url1':lead_data['url1'], 'url2':lead_data['url2'], 'url3':lead_data['url3'], 'url4':lead_data['url4'], 'url5':lead_data['url5'],\
-            'comment1':lead_data['comment1'], 'comment2':lead_data['comment2'], 'comment3':lead_data['comment3'], 'comment4':lead_data['comment4'], 'comment5':lead_data['comment5'],\
-            'ctype1':lead_data['ctype1'], 'ctype2':lead_data['ctype2'],'ctype3':lead_data['ctype3'], 'ctype4':lead_data['ctype4'],'ctype5':lead_data['ctype5'],\
-            'code1':lead_data['code1'], 'code2':lead_data['code2'], 'code3':lead_data['code3'], 'code4':lead_data['code4'], 'code5':lead_data['code5'],\
-            'company_name':lead_data['company'],'ctype1':lead_data['ctype1'],'country':lead_data['country'] , \
-            'comments':lead_data['comments'],'gref':lead_data['gref'], 'advertiser_name':lead_data['advertiser_name'] }
-            
     
-    data['link_url'] = str(url_scheme)+"://"+str(http_host)+"/leads/lead-summary/"
+    lead_data['link_url'] = str(url_scheme)+"://"+str(http_host)+"/leads/lead-summary/"
     
     mail_subject = "Thank you! Received advertiser details"
-    mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':data}))
+    mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':lead_data}))
     mail_from = 'New lead <google@regalix-inc.com>'
     mail_to = list(lead_data['emailref'])
     bcc = set([])
@@ -4720,9 +4712,9 @@ def mail_on_new_lead(lead_data, process, url_scheme, http_host):
     mail_to = list()
     for mail_id in crm_managers_mails:
         mail_to.append(mail_id)
-    data['crm_managers'] = True
-    data['process'] = process
-    mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':data}))
+    lead_data['crm_managers'] = True
+    lead_data['process'] = process
+    mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':lead_data}))
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
     
