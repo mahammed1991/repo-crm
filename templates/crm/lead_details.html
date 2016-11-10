@@ -21,13 +21,15 @@
     <section class="top-margin wfm">
     <div id="fakeTextarea" style="display: none;"></div>
       <div class=" container-fluid ">
+  <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+      <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
+  </div>
                     <div class="white-section">
                         <!-- Nav tabs -->
                       <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#lead" aria-controls="home" role="tab" data-toggle="tab">Lead</a></li>
                         <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
-                       
-                        <p style="display:none;color:green;text-transform:none;font-size:25px;text-align: center;" id="clone-info">Lead Cloned Successfully - You are on the cloned lead now.</p>
                         <div id="file_status"></div>
                         
                       </ul>
@@ -1051,11 +1053,11 @@
       var lead_owner = $("#exampleInputEmail1").val();
       var lead_type = $('#type').text();
       var lead_id = {{ lead.id }};
-      var send_mail = false;
+      var send_mail ='False';
       var override_appointment = 'False';
-      /*if($('#sendmail').is(':checked')){
-        send_mail = true;
-      }*/
+      if($('#sendmail').is(':checked')){
+       send_mail = 'True';
+      }
       if($('#override').is(':checked')){
         override_appointment = 'True';
       }
@@ -1065,7 +1067,7 @@
        $.ajax({
             url: "/crm/lead-owner-email/",
             type: 'GET',
-            data: {'lead_owner_email':lead_owner,'id':lead_id,'type':lead_type,'override_appointment':override_appointment},
+            data: {'lead_owner_email':lead_owner,'id':lead_id,'type':lead_type,'override_appointment':override_appointment, 'send_mail':send_mail},
             dataType: "json",
             success: function(data) {
               if(data['success']){
