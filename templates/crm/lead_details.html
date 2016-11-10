@@ -19,6 +19,7 @@
   {% block content %}
   <body>
     <section class="top-margin wfm">
+    <div id="fakeTextarea" style="display: none;"></div>
       <div class=" container-fluid ">
   <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
       <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
@@ -52,7 +53,7 @@
                                     </div>
                                 </div>
                                 <div class="yellow-line"></div>
-                                <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
+                                <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
                               <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -144,7 +145,7 @@
                                      </table>
                                  </div>
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Lead Information</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Lead Information</a>
                               <div class="table-responsive">
                                      <table class="table table-condensed info">
                                        <tr>
@@ -179,7 +180,7 @@
                                  </div>
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>ADVERTISER Contact Info</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>ADVERTISER Contact Info</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -225,7 +226,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Optional Fields</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Optional Fields</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -253,7 +254,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Lead Processing Information</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Lead Processing Information</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -303,7 +304,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Agency Lead Information</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Agency Lead Information</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -331,7 +332,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Google Shopping Setup</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Google Shopping Setup</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -393,7 +394,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Project Argos- Feed Performance Optimization</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Project Argos- Feed Performance Optimization</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -436,7 +437,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Mandatory Fields</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Mandatory Fields</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -507,20 +508,23 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Comments</a>
+                                 <a class="button" href="#" id="save-lead-comment" style="display:none;float: right;color: #333;text-decoration:none; ">Save </a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Comments</a>
+                                  
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Tag Team Comments</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right" id="comment">
+                                        </td>
                                         <td class="table-left">Google Comments</td>
                                         <td class="table-right edit-textarea">{{ lead.google_comment }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">New Comments Area</td>
-                                        <td class="table-right edit-textarea"></td>
+                                        <td class="table-right edit-textarea-for-comment"></td>
                                         <td class="table-left">Regalix Chat Comments</td>
-                                        <td class="table-right edit-textarea">{{ lead.regalix_comment }}</td>
+                                        <td class="table-right edit-textarea"></td>
                                        </tr>
                                        
                                        <tr>
@@ -529,13 +533,12 @@
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
-
                                      </table>
                                  </div>
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 1</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 1</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -602,7 +605,7 @@
                                  </div>
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 2</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 2</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -669,7 +672,7 @@
                                  </div>
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 3</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 3</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -737,7 +740,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 4</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 4</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -806,7 +809,7 @@
 
 
                                 <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>Code 5</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 5</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -873,7 +876,7 @@
                                  </div>
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>QUALITY ASSURANCE</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>QUALITY ASSURANCE</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -907,7 +910,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head"><span><i class="fa fa-caret-down" aria-hidden="true"></i></span>System Information</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>System Information</a>
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
@@ -1010,6 +1013,22 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
   </body>
+  <style type="text/css">
+    .button {
+      font: bold 11px Arial;
+      text-decoration: none;
+      background-color: #EEEEEE;
+      color: #333333;
+      padding: 2px 6px 2px 6px;
+      border-top: 1px solid #CCCCCC;
+      border-right: 1px solid #333333;
+      border-bottom: 1px solid #333333;
+      border-left: 1px solid #CCCCCC;
+    }
+    #save-lead-comment{
+
+    }
+  </style>
   {% endblock content %}
 
   {% block main_js %}
@@ -1019,6 +1038,16 @@
     <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
     <script type="text/javascript">
 
+    $(document).ready(function(e) {
+        var cmt = "{{ comment }}";
+        cmt = replaceAll(cmt, "On Call :", "</br>----------------------------------------</br>On Call :");
+        cmt = replaceAll(cmt, "Next Course Of Action :", "</br>Next Course Of Action :");
+        $("#comment").html(cmt + "</br>----------------------------------------");
+    });
+
+    function replaceAll(str, find, replace) {
+      return str.replace(new RegExp(find, 'g'), replace);
+    }
 
     $('#check-availability').click(function(){
       var lead_owner = $("#exampleInputEmail1").val();
@@ -1115,6 +1144,9 @@ $('#edit-lead').on('click',function() {
         var tarea = $('<textarea style="width:200px;">' + html + '</textarea>');
         $(this).html(tarea);
     });
+    
+    $('td.edit-textarea-for-comment').html('<textarea style="width:200px;" id="add-comment"></textarea>');
+    $("#add-comment").html('On Call : \nNext Course Of Action :');
 
     $('td.edit-checkbox').each(function(){
         var html = $(this).html();
@@ -1238,6 +1270,8 @@ $('#edit-lead').on('click',function() {
     });
     $('#edit-lead').hide();
     $('#save-lead').show();
+    $('#save-lead-comment').show();
+    
 });
 
   $('#save-lead').click(function(){
@@ -1277,7 +1311,27 @@ $('#edit-lead').on('click',function() {
     })
   })
 
+    $('#save-lead-comment').click(function(e){
+      e.preventDefault();
+      var comment = $('#add-comment').val().replace("\n", "");
+      data = {'id': $('#row-id').text(), 'regalix_comment':comment}
+      $.ajax({
+        url: "/crm/add-lead-comment/",
+        type: 'POST',
+        data: data,
+        dataType: "json",
+        success:function(data){
+          if(data['success']){
+            setTimeout(function(){// wait for 5 secs(2)
+             location.reload(); // then reload the page.(3)
+            }, 1000); 
+          }
+        },
+        error:function(xhr){
 
+        }
+    });
+  });
 
     $("#delete-lead").click(function(e){
       e.preventDefault();
@@ -1487,7 +1541,21 @@ function cloneLead(){
 
       return false;
   });
+  $(".tableDrop").click(function (e) {
+    e.preventDefault();
 
+    $tableDrop = $(this);
+    var drop = $(this);
+    //getting the next element
+    $linkIcon = $tableDrop.next();
+    //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+    $linkIcon.slideToggle(200, function () {
+        //execute this after slideToggle is done
+        //change arrow based on visibility of content div
+        drop.find('.fa.linkIcon').toggleClass('fa-caret-up fa-caret-right');
+    });
+
+});
     </script>
     
   {% endblock main_js %}
