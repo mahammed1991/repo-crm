@@ -731,6 +731,7 @@ def update_lead(request):
     resp = {}
     if request.method == 'POST':
         data = ast.literal_eval(json.dumps(request.POST))
+        print data
         lead_fields = settings.LEAD_FIELDS
         lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
         lead_dict = {}
