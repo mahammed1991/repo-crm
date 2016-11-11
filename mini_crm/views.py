@@ -457,6 +457,8 @@ def lead_details(request, lid, sf_lead_id, ctype):
         primary_role = ['Owner','Marketing','Webmaster']
         language = Language.objects.filter(is_active=True)
         team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+        pla_sub_status = settings.PLA_SUB_STATUS
+        implemented_code_list = ['Different / Alternate','Same as specified by the Google rep']
         team_list = []
         language_list = []
         for i in language:
@@ -466,7 +468,9 @@ def lead_details(request, lid, sf_lead_id, ctype):
             try:
                 lead_detail = TagLeadDetail.objects.get(lead_id=lead)
             except:
-                lead_detail = None
+                lead_detail = TagLeadDetail()
+                lead_detail.lead_id = lead
+                lead_detail.save()
 
     elif ctype == 'WPP':
         lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
@@ -479,7 +483,9 @@ def lead_details(request, lid, sf_lead_id, ctype):
         'status':lead_status,'role':primary_role,
         'language':language_list,'team':team_list,
         'ctype':ctype,
-        'comment':lead.regalix_comment
+        'comment':lead.regalix_comment,
+        'pla_sub_status':pla_sub_status,
+        'implemented_code_list':implemented_code_list,
         })
 
 
@@ -719,99 +725,62 @@ def download_image_file(request):
     response.write(file(image_path, "rb").read())
     return response
 
-
+import ast
 @csrf_exempt
 def update_lead(request):
     resp = {}
     if request.method == 'POST':
-        data = request.POST
+        data = ast.literal_eval(json.dumps(request.POST))
+        lead_fields = settings.LEAD_FIELDS
+        lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
+        lead_dict = {}
+        lead_detail_dict = {}
+
+        for key,val in data.items():
+            if key in lead_fields:
+                lead_dict[key] = val
+
+        for key,val in data.items():
+            if key in lead_details_fields:
+                lead_detail_dict[key] = val
+
         try:
-            lead = Leads.objects.get(id=data['id'])
-            lh = LeadHistory()
-            lh.lead_id = lead.id
-            edited_list = []
-            edited_dict = {}
-            if lead.lead_status != data['lead_status']:
-                edited_dict['lead_status'] = [lead.lead_status,data['lead_status']]
-            if lead.team != data['team']:
-                edited_dict['team'] = [lead.team,data['team']]
-
-
-            lead.lead_status = data['lead_status']
-            lead.team = data['team']
+            lead = Leads.objects.get(sf_lead_id=lead_dict['sf_lead_id'])
+            
+            if data['installation_date']:
+                temp_date_of_installation = data['installation_date'].replace('.','').replace('-','/')           
+                lead.date_of_installation = datetime.strptime(str(temp_date_of_installation), '%d/%m/%Y %I:%M %p')
+            if data['appointment_date_on']:
+                temp_appointment_date_on = data['appointment_date_on'].replace('.','').replace('-','/')           
+                lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
+            if data['rescheduled_date_on']:
+                temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
+                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
+            
             lead.save()
+            lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
+            
             try:
-                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-            except:
-                lead_detail = TagLeadDetail()
+                temp = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id'))
+                lead_detail = TagLeadDetail.objects.get(lead_id=temp)
 
-            lead_detail.lead_id = lead
-
-            qc_by = None if data['qc_by'] == '--None--' else data['qc_by']
-            if data['qc_on']:
-                qc_on = datetime.strptime(str(data['qc_on'].replace('.','').replace('-','/')), '%d/%m/%Y %I:%M %p')
-                if lead_detail.qc_on != qc_on:
-                    edited_dict['qc_on'] = [datetime.strftime(lead_detail.qc_on, '%d-%m-%Y %I:%M %p') if lead_detail.qc_on else None,data['qc_on'].replace('.','').replace('/','-')]
-            if data['qc_by'] and lead_detail.qc_by != qc_by:
-                edited_dict['qc_by'] = [lead_detail.qc_by,qc_by]
-            if data['qc_comments'] and lead_detail.qc_comments != data['qc_comments']:
-                edited_dict['qc_comments'] = [lead_detail.qc_comments,data['qc_comments']]
-
-            edited_list.append(edited_dict)
-            if edited_dict:
-                lh.action_type = 'edited'
-                lh.modified_by = request.user.first_name + ' ' +request.user.last_name
-                lh.modifications = json.dumps(edited_list)
-                lh.save()
-
-            if data['qc_on']:
-                temp_qc_on = data['qc_on']
-                temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
-                lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
-            if data['qc_by'] == '--None--':
-                lead_detail.qc_by = None
-            else:
-                lead_detail.qc_by = data['qc_by']
-            if data['qc_comments']:
-                lead_detail.qc_comments = data['qc_comments']
-            lead_detail.save()
+                if data['qc_on_date']:
+                    temp_qc_on = data['qc_on_date'].replace('.','').replace('-','/')           
+                    lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
+                
+                if data['last_contacted_date']:
+                    temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')           
+                    lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
+                
+                lead_detail.save()
+                lead_detail = TagLeadDetail.objects.filter(lead_id=temp).update(**lead_detail_dict)
+            except Exception as e:
+                print e
 
             resp['success'] = True
         except:
             resp['success'] = False
-    return HttpResponse(json.dumps(resp))
-
-@csrf_exempt
-def update_lead(request):
-    resp = {}
-    if request.method == 'POST':
-        data = request.POST
-        try:
-            lead = Leads.objects.get(id=data['id'])
-            lead.lead_status = data['lead_status']
-            lead.team = data['team']
-            lead.save()
-
-            try:
-                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-            except:
-                lead_detail = TagLeadDetail()
-
-            lead_detail.lead_id = lead
-            if data['qc_on']:
-                temp_qc_on = data['qc_on']
-                temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
-                lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
-            if data['qc_by'] == '--None--':
-                lead_detail.qc_by = None
-            if data['qc_comments']:
-                lead_detail.qc_comments = data['qc_comments']
-            lead_detail.save()
-
-            resp['success'] = True
-        except:
-            resp['success'] = False
-    return HttpResponse(json.dumps(resp))
+    return HttpResponse(json.dumps(resp),content_type='application/json')
 
 @csrf_exempt
 def add_lead_comment(request):
@@ -826,4 +795,33 @@ def add_lead_comment(request):
             resp['success'] = True
         except:
             resp['success'] = False
+    return HttpResponse(json.dumps(resp))
+
+
+def get_lead_sub_status(request):
+    if request.method == 'GET':
+        ctype = request.GET.get('ctype')
+        lead_status = request.GET.get('lead_status')
+        lead_status = lead_status.replace('%20',' ')
+        lead_sub_status = None
+        if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+            if lead_status == 'Attempting Contact':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Attempting Contact"]
+            elif lead_status == 'In Progress':
+                lead_sub_status = settings.lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["In Progress"]
+            elif lead_status == 'Pending QC - In Active':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - In Active"]
+            elif lead_status == 'Pending QC - WIN':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - WIN/Implemented"] = ["Imp - 1 Conversion", "Imp - 1 Impression"]
+            elif lead_status == 'Rework Required - In Active':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Rework Required - Inactive"]= ["Rework Required - Inactive"]
+            elif lead_status == "Rework Fixed - Win":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Rework Fixed - Win"] =["Rework Fixed - Win"]
+            elif lead_status == "Rework Fixed - In Active":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Rework Fixed - Inactive"] =["Rework Fixed - Inactive"]
+            elif lead_status == "In Active":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Inactive"] = ["Inactive"]
+            elif lead_status == "Pending QC - Dead Lead":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - Dead Lead"] = ["Pending QC - Dead Lead"]
+    resp = {'success':True,'lead_sub_status':lead_sub_status}
     return HttpResponse(json.dumps(resp))
