@@ -1575,6 +1575,8 @@ function cloneLead(){
       if(old_val != new_val){
         $(ele).addClass('edited');
       }
+      prev_val = '';
+      pres_val = '';
     }
 
     $(document).on('focusin','input',function(){
