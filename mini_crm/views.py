@@ -451,6 +451,10 @@ def search_leads(request):
 def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
     lead_detail = None
+    lead_status = ''
+    primary_role = []
+    team_list = []
+    language_list = []
     if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
         lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
         lead_status = settings.LEAD_STATUS
@@ -585,25 +589,23 @@ def get_crm_agents_emails(request):
 def delete_lead(request, lid, ctype):
     if request.user.groups.filter(name='CRM-MANAGER'):
         if ctype == "WPP":
-            if WPPLeads.objects.all().count():
-                lead = WPPLeads.objects.get(id=lid)
-                lead_cid = lead.customer_id
-                lead.delete()
+            lead = WPPLeads.objects.get(id=lid)
+            lead_cid = lead.customer_id
+            lead.delete()
         elif ctype == "PicassoAudits":
-            if PicassoLeads.objects.all().count():
-                lead = PicassoLeads.objects.get(id=lid)
-                lead_cid = lead.customer_id
-                lead.delete()
+            lead = PicassoLeads.objects.get(id=lid)
+            lead_cid = lead.customer_id
+            lead.delete()
         elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
+            lead = TagLeadDetail.objects.filter(lead_id=lid)
+            if lead.count():
+                lead_cid = lead[0].lead_id.customer_id
+                lead.delete()
             
-            if TagLeadDetail.objects.all().count():
-                lead = TagLeadDetail.objects.get(lead_id=lid)
-                lead_cid = lead.customer_id
-                lead.delete()
-            if Leads.objects.all().count():
-                lead = Leads.objects.get(id=lid)
-                lead_cid = lead.customer_id
-                lead.delete()
+            lead = Leads.objects.get(id=lid)
+            lead_cid = lead.customer_id
+            lead.delete()
+            
         return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
 
 @csrf_exempt
@@ -731,6 +733,7 @@ def update_lead(request):
     resp = {}
     if request.method == 'POST':
         data = ast.literal_eval(json.dumps(request.POST))
+        print data
         lead_fields = settings.LEAD_FIELDS
         lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
         lead_dict = {}

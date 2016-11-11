@@ -82,7 +82,7 @@
                                         </td>
                                         
                                         <td class="table-left">Email</td>
-                                        <td class="table-right" id='mail'><span id="lead_owner_email">{{ lead.lead_owner_email }}</span></td>
+                                        <td class="table-right" id='mail'><span name="lead_owner_email">{{ lead.lead_owner_email }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Status  </td>
@@ -152,13 +152,13 @@
                                         <td class="table-left">Google Accounts Manager(D)</td>
                                         <td class="table-right smile">{{ lead.google_rep_name }}</td>
                                         <td class="table-left">Googler Location</td>
-                                        <td class="table-right edit"><span id="google_rep_location">{{ lead.google_rep_location }}</span></td>
+                                        <td class="table-right edit"><span name="google_rep_location">{{ lead.google_rep_location }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Email </td>
-                                        <td class="table-right edit"><span id="google_rep_email">{{ lead.google_rep_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span name="google_rep_email">{{ lead.google_rep_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                         <td class="table-left qstn">Number Of Codes</td>
-                                        <td class="table-right edit"><span id="number_of_products">{{ lead.number_of_products }}</span></td>
+                                        <td class="table-right edit"><span name="number_of_products">{{ lead.number_of_products }}</span></td>
                                        </tr>
 
                                         <tr>
@@ -171,9 +171,9 @@
 
                                        <tr>
                                         <td class="table-left">Google Manager Email</td>
-                                        <td class="table-right edit"><span id="google_rep_manager_email">{{ lead.google_rep_manager_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span name="google_rep_manager_email">{{ lead.google_rep_manager_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                         <td class="table-left">Additional LDAP</td>
-                                        <td class="table-right edit"><span id="eto_ldap">{{ lead.eto_ldap }}</span></td>
+                                        <td class="table-right edit"><span name="eto_ldap">{{ lead.eto_ldap }}</span></td>
                                        </tr>
                                        
                                      </table>
@@ -185,15 +185,15 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Name</td>
-                                        <td class="table-right smile edit"><span id="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
+                                        <td class="table-right smile edit"><span name="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
                                         <td class="table-left">Phone</td>
-                                        <td class="table-right edit"><span id="phone">{{ lead.phone }}</span></td>
+                                        <td class="table-right edit"><span name="phone">{{ lead.phone }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Company</td>
-                                        <td class="table-right edit"><span id="company">{{ lead.company }}</span></td>
+                                        <td class="table-right edit"><span name="company">{{ lead.company }}</span></td>
                                         <td class="table-left qstn">Email (P)</td>
-                                        <td class="table-right edit"><span id="email_optional">{{ lead.email_optional }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span name="email_optional">{{ lead.email_optional }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Location</td>
@@ -203,7 +203,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Full Name</td>
-                                        <td class="table-right edit"><span id="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
+                                        <td class="table-right edit"><span name="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
                                         <td class="table-left qstn">Contact Primary</td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -212,13 +212,13 @@
                                         <td class="table-left">Primary Contact Role</td>
                                         <td class="table-right" id="primary-role">{{ lead.primary_contact_role }}</td>
                                         <td class="table-left">Webmaster Phone</td>
-                                        <td class="table-right edit"><span id="webmaster_phone">{{ lead.webmaster_phone}}</span></td>
+                                        <td class="table-right edit"><span name="webmaster_phone">{{ lead.webmaster_phone}}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Webmaster Name</td>
-                                        <td class="table-right edit"><span id="webmaster_name">{{ lead.webmaster_name}}</span></td>
+                                        <td class="table-right edit"><span name="webmaster_name">{{ lead.webmaster_name}}</span></td>
                                         <td class="table-left qstn">Webmaster E-mail</td>
-                                        <td class="table-right edit"><span id="webmaster_email">{{ lead.webmaster_email}}</span></td>
+                                        <td class="table-right edit"><span name="webmaster_email">{{ lead.webmaster_email}}</span></td>
                                        </tr>
 
                                      </table>
@@ -231,15 +231,15 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">First Name - optional</td>
-                                        <td class="table-right edit"><span id="first_name_optional">{{ lead.first_name_optional }}</span></td>
+                                        <td class="table-right edit"><span name="first_name_optional">{{ lead.first_name_optional }}</span></td>
                                         <td class="table-left">Last Name - optional</td>
-                                        <td class="table-right edit"><span id="last_name_optional">{{ lead.last_name_optional }}</span></td>
+                                        <td class="table-right edit"><span name="last_name_optional">{{ lead.last_name_optional }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Phone - optional</td>
-                                        <td class="table-right edit"><span id="phone_optional">{{ lead.phone_optional }}</span></td>
+                                        <td class="table-right edit"><span name="phone_optional">{{ lead.phone_optional }}</span></td>
                                         <td class="table-left">Email - optional</td>
-                                        <td class="table-right edit"><span id="email_optional">{{ lead.email_optional }}</span></td>
+                                        <td class="table-right edit"><span name="email_optional">{{ lead.email_optional }}</span></td>
                                        </tr>
                                        
                                        <tr>
@@ -315,16 +315,16 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Agency Phone</td>
-                                        <td class="table-right edit"><span id="agency_phone">{{ lead_detail.agency_phone }}</span></td>
+                                        <td class="table-right edit"><span name="agency_phone">{{ lead_detail.agency_phone }}</span></td>
                                         <td class="table-left">Agency Email</td>
-                                        <td class="table-right edit"><span id="agency_email">{{ lead_detail.agency_email }}</span></td>
+                                        <td class="table-right edit"><span name="agency_email">{{ lead_detail.agency_email }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">Agency Bundle#</td>
-                                        <td class="table-right edit"><span id="agency_bundle_number">{{ lead_detail.agency_bundle_number }}</span></td>
+                                        <td class="table-right edit"><span name="agency_bundle_number">{{ lead_detail.agency_bundle_number }}</span></td>
                                         <td class="table-left">Services Case ID</td>
-                                        <td class="table-right edit"><span id="agency_service_case_id">{{ lead_detail.agency_service_case_id }}</span></td>
+                                        <td class="table-right edit"><span name="agency_service_case_id">{{ lead_detail.agency_service_case_id }}</span></td>
                                        </tr>
 
                                      </table>
@@ -337,33 +337,33 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">MC-ID</td>
-                                        <td class="table-right edit"><span id="mc_id">{{ lead_detail.mc_id }}</span></td>
+                                        <td class="table-right edit"><span name="mc_id">{{ lead_detail.mc_id }}</span></td>
                                         <td class="table-left">Client's Web inventory</td>
                                         <td class="table-right">{{ lead_detail.client_web_inventory }}</td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit"><span id="opt_in_percent">{{ lead_detail.opt_in_percent }}></span></td>
+                                        <td class="table-right edit"><span name="opt_in_percent">{{ lead_detail.opt_in_percent }}></span></td>
                                         <td class="table-left">SQO / STO Comments</td>
-                                        <td class="table-right edit-textarea"><span id="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Bid</td>
-                                        <td class="table-right edit"><span id="recommended_bid">{{ lead_detail.recommended_bid }}</span></td>
+                                        <td class="table-right edit"><span name="recommended_bid">{{ lead_detail.recommended_bid }}</span></td>
                                         <td class="table-left">Secured Checkout</td>
                                         <td class="table-right">{{ lead_detail.secured_checkout }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Budget</td>
-                                        <td class="table-right edit"><span id="recommended_budget">{{ lead_detail.recommended_budget }}</span></td>
+                                        <td class="table-right edit"><span name="recommended_budget">{{ lead_detail.recommended_budget }}</span></td>
                                         <td class="table-left">Payment Gateway</td>
                                         <td class="table-right">{{ lead_detail.payment_gateway }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Recommended Mobile Bid modifier</td>
-                                        <td class="table-right edit"><span id="recommended_mobile_bid_modifier">{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
+                                        <td class="table-right edit"><span name="recommended_mobile_bid_modifier">{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
                                         <td class="table-left">Shopping Policies, verified?</td>
                                         <td class="table-right">{{ lead_detail.shopping_polices_verified }}</td>
                                        </tr>
@@ -372,21 +372,21 @@
                                         <td class="table-left">Type of Policy violation</td>
                                         <td class="table-right">{{ lead_detail.type_of_policy_violation }}</td>
                                         <td class="table-left">Shopping Troubleshoot Issue Type</td>
-                                        <td class="table-right edit"><span id="shopping_troubleshoot_issue_type">{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
+                                        <td class="table-right edit"><span name="shopping_troubleshoot_issue_type">{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Please specify if others</td>
                                         <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Number of Products uploaded</td>
-                                        <td class="table-right edit"><span id="products_uploaded">{{ lead_detail.products_uploaded }}</span></td>
+                                        <td class="table-right edit"><span name="products_uploaded">{{ lead_detail.products_uploaded }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Method used for feed upload</td>
                                         <td class="table-right">{{ lead_detail.feed_upload_method }}</td>
                                         <td class="table-left">Shopping Campaign ID</td>
-                                        <td class="table-right edit"><span id="campaign_id">{{ lead_detail.campaign_id }}</span></td>
+                                        <td class="table-right edit"><span name="campaign_id">{{ lead_detail.campaign_id }}</span></td>
                                        </tr>
 
                                      </table>
@@ -401,27 +401,27 @@
                                         <td class="table-left">Feed Optimization Status</td>
                                         <td class="table-right">{{ lead.feed_optimisation_status }}</td>
                                         <td class="table-left">Business Type / Category:</td>
-                                        <td class="table-right edit"><span id="business_type">{{ lead.business_type }}</span></td>
+                                        <td class="table-right edit"><span name="business_type">{{ lead.business_type }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Additional support (Beyond the scope)<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit-textarea"><span id="additional_support_beyond_case">{{ lead.additional_support_beyond_case }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="additional_support_beyond_case">{{ lead.additional_support_beyond_case }}</span></td>
                                         <td class="table-left">Feed Optimization Sub Status</td>
                                         <td class="table-right">{{ lead.feed_optimisation_sub_status }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Authorization Case ID for Optimization</td>
-                                        <td class="table-right edit"><span id="authcase_id">{{ lead.authcase_id }}</span></td>
+                                        <td class="table-right edit"><span name="authcase_id">{{ lead.authcase_id }}</span></td>
                                         <td class="table-left">Shopping Feed Link (G.Sheet)</td>
-                                        <td class="table-right edit-textarea"><span id="shopping_feed_link">{{ lead.shopping_feed_link }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="shopping_feed_link">{{ lead.shopping_feed_link }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left"># of Products on the feed</td>
-                                        <td class="table-right edit"><span id="number_of_products">{{ lead.number_of_products }}</span></td>
+                                        <td class="table-right edit"><span name="number_of_products">{{ lead.number_of_products }}</span></td>
                                         <td class="table-left">Area in need of most improvement:</td>
-                                        <td class="table-right edit-textarea"><span id="area_tobe_improved">{{ lead.area_tobe_improved }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="area_tobe_improved">{{ lead.area_tobe_improved }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -451,7 +451,7 @@
                                         <td class="table-left qstn">Appointment Sub-Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead_detail.appointment_sub_status }}</td>
                                         <td class="table-left qstn">gCases ID<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit"><span id="gcase_id">{{ lead_detail.gcase_id }}</span></td>
+                                        <td class="table-right edit"><span name="gcase_id">{{ lead_detail.gcase_id }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -518,13 +518,13 @@
                                         <td class="table-right" id="comment">
                                         </td>
                                         <td class="table-left">Google Comments</td>
-                                        <td class="table-right edit-textarea"><span id="google_comment">{{ lead.google_comment }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="google_comment">{{ lead.google_comment }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">New Comments Area</td>
                                         <td class="table-right edit-textarea"></td>
                                         <td class="table-left">Regalix Chat Comments</td>
-                                        <td class="table-right edit-textarea"><span id="regalix_comment">{{ lead.regalix_comment }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="regalix_comment">{{ lead.regalix_comment }}</span></td>
                                        </tr>
                                        
                                        <tr>
@@ -544,9 +544,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 1</td>
-                                        <td class="table-right edit-textarea"><span id="code_1">{{ lead.code_1 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="code_1">{{ lead.code_1 }}</span></td>
                                         <td class="table-left">URL 1</td>
-                                        <td class="table-right edit"><span id="url_1">{{ lead.url_1 }}</span></td>
+                                        <td class="table-right edit"><span name="url_1">{{ lead.url_1 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -583,9 +583,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 1</td>
-                                        <td class="table-right edit"><span id="user_list_id_1">{{ lead.user_list_id_1 }}</span></td>
+                                        <td class="table-right edit"><span name="user_list_id_1">{{ lead.user_list_id_1 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 1</td>
-                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_1">{{ lead.rlsa_bid_adjustment_1 }}</span></td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_1">{{ lead.rlsa_bid_adjustment_1 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -597,7 +597,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 1</td>
-                                        <td class="table-right edit-textarea"><span id="campaign_id_1">{{ lead.campaign_id_1 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_1">{{ lead.campaign_id_1 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -611,9 +611,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 2</td>
-                                        <td class="table-right edit-textarea"><span id="code_2">{{ lead.code_2 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="code_2">{{ lead.code_2 }}</span></td>
                                         <td class="table-left">URL 2</td>
-                                        <td class="table-right edit"><span id="url_2">{{ lead.url_2 }}</span></td>
+                                        <td class="table-right edit"><span name="url_2">{{ lead.url_2 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -650,9 +650,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 2</td>
-                                        <td class="table-right edit"><span id="user_list_id_2">{{ lead.user_list_id_2 }}</span></td>
+                                        <td class="table-right edit"><span name="user_list_id_2">{{ lead.user_list_id_2 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 2</td>
-                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_2">{{ lead.rlsa_bid_adjustment_2 }}</span></td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_2">{{ lead.rlsa_bid_adjustment_2 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -664,7 +664,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 2</td>
-                                        <td class="table-right edit-textarea"><span id="campaign_id_2">{{ lead.campaign_id_2 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_2">{{ lead.campaign_id_2 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -678,9 +678,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 3</td>
-                                        <td class="table-right edit-textarea"><span id="code_3">{{ lead.code_3 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="code_3">{{ lead.code_3 }}</span></td>
                                         <td class="table-left">URL 3</td>
-                                        <td class="table-right edit"><span id="url_3">{{ lead.url_3 }}</span></td>
+                                        <td class="table-right edit"><span name="url_3">{{ lead.url_3 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -717,9 +717,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 3</td>
-                                        <td class="table-right edit"><span id="user_list_id_3">{{ lead.user_list_id_3 }}</span></td>
+                                        <td class="table-right edit"><span name="user_list_id_3">{{ lead.user_list_id_3 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 3</td>
-                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_3">{{ lead.rlsa_bid_adjustment_3 }}</span></td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_3">{{ lead.rlsa_bid_adjustment_3 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -731,7 +731,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 3</td>
-                                        <td class="table-right edit-textarea"><span id="campaign_id_3">{{ lead.campaign_id_3 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_3">{{ lead.campaign_id_3 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -746,9 +746,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 4</td>
-                                        <td class="table-right edit-textarea"><span id="code_4">{{ lead.code_4 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="code_4">{{ lead.code_4 }}</span></td>
                                         <td class="table-left">URL 4</td>
-                                        <td class="table-right edit"><span id="url_4">{{ lead.url_4 }}</span></td>
+                                        <td class="table-right edit"><span name="url_4">{{ lead.url_4 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -785,9 +785,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 4</td>
-                                        <td class="table-right edit"><span id="user_list_id_4">{{ lead.user_list_id_4 }}</span></td>
+                                        <td class="table-right edit"><span name="user_list_id_4">{{ lead.user_list_id_4 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 4</td>
-                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_4">{{ lead.rlsa_bid_adjustment_4 }}</span></td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_4">{{ lead.rlsa_bid_adjustment_4 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -799,7 +799,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 4</td>
-                                        <td class="table-right edit-textarea"><span id="campaign_id_4">{{ lead.campaign_id_4 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_4">{{ lead.campaign_id_4 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -815,9 +815,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 5</td>
-                                        <td class="table-right edit-textarea"><span id="code_5">{{ lead.code_5 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="code_5">{{ lead.code_5 }}</span></td>
                                         <td class="table-left">URL 5</td>
-                                        <td class="table-right edit"><span id="url_5">{{ lead.url_5 }}</span></td>
+                                        <td class="table-right edit"><span name="url_5">{{ lead.url_5 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -854,9 +854,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 5</td>
-                                        <td class="table-right edit"><span id="user_list_id_5">{{ lead.user_list_id_5 }}</span></td>
+                                        <td class="table-right edit"><span name="user_list_id_5">{{ lead.user_list_id_5 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 5</td>
-                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_5">{{ lead.rlsa_bid_adjustment_5 }}</span></td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_5">{{ lead.rlsa_bid_adjustment_5 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -868,7 +868,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 5</td>
-                                        <td class="table-right edit-textarea"><span id="campaign_id_5">{{ lead.campaign_id_5 }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_5">{{ lead.campaign_id_5 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -895,7 +895,7 @@
                                        
                                        <tr>
                                         <td class="table-left">QC Comments</td>
-                                        <td class="table-right edit-textarea"><span id="qc_comments">{{ lead_detail.qc_comments }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="qc_comments">{{ lead_detail.qc_comments }}</span></td>
                                         <td class="table-left">Unethical WIN</td>
                                         <td class="table-right edit-checkbox"></td>
                                        </tr>
@@ -1588,7 +1588,7 @@ function cloneLead(){
 
     $(document).on('focusin','textarea',function(){
       $(this).addClass('edited');
-      var val = $(this).parent().attr('id');
+      var val = $(this).parent().attr('name');
       $(this).attr('name',val);
     });
 
