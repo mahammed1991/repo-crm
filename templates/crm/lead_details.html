@@ -80,7 +80,7 @@
                                         </td>
                                         
                                         <td class="table-left">Email</td>
-                                        <td class="table-right" id='mail'><span>{{ lead.lead_owner_email }}</span></td>
+                                        <td class="table-right" id='mail'><span id="lead_owner_email">{{ lead.lead_owner_email }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Status  </td>
@@ -96,9 +96,9 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Date of installation</td>
-                                        <td class="table-right edit-date">{{ lead.date_of_installation|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date" id="install-date">{{ lead.date_of_installation|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.pla_sub_status }}</td>
+                                        <td class="table-right" id="pls-sub-status">{{ lead_detail.pla_sub_status }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Type</td>
@@ -108,15 +108,15 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Implemented Code is</td>
-                                        <td class="table-right">{{ lead_detail.implemented_code_is }}</td>
+                                        <td class="table-right" id="implemented-code">{{ lead_detail.implemented_code_is }}</td>
                                         <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead.dead_lead_date|date:'d-m-Y g:i a' }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">LastCallTime</td>
-                                        <td class="table-right edit-date">{{ lead.last_contacted_on|time }}</td>
+                                        <td class="table-right edit-date" id="last-call">{{ lead_detail.last_contacted_on|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left">Dynamic Variable Set</td>
-                                        <td class="table-right">{{ lead.dynamic_variable_set }}</td>
+                                        <td class="table-right" id="dynamic-variable-set">{{ lead.dynamic_variable_set }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">No of Dials</td>
@@ -150,13 +150,13 @@
                                         <td class="table-left">Google Accounts Manager(D)</td>
                                         <td class="table-right smile">{{ lead.google_rep_name }}</td>
                                         <td class="table-left">Googler Location</td>
-                                        <td class="table-right edit"><span>{{ lead.google_rep_location }}</span></td>
+                                        <td class="table-right edit"><span id="google_rep_location">{{ lead.google_rep_location }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Email </td>
-                                        <td class="table-right edit"><span>{{ lead.google_rep_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span id="google_rep_email">{{ lead.google_rep_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                         <td class="table-left qstn">Number Of Codes</td>
-                                        <td class="table-right edit"><span>{{ lead.number_of_products }}</span></td>
+                                        <td class="table-right edit"><span id="number_of_products">{{ lead.number_of_products }}</span></td>
                                        </tr>
 
                                         <tr>
@@ -169,9 +169,9 @@
 
                                        <tr>
                                         <td class="table-left">Google Manager Email</td>
-                                        <td class="table-right edit"><span>{{ lead.google_rep_manager_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span id="google_rep_manager_email">{{ lead.google_rep_manager_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                         <td class="table-left">Additional LDAP</td>
-                                        <td class="table-right edit"><span>{{ lead.eto_ldap }}</span></td>
+                                        <td class="table-right edit"><span id="eto_ldap">{{ lead.eto_ldap }}</span></td>
                                        </tr>
                                        
                                      </table>
@@ -183,15 +183,15 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Name</td>
-                                        <td class="table-right smile edit"><span>{{ lead.first_name }} {{ lead.last_name }}</span></td>
+                                        <td class="table-right smile edit"><span id="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
                                         <td class="table-left">Phone</td>
-                                        <td class="table-right edit"><span>{{ lead.phone }}</span></td>
+                                        <td class="table-right edit"><span id="phone">{{ lead.phone }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Company</td>
-                                        <td class="table-right edit"><span>{{ lead.company }}</span></td>
+                                        <td class="table-right edit"><span id="company">{{ lead.company }}</span></td>
                                         <td class="table-left qstn">Email (P)</td>
-                                        <td class="table-right edit"><span>{{ lead.email_optional }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span id="email_optional">{{ lead.email_optional }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Location</td>
@@ -201,7 +201,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Full Name</td>
-                                        <td class="table-right edit"><span>{{ lead.first_name }} {{ lead.last_name }}</span></td>
+                                        <td class="table-right edit"><span id="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
                                         <td class="table-left qstn">Contact Primary</td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -210,13 +210,13 @@
                                         <td class="table-left">Primary Contact Role</td>
                                         <td class="table-right" id="primary-role">{{ lead.primary_contact_role }}</td>
                                         <td class="table-left">Webmaster Phone</td>
-                                        <td class="table-right edit"><span>{{ lead.webmaster_phone}}</span></td>
+                                        <td class="table-right edit"><span id="webmaster_phone">{{ lead.webmaster_phone}}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Webmaster Name</td>
-                                        <td class="table-right edit"><span>{{ lead.webmaster_name}}</span></td>
+                                        <td class="table-right edit"><span id="webmaster_name">{{ lead.webmaster_name}}</span></td>
                                         <td class="table-left qstn">Webmaster E-mail</td>
-                                        <td class="table-right edit"><span>{{ lead.webmaster_email}}</span></td>
+                                        <td class="table-right edit"><span id="webmaster_email">{{ lead.webmaster_email}}</span></td>
                                        </tr>
 
                                      </table>
@@ -229,15 +229,15 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">First Name - optional</td>
-                                        <td class="table-right edit"><span>{{ lead.first_name_optional }}</span></td>
+                                        <td class="table-right edit"><span id="first_name_optional">{{ lead.first_name_optional }}</span></td>
                                         <td class="table-left">Last Name - optional</td>
-                                        <td class="table-right edit"><span>{{ lead.last_name_optional }}</span></td>
+                                        <td class="table-right edit"><span id="last_name_optional">{{ lead.last_name_optional }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Phone - optional</td>
-                                        <td class="table-right edit"><span>{{ lead.phone_optional }}</span></td>
+                                        <td class="table-right edit"><span id="phone_optional">{{ lead.phone_optional }}</span></td>
                                         <td class="table-left">Email - optional</td>
-                                        <td class="table-right edit"><span>{{ lead.email_optional }}</span></td>
+                                        <td class="table-right edit"><span id="email_optional">{{ lead.email_optional }}</span></td>
                                        </tr>
                                        
                                        <tr>
@@ -270,28 +270,28 @@
                                        
                                        <tr>
                                         <td class="table-left">Appointment Date</td>
-                                        <td class="table-right">{{ lead.appointment_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date" id="appointment-date">{{ lead.appointment_date|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left">Tag via GTM</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Appointment Time in IST</td>
-                                        <td class="table-right">{{ lead.appointment_date_in_ist|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date" id="appointment-date-ist">{{ lead.appointment_date_in_ist|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left">Appointment Time in PST</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Rescheduled Appointments</td>
-                                        <td class="table-right">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date" id="rescheduled-date">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left">Service Segment</td>
                                         <td class="table-right">{{ lead_detail.service_segment }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Reschedule Time in IST</td>
-                                        <td class="table-right">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date" id="rescheduled-date-ist">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left">RLSA Auth Approval</td>
                                         <td class="table-right">{{ lead_detail.rlsa_auth_approval }}</td>
                                        </tr>
@@ -307,22 +307,22 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Agency POC</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.agency_poc }}</span></td>
+                                        <td class="table-right edit"><span name="agency_poc">{{ lead_detail.agency_poc }}</span></td>
                                         <td class="table-left">Agency Name</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.agency_name }}</span></td>
+                                        <td class="table-right edit"><span name="agency_name">{{ lead_detail.agency_name }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Agency Phone</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.agency_phone }}</span></td>
+                                        <td class="table-right edit"><span id="agency_phone">{{ lead_detail.agency_phone }}</span></td>
                                         <td class="table-left">Agency Email</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.agency_email }}</span></td>
+                                        <td class="table-right edit"><span id="agency_email">{{ lead_detail.agency_email }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">Agency Bundle#</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.agency_bundle_number }}</span></td>
+                                        <td class="table-right edit"><span id="agency_bundle_number">{{ lead_detail.agency_bundle_number }}</span></td>
                                         <td class="table-left">Services Case ID</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.agency_service_case_id }}</span></td>
+                                        <td class="table-right edit"><span id="agency_service_case_id">{{ lead_detail.agency_service_case_id }}</span></td>
                                        </tr>
 
                                      </table>
@@ -335,33 +335,33 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">MC-ID</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.mc_id }}</span></td>
+                                        <td class="table-right edit"><span id="mc_id">{{ lead_detail.mc_id }}</span></td>
                                         <td class="table-left">Client's Web inventory</td>
                                         <td class="table-right">{{ lead_detail.client_web_inventory }}</td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit"><span>{{ lead_detail.opt_in_percent }}></span></td>
+                                        <td class="table-right edit"><span id="opt_in_percent">{{ lead_detail.opt_in_percent }}></span></td>
                                         <td class="table-left">SQO / STO Comments</td>
-                                        <td class="table-right edit-textarea">{{ lead_detail.sqo_sto_comments }}</td>
+                                        <td class="table-right edit-textarea"><span id="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Bid</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.recommended_bid }}</span></td>
+                                        <td class="table-right edit"><span id="recommended_bid">{{ lead_detail.recommended_bid }}</span></td>
                                         <td class="table-left">Secured Checkout</td>
                                         <td class="table-right">{{ lead_detail.secured_checkout }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Budget</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.recommended_budget }}</span></td>
+                                        <td class="table-right edit"><span id="recommended_budget">{{ lead_detail.recommended_budget }}</span></td>
                                         <td class="table-left">Payment Gateway</td>
                                         <td class="table-right">{{ lead_detail.payment_gateway }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Recommended Mobile Bid modifier</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
+                                        <td class="table-right edit"><span id="recommended_mobile_bid_modifier">{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
                                         <td class="table-left">Shopping Policies, verified?</td>
                                         <td class="table-right">{{ lead_detail.shopping_polices_verified }}</td>
                                        </tr>
@@ -370,21 +370,21 @@
                                         <td class="table-left">Type of Policy violation</td>
                                         <td class="table-right">{{ lead_detail.type_of_policy_violation }}</td>
                                         <td class="table-left">Shopping Troubleshoot Issue Type</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
+                                        <td class="table-right edit"><span id="shopping_troubleshoot_issue_type">{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Please specify if others</td>
                                         <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Number of Products uploaded</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.products_uploaded }}</span></td>
+                                        <td class="table-right edit"><span id="products_uploaded">{{ lead_detail.products_uploaded }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Method used for feed upload</td>
                                         <td class="table-right">{{ lead_detail.feed_upload_method }}</td>
                                         <td class="table-left">Shopping Campaign ID</td>
-                                        <td class="table-right edit"><span>{{ lead_detail.campaign_id }}</span></td>
+                                        <td class="table-right edit"><span id="campaign_id">{{ lead_detail.campaign_id }}</span></td>
                                        </tr>
 
                                      </table>
@@ -399,27 +399,27 @@
                                         <td class="table-left">Feed Optimization Status</td>
                                         <td class="table-right">{{ lead.feed_optimisation_status }}</td>
                                         <td class="table-left">Business Type / Category:</td>
-                                        <td class="table-right edit"><span>{{ lead.business_type }}</span></td>
+                                        <td class="table-right edit"><span id="business_type">{{ lead.business_type }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Additional support (Beyond the scope)<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit-textarea">{{ lead.additional_support_beyond_case }}</td>
+                                        <td class="table-right edit-textarea"><span id="additional_support_beyond_case">{{ lead.additional_support_beyond_case }}</span></td>
                                         <td class="table-left">Feed Optimization Sub Status</td>
                                         <td class="table-right">{{ lead.feed_optimisation_sub_status }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Authorization Case ID for Optimization</td>
-                                        <td class="table-right edit"><span>{{ lead.authcase_id }}</span></td>
+                                        <td class="table-right edit"><span id="authcase_id">{{ lead.authcase_id }}</span></td>
                                         <td class="table-left">Shopping Feed Link (G.Sheet)</td>
-                                        <td class="table-right edit-textarea">{{ lead.shopping_feed_link }}</td>
+                                        <td class="table-right edit-textarea"><span id="shopping_feed_link">{{ lead.shopping_feed_link }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left"># of Products on the feed</td>
-                                        <td class="table-right edit"><span>{{ lead.number_of_products }}</span></td>
+                                        <td class="table-right edit"><span id="number_of_products">{{ lead.number_of_products }}</span></td>
                                         <td class="table-left">Area in need of most improvement:</td>
-                                        <td class="table-right edit-textarea">{{ lead.area_tobe_improved }}</td>
+                                        <td class="table-right edit-textarea"><span id="area_tobe_improved">{{ lead.area_tobe_improved }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -449,7 +449,7 @@
                                         <td class="table-left qstn">Appointment Sub-Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead_detail.appointment_sub_status }}</td>
                                         <td class="table-left qstn">gCases ID<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit"><span>{{ lead_detail.gcase_id }}</span></td>
+                                        <td class="table-right edit"><span id="gcase_id">{{ lead_detail.gcase_id }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -516,13 +516,13 @@
                                         <td class="table-right" id="comment">
                                         </td>
                                         <td class="table-left">Google Comments</td>
-                                        <td class="table-right edit-textarea">{{ lead.google_comment }}</td>
+                                        <td class="table-right edit-textarea"><span id="google_comment">{{ lead.google_comment }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">New Comments Area</td>
-                                        <td class="table-right edit-textarea-for-comment"></td>
-                                        <td class="table-left">Regalix Chat Comments</td>
                                         <td class="table-right edit-textarea"></td>
+                                        <td class="table-left">Regalix Chat Comments</td>
+                                        <td class="table-right edit-textarea"><span id="regalix_comment">{{ lead.regalix_comment }}</span></td>
                                        </tr>
                                        
                                        <tr>
@@ -531,6 +531,7 @@
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
+
                                      </table>
                                  </div>
 
@@ -541,9 +542,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 1</td>
-                                        <td class="table-right edit-textarea">{{ lead.code_1 }}</td>
+                                        <td class="table-right edit-textarea"><span id="code_1">{{ lead.code_1 }}</span></td>
                                         <td class="table-left">URL 1</td>
-                                        <td class="table-right edit" id="url-1"><span>{{ lead.url_1 }}</span></td>
+                                        <td class="table-right edit"><span id="url_1">{{ lead.url_1 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -580,9 +581,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 1</td>
-                                        <td class="table-right edit"><span>{{ lead.user_list_id_1 }}</span></td>
+                                        <td class="table-right edit"><span id="user_list_id_1">{{ lead.user_list_id_1 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 1</td>
-                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_1 }}</span></td>
+                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_1">{{ lead.rlsa_bid_adjustment_1 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -594,7 +595,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 1</td>
-                                        <td class="table-right edit-textarea">{{ lead.campaign_id_1 }}</td>
+                                        <td class="table-right edit-textarea"><span id="campaign_id_1">{{ lead.campaign_id_1 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -608,9 +609,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 2</td>
-                                        <td class="table-right edit-textarea">{{ lead.code_2 }}</td>
+                                        <td class="table-right edit-textarea"><span id="code_2">{{ lead.code_2 }}</span></td>
                                         <td class="table-left">URL 2</td>
-                                        <td class="table-right edit" id="url-2"><span>{{ lead.url_2 }}</span></td>
+                                        <td class="table-right edit"><span id="url_2">{{ lead.url_2 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -647,9 +648,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 2</td>
-                                        <td class="table-right edit"><span>{{ lead.user_list_id_2 }}</span></td>
+                                        <td class="table-right edit"><span id="user_list_id_2">{{ lead.user_list_id_2 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 2</td>
-                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_2 }}</span></td>
+                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_2">{{ lead.rlsa_bid_adjustment_2 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -661,7 +662,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 2</td>
-                                        <td class="table-right edit-textarea">{{ lead.campaign_id_2 }}</td>
+                                        <td class="table-right edit-textarea"><span id="campaign_id_2">{{ lead.campaign_id_2 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -675,9 +676,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 3</td>
-                                        <td class="table-right edit-textarea">{{ lead.code_3 }}</td>
+                                        <td class="table-right edit-textarea"><span id="code_3">{{ lead.code_3 }}</span></td>
                                         <td class="table-left">URL 3</td>
-                                        <td class="table-right edit" id="url-3"><span>{{ lead.url_3 }}</span></td>
+                                        <td class="table-right edit"><span id="url_3">{{ lead.url_3 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -714,9 +715,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 3</td>
-                                        <td class="table-right edit"><span>{{ lead.user_list_id_3 }}</span></td>
+                                        <td class="table-right edit"><span id="user_list_id_3">{{ lead.user_list_id_3 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 3</td>
-                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_3 }}</span></td>
+                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_3">{{ lead.rlsa_bid_adjustment_3 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -728,7 +729,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 3</td>
-                                        <td class="table-right edit-textarea">{{ lead.campaign_id_3 }}</td>
+                                        <td class="table-right edit-textarea"><span id="campaign_id_3">{{ lead.campaign_id_3 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -743,9 +744,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 4</td>
-                                        <td class="table-right edit-textarea">{{ lead.code_4 }}</td>
+                                        <td class="table-right edit-textarea"><span id="code_4">{{ lead.code_4 }}</span></td>
                                         <td class="table-left">URL 4</td>
-                                        <td class="table-right edit" id="url-4"><span>{{ lead.url_4 }}</span></td>
+                                        <td class="table-right edit"><span id="url_4">{{ lead.url_4 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -782,9 +783,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 4</td>
-                                        <td class="table-right edit"><span>{{ lead.user_list_id_4 }}</span></td>
+                                        <td class="table-right edit"><span id="user_list_id_4">{{ lead.user_list_id_4 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 4</td>
-                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_4 }}</span></td>
+                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_4">{{ lead.rlsa_bid_adjustment_4 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -796,7 +797,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 4</td>
-                                        <td class="table-right edit-textarea">{{ lead.campaign_id_4 }}</td>
+                                        <td class="table-right edit-textarea"><span id="campaign_id_4">{{ lead.campaign_id_4 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -812,9 +813,9 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Code 5</td>
-                                        <td class="table-right edit-textarea">{{ lead.code_5 }}</td>
+                                        <td class="table-right edit-textarea"><span id="code_5">{{ lead.code_5 }}</span></td>
                                         <td class="table-left">URL 5</td>
-                                        <td class="table-right edit" id="url-5"><span>{{ lead.url_5 }}</span></td>
+                                        <td class="table-right edit"><span id="url_5">{{ lead.url_5 }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
@@ -851,9 +852,9 @@
 
                                        <tr>
                                         <td class="table-left">User List ID 5</td>
-                                        <td class="table-right edit"><span>{{ lead.user_list_id_5 }}</span></td>
+                                        <td class="table-right edit"><span id="user_list_id_5">{{ lead.user_list_id_5 }}</span></td>
                                         <td class="table-left">RLSA Bid Adjustment 5</td>
-                                        <td class="table-right edit"><span>{{ lead.rlsa_bid_adjustment_5 }}</span></td>
+                                        <td class="table-right edit"><span id="rlsa_bid_adjustment_5">{{ lead.rlsa_bid_adjustment_5 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -865,7 +866,7 @@
 
                                        <tr>
                                         <td class="table-left">Campaign ID 5</td>
-                                        <td class="table-right edit-textarea">{{ lead.campaign_id_5 }}</td>
+                                        <td class="table-right edit-textarea"><span id="campaign_id_5">{{ lead.campaign_id_5 }}</span></td>
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -892,7 +893,7 @@
                                        
                                        <tr>
                                         <td class="table-left">QC Comments</td>
-                                        <td class="table-right edit-textarea" id="qc-comment">{{ lead_detail.qc_comments }}</td>
+                                        <td class="table-right edit-textarea"><span id="qc_comments">{{ lead_detail.qc_comments }}</span></td>
                                         <td class="table-left">Unethical WIN</td>
                                         <td class="table-right edit-checkbox"></td>
                                        </tr>
@@ -920,6 +921,8 @@
                                        <tr style="display:none;">
                                         <td class="table-left"></td>
                                         <td class="table-right" id="row-id">{{ lead.id }}</td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right" id="sf-id">{{ lead.sf_lead_id }}</td
                                        </tr>
                                        
                                      </table>
@@ -1047,6 +1050,7 @@
       return str.replace(new RegExp(find, 'g'), replace);
     }
 
+
     $('#check-availability').click(function(){
       var lead_owner = $("#exampleInputEmail1").val();
       var lead_type = $('#type').text();
@@ -1137,7 +1141,7 @@ $('#edit-lead').on('click',function() {
         $(this).html(input);
     });
 
-    $('td.edit-textarea').each(function(){
+    $('td.edit-textarea span').each(function(){
         var html = $(this).html();
         var tarea = $('<textarea style="width:200px;">' + html + '</textarea>');
         $(this).html(tarea);
@@ -1155,101 +1159,35 @@ $('#edit-lead').on('click',function() {
 
     var curr_status = $("#lead-status").html();
     $("#lead-status").html("<select id='status' style='width:200px;'></select>");
-    $("#lead-status select").append("<option value='None'>--None--</option>");
-    for(var i=0;i<lead_status.length; i++){
-      if(curr_status == 'None'){
-        $("#team select option[value='--None--']").prop('selected',true);
-      }
-      if(curr_status == lead_status[i]){
-        $("#lead-status select").append("<option selected>"+ lead_status[i] +"</option>");
-      }
-      else{
-        $("#lead-status select").append("<option>"+ lead_status[i] +"</option>");
-      }
-    }
-
+    assignDropDownValues(curr_status,lead_status,'#lead-status')
+    
 
     var curr_team = $("#team").html();
     $("#team").html("<select id='team' style='width:200px;'></select>");
-    $("#team select").append("<option value='None'>--None--</option>");
-    for(var i=0;i<team.length; i++){
-      if(curr_team == 'None'){
-        $("#team select option[value='--None--']").prop('selected',true);
-      }
-      if(curr_team == team[i]){
-        $("#team select").append("<option selected>"+ team[i] +"</option>");
-      }
-      else{
-        $("#team select").append("<option>"+ team[i] +"</option>");
-      }
-    }
+    assignDropDownValues(curr_team,team,"#team")
 
 
     var curr_prole = $("#primary-role").html();
-    $("#primary-role").html("<select style='width:200px;'></select>");
-    $("#primary-role select").append("<option value='None'>--None--</option>");
-    for(var i=0;i<primary_role.length; i++){
-      if(curr_prole == 'None'){
-        $("#primary-role select option[value='--None--']").prop('selected',true);
-      }
-      if(curr_prole == primary_role[i]){
-        $("#primary-role select").append("<option selected>"+ primary_role[i] +"</option>");
-      }
-      else{
-        $("#primary-role select").append("<option>"+ primary_role[i] +"</option>");
-      }
-    }
+    $("#primary-role").html("<select id='pRole' style='width:200px;'></select>");
+    assignDropDownValues(curr_prole,primary_role,"#primary-role")
 
 
     var curr_language = $("#language").html();
-    $("#language").html("<select style='width:200px;'></select>");
-    $("#language select").append("<option value='None'>--None--</option>");
-    for(var i=0;i<language.length; i++){
-      if(curr_language == 'None'){
-        $("#language select option[value='--None--']").prop('selected',true);
-      }
-      if(curr_language == language[i]){
-        $("#language select").append("<option selected>"+ language[i] +"</option>");
-      }
-      else{
-        $("#language select").append("<option>"+ language[i] +"</option>");
-      }
-    }
-
+    $("#language").html("<select id='lang' style='width:200px;'></select>");
+    assignDropDownValues(curr_language,language,'#language')
     
 
     var qc_by_list = ["Vishal Kumar Jha","Anto Santosh","Raphael Martin","Joshua Ajay Stanislaus","Varun B","Lohith BP","Saurabh Agarwal"];
     var curr_qc_by = $('#qc-by').html();
     $('#qc-by').html('<select id="qcBy" style="width:200px;"></select>');
-    $("#qc-by select").append("<option>--None--</option>");        
-    for(var i=0;i<qc_by_list.length; i++){
-      if(curr_qc_by == 'None'){
-        $("#qc-by select option[value='--None--']").prop('selected',true);
-      }
-      if(curr_qc_by == qc_by_list[i]){
-        $("#qc-by select").append("<option selected>"+ qc_by_list[i] +"</option>");
-      }
-      else{
-        $("#qc-by select").append("<option>"+ qc_by_list[i] +"</option>");
-      }
-    }
-
+    assignDropDownValues(curr_qc_by,qc_by_list,'#qc-by')
+   
 
     var spend_cfc_list = ["$0", "<= $2,000", "<=$5,000", "<=$10,000", "<=$20,000", ">$20,000"];
     var curr_cfc = $('#spend-cfc').html();
     $('#spend-cfc').html('<select id="spendCfc" style="width:200px;"></select>');
-    $("#spend-cfc select").append("<option>--None--</option>");        
-    for(var i=0;i<spend_cfc_list.length; i++){
-      if(curr_cfc == 'None'){
-        $("#spend-cfc select option[value='--None--']").prop('selected',true);
-      }
-      if(curr_cfc == spend_cfc_list[i]){
-        $("#spend-cfc select").append("<option selected>"+ spend_cfc_list[i] +"</option>");
-      }
-      else{
-        $("#spend-cfc select").append("<option>"+ spend_cfc_list[i] +"</option>");
-      }
-    }
+    assignDropDownValues(curr_cfc,spend_cfc_list,'#spend-cfc')       
+    
 
     $('td.edit-date').each(function(){
 
@@ -1258,6 +1196,41 @@ $('#edit-lead').on('click',function() {
         input.val(html);
         $(this).html(input);
     });
+
+    function assignDropDownValues(curr_val,val_list,doc_ele_id){
+      $(doc_ele_id + " select").append("<option value='None'>--None--</option>");
+      for(var i=0;i<val_list.length; i++){
+        if(curr_val == 'None'){
+          $(doc_ele_id +" select option[value='--None--']").prop('selected',true);
+        }
+        if(curr_val == val_list[i]){
+          $(doc_ele_id + " select").append("<option selected>"+ val_list[i] +"</option>");
+        }
+        else{
+          $(doc_ele_id + " select").append("<option>"+ val_list[i] +"</option>");
+        }
+      }
+    }
+
+    var pla_sub_status = {{ pla_sub_status|safe }};
+    var curr_pla_sub_status = $('#pls-sub-status').html();
+    $('#pls-sub-status').html('<select id="plaSubStatus" style="width:200px;"></select>');
+    assignDropDownValues(curr_pla_sub_status,pla_sub_status,'#pls-sub-status')     
+
+
+    var dynamic_variable_set = ['Yes','No','Not Applicable'];
+    var curr_dynamic_variable_set = $('#dynamic-variable-set').html();
+    $('#dynamic-variable-set').html('<select id="dynamicariableSet" style="width:200px;"></select>');
+    assignDropDownValues(curr_dynamic_variable_set,dynamic_variable_set,'#dynamic-variable-set')  
+    
+
+    var implemented_code_is = {{ implemented_code_list|safe }};
+    var curr_implemented_code = $('#implemented-code').html();
+    $('#implemented-code').html('<select id="implementedCode" style="width:200px;"></select>');
+    assignDropDownValues(curr_implemented_code,implemented_code_is,'#implemented-code')        
+
+
+    getLeadSubStatus(curr_status,'{{ ctype }}');
    
     $(".editdateinput").datetimepicker({
       timepicker : false,
@@ -1273,40 +1246,56 @@ $('#edit-lead').on('click',function() {
 });
 
   $('#save-lead').click(function(){
-    var id = $('#row-id').text();
-    var lead_status = $('#status option:selected').val(); 
-    var team = $('#team option:selected').val();
-    var qc_by = $('#qcBy option:selected').val();
-    var spend_cfc = $('#spendCfc option:selected').val();
-    var u1 = $('#url-1 span input').val();
-    var qc_comments = $('#qc-comment textarea').val();
-    var qc_on = $('#qcOn input').val();
-    //alert(qc_on)
-    var data = {
-                'id':id,
-                'lead_status':lead_status,
-                'team':team,
-                'qc_by':qc_by,
-                'qc_comments':qc_comments,
-                'qc_on':qc_on,
-              };
-    $.ajax({
-      url: "/crm/update-lead/",
-      type: 'POST',
-      data: data,
-      dataType: "json",
-      success:function(data){
-        if(data['success']){
-          setTimeout(function(){// wait for 5 secs(2)
-           location.reload(); // then reload the page.(3)
-          }, 1000); 
-        }
-      },
-      error:function(xhr){
-       
-
-      }
+    var temp = {};
+    $('.edited').each(function(){
+      temp[$(this).attr('name')] = $(this).val();   
     })
+    temp['sf_lead_id']= $('#sf-id').html();
+    temp['lead_status'] = $('#status option:selected').val();
+    temp['lead_sub_status'] = $('#sub-status option:selected').val();
+
+    //dropdown
+    temp['team'] = $('#team option:selected').val();
+    temp['language'] = $('#lang option:selected').val();
+    temp['primary_contact_role'] = $('#pRole option:selected').val();
+    temp['implemented_code_is'] = $('#implementedCode option:selected').val();
+    temp['pla_sub_status'] = $('#plaSubStatus option:selected').val();
+    temp['qc_by'] = $('#qcBy option:selected').val();
+
+    //dates
+    temp['installation_date'] = $('#install-date input').val();
+    temp['appointment_date_on'] = $('#appointment-date input').val();
+    temp['appointment_date_ist_on'] = $('#appointment-date-ist input').val();
+    temp['rescheduled_date_on'] = $('#rescheduled-date input').val();
+    temp['rescheduled_date_ist_on'] = $('#rescheduled-date-ist input').val();
+
+    temp['qc_on_date'] = $('#qcOn input').val();
+    temp['last_contacted_date'] = $('#last-call input').val();
+  
+    var valid = true;
+    if($('#sub-status option:selected').val() == 'None'){
+      valid = false;
+      $('#sub-status').css('border-color','red');
+    }
+
+    if(valid){
+      $.ajax({
+        url: "/crm/update-lead/",
+        type: 'POST',
+        data: temp,
+        dataType: "json",
+        success:function(data){
+          if(data['success']){
+            setTimeout(function(){// wait for 5 secs(2)
+             location.reload(); // then reload the page.(3)
+            }, 1000); 
+          }
+        },
+        error:function(xhr){
+
+        }
+      })
+    }
   })
 
     $('#save-lead-comment').click(function(e){
@@ -1337,6 +1326,7 @@ $('#edit-lead').on('click',function() {
         location.href = $(this).data("href");
     });
 
+  
 
 function get_lead_history(){
   $.ajax(
@@ -1553,7 +1543,61 @@ function cloneLead(){
         drop.find('.fa.linkIcon').toggleClass('fa-caret-up fa-caret-right');
     });
 
-});
+  });
+
+  function getLeadSubStatus(lead_status,type){
+      $.ajax({
+        type: 'GET',
+        url: '/crm/get-lead-sub-status?lead_status=' + lead_status + '&ctype=' + type,
+        dataType: "json",
+        success: function(data) {
+                if(data['success'] && data['lead_sub_status']){
+                  var sub_status = $('#lead-sub-status').html();
+                  $("#lead-sub-status").html("<select id='sub-status' style='width:200px;'></select>");
+                  $("#lead-sub-status select").append("<option value='None'>--None--</option>");
+                  for(var i=0;i< data['lead_sub_status'].length; i++){
+                    if(sub_status == 'None'){
+                      $("#lead-sub-status select option[value='--None--']").prop('selected',true);
+                    }
+                    if(sub_status ==  data['lead_sub_status'][i]){
+                      $("#lead-sub-status select").append("<option selected>"+ data['lead_sub_status'][i] +"</option>");
+                    }
+                    else{
+                      $("#lead-sub-status select").append("<option>"+ data['lead_sub_status'][i] +"</option>");
+                    }
+                  }
+
+                }
+                else{
+                  $('#lead-sub-status').html('');
+                }
+              },
+              error: function(data){
+                  alert("Something went wrong, please try after some time");
+              }
+      })
+    }
+
+
+
+    $(document).on('change','#lead-status select',function(){
+      var curr_status = $(this).val();
+      var type = '{{ ctype }}';
+      getLeadSubStatus(curr_status,'{{ ctype }}');
+    })
+
+    $(document).on('focusin','input',function(){
+      $(this).addClass('edited');
+      var val = $(this).parent().attr('name');
+      $(this).attr('name',val);
+    });
+
+    $(document).on('focusin','textarea',function(){
+      $(this).addClass('edited');
+      var val = $(this).parent().attr('id');
+      $(this).attr('name',val);
+    });
+
     </script>
     
   {% endblock main_js %}
