@@ -7,8 +7,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
 from django.core.urlresolvers import reverse
-
-#import datetime
+from django.core.exceptions import PermissionDenied
 import json
 from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory, Language, Team
 from datetime import datetime,timedelta
@@ -16,7 +15,6 @@ from collections import OrderedDict
 from leads.models import Location, Timezone
 import pytz 
 from reports.models import Region
-
 from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.db.models import Q
@@ -24,8 +22,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
-#import datetime
-
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -147,7 +143,7 @@ def crm_management(request):
             except Exception as e:
                 print e
 
-        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list)}
+        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list), 'manager':True}
         return render(request,'crm/manager_home.html',context)
 
     elif request.user.groups.filter(name='CRM-AGENT'):
@@ -482,7 +478,10 @@ def lead_details(request, lid, sf_lead_id, ctype):
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
 
-
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        manager = True
+    else:
+        manager = False
     return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
         'status':lead_status,'role':primary_role,
         'language':language_list,'team':team_list,
@@ -490,6 +489,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
         'comment':lead.regalix_comment,
         'pla_sub_status':pla_sub_status,
         'implemented_code_list':implemented_code_list,
+        'manager': manager,
         })
 
 
@@ -607,7 +607,8 @@ def delete_lead(request, lid, ctype):
             lead.delete()
             
         return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
-
+    else:
+        raise PermissionDenied()
 @csrf_exempt
 def clone_lead(request):
     process_type = request.POST.get('process_type')
