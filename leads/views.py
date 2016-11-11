@@ -128,7 +128,7 @@ def lead_form(request):
                 lead.email_optional = data['aemail']
                 lead.phone = data['phone']
                 if str(data.get('setup_datepick')):
-                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
+                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %I:%M %p')
                 lead.save()
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -158,7 +158,7 @@ def lead_form(request):
                 lead.sf_lead_id = get_unique_uuid('SHOPPING')
                 lead.company = data['company']               
                 if data.get('setup_datepick'):
-                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %H:%M %p')
+                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
                 if request.POST.get('shop_contact_person_name'):
                     full_name = request.POST.get('shop_contact_person_name')
                     first_name, last_name = split_fullname(full_name)
@@ -293,7 +293,7 @@ def lead_form(request):
                 lead.email_optional = data['aemail']
                 lead.phone = data['phone']
                 if str(data.get('setup_datepick')):
-                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
+                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %I:%M %p')
                 lead.save()
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -323,7 +323,7 @@ def lead_form(request):
                 lead.sf_lead_id = get_unique_uuid('SHOPPING')
                 lead.company = data['company']               
                 if data.get('setup_datepick'):
-                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %H:%M %p')
+                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
                 if request.POST.get('shop_contact_person_name'):
                     full_name = request.POST.get('shop_contact_person_name')
                     first_name, last_name = split_fullname(full_name)
