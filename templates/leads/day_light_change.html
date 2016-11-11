@@ -1,0 +1,178 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Day Light Saving Changes
+{% endblock title %}
+{% block main_css %}
+
+<style>
+  .table_row {
+    color:#4C4C4C;
+    background-color:#FBFBFB;
+    text-align:left;
+
+  }
+
+  .legend {
+	margin: 0 29.5%;
+	border: 1px solid #d9d9d9;
+	width: 360px;
+	}
+ 
+</style>
+{% endblock main_css %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend">
+                <p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Day Light Saving Changes 2014</p>
+                </legend>
+
+
+                <div style="min-height:400px;">
+                <span id="ctl00_ContentPlaceHolder2_lblMsg"></span><br>
+                <div style="width:100%;">
+                    <div>
+                        <table cellspacing="0" cellpadding="4" rules="all" border="1" id="ctl00_ContentPlaceHolder2_gvListByGoogleRep" style="background-color:White;border-color:#4C4C4C;border-width:1px;border-style:None;font-size:9pt;width:100%;border-collapse:collapse;">
+                            <tbody>
+                                <tr style="color:#4C4C4C;background-color:#E6E6E6;font-weight:normal;" align="center">
+                                    <th scope="col">Country Affected</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Old Time Zone</th>
+                                    <th scope="col">New Time Zone</th>
+                                </tr>
+                                
+                                <tr class="table_row">
+                                    <td> Iran </td>
+                                    <td>Monday, 22 September 2014: Mon 00:00 back to Sun 23:00</td>
+                                    <td>IRDT (UTC+4:30 hours)</td>
+                                    <td>IRST (UTC+3:30 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Egypt </td>
+                                    <td>Friday, 26 September 2014: Fri 00:00 back to Thu 23:00</td>
+                                    <td>EEST (UTC+3 hours)</td>
+                                    <td>EET (UTC+2 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Gaza Strip</td>
+                                    <td>Friday, 26 September 2014: Fri 00:00 back to Thu 23:00</td>
+                                    <td>EEST (UTC+3 hours)</td>
+                                    <td>EET (UTC+2 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> West Bank </td>
+                                    <td>Friday, 26 September 2014: Fri 00:00 back to Thu 23:00</td>
+                                    <td>EEST (UTC+3 hours)</td>
+                                    <td>EET (UTC+2 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Antarctica </td>
+                                    <td>Sunday, 28 September 2014: 02:00 forward to 03:00</td>
+                                    <td>NZST (UTC+12 hours)</td>
+                                    <td>NZDT (UTC+13 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td>New Zealand</td>
+                                    <td>Sunday, 28 September 2014: 02:00 forward to 03:00</td>
+                                    <td>NZST (UTC+12 hours)</td>
+                                    <td>NZDT (UTC+13 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> New Zealand </td>
+                                    <td>Sunday, 28 September 2014: 02:45 forward to 03:45</td>
+                                    <td>CHAST (UTC+12:45 hours)</td>
+                                    <td>CHADT (UTC+13:45 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Samoa </td>
+                                    <td>Sunday, 28 September 2014: 03:00 forward to 04:00</td>
+                                    <td>WST (UTC+13 hours)</td>
+                                    <td>WST (UTC+14 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Paraguay </td>
+                                    <td>Sunday, 5 October 2014: 00:00 forward to 01:00</td>
+                                    <td>PYT (UTC-4 hours)</td>
+                                    <td>PYST (UTC-3 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Australia </td>
+                                    <td>Sunday, 5 October 2014: 02:00 forward to 02:30</td>
+                                    <td>LHST (UTC+10:30 hours)</td>
+                                    <td>LHDT (UTC+11 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Australia</td>
+                                    <td>Sunday, 5 October 2014: 02:00 forward to 03:00</td>
+                                    <td>AEST (UTC+10 hours)</td>
+                                    <td>AEDT (UTC+11 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Australia </td>
+                                    <td>Sunday, 5 October 2014: 02:00 forward to 03:00</td>
+                                    <td>ACST (UTC+9:30 hours)</td>
+                                    <td>ACDT (UTC+10:30 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Uruguay </td>
+                                    <td>Sunday, 5 October 2014: 02:00 forward to 03:00</td>
+                                    <td>UYT (UTC-3 hours)</td>
+                                    <td>UYST (UTC-2 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Chile </td>
+                                    <td>Saturday, 6 September 2014: 22:00 forward to 23:00</td>
+                                    <td>EAST (UTC-6 hours)</td>
+                                    <td>EASST (UTC-5 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Chile </td>
+                                    <td>Sunday, 7 September 2014: 00:00 forward to 01:00</td>
+                                    <td>CLT (UTC-4 hours)</td>
+                                    <td>CLST (UTC-3 hours)</td>
+                                </tr>
+
+                                <tr class="table_row">
+                                    <td> Namibia </td>
+                                    <td>Sunday, 7 September 2014: 02:00 forward to 03:00</td>
+                                    <td>WAT (UTC+1 hour)</td>
+                                    <td>WAST (UTC+2 hours)</td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </fieldset>
+
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script type='text/javascript'>
+    
+</script>
+{% endblock main_js %}
