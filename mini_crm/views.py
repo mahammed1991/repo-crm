@@ -529,7 +529,7 @@ def lead_owner_avalibility(request):
             current_lead.save()
 
             
-            if request.GET.get('send_mail', 'False') == 'True':
+            if request.GET.get('send_mail') == 'True':
                 if lead_type in ['WPP','Bolt Build','WPP - Nomination']:
                     assigning_lead_info = WPPLeads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_time_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
                     assigning_lead_info['process'] = 'WPP'                
