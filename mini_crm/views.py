@@ -7,8 +7,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
 from django.core.urlresolvers import reverse
-
-#import datetime
+from django.core.exceptions import PermissionDenied
 import json
 from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory, Language, Team
 from datetime import datetime,timedelta
@@ -16,7 +15,6 @@ from collections import OrderedDict
 from leads.models import Location, Timezone
 import pytz 
 from reports.models import Region
-
 from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.db.models import Q
@@ -24,8 +22,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
-#import datetime
-
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -612,7 +608,7 @@ def delete_lead(request, lid, ctype):
             
         return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
     else:
-        raise Http404
+        raise PermissionDenied()
 @csrf_exempt
 def clone_lead(request):
     process_type = request.POST.get('process_type')
