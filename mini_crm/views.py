@@ -733,7 +733,6 @@ def update_lead(request):
     resp = {}
     if request.method == 'POST':
         data = ast.literal_eval(json.dumps(request.POST))
-        print data
         lead_fields = settings.LEAD_FIELDS
         lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
         lead_dict = {}
@@ -750,28 +749,27 @@ def update_lead(request):
         try:
             lead = Leads.objects.get(sf_lead_id=lead_dict['sf_lead_id'])
             
-            if data['installation_date']:
+            if data.get('installation_date'):
                 temp_date_of_installation = data['installation_date'].replace('.','').replace('-','/')           
                 lead.date_of_installation = datetime.strptime(str(temp_date_of_installation), '%d/%m/%Y %I:%M %p')
-            if data['appointment_date_on']:
+            if data.get('appointment_date_on'):
                 temp_appointment_date_on = data['appointment_date_on'].replace('.','').replace('-','/')           
                 lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
-            if data['rescheduled_date_on']:
+            if data.get('rescheduled_date_on'):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
                 lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
             
             lead.save()
             lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
-            
             try:
                 temp = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id'))
                 lead_detail = TagLeadDetail.objects.get(lead_id=temp)
 
-                if data['qc_on_date']:
+                if data.get('qc_on_date'):
                     temp_qc_on = data['qc_on_date'].replace('.','').replace('-','/')           
                     lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
                 
-                if data['last_contacted_date']:
+                if data.get('last_contacted_date'):
                     temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')           
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
                 
