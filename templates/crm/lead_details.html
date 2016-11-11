@@ -1351,36 +1351,30 @@ function get_lead_history(){
               changed = ' changed '
               edited_fields = Object.keys(edited)
               if (edited){
+                chg_tbl = changed + '<table border="1" class="lead-history-tbl"><tr><th>Field</th><th>Previous Value</th><th>New Value</th></tr>'
                 for(var j=0;j<edited_fields.length;j++){
                   field = edited_fields[j]
                   if (field == "lead_status"){
-                    chg = ' Lead Status from '
+                    chg = 'Lead Status'
                   }
                   if (field == "team"){
-                    chg = ' Team from ' 
+                    chg = 'Team' 
                   }
                   if (field == "qc_on"){
-                    chg = " QC'ed on from "
+                    chg = "QC'ed on"
 
                   }
                   if (field == "qc_by"){
-                    chg = " QC'ed by from "
+                    chg = "QC'ed by"
 
                   }
                   if (field == "qc_comments"){
-                    chg = ' QC comments from '
+                    chg = 'QC comments'
 
                   }
-                  add_by = ','
-                  if (edited_fields.length == 1 && edited_fields.indexOf(field) == 0 || edited_fields[edited_fields.length-1] == field){
-                    add_by = '.'
-                  }
-                  if (edited_fields.length > 1 && edited_fields[edited_fields.length-2] == field){
-                    add_by = ' and'
-                  }
-                  changed = changed + chg + edited[field][0] +  ' to ' + edited[field][1] + add_by
+                  chg_tbl = chg_tbl + '<tr><td>' + chg +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
                 }
-                changed  = changed + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'                 
+                changed  = chg_tbl + "</table></p><span class='post-time'>"+ data[i]['created_date'] +'</span>' 
               }
             }
             else if(action_type == 'image'){
@@ -1389,7 +1383,7 @@ function get_lead_history(){
             else{
               changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
             }
-            $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='col-lg-1 col-md-1 col-sm-1'><a href='#' class='trash'><i class='fa fa-trash-o' aria-hidden='true'></i></a></div> <div class='clearfix'></div><div class='margin-top-20'></div>")
+            $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='clearfix'></div><div class='margin-top-20'></div>")
           }
         }
       }
