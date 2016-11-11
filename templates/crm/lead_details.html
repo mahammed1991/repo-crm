@@ -45,10 +45,12 @@
                                             <li>
                                               <a href="#" id="edit-lead">Edit </a>
                                               <a href="#" id="save-lead" style="display:none;">Save </a>
-                                            </li>             
+                                            </li>  
+                                            {% if manager %}           
                                             <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
                                             <!-- <li><a href="#">Clone</a></li> -->
                                             <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
+                                            {% endif %}
                                         </ul>
                                     </div>
                                 </div>
@@ -86,9 +88,9 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Status  </td>
-                                        <td class="table-right" id="lead-status">{{ lead.lead_status }}</td>
+                                        <td class="table-right" id="lead-status"><span name="lead_status">{{ lead.lead_status }}</span></td>
                                         <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right" id="lead-sub-status">{{ lead.lead_sub_status }}</td>
+                                        <td class="table-right" id="lead-sub-status"><span name="lead_sub_status">{{ lead.lead_sub_status }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Team</td>
@@ -98,9 +100,9 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Date of installation</td>
-                                        <td class="table-right edit-date" id="install-date">{{ lead.date_of_installation|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="installation_date">{{ lead.date_of_installation|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right" id="pls-sub-status">{{ lead_detail.pla_sub_status }}</td>
+                                        <td class="table-right" id="pls-sub-status"><span name="pla_sub_status">{{ lead_detail.pla_sub_status }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Type</td>
@@ -110,15 +112,15 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Implemented Code is</td>
-                                        <td class="table-right" id="implemented-code">{{ lead_detail.implemented_code_is }}</td>
+                                        <td class="table-right" id="implemented-code"><span name="implemented_code_is">{{ lead_detail.implemented_code_is }}</span></td>
                                         <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead.dead_lead_date|date:'d-m-Y g:i a' }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">LastCallTime</td>
-                                        <td class="table-right edit-date" id="last-call">{{ lead_detail.last_contacted_on|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="last_contacted_date">{{ lead_detail.last_contacted_on|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">Dynamic Variable Set</td>
-                                        <td class="table-right" id="dynamic-variable-set">{{ lead.dynamic_variable_set }}</td>
+                                        <td class="table-right" id="dynamic-variable-set"><span name="dynamic_variable_set">{{ lead.dynamic_variable_set }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">No of Dials</td>
@@ -272,28 +274,28 @@
                                        
                                        <tr>
                                         <td class="table-left">Appointment Date</td>
-                                        <td class="table-right edit-date" id="appointment-date">{{ lead.appointment_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="appointment_date_on">{{ lead.appointment_date|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">Tag via GTM</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Appointment Time in IST</td>
-                                        <td class="table-right edit-date" id="appointment-date-ist">{{ lead.appointment_date_in_ist|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="appointment_date_ist_on">{{ lead.appointment_date_in_ist|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">Appointment Time in PST</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Rescheduled Appointments</td>
-                                        <td class="table-right edit-date" id="rescheduled-date">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</td>
                                         <td class="table-left">Service Segment</td>
                                         <td class="table-right">{{ lead_detail.service_segment }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Reschedule Time in IST</td>
-                                        <td class="table-right edit-date" id="rescheduled-date-ist">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">RLSA Auth Approval</td>
                                         <td class="table-right">{{ lead_detail.rlsa_auth_approval }}</td>
                                        </tr>
@@ -882,13 +884,13 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead QC'ed on</td>
-                                        <td class="table-right edit-date" id="qcOn">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left qstn">Spend (Cost from creation<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right" id="spend-cfc"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead QC'ed by</td>
-                                        <td class="table-right" id="qc-by">{{ lead_detail.qc_by }}</td>
+                                        <td class="table-right" id="qc-by"><span name="qc_by">{{ lead_detail.qc_by }}</span></td>
                                         <td class="table-left">Reason For Conversion Not Reporting</td>
                                         <td class="table-right"></td>
                                        </tr>
@@ -1158,46 +1160,46 @@ $('#edit-lead').on('click',function() {
         $(this).html(tarea);
     });
 
-
-    var curr_status = $("#lead-status").html();
-    $("#lead-status").html("<select id='status' style='width:200px;'></select>");
-    assignDropDownValues(curr_status,lead_status,'#lead-status')
-    
-
-    var curr_team = $("#team").html();
-    $("#team").html("<select id='team' style='width:200px;'></select>");
-    assignDropDownValues(curr_team,team,"#team")
-
-
-    var curr_prole = $("#primary-role").html();
-    $("#primary-role").html("<select id='pRole' style='width:200px;'></select>");
-    assignDropDownValues(curr_prole,primary_role,"#primary-role")
-
-
-    var curr_language = $("#language").html();
-    $("#language").html("<select id='lang' style='width:200px;'></select>");
-    assignDropDownValues(curr_language,language,'#language')
-    
-
-    var qc_by_list = ["Vishal Kumar Jha","Anto Santosh","Raphael Martin","Joshua Ajay Stanislaus","Varun B","Lohith BP","Saurabh Agarwal"];
-    var curr_qc_by = $('#qc-by').html();
-    $('#qc-by').html('<select id="qcBy" style="width:200px;"></select>');
-    assignDropDownValues(curr_qc_by,qc_by_list,'#qc-by')
-   
-
-    var spend_cfc_list = ["$0", "<= $2,000", "<=$5,000", "<=$10,000", "<=$20,000", ">$20,000"];
-    var curr_cfc = $('#spend-cfc').html();
-    $('#spend-cfc').html('<select id="spendCfc" style="width:200px;"></select>');
-    assignDropDownValues(curr_cfc,spend_cfc_list,'#spend-cfc')       
-    
-
-    $('td.edit-date').each(function(){
+    $('td.edit-date span').each(function(){
 
         var html = $(this).html();
         var input = $('<input type="text" class="editdateinput" style="width:200px;"/>');
         input.val(html);
         $(this).html(input);
     });
+
+
+    var curr_status = $("#lead-status span").html();
+    $("#lead-status span").html("<select id='status' style='width:200px;'></select>");
+    assignDropDownValues(curr_status,lead_status,'#lead-status span')
+    
+
+    var curr_team = $("#team span").html();
+    $("#team span").html("<select id='team' style='width:200px;'></select>");
+    assignDropDownValues(curr_team,team,"#team span")
+
+
+    var curr_prole = $("#primary-role span").html();
+    $("#primary-role span").html("<select id='pRole' style='width:200px;'></select>");
+    assignDropDownValues(curr_prole,primary_role,"#primary-role span")
+
+
+    var curr_language = $("#language span").html();
+    $("#language span").html("<select id='lang' style='width:200px;'></select>");
+    assignDropDownValues(curr_language,language,'#language span')
+    
+
+    var qc_by_list = ["Vishal Kumar Jha","Anto Santosh","Raphael Martin","Joshua Ajay Stanislaus","Varun B","Lohith BP","Saurabh Agarwal"];
+    var curr_qc_by = $('#qc-by span').html();
+    $('#qc-by span').html('<select id="qcBy" style="width:200px;"></select>');
+    assignDropDownValues(curr_qc_by,qc_by_list,'#qc-by span')
+   
+
+    var spend_cfc_list = ["$0", "<= $2,000", "<=$5,000", "<=$10,000", "<=$20,000", ">$20,000"];
+    var curr_cfc = $('#spend-cfc span').html();
+    $('#spend-cfc span').html('<select id="spendCfc" style="width:200px;"></select>');
+    assignDropDownValues(curr_cfc,spend_cfc_list,'#spend-cfc span')       
+    
 
     function assignDropDownValues(curr_val,val_list,doc_ele_id){
       $(doc_ele_id + " select").append("<option value='None'>--None--</option>");
@@ -1215,21 +1217,21 @@ $('#edit-lead').on('click',function() {
     }
 
     var pla_sub_status = {{ pla_sub_status|safe }};
-    var curr_pla_sub_status = $('#pls-sub-status').html();
-    $('#pls-sub-status').html('<select id="plaSubStatus" style="width:200px;"></select>');
-    assignDropDownValues(curr_pla_sub_status,pla_sub_status,'#pls-sub-status')     
+    var curr_pla_sub_status = $('#pls-sub-status span').html();
+    $('#pls-sub-status span').html('<select id="plaSubStatus" style="width:200px;"></select>');
+    assignDropDownValues(curr_pla_sub_status,pla_sub_status,'#pls-sub-status span')     
 
 
     var dynamic_variable_set = ['Yes','No','Not Applicable'];
-    var curr_dynamic_variable_set = $('#dynamic-variable-set').html();
-    $('#dynamic-variable-set').html('<select id="dynamicariableSet" style="width:200px;"></select>');
-    assignDropDownValues(curr_dynamic_variable_set,dynamic_variable_set,'#dynamic-variable-set')  
+    var curr_dynamic_variable_set = $('#dynamic-variable-set span').html();
+    $('#dynamic-variable-set span').html('<select id="dynamicariableSet" style="width:200px;"></select>');
+    assignDropDownValues(curr_dynamic_variable_set,dynamic_variable_set,'#dynamic-variable-set span')  
     
 
     var implemented_code_is = {{ implemented_code_list|safe }};
-    var curr_implemented_code = $('#implemented-code').html();
-    $('#implemented-code').html('<select id="implementedCode" style="width:200px;"></select>');
-    assignDropDownValues(curr_implemented_code,implemented_code_is,'#implemented-code')        
+    var curr_implemented_code = $('#implemented-code span').html();
+    $('#implemented-code span').html('<select id="implementedCode" style="width:200px;"></select>');
+    assignDropDownValues(curr_implemented_code,implemented_code_is,'#implemented-code span')        
 
 
     getLeadSubStatus(curr_status,'{{ ctype }}');
@@ -1247,32 +1249,14 @@ $('#edit-lead').on('click',function() {
     
 });
 
+
+
   $('#save-lead').click(function(){
     var temp = {};
     $('.edited').each(function(){
       temp[$(this).attr('name')] = $(this).val();   
     })
     temp['sf_lead_id']= $('#sf-id').html();
-    temp['lead_status'] = $('#status option:selected').val();
-    temp['lead_sub_status'] = $('#sub-status option:selected').val();
-
-    //dropdown
-    temp['team'] = $('#team option:selected').val();
-    temp['language'] = $('#lang option:selected').val();
-    temp['primary_contact_role'] = $('#pRole option:selected').val();
-    temp['implemented_code_is'] = $('#implementedCode option:selected').val();
-    temp['pla_sub_status'] = $('#plaSubStatus option:selected').val();
-    temp['qc_by'] = $('#qcBy option:selected').val();
-
-    //dates
-    temp['installation_date'] = $('#install-date input').val();
-    temp['appointment_date_on'] = $('#appointment-date input').val();
-    temp['appointment_date_ist_on'] = $('#appointment-date-ist input').val();
-    temp['rescheduled_date_on'] = $('#rescheduled-date input').val();
-    temp['rescheduled_date_ist_on'] = $('#rescheduled-date-ist input').val();
-
-    temp['qc_on_date'] = $('#qcOn input').val();
-    temp['last_contacted_date'] = $('#last-call input').val();
   
     var valid = true;
     if($('#sub-status option:selected').val() == 'None'){
@@ -1546,24 +1530,24 @@ function cloneLead(){
         dataType: "json",
         success: function(data) {
                 if(data['success'] && data['lead_sub_status']){
-                  var sub_status = $('#lead-sub-status').html();
-                  $("#lead-sub-status").html("<select id='sub-status' style='width:200px;'></select>");
-                  $("#lead-sub-status select").append("<option value='None'>--None--</option>");
+                  var sub_status = $('#lead-sub-status span').text();
+                  $("#lead-sub-status span").html("<select id='sub-status' style='width:200px;'></select>");
+                  $("#lead-sub-status span select").append("<option value='None'>--None--</option>");
                   for(var i=0;i< data['lead_sub_status'].length; i++){
                     if(sub_status == 'None'){
-                      $("#lead-sub-status select option[value='--None--']").prop('selected',true);
+                      $("#lead-sub-status span select option[value='--None--']").prop('selected',true);
                     }
                     if(sub_status ==  data['lead_sub_status'][i]){
-                      $("#lead-sub-status select").append("<option selected>"+ data['lead_sub_status'][i] +"</option>");
+                      $("#lead-sub-status span select").append("<option selected>"+ data['lead_sub_status'][i] +"</option>");
                     }
                     else{
-                      $("#lead-sub-status select").append("<option>"+ data['lead_sub_status'][i] +"</option>");
+                      $("#lead-sub-status span select").append("<option>"+ data['lead_sub_status'][i] +"</option>");
                     }
                   }
 
                 }
                 else{
-                  $('#lead-sub-status').html('');
+                  $('#lead-sub-status span').html('');
                 }
               },
               error: function(data){
@@ -1574,23 +1558,56 @@ function cloneLead(){
 
 
 
-    $(document).on('change','#lead-status select',function(){
+    $(document).on('change','#lead-status span select',function(){
       var curr_status = $(this).val();
       var type = '{{ ctype }}';
       getLeadSubStatus(curr_status,'{{ ctype }}');
     })
 
+    var prev_val = '';
+    var pres_val = '';
+
+    function valCompare(old_val,new_val,ele){
+      if(old_val != new_val){
+        $(ele).addClass('edited');
+      }
+      prev_val = '';
+      pres_val = '';
+    }
+
     $(document).on('focusin','input',function(){
-      $(this).addClass('edited');
+      prev_val = $(this).val();
       var val = $(this).parent().attr('name');
       $(this).attr('name',val);
     });
 
+    $(document).on('focusout','input',function(){
+      pres_val = $(this).val();
+      valCompare(prev_val,pres_val,this);
+    });
+
     $(document).on('focusin','textarea',function(){
-      $(this).addClass('edited');
+      prev_val = $(this).val();
       var val = $(this).parent().attr('name');
       $(this).attr('name',val);
     });
+
+    $(document).on('focusout','textarea',function(){
+      pres_val = $(this).val();
+      valCompare(prev_val,pres_val,this);
+    });
+
+    $(document).on('focusin','select',function(){
+      prev_val = $(this).val();
+      var val = $(this).parent().attr('name');
+      $(this).attr('name',val);
+    });
+
+    $(document).on('focusout','select',function(){
+      pres_val = $(this).val();
+      valCompare(prev_val,pres_val,this);
+    });
+
 
     </script>
     
