@@ -45,10 +45,12 @@
                                             <li>
                                               <a href="#" id="edit-lead">Edit </a>
                                               <a href="#" id="save-lead" style="display:none;">Save </a>
-                                            </li>             
+                                            </li>  
+                                            {% if manager %}           
                                             <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
                                             <!-- <li><a href="#">Clone</a></li> -->
                                             <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
+                                            {% endif %}
                                         </ul>
                                     </div>
                                 </div>
@@ -1273,7 +1275,6 @@ $('#edit-lead').on('click',function() {
 
     temp['qc_on_date'] = $('#qcOn input').val();
     temp['last_contacted_date'] = $('#last-call input').val();
-  
     var valid = true;
     if($('#sub-status option:selected').val() == 'None'){
       valid = false;
