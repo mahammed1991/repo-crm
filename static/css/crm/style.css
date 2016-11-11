@@ -200,6 +200,9 @@ a.accordion-head span{ background:#f2f2f2; border:1px solid #cdcdcd; border-radi
 .search-result .table>thead>tr>th{ color:#4d7dbe; font-weight:600; padding:0px 5px; border-bottom:1px solid #fff}
 .search-result h3{ font-size:26px; font-weight:600; color:#e24136;  margin-bottom:20px }
 .img-center img{ margin:0 auto; display:block}
+.lead-history-tbl { border:1px solid black; margin:10px 0px 0px}
+.lead-history-tbl th,td{ border:1px solid black; text-align:center;}
+.lead-history-tbl th{ font-weight:bold;}
 /*Responsive Start*/
 @media only screen and (min-width: 992px) and (max-width: 1219px) {
 	
