@@ -212,7 +212,10 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Use for generating reports
 # lead status should be this order
 LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active',
-               'Implemented', 'ON CALL', 'Pending QC - WIN', 'Pending QC - In Active', 'Rework Required']
+               'Implemented', 'ON CALL', 'Pending QC - WIN', 'Pending QC - In Active',
+               'Rework Required - In Active','Pending QC - Dead Lead','Rework Fixed - Win',
+               'Rework Fixed - In Active']
+
 
 WPP_LEAD_STATUS = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation','07. Self Development']
 
@@ -474,29 +477,29 @@ LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Design Rework Required"] = ["D
 LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Delivered"] = ["Delivered"]
 LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Rework Required"] = ["Rework Required"]
 
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"] = OrderedDict()
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["In Queue"] = ["In Queue"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["ON CALL"] = ["ON CALL"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back",
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"] = OrderedDict()
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["In Queue"] = ["In Queue"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["ON CALL"] = ["ON CALL"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back",
                            "AC - Phone rings but No Answer"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["In Progress"] = ["IP - Account Suspended", "IP - Advertiser at Work", "IP - Advertiser Unreachable",
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["In Progress"] = ["IP - Account Suspended", "IP - Advertiser at Work", "IP - Advertiser Unreachable",
                     "IP - Awaiting Impressions", "IP - Campaign Paused", "IP - Data Quality Errors",
                     "IP - Installing an Extension/Creating a Landing Page", "IP - No Admin Access",
                     "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser",
                     "IP - Waiting for website verification"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Implemented"] = ["Implemented"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Pending QC - In Active"] = [
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Implemented"] = ["Implemented"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Pending QC - In Active"] = [
         "DL - Account Suspended post Regalix ImplementationDL - Account suspended when the lead was submitted",
         "DL - Already Active", "DL - Campaign Paused", "DL - Invalid contact Details",
         "DL - Lack of time/resources", "DL - No access / No Website Credentials", "DL - No response",
         "DL - Not Interested", "DL - Policy Issues", "DL - Redesigning Website", "DL - Technically unfeasible",
         "DL - Troubleshooting"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Pending QC - WIN/Implemented"] = ["IM - WIN (Impressions Received)", "IM - WIN > Troubleshooting (Complex)",
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Pending QC - WIN/Implemented"] = ["IM - WIN (Impressions Received)", "IM - WIN > Troubleshooting (Complex)",
                                      "IM - WIN - Troubleshooting(Basics)"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Required - Inactive"] = ["Rework Required - Inactive"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Fixed - Win"] = ["Rework Fixed - Win"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
-LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Inactive"] = ["Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Rework Required - Inactive"] = ["Rework Required - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Rework Fixed - Win"] = ["Rework Fixed - Win"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["ShoppingArgos"]["Inactive"] = ["Inactive"]
 
 PROCESS_TYPE_MAPPING = {
     "Picasso Audits" : ["Picasso", "BOLT"],
@@ -506,4 +509,43 @@ PROCESS_TYPE_MAPPING = {
     "Shopping Argos":["Project Argos- Feed Performance Optimization"], #Tag is anything other than RLSA and Shopping from leads table
 }
 
+LEAD_FIELDS = ['lead_owner_name','lead_owner_email','google_rep_name','google_rep_email',
+                'google_rep_manager_email','google_rep_manager_name','google_rep_location',
+                'sf_lead_id','lead_status','team','lead_sub_status','customer_id','first_name',
+                'last_name','phone','compamy','first_name_optional','last_name_optional',
+                'phone_optional','email_optional','country','time_zone','language',
+                'primary_contact_role','webmaster_phone','webmaster_name','webmaster_email',
+                'appointment_date','appointment_date_in_ist','rescheduled_appointment',
+                'rescheduled_appointment_in_ist','first_contacted_on',
+                'ecommerce','date_of_installation','regalix_comment','google_comment',
+                'eto_ldap','tat','gcss','no_of_calls_inbound','no_of_calls_outbound',
+                'emails_sent','emails_received','call_recordings','email_logs','dials','code_1',
+                'url_1','type_1','comment_1','user_list_id_1','rlsa_bid_adjustment_1',
+                'internale_cid_1','override_existing_bid_modifiers_1','campaign_id_1',
+                'code_2','url_2','type_2','comment_2','user_list_id_2','rlsa_bid_adjustment_2',
+                'internale_cid_2','override_existing_bid_modifiers_2','campaign_id_2','code_3',
+                'url_3','type_3','comment_3','user_list_id_3','rlsa_bid_adjustment_3',
+                'internale_cid_3','override_existing_bid_modifiers_3','campaign_id_3',
+                'code_4','url_4','type_4','comment_4','user_list_id_4','rlsa_bid_adjustment_4',
+                'internale_cid_4','override_existing_bid_modifiers_4','campaign_id_4',
+                'code_5','url_5','type_5','comment_5','user_list_id_5','rlsa_bid_adjustment_5',
+                'internale_cid_5','override_existing_bid_modifiers_5','campaign_id_5',
+                'feed_optimisation_status','feed_optimisation_sub_status','number_of_products',
+                'additional_description','area_tobe_improved','shopping_feed_link','business_type',
+                'authcase_id','additional_support_beyond_case']
 
+TAGLEAD_DETAILS_FIELDS = ['agency_name','agency_poc','agency_phone','agency_email','agency_bundle_number',
+                        'agency_service_case_id','qc_on','qc_by','qc_comments',
+                        'auth_email_sent','live_transfer','cms_platform','appointment_sub_status',
+                        'gcase_id','gcss_status','gcss_status_approved_by','mouse_control_taken',
+                        'mouse_control_approved_by','list_type','regalix_sme','lead_difficulty_level',
+                        'rlsa_tag_team_contacted','campaign_created_by_gsr','adwords_cid_submitted',
+                        'implemented_code_is','number_of_dails','pla_sub_status',
+                        'dynamic_variable_set','dead_lead_date','last_contacted_on','is_backup_taken',
+                        'tag_via_gtm','description','service_segment','rlsa_auth_approval',
+                        'mc_id','opt_in_percent','client_web_inventory','recommended_bid','recommended_budget',
+                        'sqo_sto_comments','secured_checkout','payment_gateway','recommended_mobile_bid_modifier',
+                        'shopping_polices_verified','type_of_policy_violation','shopping_troubleshoot_issue_type',
+                        'products_uploaded','campaign_id','feed_upload_method']
+
+PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back", "AC - Phone rings but No Answer", "DL - Account Suspended post Regalix Implementation", "DL - Account suspended when the lead was submitted.", "DL - Already Active", "DL - Campaign Paused", "DL - Invalid contact Details", "DL - Lack of time/resources", "DL - No access / No Website Credentials", "DL - No response", "DL - Not Interested", "DL - Policy Issues", "DL - Redesigning Website", "DL - Technically unfeasible", "DL - Troubleshooting", "IM - WIN (Impressions Received)", "IM - WIN > Troubleshooting (Complex)", "IM - WIN - Troubleshooting(Basics)", "IP - Account Suspended", "IP - Advertiser at Work", "IP - Advertiser Unreachable", "IP - Awaiting Impressions", "IP - Campaign Paused", "IP - Data Quality Errors", "IP - Installing an Extension/Creating a Landing Page", "IP - No Admin Access", "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser", "IP - Waiting for website verification"]
