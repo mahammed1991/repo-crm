@@ -18,7 +18,12 @@ WFM Home
   {% block content %}
   <body>
     <section class="top-margin wfm">
+
       <div class="container-fluid" style="max-width:100%;">
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
+        </div>
         <div class="white-section">
           <div class="blue-bg">
           <div id="delete_lead_msg"></div>
@@ -140,6 +145,12 @@ WFM Home
           populate_sub_status();
           
         }
+        var qp = window.location.href.split('?')
+        var qp = window.location.href.split('=')[1].split("&")
+        if(qp.length > 1){
+          $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
+          $("#clone-info").show(); 
+        }
         // LoadTheTableContent(true);
     });
     function GetStatus(){
@@ -185,10 +196,6 @@ WFM Home
         var c_id = getParameterByName('customer_id')
         process_name = $('#process').val()
         if(initial_load && ptype != null){
-          $("#delete_lead_msg").empty();
-          var successState = document.getElementById("delete_lead_msg");
-          successState.innerHTML = "<div class='alert alert-success'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Lead with CID " + c_id + " deleted sucessfully.<b> "  + "</b></div>";
           if(ptype === "ShoppingArgos") ptype  = "Shopping Argos";
           if(ptype === "PicassoAudits") ptype  = "Picasso Audits";
           $('#process').val(ptype)
