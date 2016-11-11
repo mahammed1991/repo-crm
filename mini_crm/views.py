@@ -747,7 +747,7 @@ def update_lead(request):
             resp['success'] = True
         except:
             resp['success'] = False
-    return HttpResponse(json.dumps(resp))
+    return HttpResponse(json.dumps(resp),content_type='application/json')
 
 @csrf_exempt
 def add_lead_comment(request):
