@@ -7,8 +7,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
 from django.core.urlresolvers import reverse
-
-#import datetime
+from django.core.exceptions import PermissionDenied
 import json
 from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory, Language, Team
 from datetime import datetime,timedelta
@@ -16,7 +15,6 @@ from collections import OrderedDict
 from leads.models import Location, Timezone
 import pytz 
 from reports.models import Region
-
 from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.db.models import Q
@@ -24,8 +22,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
-#import datetime
-
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -147,7 +143,7 @@ def crm_management(request):
             except Exception as e:
                 print e
 
-        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list)}
+        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list), 'manager':True}
         return render(request,'crm/manager_home.html',context)
 
     elif request.user.groups.filter(name='CRM-AGENT'):
@@ -482,7 +478,10 @@ def lead_details(request, lid, sf_lead_id, ctype):
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
 
-
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        manager = True
+    else:
+        manager = False
     return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
         'status':lead_status,'role':primary_role,
         'language':language_list,'team':team_list,
@@ -490,6 +489,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
         'comment':lead.regalix_comment,
         'pla_sub_status':pla_sub_status,
         'implemented_code_list':implemented_code_list,
+        'manager': manager,
         })
 
 
@@ -607,7 +607,8 @@ def delete_lead(request, lid, ctype):
             lead.delete()
             
         return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
-
+    else:
+        raise PermissionDenied()
 @csrf_exempt
 def clone_lead(request):
     process_type = request.POST.get('process_type')
@@ -733,7 +734,6 @@ def update_lead(request):
     resp = {}
     if request.method == 'POST':
         data = ast.literal_eval(json.dumps(request.POST))
-        print data
         lead_fields = settings.LEAD_FIELDS
         lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
         lead_dict = {}
@@ -750,28 +750,27 @@ def update_lead(request):
         try:
             lead = Leads.objects.get(sf_lead_id=lead_dict['sf_lead_id'])
             
-            if data['installation_date']:
+            if data.get('installation_date'):
                 temp_date_of_installation = data['installation_date'].replace('.','').replace('-','/')           
                 lead.date_of_installation = datetime.strptime(str(temp_date_of_installation), '%d/%m/%Y %I:%M %p')
-            if data['appointment_date_on']:
+            if data.get('appointment_date_on'):
                 temp_appointment_date_on = data['appointment_date_on'].replace('.','').replace('-','/')           
                 lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
-            if data['rescheduled_date_on']:
+            if data.get('rescheduled_date_on'):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
                 lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
             
             lead.save()
             lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
-            
             try:
                 temp = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id'))
                 lead_detail = TagLeadDetail.objects.get(lead_id=temp)
 
-                if data['qc_on_date']:
+                if data.get('qc_on_date'):
                     temp_qc_on = data['qc_on_date'].replace('.','').replace('-','/')           
                     lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
                 
-                if data['last_contacted_date']:
+                if data.get('last_contacted_date'):
                     temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')           
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
                 
