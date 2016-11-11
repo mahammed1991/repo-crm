@@ -147,7 +147,7 @@ def crm_management(request):
             except Exception as e:
                 print e
 
-        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list)}
+        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list), 'manager':True}
         return render(request,'crm/manager_home.html',context)
 
     elif request.user.groups.filter(name='CRM-AGENT'):
@@ -482,7 +482,10 @@ def lead_details(request, lid, sf_lead_id, ctype):
         lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 
 
-
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        manager = True
+    else:
+        manager = False
     return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
         'status':lead_status,'role':primary_role,
         'language':language_list,'team':team_list,
@@ -490,6 +493,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
         'comment':lead.regalix_comment,
         'pla_sub_status':pla_sub_status,
         'implemented_code_list':implemented_code_list,
+        'manager': manager,
         })
 
 
@@ -607,7 +611,8 @@ def delete_lead(request, lid, ctype):
             lead.delete()
             
         return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
-
+    else:
+        raise Http404
 @csrf_exempt
 def clone_lead(request):
     process_type = request.POST.get('process_type')
