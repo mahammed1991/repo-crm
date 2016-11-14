@@ -1,0 +1,314 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+WFM Home
+{% endblock title %}
+
+
+  <head>
+{% block main_css %}
+  <style type="text/css"></style>
+    <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+{% endblock main_css %}
+  </head>
+  {% block content %}
+  <body>
+    <section class="top-margin wfm">
+
+      <div class="container-fluid" style="max-width:100%;">
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
+        </div>
+        <div class="white-section">
+          <div class="blue-bg">
+          <div id="delete_lead_msg"></div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="arrow-box-blue">
+                  <div class="row">
+
+                    <div class="col-sm-6">
+                      <label for="exampleInputEmail1">Region</label>
+                        <select id="region" name="region" class="form-control bgicon" >
+                          
+                        </select>
+                    </div>
+
+                    <div class="col-sm-6">
+                      <label for="exampleInputEmail1">Process</label>
+                        <script type="text/javascript"> regions = "{{regions}}" </script>
+                        <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
+                        <select id="process" name="process" onchange="LoadTheTableContent(false);GetStatus();" class="form-control bgicon">
+                          <!-- <option value="process_default">Process</option> -->
+                        </select>
+                    </div> 
+
+                  </div>
+                </div>
+                  </div>
+              <div class="col-md-7">
+                <div class="blue-padding-20">
+                  <div class="row">
+
+                    <div class="col-sm-3">
+                      <label for="exampleInputEmail1">Fresh Appointment</label>
+                        <select id="appointment" name="appointment" onchange="" class="form-control bgicon" >
+                          <option>Fresh Appointment</option>
+                          <option>30 minutes</option>
+                          <option>1 hour</option>
+                          <option>Today</option>
+                          <option>Tomorrow</option>
+                          <option>This week</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-1 ">
+                      <p>OR</p>
+                    </div>
+
+                    <div class="col-sm-4">
+                      <label for="exampleInputEmail1">Status</label>
+                        <select id="status" name="status" onchange="" class="form-control bgicon" >
+                          <!-- <option value="status_default">Status</option> -->
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                      <label for="exampleInputEmail1">Sub Status</label>
+                        <select id="sub_status" name="sub_status" onchange="" class="form-control bgicon" >
+                          <!-- <option value="sub_status_default">Sub Status</option> -->
+                        </select> 
+                    </div>
+
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div class="padding-20 wfm-body-table" style="height: 450px;">
+          <table class="table table-bordered"> 
+            <thead>
+              <tr>
+                <th>CID </th> 
+                <th>Company</th> 
+                <th>Customer Name</th> 
+                <th>Created Date</th>
+                <th>Appointment time</th> 
+                <th>Phone No</th> 
+                <th>Additional Ph No</th> 
+                <th>Web Master No.</th> 
+                <th>Location</th> 
+              </tr>
+            </thead> 
+            <tbody id="leads_table_body"></tbody> 
+          </table>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/reports/jquery.min.js' %}"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        initial_load = true;
+        objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
+        objdata_process = Object.keys(JSON.parse(status_mapping.replace(/&quot;/g,'"')))
+        objdata_region = JSON.parse(regions.replace(/&quot;/g,'"'))
+        $('#region').append('<option value="all">All</option>')
+        for(i=0; i< objdata_region.length; i += 1){
+
+            option_region = '<option value="'+ objdata_region[i]['name'] +'">'+ objdata_region[i]['name'] +'</option>'
+            
+            $("#region").append(option_region); 
+        }
+
+        for(i=0; i< objdata_process.length; i += 1){
+            if (objdata_process[i] == "TAG"){
+                option_process = '<option selected="selected" value="'+ objdata_process[i] +'">'+ objdata_process[i] +'</option>'
+
+            }
+            else{
+                option_process = '<option value="'+ objdata_process[i] +'">'+ objdata_process[i] +'</option>'
+            }
+            $("#process").append(option_process); 
+        }
+        if ($("#process").val()){
+          GetStatus()
+          $("#status").val('In Queue')
+          populate_sub_status();
+          
+        }
+        var qp = window.location.href.split('?')
+        var qp = window.location.href.split('=')[1].split("&")
+        if(qp.length > 1){
+          $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
+          $("#clone-info").show(); 
+        }
+        // LoadTheTableContent(true);
+    });
+    function GetStatus(){
+      get_process = $("#process").val()
+      get_status = Object.keys(objdata[$("#process").val()])
+      $("#status").html('')
+      if (get_status.length){
+        for(i=0; i< get_status.length; i += 1){
+            
+              option_status = '<option value="'+ get_status[i] +'">'+ get_status[i] +'</option>'
+            
+            $("#status").append(option_status); 
+        }
+      }
+      populate_sub_status()
+    }
+
+    function populate_sub_status(){
+      process_name = $('#process').val()
+      status = $('#status').val()
+      $('#sub_status').html('')
+      lead_sub_status = objdata[process_name][status]
+      if (lead_sub_status.length){
+        for(var i=0;i<lead_sub_status.length;i++){
+          $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+        }
+      }
+      LoadTheTableContent(false);    
+    }
+    $('#region').on('change',function(){
+      LoadTheTableContent(false)
+    })
+    $('#status').on('change',function(){
+      populate_sub_status()
+    })
+
+    $('#sub_status').on('change',function(){
+      LoadTheTableContent(false);
+    })
+    function LoadTheTableContent(freshAppointment){
+        region = $('#region').val()
+        var ptype = getParameterByName('ptype')
+        var c_id = getParameterByName('customer_id')
+        process_name = $('#process').val()
+        if(initial_load && ptype != null){
+          if(ptype === "ShoppingArgos") ptype  = "Shopping Argos";
+          if(ptype === "PicassoAudits") ptype  = "Picasso Audits";
+          $('#process').val(ptype)
+          process_name = ptype
+        }
+        status = $('#status').val()
+        sub_status = $('#sub_status').val()
+        appointment = $('#appointment').val()
+        data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status}
+        
+        if(freshAppointment){
+          data = {'appointment': appointment, 'region':region, 'process':process_name}
+          $('#status').val('In Queue')
+          $('#sub_status').html('')
+          lead_sub_status = objdata[process_name][$('#status').val()]
+          for(var i=0;i<lead_sub_status.length;i++){
+            $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+          }
+          $('#sub_status').val('In Queue')
+          // $('#process').val('TAG')
+          // $('#region').val('all')
+        }
+        if (appointment != 'Fresh Appointment'){
+          data = {'appointment': appointment, 'region':region, 'process':process_name}
+        }
+
+        if (status != 'In Queue'){
+          $('#appointment').val('Fresh Appointment')
+        }
+
+        //data = {'process': $('#process').val()}
+        console.log(data)
+        $.ajax({
+            url: "/crm/all-leads/",
+            type: 'GET',
+            data: data,
+            dataType: "json",
+            success: function(data) {
+                LeadsDataTable(data)
+                initial_load = false;
+            },
+            error: function(xhr){
+                alert('Request Status: ' + xhr.status);
+            }
+        });
+    }
+
+    $('#appointment').on('change',function(){
+      appointment = $('#appointment').val()
+      if (appointment != 'Fresh Appointment'){
+        LoadTheTableContent(true);
+      }
+    })
+    appointment = $('#appointment').val()
+    if (appointment != 'Fresh Appointment'){
+        LoadTheTableContent(true);
+      }
+    function LeadsDataTable(data){
+      
+        $("#leads_table_body").html('')
+        tabledata = data['leads_list']
+        if(tabledata.length != 0){
+            for(i=0; i< tabledata.length; i += 1){
+                row = '<tr><td><a onclick="addURL(this)" href="/crm/lead-details/' + tabledata[i]['id'] + '/'+ tabledata[i]['sf_lead_id'] + '" target="_blank">'+ tabledata[i]['c_id'] + '</a></td>' +
+                '<td>' + tabledata[i]['company'] + '</td>' +
+                '<td>' + tabledata[i]['customer_name'] +'</td>'+
+                '<td>' + tabledata[i]['created_date'] +'</td>'+
+                '<td>' + tabledata[i]['appointment_time'] + '</td>'+
+                '<td>' + tabledata[i]['phone_number'] + '</td>'+
+                '<td>' + tabledata[i]['additional_phone_number'] + '</td>'+
+                '<td>' + tabledata[i]['web_master_number'] + '</td>'+
+                '<td>' + tabledata[i]['location'] + '</td>'
+
+                $("#leads_table_body").append(row)
+            }
+        }
+    }
+
+    function addURL(element)
+    {
+
+      var type = $('#process option:selected').text().replace(" ","");
+        $(element).attr('href', function() {
+          var url = this.href;
+          if(url.includes(type))
+          {
+            return this.href;
+          }
+          else{
+            return this.href + '/' + type;
+          }
+        });
+    }
+
+    function getParameterByName(name, url) {
+      if (!url) {
+        url = window.location.href;
+      }
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+
+    </script>
+    
+
+    
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    
+  </body>
+  {% endblock content %}
