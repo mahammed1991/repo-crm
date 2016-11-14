@@ -768,6 +768,22 @@ def update_lead(request):
             if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
                 lead.lead_sub_status = ''
 
+            # mail function on lead status change
+            if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
+                mail_subject = "Lead status has been changed"
+                mail_from = 'Lead Status Changed <google@regalix-inc.com>'
+                crm_managers_mails = User.objects.values_list('email').filter(groups__name='CRM-MANAGER')
+                mail_to = list()
+                for mail_id in crm_managers_mails:
+                    mail_to.append(mail_id)
+                bcc = set([])
+                attachments = list()
+                mail_body = get_template('leads/email_templates/lead_status_changed_mail.html').render(Context({
+                    'url':str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(lead.id)+"/"+str(lead.sf_lead_id)+"/TAG",
+                    'lead_status': data['lead_status'],
+                    'prev_lead_status':data['prev_lead_status']}))
+                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
             lead.save()
             lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
             try:
@@ -783,6 +799,7 @@ def update_lead(request):
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
                 
                 lead_detail.save()
+
                 lead_detail = TagLeadDetail.objects.filter(lead_id=temp).update(**lead_detail_dict)
             except Exception as e:
                 print e
