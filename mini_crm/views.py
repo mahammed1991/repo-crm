@@ -7,8 +7,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context
 from django.core.urlresolvers import reverse
-
-#import datetime
+from django.core.exceptions import PermissionDenied
 import json
 from leads.models import Leads, WPPLeads, PicassoLeads, TagLeadDetail, LeadHistory, Language, Team
 from datetime import datetime,timedelta
@@ -16,7 +15,6 @@ from collections import OrderedDict
 from leads.models import Location, Timezone
 import pytz 
 from reports.models import Region
-
 from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.db.models import Q
@@ -24,14 +22,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
-#import datetime
-
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 import uuid, os
 from lib.helpers import save_file
 import mimetypes
+
+from django.template.loader import get_template
+from lib.helpers import send_mail
 
 # Create your views here.
 @login_required
@@ -144,7 +143,7 @@ def crm_management(request):
             except Exception as e:
                 print e
 
-        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list)}
+        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list), 'manager':True}
         return render(request,'crm/manager_home.html',context)
 
     elif request.user.groups.filter(name='CRM-AGENT'):
@@ -448,33 +447,56 @@ def search_leads(request):
 def lead_details(request, lid, sf_lead_id, ctype):
     lead = None
     lead_detail = None
-    if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
-        lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        lead_status = settings.LEAD_STATUS
-        primary_role = ['Owner','Marketing','Webmaster']
-        language = Language.objects.filter(is_active=True)
-        team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
-        team_list = []
-        language_list = []
-        for i in language:
-            language_list.append(str(i.language_name))
-        for i in team:
-            team_list.append(str(i.team_name))
-            try:
-                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-            except:
-                lead_detail = None
+    lead_status = ''
+    primary_role = []
+    team_list = []
+    language_list = []
+    context = {}
+    try:
+        if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+            lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            lead_status = settings.LEAD_STATUS
+            primary_role = ['Owner','Marketing','Webmaster']
+            language = Language.objects.filter(is_active=True)
+            team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+            pla_sub_status = settings.PLA_SUB_STATUS
+            implemented_code_list = ['Different / Alternate','Same as specified by the Google rep']
+            team_list = []
+            language_list = []
+            for i in language:
+                language_list.append(str(i.language_name))
+            for i in team:
+                team_list.append(str(i.team_name))
+                try:
+                    lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+                except:
+                    lead_detail = TagLeadDetail()
+                    lead_detail.lead_id = lead
+                    lead_detail.save()
 
-    elif ctype == 'WPP':
-        lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        elif ctype == 'WPP':
+            lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        else:
+            lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        
+        context = {'lead':lead,'lead_detail':lead_detail,
+                'status':lead_status,'role':primary_role,
+                'language':language_list,'team':team_list,
+                'ctype':ctype,
+                'comment':lead.regalix_comment,
+                'pla_sub_status':pla_sub_status,
+                'implemented_code_list':implemented_code_list,
+                'success': True
+                }
+
+    except ObjectDoesNotExist:
+        context['success'] = False
+
+    if request.user.groups.filter(name='CRM-MANAGER'):
+        context['manager'] = True
     else:
-        lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-
-    return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
-        'status':lead_status,'role':primary_role,
-        'language':language_list,'team':team_list,
-        'ctype':ctype,
-        })
+        context['manager'] = False
+    return render(request,'crm/lead_details.html',context)
 
 
 @login_required
@@ -521,6 +543,36 @@ def lead_owner_avalibility(request):
             current_lead.lead_owner_name = assignee_name
             current_lead.lead_owner_email = lead_owner
             current_lead.save()
+
+            
+            if request.GET.get('send_mail') == 'True':
+                if lead_type in ['WPP','Bolt Build','WPP - Nomination']:
+                    assigning_lead_info = WPPLeads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_time_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
+                    assigning_lead_info['process'] = 'WPP'                
+                else:
+                    assigning_lead_info = Leads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_date_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
+                    assigning_lead_info['process'] = 'TAG'
+
+                assigning_lead_info['lead_url'] = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(assigning_lead_info['id'])+"/"+str(assigning_lead_info['sf_lead_id'])+"/"+str(assigning_lead_info['process'])
+
+                # Mail to assignee
+                mail_subject = "New Lead Assigned to you - "+str(assigning_lead_info['customer_id'])
+                mail_from = str(request.user.email)
+                mail_to = request.GET.get('lead_owner_email')
+                bcc = set([])
+                attachments = list()
+                mail_body = get_template('leads/email_templates/lead_assigning_mail.html').render(Context({'data':assigning_lead_info}))
+                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+                # Notification to manager
+                mail_subject = "You Assigned Lead - "+str(assigning_lead_info['customer_id'])+" to "+str(current_lead.lead_owner_name)
+                assigning_lead_info['assignee_name'] = str(current_lead.lead_owner_name)
+                mail_to = request.user.email
+                assigning_lead_info['manager'] =request.user.first_name + ' ' +request.user.last_name
+                mail_body = get_template('leads/email_templates/lead_assigning_mail.html').render(Context({'data':assigning_lead_info}))
+                send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
             resp['success'] = True
         else:
             resp['success'] = False   
@@ -543,23 +595,26 @@ def get_crm_agents_emails(request):
 def delete_lead(request, lid, ctype):
     if request.user.groups.filter(name='CRM-MANAGER'):
         if ctype == "WPP":
-            if WPPLeads.objects.all().count():
-                lead = WPPLeads.objects.get(id=lid)
-                lead.delete()
+            lead = WPPLeads.objects.get(id=lid)
+            lead_cid = lead.customer_id
+            lead.delete()
         elif ctype == "PicassoAudits":
-            if PicassoLeads.objects.all().count():
-                lead = PicassoLeads.objects.get(id=lid)
-                lead.delete()
+            lead = PicassoLeads.objects.get(id=lid)
+            lead_cid = lead.customer_id
+            lead.delete()
         elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
+            lead = TagLeadDetail.objects.filter(lead_id=lid)
+            if lead.count():
+                lead_cid = lead[0].lead_id.customer_id
+                lead.delete()
             
-            if TagLeadDetail.objects.all().count():
-                lead = TagLeadDetail.objects.get(lead_id=lid)
-                lead.delete()
-            if Leads.objects.all().count():
-                lead = Leads.objects.get(id=lid)
-                lead.delete()
-        return redirect(reverse("all-leads") + "?ptype=" + ctype)
-
+            lead = Leads.objects.get(id=lid)
+            lead_cid = lead.customer_id
+            lead.delete()
+            
+        return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
+    else:
+        raise PermissionDenied()
 @csrf_exempt
 def clone_lead(request):
     process_type = request.POST.get('process_type')
@@ -577,7 +632,7 @@ def clone_lead(request):
         obj.first_contacted_on = None
         obj.lead_sub_status = None
         obj.dials = 0
-        obj.created_date = datetime.datetime.now()
+        obj.created_date = datetime.now()
         obj.save()
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['Picasso', 'BOLT']:
@@ -590,7 +645,7 @@ def clone_lead(request):
         obj.lead_owner_email = 'skamat@regalix-inc.com'
         obj.regalix_comment = ""
         obj.additional_notes = ""
-        obj.created_date = datetime.datetime.now()
+        obj.created_date = datetime.now()
         obj.save()
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['TAG', 'Sopping', 'RLSA']:
@@ -607,7 +662,7 @@ def clone_lead(request):
         obj.comment_1 = ""
         obj.code_1 = ""
         obj.dials = 0
-        obj.created_date = datetime.datetime.now()
+        obj.created_date = datetime.now()
         obj.save()
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     else:
@@ -620,6 +675,10 @@ def save_image_file(request):
         file = request.FILES['file']
         original_file_name, file_extension = file.name.split(".")
         new_file_name = str(uuid.uuid4()) + "." + file_extension
+        
+        if not os.path.isdir(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+            
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
             save_file(file, file_path)
@@ -675,35 +734,104 @@ def download_image_file(request):
     response.write(file(image_path, "rb").read())
     return response
 
-
+import ast
 @csrf_exempt
 def update_lead(request):
     resp = {}
     if request.method == 'POST':
-        data = request.POST
+        data = ast.literal_eval(json.dumps(request.POST))
+        lead_fields = settings.LEAD_FIELDS
+        lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
+        lead_dict = {}
+        lead_detail_dict = {}
+
+        for key,val in data.items():
+            if key in lead_fields:
+                lead_dict[key] = val
+
+        for key,val in data.items():
+            if key in lead_details_fields:
+                lead_detail_dict[key] = val
+
         try:
-            lead = Leads.objects.get(id=data['id'])
-            lead.lead_status = data['lead_status']
-            lead.team = data['team']
+            lead = Leads.objects.get(sf_lead_id=lead_dict['sf_lead_id'])
+            
+            if data.get('installation_date'):
+                temp_date_of_installation = data['installation_date'].replace('.','').replace('-','/')           
+                lead.date_of_installation = datetime.strptime(str(temp_date_of_installation), '%d/%m/%Y %I:%M %p')
+            if data.get('appointment_date_on'):
+                temp_appointment_date_on = data['appointment_date_on'].replace('.','').replace('-','/')           
+                lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
+            if data.get('rescheduled_date_on'):
+                temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
+                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')       
+            if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
+                lead.lead_sub_status = ''
+
             lead.save()
-
+            lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
             try:
-                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-            except:
-                lead_detail = TagLeadDetail()
+                temp = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id'))
+                lead_detail = TagLeadDetail.objects.get(lead_id=temp)
 
-            lead_detail.lead_id = lead
-            if data['qc_on']:
-                temp_qc_on = data['qc_on']
-                temp_qc_on = temp_qc_on.replace('.','').replace('-','/')           
-                lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
-            if data['qc_by'] == '--None--':
-                lead_detail.qc_by = None
-            if data['qc_comments']:
-                lead_detail.qc_comments = data['qc_comments']
-            lead_detail.save()
+                if data.get('qc_on_date'):
+                    temp_qc_on = data['qc_on_date'].replace('.','').replace('-','/')           
+                    lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
+                
+                if data.get('last_contacted_date'):
+                    temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')           
+                    lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
+                
+                lead_detail.save()
+                lead_detail = TagLeadDetail.objects.filter(lead_id=temp).update(**lead_detail_dict)
+            except Exception as e:
+                print e
 
             resp['success'] = True
         except:
             resp['success'] = False
+    return HttpResponse(json.dumps(resp),content_type='application/json')
+
+@csrf_exempt
+def add_lead_comment(request):
+    # import ipdb; ipdb.set_trace()
+    resp = {}
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            lead = Leads.objects.get(id=data['id']) 
+            lead.regalix_comment += data['regalix_comment']
+            lead.save()
+            resp['success'] = True
+        except:
+            resp['success'] = False
+    return HttpResponse(json.dumps(resp))
+
+
+def get_lead_sub_status(request):
+    if request.method == 'GET':
+        ctype = request.GET.get('ctype')
+        lead_status = request.GET.get('lead_status')
+        lead_status = lead_status.replace('%20',' ')
+        lead_sub_status = None
+        if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+            if lead_status == 'Attempting Contact':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Attempting Contact"]
+            elif lead_status == 'In Progress':
+                lead_sub_status = settings.lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["In Progress"]
+            elif lead_status == 'Pending QC - In Active':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - In Active"]
+            elif lead_status == 'Pending QC - WIN':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - WIN/Implemented"] = ["Imp - 1 Conversion", "Imp - 1 Impression"]
+            elif lead_status == 'Rework Required - In Active':
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Rework Required - Inactive"]= ["Rework Required - Inactive"]
+            elif lead_status == "Rework Fixed - Win":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Rework Fixed - Win"] =["Rework Fixed - Win"]
+            elif lead_status == "Rework Fixed - In Active":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Rework Fixed - Inactive"] =["Rework Fixed - Inactive"]
+            elif lead_status == "In Active":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Inactive"] = ["Inactive"]
+            elif lead_status == "Pending QC - Dead Lead":
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - Dead Lead"] = ["Pending QC - Dead Lead"]
+    resp = {'success':True,'lead_sub_status':lead_sub_status}
     return HttpResponse(json.dumps(resp))
