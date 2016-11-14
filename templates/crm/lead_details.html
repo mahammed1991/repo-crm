@@ -20,11 +20,12 @@
   <body>
     <section class="top-margin wfm">
     <div id="fakeTextarea" style="display: none;"></div>
+    {% if success %}
       <div class=" container-fluid ">
-  <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
-      <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-      <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
-  </div>
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
+        </div>
                     <div class="white-section">
                         <!-- Nav tabs -->
                       <ul class="nav nav-tabs" role="tablist">
@@ -33,7 +34,6 @@
                         <div id="file_status"></div>
                         
                       </ul>
-                    
                       <!-- Tab panes -->
                       <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="lead">
@@ -1013,6 +1013,9 @@
 
                     </div>
                 </div><!--container-fluid-->
+                {% else %}
+                <div class=" container " style="background:white"><div class="center-align" style="margin-top:20%;margin-bottom:20%;text-align:center;font-size:16px;">Lead does not exist.</div></div>
+                {% endif %}
                 <div style="margin-top:80px;"></div> 
     </section>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -1250,6 +1253,7 @@ $('#edit-lead').on('click',function() {
 });
 
 
+  var prev_lead_status = '';
 
   $('#save-lead').click(function(){
     var temp = {};
@@ -1257,12 +1261,16 @@ $('#edit-lead').on('click',function() {
       temp[$(this).attr('name')] = $(this).val();   
     })
     temp['sf_lead_id']= $('#sf-id').html();
+    if(prev_lead_status != ''){
+      temp['prev_lead_status'] = prev_lead_status;
+    }
   
     var valid = true;
     if($('#sub-status option:selected').val() == 'None'){
       valid = false;
       $('#sub-status').css('border-color','red');
     }
+
 
     if(valid){
       $.ajax({
@@ -1304,11 +1312,11 @@ $('#edit-lead').on('click',function() {
     });
   });
 
-    $("#delete-lead").click(function(e){
-      e.preventDefault();
-      if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
-        location.href = $(this).data("href");
-    });
+  $("#delete-lead").click(function(e){
+    e.preventDefault();
+    if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
+      location.href = $(this).data("href");
+  });
 
   
 
@@ -1556,15 +1564,19 @@ function cloneLead(){
     function valCompare(old_val,new_val,ele){
       if(old_val != new_val){
         $(ele).addClass('edited');
+        var val = $(ele).parent().attr('name');
+        $(ele).attr('name',val);
+        if(val == 'lead_status'){
+          prev_lead_status = old_val;
+        }
       }
+
       prev_val = '';
       pres_val = '';
     }
 
     $(document).on('focusin','input',function(){
       prev_val = $(this).val();
-      var val = $(this).parent().attr('name');
-      $(this).attr('name',val);
     });
 
     $(document).on('focusout','input',function(){
@@ -1574,8 +1586,6 @@ function cloneLead(){
 
     $(document).on('focusin','textarea',function(){
       prev_val = $(this).val();
-      var val = $(this).parent().attr('name');
-      $(this).attr('name',val);
     });
 
     $(document).on('focusout','textarea',function(){
@@ -1585,15 +1595,12 @@ function cloneLead(){
 
     $(document).on('focusin','select',function(){
       prev_val = $(this).val();
-      var val = $(this).parent().attr('name');
-      $(this).attr('name',val);
     });
 
     $(document).on('focusout','select',function(){
       pres_val = $(this).val();
       valCompare(prev_val,pres_val,this);
     });
-
 
     </script>
     
