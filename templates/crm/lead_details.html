@@ -20,11 +20,12 @@
   <body>
     <section class="top-margin wfm">
     <div id="fakeTextarea" style="display: none;"></div>
+    {% if success %}
       <div class=" container-fluid ">
-  <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
-      <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-      <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
-  </div>
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
+        </div>
                     <div class="white-section">
                         <!-- Nav tabs -->
                       <ul class="nav nav-tabs" role="tablist">
@@ -33,7 +34,6 @@
                         <div id="file_status"></div>
                         
                       </ul>
-                    
                       <!-- Tab panes -->
                       <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="lead">
@@ -1013,6 +1013,9 @@
 
                     </div>
                 </div><!--container-fluid-->
+                {% else %}
+                <div class=" container " style="background:white"><div class="center-align" style="margin-top:20%;margin-bottom:20%;text-align:center;font-size:16px;">Lead does not exist.</div></div>
+                {% endif %}
                 <div style="margin-top:80px;"></div> 
     </section>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -1264,6 +1267,9 @@ $('#edit-lead').on('click',function() {
       $('#sub-status').css('border-color','red');
     }
 
+    var prev_lead_status = $('#lead-sub-status span input').val();
+    temp['prev_lead_status'] = prev_lead_status;
+
     if(valid){
       $.ajax({
         url: "/crm/update-lead/",
@@ -1304,11 +1310,11 @@ $('#edit-lead').on('click',function() {
     });
   });
 
-    $("#delete-lead").click(function(e){
-      e.preventDefault();
-      if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
-        location.href = $(this).data("href");
-    });
+  $("#delete-lead").click(function(e){
+    e.preventDefault();
+    if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
+      location.href = $(this).data("href");
+  });
 
   
 
