@@ -451,46 +451,52 @@ def lead_details(request, lid, sf_lead_id, ctype):
     primary_role = []
     team_list = []
     language_list = []
-    if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
-        lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        lead_status = settings.LEAD_STATUS
-        primary_role = ['Owner','Marketing','Webmaster']
-        language = Language.objects.filter(is_active=True)
-        team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
-        pla_sub_status = settings.PLA_SUB_STATUS
-        implemented_code_list = ['Different / Alternate','Same as specified by the Google rep']
-        team_list = []
-        language_list = []
-        for i in language:
-            language_list.append(str(i.language_name))
-        for i in team:
-            team_list.append(str(i.team_name))
-            try:
-                lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-            except:
-                lead_detail = TagLeadDetail()
-                lead_detail.lead_id = lead
-                lead_detail.save()
+    context = {}
+    try:
+        if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+            lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            lead_status = settings.LEAD_STATUS
+            primary_role = ['Owner','Marketing','Webmaster']
+            language = Language.objects.filter(is_active=True)
+            team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+            pla_sub_status = settings.PLA_SUB_STATUS
+            implemented_code_list = ['Different / Alternate','Same as specified by the Google rep']
+            team_list = []
+            language_list = []
+            for i in language:
+                language_list.append(str(i.language_name))
+            for i in team:
+                team_list.append(str(i.team_name))
+                try:
+                    lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+                except:
+                    lead_detail = TagLeadDetail()
+                    lead_detail.lead_id = lead
+                    lead_detail.save()
 
-    elif ctype == 'WPP':
-        lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-    else:
-        lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        elif ctype == 'WPP':
+            lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        else:
+            lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+        
+        context = {'lead':lead,'lead_detail':lead_detail,
+                'status':lead_status,'role':primary_role,
+                'language':language_list,'team':team_list,
+                'ctype':ctype,
+                'comment':lead.regalix_comment,
+                'pla_sub_status':pla_sub_status,
+                'implemented_code_list':implemented_code_list,
+                'success': True
+                }
 
+    except ObjectDoesNotExist:
+        context['success'] = False
 
     if request.user.groups.filter(name='CRM-MANAGER'):
-        manager = True
+        context['manager'] = True
     else:
-        manager = False
-    return render(request,'crm/lead_details.html',{'lead':lead,'lead_detail':lead_detail,
-        'status':lead_status,'role':primary_role,
-        'language':language_list,'team':team_list,
-        'ctype':ctype,
-        'comment':lead.regalix_comment,
-        'pla_sub_status':pla_sub_status,
-        'implemented_code_list':implemented_code_list,
-        'manager': manager,
-        })
+        context['manager'] = False
+    return render(request,'crm/lead_details.html',context)
 
 
 @login_required
@@ -758,8 +764,10 @@ def update_lead(request):
                 lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
             if data.get('rescheduled_date_on'):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
-                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
-            
+                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')       
+            if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
+                lead.lead_sub_status = ''
+
             lead.save()
             lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
             try:

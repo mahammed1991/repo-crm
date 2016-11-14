@@ -63,12 +63,10 @@ class SalesforceApi(object):
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com',
                                        password='portalsupport12345',
                                        security_token='enfTcpWGlwx6ObKwksx3Bt9I')
-
                 if not sf:
                     sf = CustomeSalesforce(username='google.tech@regalix-inc.com',
                                            password='portalsupport12345',
                                            security_token='enfTcpWGlwx6ObKwksx3Bt9I')
-
                 return sf
             except Exception, e:
                 logging.error("Error while connecting to Stage SFDC : %s " % e)
