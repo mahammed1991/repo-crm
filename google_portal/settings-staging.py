@@ -121,8 +121,11 @@ MINICRM_URL = 'http://minicrm.regalixdev.com'
 # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '124672404110-8i8oatin6gg2r2b8611o0qgmvmiuvlme.apps.googleusercontent.com'
 # SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'm9U_OqVgSYcLTQ8DFdjndo7B'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '306443257786-qav8khr2je2ocpftb4pg3pgjhc7h89e1.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'moS9p0suOUzkzAEWJGAsCWg9'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '306443257786-qav8khr2je2ocpftb4pg3pgjhc7h89e1.apps.googleusercontent.com'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'moS9p0suOUzkzAEWJGAsCWg9'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '728749236818-8112m0a95f3h7ijmvtcvtfc2os91nr0s.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'UYpYphH-_HOLdPIznP79PuTj'
 
 # Social Auth error handling
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = LOGIN_URL
