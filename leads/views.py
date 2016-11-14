@@ -57,6 +57,8 @@ from reports.report_services import ReportService, DownloadLeads
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+# Lead form should contain the Appointment Time in 3 formats - IST, Advertiser tz and appointment time in IST
+# TAG, SHOPPING, WPP lead forms will have appointments and add logic to
 
 
 # Create your views here.
