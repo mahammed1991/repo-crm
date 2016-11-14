@@ -1346,25 +1346,11 @@ function get_lead_history(){
                 chg_tbl = changed + '<table border="1" class="lead-history-tbl"><tr><th>Field</th><th>Previous Value</th><th>New Value</th></tr>'
                 for(var j=0;j<edited_fields.length;j++){
                   field = edited_fields[j]
-                  if (field == "lead_status"){
-                    chg = 'Lead Status'
+                  fieldText = $("[name="+edited_fields[j]+"]").parent().prev().text();
+                  if(fieldText.length < 1){
+                    fieldText = field;
                   }
-                  if (field == "team"){
-                    chg = 'Team' 
-                  }
-                  if (field == "qc_on"){
-                    chg = "QC'ed on"
-
-                  }
-                  if (field == "qc_by"){
-                    chg = "QC'ed by"
-
-                  }
-                  if (field == "qc_comments"){
-                    chg = 'QC comments'
-
-                  }
-                  chg_tbl = chg_tbl + '<tr><td>' + chg +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
+                  chg_tbl = chg_tbl + '<tr><td>' + fieldText +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
                 }
                 changed  = chg_tbl + "</table></p><span class='post-time'>"+ data[i]['created_date'] +'</span>' 
               }
