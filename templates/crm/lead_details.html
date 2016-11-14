@@ -1253,7 +1253,7 @@ $('#edit-lead').on('click',function() {
 });
 
 
-  var prev_lead_status = $('#lead-status span').text();
+  var prev_lead_status = '';
 
   $('#save-lead').click(function(){
     var temp = {};
@@ -1261,7 +1261,9 @@ $('#edit-lead').on('click',function() {
       temp[$(this).attr('name')] = $(this).val();   
     })
     temp['sf_lead_id']= $('#sf-id').html();
-    temp['prev_lead_status'] = prev_lead_status;
+    if(prev_lead_status != ''){
+      temp['prev_lead_status'] = prev_lead_status;
+    }
   
     var valid = true;
     if($('#sub-status option:selected').val() == 'None'){
@@ -1582,15 +1584,19 @@ function cloneLead(){
     function valCompare(old_val,new_val,ele){
       if(old_val != new_val){
         $(ele).addClass('edited');
+        var val = $(ele).parent().attr('name');
+        $(ele).attr('name',val);
+        if(val == 'lead_status'){
+          prev_lead_status = prev_val;
+        }
       }
+
       prev_val = '';
       pres_val = '';
     }
 
     $(document).on('focusin','input',function(){
       prev_val = $(this).val();
-      var val = $(this).parent().attr('name');
-      $(this).attr('name',val);
     });
 
     $(document).on('focusout','input',function(){
@@ -1600,8 +1606,6 @@ function cloneLead(){
 
     $(document).on('focusin','textarea',function(){
       prev_val = $(this).val();
-      var val = $(this).parent().attr('name');
-      $(this).attr('name',val);
     });
 
     $(document).on('focusout','textarea',function(){
@@ -1611,15 +1615,12 @@ function cloneLead(){
 
     $(document).on('focusin','select',function(){
       prev_val = $(this).val();
-      var val = $(this).parent().attr('name');
-      $(this).attr('name',val);
     });
 
     $(document).on('focusout','select',function(){
       pres_val = $(this).val();
       valCompare(prev_val,pres_val,this);
     });
-
 
     </script>
     
