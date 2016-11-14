@@ -24,7 +24,8 @@ DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com', 'wpp.regalixdev.com', 'picasso.regalixdev.com']
+ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com', 'wpp.regalixdev.com',
+                 'picasso.regalixdev.com', 'minicrm.regalixdev.com']
 
 ROOT_URLCONF = 'google_portal.urls'
 
@@ -113,6 +114,7 @@ LOGIN_ERROR_URL = '/auth/error'
 
 TAG_URL = 'http://gtrack.regalixdev.com'
 WPP_URL = 'http://wpp.regalixdev.com'
+MINICRM_URL = 'http://minicrm.regalixdev.com'
 
 # Social auth settings
 # APP settings
@@ -323,11 +325,11 @@ SFDC_FIELDS = "Id, LastName, FirstName, Name, Company, Phone, Email, Description
     Type_4__c, Type_5__c, Appointment_Date__c, qbdialer__Dials__c, Comment_1__c, E_commerce__c, Location__c, X1st_Contact_on__c,\
     Primary_Contact_Email__c, Google_Rep__c, Date_of_installation__c, Team__c, Type_Of_Installation__c, Lead_Implemented_Date_Time__c,\
     Rescheduled_Appointments__c, Time_Zone__c, Lead_Sub_Status__c, Q2_Manager__c, WPP_Lead_Status__c, WPP_Lead_Sub_Status__c, OwnerId, Reschedule_IST_Time__c,\
-    Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c,\
-    Stage_URL_Credentials__c, AB_Testing__c, GCSS_Status__c, Language__c,  All_Regalix_Comments__c, Picasso_Objective__c,\
-    Internal_CID_1__c, POD_Name__c, Picasso_Lead_Stage__c, PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c,\
-    Delivery_Date__c, IST_TIME_N__c, Googler_Corporate_Email__c, Picasso_Advertiser_Email__c, Googler_Cases_Alias__c, Picasso_Market_Served__c,\
-    Additional_LDAP__c, Feed_Optimization_Status__c, Feed_Optimization_Sub_Status__c, of_Products_on_the_feed__c, \
+    Reschedule_IST__c, Treatment_Type__c, Additional_Notes_if_any__c, Mockup_URL__c, Mockup_URL_Password__c, Stage_URL__c, Stage_URL_Credentials__c,\
+    AB_Testing__c, GCSS_Status__c, Language__c, All_Regalix_Comments__c, Picasso_Objective__c, Internal_CID_1__c, POD_Name__c, Picasso_Lead_Stage__c,\
+    PICASSO_build_eligible__c, Picasso_Reference_Id__c, Picasso_TAT__c, Delivery_Date__c, IST_TIME_N__c, Googler_Corporate_Email__c,\
+    Picasso_Advertiser_Email__c, Googler_Cases_Alias__c, Picasso_Market_Served__c, Additional_LDAP__c, \
+    Feed_Optimization_Status__c, Feed_Optimization_Sub_Status__c, of_Products_on_the_feed__c, \
     Anything_else_we_should_know__c, Area_in_need_of_most_improvement__c, Shopping_Feed_Link_G_Sheet__c, \
     Business_Type_Category__c, Authorization_Case_ID_for_Optimization__c"
 
@@ -372,3 +374,167 @@ LEAD_STATUS_MAPPING = {'Attempting Contact': 'Attempting Contact',
                        'ON CALL': 'In Queue',
                        'Pending QC - In Active': 'In Active',
                        'Pending QC - WIN': 'Implemented'}
+
+from collections import OrderedDict
+
+LEAD_STATUS_SUB_STATUS_MAPPING = OrderedDict()
+
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"] = OrderedDict()
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["In Queue"] = ["In Queue"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["ON CALL"] = ["ON CALL"],
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number",
+                                                               "AC - Left VM - Call Back",
+                                                               "AC - Mailbox Full/ No option to leave VM",
+                                                               "AC - Phone rings no answer",
+                                                               "AC - Rescheduled by Agent"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["In Progress"] = ["IP - Advertiser not Available (Travelling,On Holiday)",
+                                                        "IP - Advertiser Not Aware of the Appointment",
+                                                        "IP - Advertiser Not Aware of the requirements for Implementation",
+                                                        "IP - Awaiting Conversion value on ICS/ Screenshot from Advertiser",
+                                                        "IP - Code Sent",
+                                                        "IP - Code sent Advertiser implemented incorrectly",
+                                                        "IP - Communication via email",
+                                                        "IP - Multiple Rescheduled Appointment", "IP - No Web Access",
+                                                        "IP - Owner Approval For Implementation", "IP - Regalix Delay",
+                                                        "IP - Regalix FollowUp",
+                                                        "IP - Rescheduled by Advertiser", "IP - Webmaster Delay",
+                                                        "IP - Webmaster is not located in the Country",
+                                                        "IP - Website under-construction (For the Current quarter)",
+                                                        "IP - Advertiser To Implement the Code in 2-3 Weeks"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Implemented"] = ["Implemented"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Pending QC - In Active"] = ["IL - Code already implemented by the advertiser",
+                                                                   "IL - Code Sent but no response",
+                                                                   "IL - Invalid Contact Details", "IL - No Response",
+                                                                   "IL - Not Interested",
+                                                                   "IL - No Web Access",
+                                                                   "IL - Query / Troubleshooting - Provided Solution",
+                                                                   "IL - Redesigning Website",
+                                                                   "IL - Reschedule but No Response",
+                                                                   "IL - Technically Unfeasible",
+                                                                   "IL - Troubleshooting / Rejected",
+                                                                   "IL - Duplicate - Lead via gCase"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Pending QC - WIN/Implemented"] = ["Imp - 1 Conversion", "Imp - 1 Impression"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Rework Required - Inactive"] = ["Rework Required - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Rework Fixed - Win"] = ["Rework Fixed - Win"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Inactive"] = ["Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Pending QC - Dead Lead"] = ["Pending QC - Dead Lead"]
+
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"] = OrderedDict()
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["In Queue"] = ["In Queue"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["ON CALL"] = ["ON CALL"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number",
+                                                                    "AC - Left VM - Call Back",
+                                                                    "AC - Phone rings but No Answer"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["In Progress"] = ["IP - Account Suspended", "IP - Advertiser at Work",
+                                                             "IP - Advertiser Unreachable",
+                                                             "IP - Awaiting Impressions", "IP - Campaign Paused",
+                                                             "IP - Data Quality Errors",
+                                                             "IP - Installing an Extension/Creating a Landing Page",
+                                                             "IP - No Admin Access",
+                                                             "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser",
+                                                             "IP - Waiting for website verification"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Implemented"] = ["Implemented"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Pending QC - In Active"] = [
+    "DL - Account Suspended post Regalix ImplementationDL - Account suspended when the lead was submitted",
+    "DL - Already Active", "DL - Campaign Paused", "DL - Invalid contact Details",
+    "DL - Lack of time/resources", "DL - No access / No Website Credentials", "DL - No response",
+    "DL - Not Interested", "DL - Policy Issues", "DL - Redesigning Website", "DL - Technically unfeasible",
+    "DL - Troubleshooting"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Pending QC - WIN/Implemented"] = ["IM - WIN (Impressions Received)",
+                                                                              "IM - WIN > Troubleshooting (Complex)",
+                                                                              "IM - WIN - Troubleshooting(Basics)"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Rework Required - Inactive"] = ["Rework Required - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Rework Fixed - Win"] = ["Rework Fixed - Win"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping"]["Inactive"] = ["Inactive"]
+
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"] = OrderedDict()
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["In Queue"] = ["In Queue"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["ON CALL"] = ["ON CALL"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number",
+                                                                "AC - Left VM - Call Back",
+                                                                "AC - Mailbox Full/ No option to leave VM",
+                                                                "AC - Phone rings no answer",
+                                                                "AC - Rescheduled by Agent"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["In Progress"] = ["IP - Advertiser not Available (Travelling,On Holiday)",
+                                                         "IP - Advertiser Not Aware of the Appointment",
+                                                         "IP - Advertiser Not Aware of the requirements for Implementation",
+                                                         "IP - Awaiting Conversion value on ICS/ Screenshot from Advertiser",
+                                                         "IP - Code Sent",
+                                                         "IP - Code sent Advertiser implemented incorrectly",
+                                                         "IP - Communication via email",
+                                                         "IP - Multiple Rescheduled Appointment", "IP - No Web Access",
+                                                         "IP - Owner Approval For Implementation", "IP - Regalix Delay",
+                                                         "IP - Regalix FollowUp",
+                                                         "IP - Rescheduled by Advertiser", "IP - Webmaster Delay",
+                                                         "IP - Webmaster is not located in the Country",
+                                                         "IP - Website under-construction (For the Current quarter)",
+                                                         "IP - Advertiser To Implement the Code in 2-3 Weeks"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Implemented"] = ["Implemented"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Pending QC - In Active"] = ["IL - Code already implemented by the advertiser",
+                                                                    "IL - Code Sent but no response",
+                                                                    "IL - Invalid Contact Details", "IL - No Response",
+                                                                    "IL - Not Interested",
+                                                                    "IL - No Web Access",
+                                                                    "IL - Query / Troubleshooting - Provided Solution",
+                                                                    "IL - Redesigning Website",
+                                                                    "IL - Reschedule but No Response",
+                                                                    "IL - Technically Unfeasible",
+                                                                    "IL - Troubleshooting / Rejected",
+                                                                    "IL - Duplicate - Lead via gCase"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Pending QC - WIN/Implemented"] = ["Imp - 1 Conversion", "Imp - 1 Impression"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Rework Required - Inactive"] = ["Rework Required - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Rework Fixed - Win"] = ["Rework Fixed - Win"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["RLSA"]["Inactive"] = ["Inactive"]
+
+LEAD_STATUS_SUB_STATUS_MAPPING["WPP"] = OrderedDict()
+
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"] = OrderedDict()
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["In Queue"] = ["In Queue"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Case Categorization"] = ["Case Categorization"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Design Required"] = ["Design Required"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Mocks Ready"] = ["Mocks Ready"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Design Rework Required"] = ["Design Rework Required"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Delivered"] = ["Delivered"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Picasso Audits"]["Rework Required"] = ["Rework Required"]
+
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"] = OrderedDict()
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["In Queue"] = ["In Queue"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["ON CALL"] = ["ON CALL"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number",
+                                                                          "AC - Left VM - Call Back",
+                                                                          "AC - Phone rings but No Answer"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["In Progress"] = ["IP - Account Suspended", "IP - Advertiser at Work",
+                                                                   "IP - Advertiser Unreachable",
+                                                                   "IP - Awaiting Impressions", "IP - Campaign Paused",
+                                                                   "IP - Data Quality Errors",
+                                                                   "IP - Installing an Extension/Creating a Landing Page",
+                                                                   "IP - No Admin Access",
+                                                                   "IP - POLICY ISSUES",
+                                                                   "IP - Rescheduled by Advertiser",
+                                                                   "IP - Waiting for website verification"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Implemented"] = ["Implemented"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Pending QC - In Active"] = [
+    "DL - Account Suspended post Regalix ImplementationDL - Account suspended when the lead was submitted",
+    "DL - Already Active", "DL - Campaign Paused", "DL - Invalid contact Details",
+    "DL - Lack of time/resources", "DL - No access / No Website Credentials", "DL - No response",
+    "DL - Not Interested", "DL - Policy Issues", "DL - Redesigning Website", "DL - Technically unfeasible",
+    "DL - Troubleshooting"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Pending QC - WIN/Implemented"] = ["IM - WIN (Impressions Received)",
+                                                                                    "IM - WIN > Troubleshooting (Complex)",
+                                                                                    "IM - WIN - Troubleshooting(Basics)"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Required - Inactive"] = ["Rework Required - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Fixed - Win"] = ["Rework Fixed - Win"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Rework Fixed - Inactive"] = ["Rework Fixed - Inactive"]
+LEAD_STATUS_SUB_STATUS_MAPPING["Shopping Argos"]["Inactive"] = ["Inactive"]
+
+PROCESS_TYPE_MAPPING = {
+    "Picasso Audits": ["Picasso", "BOLT"],
+    "WPP": ["WPP", "WPP - Nomination"],
+    "RLSA": ["RLSA Bulk Implementation"],
+    "Shopping": ["Existing Datafeed Optimization", "Google Shopping Setup"],
+    "Shopping Argos": ["Project Argos- Feed Performance Optimization"],
+# Tag is anything other than RLSA and Shopping from leads table
+}
