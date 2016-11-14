@@ -740,6 +740,7 @@ def update_lead(request):
     resp = {}
     if request.method == 'POST':
         data = ast.literal_eval(json.dumps(request.POST))
+        print data
         lead_fields = settings.LEAD_FIELDS
         lead_details_fields = settings.TAGLEAD_DETAILS_FIELDS
         lead_dict = {}
@@ -764,8 +765,10 @@ def update_lead(request):
                 lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
             if data.get('rescheduled_date_on'):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
-                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
-            
+                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')       
+            if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
+                lead.lead_sub_status = ''
+
             lead.save()
             lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
             try:
