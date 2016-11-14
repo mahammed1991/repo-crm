@@ -1253,6 +1253,7 @@ $('#edit-lead').on('click',function() {
 });
 
 
+  var prev_lead_status = $('#lead-status span').text();
 
   $('#save-lead').click(function(){
     var temp = {};
@@ -1260,6 +1261,7 @@ $('#edit-lead').on('click',function() {
       temp[$(this).attr('name')] = $(this).val();   
     })
     temp['sf_lead_id']= $('#sf-id').html();
+    temp['prev_lead_status'] = prev_lead_status;
   
     var valid = true;
     if($('#sub-status option:selected').val() == 'None'){
@@ -1267,8 +1269,6 @@ $('#edit-lead').on('click',function() {
       $('#sub-status').css('border-color','red');
     }
 
-    var prev_lead_status = $('#lead-sub-status span input').val();
-    temp['prev_lead_status'] = prev_lead_status;
 
     if(valid){
       $.ajax({
