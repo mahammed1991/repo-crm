@@ -24,7 +24,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com', 'wpp.regalixdev.com',
+ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', '54.146.230.23', 'gtrack.regalixdev.com', 'wpp.regalixdev.com',
                  'picasso.regalixdev.com', 'minicrm.regalixdev.com']
 
 ROOT_URLCONF = 'google_portal.urls'
