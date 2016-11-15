@@ -31,6 +31,7 @@ import mimetypes
 
 from django.template.loader import get_template
 from lib.helpers import send_mail
+from django.forms.models import model_to_dict
 
 # Create your views here.
 @login_required
@@ -745,6 +746,11 @@ def update_lead(request):
         lead_dict = {}
         lead_detail_dict = {}
 
+        lh = LeadHistory()
+        #lh.lead_id = lead.id
+        edited_list = []
+        edited_dict = {}
+
         for key,val in data.items():
             if key in lead_fields:
                 lead_dict[key] = val
@@ -755,16 +761,24 @@ def update_lead(request):
 
         try:
             lead = Leads.objects.get(sf_lead_id=lead_dict['sf_lead_id'])
-            
+            lh.lead_id = lead.id
+            l_dict =  model_to_dict(lead)
+            for key,val in lead_dict.items():
+                if key != 'sf_lead_id':
+                    edited_dict[key] = [l_dict[key] if l_dict[key] != 'None' or l_dict[key] != 'null' else '',val]
+
             if data.get('installation_date'):
                 temp_date_of_installation = data['installation_date'].replace('.','').replace('-','/')           
+                edited_dict['installation_date'] = [datetime.strftime(lead.date_of_installation, '%d-%m-%Y %I:%M %p') if lead.date_of_installation else '',data['installation_date'].replace('.','').replace('/','-')]
                 lead.date_of_installation = datetime.strptime(str(temp_date_of_installation), '%d/%m/%Y %I:%M %p')
             if data.get('appointment_date_on'):
                 temp_appointment_date_on = data['appointment_date_on'].replace('.','').replace('-','/')           
+                edited_dict['appointment_date_on'] = [datetime.strftime(lead.appointment_date, '%d-%m-%Y %I:%M %p') if lead.appointment_date else '',data['appointment_date_on'].replace('.','').replace('/','-')]
                 lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
             if data.get('rescheduled_date_on'):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
-                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')       
+		edited_dict['rescheduled_date_on'] = [datetime.strftime(lead.rescheduled_appointment, '%d-%m-%Y %I:%M %p') if lead.rescheduled_appointment else '',data['rescheduled_date_on'].replace('.','').replace('/','-')]                
+		lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')       
             if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
                 lead.lead_sub_status = ''
 
@@ -790,13 +804,27 @@ def update_lead(request):
                 temp = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id'))
                 lead_detail = TagLeadDetail.objects.get(lead_id=temp)
 
+                l_detail_dict =  model_to_dict(lead_detail)
+
+                for key,val in lead_detail_dict.items():
+                    edited_dict[key] = [l_detail_dict[key] if l_detail_dict[key] != 'None' or l_detail_dict[key] != 'null' else '',val]
+
                 if data.get('qc_on_date'):
                     temp_qc_on = data['qc_on_date'].replace('.','').replace('-','/')           
+                    edited_dict['qc_on_date'] = [datetime.strftime(lead_detail.qc_on, '%d-%m-%Y %I:%M %p') if lead_detail.qc_on else '',data['qc_on_date'].replace('.','').replace('/','-')]
                     lead_detail.qc_on = datetime.strptime(str(temp_qc_on), '%d/%m/%Y %I:%M %p')
                 
                 if data.get('last_contacted_date'):
                     temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')           
+                    edited_dict['last_contacted_date'] = [datetime.strftime(lead.last_contacted_on, '%d-%m-%Y %I:%M %p') if lead_detail.last_contacted_on else '',data['last_contacted_date'].replace('.','').replace('/','-')]
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
+                
+                edited_list.append(edited_dict)
+                if edited_dict:
+                    lh.action_type = 'edited'
+                    lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+                    lh.modifications = json.dumps(edited_list)
+                    lh.save()
                 
                 lead_detail.save()
 
