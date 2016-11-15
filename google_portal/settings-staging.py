@@ -24,7 +24,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', 'gtrack.regalixdev.com', 'wpp.regalixdev.com',
+ALLOWED_HOSTS = ['10.250.2.21', '202.140.38.95', '54.146.230.23', 'gtrack.regalixdev.com', 'wpp.regalixdev.com',
                  'picasso.regalixdev.com', 'minicrm.regalixdev.com']
 
 ROOT_URLCONF = 'google_portal.urls'
@@ -121,8 +121,11 @@ MINICRM_URL = 'http://minicrm.regalixdev.com'
 # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '124672404110-8i8oatin6gg2r2b8611o0qgmvmiuvlme.apps.googleusercontent.com'
 # SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'm9U_OqVgSYcLTQ8DFdjndo7B'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '306443257786-qav8khr2je2ocpftb4pg3pgjhc7h89e1.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'moS9p0suOUzkzAEWJGAsCWg9'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '306443257786-qav8khr2je2ocpftb4pg3pgjhc7h89e1.apps.googleusercontent.com'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'moS9p0suOUzkzAEWJGAsCWg9'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '728749236818-43sk2l45sq49sdjblf1q5220h5srv00i.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '7Je3JESKO--oeR9v9xl1l41r'
 
 # Social Auth error handling
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = LOGIN_URL
