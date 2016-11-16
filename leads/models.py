@@ -146,19 +146,19 @@ class TagLeadDetail(models.Model):
 
     # New Mandatory Fields
     auth_email_sent = models.NullBooleanField(blank=True, null=True)
-    live_transfer = models.NullBooleanField(blank=True, null=True)
+    live_transfer = models.CharField(max_length=100, blank=True, null=True, default='')
     cms_platform = models.CharField(max_length=80, blank=True, null=True, default='')
     appointment_sub_status = models.CharField(max_length=100, blank=True, null=True, default='')
     gcase_id = models.CharField(max_length=80, blank=True, null=True, default='')
     gcss_status = models.CharField(max_length=80, blank=True, null=True, default='')
     gcss_status_approved_by = models.CharField(max_length=100, blank=True, null=True, default='')
-    mouse_control_taken = models.NullBooleanField(blank=True, null=True)
+    mouse_control_taken = models.CharField(max_length=100, blank=True, null=True, default='')
     mouse_control_approved_by = models.CharField(max_length=100, blank=True, null=True, default='')
     list_type = models.CharField(max_length=100, blank=True, null=True, default='')
     regalix_sme = models.CharField(max_length=100, blank=True, null=True, default='')
     lead_difficulty_level = models.CharField(max_length=100, blank=True, null=True, default='')
     rlsa_tag_team_contacted = models.CharField(max_length=100, blank=True, null=True, default='')
-    campaign_created_by_gsr = models.NullBooleanField(blank=True, null=True)
+    campaign_created_by_gsr = models.CharField(max_length=100, blank=True, null=True, default='')
     adwords_cid_submitted = models.CharField(max_length=100, blank=True, null=True, default='')
 
     # New Fields
