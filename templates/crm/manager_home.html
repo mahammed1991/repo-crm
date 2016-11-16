@@ -43,7 +43,7 @@ WFM Home
                       <label for="exampleInputEmail1">Process</label>
                         <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
-                        <select id="process" name="process" onchange="LoadTheTableContent(false);GetStatus();" class="form-control bgicon">
+                        <select id="process" name="process" onchange="GetStatus();" class="form-control bgicon">
                           <!-- <option value="process_default">Process</option> -->
                         </select>
                     </div> 
@@ -117,6 +117,7 @@ WFM Home
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script type="text/javascript">
     $(document).ready(function(){
+
         initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
         objdata_process = Object.keys(JSON.parse(status_mapping.replace(/&quot;/g,'"')))
@@ -137,7 +138,9 @@ WFM Home
             else{
                 option_process = '<option value="'+ objdata_process[i] +'">'+ objdata_process[i] +'</option>'
             }
-            $("#process").append(option_process); 
+            $("#process").append(option_process);
+            $("#process option[value='WPP']").remove();
+            $("#process option[value='Picasso Audits']").remove(); 
         }
         if ($("#process").val()){
           GetStatus()
@@ -146,14 +149,16 @@ WFM Home
           
         }
         var qp = window.location.href.split('?')
-        var qp = window.location.href.split('=')[1].split("&")
         if(qp.length > 1){
-          $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
-          $("#clone-info").show(); 
-        }
-        // LoadTheTableContent(true);
+          var qp = window.location.href.split('=')[1].split("&")
+          if(qp.length > 1){
+            $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
+            $("#clone-info").show(); 
+          }
+      }
     });
     function GetStatus(){
+      $('#appointment').val('Fresh Appointment')
       get_process = $("#process").val()
       get_status = Object.keys(objdata[$("#process").val()])
       $("#status").html('')
@@ -184,6 +189,7 @@ WFM Home
       LoadTheTableContent(false)
     })
     $('#status').on('change',function(){
+      $('#appointment').val('Fresh Appointment')
       populate_sub_status()
     })
 
@@ -196,7 +202,7 @@ WFM Home
         var c_id = getParameterByName('customer_id')
         process_name = $('#process').val()
         if(initial_load && ptype != null){
-          if(ptype === "ShoppingArgos") ptype  = "Shopping Argos";
+          if(ptype === "ShoppingArgos");
           if(ptype === "PicassoAudits") ptype  = "Picasso Audits";
           $('#process').val(ptype)
           process_name = ptype
@@ -215,19 +221,16 @@ WFM Home
             $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
           }
           $('#sub_status').val('In Queue')
-          // $('#process').val('TAG')
-          // $('#region').val('all')
+          
         }
         if (appointment != 'Fresh Appointment'){
           data = {'appointment': appointment, 'region':region, 'process':process_name}
         }
-
+        status = $('#status').val()
         if (status != 'In Queue'){
           $('#appointment').val('Fresh Appointment')
         }
 
-        //data = {'process': $('#process').val()}
-        console.log(data)
         $.ajax({
             url: "/crm/all-leads/",
             type: 'GET',
@@ -248,17 +251,24 @@ WFM Home
       if (appointment != 'Fresh Appointment'){
         LoadTheTableContent(true);
       }
+      else{
+        LoadTheTableContent(false);
+      }
+      
     })
     appointment = $('#appointment').val()
     if (appointment != 'Fresh Appointment'){
         LoadTheTableContent(true);
       }
+
     function LeadsDataTable(data){
-      
         $("#leads_table_body").html('')
         tabledata = data['leads_list']
         if(tabledata.length != 0){
             for(i=0; i< tabledata.length; i += 1){
+                if(tabledata[i]['appointment_time'] == null){
+                  tabledata[i]['appointment_time'] = "N/A"
+                }
                 row = '<tr><td><a onclick="addURL(this)" href="/crm/lead-details/' + tabledata[i]['id'] + '/'+ tabledata[i]['sf_lead_id'] + '" target="_blank">'+ tabledata[i]['c_id'] + '</a></td>' +
                 '<td>' + tabledata[i]['company'] + '</td>' +
                 '<td>' + tabledata[i]['customer_name'] +'</td>'+
