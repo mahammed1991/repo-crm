@@ -28,7 +28,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav main-nav">
           {% if "CRM-MANAGER" in  request.session.groups %}
-            <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">All Leads</a>
+            <li style="margin-left: -15px;" class="dropdown"> <a href="{% url 'main.views.home' %}" {% if "wpp" in request.META.HTTP_HOST %} style="padding-top: 8px;" {% endif %}" aria-expanded="false">All Leads</a></li>
           {% elif "CRM-AGENT" in  request.session.groups %}
             <li><a href="#">My Leads</a></li>
           {% else %}             

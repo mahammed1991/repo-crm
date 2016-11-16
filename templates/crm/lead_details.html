@@ -510,7 +510,7 @@
 
 
                                  <div class="yellow-line"></div>
-                                 <a class="button" href="#" id="save-lead-comment" style="display:none;float: right;color: #333;text-decoration:none; ">Save </a>
+                                 <a class="button" href="#" id="save-lead-comment" style="display:none;float: right;color: #333;text-decoration:none;background: #4385f5;color: #fff; ">Save </a>
                                  <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Comments</a>
                                   
                                  <div class="table-responsive">
@@ -526,7 +526,7 @@
                                         <td class="table-left">New Comments Area</td>
                                         <td class="table-right edit-textarea-for-comment"></td>
                                         <td class="table-left">Regalix Chat Comments</td>
-                                        <td class="table-right edit-textarea"><span name="regalix_comment">{{ lead.regalix_comment }}</span></td>
+                                        <td class="table-right edit-textarea"><span name="regalix_comment"></span></td>
                                        </tr>
                                        
                                        <tr>
@@ -1301,9 +1301,12 @@ $('#edit-lead').on('click',function() {
         dataType: "json",
         success:function(data){
           if(data['success']){
-            setTimeout(function(){// wait for 5 secs(2)
-             location.reload(); // then reload the page.(3)
-            }, 1000); 
+              var input_coment = $('#add-comment').val();          
+              var input_coment = input_coment.replace("\n", "</br>");
+              $('#comment').append("</br>" + input_coment +"</br>----------------------------------------")
+              $("#add-comment").val('');
+              $("#add-comment").val('On Call : \nNext Course Of Action :');
+            
           }
         },
         error:function(xhr){
