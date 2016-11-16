@@ -456,6 +456,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
         if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
             lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
             lead_status = settings.LEAD_STATUS
+            feed_optimisation_status = settings.FEED_OPTIMISATION_STATUS
             primary_role = ['Owner','Marketing','Webmaster']
             language = Language.objects.filter(is_active=True)
             team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
@@ -486,6 +487,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
                 'comment':lead.regalix_comment,
                 'pla_sub_status':pla_sub_status,
                 'implemented_code_list':implemented_code_list,
+                'feed_optimisation_status':feed_optimisation_status,
                 'success': True
                 }
 
@@ -768,6 +770,9 @@ def update_lead(request):
             if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
                 lead.lead_sub_status = ''
 
+            if data.get('feed_optimisation_status') == 'None':
+                lead.feed_optimisation_sub_status = None
+
             lead.save()
             lead = Leads.objects.filter(sf_lead_id=request.POST.get('sf_lead_id')).update(**lead_dict)
             try:
@@ -782,6 +787,7 @@ def update_lead(request):
                     temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')           
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
                 
+
                 lead_detail.save()
                 lead_detail = TagLeadDetail.objects.filter(lead_id=temp).update(**lead_detail_dict)
             except Exception as e:
@@ -818,7 +824,7 @@ def get_lead_sub_status(request):
             if lead_status == 'Attempting Contact':
                 lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Attempting Contact"]
             elif lead_status == 'In Progress':
-                lead_sub_status = settings.lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["In Progress"]
+                lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["In Progress"]
             elif lead_status == 'Pending QC - In Active':
                 lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - In Active"]
             elif lead_status == 'Pending QC - WIN':
@@ -834,4 +840,29 @@ def get_lead_sub_status(request):
             elif lead_status == "Pending QC - Dead Lead":
                 lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - Dead Lead"] = ["Pending QC - Dead Lead"]
     resp = {'success':True,'lead_sub_status':lead_sub_status}
-    return HttpResponse(json.dumps(resp))
+    return HttpResponse(json.dumps(resp),content_type='application/json')
+
+
+
+def get_feed_optimisation_sub_status(request):
+    if request.method == 'GET':
+        feed_optimisation_status = request.GET.get('feed_optimisation_status')
+        feed_optimisation_status = feed_optimisation_status.replace('%20',' ')
+        feed_optimisation_sub_status = None
+
+        if feed_optimisation_status == 'Feed Audit':
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+        elif feed_optimisation_status == 'Feed Optimization':
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+        elif feed_optimisation_status == 'Feed Testing':
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+        elif feed_optimisation_status == 'Feed Upload':
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+        elif feed_optimisation_status == 'Implementation':
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+        elif feed_optimisation_status == "Rework":
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+        elif feed_optimisation_status == "Inactive":
+            feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+    resp = {'success':True,'feed_optimisation_sub_status':feed_optimisation_sub_status}
+    return HttpResponse(json.dumps(resp),content_type='application/json')
