@@ -783,8 +783,8 @@ def update_lead(request):
                 lead.appointment_date = datetime.strptime(str(temp_appointment_date_on), '%d/%m/%Y %I:%M %p')
             if data.get('rescheduled_date_on'):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')           
-        		edited_dict['rescheduled_date_on'] = [datetime.strftime(lead.rescheduled_appointment, '%d-%m-%Y %I:%M %p') if lead.rescheduled_appointment else '',data['rescheduled_date_on'].replace('.','').replace('/','-')]                
-        		lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')       
+                edited_dict['rescheduled_date_on'] = [datetime.strftime(lead.rescheduled_appointment, '%d-%m-%Y %I:%M %p') if lead.rescheduled_appointment else '',data['rescheduled_date_on'].replace('.','').replace('/','-')]                
+                lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
             if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
                 lead.lead_sub_status = ''
 
