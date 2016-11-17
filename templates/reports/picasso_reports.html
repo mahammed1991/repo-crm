@@ -1,0 +1,144 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+{% load custom_tags %}
+{% block title %}
+  PICASSO Reports
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/material.min.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/picasso_lead_form.css'%}">
+  <style type="text/css">
+    .tasks{ margin-bottom: 5px;}
+    .footer{position: relative;}
+    .table-container, .display_footer{ min-height:300px;}
+    .footer .container-fluid  ul{ line-height: 62px;}
+    h1 {
+	  font-size: 24px;
+	  font-family: 'robotoblack';
+	  text-transform: uppercase;
+	  text-align: center;
+	  border-bottom: 1px solid #ccc;
+	  padding-bottom: 12px;
+	  margin-top: 50px;
+	  margin-bottom: 20px;
+	}
+	h2 {
+	  font-family: 'robotoblack';
+	  font-size: 21px;
+	  text-transform: uppercase;
+	  border-bottom: 1px solid #ccc;
+	  padding-bottom: 12px;
+	  text-align: center;
+	  margin-bottom: 30px;
+	}
+    #no_data{
+        margin-left: 448px;
+    }
+  </style>
+{% endblock main_css %}
+{% block content %}
+
+{% if picasso %}
+  {% include 'layouts/picasso_header.html'%}
+{% endif %}
+
+<div class="wrapper">
+	<!-- content-region -->
+	<section class="content-region inner-page-wide reports-page">
+		<div class="container-fluid">
+			<h1>Mobile site Optimization Reports</h1>
+			<div class="row text-center report-category">
+				<div class="col-md-3 centered select-style">
+					<select class="form-control bgicon" id="filter_picasso_report_type">
+                        <option value="">Choose Report Type</option>
+                        {% if request.user|has_group:"SUPERUSER" %}
+                        <option value="leadreport_superUser">All</option>
+                        {% endif %}
+                        <option value="leadreport_individualRep">Individual Rep</option>
+                        {% if manager %}
+                        <option value="leadreport_teamLead">Team Lead </option>
+                        {% endif %}
+                        
+                    </select>
+				</div>
+				{% if manager %}
+                <div id="picasso_filter_team_members"  class="col-md-3  centered" style="display:none;">
+                  <div class="country-pick">
+                    <div class="checkbox" id="members_checks">
+                      <label><input type="checkbox" value="all" class="checkbox_select_all" checked> Select All </label>
+                        {% for member in team_members %}
+                            <label>
+                                <input type="checkbox" value="{{member.id}}" checked=checked> {{member.get_full_name}} 
+                            </label>
+                        {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                <div class="col-md-3 centered">
+                    <select name="type" id="picasso_filter_timeline" style="display:block;" class="form-control bgicon">
+                        <option value="">Choose Timeline</option>
+                        <option value="this_week">This Week</option>
+                        <option value="last_week">Last Week</option>
+                        <option value="this_month">This Month</option>
+                        <option value="last_month">Last Month</option>
+                        <option value="this_quarter">This Quarter</option>
+                        <!-- <option value="dateRange">Date Range</option> -->
+                    </select>
+                </div>
+			</div>
+			<div class="btn-row">
+                <button class="btn std-btn" id='get_picasso_report'>View Report</button>
+                <br>
+                <label for="download_picasso" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" style="width:198px;margin-top:12px;">
+                <input class="mdl-checkbox__input picasso_objective" type="checkbox" name="download_picasso" id="download_picasso" ><span>Want to Download Report?</span>
+                <form method="POST" action="{% url 'reports.views.download_picasso_report' %}" name="download_reports" id="download_reports">
+                    {% csrf_token %}
+                        <input type="hidden" name="download_report_type" id="download_report_type" value="" />
+                        <input type="hidden" name="download_report_timeline" id="download_report_timeline" value="" />
+                        <input type="hidden" name="download_team_members" id="download_team_members" value="" />
+                        <button class="btn std-btn" id='download_picasso_report' style="margin-top: 7px; margin-left: -25px; display:none;">Download Report</button>
+                </form>
+
+        </label>
+            </div>
+            <h2>Lead Status Summary</h2>
+            <div id="no_data" style="margin-left=475px;">Currently No Leads for selected Timeline</div>
+            <div class="display_footer">
+                <div class="report-section c" id='report-section'>      
+                    <div class="report-section-content">
+
+                        <div class="report-img" id="barchart" style="width: 900px; height: 500px;"></div>
+                        <div class="report-data">
+                            <table class="report-table" cellpadding="0" cellspacing="0" border="0" id="picasso_treatment_lead_status_table">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</section>
+</div>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  
+  </div>
+</div>
+
+
+{% endblock content %}
+{% block main_js %}
+
+<script src="{% static 'js/chart.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
+<script src="{% static 'js/picasso-reports.js' %}"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+</script>
+<script type="text/javascript">
+  olark('api.box.hide');
+</script>
+{% endblock main_js %}

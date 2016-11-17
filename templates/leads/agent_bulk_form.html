@@ -1,0 +1,304 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+	Lead Form
+{% endblock title %}
+
+{% block content %}
+<section class="content-region inner-page">
+  <div class="container-fluid">
+  <h1>Submit Lead</h1>
+    <!-- BULK UPLOAD FORM FORM REP -->
+    <div class="container-fluid">
+      <div class="lead-form agents-form-selection" id="agency_bulk_upload">
+            {% if data %}
+            <div class="row table-container" style="width:100% !important;overflow:auto">
+                  <form method="post" id="bulkForm" name="buklForm" action="{% url 'leads.views.agent_bulk_upload' %}">
+                    <input type="hidden" value="/wEPDwUKMTQ5MDIxNjIyMmRkkaquz41PfskY4KKZFRwNmxGTj9E=" id="__VIEWSTATE" name="__VIEWSTATE">
+                    <input type="hidden" name="oid" value="00DZ000000MipUa">
+                      <input type="hidden" value="{{google_rep.id}}" name="google_rep_id" id="google_rep_id">
+                      <input type="hidden" value="{{poc_details.id}}" name="poc_id" id="poc_id">
+                      <input type="hidden" value="{{request.META.HTTP_HOST}}{% url 'leads.views.thankyou' %}?n=5" name="retURL">
+                      <input type="hidden" id="lead_type" name="lead_type" value="Agency Bulk Lead">
+                      <table style="width:100%" class="csv-table" id="csv_table">
+                      <tr>
+                        <th width="100px">Google Rep Name</th>
+                        <th width="80px">Customer ID</th>
+                        <th>Task Type</th>
+                        <th>URL</th>
+                        <th>Location</th>
+                        <th>Timezone</th>
+                        <th>Agency Contact Name</th>
+                        <th>Agency Contact phone</th>
+                        <th>Agency Contact Email</th>
+                        <th>Special Instructions</th>
+                      </tr>
+                      {% for rec in data %}
+                      <tr class="leads" id="tr_{{forloop.counter}}">
+                        <td><input type="text" value="{{google_rep.first_name}} {{google_rep.last_name}}" name="rep_name_{{forloop.counter}}" id="rep_name_{{forloop.counter}}" disabled=""></td>
+                        <td><input type="text" value="{{rec.customer_id }}" name="customer_id_{{forloop.counter}}" id="customer_id_{{forloop.counter}}" ></td>
+
+                        <td>
+                          <select name="code_type_{{forloop.counter}}" id="code_type_{{forloop.counter}}">
+                              <option value="">Choose an Task type</option>
+                            {% for type in code_types %}
+                              {% if rec.code_type == type %}
+                                <option value="{{rec.code_type}}" selected>{{type}}</option>
+                              {% else %}
+                                <option value="{{type}}">{{type}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                        </td>
+                        <td><input type="text" value="{{rec.url}}" name="url_{{forloop.counter}}" id="url_{{forloop.counter}}"></td>
+
+                        <td>
+                          <select name="location_{{forloop.counter}}" id="location_{{forloop.counter}}" class="location">
+                              <option value="">Market Served</option>
+                            {% for loc in locations %}
+                              {% if loc.id == google_rep.profile.location.id %}
+                                <option value="{{loc.name}}" selected>{{loc.name}}</option>
+                              {% else %}
+                                <option value="{{loc.name}}">{{loc.name}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                        </td>
+
+                        <td>
+                          <select name="timezone_{{forloop.counter}}" id="timezone_{{forloop.counter}}">
+                              {% if google_rep.profile.timezone.zone_name %}
+                                <option value="{{google_rep.profile.timezone.zone_name}}">{{google_rep.profile.timezone.zone_name}}</option>
+                              {% else %}
+                                <option value="">Select Timezone</option>
+                              {% endif %}
+                          </select>
+                        </td>
+
+                        <td>
+                          <input type="text" value="{{poc_details.contact_person}}" name="agency_name_{{forloop.counter}}" id="agency_name_{{forloop.counter}}">
+                        </td>
+
+                        <td>
+                          <input type="text" value="{{poc_details.contact_phone}}" name="agency_phone_{{forloop.counter}}" id="agency_phone_{{forloop.counter}}">
+                        </td>
+
+                        <td>
+                          <input type="text" value="{{poc_details.contact_email}}" name="agency_email_{{forloop.counter}}" id="agency_email_{{forloop.counter}}">
+                        </td>
+
+                        <td><input type="textarea" value="{{rec.special_instructions}}" name="special_instructions_{{forloop.counter}}" id="special_instructions_{{forloop.counter}}"></td>
+                      </tr>
+                      {% endfor %}
+                      <tr>
+                      <td><a href="javascript:void(0);" class="addMore" id="addMore_{{data|length}}">Add new</a></td>
+                      <td><a href="javascript:void(0);" class="deletePrev" id="deletePrev_{{data|length}}">Delete Prev</a></td>
+                        
+                      </tr>
+                      <input type="hidden" value="{{data|length}}" name="paramcounts" id="paramcounts">
+                  </table>
+                <div class="row" style="margin-top:20px">
+                  <input type="submit" value="Submit" class="btn std-btn sm-btn">
+                </div>
+            </form>
+          </div>
+       {% endif %}
+      </div>
+    </div>
+</div>
+</section>
+<div id="preloaderOverlay" style='display:none;'>
+  <div class="preloader">
+  <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+  </div>
+</div>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+ <script type="text/javascript">
+
+ $(document).ready(function(){
+    $(".deletePrev").hide();
+    window.fileLen = parseInt('{{data|length}}');
+    var loc_length = $(".location").length;
+    for(i=1; i<=loc_length; i++){
+      locElem = "#location_" + i;
+      val = $(locElem).val();
+      if(val){
+        getTimezones(val, i);
+      }
+    }
+ });
+
+ $(".addMore").click(function(){
+  cnt = $('#csv_table tr').length
+  indx = cnt - 1
+  ele =  '<tr class="leads snew-tr" id="tr_' + indx + '">'+
+        '<td><input type="text" value="" name="rep_name_' + indx + '" id="rep_name_' + indx + '" disabled=""></td>'+
+        '<td><input type="text" value="" name="customer_id_' + indx + '" id="customer_id_' + indx + '" ></td>'+
+         '<td><select name="code_type_' + indx + '" id="code_type_' + indx + '">'+
+              '<option value="">Choose an Task type</option>{% for type in code_types %}<option value="{{type}}">{{type}}</option>{% endfor %}</select></td>'+
+        '<td><input type="text" value="" name="url_' + indx + '" id="url_' + indx + '"></td>'+
+        '<td><select name="location_' + indx + '" id="location_' + indx + '" class="location">'+
+              '<option value="">Market Served</option>{% for loc in locations %}<option value="{{loc.name}}">{{loc.name}}</option>{% endfor %}</select></td>'+
+        '<td><select name="timezone_' + indx + '" id="timezone_' + indx + '" class="timezone"><option value="">Select Timezone</option></select></td>'+
+        '<td><input type="text" value="" name="agency_name_' + indx + '" id="agency_name_' + indx + '"></td>'+
+        '<td><input type="text" value="" name="agency_phone_' + indx + '" id="agency_phone_' + indx + '"></td>'+
+        '<td><input type="text" value="" name="agency_email_' + indx + '" id="agency_email_' + indx + '"></td>'+
+        '<td><input type="textarea" value="" name="special_instructions_' + indx + '" id="special_instructions_' + indx + '"></td>'+
+    '</tr>'
+    
+    $('#csv_table tr:last').before(ele);
+    $('#rep_name_'+indx).val($('#rep_name_1').val());
+    $(".deletePrev").show();
+ 
+ })
+
+    /*$(".addMore").click(function(){
+        var thisid = $(this).attr('id')
+        var indx = thisid.split('_')[1]
+        var elm = thisid.split('_')[0]
+        idx = parseInt(indx) + 1;
+        $("#tr_"+idx).show();
+        next_id = parseInt(indx) + 1;
+        $(this).attr('id', elm + '_'+ next_id);
+        $('#rep_name_'+idx).val($('#rep_name_1').val());
+        $('#customer_id_'+idx).val($('#customer_id_1').val());
+    });
+*/
+    $(".deletePrev").click(function(){
+        cnt = $('#csv_table tr').length;
+        noOftrs = cnt-2;
+        if (noOftrs>window.fileLen){
+            prevID = cnt - 2;
+            $('#tr_'+prevID).remove();
+            if(noOftrs == window.fileLen + 1){
+              $(".deletePrev").hide();
+            }
+        }
+
+    });
+
+
+    $("#bulkForm").submit(function(event){
+        $(".error-txt").remove();
+        $(".lead-form .form-control").removeClass('error-box');
+        $("select").removeClass('error-box');
+        $('input[type=text]').removeClass('error-box');
+        var check = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var cidFormat = /^\d{3}-\d{3}-\d{4}$/;
+        var phoneFormat = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        var numericExpression = /^[0-9]+$/;
+        window.failedFields = new Array();
+        window.is_error = false;
+        var row_len = $(".csv-table .leads:visible").length;
+
+        for(i=1; i<=row_len; i++){
+          rep_name = document.getElementById('rep_name_'+ i);
+          validateFiled(rep_name);
+          cid = document.getElementById('customer_id_' + i);
+          validateFiled(cid)
+
+          if(!$(cid).val().match(cidFormat)){
+            //alert("Please enter a valid Customer ID (nnn-nnn-nnnn)");
+            $(cid).addClass('error-box');
+            //$(frm.cid).after('<span class="error-txt">Please enter a valid Customer ID (nnn-nnn-nnnn)</span>')
+            /*$(cid).focus();*/
+            window.is_error = true;
+          }
+
+          ctype = document.getElementById('code_type_' + i);
+          validateFiled(ctype);
+          url = document.getElementById('url_' + i);
+          validateFiled(url);
+          loc = document.getElementById('location_' + i);
+          validateFiled(loc)
+          timezone = document.getElementById('timezone_' + i);
+          validateFiled(timezone)
+          agency_name = document.getElementById('agency_name_' + i);
+          validateFiled(agency_name)
+          agency_phone = document.getElementById('agency_phone_' + i);
+          validateFiled(agency_phone)
+          agency_email = document.getElementById('agency_email_' + i);
+          validateFiled(agency_email)
+
+          if(!$(agency_phone).val().match(phoneFormat)){
+            $(agency_phone).addClass('error-box');
+            window.is_error = true;
+          }
+          
+          if (!$(agency_email).val().trim().match(check)) {
+            $(agency_email).addClass('error-box');
+            $(agency_email).focus();
+            window.is_error = true;
+          }
+
+        }
+        
+        if(window.is_error){
+          event.preventDefault();
+          focusElem = failedFields[0];
+          $(focusElem).focus();
+          return false;
+        }else{
+          $('#preloaderOverlay').show();
+          $("#paramcounts").val(row_len);
+          $(this).attr('disabled', true)
+        }
+      });
+
+    function validateFiled(elem){
+      console.log($(elem).val());
+      // Google Manager details validation
+        if ($(elem).val() == "" || $(elem).val() == "0" || !$(elem).val()) {
+          $(elem).addClass('error-box');
+          window.failedFields.push(elem);
+          window.is_error = true;
+          return false;
+        }
+    }
+$(document).on("change", '.location', function(){
+    
+    var loc = $(this).val();
+    var id = $(this).attr('id')
+    var index = id.split('_')[1]
+    $("#timezone_"+index+"").empty();
+    if(loc){
+      getTimezones(loc, index);
+    }
+
+  });
+
+  function getTimezones(loc_name, index){
+  if(loc_name==''){
+    console.log(loc_name);
+  }else{
+     $.ajax({
+          url: "/leads/get-timezones",
+          dataType: "json",
+          type: 'GET',
+          data: {'loc_name': loc_name},
+          success: function(data) {
+              console.log(data);
+              displayTimezones(data, index);
+          },
+          error: function(errorThrown) {
+              console.log('failure');
+          }
+        }); 
+   }
+}
+
+function displayTimezones(timezones, index){
+  $("#timezone_"+index).html("");
+  for( i=0; i<timezones.length; i++){
+      var id = timezones[i]['id'];
+      var time = timezones[i]['time'];
+      $("#timezone_"+index).append('<option value="' + id + '">' + time + '</option>');
+  }
+}
+</script>
+{% endblock main_js %}
