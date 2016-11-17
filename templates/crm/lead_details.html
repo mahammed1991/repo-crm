@@ -4,13 +4,12 @@
 {% load staticfiles %}
 
 {% block title %}
-  Lead Details
+  Lead Detail
 {% endblock title %}
 
 
   <head>
 {% block main_css %}
-  <style type="text/css"></style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" type="text/css">
@@ -114,11 +113,11 @@
                                         <td class="table-left">Implemented Code is</td>
                                         <td class="table-right" id="implemented-code"><span name="implemented_code_is">{{ lead_detail.implemented_code_is }}</span></td>
                                         <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead.dead_lead_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right">{{ lead.dead_lead_date|date:'d/m/Y g:i A' }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">LastCallTime</td>
-                                        <td class="table-right edit-date"><span name="last_contacted_date">{{ lead_detail.last_contacted_on|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-right edit-date"><span name="last_contacted_date">{{ lead_detail.last_contacted_on|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">Dynamic Variable Set</td>
                                         <td class="table-right" id="dynamic-variable-set"><span name="dynamic_variable_set">{{ lead.dynamic_variable_set }}</span></td>
                                        </tr>
@@ -140,10 +139,8 @@
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                         <td class="table-left qstn"> 1st Contacted on <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{lead.first_contacted_on|date:'d-m-Y g:i a'}}</td>
+                                        <td class="table-right">{{lead.first_contacted_on|date:'d/m/Y g:i A'}}</td>
                                        </tr>
-
-                                       
                                      </table>
                                  </div>
                                  <div class="yellow-line"></div>
@@ -274,28 +271,28 @@
                                        
                                        <tr>
                                         <td class="table-left">Appointment Date</td>
-                                        <td class="table-right edit-date"><span name="appointment_date_on">{{ lead.appointment_date|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-right"><span name="appointment_date_on">{{ lead.appointment_date|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">Tag via GTM</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Appointment Time in IST</td>
-                                        <td class="table-right edit-date"><span name="appointment_date_ist_on">{{ lead.appointment_date_in_ist|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-right"><span name="appointment_date_ist_on">{{ lead.appointment_date_in_ist|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">Appointment Time in PST</td>
                                         <td class="table-right"></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Rescheduled Appointments</td>
-                                        <td class="table-right edit-date"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right edit-date"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">Service Segment</td>
                                         <td class="table-right">{{ lead_detail.service_segment }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Reschedule Time in IST</td>
-                                        <td class="table-right edit-date"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-right"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">RLSA Auth Approval</td>
                                         <td class="table-right">{{ lead_detail.rlsa_auth_approval }}</td>
                                        </tr>
@@ -346,7 +343,7 @@
                                        
                                        <tr>
                                         <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit"><span name="opt_in_percent">{{ lead_detail.opt_in_percent }}></span></td>
+                                        <td class="table-right edit"><span name="opt_in_percent">{{ lead_detail.opt_in_percent }}</span></td>
                                         <td class="table-left">SQO / STO Comments</td>
                                         <td class="table-right edit-textarea"><span name="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span></td>
                                        </tr>
@@ -884,7 +881,7 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead QC'ed on</td>
-                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left qstn">Spend (Cost from creation<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right" id="spend-cfc"></td>
                                        </tr>
@@ -918,15 +915,15 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Created By</td>
-                                        <td class="table-right">{{ lead.created_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right">{{ lead.created_date|date:'d/m/Y g:i A' }}</td>
                                         <td class="table-left">Last Modified By</td>
-                                        <td class="table-right">{{ lead.updated_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-right">{{ lead.updated_date|date:'d/m/Y g:i A' }}</td>
                                        </tr>
                                        <tr style="display:none;">
                                         <td class="table-left"></td>
                                         <td class="table-right" id="row-id">{{ lead.id }}</td>
                                         <td class="table-left"></td>
-                                        <td class="table-right" id="sf-id">{{ lead.sf_lead_id }}</td
+                                        <td class="table-right" id="sf-id">{{ lead.sf_lead_id }}</td>
                                        </tr>
                                        
                                      </table>
@@ -1016,7 +1013,11 @@
                 {% else %}
                 <div class=" container " style="background:white"><div class="center-align" style="margin-top:20%;margin-bottom:20%;text-align:center;font-size:16px;">Lead does not exist.</div></div>
                 {% endif %}
-                <div style="margin-top:80px;"></div> 
+                <div style="margin-top:80px;"></div>
+                <div id="fade"></div>
+                <div id="modal">
+                    <img id="loader" src="{% static 'images/loading-1.gif' %}" />
+                </div>
     </section>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
@@ -1036,6 +1037,36 @@
     #save-lead-comment{
 
     }
+    #modal {
+        display: none;
+        position: absolute;
+        top: 45%;
+        left: 45%;
+        width: 64px;
+        height: 64px;
+        padding:30px 15px 0px;
+        border: 3px solid #ababab;
+        box-shadow:1px 1px 10px #ababab;
+        border-radius:20px;
+        background-color: white;
+        z-index: 1002;
+        text-align:center;
+        overflow: auto;
+    }
+
+    #fade {
+        display: none;
+        position:absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: #ababab;
+        z-index: 1001;
+        -moz-opacity: 0.8;
+        opacity: .70;
+        filter: alpha(opacity=80);
+    }
   </style>
   {% endblock content %}
 
@@ -1051,7 +1082,22 @@
         cmt = replaceAll(cmt, "On Call :", "</br>----------------------------------------</br>On Call :");
         cmt = replaceAll(cmt, "Next Course Of Action :", "</br>Next Course Of Action :");
         $("#comment").html(cmt + "</br>----------------------------------------");
+        function showLoading() {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('fade').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('fade').style.display = 'none';
+        }
+        /*$(document).ajaxStart(function () {
+            showLoading();
+        }).ajaxStop(function () {
+            hideLoading();
+        });*/
     });
+
 
     function replaceAll(str, find, replace) {
       return str.replace(new RegExp(find, 'g'), replace);
@@ -1238,13 +1284,10 @@ $('#edit-lead').on('click',function() {
 
 
     getLeadSubStatus(curr_status,'{{ ctype }}');
-   
+
     $(".editdateinput").datetimepicker({
-      timepicker : false,
-      format: 'd/m/Y g:i A',
-      formatTime: 'g:i A',
-      scrollInput : true,
-          
+      timepicker : true,
+      format: 'd/m/Y g:i A'
     });
     $('#edit-lead').hide();
     $('#save-lead').show();
