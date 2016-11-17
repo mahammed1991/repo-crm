@@ -10,6 +10,19 @@
 
   <head>
 {% block main_css %}
+  <style type="text/css">
+    .table-left{
+      font-weight: bold;
+    }
+    .error{
+      border-color: red;
+    }
+
+    .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+  </style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" type="text/css">
@@ -23,7 +36,7 @@
       <div class=" container-fluid ">
         <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-            <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
+            <span id ='span-msg' style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
         </div>
                     <div class="white-section">
                         <!-- Nav tabs -->
@@ -43,8 +56,9 @@
                                       <ul class="lead-menu">
                                             <li>
                                               <a href="#" id="edit-lead">Edit </a>
-                                              <a href="#" id="save-lead" style="display:none;">Save </a>
+                                              <a href="#" class="cancel-save" onclick="window.location.reload()" style="display:none;">cancel </a>
                                             </li>  
+                                            <li class="save-lead" style="display:none;"><a href="#" onclick="updateLead()">Save </a></li>
                                             {% if manager %}           
                                             <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
                                             <!-- <li><a href="#">Clone</a></li> -->
@@ -71,9 +85,9 @@
                                                   <input id="sendmail" type="checkbox" checked="checked"> Send Email Notification
                                                 </label>
                                               </div>
-                                              <div>
+                                              <div id="over-ride" style="display:none">
                                                 <label>
-                                                  <input id="override" type="checkbox"> Override existing appointment
+                                                  <input id="override" type="checkbox" > Override existing appointment
                                                 </label>
                                               </div>
                                               <input type="button" id="check-availability" class="btn btn-primary" value="Submit" style="margin-top:20px;float:right;background:#4385f5">
@@ -87,21 +101,21 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Status  </td>
-                                        <td class="table-right" id="lead-status"><span name="lead_status">{{ lead.lead_status }}</span></td>
+                                        <td class="table-right" id="lead-status"><span name="lead_status">{{ lead.lead_status }}</span><p style="display:none;color:red;">*You are not authorised to move leads to 'Rework Required' / 'In Queue'. Please contact your QA.</p><p id="inactive-msg" style="display:none;color:red;">*Leads declared as "In Active" should not be moved to any other status. Please contact your T.L for more information</p><p id="implement-msg" style="display:none;color:red;">*Leads declared as "Implemented" should not be moved to any other status. Please contact your T.L for more information</p></td>
                                         <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right" id="lead-sub-status"><span name="lead_sub_status">{{ lead.lead_sub_status }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Team</td>
-                                        <td class="table-right" id="team">{{ lead.team }}</td>
+                                        <td class="table-right" id="team"><span name="team">{{ lead.team }}</span></td>
                                         <td class="table-left">Not Interested Cases RCA</td>
                                         <td class="table-right"></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Date of installation</td>
-                                        <td class="table-right edit-date"><span name="installation_date">{{ lead.date_of_installation|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-right edit-date" id="msg"><span name="installation_date" id="doi">{{ lead.date_of_installation|date:'d/m/Y g:i A' }}</span><p style="display:none;color:red;">*Please enter the value.</p></td>
                                         <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right" id="pls-sub-status"><span name="pla_sub_status">{{ lead_detail.pla_sub_status }}</span></td>
+                                        <td class="table-right" id="pls-sub-status"><span name="pla_sub_status">{{ lead_detail.pla_sub_status }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Type</td>
@@ -111,15 +125,15 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Implemented Code is</td>
-                                        <td class="table-right" id="implemented-code"><span name="implemented_code_is">{{ lead_detail.implemented_code_is }}</span></td>
+                                        <td class="table-right" id="implemented-code"><span name="implemented_code_is">{{ lead_detail.implemented_code_is }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                         <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead.dead_lead_date|date:'d/m/Y g:i A' }}</td>
+                                        <td class="table-right">{{ lead.dead_lead_date|date:'d-m-Y g:i a' }}</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">LastCallTime</td>
-                                        <td class="table-right edit-date"><span name="last_contacted_date">{{ lead_detail.last_contacted_on|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-right edit-date"><span name="last_contacted_date">{{ lead_detail.last_contacted_on|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">Dynamic Variable Set</td>
-                                        <td class="table-right" id="dynamic-variable-set"><span name="dynamic_variable_set">{{ lead.dynamic_variable_set }}</span></td>
+                                        <td class="table-right" id="dynamic-variable-set"><span name="dynamic_variable_set">{{ lead_detail.dynamic_variable_set }}</span></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">No of Dials</td>
@@ -139,8 +153,10 @@
                                         <td class="table-left"></td>
                                         <td class="table-right"></td>
                                         <td class="table-left qstn"> 1st Contacted on <i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{lead.first_contacted_on|date:'d/m/Y g:i A'}}</td>
+                                        <td class="table-right edit-date" id="first-contacted"><span name="first_contacted">{{lead.first_contacted_on|date:'d-m-Y g:i a'}}</span><p style="display:none;color:red;">*You are not authorized to change this field</p></td>
                                        </tr>
+
+                                       
                                      </table>
                                  </div>
                                  <div class="yellow-line"></div>
@@ -155,7 +171,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Email </td>
-                                        <td class="table-right edit"><span name="google_rep_email">{{ lead.google_rep_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span name="google_rep_email">{{ lead.google_rep_email }}</span> [ <img src="{% static 'images/gmail.png' %}">   Gmail]</td>
                                         <td class="table-left qstn">Number Of Codes</td>
                                         <td class="table-right edit"><span name="number_of_products">{{ lead.number_of_products }}</span></td>
                                        </tr>
@@ -170,7 +186,7 @@
 
                                        <tr>
                                         <td class="table-left">Google Manager Email</td>
-                                        <td class="table-right edit"><span name="google_rep_manager_email">{{ lead.google_rep_manager_email }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span name="google_rep_manager_email">{{ lead.google_rep_manager_email }}</span> [ <img src="{% static 'images/gmail.png' %}">   Gmail]</td>
                                         <td class="table-left">Additional LDAP</td>
                                         <td class="table-right edit"><span name="eto_ldap">{{ lead.eto_ldap }}</span></td>
                                        </tr>
@@ -192,7 +208,7 @@
                                         <td class="table-left">Company</td>
                                         <td class="table-right edit"><span name="company">{{ lead.company }}</span></td>
                                         <td class="table-left qstn">Email (P)</td>
-                                        <td class="table-right edit"><span name="email_optional">{{ lead.email_optional }}</span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-right edit"><span name="email_optional">{{ lead.email_optional }}</span> [ <img src="{% static 'images/gmail.png' %}">   Gmail]</td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Advertiser Location</td>
@@ -285,14 +301,14 @@
 
                                        <tr>
                                         <td class="table-left">Rescheduled Appointments</td>
-                                        <td class="table-right edit-date"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-right edit-date" id="rescheduled-appointment"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</span><p style="display:none;color:red;">*Please reschedule the appointment.</p></td>
                                         <td class="table-left">Service Segment</td>
                                         <td class="table-right">{{ lead_detail.service_segment }}</td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Reschedule Time in IST</td>
-                                        <td class="table-right"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-right"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">RLSA Auth Approval</td>
                                         <td class="table-right">{{ lead_detail.rlsa_auth_approval }}</td>
                                        </tr>
@@ -345,7 +361,7 @@
                                         <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right edit"><span name="opt_in_percent">{{ lead_detail.opt_in_percent }}</span></td>
                                         <td class="table-left">SQO / STO Comments</td>
-                                        <td class="table-right edit-textarea"><span name="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span></td>
+                                        <td class="table-right edit-textarea" id="sqo-sto-comments"><span name="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span><p style="display:none;color:red;">*Field cannot be empty.</p></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Recommended Bid</td>
@@ -369,7 +385,7 @@
 
                                        <tr>
                                         <td class="table-left">Type of Policy violation</td>
-                                        <td class="table-right">{{ lead_detail.type_of_policy_violation }}</td>
+                                        <td class="table-right" id="type-of-policy-violation"><span name="type_of_policy_violation">{{ lead_detail.type_of_policy_violation }}</span></td>
                                         <td class="table-left">Shopping Troubleshoot Issue Type</td>
                                         <td class="table-right edit"><span name="shopping_troubleshoot_issue_type">{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
                                        </tr>
@@ -378,12 +394,12 @@
                                         <td class="table-left">Please specify if others</td>
                                         <td class="table-right edit"><span></span></td>
                                         <td class="table-left">Number of Products uploaded</td>
-                                        <td class="table-right edit"><span name="products_uploaded">{{ lead_detail.products_uploaded }}</span></td>
+                                        <td class="table-right edit" id="products-uploaded"><span name="products_uploaded">{{ lead_detail.products_uploaded }}</span><p style="display:none;color:red;">*Please enter the value.</p></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Method used for feed upload</td>
-                                        <td class="table-right">{{ lead_detail.feed_upload_method }}</td>
+                                        <td class="table-right" id="feed-upload-method"><span name="feed_upload_method">{{ lead_detail.feed_upload_method }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                         <td class="table-left">Shopping Campaign ID</td>
                                         <td class="table-right edit"><span name="campaign_id">{{ lead_detail.campaign_id }}</span></td>
                                        </tr>
@@ -398,7 +414,7 @@
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Feed Optimization Status</td>
-                                        <td class="table-right">{{ lead.feed_optimisation_status }}</td>
+                                        <td class="table-right" id="feed-optimisation-status"><span name="feed_optimisation_status">{{ lead.feed_optimisation_status }}</span></td>
                                         <td class="table-left">Business Type / Category:</td>
                                         <td class="table-right edit"><span name="business_type">{{ lead.business_type }}</span></td>
                                        </tr>
@@ -407,7 +423,7 @@
                                         <td class="table-left qstn">Additional support (Beyond the scope)<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right edit-textarea"><span name="additional_support_beyond_case">{{ lead.additional_support_beyond_case }}</span></td>
                                         <td class="table-left">Feed Optimization Sub Status</td>
-                                        <td class="table-right">{{ lead.feed_optimisation_sub_status }}</td>
+                                        <td class="table-right" id="feed-optimisation-sub-status"><span name="feed_optimisation_sub_status">{{ lead.feed_optimisation_sub_status }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
 
                                        <tr>
@@ -443,21 +459,21 @@
                                         <td class="table-left">Authorization Email Sent</td>
                                         <td class="table-right">{{ lead_detail.auth_email_sent }}</td>
                                         <td class="table-left qstn">Lead via Live Transfer<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.live_transfer }}</td>
+                                        <td class="table-right" id="live-transfer"><span name="live_transfer">{{ lead_detail.live_transfer }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left qstn">Appointment Sub-Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.appointment_sub_status }}</td>
+                                        <td class="table-right" id="appointment-sub-status"><span name="appointment_sub_status">{{ lead_detail.appointment_sub_status }}</span></td>
                                         <td class="table-left qstn">gCases ID<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right edit"><span name="gcase_id">{{ lead_detail.gcase_id }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left qstn">CMS/Platform<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.cms_platform }}</td>
+                                        <td class="table-right" id="cms-platform"><span name="cms_platform">{{ lead_detail.cms_platform }}</span></td>
                                         <td class="table-left qstn">GCSS Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.gcss_status }}</td>
+                                        <td class="table-right" id="gcss-status"><span name="gcss_status">{{ lead_detail.gcss_status }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
 
                                        <tr>
@@ -469,16 +485,16 @@
 
                                        <tr>
                                         <td class="table-left">Screenshare Scheduled</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right" id="screenshare-scheduled"><span name="screenshare_scheduled">{{ lead_detail.screenshare_scheduled}}</span></td>
                                         <td class="table-left">Mouse Control Taken</td>
-                                        <td class="table-right">{{ lead_detail.mouse_control_taken }}</td>
+                                        <td class="table-right" id="mouse-control-taken"><span name="mouse_control_taken">{{ lead_detail.mouse_control_taken }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">List Type</td>
-                                        <td class="table-right">{{ lead_detail.list_type }}</td>
+                                        <td class="table-right" id="list-type"><span name="list_type">{{ lead_detail.list_type }}</span></td>
                                         <td class="table-left qstn">Mouse Control Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.mouse_control_approved_by }}</td>
+                                        <td class="table-right" id="mouse-control-approved"><span name="mouse_control_approved_by">{{ lead_detail.mouse_control_approved_by }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
 
                                        <tr>
@@ -492,13 +508,13 @@
                                         <td class="table-left qstn">Regalix SME<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right">{{ lead_detail.regalix_sme }}</td>
                                         <td class="table-left">RLSA - TagTeam Contacted Advertiser</td>
-                                        <td class="table-right">{{ lead_detail.rlsa_tag_team_contacted }}</td>
+                                        <td class="table-right" id="rlsa-tag-team-contacted"><span name="rlsa_tag_team_contacted">{{ lead_detail.rlsa_tag_team_contacted }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Campaigns already created by GSR</td>
-                                        <td class="table-right">{{ lead_detail.campaign_created_by_gsr }}</td>
+                                        <td class="table-right" id="campaign-created"><span name="campaign_created_by_gsr">{{ lead_detail.campaign_created_by_gsr}}</span></td>
                                         <td class="table-left">Adwords CID Submitted</td>
-                                        <td class="table-right">{{ lead_detail.adwords_cid_submitted }}</td>
+                                        <td class="table-right" id="adwords-cid-submitted"><span name="adwords_cid_submitted">{{ lead_detail.adwords_cid_submitted }}</span></td>
                                        </tr>
 
                                      </table>
@@ -877,11 +893,11 @@
 
                                  <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>QUALITY ASSURANCE</a>
-                                 <div class="table-responsive">
+                                 <div class="table-responsive" id="qa-fields">
                                      <table class="table table-condensed">
                                        <tr>
                                         <td class="table-left">Lead QC'ed on</td>
-                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left qstn">Spend (Cost from creation<i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right" id="spend-cfc"></td>
                                        </tr>
@@ -941,7 +957,10 @@
                               <span class="btn btn-primary load-file">
                               <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
                                   <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;">Upload File
+                                  <p class="file-name" style="color: black;"></p>
                               </span>
+                              <div class="clearfix"></div>
+                              <p class="file-name"></p>
                               </label>
                                 <div class="or-left">OR</div>
                                 <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
@@ -1009,15 +1028,15 @@
                       </div>
 
                     </div>
+                    <div style="text-align:center;padding-top:10px;">
+                      <button class="cancel-save btn std-btn sm-btn grayed" onclick="window.location.reload()" style="display:none;">cancel</button>
+                      <button class="save-lead btn std-btn sm-btn" onclick="updateLead()" style="display:none;">Save</button>
+                    </div>
                 </div><!--container-fluid-->
                 {% else %}
                 <div class=" container " style="background:white"><div class="center-align" style="margin-top:20%;margin-bottom:20%;text-align:center;font-size:16px;">Lead does not exist.</div></div>
                 {% endif %}
-                <div style="margin-top:80px;"></div>
-                <div id="fade"></div>
-                <div id="modal">
-                    <img id="loader" src="{% static 'images/loading-1.gif' %}" />
-                </div>
+                <div style="margin-top:80px;"></div> 
     </section>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
@@ -1078,24 +1097,16 @@
     <script type="text/javascript">
 
     $(document).ready(function(e) {
-        var cmt = "{{ comment }}";
-        cmt = replaceAll(cmt, "On Call :", "</br>----------------------------------------</br>On Call :");
-        cmt = replaceAll(cmt, "Next Course Of Action :", "</br>Next Course Of Action :");
-        $("#comment").html(cmt + "</br>----------------------------------------");
-        function showLoading() {
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('fade').style.display = 'block';
-        }
-
-        function hideLoading() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('fade').style.display = 'none';
-        }
-        /*$(document).ajaxStart(function () {
-            showLoading();
-        }).ajaxStop(function () {
-            hideLoading();
-        });*/
+        var cmt_txt = "{{comment}}"
+        if(cmt_txt != "")
+        {
+          var cmt = cmt_txt.split("Dail");
+          var regComment = ""
+          for(var i = 1; i <= cmt.length - 1; i ++ )
+            regComment += "<p> Dail" + cmt[i] + "</p></br>";
+          regComment = replaceAll(regComment, "&lt;/br&gt;", "</br>");
+          $('#comment').html(regComment);
+      }
     });
 
 
@@ -1126,6 +1137,8 @@
             dataType: "json",
             success: function(data) {
               if(data['success']){
+                $("#over-ride").hide();
+                $("#override").removeAttr("style");
                 $('#lon').html(data['name']);
                 $('#mail').html(data['email']);
                 $('#exampleInputEmail1').val('');
@@ -1136,6 +1149,7 @@
                 }, 2000); */
               }
               else{
+                $("#over-ride").show();
                 alert(data['name'] + ' is booked for an other appointment at the same time')
               }
             },
@@ -1147,7 +1161,7 @@
         });
      }
      else{
-      $('#exampleInputEmail1').css('border-color','red')
+      $('#exampleInputEmail1').css('border-color','red');
      }
 
     });
@@ -1179,6 +1193,9 @@
     });
 
 
+var curr_ls = $('#lead-status span').html();
+var curr_fco = $('#first-contacted span').html();
+var rs_appointment = $('#rescheduled-appointment span').html();
 
 $('#edit-lead').on('click',function() {
   var lead_status = {{ status|safe }};
@@ -1202,6 +1219,7 @@ $('#edit-lead').on('click',function() {
     
     $('td.edit-textarea-for-comment').html('<textarea style="width:200px;" id="add-comment"></textarea>');
     $("#add-comment").html('On Call : \nNext Course Of Action :');
+    $("#add-comment").attr("data-dail", "{{dail_num}}");
 
     $('td.edit-checkbox').each(function(){
         var html = $(this).html();
@@ -1280,17 +1298,96 @@ $('#edit-lead').on('click',function() {
     var implemented_code_is = {{ implemented_code_list|safe }};
     var curr_implemented_code = $('#implemented-code span').html();
     $('#implemented-code span').html('<select id="implementedCode" style="width:200px;"></select>');
-    assignDropDownValues(curr_implemented_code,implemented_code_is,'#implemented-code span')        
+    assignDropDownValues(curr_implemented_code,implemented_code_is,'#implemented-code span') 
+    
 
+    var campaign_created_list = ['Yes','No'];
+    var curr_campaign_created_state =  $('#campaign-created span').html();
+    $('#campaign-created span').html('<select id="campaignCreated" style="width:200px;"></select>');
+    assignDropDownValues(curr_campaign_created_state,campaign_created_list,'#campaign-created span');
+
+    var adwords_cid_submitted_list = ['Correct','Invalid',"Different from Advertiser's Adwords account"];
+    var curr_adwords_cid_submitted =  $('#adwords-cid-submitted span').html();
+    $('#adwords-cid-submitted span').html('<select id="adwordsCidSubmitted" style="width:200px;"></select>');
+    assignDropDownValues(curr_adwords_cid_submitted,adwords_cid_submitted_list,'#adwords-cid-submitted span');
+
+    var cms_platform_list = ["1&1 sitebuilder", "3D Cart", "Adobe Dreamweaver", "Aspdotnetstorefront", "Big Commerce", "Concrate 5", "Cs Cart", "Drupal", "EKM Powershop", "FTP/ Hosting account (customised website)", "Go Daddy", "Go Daddy Online store", "Go Daddy Site Builder", "JIMDO", "Joomla", "Magento", "MaxCart", "Netsuite", "Network Solution", "Open Cart", "OS Commerce", "Other CMS", "Prestashop", "Prostores", "Shopify", "Squarespace", "Vista print", "Volusion", "Webs.com site builder ", "Weebly", "Wix", "Wordpress", "X Cart", "Yahoo store", "Zen cart"];
+    var curr_cms = $('#cms-platform span').html();
+    $('#cms-platform span').html('<select id="cmsPlatform" style="width:200px;"></select>');
+    assignDropDownValues(curr_cms,cms_platform_list,'#cms-platform span')
+
+    var gcss_status_list = ["Advertiser Transferred to Phone GCSS", "Advertiser Not Interested for GCSS", "Advertiser Busy for GCSS", "Code Implemented via Email Instructions Sent - Email GCSS", "Call was not Via Calling Solution - Email GCSS", "TAG Rep has another Appointment", "TAG Rep busy for GCSS"];
+    var curr_gcss_status = $('#gcss-status span').html();
+    $('#gcss-status span').html('<select id="gcss-msg" style="width:200px;"></select>');
+    assignDropDownValues(curr_gcss_status,gcss_status_list,'#gcss-status span');
+
+    var appointment_sub_status_list = ["NA - NOT APPLICABLE", "Google - Incorrect Appointment / Past Appointment", "RX - Met Appointment, AD - Met Appointment", "RX - Met Appointment, AD - Missed Appointment", "RX - Met Appointment, AD - Rescheduled Appointment", "RX - Missed Appointment", "RX - Rescheduled Appointment", "ATC - Rescheduled Appointment", "RX - Met Appointment Adv-Met Appointment (After 10 Minutes)"]
+    var curr_appointment_sub_status = $('#appointment-sub-status span').html();
+    $('#appointment-sub-status span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_appointment_sub_status,appointment_sub_status_list,'#appointment-sub-status span');
+
+    var live_transfer_list = ['Yes','No']
+    var curr_live_transfer = $('#live-transfer span').html();
+    $('#live-transfer span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_live_transfer,live_transfer_list,'#live-transfer span');
+
+    var screenshare_scheduled_list = ["WebEx", "JoinMe", "TeamViewer", "GoogleHangout", "GoTo Meeting", "No Screenshare", "Gcases Screenshare", "Skype", "Appear.in"];
+    var curr_screenshare_scheduled = $('#screenshare-scheduled span').html();
+    $('#screenshare-scheduled span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_screenshare_scheduled,screenshare_scheduled_list,'#screenshare-scheduled span');
+
+    var mouse_control_taken_list = ['Yes','No'];
+    var curr_mouse_control_taken = $('#mouse-control-taken span').html();
+    $('#mouse-control-taken span').html('<select id="mc-taken" style="width:200px;"></select>');
+    assignDropDownValues(curr_mouse_control_taken,mouse_control_taken_list,'#mouse-control-taken span');
+
+    var mouse_control_approved_by_list = ["Haleema Shareef", "Konan Daniel", "Leon Dave", "Linda Joseph", "Rajesh Menon", "Sijo Varkey", "Syed Saifullah", "Vaibhav Gupta", "Vishal Kumar Jha"];
+    var curr_mouse_control_approved_by = $('#mouse-control-approved span').html();
+    $('#mouse-control-approved span').html('<select id="mc-approved" style="width:200px;"></select>');
+    assignDropDownValues(curr_mouse_control_approved_by,mouse_control_approved_by_list,'#mouse-control-approved span');
+
+    var rlsa_tag_team_contacted_list = ['By Phone','Via E-mail','No Contact'];
+    var curr_rlsa_tag_team_contacted = $('#rlsa-tag-team-contacted span').html();
+    $('#rlsa-tag-team-contacted span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_rlsa_tag_team_contacted,rlsa_tag_team_contacted_list,'#rlsa-tag-team-contacted span');
+
+    var list_type_list = ['Google Analytics Dynamic List','Google Adwords Dynamic List','No List'];
+    var curr_list_type = $('#list-type span').html();
+    $('#list-type span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_list_type,list_type_list,'#list-type span');
+
+
+    var feed_optimisation_status_list = {{ feed_optimisation_status|safe }};
+    var curr_feed_optimisation_status = $('#feed-optimisation-status span').html();
+    $('#feed-optimisation-status span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_feed_optimisation_status,feed_optimisation_status_list,'#feed-optimisation-status span');
+
+
+    var feed_upload_method_list = ["MaxCart", "GSS", "API", "Extensions", "XML", "Others(please specify in case logs)", "Not Applicable"];
+    var curr_feed_upload_method = $('#feed-upload-method span').html();
+    $('#feed-upload-method span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_feed_upload_method,feed_upload_method_list,'#feed-upload-method span');
+
+    var policy_violation_list_list = ["Not Applicable", "No Secured Payment method (SSL certificate missing)", "No Return and Refund policy page", "Payment not displayed on home page", "Contact information missing on home page", "No specific product landing page on the website", "Watermark on Images", "Services Related Website", "None", "Others"];
+    var curr_type_of_policy_violation = $('#type-of-policy-violation span').html();
+    $('#type-of-policy-violation span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_type_of_policy_violation,policy_violation_list_list,'#type-of-policy-violation span');
+
+    getFeedOptimisationSubStatus(curr_feed_optimisation_status);
 
     getLeadSubStatus(curr_status,'{{ ctype }}');
 
+    if({{request.session.groups|safe}}.includes('CRM-AGENT')){
+      $('#qa-fields').addClass('disabledbutton');
+    }
+   
     $(".editdateinput").datetimepicker({
       timepicker : true,
       format: 'd/m/Y g:i A'
     });
     $('#edit-lead').hide();
-    $('#save-lead').show();
+    $('.save-lead').show();
+    $('.cancel-save').show();
     $('#save-lead-comment').show();
     
 });
@@ -1298,7 +1395,7 @@ $('#edit-lead').on('click',function() {
 
   var prev_lead_status = '';
 
-  $('#save-lead').click(function(){
+  function updateLead(){
     var temp = {};
     $('.edited').each(function(){
       temp[$(this).attr('name')] = $(this).val();   
@@ -1309,11 +1406,187 @@ $('#edit-lead').on('click',function() {
     }
   
     var valid = true;
-    if($('#sub-status option:selected').val() == 'None'){
+
+    if($('#plaSubStatus option:selected').val() == 'IP - Account Suspended' && $('#sqo-sto-comments span textarea').val().replace(' ','') == ''){
       valid = false;
-      $('#sub-status').css('border-color','red');
+      $('#sqo-sto-comments p').show();
+      $('#sqo-sto-comments span textarea').addClass('error');
+    }
+    else{
+      $('#sqo-sto-comments p').hide();
+      $('#sqo-sto-comments span textarea').removeClass('error');
+    }
+    
+    if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val())){
+      if($('#implemented-code span select').val() == 'None'){
+        valid = false;
+        $('#implemented-code span select').addClass('error');
+        $('#implemented-code p').show();
+      }
+      else{
+        $('#implemented-code span select').removeClass('error');
+        $('#implemented-code p').hide();
+      }
     }
 
+    if($('#status option:selected').val() == 'Pending QC - WIN'){
+
+      valid = false;
+      $('#gcss-status p').show();
+      $('#gcss-msg').addClass('error');
+    }
+    else{
+      $('#gcss-status p').hide();
+      $('#gcss-msg').removeClass('error');
+    }
+
+    if($('#status option:selected').val() != 'None'){
+      if($('#sub-status option:selected').val() == 'None'){
+        valid = false;
+        $('#sub-status').addClass('error');
+      }
+      else{
+        $('#sub-status').removeClass('error');
+      }
+      if($('#plaSubStatus option:selected').val() == 'None'){
+        valid = false;
+        $('#pls-sub-status p').show();
+        $('#plaSubStatus').addClass('error');
+      }
+      else{
+        $('#pls-sub-status p').hide();
+        $('#plaSubStatus').removeClass('error');
+      }
+    }
+
+    if($('#screenshare-scheduled span select option:selected').val() != 'None'){
+      if($('#mouse-control-taken span select option:selected').val() == 'None'){
+        valid = false;
+        $('#mouse-control-taken p').show();
+        $('#mc-taken').addClass('error');
+      }
+      else{
+        $('#mouse-control-taken p').hide();
+        $('#mc-taken').removeClass('error');
+      }
+      if($('#mouse-control-approved span select option:selected').val() == 'None'){
+        valid = false;
+        $('#mouse-control-approved p').show();
+        $('#mc-approved').addClass('error');
+      }
+      else{
+        $('#mouse-control-approved p').hide();
+        $('#mc-approved').removeClass('error');
+      }
+    }
+
+    if($('#feed-optimisation-sub-status span select option:selected').val() == 'None'){
+      valid = false;
+      $('#feed-optimisation-sub-status p').show();
+      $('#feed-optimisation-sub-status span select').addClass('error');
+    }
+    else{
+      $('#feed-optimisation-sub-status p').hide();
+      $('#feed-optimisation-sub-status span select').removeClass('error');
+    }
+
+    if($('#type').text() == 'RLSA Bulk Implementation' && $('#rlsa-tag-team-contacted span select').val() == 'None'){
+      valid = false;
+      $('#rlsa-tag-team-contacted p').show();
+      $('#rlsa-tag-team-contacted span select').addClass('error');
+    }
+    else{
+      $('#rlsa-tag-team-contacted p').hide();
+      $('#rlsa-tag-team-contacted span select').removeClass('error')
+    }
+
+    if({{request.session.groups|safe}}.includes('CRM-AGENT')){
+      if(['In Queue','Rework Required - In Active'].includes(curr_ls) && curr_ls != $('#status option:selected').val()){
+        $('#lead-status p').show();
+        $('#status').addClass('error');
+        valid = false;
+      }
+      else{
+        $('#lead-status p').hide();
+        $('#status').removeClass('error');
+      }
+
+      if($('#status option:selected').val() == 'Pending QC - WIN'){
+        $('#doi input').attr('disabled', 'disabled');
+      }
+
+      if(curr_ls == 'In Active' && curr_ls != $('#status option:selected').val()){
+        $('#lead-status p').hide();
+        valid = false;
+        $('#status').addClass('error');
+        $('#lead-status p#inactive-msg').show();
+      }
+      else{
+        $('#status').removeClass('error');
+        $('#lead-status p#inactive-msg').hide();
+      }
+       
+      if(curr_ls == 'Implemented' && curr_ls != $('#status option:selected').val()){
+        $('#lead-status p').hide();
+        $('#lead-status p#inactive-msg').hide();
+        valid = false;
+        $('#status').addClass('error');
+        $('#lead-status p#implement-msg').show();
+      }
+      else{
+        $('#status').removeClass('error');
+        $('#lead-status p#implement-msg').hide();
+      }
+
+      if(curr_fco != $('#first-contacted span input').val()){
+        valid = false;
+        $('#first-contacted span input').addClass('error');
+        $('#first-contacted p').show();
+      }
+      else{
+        $('#first-contacted span input').removeClass('error');
+        $('#first-contacted p').hide();
+      }
+
+    }
+
+    if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val()) && $('#type').text() == 'Google Shopping Setup'){
+      if($('#products-uploaded span input').val().replace(' ','') == ''){
+        valid = false;
+        $('#products-uploaded p').show();
+        $('#products-uploaded span input').addClass('error');
+      }
+      else{
+        $('#products-uploaded p').hide();
+        $('#products-uploaded span input').removeClass('error');
+      }
+
+      if($('#feed-upload-method span select').val() == 'None'){
+        valid = false;
+        $('#feed-upload-method p').show();
+        $('#feed-upload-method span select').addClass('error');
+      }
+      else{
+        $('#feed-upload-method p').hide();
+        $('#feed-upload-method span select').removeClass('error');
+      }
+    }
+
+
+    if($('#status option:selected').val() == 'Attempting Contact'){
+      if(rs_appointment == $('#rescheduled-appointment span input').val()){
+        $('#rescheduled-appointment p').show();
+        $('#rescheduled-appointment span input').addClass('error');
+      }
+      else{
+        $('#rescheduled-appointment p').hide();
+        $('#rescheduled-appointment span input').removeClass('error');
+      }
+    }
+
+   /* if($('#type-of-policy-violation span select').val() == 'None'){
+
+    }*/
 
     if(valid){
       $.ajax({
@@ -1331,12 +1604,15 @@ $('#edit-lead').on('click',function() {
         }
       })
     }
-  })
+  }
 
     $('#save-lead-comment').click(function(e){
       e.preventDefault();
       var comment = $('#add-comment').val().replace("\n", "");
-      data = {'id': $('#row-id').text(), 'regalix_comment':comment}
+      var date = new Date();
+      var date = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear()
+      commentDetail = "Dail: "+ $('#add-comment').attr("data-dail") +" </br>" + "Date: " + date +"</br>" + "Name: {{name}}</br>" + comment +"</br>"
+      data = {'id': $('#row-id').text(), 'regalix_comment':commentDetail}
       $.ajax({
         url: "/crm/add-lead-comment/",
         type: 'POST',
@@ -1344,10 +1620,14 @@ $('#edit-lead').on('click',function() {
         dataType: "json",
         success:function(data){
           if(data['success']){
-              var input_coment = $('#add-comment').val();          
-              var input_coment = input_coment.replace("\n", "</br>");
-              $('#comment').append("</br>" + input_coment +"</br>----------------------------------------")
+            var comment = "";
+            $('#comment').html('');
+            var cmt = data["regalix_comment"].split('Dail')
+            for(var i = 1; i <= cmt.length - 1; i ++ )
+                $('#comment').append("<p> Dail" + cmt[i] + "</p></br>");
+
               $("#add-comment").val('');
+              $("#add-comment").attr("data-dail", cmt.length -1);
               $("#add-comment").val('On Call : \nNext Course Of Action :');
             
           }
@@ -1473,11 +1753,18 @@ function cloneLead(){
           // inputted file path is not an image of one of the above types
           $(".save-button").prop("disabled",true);
 
-          errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Please upload files only with extension<b> " + allowedFiles.join(', ') + "</b></div>";
+          /*errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please upload files only with extension<b> " + allowedFiles.join(', ') + "</b></div>";*/
+          $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+          $('#clone-info').addClass('alert-warning')
+          $('#span-msg').text('Please upload files only with extension ' + allowedFiles.join(', '))
+          $('#clone-info').show();
+          $('#image_save')[0].reset()
+          $('.file-name').html('');
           return false;
         }
         $(".save-button").prop("disabled",false);
+        $('.file-name').html(filename);
         return true;
       }
   }
@@ -1494,8 +1781,13 @@ function cloneLead(){
         if (regUrl.test(image_link) == false) {
           $(".save-button").prop("disabled",true);
 
-          errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Please add a valid url</div>";
+          /*errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please add a valid url</div>";*/
+          $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+          $('#span-msg').text('Please add a valid url')
+          $('#clone-info').show();
+          $('#image_save')[0].reset()
+          $('.file-name').html('');
           return false;
         }
         $(".save-button").prop("disabled",false);
@@ -1526,18 +1818,16 @@ function cloneLead(){
             processData: false,
             success: function (data) {
               if(data['success']){
-                errState.innerHTML = "<div class='alert alert-success'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
-                get_lead_history();
-                $('#image_save')[0].reset()
-
+                $('#clone-info').removeClass('alert-warning').addClass('alert-success')
               }
               else{
-                errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
+                $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+              }
+                $('#span-msg').text(data['msg'])
+                $('#clone-info').show();
                 get_lead_history();
                 $('#image_save')[0].reset()
-              }
+                $('.file-name').html('');
             },
             error: function(data){
               alert("Something went wrong, please try after some time");
@@ -1597,11 +1887,51 @@ function cloneLead(){
     }
 
 
+    function getFeedOptimisationSubStatus(feed_optimisation_status){
+      $.ajax({
+        type: 'GET',
+        url: '/crm/get-feed-optimisation-sub-status?feed_optimisation_status=' + feed_optimisation_status,
+        dataType: "json",
+        success: function(data) {
+                if(data['success'] && data['feed_optimisation_sub_status']){
+                  var sub_status = $('#feed-optimisation-sub-status span').text();
+                  $("#feed-optimisation-sub-status span").html("<select style='width:200px;'></select>");
+                  $("#feed-optimisation-sub-status span select").append("<option value='None'>--None--</option>");
+                  for(var i=0;i< data['feed_optimisation_sub_status'].length; i++){
+                    if(sub_status == 'None'){
+                      $("#feed-optimisation-sub-status span select option[value='--None--']").prop('selected',true);
+                    }
+                    if(sub_status ==  data['feed_optimisation_sub_status'][i]){
+                      $("#feed-optimisation-sub-status span select").append("<option selected>"+ data['feed_optimisation_sub_status'][i] +"</option>");
+                    }
+                    else{
+                      $("#feed-optimisation-sub-status span select").append("<option>"+ data['feed_optimisation_sub_status'][i] +"</option>");
+                    }
+                  }
+
+                }
+                else{
+                  $('#feed-optimisation-sub-status span').html('');
+                }
+              },
+              error: function(data){
+                  alert("Something went wrong, please try after some time");
+              }
+      })
+    }
+
+
+
 
     $(document).on('change','#lead-status span select',function(){
       var curr_status = $(this).val();
       var type = '{{ ctype }}';
       getLeadSubStatus(curr_status,'{{ ctype }}');
+    })
+
+    $(document).on('change','#feed-optimisation-status span select',function(){
+      var curr_status = $(this).val();
+      getFeedOptimisationSubStatus(curr_status);
     })
 
     var prev_val = '';
@@ -1612,6 +1942,7 @@ function cloneLead(){
         $(ele).addClass('edited');
         var val = $(ele).parent().attr('name');
         $(ele).attr('name',val);
+        $(ele).css('background','#df970d');
         if(val == 'lead_status'){
           prev_lead_status = old_val;
         }
