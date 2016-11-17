@@ -19,4 +19,5 @@ urlpatterns = patterns(
     url(r'^save-image-file/$',views.save_image_file),
     url(r'^download-image-file/',views.download_image_file),
     url(r'^get-lead-sub-status/$', views.get_lead_sub_status),
+    url(r'^get-feed-optimisation-sub-status/$', views.get_feed_optimisation_sub_status),
 )

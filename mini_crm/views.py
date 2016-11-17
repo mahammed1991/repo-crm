@@ -98,7 +98,6 @@ def crm_management(request):
 						query = {'lead_status': lead_status, 'country__in':loc_list}
 					else:
 						query = {'lead_status': lead_status}
-
 					leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
 						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
 					leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
@@ -106,7 +105,7 @@ def crm_management(request):
 				elif process_type == "RLSA":
 					
 					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
-						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
 						).order_by('-created_date')[offset:limit]
 					
 					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
@@ -114,21 +113,25 @@ def crm_management(request):
 				elif process_type == "Shopping":
 
 					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
-						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
+						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
 						)[offset:limit]
 					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
-
+					
+				elif process_type == "ShoppingArgos":
+					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
+						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
+						)[offset:limit]
+					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
 				elif process_type == "Shopping Argos":
 					leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
 						'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
 						)[offset:limit]
 					leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
-					
 
 				else: # Tag
 					exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
 					leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country'
-						)[offset:limit]
+							)[offset:limit]
 					leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 					
 			else:
@@ -156,7 +159,7 @@ def crm_management(request):
 
 def get_leads(leads, leads_list):
 	for lead in leads:
-		appointment_date = datetime.strftime(lead.get('appointment_date'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date') else lead.get('appointment_date') ,
+		appointment_date = datetime.strftime(lead.get('appointment_date_in_ist'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date_in_ist') else None
 		phone_optional =  lead.get('phone_optional')
 		
 		lead_dict = {'id':lead['id'],
@@ -264,65 +267,69 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
 
 	return leads
 
-# def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
+def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
 	
-#     if has_region:
-#         query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
-#     else:
-#         query = {'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
-	
-#     if process_type == "WPP":
+	if has_region:
+		if start_date_time != '' and end_date_time != '':
+			query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
+		else:
+			query = {'country__in':loc_list}
+	else:
+		if start_date_time != '' and end_date_time != '':
+			query = {'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
+		else:
+			query = {}
+	if process_type == "WPP":
 
-#         leads = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).values(
-#             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
-#             )[offset:limit]
-#         leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
-	   
-
-#     elif process_type == "Picasso Audits":
-
-#         if loc_list:
-#             query = {'country__in':loc_list}
-#         else:
-#             query = {}
-
-#         leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
-#             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
-#         leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
-
-#     elif process_type == "RLSA":
-		
-#         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
-#             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
-#             ).order_by('-created_date')[offset:limit]
-		
-#         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
+		leads = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).values(
+			'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
+			)[offset:limit]
+		leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
 		
 
-#     elif process_type == "Shopping":
+	elif process_type == "Picasso Audits":
+
+		if loc_list:
+			query = {'country__in':loc_list}
+		else:
+			query = {}
+
+		leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
+			'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
+		leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
+
+	elif process_type == "RLSA":
 		
-#         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
-#             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
-#             )[offset:limit]
-#         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
+		leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
+			'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
+			).order_by('-created_date')[offset:limit]
+		
+		leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
 		
 
-#     elif process_type == "Shopping Argos":
-#         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
-#             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date', 'phone', 'phone_optional', 'country'
-#             )[offset:limit]
-#         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
+	elif process_type == "Shopping":
+		leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
+			'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
+			)[offset:limit]
+		leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
 		
 
-#     else: # Tag
-
-#         exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
+	elif process_type == "ShoppingArgos":
+		leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
+			'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
+			)[offset:limit]
+		leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
 		
-#         leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date', 'phone', 'phone_optional', 'country'
-#             )[offset:limit]
-#         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
-#     return leads
+	else: # Tag
+
+		exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
+		
+		leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
+			)[offset:limit]
+		leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
+		
+	return leads
 		
 
 
@@ -509,6 +516,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
 		if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
 			lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
 			lead_status = settings.LEAD_STATUS
+			feed_optimisation_status = settings.FEED_OPTIMISATION_STATUS
 			primary_role = ['Owner','Marketing','Webmaster']
 			language = Language.objects.filter(is_active=True)
 			team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
@@ -537,8 +545,11 @@ def lead_details(request, lid, sf_lead_id, ctype):
 				'language':language_list,'team':team_list,
 				'ctype':ctype,
 				'comment':lead.regalix_comment,
+				'dail_num':len(lead.regalix_comment.split("Dail")) - 1,
+				'name':request.user.first_name,
 				'pla_sub_status':pla_sub_status,
 				'implemented_code_list':implemented_code_list,
+				'feed_optimisation_status':feed_optimisation_status,
 				'success': True
 				}
 
@@ -834,6 +845,9 @@ def update_lead(request):
 			if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
 				lead.lead_sub_status = ''
 
+			if data.get('feed_optimisation_status') == 'None':
+				lead.feed_optimisation_sub_status = None
+
 			# mail function on lead status change
 			if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
 				mail_subject = "Lead status has been changed"
@@ -899,6 +913,7 @@ def add_lead_comment(request):
 			lead = Leads.objects.get(id=data['id']) 
 			lead.regalix_comment += data['regalix_comment']
 			lead.save()
+			resp['regalix_comment'] = lead.regalix_comment
 			resp['success'] = True
 		except:
 			resp['success'] = False
@@ -915,7 +930,7 @@ def get_lead_sub_status(request):
 			if lead_status == 'Attempting Contact':
 				lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Attempting Contact"]
 			elif lead_status == 'In Progress':
-				lead_sub_status = settings.lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["In Progress"]
+				lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["In Progress"]
 			elif lead_status == 'Pending QC - In Active':
 				lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - In Active"]
 			elif lead_status == 'Pending QC - WIN':
@@ -931,4 +946,29 @@ def get_lead_sub_status(request):
 			elif lead_status == "Pending QC - Dead Lead":
 				lead_sub_status = settings.LEAD_STATUS_SUB_STATUS_MAPPING[ctype]["Pending QC - Dead Lead"] = ["Pending QC - Dead Lead"]
 	resp = {'success':True,'lead_sub_status':lead_sub_status}
-	return HttpResponse(json.dumps(resp))
+	return HttpResponse(json.dumps(resp),content_type='application/json')
+
+
+
+def get_feed_optimisation_sub_status(request):
+	if request.method == 'GET':
+		feed_optimisation_status = request.GET.get('feed_optimisation_status')
+		feed_optimisation_status = feed_optimisation_status.replace('%20',' ')
+		feed_optimisation_sub_status = None
+
+		if feed_optimisation_status == 'Feed Audit':
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+		elif feed_optimisation_status == 'Feed Optimization':
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+		elif feed_optimisation_status == 'Feed Testing':
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+		elif feed_optimisation_status == 'Feed Upload':
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+		elif feed_optimisation_status == 'Implementation':
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+		elif feed_optimisation_status == "Rework":
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+		elif feed_optimisation_status == "Inactive":
+			feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
+	resp = {'success':True,'feed_optimisation_sub_status':feed_optimisation_sub_status}
+	return HttpResponse(json.dumps(resp),content_type='application/json')
