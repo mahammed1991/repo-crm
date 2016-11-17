@@ -1047,10 +1047,16 @@
     <script type="text/javascript">
 
     $(document).ready(function(e) {
-        var cmt = "{{ comment }}";
-        cmt = replaceAll(cmt, "On Call :", "</br>----------------------------------------</br>On Call :");
-        cmt = replaceAll(cmt, "Next Course Of Action :", "</br>Next Course Of Action :");
-        $("#comment").html(cmt + "</br>----------------------------------------");
+        var cmt_txt = "{{comment}}"
+        if(cmt_txt != "")
+        {
+          var cmt = cmt_txt.split("Dail");
+          var regComment = ""
+          for(var i = 1; i <= cmt.length - 1; i ++ )
+            regComment += "<p> Dail" + cmt[i] + "</p></br>";
+          regComment = replaceAll(regComment, "&lt;/br&gt;", "</br>");
+          $('#comment').html(regComment);
+      }
     });
 
     function replaceAll(str, find, replace) {
@@ -1101,7 +1107,7 @@
         });
      }
      else{
-      $('#exampleInputEmail1').css('border-color','red')
+      $('#exampleInputEmail1').css('border-color','red');
      }
 
     });
@@ -1156,6 +1162,7 @@ $('#edit-lead').on('click',function() {
     
     $('td.edit-textarea-for-comment').html('<textarea style="width:200px;" id="add-comment"></textarea>');
     $("#add-comment").html('On Call : \nNext Course Of Action :');
+    $("#add-comment").attr("data-dail", "{{dail_num}}");
 
     $('td.edit-checkbox').each(function(){
         var html = $(this).html();
@@ -1293,7 +1300,10 @@ $('#edit-lead').on('click',function() {
     $('#save-lead-comment').click(function(e){
       e.preventDefault();
       var comment = $('#add-comment').val().replace("\n", "");
-      data = {'id': $('#row-id').text(), 'regalix_comment':comment}
+      var date = new Date();
+      var date = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear()
+      commentDetail = "Dail: "+ $('#add-comment').attr("data-dail") +" </br>" + "Date: " + date +"</br>" + "Name: {{name}}</br>" + comment +"</br>"
+      data = {'id': $('#row-id').text(), 'regalix_comment':commentDetail}
       $.ajax({
         url: "/crm/add-lead-comment/",
         type: 'POST',
@@ -1301,10 +1311,14 @@ $('#edit-lead').on('click',function() {
         dataType: "json",
         success:function(data){
           if(data['success']){
-              var input_coment = $('#add-comment').val();          
-              var input_coment = input_coment.replace("\n", "</br>");
-              $('#comment').append("</br>" + input_coment +"</br>----------------------------------------")
+            var comment = "";
+            $('#comment').html('');
+            var cmt = data["regalix_comment"].split('Dail')
+            for(var i = 1; i <= cmt.length - 1; i ++ )
+                $('#comment').append("<p> Dail" + cmt[i] + "</p></br>");
+
               $("#add-comment").val('');
+              $("#add-comment").attr("data-dail", cmt.length -1);
               $("#add-comment").val('On Call : \nNext Course Of Action :');
             
           }

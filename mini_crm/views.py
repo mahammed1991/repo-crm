@@ -485,12 +485,13 @@ def lead_details(request, lid, sf_lead_id, ctype):
             lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
         else:
             lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-        
         context = {'lead':lead,'lead_detail':lead_detail,
                 'status':lead_status,'role':primary_role,
                 'language':language_list,'team':team_list,
                 'ctype':ctype,
                 'comment':lead.regalix_comment,
+                'dail_num':len(lead.regalix_comment.split("Dail")) - 1,
+                'name':request.user.first_name,
                 'pla_sub_status':pla_sub_status,
                 'implemented_code_list':implemented_code_list,
                 'success': True
@@ -852,6 +853,7 @@ def add_lead_comment(request):
             lead = Leads.objects.get(id=data['id']) 
             lead.regalix_comment += data['regalix_comment']
             lead.save()
+            resp['regalix_comment'] = lead.regalix_comment
             resp['success'] = True
         except:
             resp['success'] = False
