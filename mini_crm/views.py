@@ -412,7 +412,7 @@ def search_leads(request):
             Q(customer_id= search_query) | Q(sf_lead_id= search_query))
         if normal_leads:
             for each in list(normal_leads):
-                if each['type_1'] in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration']:
+                if each['type_1'] in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration', 'Project Argos- Feed Performance Optimization']:
                     each['process_type'] = 'Shopping'
                 elif each['type_1'] in ['RLSA Bulk Implementation']:
                     each['process_type'] = 'RLSA'
@@ -421,27 +421,27 @@ def search_leads(request):
             results += list(normal_leads)
     except ObjectDoesNotExist:
         pass
-    try:
-        picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
-            Q(customer_id= search_query) | Q(sf_lead_id= search_query))
-        if picasso_leads:
-            for each in list(picasso_leads):
-                if each['type_1'] in ['BOLT']:
-                    each['process_type'] = 'BOLT'
-                else:
-                    each['process_type'] = 'Picasso'
-            results += list(picasso_leads)
+    # try:
+    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+    #         Q(customer_id= search_query) | Q(sf_lead_id= search_query))
+    #     if picasso_leads:
+    #         for each in list(picasso_leads):
+    #             if each['type_1'] in ['BOLT']:
+    #                 each['process_type'] = 'BOLT'
+    #             else:
+    #                 each['process_type'] = 'Picasso'
+    #         results += list(picasso_leads)
 
-    except ObjectDoesNotExist:
-        pass
-    try:
-        wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
-        if wpp_leads:
-            for each in list(wpp_leads):
-                each['process_type'] = 'WPP'
-            results += list(wpp_leads)
-    except ObjectDoesNotExist:
-        pass
+    # except ObjectDoesNotExist:
+    #     pass
+    # try:
+    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
+    #     if wpp_leads:
+    #         for each in list(wpp_leads):
+    #             each['process_type'] = 'WPP'
+    #         results += list(wpp_leads)
+    # except ObjectDoesNotExist:
+    #     pass
 
     return render(request, 'crm/search_result.html', {'returning_data': results,
                                                       'resultcount': len(results),
@@ -627,6 +627,7 @@ def clone_lead(request):
     process_type = request.POST.get('process_type')
     lead_id = request.POST.get('lead_id')
     if process_type in ['WPP']:
+        url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
         obj = WPPLeads.objects.get(pk=lead_id)
         obj.pk = None
         obj.date_of_installation = None
@@ -641,9 +642,19 @@ def clone_lead(request):
         obj.dials = 0
         obj.created_date = datetime.now()
         obj.save()
+
+        lh = LeadHistory()
+        lh.lead_id = obj.pk
+        lh.action_type = 'clone'
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.modifications = "This lead is cloned from <a href="+url+">"+str(obj.customer_id)+"</a>."
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.save()
+
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     elif process_type in ['Picasso', 'BOLT']:
         obj = PicassoLeads.objects.get(pk=lead_id)
+        url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
         obj.pk = None
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
@@ -654,9 +665,19 @@ def clone_lead(request):
         obj.additional_notes = ""
         obj.created_date = datetime.now()
         obj.save()
+
+        lh = LeadHistory()
+        lh.lead_id = obj.pk
+        lh.action_type = 'clone'
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.modifications = "This lead is cloned from <a href="+url+">"+str(obj.customer_id)+"</a>."
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.save()
+
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
-    elif process_type in ['TAG', 'Sopping', 'RLSA']:
+    elif process_type in ['TAG', 'Shopping', 'ShoppingArgos', 'RLSA']:
         obj = Leads.objects.get(pk=lead_id)
+        url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
         obj.pk = None
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
@@ -670,7 +691,17 @@ def clone_lead(request):
         obj.code_1 = ""
         obj.dials = 0
         obj.created_date = datetime.now()
+        obj.created_by = str(request.user.email)
         obj.save()
+        
+        lh = LeadHistory()
+        lh.lead_id = obj.pk
+        lh.action_type = 'clone'
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.modifications = "This lead is cloned from <a href="+url+">"+str(obj.customer_id)+"</a>."
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.save()
+
         return HttpResponse(json.dumps({'process_type': process_type, 'sf_id':obj.sf_lead_id, 'id':obj.pk}), content_type="application/json")
     else:
         response = {'msg':'Failed to clone'}
@@ -793,7 +824,7 @@ def update_lead(request):
 
             # mail function on lead status change
             if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
-                mail_subject = "Lead status has been changed"
+                mail_subject = "Lead status has been changed ("+str(lead.customer_id)+")"
                 mail_from = 'Lead Status Changed <google@regalix-inc.com>'
                 crm_managers_mails = User.objects.values_list('email').filter(groups__name='CRM-MANAGER')
                 mail_to = list()
