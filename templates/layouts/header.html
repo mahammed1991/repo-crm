@@ -4,8 +4,13 @@
 
 .main-nav {width:150% !important;}
 
+{% if not "CRM-AGENT" in  request.session.groups %}
 .navbar-right{margin-left:-40px !important;}
+{% endif %}
 
+{% if not "CRM-AGENT" in  request.session.groups  or  not "CRM-MANAGER" in  request.session.groups %}
+.navbar-right{margin-top:16px !important;}
+{% endif %}
 </style>
 
 {% endblock main_css %}
@@ -28,7 +33,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav main-nav">
           {% if "CRM-MANAGER" in  request.session.groups %}
-            <li style="margin-left: -15px;" class="dropdown"> <a href="{% url 'main.views.home' %}" {% if "wpp" in request.META.HTTP_HOST %} style="padding-top: 8px;" {% endif %}" aria-expanded="false">All Leads</a></li>
+            <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">All Leads</a>
           {% elif "CRM-AGENT" in  request.session.groups %}
             <li><a href="#">My Leads</a></li>
           {% else %}             
@@ -48,6 +53,7 @@
             </li>
             <!-- <li><a href="{% url 'reports.views.reports' %}">Reports</a></li> -->
           {% if "CRM-MANAGER" in  request.session.groups %}
+          <!-- Reports section 
           <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">CRM Reports links <i class="fa fa-angle-down"></i></a>
             <ul class="dropdown-menu" role="menu">
              
@@ -56,7 +62,7 @@
              
             <li><a href="{% url 'reports.views.reports' %}">Reports 3</a></li>  
             </ul>
-            </li>
+            </li> -->
               {% elif "CRM-AGENT" not in  request.session.groups %}
           
             <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Reports <i class="fa fa-angle-down"></i></a>
@@ -88,8 +94,8 @@
 
           {% if "CRM-MANAGER" in  request.session.groups %}
           
-                      <div class="col-md-4">
-                          <div class="input-group" style="display: flex;">
+                       <div class="col-md-6">
+                          <div class="input-group" style="display: flex;margin-left: 40px;">
                           
                           <input style="width:65%;height:36px;" type="text" class="form-control" placeholder="Search cid / sf-id" id="search-field" />
                           <span><button class="btn btn-default" type="button"onclick="searchValidation();" id="search-btn">Search</button></span>
@@ -99,10 +105,10 @@
               
                     {% elif "CRM-AGENT" in  request.session.groups %}
                   
-                      <div class="col-md-4">
-                          <div class="input-group" style="display: flex;">
+                      <div class="col-md-6">
+                          <div class="input-group" style="display: flex;margin-left: 40px;">
                           
-                          <input style="width:65%;height:36px;" type="text" class="form-control" placeholder="Search cid /sf-id" id="search-field" />
+                          <input style="width: 70%;height:36px;" type="text" class="form-control" placeholder="Search cid /sf-id" id="search-field" />
                           <span><button class="btn btn-default" type="button"onclick="searchValidation();"  id="search-btn">Search</button></span>
                         </div>
                        
@@ -162,27 +168,28 @@
 
 
 
+<div class="col-md-5" {% if "CRM-MANAGER" in  request.session.groups %} style ="margin-top: -15px;" {% endif %}>
 
-
-        <ul class="nav navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style="width: 37%;" {% endif %}>
+        <ul class=" navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style ="margin-left:60px;margin-top:0px !important;" {% endif %} >
           <li style="margin-left: -15px;" class="submit-lead-btn">
-           {% if "CRM-MANAGER" in  request.session.groups %}
+           {% if not "CRM-AGENT" in  request.session.groups %}
             {% if "wpp" in request.META.HTTP_HOST %}
              <!--  <button class="btn std-btn sm-btn" onclick='location.href=""'>Nominate Advertiser Website</button> -->
               <button style="margin-left:0px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
+            <button class="btn std-btn sm-btn save-lead" style="display:none;margin-left:0px !important;" onclick="updateLead()">Save</button>
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
             {% endif %}
           {% endif %}
           </li>
           <li class="dropdown notification"> 
           <a {% if "wpp" in request.META.HTTP_HOST %} style="margin-right: 28px;margin-left: -34px;" {% endif %}
-           href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bell"></i><span id="notifications_count"></span></a>
+           href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bell"></i><span style="left:12px" id="notifications_count"></span></a>
             <ul class="dropdown-menu" role="menu" id="notifications">
             </ul>
           </li>
           {% if user.is_authenticated %}
-          <li class="dropdown user-area"> 
+          <li class="dropdown user-area" {% if "CRM-AGENT" in  request.session.groups or "CRM-MANAGER" in  request.session.groups  %} style ="margin-left: 30px;"{% else %} style ="margin-left: 40px;"  {% endif %}> 
             <a {% if "wpp" in request.META.HTTP_HOST %} style="margin-left: -31px;" {% endif %} 
             href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
               {% if request.session.profile_image %}
@@ -231,6 +238,7 @@
           </li>
           {% endif %}
         </ul>
+        </div>
       </div>
       <!-- /.container-fluid --> 
     </nav>
