@@ -24,7 +24,7 @@
       <div class=" container-fluid ">
         <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-            <span style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
+            <span id ='span-msg' style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
         </div>
                     <div class="white-section">
                         <!-- Nav tabs -->
@@ -944,7 +944,10 @@
                               <span class="btn btn-primary load-file">
                               <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
                                   <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;">Upload File
+                                  <p class="file-name" style="color: black;"></p>
                               </span>
+                              <div class="clearfix"></div>
+                              <p class="file-name"></p>
                               </label>
                                 <div class="or-left">OR</div>
                                 <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
@@ -1427,11 +1430,18 @@ function cloneLead(){
           // inputted file path is not an image of one of the above types
           $(".save-button").prop("disabled",true);
 
-          errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Please upload files only with extension<b> " + allowedFiles.join(', ') + "</b></div>";
+          /*errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please upload files only with extension<b> " + allowedFiles.join(', ') + "</b></div>";*/
+          $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+          $('#clone-info').addClass('alert-warning')
+          $('#span-msg').text('Please upload files only with extension ' + allowedFiles.join(', '))
+          $('#clone-info').show();
+          $('#image_save')[0].reset()
+          $('.file-name').html('');
           return false;
         }
         $(".save-button").prop("disabled",false);
+        $('.file-name').html(filename);
         return true;
       }
   }
@@ -1448,8 +1458,13 @@ function cloneLead(){
         if (regUrl.test(image_link) == false) {
           $(".save-button").prop("disabled",true);
 
-          errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Please add a valid url</div>";
+          /*errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please add a valid url</div>";*/
+          $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+          $('#span-msg').text('Please add a valid url')
+          $('#clone-info').show();
+          $('#image_save')[0].reset()
+          $('.file-name').html('');
           return false;
         }
         $(".save-button").prop("disabled",false);
@@ -1480,18 +1495,16 @@ function cloneLead(){
             processData: false,
             success: function (data) {
               if(data['success']){
-                errState.innerHTML = "<div class='alert alert-success'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
-                get_lead_history();
-                $('#image_save')[0].reset()
-
+                $('#clone-info').removeClass('alert-warning').addClass('alert-success')
               }
               else{
-                errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                               aria-label='close'>&times;</a>" + data['msg'] + "</b></div>";
+                $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+              }
+                $('#span-msg').text(data['msg'])
+                $('#clone-info').show();
                 get_lead_history();
                 $('#image_save')[0].reset()
-              }
+                $('.file-name').html('');
             },
             error: function(data){
               alert("Something went wrong, please try after some time");
