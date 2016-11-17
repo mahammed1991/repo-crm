@@ -133,6 +133,10 @@ class Leads(models.Model):
     # System Information
     created_date = models.DateTimeField(default=datetime.utcnow())
     updated_date = models.DateTimeField(default=datetime.utcnow(), auto_now=True)
+    created_by = models.CharField(max_length=100, blank=True, null=True)
+    last_updated_by = models.CharField(max_length=100, blank=True, null=True)
+    appointment_date_in_pst = models.DateTimeField(blank=True, null=True)
+    rescheduled_appointment_in_pst = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Leads"
@@ -160,6 +164,7 @@ class TagLeadDetail(models.Model):
     rlsa_tag_team_contacted = models.CharField(max_length=100, blank=True, null=True, default='')
     campaign_created_by_gsr = models.CharField(max_length=100, blank=True, null=True, default='')
     adwords_cid_submitted = models.CharField(max_length=100, blank=True, null=True, default='')
+    screenshare_scheduled = models.CharField(max_length=100, blank=True, null=True, default='')
 
     # New Fields
     implemented_code_is = models.CharField(max_length=80, blank=True, null=True, default='')
@@ -198,6 +203,7 @@ class TagLeadDetail(models.Model):
     products_uploaded = models.CharField(max_length=100, blank=True, null=True, default='')
     campaign_id = models.CharField(max_length=100, blank=True, null=True, default='')
     feed_upload_method = models.CharField(max_length=100, blank=True, null=True, default='')
+
 
 # Create your models here.
 class WPPLeads(models.Model):
