@@ -35,7 +35,7 @@
           {% if "CRM-MANAGER" in  request.session.groups %}
             <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">All Leads</a>
           {% elif "CRM-AGENT" in  request.session.groups %}
-            <li><a href="#">My Leads</a></li>
+            <li><a href="{% url 'mini_crm.views.crm_agent' %}">My Leads</a></li>
           {% else %}             
              <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
