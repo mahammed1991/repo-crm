@@ -8,7 +8,7 @@
 .navbar-right{margin-left:-40px !important;}
 {% endif %}
 
-{% if not "CRM-AGENT" in  request.session.groups  or  not "CRM-MANAGER" in  request.session.groups %}
+{% if not "CRM-MANAGER" in  request.session.groups %}
 .navbar-right{margin-top:16px !important;}
 {% endif %}
 </style>
@@ -35,7 +35,7 @@
           {% if "CRM-MANAGER" in  request.session.groups %}
             <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">All Leads</a>
           {% elif "CRM-AGENT" in  request.session.groups %}
-            <li><a href="#">My Leads</a></li>
+            <li><a href="{% url 'mini_crm.views.crm_agent' %}">My Leads</a></li>
           {% else %}             
              <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leads <i class="fa fa-angle-down"></i></a>
               <ul class="dropdown-menu" role="menu">
@@ -168,16 +168,19 @@
 
 
 
-<div class="col-md-5" {% if "CRM-MANAGER" in  request.session.groups %} style ="margin-top: -15px;" {% endif %}>
+<div class="col-md-5" style ="float:right;margin-top: 8px !important;" >
 
-        <ul class=" navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style ="margin-left:60px;margin-top:0px !important;" {% endif %} >
-          <li style="margin-left: -15px;" class="submit-lead-btn">
+        <ul class=" navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style ="margin-left:60px;margin-top:0px !important;" {% endif %}  >
+          <li {% if "CRM-MANAGER" in  request.session.groups %} style="margin-left: -70px !important;" {% elif "CRM-AGENT" in  request.session.groups %} style="margin-left: -50px !important;"{% endif %} class="submit-lead-btn">
+            {% if "CRM-MANAGER" in  request.session.groups or "CRM-AGENT" in  request.session.groups %}
+              <button class="btn std-btn sm-btn save-lead" style="display:none;margin-left:0px !important;" onclick="updateLead()">Save</button>
+            {% endif %}
+
            {% if not "CRM-AGENT" in  request.session.groups %}
             {% if "wpp" in request.META.HTTP_HOST %}
              <!--  <button class="btn std-btn sm-btn" onclick='location.href=""'>Nominate Advertiser Website</button> -->
               <button style="margin-left:0px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
-            <button class="btn std-btn sm-btn save-lead" style="display:none;margin-left:0px !important;" onclick="updateLead()">Save</button>
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
             {% endif %}
           {% endif %}
@@ -291,4 +294,3 @@ window.addEventListener("click", function(evt){
 });
 
   </script>
-

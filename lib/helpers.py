@@ -942,3 +942,31 @@ def save_file(file_data, file_path):
 def is_cid(cid):
     reg = '\d{3}-\d{3}-\d{4}$'
     return re.match(reg, cid)
+
+
+def get_ist_pst_converted_timestamps(current_tz, appointment_date):
+    if appointment_date:
+        # Convert Appointment to IST
+        if current_tz == 'IST':
+            appointment_in_ist = appointment_date
+        else:
+            tz = Timezone.objects.get(zone_name=current_tz)
+            utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
+            tz_ist = Timezone.objects.get(zone_name='IST')
+            appointment_in_ist = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+        # appointment_in_ist = datetime.strftime(appointment_in_ist, '%m/%d/%Y %I:%M %p')
+
+        # Convert Appointment to PST/PDT
+        sf_timezone = SalesforceApi.get_current_timezone_of_salesforce()
+        if current_tz == sf_timezone.zone_name:
+            appointment_in_pst = appointment_date
+        else:
+            tz = Timezone.objects.get(zone_name=current_tz)
+            utc_date = SalesforceApi.get_utc_date(appointment_date, tz.time_value)
+
+            tz_ist = Timezone.objects.get(zone_name=sf_timezone.zone_name)
+            appointment_in_pst = SalesforceApi.convert_utc_to_timezone(utc_date, tz_ist.time_value)
+        # appointment_in_pst = datetime.strftime(appointment_in_pst, '%m/%d/%Y %I:%M %p')
+        return appointment_in_ist, appointment_in_pst
+    else:
+        return None, None

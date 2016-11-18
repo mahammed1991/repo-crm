@@ -47,7 +47,7 @@ from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
 
 # Custom imports
 import config
-from lib.helpers import save_file, is_cid
+from lib.helpers import save_file, is_cid, get_ist_pst_converted_timestamps
 from lib.sf_lead_ids import SalesforceLeads
 from lib.salesforce import SalesforceApi
 from lib.helpers import (get_unique_uuid, get_quarter_date_slots, send_mail, get_count_of_each_lead_status_by_rep, wpp_lead_status_count_analysis, get_tat_for_picasso, get_tat_for_bolt,
@@ -57,16 +57,11 @@ from reports.report_services import ReportService, DownloadLeads
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-# Lead form should contain the Appointment Time in 3 formats - IST, Advertiser tz and appointment time in IST
-# TAG, SHOPPING, WPP lead forms will have appointments and add logic to
-
-
 # Create your views here.
 @login_required
 @csrf_exempt
 @tag_user_required
 def lead_form(request):
-
     """
     Lead Submission to Salesforce
     """
@@ -75,20 +70,21 @@ def lead_form(request):
         post_lead_to_google_form(request.POST, 'normal')
         ret_url = ''
         # error_url = ''
-
         if request.POST.get('is_tag_lead') == 'yes':
             data = request.POST
-            basic_data = {}
+            basic_data = dict()
             # Get Basic/Common form field data
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
             # error_url = basic_data['errorURL']
             try:
                 lead = Leads()
-                lead.lead_owner_name = data['manager_name']
-                lead.lead_owner_email = data['manager_email']
+                lead.lead_owner_name = 'Suri Kamat'
+                lead.lead_owner_email = 'skamat@regalix-inc.com'
                 lead.google_rep_name = data['gref']
                 lead.google_rep_email = data['emailref']
+                lead.google_rep_manager_name = data['manager_name']
+                lead.google_rep_manager_email = data['manager_email']
                 lead.customer_id = data['cid']
                 lead.url_1 = data['url1']
                 lead.type_1 = data['ctype1']
@@ -129,14 +125,15 @@ def lead_form(request):
                 lead.last_name = last_name
                 lead.email_optional = data['aemail']
                 lead.phone = data['phone']
-                if str(data.get('setup_datepick')):
-                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %I:%M %p')
+                if str(data.get('tag_datepick')):
+                    appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %I:%M %p')
+                    lead.appointment_date = appointment_date
+                    lead.appointment_date_in_ist, lead.appointment_date_in_pst = get_ist_pst_converted_timestamps(data['tzone'], appointment_date)
                 lead.save()
                 mail_on_new_lead(request.POST, 'TAG', request.META['wsgi.url_scheme'], request.META['HTTP_HOST']) 
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
-
 
         if request.POST.get('is_shopping_lead') == 'yes':
             data = request.POST
@@ -161,7 +158,10 @@ def lead_form(request):
                 lead.sf_lead_id = get_unique_uuid('SHOPPING')
                 lead.company = data['company']               
                 if data.get('setup_datepick'):
-                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
+                    appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
+                    lead.appointment_date = appointment_date
+                    lead.appointment_date_in_ist, lead.appointment_date_in_pst = get_ist_pst_converted_timestamps(
+                        data['tzone'], appointment_date)
                 if request.POST.get('shop_contact_person_name'):
                     full_name = request.POST.get('shop_contact_person_name')
                     first_name, last_name = split_fullname(full_name)
@@ -193,10 +193,9 @@ def lead_form(request):
             except:
                 ret_url = basic_data['errorURL']
 
-
         if request.POST.get('is_rlsa_lead') == 'yes':
             data = request.POST
-            basic_data = {}
+            basic_data = dict()
             # Get Basic/Common form field data
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
@@ -233,8 +232,6 @@ def lead_form(request):
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
-
-            
         resp = {'success':True, 'redirect':True}
         return HttpResponse(json.dumps(resp))
     elif request.method == 'POST':
@@ -299,17 +296,19 @@ def lead_form(request):
                 lead.email_optional = data['aemail']
                 lead.phone = data['phone']
                 if str(data.get('setup_datepick')):
-                    lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %I:%M %p')
+                    appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %I:%M %p')
+                    lead.appointment_date = appointment_date
+                    lead.appointment_date_in_ist, lead.appointment_date_in_pst = get_ist_pst_converted_timestamps(
+                        data['tzone'], appointment_date)
                 lead.save()
                 mail_on_new_lead(request.POST, 'TAG', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
 
-
         if request.POST.get('is_shopping_lead') == 'yes':
             data = request.POST
-            basic_data = {}
+            basic_data = dict()
             # Get Basic/Common form field data
             basic_data['retURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('retURL') if request.POST.get('retURL') else None
             basic_data['errorURL'] = request.META['wsgi.url_scheme'] + '://' + request.POST.get('errorURL') if request.POST.get('errorURL') else None
@@ -330,7 +329,10 @@ def lead_form(request):
                 lead.sf_lead_id = get_unique_uuid('SHOPPING')
                 lead.company = data['company']               
                 if data.get('setup_datepick'):
-                    lead.appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
+                    appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
+                    lead.appointment_date = appointment_date
+                    lead.appointment_date_in_ist, lead.appointment_date_in_pst = get_ist_pst_converted_timestamps(
+                        data['tzone'], appointment_date)
                 if request.POST.get('shop_contact_person_name'):
                     full_name = request.POST.get('shop_contact_person_name')
                     first_name, last_name = split_fullname(full_name)
@@ -361,8 +363,6 @@ def lead_form(request):
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
                 ret_url = basic_data['errorURL']
-
-
 
         if request.POST.get('is_rlsa_lead') == 'yes':
             data = request.POST
@@ -476,6 +476,7 @@ def wpp_lead_form(request, ref_id=None):
             wpp_lead.team = data['team']
             wpp_lead.is_ab_test = data['ab_testing']
             wpp_lead.appointment_date = datetime.strptime(str(data['tag_datepick']), '%m/%d/%Y %H:%M %p')
+            
             wpp_lead.country = data['country']
             wpp_lead.type_1 = data['ctype1']
             wpp_lead.additional_notes = data['additional_notes']
@@ -4719,4 +4720,3 @@ def mail_on_new_lead(lead_data, process, url_scheme, http_host):
     mail_body = get_template('leads/email_templates/new_lead_mail.html').render(Context({'data':lead_data}))
     send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
 
-    
