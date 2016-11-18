@@ -546,7 +546,7 @@ TAGLEAD_DETAILS_FIELDS = ['agency_name','agency_poc','agency_phone','agency_emai
                         'mc_id','opt_in_percent','client_web_inventory','recommended_bid','recommended_budget',
                         'sqo_sto_comments','secured_checkout','payment_gateway','recommended_mobile_bid_modifier',
                         'shopping_polices_verified','type_of_policy_violation','shopping_troubleshoot_issue_type',
-                        'products_uploaded','campaign_id','feed_upload_method']
+                        'products_uploaded','campaign_id','feed_upload_method','screenshare_scheduled']
 
 PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back", "AC - Phone rings but No Answer", "DL - Account Suspended post Regalix Implementation", "DL - Account suspended when the lead was submitted.", "DL - Already Active", "DL - Campaign Paused", "DL - Invalid contact Details", "DL - Lack of time/resources", "DL - No access / No Website Credentials", "DL - No response", "DL - Not Interested", "DL - Policy Issues", "DL - Redesigning Website", "DL - Technically unfeasible", "DL - Troubleshooting", "IM - WIN (Impressions Received)", "IM - WIN > Troubleshooting (Complex)", "IM - WIN - Troubleshooting(Basics)", "IP - Account Suspended", "IP - Advertiser at Work", "IP - Advertiser Unreachable", "IP - Awaiting Impressions", "IP - Campaign Paused", "IP - Data Quality Errors", "IP - Installing an Extension/Creating a Landing Page", "IP - No Admin Access", "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser", "IP - Waiting for website verification"]
 

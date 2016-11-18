@@ -869,7 +869,6 @@ function newTable(firstrow, details){
 
 
 function programViewReport(programs){
-  debugger;
   createTableHeader("Program");
   rows = "";
   i = 1;
