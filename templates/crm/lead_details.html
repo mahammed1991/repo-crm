@@ -953,6 +953,12 @@
                                  <div class="table-responsive">
                                      <table class="table table-condensed">
                                        <tr>
+                                        <td class="table-left">Created On</td>
+                                        <td class="table-right">{{ lead.created_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-left">Last Modified On</td>
+                                        <td class="table-right">{{ lead.updated_date|date:'d-m-Y g:i a' }}</td>
+                                       </tr>
+                                       <tr>
                                         <td class="table-left">Created By</td>
                                         <td class="table-right">{{ lead.created_date|date:'d/m/Y g:i A' }}</td>
                                         <td class="table-left">Last Modified By</td>
@@ -1723,6 +1729,10 @@ function get_lead_history(){
             else if(action_type == 'image'){
               changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
             }
+            else if(action_type == 'clone'){
+              changed = "<p style='text-align left;color:red;'>"+data[i]['modifications']+"</p>"
+            }
+
             else{
               changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
             }
@@ -2017,6 +2027,7 @@ function cloneLead(){
       pres_val = $(this).val();
       valCompare(prev_val,pres_val,this);
     });
+
 
     </script>
     
