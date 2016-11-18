@@ -67,7 +67,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                	<div id="data" class="padding-20 wfm-body-table">
+                	<div class="padding-20 wfm-body-table">
                     	<table class="table table-bordered"> 
                         	<thead> 
                             	<tr> 
@@ -85,6 +85,7 @@
                              </tbody> 
                      	</table>
                     </div>
+                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
                 </div>
             </div>
         </section>
@@ -138,6 +139,7 @@
                                         '<div class="info-box alert"><div class="msg">'+
                                         '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
                                         'please contact your TL/WFM.</b></i></div></div></div></div>');
+                        $('#data').show(); 
                         $('table').hide();
                       }
               },

@@ -174,7 +174,7 @@ def get_leads(leads, leads_list):
 
     return leads_list
 
-
+@login_required
 def crm_agent(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
         return redirect('mini_crm.views.crm_management')
@@ -386,7 +386,7 @@ def get_json_leads(leads,process_type=None):
         'first_contacted_on':datetime.strftime(lead.first_contacted_on, "%d/%m/%Y %I:%M %P") if hasattr(lead, 'first_contacted_on') and lead.first_contacted_on else '',
         'dials':lead.dials if hasattr(lead, 'dials') and lead.dials else 0
         }
-        if lead_dict['appointment_time']:
+        if lead_dict.get('appointment_time'):
             local_tz = pytz.timezone('Asia/Calcutta')
             appointment_date = pytz.utc.localize(lead.appointment_date)
             appointment_date_in_ist = appointment_date.astimezone(local_tz)
@@ -556,6 +556,8 @@ def lead_details(request, lid, sf_lead_id, ctype):
                 'language':language_list,'team':team_list,
                 'ctype':ctype,
                 'comment':lead.regalix_comment,
+                'dail_num':len(lead.regalix_comment.split("Dail")) - 1,
+                'name':request.user.first_name,
                 'pla_sub_status':pla_sub_status,
                 'implemented_code_list':implemented_code_list,
                 'feed_optimisation_status':feed_optimisation_status,
@@ -661,7 +663,7 @@ def lead_owner_avalibility(request):
 def get_crm_agents_emails(request):
     agents_email_list = list()
     search_keyword = request.GET.get('search_key')
-    all_emails = User.objects.values('email').filter(email__icontains = search_keyword, groups__name='CRM-AGENT')[:20]
+    all_emails = User.objects.values('email').filter(email__icontains=search_keyword, groups__name__in=['CRM-AGENT', 'CRM-MANAGER'])[:20]
     for each in all_emails:
         agents_email_list.append(each['email'])
     response = {'data':agents_email_list}
@@ -785,8 +787,8 @@ def clone_lead(request):
 def save_image_file(request):
     lh = LeadHistory()
     if request.FILES:
-        file = request.FILES['file']
-        original_file_name, file_extension = file.name.split(".")
+        img_file = request.FILES['file']
+        original_file_name, file_extension = img_file.name.split(".")
         new_file_name = str(uuid.uuid4()) + "." + file_extension
 
         if not os.path.isdir(settings.MEDIA_ROOT):
@@ -837,6 +839,8 @@ def get_lead_history(request):
             }
             lead_history_list.append(lead_history_dict)
         return HttpResponse(json.dumps(lead_history_list),content_type='application/json')
+    else:
+        return HttpResponse(json.dumps([]), content_type='application/json')
 
 
 @login_required
@@ -972,6 +976,7 @@ def add_lead_comment(request):
             lead = Leads.objects.get(id=data['id'])
             lead.regalix_comment += data['regalix_comment']
             lead.save()
+            resp['regalix_comment'] = lead.regalix_comment
             resp['success'] = True
         except:
             resp['success'] = False
