@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  All Leads
+{% endblock title %}
+
+{% block main_css %}
+  <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        .alert {
+            padding: 19px 15px;
+            color: #fefefe;
+            position: relative;
+            font: 14px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+        }
+        .alert .msg { padding: 0 20px 0 40px;}
+        .info-box {		background: #4D7DBE  no-repeat 14px 14px;}
+      </style>
+{% endblock main_css %}
+
+  {% block content %}
+  <body>
+        
+        <section class="top-margin wfm">
+       		<div class="container-fluid" style="max-width:100%;">
+            	<div class="white-section">
+                	<div class="blue-bg2">
+                                 <select class="form-control bgicon" id='status'>
+                                   {% if lead_status %}
+                                    {% for status in lead_status %}
+                                     <option>{{status}}</option>
+                                     {% endfor %}
+                                   {% endif %}
+                                 </select>
+                                 <select class="form-control bgicon" id='sub_status'>
+                                 </select> 
+                                 <div class="or">OR</div> 
+                                  <select class="form-control bgicon" id='appointment' >
+                                   <option>Fresh Appointment</option>
+                                   <option>30 minutes</option>
+                                   <option>1 hour</option>
+                                   <option>Today</option>
+                                   <option>Tomorrow</option>
+                                   <option>This week</option>
+                                 </select> 
+                        <div class="clearfix"></div>
+                    </div>
+                	<div id="data" class="padding-20 wfm-body-table">
+                    	<table class="table table-bordered"> 
+                        	<thead> 
+                            	<tr> 
+                                    <th>CID </th> 
+                                    <th>Company</th> 
+                                    <th>Customer Name</th> 
+                                    <th>Appointment time</th> 
+                                    <th>Phone No</th> 
+                                    <th>Additional Ph No</th> 
+                                    <th>Web Master No.</th> 
+                                    <th>Location</th> 
+                                  </tr>
+                             </thead> 
+                             <tbody> 
+                             </tbody> 
+                     	</table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+  
+
+  </body>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script type="text/javascript">
+  function call_crm_management(freshAppointment){
+      status = $('#status').val()
+      sub_status = $('#sub_status').val()
+      appointment = $('#appointment').val()
+      data = {'status':status, 'sub_status':sub_status}
+      if(freshAppointment){
+        data = {'appointment': appointment}
+        $('#status').val('In Queue')
+        $('#sub_status').html('')
+        lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[$('#status').val()]
+        for(var i=0;i<lead_sub_status.length;i++){
+          $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+        }
+        $('#sub_status').val('In Queue')
+      }
+      else{
+        $('#appointment').val('Fresh Appointment')
+      }
+      $.ajax({
+              type: "GET",
+              url: '/crm/myleads/',
+              data: data,
+              success: function(response) {
+                      if (response.length) {
+                        $('table').show();
+                        $('tbody').html('')
+                        for(var i=0;i<response.length;i++){
+                          $('tbody').append('<tr> <td><a onclick="addURL(this)" href="/crm/lead-details/' + response[i]['id'] + '/'+ response[i]['sf_lead_id'] + '" target="_blank">'+ response[i]['customer_id'] + '</a> </td>'+ "<td>"+response[i]['company'] + "</td> <td>"+response[i]['customer_name']+"</td> <td>"+response[i]['appointment_time']  + "</td> <td> " + response[i]['phone']  +"</td> <td> " + response[i]['phone_optional'] + "</td> <td> " + response[i]['web_master_no']  +"</td> <td>" + response[i]['location'] +"</td></tr>")                          
+                        }
+                      }
+                      else{
+                        $('#data').html('<div  id="no-leads-msg">'+
+                                        '<div class="container-fluid" style="margin-top:15%;">'+
+                                        '<div class="info-box alert"><div class="msg">'+
+                                        '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
+                                        'please contact your TL/WFM.</b></i></div></div></div></div>');
+                        $('table').hide();
+                      }
+              },
+      });    
+  }
+
+  function addURL(element)
+  {
+    //var type = $('#process option:selected').text().replace(" ","");
+    process_type = 'TAG'
+    $(element).attr('href', function() {
+          var url = this.href;
+          if(url.includes(process_type))
+          {
+            return this.href;
+          }
+          else{
+            return this.href + '/' + process_type;
+          }
+    });
+  }
+
+  function populate_sub_status(){
+    status = $('#status').val()
+    $('#sub_status').html('')
+    lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[status]
+    for(var i=0;i<lead_sub_status.length;i++){
+      $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+    }
+    call_crm_management(false);    
+  }
+
+  $('#status').on('change',function(){
+    populate_sub_status()
+  })
+
+  $('#sub_status').on('change',function(){
+    call_crm_management(false);
+  })
+
+  $('#appointment').on('change',function(){
+    appointment = $('#appointment').val()
+    if (appointment != 'Fresh Appointment'){
+      call_crm_management(true);
+    }
+
+  })
+
+$(document).ready(function() {
+  lead_data = '{{lead_status_sub_status_mapping}}'
+  lead_data_status = JSON.parse(lead_data.replace(/&quot;/g,'"'));
+  lead_status = $('#status').val('In Queue')
+  populate_sub_status();
+});
+</script>
+{% endblock main_js %}
