@@ -13,10 +13,19 @@
   <!-- Bootstrap -->
   <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+  <style>
+    .alert {
+        padding: 19px 15px;
+        color: #fefefe;
+        position: relative;
+        font: 14px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+    }
+    .alert .msg { padding: 0 20px 0 40px;}
+    .info-box {		background: #4D7DBE  no-repeat 14px 14px;}
+  </style>
 {% endblock main_css %}
   {% block content %}
   <body>
-        
         <section class="top-margin" >
        		<div class="left-panel first-canvas-nav top-margin" style="margin-top: 8%;">
                 <select class="form-control bgicon" id='status'>
@@ -29,8 +38,14 @@
                 </ul>
                 
             </div><!--left-panel-->
-            
-            <div class="page-pull-left">
+            <div  id="no-leads-msg" class="page-pull-left" style="display:none">
+                <div class="container-fluid" style="margin-top:25%;">
+                    <div class="info-box alert">
+                        <div class="msg"> <strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for sort criteria, please contact your TL/WFM.</b></i></div>
+                    </div>
+                </div>
+            </div>
+            <div id="leads-msg"class="page-pull-left">
                 <div class=" container-fluid ">
                     <div class="white-section">
                         <!-- Nav tabs -->
@@ -979,7 +994,8 @@
               data: data,
               success: function(response) {
                       if (response.length) {
-                        $('.lead-history').show();
+                        $('#no-leads-msg').hide();
+                        $('#leads-msg').show();
                         $('.side-menu').html('')
                         ajax_response = response
                         for(var i=0;i<response.length;i++){
@@ -998,7 +1014,8 @@
                       }
                       else{
                         $('.side-menu').html('No leads found')
-                        $('.lead-history').hide();
+                        $('#no-leads-msg').show();
+                        $('#leads-msg').hide();
                         /*$('.side-menu').html('')
                         $('#lead_owner').text('')
                         $('#lead_status').text('')
@@ -1105,54 +1122,57 @@
   });
 
   function get_lead_history(){
-    $.ajax(
-    {
-        url: "/crm/get-lead-history/",
-        dataType: "json",
-        data:
+    var leadId = $('.side-menu a.active').parent().attr('id');
+    if(lead_id){
+        $.ajax(
         {
-            lead_id:$('.side-menu a.active').parent().attr('id'),
-        },
-        success: function (data)
-        {
-          if (data.length) {
-            $('#lead_history_changed').html('')
-            for(var i=0;i<data.length;i++){
-              action_type = data[i]['action_type']
-              if (action_type == 'owner_change'){
-                changed = ' changed Lead Owner from ' + data[i]['previous_owner'] +  ' to ' + data[i]['current_owner'] + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
-              }
-              else if(action_type == 'edited'){
-                edited = JSON.parse(data[i]['modifications'])[0]
-                changed = ' changed '
-                edited_fields = Object.keys(edited)
-                if (edited){
-                  chg_tbl = changed + '<table border="1" class="lead-history-tbl"><tr><th>Field</th><th>Previous Value</th><th>New Value</th></tr>'
-                  for(var j=0;j<edited_fields.length;j++){
-                    field = edited_fields[j]
-                    fieldText = $("[name="+edited_fields[j]+"]").parent().prev().text();
-                    if(fieldText.length < 1){
-                      fieldText = field;
-                    }
-                    chg_tbl = chg_tbl + '<tr><td>' + fieldText +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
+            url: "/crm/get-lead-history/",
+            dataType: "json",
+            data:
+            {
+                lead_id:leadId,
+            },
+            success: function (data)
+            {
+              if (data.length) {
+                $('#lead_history_changed').html('')
+                for(var i=0;i<data.length;i++){
+                  action_type = data[i]['action_type']
+                  if (action_type == 'owner_change'){
+                    changed = ' changed Lead Owner from ' + data[i]['previous_owner'] +  ' to ' + data[i]['current_owner'] + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
                   }
-                  changed  = chg_tbl + "</table></p><span class='post-time'>"+ data[i]['created_date'] +'</span>' 
+                  else if(action_type == 'edited'){
+                    edited = JSON.parse(data[i]['modifications'])[0]
+                    changed = ' changed '
+                    edited_fields = Object.keys(edited)
+                    if (edited){
+                      chg_tbl = changed + '<table border="1" class="lead-history-tbl"><tr><th>Field</th><th>Previous Value</th><th>New Value</th></tr>'
+                      for(var j=0;j<edited_fields.length;j++){
+                        field = edited_fields[j]
+                        fieldText = $("[name="+edited_fields[j]+"]").parent().prev().text();
+                        if(fieldText.length < 1){
+                          fieldText = field;
+                        }
+                        chg_tbl = chg_tbl + '<tr><td>' + fieldText +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
+                      }
+                      changed  = chg_tbl + "</table></p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
+                    }
+                  }
+                  else if(action_type == 'image'){
+                    changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
+                  }
+                  else{
+                    changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
+                  }
+                  $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='clearfix'></div><div class='margin-top-20'></div>")
                 }
               }
-              else if(action_type == 'image'){
-                changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
-              }
               else{
-                changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
-              }
-              $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='clearfix'></div><div class='margin-top-20'></div>")
+                $('#lead_history_changed').html('');
             }
           }
-          else{
-            $('#lead_history_changed').html('');
-        }
-      }
-    });
+        });
+    }
   }
 
   $("li a[href='#history']").click(function(){
