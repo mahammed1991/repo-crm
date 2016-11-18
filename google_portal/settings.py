@@ -383,7 +383,7 @@ LEAD_STATUS_SUB_STATUS_MAPPING = OrderedDict()
 
 LEAD_STATUS_SUB_STATUS_MAPPING["TAG"] = OrderedDict()
 LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["In Queue"] = ["In Queue"]
-LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["ON CALL"] = ["ON CALL"],
+LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["ON CALL"] = ["ON CALL"]
 LEAD_STATUS_SUB_STATUS_MAPPING["TAG"]["Attempting Contact"] = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back",
                            "AC - Mailbox Full/ No option to leave VM", "AC - Phone rings no answer",
                            "AC - Rescheduled by Agent"]

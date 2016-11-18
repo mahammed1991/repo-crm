@@ -1384,7 +1384,6 @@ $('#edit-lead').on('click',function() {
         dataType: "json",
         success:function(data){
           if(data['success']){
-            var comment = "";
             $('#comment').html('');
             var cmt = data["regalix_comment"].split('Dail')
             for(var i = 1; i <= cmt.length - 1; i ++ )
