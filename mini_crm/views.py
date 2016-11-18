@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
@@ -18,8 +17,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 import uuid, os
 from lib.helpers import save_file, get_ist_pst_converted_timestamps
