@@ -22,6 +22,23 @@
         pointer-events: none;
         opacity: 0.4;
     }
+
+    .color-indicator {
+        float: left;
+        width: 10px;
+        height: 10px;
+        margin-top: 4px;
+        margin-right: 4px;
+      }
+
+      #orange {
+        background: rgb(223, 151, 13);
+      }
+
+      #red {
+        background: red;
+      }
+
   </style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
@@ -45,7 +62,13 @@
                         <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
                         <div id="file_status"></div>
                         
+                        <ul style="float:right;margin-top:6px;margin-right:20px;">
+                          <li><span class="color-indicator" id="orange"></span>Updated</li>
+                          <li><span class="color-indicator" id="red"></span>Error</li>
+                        </ul>
+
                       </ul>
+
                       <!-- Tab panes -->
                       <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="lead">
@@ -101,7 +124,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Lead Status  </td>
-                                        <td class="table-right" id="lead-status"><span name="lead_status">{{ lead.lead_status }}</span><p style="display:none;color:red;">*You are not authorised to move leads to 'Rework Required' / 'In Queue'. Please contact your QA.</p><p id="inactive-msg" style="display:none;color:red;">*Leads declared as "In Active" should not be moved to any other status. Please contact your T.L for more information</p><p id="implement-msg" style="display:none;color:red;">*Leads declared as "Implemented" should not be moved to any other status. Please contact your T.L for more information</p></td>
+                                        <td class="table-right" id="lead-status"><span name="lead_status">{{ lead.lead_status }}</span><p id="error-msg" style="display:none;color:red;">*You are not authorised to move leads to 'Rework Required' / 'In Queue'. Please contact your QA.</p></td>
                                         <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
                                         <td class="table-right" id="lead-sub-status"><span name="lead_sub_status">{{ lead.lead_sub_status }}</span></td>
                                        </tr>
@@ -1507,41 +1530,51 @@ $('#edit-lead').on('click',function() {
     }
 
     if({{request.session.groups|safe}}.includes('CRM-AGENT')){
-      if(['In Queue','Rework Required - In Active'].includes(curr_ls) && curr_ls != $('#status option:selected').val()){
-        $('#lead-status p').show();
-        $('#status').addClass('error');
-        valid = false;
+      if(['In Queue', 'Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Rework Required - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].includes(curr_ls)){
+        if($('#status option:selected').val() == 'In Active' && curr_ls != 'In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*You are not authorised to move leads to "In Active". Please contact your QA.').show();
+        }
+        else if($('#status option:selected').val() == 'Implemented' && curr_ls != 'Implemented'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*You are not authorised to move leads to "Implemented". Please contact your QA.').show();
+        }
+        else if($('#status option:selected').val() == 'In Queue' && curr_ls != 'In Queue'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'In Queue'. Please contact your QA.").show();
+        }
+        else if($('#status option:selected').val() == 'Rework Required - In Active' && curr_ls != 'Rework Required - In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'Rework Required'. Please contact your QA.").show();
+        }
+        else{
+          $('#lead-status p#error-msg').hide();
+          $('#status').removeClass('error');
+        }
       }
-      else{
-        $('#lead-status p').hide();
-        $('#status').removeClass('error');
+      else if(['Implemented','In Active'].includes(curr_ls)){
+        if($('#status option:selected').val() != 'In Active' && curr_ls == 'In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*Leads declared as "In Active" should not be moved to any other status. Please contact your T.L for more information.').show();
+        }
+        else if($('#status option:selected').val() != 'Implemented' && curr_ls == 'Implemented'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*Leads declared as "Implemented" should not be moved to any other status. Please contact your T.L for more information.').show();
+        }
+        else{
+          $('#lead-status p#error-msg').hide();
+          $('#status').removeClass('error');
+        }
       }
 
       if($('#status option:selected').val() == 'Pending QC - WIN'){
         $('#doi input').attr('disabled', 'disabled');
-      }
-
-      if(curr_ls == 'In Active' && curr_ls != $('#status option:selected').val()){
-        $('#lead-status p').hide();
-        valid = false;
-        $('#status').addClass('error');
-        $('#lead-status p#inactive-msg').show();
-      }
-      else{
-        $('#status').removeClass('error');
-        $('#lead-status p#inactive-msg').hide();
-      }
-       
-      if(curr_ls == 'Implemented' && curr_ls != $('#status option:selected').val()){
-        $('#lead-status p').hide();
-        $('#lead-status p#inactive-msg').hide();
-        valid = false;
-        $('#status').addClass('error');
-        $('#lead-status p#implement-msg').show();
-      }
-      else{
-        $('#status').removeClass('error');
-        $('#lead-status p#implement-msg').hide();
       }
 
       if(curr_fco != $('#first-contacted span input').val()){
@@ -1581,6 +1614,7 @@ $('#edit-lead').on('click',function() {
 
     if($('#status option:selected').val() == 'Attempting Contact'){
       if(rs_appointment == $('#rescheduled-appointment span input').val()){
+        valid = false;
         $('#rescheduled-appointment p').show();
         $('#rescheduled-appointment span input').addClass('error');
       }
@@ -1589,12 +1623,10 @@ $('#edit-lead').on('click',function() {
         $('#rescheduled-appointment span input').removeClass('error');
       }
     }
-
-   /* if($('#type-of-policy-violation span select').val() == 'None'){
-
-    }*/
+   
 
     if(valid){
+      $('#clone-info').css('display','none');
       $.ajax({
         url: "/crm/update-lead/",
         type: 'POST',
@@ -1610,6 +1642,13 @@ $('#edit-lead').on('click',function() {
         }
       })
     }
+    else{
+      $('#span-msg').text('Please select/fill the required fields on form.');
+      $('#clone-info').removeClass('.alert-success');
+      $('#clone-info').addClass('alert-warning');
+      $('#clone-info').css('display','block');
+      $("body").scrollTop(0);
+   }
   }
 
     $('#save-lead-comment').click(function(e){
