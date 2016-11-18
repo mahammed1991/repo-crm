@@ -1078,3 +1078,24 @@ def get_feed_optimisation_sub_status(request):
             feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
     resp = {'success':True,'feed_optimisation_sub_status':feed_optimisation_sub_status}
     return HttpResponse(json.dumps(resp),content_type='application/json')
+
+
+@login_required
+def user_appointmnets(request): 
+    if request.user.groups.filter(name='CRM-AGENT'):
+        response = list()
+        user_appointment_leads = Leads.objects.values('customer_id','appointment_date_in_ist', 'rescheduled_appointment_in_ist').filter( lead_owner_email=request.user.email,lead_status__in=['In Queue'])
+        for each in user_appointment_leads:
+            data = dict()
+            appointment_date = None
+            if each['appointment_date_in_ist'] or each['rescheduled_appointment_in_ist']:
+                if each['rescheduled_appointment_in_ist']:
+                    appointment_date = datetime.strptime( str(each['rescheduled_appointment_in_ist']), '%Y-%m-%d %H:%M:%S')
+                else:
+                    appointment_date = datetime.strptime( str(each['appointment_date_in_ist']), '%Y-%m-%d %H:%M:%S')
+            
+            data['customer_id'] =  each['customer_id']
+            data['appointment_time'] =  str(appointment_date) if appointment_date else ""
+            response.append(data)
+        return HttpResponse(json.dumps(response))
+    
