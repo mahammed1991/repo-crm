@@ -746,7 +746,6 @@ def clone_lead(request):
     if process_type in ['WPP']:
         obj = WPPLeads.objects.get(pk=lead_id)
         url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
-        obj = WPPLeads.objects.get(pk=lead_id)
         obj.pk = None
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
