@@ -21,25 +21,40 @@
         <section class="top-margin wfm">
        		<div class="container-fluid" style="max-width:100%;">
             	<div class="white-section">
-                	<div class="blue-bg2">
-                                 <select class="form-control bgicon" id='status'>
-                                   {% if lead_status %}
-                                    {% for status in lead_status %}
-                                     <option>{{status}}</option>
-                                     {% endfor %}
-                                   {% endif %}
-                                 </select>
-                                 <select class="form-control bgicon" id='sub_status'>
-                                 </select> 
-                                 <div class="or">OR</div> 
-                                  <select class="form-control bgicon" id='appointment' >
+                	<div class="blue-bg">
+                    <div class="col-sm-12">
+                      <div class="blue-padding-20">
+                        <div class="row">
+                            <div class="col-sm-4">
+                              <label for="status">Status</label>
+                               <select class="form-control bgicon" id='status'>
+                                 {% if lead_status %}
+                                  {% for status in lead_status %}
+                                   <option>{{status}}</option>
+                                   {% endfor %}
+                                 {% endif %}
+                               </select>
+                             </div>
+                             <div class="col-sm-4">
+                               <label for="status">Sub Status</label>
+                               <select class="form-control bgicon" id='sub_status'>
+                               </select>
+                             </div> 
+                             <div class="col-sm-1"><p>OR</p></div> 
+                             <div class="col-sm-3">
+                                <label for="fresh-appointment">Fresh Appointment</label>
+                                <select class="form-control bgicon" id='appointment' >
                                    <option>Fresh Appointment</option>
                                    <option>30 minutes</option>
                                    <option>1 hour</option>
                                    <option>Today</option>
                                    <option>Tomorrow</option>
                                    <option>This week</option>
-                                 </select> 
+                                </select> 
+                             </div>
+                            </div>
+                          </div>
+                        </div>
                         <div class="clearfix"></div>
                     </div>
                 	<div class="padding-20 wfm-body-table">
