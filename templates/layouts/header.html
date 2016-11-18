@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function notifyMe(row) {
   if (!Notification) {
-    alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    alert('Desktop notifications not available in your browser. Please try Google Chrome.'); 
     return;
   }
 
@@ -376,7 +376,6 @@ function notifyMe(row) {
     var notification = new Notification('Hey You have appointment in Next 15 Minutes', {
       body: row,
       icon: notifIcon,
-      bounds: { width: 1000, height: 500 }
     });
     
   }

@@ -1056,4 +1056,4 @@ def user_appointmnets(request):
             data['appointment_time'] =  str(appointment_date) if appointment_date else ""
             response.append(data)
         return HttpResponse(json.dumps(response))
-    return HttpResponse("User is not an Agent")
+    
