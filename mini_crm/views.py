@@ -702,8 +702,8 @@ def clone_lead(request):
     process_type = request.POST.get('process_type')
     lead_id = request.POST.get('lead_id')
     if process_type in ['WPP']:
-        url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
         obj = WPPLeads.objects.get(pk=lead_id)
+        url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
         obj.pk = None
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
@@ -796,11 +796,11 @@ def save_image_file(request):
 
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
-            save_file(file, file_path)
+            save_file(img_file, file_path)
             response = {'msg':'File uploaded successfully','success':True}
         except:
             response = {'msg':'Failed to upload file, please try after sometime.','success':False}
-        lh.original_image_name = file.name
+        lh.original_image_name = img_file.name
         lh.image_guid = new_file_name
         lh.action_type = 'image'
         '''
