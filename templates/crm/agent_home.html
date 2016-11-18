@@ -28,6 +28,7 @@
                             <div class="col-sm-4">
                               <label for="status">Status</label>
                                <select class="form-control bgicon" id='status'>
+                               <option>Select</option>
                                  {% if lead_status %}
                                   {% for status in lead_status %}
                                    <option>{{status}}</option>
@@ -44,7 +45,7 @@
                              <div class="col-sm-3">
                                 <label for="fresh-appointment">Fresh Appointment</label>
                                 <select class="form-control bgicon" id='appointment' >
-                                   <option>Fresh Appointment</option>
+                                   <option>Select</option>
                                    <option>30 minutes</option>
                                    <option>1 hour</option>
                                    <option>Today</option>
@@ -94,16 +95,21 @@
       data = {'status':status, 'sub_status':sub_status}
       if(freshAppointment){
         data = {'appointment': appointment}
-        $('#status').val('In Queue')
+        $('#status').val('Select')
         $('#sub_status').html('')
         lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[$('#status').val()]
-        for(var i=0;i<lead_sub_status.length;i++){
-          $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+        if (lead_sub_status){
+          for(var i=0;i<lead_sub_status.length;i++){
+            $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+          }
         }
-        $('#sub_status').val('In Queue')
+        else{
+          $('#sub_status').append("<option>Select</option>")
+        }
+        $('#sub_status').val('Select')
       }
       else{
-        $('#appointment').val('Fresh Appointment')
+        $('#appointment').val('Select')
       }
       $.ajax({
               type: "GET",
@@ -143,8 +149,13 @@
     status = $('#status').val()
     $('#sub_status').html('')
     lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[status]
-    for(var i=0;i<lead_sub_status.length;i++){
-      $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+    if (lead_sub_status){
+      for(var i=0;i<lead_sub_status.length;i++){
+        $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+      }
+    }
+    else{
+      $('#sub_status').append("<option>Select</option>")
     }
     call_crm_management(false);    
   }
@@ -159,8 +170,11 @@
 
   $('#appointment').on('change',function(){
     appointment = $('#appointment').val()
-    if (appointment != 'Fresh Appointment'){
+    if (appointment != 'Select'){
       call_crm_management(true);
+    }
+    else{
+      call_crm_management(false);
     }
 
   })

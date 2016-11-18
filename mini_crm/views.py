@@ -207,7 +207,7 @@ def crm_agent(request):
 
 
 def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list):
-    if lead_appointment and lead_appointment != 'Fresh Appointment':
+    if lead_appointment and lead_appointment != 'Select':
         #Our Local timezone, to which we want to convert the UTC time.
         local_tz = pytz.timezone('Asia/Calcutta')
         #Add Timezone information toUTC time.
