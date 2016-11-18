@@ -28,11 +28,12 @@ from django.forms.models import model_to_dict
 
 import ast
 
+
 # Create your views here.
 @login_required
 def crm_management(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
-        
+ 
         leads_list = list()
         limit = 10
         on_page = request.GET.get('page', 1)
@@ -153,28 +154,29 @@ def crm_management(request):
         raise Http404
 
 
+@login_required
 def get_leads(leads, leads_list):
     for lead in leads:
         appointment_date = datetime.strftime(lead.get('appointment_date_in_ist'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date_in_ist') else None
-        phone_optional =  lead.get('phone_optional')
+        phone_optional = lead.get('phone_optional')
 
-        lead_dict = {'id':lead['id'],
-                     'sf_lead_id':lead['sf_lead_id'],
-                     'c_id':lead['customer_id'],
-                     'company':lead['company'],
-                     'customer_name':lead['first_name'],
-                     'created_date':datetime.strftime(lead.get('created_date'), "%d/%m/%Y %I:%M %P") if lead.get('created_date') else lead.get('created_date'),
+        lead_dict = {'id': lead['id'],
+                     'sf_lead_id': lead['sf_lead_id'],
+                     'c_id': lead['customer_id'],
+                     'company': lead['company'],
+                     'customer_name': lead['first_name'],
+                     'created_date': datetime.strftime(lead.get('created_date'), "%d/%m/%Y %I:%M %P") if lead.get('created_date') else lead.get('created_date'),
                      'appointment_time': appointment_date,
-                     'phone_number':lead['phone'],
-                     'additional_phone_number':phone_optional,
-                     'web_master_number':'',
-                     'location':lead['country']}
-
+                     'phone_number': lead['phone'],
+                     'additional_phone_number': phone_optional,
+                     'web_master_number': '',
+                     'location': lead['country']}
         leads_list.append(lead_dict)
 
     return leads_list
 
 
+@login_required
 def crm_agent(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
         return redirect('mini_crm.views.crm_management')
@@ -197,16 +199,17 @@ def crm_agent(request):
             response_json = leads_data
             res = HttpResponse(json.dumps(response_json), content_type="application/json")
             return res
-        context ={
-            'lead_status':settings.LEAD_STATUS_SUB_STATUS_MAPPING['TAG'].keys(),
-            'lead_status_sub_status_mapping':json.dumps({'lead_status_sub_status_mapping':settings.LEAD_STATUS_SUB_STATUS_MAPPING},encoding="utf-8")
+        context = {
+            'lead_status': settings.LEAD_STATUS_SUB_STATUS_MAPPING['TAG'].keys(),
+            'lead_status_sub_status_mapping': json.dumps({
+                'lead_status_sub_status_mapping': settings.LEAD_STATUS_SUB_STATUS_MAPPING}, encoding="utf-8")
         }
-        return render(request,'crm/agent_home.html',context)
+        return render(request, 'crm/agent_home.html', context)
     else:
         raise Http404
 
 
-def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list):
+def get_filtered_leads(user_group, process, lead_status, lead_sub_status, lead_appointment, current_user_email, limit, offset,has_region,loc_list):
     if lead_appointment and lead_appointment != 'Fresh Appointment':
         #Our Local timezone, to which we want to convert the UTC time.
         local_tz = pytz.timezone('Asia/Calcutta')
@@ -365,7 +368,7 @@ def get_json_leads(leads,process_type=None):
         'customer_id':lead.customer_id,
         'company':lead.company,
         'customer_name':lead.first_name + '' + lead.last_name,
-        'appointment_time':datetime.strftime(lead.appointment_date, "%d/%m/%Y %I:%M %P") if hasattr(lead, 'appointment_date') and lead.appointment_date else '',
+        'appointment_time': datetime.strftime(lead.appointment_date, "%d/%m/%Y %I:%M %P") if hasattr(lead, 'appointment_date') and lead.appointment_date else '',
         'appointment_date_in_ist':datetime.strftime(lead.appointment_date_in_ist, "%d-%m-%Y %I:%M %P") if hasattr(lead, 'appointment_date_in_ist') and lead.appointment_date_in_ist else '',
         'rescheduled_appointment':datetime.strftime(lead.rescheduled_appointment, "%d-%m-%Y %I:%M %P") if hasattr(lead, 'rescheduled_appointment') and lead.rescheduled_appointment else '',
         'rescheduled_appointment_in_ist':datetime.strftime(lead.rescheduled_date_in_ist, "%d-%m-%Y %I:%M %P") if hasattr(lead, 'rescheduled_appointment_in_ist') and lead.rescheduled_appointment_in_ist else '',
@@ -386,7 +389,7 @@ def get_json_leads(leads,process_type=None):
         'first_contacted_on':datetime.strftime(lead.first_contacted_on, "%d/%m/%Y %I:%M %P") if hasattr(lead, 'first_contacted_on') and lead.first_contacted_on else '',
         'dials':lead.dials if hasattr(lead, 'dials') and lead.dials else 0
         }
-        if lead_dict['appointment_time']:
+        if not lead_dict.get('appointment_time_in_ist'):
             local_tz = pytz.timezone('Asia/Calcutta')
             appointment_date = pytz.utc.localize(lead.appointment_date)
             appointment_date_in_ist = appointment_date.astimezone(local_tz)
@@ -450,7 +453,7 @@ def lead_history(request):
                 else:
                     leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
 
-            res = HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
+            res = HttpResponse(json.dumps(get_json_leads(leads, process_type)), content_type="application/json")
             return res
         return render(request,'crm/lead_and_history.html')
     else:
@@ -556,6 +559,8 @@ def lead_details(request, lid, sf_lead_id, ctype):
                 'language':language_list,'team':team_list,
                 'ctype':ctype,
                 'comment':lead.regalix_comment,
+                'dail_num':len(lead.regalix_comment.split("Dail")) - 1,
+                'name':request.user.first_name,
                 'pla_sub_status':pla_sub_status,
                 'implemented_code_list':implemented_code_list,
                 'feed_optimisation_status':feed_optimisation_status,
@@ -661,7 +666,7 @@ def lead_owner_avalibility(request):
 def get_crm_agents_emails(request):
     agents_email_list = list()
     search_keyword = request.GET.get('search_key')
-    all_emails = User.objects.values('email').filter(email__icontains = search_keyword, groups__name='CRM-AGENT')[:20]
+    all_emails = User.objects.values('email').filter(email__icontains=search_keyword, groups__name__in=['CRM-AGENT', 'CRM-MANAGER'])[:20]
     for each in all_emails:
         agents_email_list.append(each['email'])
     response = {'data':agents_email_list}
@@ -700,6 +705,7 @@ def clone_lead(request):
     process_type = request.POST.get('process_type')
     lead_id = request.POST.get('lead_id')
     if process_type in ['WPP']:
+        obj = WPPLeads.objects.get(pk=lead_id)
         url = str(request.META['wsgi.url_scheme'])+"://"+str(request.META['HTTP_HOST'])+"/crm/lead-details/"+str(obj.id)+"/"+str(obj.sf_lead_id)+"/"+str(process_type)
         obj = WPPLeads.objects.get(pk=lead_id)
         obj.pk = None
@@ -785,19 +791,19 @@ def clone_lead(request):
 def save_image_file(request):
     lh = LeadHistory()
     if request.FILES:
-        file = request.FILES['file']
-        original_file_name, file_extension = file.name.split(".")
+        img_file = request.FILES['file']
+        original_file_name, file_extension = img_file.name.split(".")
         new_file_name = str(uuid.uuid4()) + "." + file_extension
 
         if not os.path.isdir(settings.MEDIA_ROOT):
             os.makedirs(settings.MEDIA_ROOT)
 
-        file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
+        file_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
         try:
-            save_file(file, file_path)
-            response = {'msg':'File uploaded successfully','success':True}
+            save_file(img_file, file_path)
+            response = {'msg': 'File uploaded successfully', 'success': True}
         except:
-            response = {'msg':'Failed to upload file, please try after sometime.','success':False}
+            response = {'msg': 'Failed to upload file, please try after sometime.', 'success': False}
         lh.original_image_name = file.name
         lh.image_guid = new_file_name
         lh.action_type = 'image'
@@ -807,11 +813,11 @@ def save_image_file(request):
     else:
         lh.image_link = request.POST.get('image_link')
         lh.action_type = 'image_link'
-        response = {'msg':'image link added successfully' ,'success':True}
+        response = {'msg': 'image link added successfully', 'success': True}
     lh.lead_id = request.POST['lead_id']
-    lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+    lh.modified_by = request.user.first_name + ' ' + request.user.last_name
     lh.save()
-    return HttpResponse(json.dumps(response),content_type="application/json")
+    return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 @login_required
@@ -837,6 +843,8 @@ def get_lead_history(request):
             }
             lead_history_list.append(lead_history_dict)
         return HttpResponse(json.dumps(lead_history_list),content_type='application/json')
+    else:
+        return HttpResponse(json.dumps([]), content_type='application/json')
 
 
 @login_required
@@ -972,6 +980,7 @@ def add_lead_comment(request):
             lead = Leads.objects.get(id=data['id'])
             lead.regalix_comment += data['regalix_comment']
             lead.save()
+            resp['regalix_comment'] = lead.regalix_comment
             resp['success'] = True
         except:
             resp['success'] = False
