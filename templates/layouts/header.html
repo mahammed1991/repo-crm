@@ -8,7 +8,7 @@
 .navbar-right{margin-left:-40px !important;}
 {% endif %}
 
-{% if not "CRM-AGENT" in  request.session.groups  or  not "CRM-MANAGER" in  request.session.groups %}
+{% if not "CRM-MANAGER" in  request.session.groups %}
 .navbar-right{margin-top:16px !important;}
 {% endif %}
 </style>
@@ -168,10 +168,10 @@
 
 
 
-<div class="col-md-5" style ="float:right;margin-top: -15px;" {% if "CRM-MANAGER" in  request.session.groups %} style ="margin-top: -15px;" {% endif %}>
+<div class="col-md-5" style ="float:right;" >
 
-        <ul class=" navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style ="margin-left:60px;margin-top:0px !important;" {% endif %} >
-          <li style="margin-left: -15px;" class="submit-lead-btn">
+        <ul class=" navbar-nav navbar-right" {% if "CRM-AGENT" in  request.session.groups %} style ="margin-left:60px;margin-top:0px !important;" {% endif %}  >
+          <li {% if "CRM-MANAGER" in  request.session.groups %} style="margin-left: -70px !important;" {% elif "CRM-AGENT" in  request.session.groups %} style="margin-left: -50px !important;"{% endif %} class="submit-lead-btn">
             {% if "CRM-MANAGER" in  request.session.groups or "CRM-AGENT" in  request.session.groups %}
               <button class="btn std-btn sm-btn save-lead" style="display:none;margin-left:0px !important;" onclick="updateLead()">Save</button>
             {% endif %}
@@ -181,7 +181,6 @@
              <!--  <button class="btn std-btn sm-btn" onclick='location.href=""'>Nominate Advertiser Website</button> -->
               <button style="margin-left:0px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
-            <button class="btn std-btn sm-btn save-lead" style="display:none;margin-left:0px !important;" onclick="updateLead()">Save</button>
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
             {% endif %}
           {% endif %}
