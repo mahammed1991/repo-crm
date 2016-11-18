@@ -1123,7 +1123,7 @@
 
   function get_lead_history(){
     var leadId = $('.side-menu a.active').parent().attr('id');
-    if(lead_id){
+    if(leadId){
         $.ajax(
         {
             url: "/crm/get-lead-history/",

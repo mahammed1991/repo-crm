@@ -30,28 +30,44 @@
         <section class="top-margin wfm">
        		<div class="container-fluid" style="max-width:100%;">
             	<div class="white-section">
-                	<div class="blue-bg2">
-                                 <select class="form-control bgicon" id='status'>
-                                   {% if lead_status %}
-                                    {% for status in lead_status %}
-                                     <option>{{status}}</option>
-                                     {% endfor %}
-                                   {% endif %}
-                                 </select>
-                                 <select class="form-control bgicon" id='sub_status'>
-                                 </select> 
-                                 <div class="or">OR</div> 
-                                  <select class="form-control bgicon" id='appointment' >
-                                   <option>Fresh Appointment</option>
+                	<div class="blue-bg">
+                    <div class="col-sm-12">
+                      <div class="blue-padding-20">
+                        <div class="row">
+                            <div class="col-sm-4">
+                              <label for="status">Status</label>
+                               <select class="form-control bgicon" id='status'>
+                               <option>Select</option>
+                                 {% if lead_status %}
+                                  {% for status in lead_status %}
+                                   <option>{{status}}</option>
+                                   {% endfor %}
+                                 {% endif %}
+                               </select>
+                             </div>
+                             <div class="col-sm-4">
+                               <label for="status">Sub Status</label>
+                               <select class="form-control bgicon" id='sub_status'>
+                               </select>
+                             </div> 
+                             <div class="col-sm-1"><p>OR</p></div> 
+                             <div class="col-sm-3">
+                                <label for="fresh-appointment">Fresh Appointment</label>
+                                <select class="form-control bgicon" id='appointment' >
+                                   <option>Select</option>
                                    <option>30 minutes</option>
                                    <option>1 hour</option>
                                    <option>Today</option>
                                    <option>Tomorrow</option>
                                    <option>This week</option>
-                                 </select> 
+                                </select> 
+                             </div>
+                            </div>
+                          </div>
+                        </div>
                         <div class="clearfix"></div>
                     </div>
-                	<div id="data" class="padding-20 wfm-body-table">
+                	<div class="padding-20 wfm-body-table">
                     	<table class="table table-bordered"> 
                         	<thead> 
                             	<tr> 
@@ -69,6 +85,7 @@
                              </tbody> 
                      	</table>
                     </div>
+                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
                 </div>
             </div>
         </section>
@@ -88,16 +105,21 @@
       data = {'status':status, 'sub_status':sub_status}
       if(freshAppointment){
         data = {'appointment': appointment}
-        $('#status').val('In Queue')
+        $('#status').val('Select')
         $('#sub_status').html('')
         lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[$('#status').val()]
-        for(var i=0;i<lead_sub_status.length;i++){
-          $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+        if (lead_sub_status){
+          for(var i=0;i<lead_sub_status.length;i++){
+            $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+          }
         }
-        $('#sub_status').val('In Queue')
+        else{
+          $('#sub_status').append("<option>Select</option>")
+        }
+        $('#sub_status').val('Select')
       }
       else{
-        $('#appointment').val('Fresh Appointment')
+        $('#appointment').val('Select')
       }
       $.ajax({
               type: "GET",
@@ -117,6 +139,7 @@
                                         '<div class="info-box alert"><div class="msg">'+
                                         '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
                                         'please contact your TL/WFM.</b></i></div></div></div></div>');
+                        $('#data').show(); 
                         $('table').hide();
                       }
               },
@@ -143,8 +166,13 @@
     status = $('#status').val()
     $('#sub_status').html('')
     lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[status]
-    for(var i=0;i<lead_sub_status.length;i++){
-      $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+    if (lead_sub_status){
+      for(var i=0;i<lead_sub_status.length;i++){
+        $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+      }
+    }
+    else{
+      $('#sub_status').append("<option>Select</option>")
     }
     call_crm_management(false);    
   }
@@ -159,8 +187,11 @@
 
   $('#appointment').on('change',function(){
     appointment = $('#appointment').val()
-    if (appointment != 'Fresh Appointment'){
+    if (appointment != 'Select'){
       call_crm_management(true);
+    }
+    else{
+      call_crm_management(false);
     }
 
   })
