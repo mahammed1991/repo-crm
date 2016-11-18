@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
@@ -17,6 +18,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from lib.helpers import (get_unique_uuid)
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 import uuid, os
 from lib.helpers import save_file, get_ist_pst_converted_timestamps
@@ -32,6 +35,7 @@ import ast
 @login_required
 def crm_management(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
+        
         leads_list = list()
         limit = 10
         on_page = request.GET.get('page', 1)
@@ -92,6 +96,7 @@ def crm_management(request):
                         query = {'lead_status': lead_status, 'country__in':loc_list}
                     else:
                         query = {'lead_status': lead_status}
+
                     leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country')[offset:limit]
                     leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
@@ -281,6 +286,7 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country'
             )[offset:limit]
         leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
+        
 
     elif process_type == "Picasso Audits":
 
@@ -300,18 +306,21 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
             ).order_by('-created_date')[offset:limit]
 
         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
+        
 
     elif process_type == "Shopping":
         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
             )[offset:limit]
         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
+        
 
     elif process_type == "ShoppingArgos":
         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country'
             )[offset:limit]
         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
+        
 
     else: # Tag
 
@@ -322,6 +331,7 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
     return leads
+        
 
 
 def get_json_leads(leads,process_type=None):
@@ -429,6 +439,7 @@ def lead_history(request):
                     leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
 
             else:
+                exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                 if process_type == 'TAG':
                     leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],lead_owner_email=current_user_email).exclude(type_1__in = exclude_types)
                 elif process_type == 'SHOPPING':
@@ -505,12 +516,18 @@ def lead_details(request, lid, sf_lead_id, ctype):
     context = {}
     try:
         if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
-            lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            try:
+                lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            except ObjectDoesNotExist:
+                print "No lead with this Salesforce ID"
             lead_status = settings.LEAD_STATUS
             feed_optimisation_status = settings.FEED_OPTIMISATION_STATUS
             primary_role = ['Owner','Marketing','Webmaster']
             language = Language.objects.filter(is_active=True)
-            team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+            try:
+                team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
+            except ObjectDoesNotExist:
+                print "No teams with this filter parameters"
             pla_sub_status = settings.PLA_SUB_STATUS
             implemented_code_list = ['Different / Alternate','Same as specified by the Google rep']
             team_list = []
@@ -527,24 +544,29 @@ def lead_details(request, lid, sf_lead_id, ctype):
                     lead_detail.save()
 
         elif ctype == 'WPP':
-            lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            try:
+                lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            except ObjectDoesNotExist:
+                print "No WPP Lead with this Salesforce ID"
         else:
-            lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            try:
+                lead = PicassoLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
+            except ObjectDoesNotExist:
+                print "No Picasso Lead with this Salesforce ID"
 
         context = {'lead':lead,'lead_detail':lead_detail,
                 'status':lead_status,'role':primary_role,
                 'language':language_list,'team':team_list,
                 'ctype':ctype,
                 'comment':lead.regalix_comment,
-                'dail_num':len(lead.regalix_comment.split("Dail")) - 1,
-                'name':request.user.first_name,
                 'pla_sub_status':pla_sub_status,
                 'implemented_code_list':implemented_code_list,
                 'feed_optimisation_status':feed_optimisation_status,
                 'success': True
                 }
 
-    except ObjectDoesNotExist:
+    except Exception as e:
+        print e
         context['success'] = False
 
     if request.user.groups.filter(name='CRM-MANAGER'):
@@ -598,6 +620,8 @@ def lead_owner_avalibility(request):
             current_lead.lead_owner_name = assignee_name
             current_lead.lead_owner_email = lead_owner
             current_lead.save()
+
+            
             if request.GET.get('send_mail') == 'True':
                 if lead_type in ['WPP','Bolt Build','WPP - Nomination']:
                     assigning_lead_info = WPPLeads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_time_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
@@ -624,6 +648,8 @@ def lead_owner_avalibility(request):
                 assigning_lead_info['manager'] =request.user.first_name + ' ' +request.user.last_name
                 mail_body = get_template('leads/email_templates/lead_assigning_mail.html').render(Context({'data':assigning_lead_info}))
                 send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
+
+
             resp['success'] = True
         else:
             resp['success'] = False
@@ -840,6 +866,10 @@ def update_lead(request):
                 temp_rescheduled_date_on = data['rescheduled_date_on'].replace('.','').replace('-','/')
                 edited_dict['rescheduled_date_on'] = [datetime.strftime(lead.rescheduled_appointment, '%d-%m-%Y %I:%M %p') if lead.rescheduled_appointment else '',data['rescheduled_date_on'].replace('.','').replace('/','-')]
                 lead.rescheduled_appointment = datetime.strptime(str(temp_rescheduled_date_on), '%d/%m/%Y %I:%M %p')
+            if data.get('first_contacted'):
+                temp_first_contacted_on = data['first_contacted'].replace('.','').replace('-','/')           
+                edited_dict['first_contacted'] = [datetime.strftime(lead.first_contacted_on, '%d-%m-%Y %I:%M %p') if lead.first_contacted_on else '',data['first_contacted'].replace('.','').replace('/','-')]
+                lead.first_contacted_on = datetime.strptime(str(temp_first_contacted_on), '%d/%m/%Y %I:%M %p')
             if data.get('lead_status') in ['In Queue','Implemented','ON CALL']:
                 lead.lead_sub_status = ''
 
@@ -897,7 +927,8 @@ def update_lead(request):
                 print e
 
             resp['success'] = True
-        except:
+        except Exception as e:
+            print e
             resp['success'] = False
     return HttpResponse(json.dumps(resp),content_type='application/json')
 
@@ -913,7 +944,6 @@ def add_lead_comment(request):
             lead = Leads.objects.get(id=data['id'])
             lead.regalix_comment += data['regalix_comment']
             lead.save()
-            resp['regalix_comment'] = lead.regalix_comment
             resp['success'] = True
         except:
             resp['success'] = False
