@@ -175,7 +175,6 @@ def crm_management(request):
         raise Http404
 
 
-@login_required
 def get_leads(leads, leads_list):
     for lead in leads:
         appointment_date = datetime.strftime(lead.get('appointment_date_in_ist'), "%d/%m/%Y %I:%M %P") if lead.get('appointment_date_in_ist') else None
@@ -288,19 +287,19 @@ def get_filtered_leads(user_group, process, lead_status, lead_sub_status, lead_a
         else:
             #manager
 
-            # leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
+            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
 
-            leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
-                'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
+            # leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
+            #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
     else:
         if user_group[0].name == 'CRM-AGENT':
             leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status,lead_owner_email=current_user_email)
         else:
             #manager
-            # leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
+            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
 
-            leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
-                'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
+            # leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
+            #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
 
     return leads
 
