@@ -10,9 +10,18 @@
 {% endblock title %}
 
 {% block main_css %}
-  <style type="text/css"></style>
   <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        .alert {
+            padding: 19px 15px;
+            color: #fefefe;
+            position: relative;
+            font: 14px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+        }
+        .alert .msg { padding: 0 20px 0 40px;}
+        .info-box {		background: #4D7DBE  no-repeat 14px 14px;}
+      </style>
 {% endblock main_css %}
 
   {% block content %}
@@ -58,7 +67,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                	<div class="padding-20 wfm-body-table">
+                	<div id="data" class="padding-20 wfm-body-table">
                     	<table class="table table-bordered"> 
                         	<thead> 
                             	<tr> 
@@ -117,13 +126,19 @@
               data: data,
               success: function(response) {
                       if (response.length) {
+                        $('table').show();
                         $('tbody').html('')
                         for(var i=0;i<response.length;i++){
                           $('tbody').append('<tr> <td><a onclick="addURL(this)" href="/crm/lead-details/' + response[i]['id'] + '/'+ response[i]['sf_lead_id'] + '" target="_blank">'+ response[i]['customer_id'] + '</a> </td>'+ "<td>"+response[i]['company'] + "</td> <td>"+response[i]['customer_name']+"</td> <td>"+response[i]['appointment_time']  + "</td> <td> " + response[i]['phone']  +"</td> <td> " + response[i]['phone_optional'] + "</td> <td> " + response[i]['web_master_no']  +"</td> <td>" + response[i]['location'] +"</td></tr>")                          
                         }
                       }
                       else{
-                        $('tbody').html('')
+                        $('#data').html('<div  id="no-leads-msg">'+
+                                        '<div class="container-fluid" style="margin-top:15%;">'+
+                                        '<div class="info-box alert"><div class="msg">'+
+                                        '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
+                                        'please contact your TL/WFM.</b></i></div></div></div></div>');
+                        $('table').hide();
                       }
               },
       });    
