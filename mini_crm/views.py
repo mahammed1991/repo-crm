@@ -150,7 +150,6 @@ def crm_management(request):
                     leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
             else:
-
                 user_group = request.user.groups.filter(name='CRM-MANAGER')
                 current_user_email = request.user.email
                 leads = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)
@@ -178,7 +177,6 @@ def get_leads(leads, leads_list):
         phone_optional =  lead.get('phone_optional')
         process_type = None
         type_1 = lead.get('type_1')
-        
         if type_1 in settings.PROCESS_TYPE_MAPPING.get('Shopping'):
             process_type = "Shopping"
         elif type_1 in settings.PROCESS_TYPE_MAPPING.get('Shopping Argos'):
@@ -301,7 +299,7 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
 
 
 def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
-	
+
     if has_region:
         if start_date_time != '' and end_date_time != '':
             query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
@@ -370,10 +368,9 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
     return leads
-        
 
 
-def get_json_leads(leads,process_type=None):
+def get_json_leads(leads, process_type=None):
     leads_data = list()
     lead_detail = None
     for lead in leads:
@@ -554,34 +551,35 @@ def lead_details(request, lid, sf_lead_id, ctype):
     language_list = []
     context = {}
     try:
-        if ctype in ['TAG','Shopping','RLSA','ShoppingArgos']:
+        if ctype in ['TAG', 'Shopping', 'RLSA', 'ShoppingArgos']:
             try:
-                lead = Leads.objects.get(id=lid,sf_lead_id=sf_lead_id)
-            except ObjectDoesNotExist:
-                print "No lead with this Salesforce ID"
-            lead_status = settings.LEAD_STATUS
-            feed_optimisation_status = settings.FEED_OPTIMISATION_STATUS
-            primary_role = ['Owner','Marketing','Webmaster']
-            language = Language.objects.filter(is_active=True)
-            try:
-                team = Team.objects.filter(belongs_to__in=['TAG','TAG-WPP','TAG-PICASSO','ALL'])
-            except ObjectDoesNotExist:
-                print "No teams with this filter parameters"
-            pla_sub_status = settings.PLA_SUB_STATUS
-            implemented_code_list = ['Different / Alternate','Same as specified by the Google rep']
-            team_list = []
-            language_list = []
-            for i in language:
-                language_list.append(str(i.language_name))
-            for i in team:
-                team_list.append(str(i.team_name))
+                print "11111111111111111111", lid, sf_lead_id
+                lead = Leads.objects.get(id=lid, sf_lead_id=sf_lead_id)
+                lead_status = settings.LEAD_STATUS
+                feed_optimisation_status = settings.FEED_OPTIMISATION_STATUS
+                primary_role = ['Owner', 'Marketing', 'Webmaster']
+                language = Language.objects.filter(is_active=True)
                 try:
-                    lead_detail = TagLeadDetail.objects.get(lead_id=lead)
-                except:
-                    lead_detail = TagLeadDetail()
-                    lead_detail.lead_id = lead
-                    lead_detail.save()
-
+                    team = Team.objects.filter(belongs_to__in=['TAG', 'TAG-WPP', 'TAG-PICASSO', 'ALL'])
+                except ObjectDoesNotExist:
+                    print "No teams with this filter parameters"
+                pla_sub_status = settings.PLA_SUB_STATUS
+                implemented_code_list = ['Different / Alternate', 'Same as specified by the Google rep']
+                team_list = []
+                language_list = []
+                for i in language:
+                    language_list.append(str(i.language_name))
+                for i in team:
+                    team_list.append(str(i.team_name))
+                    try:
+                        lead_detail = TagLeadDetail.objects.get(lead_id=lead)
+                    except:
+                        lead_detail = TagLeadDetail()
+                        lead_detail.lead_id = lead
+                        lead_detail.save()
+            except ObjectDoesNotExist:
+                print "2222222222222222222"
+                print "No lead with this Salesforce ID"
         elif ctype == 'WPP':
             try:
                 lead = WPPLeads.objects.get(id=lid,sf_lead_id=sf_lead_id)
@@ -614,7 +612,7 @@ def lead_details(request, lid, sf_lead_id, ctype):
         context['manager'] = True
     else:
         context['manager'] = False
-    return render(request,'crm/lead_details.html',context)
+    return render(request, 'crm/lead_details.html',context)
 
 
 @login_required
@@ -662,7 +660,6 @@ def lead_owner_avalibility(request):
             current_lead.lead_owner_email = lead_owner
             current_lead.save()
 
-            
             if request.GET.get('send_mail') == 'True':
                 if lead_type in ['WPP','Bolt Build','WPP - Nomination']:
                     assigning_lead_info = WPPLeads.objects.values('id', 'sf_lead_id', 'customer_id','appointment_time_in_ist', 'code_1', 'type_1', 'phone', 'first_name', 'last_name', 'company', 'url_1').get(id=lead_id)
@@ -689,8 +686,6 @@ def lead_owner_avalibility(request):
                 assigning_lead_info['manager'] =request.user.first_name + ' ' +request.user.last_name
                 mail_body = get_template('leads/email_templates/lead_assigning_mail.html').render(Context({'data':assigning_lead_info}))
                 send_mail(mail_subject, mail_body, mail_from, mail_to, list(bcc), attachments, template_added=True)
-
-
             resp['success'] = True
         else:
             resp['success'] = False
@@ -1061,7 +1056,6 @@ def get_feed_optimisation_sub_status(request):
         feed_optimisation_status = request.GET.get('feed_optimisation_status')
         feed_optimisation_status = feed_optimisation_status.replace('%20',' ')
         feed_optimisation_sub_status = None
-
         if feed_optimisation_status == 'Feed Audit':
             feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
         elif feed_optimisation_status == 'Feed Optimization':
@@ -1077,7 +1071,7 @@ def get_feed_optimisation_sub_status(request):
         elif feed_optimisation_status == "Inactive":
             feed_optimisation_sub_status = settings.FEED_OPTIMISATION_SUB_STATUS[feed_optimisation_status]
     resp = {'success':True,'feed_optimisation_sub_status':feed_optimisation_sub_status}
-    return HttpResponse(json.dumps(resp),content_type='application/json')
+    return HttpResponse(json.dumps(resp), content_type='application/json')
 
 
 @login_required
@@ -1085,17 +1079,18 @@ def user_appointmnets(request):
     if request.user.groups.filter(name='CRM-AGENT'):
         response = list()
         user_appointment_leads = Leads.objects.values('customer_id','appointment_date_in_ist', 'rescheduled_appointment_in_ist').filter( lead_owner_email=request.user.email,lead_status__in=['In Queue'])
-        for each in user_appointment_leads:
+        for appointment in user_appointment_leads:
             data = dict()
             appointment_date = None
-            if each['appointment_date_in_ist'] or each['rescheduled_appointment_in_ist']:
-                if each['rescheduled_appointment_in_ist']:
-                    appointment_date = datetime.strptime( str(each['rescheduled_appointment_in_ist']), '%Y-%m-%d %H:%M:%S')
+            if appointment['appointment_date_in_ist'] or appointment['rescheduled_appointment_in_ist']:
+                if appointment['rescheduled_appointment_in_ist']:
+                    appointment_date = datetime.strptime(str(appointment['rescheduled_appointment_in_ist']), '%Y-%m-%d %H:%M:%S')
                 else:
-                    appointment_date = datetime.strptime( str(each['appointment_date_in_ist']), '%Y-%m-%d %H:%M:%S')
+                    appointment_date = datetime.strptime(str(appointment['appointment_date_in_ist']), '%Y-%m-%d %H:%M:%S')
             
-            data['customer_id'] =  each['customer_id']
-            data['appointment_time'] =  str(appointment_date) if appointment_date else ""
+            data['customer_id'] = appointment['customer_id']
+            data['appointment_time'] = str(appointment_date) if appointment_date else ""
             response.append(data)
         return HttpResponse(json.dumps(response))
-    
+    else:
+        HttpResponse(json.dumps([]))
