@@ -1089,6 +1089,6 @@ def user_appointmnets(request):
             data['customer_id'] = appointment['customer_id']
             data['appointment_time'] = str(appointment_date) if appointment_date else ""
             response.append(data)
-        return HttpResponse(json.dumps(response))
+        return HttpResponse(json.dumps(response), content_type='application/json')
     else:
-        HttpResponse(json.dumps([]))
+        return HttpResponse(json.dumps([]), content_type='application/json')
