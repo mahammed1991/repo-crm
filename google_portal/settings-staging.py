@@ -594,9 +594,6 @@ PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Cal
                   "IP - No Admin Access", "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser",
                   "IP - Waiting for website verification"]
 
-
-PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back", "AC - Phone rings but No Answer", "DL - Account Suspended post Regalix Implementation", "DL - Account suspended when the lead was submitted.", "DL - Already Active", "DL - Campaign Paused", "DL - Invalid contact Details", "DL - Lack of time/resources", "DL - No access / No Website Credentials", "DL - No response", "DL - Not Interested", "DL - Policy Issues", "DL - Redesigning Website", "DL - Technically unfeasible", "DL - Troubleshooting", "IM - WIN (Impressions Received)", "IM - WIN > Troubleshooting (Complex)", "IM - WIN - Troubleshooting(Basics)", "IP - Account Suspended", "IP - Advertiser at Work", "IP - Advertiser Unreachable", "IP - Awaiting Impressions", "IP - Campaign Paused", "IP - Data Quality Errors", "IP - Installing an Extension/Creating a Landing Page", "IP - No Admin Access", "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser", "IP - Waiting for website verification"]
-
 FEED_OPTIMISATION_STATUS = ['Feed Audit','Feed Optimization','Feed Testing','Feed Upload','Implementation','Rework','Inactive']
 
 FEED_OPTIMISATION_SUB_STATUS = OrderedDict()
