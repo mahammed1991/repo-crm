@@ -36,12 +36,14 @@ def crm_management(request):
         
         leads_list = list()
         limit = 10
-        on_page = request.GET.get('page', 1)
-        if on_page == 1:
+        on_page = int(request.GET.get('page', 1))
+        if on_page <= 1:
             offset = 0
         else:
-            offset = limit * on_page - 1
-
+            on_page -= 1;
+            offset = limit * on_page
+            limit = offset + limit  
+        
         regions = Region.objects.all()
         regions_list = list()
         for region in regions:
@@ -158,7 +160,7 @@ def crm_management(request):
             all_leads = get_leads(leads, leads_list)
 
             try:
-                return HttpResponse(json.dumps({'leads_list': all_leads}), content_type="application/json")
+                return HttpResponse(json.dumps({'leads_list': all_leads, 'leads_count':leads_count}), content_type="application/json")
             except Exception as e:
                 print e
 
