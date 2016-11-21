@@ -591,3 +591,14 @@ PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Cal
                   "IP - Data Quality Errors", "IP - Installing an Extension/Creating a Landing Page",
                   "IP - No Admin Access", "IP - POLICY ISSUES", "IP - Rescheduled by Advertiser",
                   "IP - Waiting for website verification"]
+
+FEED_OPTIMISATION_STATUS = ['Feed Audit','Feed Optimization','Feed Testing','Feed Upload','Implementation','Rework','Inactive']
+
+FEED_OPTIMISATION_SUB_STATUS = OrderedDict()
+FEED_OPTIMISATION_SUB_STATUS['Feed Audit'] = ['In Queue','In Progress - Feed Audit']
+FEED_OPTIMISATION_SUB_STATUS['Feed Optimization'] = ['In Progress - Feed Optimization']
+FEED_OPTIMISATION_SUB_STATUS['Feed Testing'] = ['In Progress - Feed Testing','In Progress - Feed Optimization','Awaiting QC (Feed Quality)','In Progress - QC (Feed Quality)','Rework Required (Feed Quality)','In Progress - Rework (Feed Quality)']
+FEED_OPTIMISATION_SUB_STATUS['Feed Upload'] = ['In Progress - Feed Upload','In Progress - Advertiser Delay','Inactive - Unable to Reach Customer','Awaiting Feed Upload']
+FEED_OPTIMISATION_SUB_STATUS['Implementation'] = ['Inactive - Unable to Reach Customer','Win - Implemented by Regalix','Pending QC - Win']
+FEED_OPTIMISATION_SUB_STATUS['Rework'] = ['Rework Fixed - Win','Rework Required - Win']
+FEED_OPTIMISATION_SUB_STATUS['Inactive'] = ['Not Feasible']
