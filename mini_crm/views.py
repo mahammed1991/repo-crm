@@ -868,7 +868,7 @@ def get_lead_history(request):
                 'original_image_name':lead.original_image_name,
                 'previous_owner':lead.previous_owner,
                 'current_owner':lead.current_owner,
-                'image_path':"/static/uploads/"+lead.image_guid if lead.image_guid else '',
+                'image_path':"/media/"+lead.image_guid if lead.image_guid else '',
                 'image_size':round(float(os.path.getsize(os.path.join(settings.MEDIA_ROOT,lead.image_guid))) /(1024*1024),2) if lead.image_guid else '',
                 'created_date':datetime.strftime(lead.created_date, "%d-%m-%Y %I:%M %P"),
             }
