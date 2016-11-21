@@ -553,7 +553,6 @@ def lead_details(request, lid, sf_lead_id, ctype):
     try:
         if ctype in ['TAG', 'Shopping', 'RLSA', 'ShoppingArgos']:
             try:
-                print "11111111111111111111", lid, sf_lead_id
                 lead = Leads.objects.get(id=lid, sf_lead_id=sf_lead_id)
                 lead_status = settings.LEAD_STATUS
                 feed_optimisation_status = settings.FEED_OPTIMISATION_STATUS
@@ -578,7 +577,6 @@ def lead_details(request, lid, sf_lead_id, ctype):
                         lead_detail.lead_id = lead
                         lead_detail.save()
             except ObjectDoesNotExist:
-                print "2222222222222222222"
                 print "No lead with this Salesforce ID"
         elif ctype == 'WPP':
             try:
