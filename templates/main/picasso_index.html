@@ -231,7 +231,7 @@
 <script type="text/javascript" src="{% static 'js/material.min.js'%}"></script>
 <script src="{% static 'js/jquery.classyloader.js' %}"></script>
 <script type="text/javascript">
-  olark('api.box.hide');
+ /* olark('api.box.hide');*/
 </script>
 <script>
 
@@ -285,9 +285,9 @@ $(document).ready(function() {
 function include(arr,obj) {
   return (arr.indexOf(obj) != -1);
 }
-function hideOlark(){
+/*function hideOlark(){
   olark('api.box.hide');
-}
+}*/
 function classyloader1(){
   mydict = {{picasso_objective_dict|safe}}
   $('#totalWins').ClassyLoader({
