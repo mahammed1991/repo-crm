@@ -435,7 +435,7 @@ WFM Home
                 '<td>' + tabledata[i]['additional_phone_number'] + '</td>'+
                 '<td>' + tabledata[i]['web_master_number'] + '</td>'+
                 '<td>' + tabledata[i]['location'] + '</td>'+
-                '<td>' + tabledata[i]['type_1'] + '</td>'
+                '<td id="ctype">' + tabledata[i]['type_1'] + '</td>'
 
                 $("#leads_table_body").append(row)
             }
@@ -445,7 +445,7 @@ WFM Home
     function addURL(element)
     {
 
-      var type = $('#process option:selected').text().replace(" ","");
+      var type = $('#ctype').text().replace(/ |-/g,"");
         $(element).attr('href', function() {
           var url = this.href;
           if(url.includes(type))
