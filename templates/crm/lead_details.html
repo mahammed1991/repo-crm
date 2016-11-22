@@ -160,7 +160,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">No of Dials</td>
-                                        <td class="table-right">{{ lead.dials }}</td>
+                                        <td class="table-right edit"><span name="dials">{{ lead.dials }}</span></td>
                                         <td class="table-left">Website Backup Taken?</td>
                                         <td class="table-right">{{ lead_detail.is_backup_taken }}</td>
                                        </tr>
@@ -324,7 +324,7 @@
 
                                        <tr>
                                         <td class="table-left">Rescheduled Appointments</td>
-                                        <td class="table-right edit-date" id="rescheduled-appointment"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d-m-Y g:i a' }}</span><p style="display:none;color:red;">*Please reschedule the appointment.</p></td>
+                                        <td class="table-right edit-date" id="rescheduled-appointment"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d/m/Y g:i A' }}</span><p style="display:none;color:red;">*Please reschedule the appointment.</p></td>
                                         <td class="table-left">Service Segment</td>
                                         <td class="table-right">{{ lead_detail.service_segment }}</td>
                                        </tr>
@@ -560,7 +560,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">New Comments Area</td>
-                                        <td class="table-right edit-textarea-for-comment"></td>
+                                        <td class="table-right edit-textarea-for-comment"><span></span><p style="display:none;color:red;">*Please enter the value.</p></td>
                                         <td class="table-left">Regalix Chat Comments</td>
                                         <td class="table-right edit-textarea"><span name="regalix_comment"></span></td>
                                        </tr>
@@ -1247,7 +1247,7 @@ $('#edit-lead').on('click',function() {
         $(this).html(tarea);
     });
     
-    $('td.edit-textarea-for-comment').html('<textarea style="width:200px;" id="add-comment"></textarea>');
+    $('td.edit-textarea-for-comment span').html('<textarea style="width:200px;" id="add-comment"></textarea>');
     $("#add-comment").html('On Call : \nNext Course Of Action :');
     $("#add-comment").attr("data-dail", "{{dail_num}}");
 
@@ -1424,7 +1424,7 @@ $('#edit-lead').on('click',function() {
 
 
   var prev_lead_status = '';
-
+ 
   function updateLead(){
     var temp = {};
     $('.edited').each(function(){
@@ -1588,6 +1588,34 @@ $('#edit-lead').on('click',function() {
         $('#first-contacted p').hide();
       }
 
+    }
+
+    if({{request.session.groups|safe}}.includes('CRM-MANAGER') && curr_ls != $('#status option:selected').val()){
+      var comment = 'On Call : Next Course Of Action :';
+      var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
+      if(curr_comment == comment){ 
+        valid = false;
+        $('.edit-textarea-for-comment p').show();
+        $('.edit-textarea-for-comment span textarea').addClass('error')
+      }
+      else{
+        $('.edit-textarea-for-comment p').hide();
+        $('.edit-textarea-for-comment span textarea').removeClass('error')
+        $('#save-lead-comment').trigger('click');
+      }
+    }else if({{request.session.groups|safe}}.includes('CRM-AGENT') && curr_ls != $('#status option:selected').val() && ['Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].includes($('#status option:selected').val())){
+      var comment = 'On Call : Next Course Of Action :';
+      var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
+      if(curr_comment == comment){ 
+        valid = false;
+        $('.edit-textarea-for-comment p').show();
+        $('.edit-textarea-for-comment span textarea').addClass('error')
+      }
+      else{
+        $('.edit-textarea-for-comment p').hide();
+        $('.edit-textarea-for-comment span textarea').removeClass('error')
+        $('#save-lead-comment').trigger('click');
+      }
     }
 
     if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val()) && $('#type').text() == 'Google Shopping Setup'){
