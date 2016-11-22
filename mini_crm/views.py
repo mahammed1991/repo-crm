@@ -947,7 +947,15 @@ def update_lead(request):
 
             # mail function on lead status change
             if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
-                mail_subject = "Lead status has been changed ("+str(lead.customer_id)+")"
+
+                if lead.type_1 in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration', 'Project Argos- Feed Performance Optimization']:
+                    process_type = "Shopping"
+                elif lead.type_1 in ['RLSA', 'rlsa', 'RLSA Bulk Implementation']:
+                    process_type = "RLSA"
+                else:
+                    process_type = "TAG"
+
+                mail_subject = "Lead status has been changed ("+str(lead.customer_id)+" - "+process_type+")"
                 mail_from = 'Lead Status Changed <google@regalix-inc.com>'
                 crm_managers_mails = User.objects.values_list('email').filter(groups__name='CRM-MANAGER')
                 mail_to = list()
