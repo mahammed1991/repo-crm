@@ -637,13 +637,15 @@ def lead_owner_avalibility(request):
                         appointment_date_in_ist=current_lead.appointment_date_in_ist,
                         lead_owner_email=lead_owner)
                     assign = False if appointment_conflict else True
-            else:
+            elif not assign:
                 current_lead = Leads.objects.get(id=lead_id)
-                if not assign:
+                if current_lead.appointment_date_in_ist:
                     appointment_conflict = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,
-                        lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'],
-                        appointment_date_in_ist=current_lead.appointment_date_in_ist)
+                            lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'],
+                            appointment_date_in_ist=current_lead.appointment_date_in_ist)
                     assign = False if appointment_conflict else True
+                else:
+                    assign = True
         if assign:
             # Store this action as part of history
             lh = LeadHistory()
@@ -944,7 +946,7 @@ def update_lead(request):
                 lead.feed_optimisation_sub_status = None
 
             # mail function on lead status change
-            if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
+            if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active", "Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
                 mail_subject = "Lead status has been changed ("+str(lead.customer_id)+")"
                 mail_from = 'Lead Status Changed <google@regalix-inc.com>'
                 crm_managers_mails = User.objects.values_list('email').filter(groups__name='CRM-MANAGER')
