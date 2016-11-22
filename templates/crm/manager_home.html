@@ -163,7 +163,7 @@ WFM Home
           
         </div>
       </div>
-       <div style="margin-bottom: 10px;">
+       <div style="margin-bottom: 10px;margin-right: 4%">
           <ul class="pagination" id="pagination">
             
           </ul>
@@ -173,7 +173,10 @@ WFM Home
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script type="text/javascript">
-    var pageNum = 1;
+    var clickedPage = 1;
+    var pageStartNum = 1;
+    var pageEndNum = 10;
+    var defaultStartNum = 1, defaultEndNum = 20, shaffelCount = 10;
     $(document).ready(function(){
         initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
@@ -220,7 +223,7 @@ WFM Home
     });
 
     function GetStatus(){
-      pageNum = 1;
+      reloadPagination();
       get_process = $("#process").val()
       if (get_process == "tag_and_shopping"){
         var tag_status = Object.keys(objdata["TAG"])
@@ -326,18 +329,18 @@ WFM Home
     };
 
     $('#region').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       LoadTheTableContent(false)
     });
 
     $('#status').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       $('#appointment').val("Select");
       populate_sub_status();
     });
 
     $('#sub_status').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       $('#appointment').val("Select");
       if($(this).val() != "Select"){
         LoadTheTableContent(false);
@@ -345,12 +348,18 @@ WFM Home
     });
 
     $('#appointment').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       $('#status').val("Select");
       $('#sub_status').val("Select");
       if($(this).val() != 'Select')
         LoadTheTableContent(true);
     });
+
+    var reloadPagination = function(){
+      clickedPage = 1;
+      pageStartNum = defaultStartNum;
+      pageEndNum = defaultEndNum;
+    }
 
 
     function LoadTheTableContent(freshAppointment){
@@ -391,7 +400,7 @@ WFM Home
           makeCall = true;
         }*/
         if(makeCall){
-          data['page'] = pageNum;
+          data['page'] = clickedPage;
           $.ajax({
               url: "/crm/all-leads/",
               type: 'GET',
@@ -418,7 +427,7 @@ WFM Home
           formPagination(numOfPages);
           }
         else{
-          formPagination(1);
+          $("#pagination").html('');
         }
         tabledata = data['leads_list']
         if(tabledata.length != 0){
@@ -471,23 +480,28 @@ WFM Home
   }
 
   var formPagination = function(numOfPages){
-
+    
     var ulEle = $("#pagination");
     ulEle.html('');
     
-    if(pageNum < 2)
-      ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
+    if(clickedPage < 2)
+      ulEle.append("<li><a class='paged disabled' href='#'>»</a></li>");
     else
       ulEle.append("<li><a class='paged' href='#'>«</a></li>");
 
-    for(i=1; i<= numOfPages; i++){
-      if(pageNum == i)
-        ulEle.append("<li><a class='paged active'href='#' style='background-color: #4CAF50;'>"+i+"</a></li>");
-      else
-        ulEle.append("<li><a class='paged' href='#'>"+i+"</a></li>");
+    for(i=pageStartNum; i<= Math.min(pageEndNum, numOfPages); i++){
+        if(clickedPage == i)
+          ulEle.append("<li><a class='paged active'href='#' style='background-color: #4CAF50;' data-value=" +i+ ">"+i+"</a></li>");
+        else{
+          ulEle.append("<li><a class='paged' href='#' data-value=" +i+ ">"+i+"</a></li>");
+        }
     }
-
-    if(pageNum == numOfPages)
+    if($( '#pagination li a' ).data( 'value' ) )
+    if(numOfPages > defaultEndNum){
+      $('#pagination li a').hide();
+      $('#pagination li a:lt('+defaultEndNum+')').show();
+    }
+    if(clickedPage == numOfPages)
       ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
     else
       ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
@@ -495,14 +509,56 @@ WFM Home
 
   $("body").on('click', '.paged', function(e){
       e.preventDefault();
-      var page = $(this).text();
-      if(pageNum > 0 || parseInt(page)){
-        if(page === "«")
-          pageNum -= 1;
-        else if(page === "»")
-          pageNum += 1;
-        else
-          pageNum = page;
+
+      clickedPage = $(this).text();
+      var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
+      var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
+      var activePage = parseInt($('#pagination li a.active' ).data('value' ));
+      var reShuffelPagination = false;
+      if(clickedPage === "«" && activePage > 0){
+        if(firstPage == 1){
+          pageStartNum = defaultStartNum
+          pageEndNum = defaultEndNum
+          if(activePage == 1)
+            clickedPage = activePage
+          else
+            clickedPage = activePage - 1
+        }else{
+          pageStartNum -= 1
+          pageEndNum -= 1
+          clickedPage = activePage - 1;
+        }
+        reShuffelPagination = true;
+      }else if(clickedPage === "»" && activePage < numOfPages){
+        if(activePage == numOfPages)
+            reShuffelPagination = false;
+        else{
+          pageStartNum += 1
+          pageEndNum += 1
+          clickedPage = activePage + 1;
+        }
+        reShuffelPagination = true;
+        
+      }else if(parseInt(clickedPage)) {
+        clickedPage = parseInt(clickedPage);
+        if(clickedPage == lastPage){
+          pageStartNum += shaffelCount;
+          pageEndNum += shaffelCount;
+        }else if (clickedPage == firstPage){
+          if(activePage - shaffelCount > shaffelCount){
+            pageStartNum -= shaffelCount;
+            pageEndNum -= shaffelCount; 
+          }else{
+              pageStartNum = defaultStartNum
+              pageEndNum = defaultEndNum
+          }
+        }else{
+          clickedPage = clickedPage;
+        }
+        reShuffelPagination = true;
+      }
+
+      if(reShuffelPagination){
         LoadTheTableContent(false);
       }
   });
