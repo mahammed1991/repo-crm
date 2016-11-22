@@ -216,7 +216,6 @@ LEAD_STATUS = ['In Queue', 'Attempting Contact', 'In Progress', 'In Active',
                'Rework Required - In Active','Pending QC - Dead Lead','Rework Fixed - Win',
                'Rework Fixed - In Active']
 
-
 WPP_LEAD_STATUS = ['01. UI/UX','02. Design','03. Development','04. Testing','05. Staging','06. Implementation','07. Self Development']
 
 LEAD_STATUS_DICT = {'Attempting Contact': ['Attempting Contact'],
