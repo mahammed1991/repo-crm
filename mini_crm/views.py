@@ -36,12 +36,14 @@ def crm_management(request):
         
         leads_list = list()
         limit = 10
-        on_page = request.GET.get('page', 1)
-        if on_page == 1:
+        on_page = int(request.GET.get('page', 1))
+        if on_page <= 1:
             offset = 0
         else:
-            offset = limit * on_page - 1
-
+            on_page -= 1;
+            offset = limit * on_page
+            limit = offset + limit  
+        
         regions = Region.objects.all()
         regions_list = list()
         for region in regions:
@@ -158,7 +160,7 @@ def crm_management(request):
             all_leads = get_leads(leads, leads_list)
 
             try:
-                return HttpResponse(json.dumps({'leads_list': all_leads}), content_type="application/json")
+                return HttpResponse(json.dumps({'leads_list': all_leads, 'leads_count':leads_count}), content_type="application/json")
             except Exception as e:
                 print e
 
@@ -946,8 +948,16 @@ def update_lead(request):
                 lead.feed_optimisation_sub_status = None
 
             # mail function on lead status change
-            if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active", "Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
-                mail_subject = "Lead status has been changed ("+str(lead.customer_id)+")"
+            if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
+
+                if lead.type_1 in ['Google Shopping Setup', 'Existing Datafeed Optimization','Google Shopping Migration', 'Project Argos- Feed Performance Optimization']:
+                    process_type = "Shopping"
+                elif lead.type_1 in ['RLSA', 'rlsa', 'RLSA Bulk Implementation']:
+                    process_type = "RLSA"
+                else:
+                    process_type = "TAG"
+
+                mail_subject = "Lead status has been changed ("+str(lead.customer_id)+" - "+process_type+")"
                 mail_from = 'Lead Status Changed <google@regalix-inc.com>'
                 crm_managers_mails = User.objects.values_list('email').filter(groups__name='CRM-MANAGER')
                 mail_to = list()

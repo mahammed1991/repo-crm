@@ -13,6 +13,56 @@ WFM Home
   <style type="text/css"></style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+      .pagination {
+          display: inline-block;
+          padding-left: 0;
+          margin: 20px 0;
+          border-radius: 4px;
+      }
+
+      .pagination>li {
+          display: inline;
+      }
+
+      .pagination>li:first-child>a, .pagination>li:first-child>span {
+          margin-left: 0;
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+      }
+
+      .pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+        z-index: 3;
+        color: #fff;
+        cursor: default;
+        background-color: #337ab7;
+        border-color: #337ab7;
+    }
+
+    .pagination>li>a, .pagination>li>span {
+        position: relative;
+        float: left;
+        padding: 6px 12px;
+        margin-left: -1px;
+        line-height: 1.42857143;
+        color: #337ab7;
+        text-decoration: none;
+        background-color: #fff;
+        border: 1px solid #ddd;
+    }
+
+    .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {
+        z-index: 2;
+        color: #23527c;
+        background-color: #eee;
+        border-color: #ddd;
+    }
+
+    .pagination>li:last-child>a, .pagination>li:last-child>span {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+    </style>
 {% endblock main_css %}
   </head>
   {% block content %}
@@ -110,16 +160,24 @@ WFM Home
             </thead> 
             <tbody id="leads_table_body"></tbody> 
           </table>
+          
         </div>
       </div>
+       <div style="margin-bottom: 10px;margin-right: 4%">
+          <ul class="pagination" id="pagination">
+            
+          </ul>
+        </div>
       </div>
     </section>
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script type="text/javascript">
+    var clickedPage = 1;
+    var pageStartNum = 1;
+    var pageEndNum = 10;
+    var defaultStartNum = 1, defaultEndNum = 20, shaffelCount = 10;
     $(document).ready(function(){
-
         initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
         objdata_process = Object.keys(JSON.parse(status_mapping.replace(/&quot;/g,'"')))
@@ -163,7 +221,9 @@ WFM Home
           }
       }
     });
+
     function GetStatus(){
+      reloadPagination();
       get_process = $("#process").val()
       if (get_process == "tag_and_shopping"){
         var tag_status = Object.keys(objdata["TAG"])
@@ -269,15 +329,18 @@ WFM Home
     };
 
     $('#region').on('change',function(){
+      reloadPagination();
       LoadTheTableContent(false)
     });
 
     $('#status').on('change',function(){
+      reloadPagination();
       $('#appointment').val("Select");
       populate_sub_status();
     });
 
     $('#sub_status').on('change',function(){
+      reloadPagination();
       $('#appointment').val("Select");
       if($(this).val() != "Select"){
         LoadTheTableContent(false);
@@ -285,11 +348,19 @@ WFM Home
     });
 
     $('#appointment').on('change',function(){
+      reloadPagination();
       $('#status').val("Select");
       $('#sub_status').val("Select");
       if($(this).val() != 'Select')
         LoadTheTableContent(true);
     });
+
+    var reloadPagination = function(){
+      clickedPage = 1;
+      pageStartNum = defaultStartNum;
+      pageEndNum = defaultEndNum;
+    }
+
 
     function LoadTheTableContent(freshAppointment){
         var region = $('#region').val()
@@ -329,6 +400,7 @@ WFM Home
           makeCall = true;
         }*/
         if(makeCall){
+          data['page'] = clickedPage;
           $.ajax({
               url: "/crm/all-leads/",
               type: 'GET',
@@ -349,9 +421,17 @@ WFM Home
     function LeadsDataTable(data){
         process_col_data = $("#process").val()
         $("#leads_table_body").html('')
+        leads_count = data['leads_count']
+        if (leads_count > 10){
+          numOfPages = Math.ceil(leads_count/10);
+          formPagination(numOfPages);
+          }
+        else{
+          $("#pagination").html('');
+        }
         tabledata = data['leads_list']
         if(tabledata.length != 0){
-            for(i=0; i< tabledata.length; i += 1){
+            for(i=0; i< tabledata.length; i++){
                 if(tabledata[i]['appointment_time'] == null){
                   tabledata[i]['appointment_time'] = "N/A"
                 }
@@ -364,7 +444,7 @@ WFM Home
                 '<td>' + tabledata[i]['additional_phone_number'] + '</td>'+
                 '<td>' + tabledata[i]['web_master_number'] + '</td>'+
                 '<td>' + tabledata[i]['location'] + '</td>'+
-                '<td>' + tabledata[i]['type_1'] + '</td>'
+                '<td id="ctype">' + tabledata[i]['type_1'] + '</td>'
 
                 $("#leads_table_body").append(row)
             }
@@ -374,7 +454,7 @@ WFM Home
     function addURL(element)
     {
 
-      var type = $('#process option:selected').text().replace(" ","");
+      var type = $('#ctype').text().replace(/ |-/g,"");
         $(element).attr('href', function() {
           var url = this.href;
           if(url.includes(type))
@@ -399,6 +479,89 @@ WFM Home
       return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
+  var formPagination = function(numOfPages){
+    
+    var ulEle = $("#pagination");
+    ulEle.html('');
+    
+    if(clickedPage < 2)
+      ulEle.append("<li><a class='paged disabled' href='#'>»</a></li>");
+    else
+      ulEle.append("<li><a class='paged' href='#'>«</a></li>");
+
+    for(i=pageStartNum; i<= Math.min(pageEndNum, numOfPages); i++){
+        if(clickedPage == i)
+          ulEle.append("<li><a class='paged active'href='#' style='background-color: #4CAF50;' data-value=" +i+ ">"+i+"</a></li>");
+        else{
+          ulEle.append("<li><a class='paged' href='#' data-value=" +i+ ">"+i+"</a></li>");
+        }
+    }
+    if($( '#pagination li a' ).data( 'value' ) )
+    if(numOfPages > defaultEndNum){
+      $('#pagination li a').hide();
+      $('#pagination li a:lt('+defaultEndNum+')').show();
+    }
+    if(clickedPage == numOfPages)
+      ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
+    else
+      ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
+  }
+
+  $("body").on('click', '.paged', function(e){
+      e.preventDefault();
+
+      clickedPage = $(this).text();
+      var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
+      var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
+      var activePage = parseInt($('#pagination li a.active' ).data('value' ));
+      var reShuffelPagination = false;
+      if(clickedPage === "«" && activePage > 0){
+        if(firstPage == 1){
+          pageStartNum = defaultStartNum
+          pageEndNum = defaultEndNum
+          if(activePage == 1)
+            clickedPage = activePage
+          else
+            clickedPage = activePage - 1
+        }else{
+          pageStartNum -= 1
+          pageEndNum -= 1
+          clickedPage = activePage - 1;
+        }
+        reShuffelPagination = true;
+      }else if(clickedPage === "»" && activePage < numOfPages){
+        if(activePage == numOfPages)
+            reShuffelPagination = false;
+        else{
+          pageStartNum += 1
+          pageEndNum += 1
+          clickedPage = activePage + 1;
+        }
+        reShuffelPagination = true;
+        
+      }else if(parseInt(clickedPage)) {
+        clickedPage = parseInt(clickedPage);
+        if(clickedPage == lastPage){
+          pageStartNum += shaffelCount;
+          pageEndNum += shaffelCount;
+        }else if (clickedPage == firstPage){
+          if(activePage - shaffelCount > shaffelCount){
+            pageStartNum -= shaffelCount;
+            pageEndNum -= shaffelCount; 
+          }else{
+              pageStartNum = defaultStartNum
+              pageEndNum = defaultEndNum
+          }
+        }else{
+          clickedPage = clickedPage;
+        }
+        reShuffelPagination = true;
+      }
+
+      if(reShuffelPagination){
+        LoadTheTableContent(false);
+      }
+  });
 
     </script>
     
