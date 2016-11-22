@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meeting Minutes Email Template</title>
+</head>
+<body>
+  <table style="width: 100%;" border="0" cellpadding="0" cellspacing="0">
+      <tr> 
+        <td style="vertical-align:top;" align="center" valign="top">
+            <table style="width:600px;text-align: left;" border="0" cellpadding="0" cellspacing="0">
+             <tr>
+                <td style="">
+                {% if 'TAG Team' in program %}
+                 <img src="http://gtrack.regalix.com/static/images/tag-logo.png" align="left" border="0" width="132" height="26" alt="Regalix" style="text-align: center; vertical-align: middle; padding-top: 10px"/>
+                 {% else %}
+                 <img src="http://gtrack.regalix.com/static/images/GTrack-logo.png" align="left" border="0" width="83" height="38" alt="Regalix" style="text-align: center; vertical-align: middle; padding-top: 10px"/>
+                 {% endif %}
+                 <div style="color: #336699; font-size: 23px; font-family: Cambria; font-weight: bold; line-height: 26px;">
+                 <div style="color: #336699; font-size: 23px; font-family: Cambria; font-weight: bold; line-height: 26px;">
+                  </div>
+                </td>
+            </tr>
+            </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;" align="center" valign="top">
+          <table style="width:600px;text-align: left;" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding: 10px; border-top: 1px solid #3369e8;color: #6f6f6f; font-family: Arial;font-size: 14px; line-height: 18px; vertical-align: top;">
+              Hello Team,<br/>
+              {% if closed %}
+                <p>Below action item striked out in Red was closed by {{status_changed_by}},
+              {% else %}
+                <p>This is to inform you that the below mentioned action item:
+              {% endif %}
+
+                <table style="width:600px;text-align: left;" border="1" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <th style=" padding: 5px; text-align: center; width: 35%;">Action Item(s):</th>
+                    <th style=" padding: 5px; text-align: center; width: 15%;">Owner:</th>
+                    <th style=" padding: 5px; text-align: center; width: 25%;">Target Date: </th>
+                  </tr>
+                  {% if closed %}
+                    <tr>
+                      <td style="{% if current_closed_action_item.status in open%} padding:5px; {%else%} padding:5px;text-decoration: line-through; color: red; {%endif%}"><span style="color: #6f6f6f;">{{current_closed_action_item.action_items}}</span></td>
+                      <td style="{% if current_closed_action_item.status in open%} padding:5px; {%else%} padding:5px;text-decoration: line-through; color: red; {%endif%}"><span style="color: #6f6f6f;">{{current_closed_action_item.owners}}</span></td>
+                      <td style="{% if current_closed_action_item.status in open%} padding:5px; {%else%} padding:5px;text-decoration: line-through; color: red; {%endif%}"><span style="color: #6f6f6f;">{{current_closed_action_item.target_date}}</span></td>
+                    </tr>
+
+                    {% for i in closed_action_items %}
+                      {% if i.action_items != current_closed_action_item.action_items %}
+                      <tr>
+                        <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.action_items}}</td>
+                        <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.owners}}</td>
+                        <td style="{% if i.status in open%} padding:5px; {%else%} padding:5px;text-decoration:line-through; {%endif%}">{{i.target_date}}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td style="padding:5px;">{{action_item}}</td>
+                      <td style="padding:5px;">{{owner}}</td>
+                      <td style="padding:5px;">{{target_date}}</td>
+                    </tr>               
+                  {% endif %}    
+                </table>
+              {% if closed %}
+                <br><a href="{{last_meeting_link_id}}">Click here</a> to view status of all action items from this meeting - <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>.</p>
+              {% else %}
+                <br> from the Meeting <a href="{{last_meeting_link_id}}">{{program}} {{program_type}} {{google_team}} {{subject_timeline}} {{other_subject}} {{meeting_date}}</a>, is being {{status|lower}} by {{status_changed_by}}.</p> 
+              {% endif %}
+
+                <p>Thanks,<br />
+                {% if 'TAG Team' in program %}
+                Google Implementation Team</p>
+                {% elif 'WPP' in program %}
+                PICASSO Build Team</p>
+                {% else %}
+                PICASSO Team</p>
+                {% endif %}
+                <br />
+
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    
+      <tr>
+        <td style="vertical-align: top;padding-top: 30px;" align="center" valign="top">
+          <div style="background:#fafafa; color: #999999; font-size: 12px; font-family: Calibri; height:26px;">
+          <div class="mktEditable" id="Footer" align="center" style="padding-top: 10px;">Copyright &copy; 2016 Regalix Inc. All rights reserved.</div></div>
+        </td>
+      </tr>
+    </table>
+
+</body>
+</html>
