@@ -35,7 +35,7 @@ def crm_management(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
         
         leads_list = list()
-        limit = 10
+        limit = int(request.GET.get('limit', 10))
         on_page = int(request.GET.get('page', 1))
         if on_page <= 1:
             offset = 0
