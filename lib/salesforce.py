@@ -47,11 +47,11 @@ class SalesforceApi(object):
             try:
                 logging.error("Connecting to Stage SFDC")
                 sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
-                                       password='portalsupport1234',
+                                       password='portalsupport09876',
                                        security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
                 if not sf:
                     sf = CustomeSalesforce(username='google.tech@regalix-inc.com.regalixdev',
-                                           password='portalsupport1234',
+                                           password='portalsupport09876',
                                            security_token='bZPoCobHAJQsdPFcjjDfEWHA2', sandbox=True)
 
                 return sf
@@ -145,7 +145,6 @@ class SalesforceApi(object):
                     tz = Timezone.objects.get(zone_name='PDT')
                 else:
                     tz = Timezone.objects.get(zone_name='PST')
-
         return tz
 
     @staticmethod
