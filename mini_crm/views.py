@@ -220,6 +220,16 @@ def crm_agent(request):
             lead_status =  ''
             lead_sub_status = ''
             lead_appointment = None
+
+            limit = int(request.GET.get('limit', 10))
+            on_page = int(request.GET.get('page', 1))
+            if on_page <= 1:
+                offset = 0
+            else:
+                on_page -= 1;
+                offset = limit * on_page
+                limit = offset + limit
+            
             if request.GET.get('status'):
                 lead_status = request.GET.get('status')
             if request.GET.get('sub_status'):
@@ -229,9 +239,9 @@ def crm_agent(request):
             user_group = request.user.groups.filter(name='CRM-AGENT')
             current_user_email = request.user.email
             leads = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','')
-            leads_data = get_json_leads(leads,'TAG')
-            response_json = leads_data
-            res = HttpResponse(json.dumps(response_json), content_type="application/json")
+            leads_data = get_json_leads(leads[offset:limit],'TAG')
+            response_json = {'leads_list': leads_data, 'leads_count':leads.count()}
+            res = HttpResponse(json.dumps(response_json), content_type="application/json") 
             return res
         context ={
             'lead_status':settings.LEAD_STATUS_SUB_STATUS_MAPPING['TAG'].keys(),
@@ -278,38 +288,64 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             week_end = week_start + timedelta(6)
             start_date_time = datetime.combine(week_start, datetime.min.time()).replace(hour=0,minute=0,second=0)
             end_date_time =  datetime.combine(week_end, datetime.min.time()).replace(hour=23,minute=59,second=59)
+        if lead_appointment == 'Without Appointment':
+            start_date_time = ''
+            end_date_time = ''
         if user_group[0].name == 'CRM-AGENT':
-            leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time,lead_owner_email=current_user_email)
+            if lead_appointment == 'Without Appointment':
+                exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
+                leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',
+                        lead_owner_email=current_user_email).exclude(type_1__in=exclude_types)
+            else:
+                leads = Leads.objects.filter(lead_status__in=['Attempting Contact','In Queue'], 
+                        appointment_date_in_ist__gte=start_date_time,
+                        appointment_date_in_ist__lte=end_date_time,
+                        rescheduled_appointment_in_ist__gte=start_date_time,
+                        rescheduled_appointment_in_ist__lte=end_date_time,
+                        lead_owner_email=current_user_email)
         else:
             #manager
-
             leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
 
             # leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
     else:
         if user_group[0].name == 'CRM-AGENT':
-            leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status,lead_owner_email=current_user_email)
+            if lead_status == 'In Queue':
+                query = {}
+            else:
+                query = {'lead_sub_status': lead_sub_status}
+            leads = Leads.objects.filter(lead_status=lead_status,lead_owner_email=current_user_email,**query)
         else:
             #manager
             leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
 
             # leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
-
     return leads
 
 
 def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
-
     if has_region:
-        if start_date_time != '' and end_date_time != '':
-            query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
+        if lead_appointment == 'Without Appointment':
+            query = {'country__in':loc_list, 'appointment_date__isnull':True}
+        elif lead_appointment != 'Select' or 'Without Appointment':
+            query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 
+                    'appointment_date_in_ist__lte':end_date_time,
+                    'rescheduled_appointment_in_ist__gte':start_date_time,
+                    'rescheduled_appointment_in_ist__lte':end_date_time
+                    }
         else:
             query = {'country__in':loc_list}
     else:
-        if start_date_time != '' and end_date_time != '':
-            query = {'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
+        if lead_appointment == 'Without Appointment':
+            query = {'appointment_date__isnull':True}
+        elif lead_appointment != 'Select' or 'Without Appointment':
+            query = {'appointment_date_in_ist__gte':start_date_time,
+                    'appointment_date_in_ist__lte':end_date_time,
+                    'rescheduled_appointment_in_ist__gte':start_date_time,
+                    'rescheduled_appointment_in_ist__lte':end_date_time
+                    }
         else:
             query = {}
 
@@ -490,7 +526,6 @@ def lead_history(request):
                     leads = list()
                 else:
                     leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
-
             res = HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
             return res
         return render(request,'crm/lead_and_history.html')
@@ -639,13 +674,15 @@ def lead_owner_avalibility(request):
                         appointment_date_in_ist=current_lead.appointment_date_in_ist,
                         lead_owner_email=lead_owner)
                     assign = False if appointment_conflict else True
-            else:
+            elif not assign:
                 current_lead = Leads.objects.get(id=lead_id)
-                if not assign:
+                if current_lead.appointment_date_in_ist:
                     appointment_conflict = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,
-                        lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'],
-                        appointment_date_in_ist=current_lead.appointment_date_in_ist)
+                            lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'],
+                            appointment_date_in_ist=current_lead.appointment_date_in_ist)
                     assign = False if appointment_conflict else True
+                else:
+                    assign = True
         if assign:
             # Store this action as part of history
             lh = LeadHistory()
