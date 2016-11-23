@@ -14,6 +14,14 @@ WFM Home
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <style>
+    .alert {
+            padding: 19px 15px;
+            color: #fefefe;
+            position: relative;
+            font: 20px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+        }
+      .alert .msg { padding: 0 20px 0 40px;}
+      .info-box {   background: #4D7DBE  no-repeat 14px 14px;}
       .pagination {
           display: inline-block;
           padding-left: 0;
@@ -76,8 +84,8 @@ WFM Home
             <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
         </div>
         <div style="float: right;">
-            <label>Result Limit</label>
-                <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:68px;    margin-bottom: 0px;">
+            <label><b style="font-weight: bold;">Result Limit</b></label>
+                <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;    margin-bottom: 0px;">
                   <option>10</option>
                   <option>25</option>
                   <option>50</option>
@@ -175,6 +183,7 @@ WFM Home
           </table>
           
         </div>
+        <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
       </div>
        <div style="margin-bottom: 10px;text-align: center;">
           <ul class="pagination" id="pagination">
@@ -454,6 +463,8 @@ WFM Home
         }
         tabledata = data['leads_list']
         if(tabledata.length != 0){
+            $('table').show();
+            $('#data').hide();
             for(i=0; i< tabledata.length; i++){
                 if(tabledata[i]['appointment_time'] == null){
                   tabledata[i]['appointment_time'] = "N/A"
@@ -472,6 +483,15 @@ WFM Home
                 $("#leads_table_body").append(row)
             }
         }
+        else{
+            $('#data').html('<div  id="no-leads-msg">'+
+                            '<div class="container-fluid" style="margin-top:15%;">'+
+                            '<div class="info-box alert"><div class="msg">'+
+                            '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
+                            'please contact your TL/WFM.</b></i></div></div></div></div>');
+            $('#data').show(); 
+            $('table').hide();
+          }
     }
 
     function addURL(element)
