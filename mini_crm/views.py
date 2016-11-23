@@ -674,13 +674,15 @@ def lead_owner_avalibility(request):
                         appointment_date_in_ist=current_lead.appointment_date_in_ist,
                         lead_owner_email=lead_owner)
                     assign = False if appointment_conflict else True
-            else:
+            elif not assign:
                 current_lead = Leads.objects.get(id=lead_id)
-                if not assign:
+                if current_lead.appointment_date_in_ist:
                     appointment_conflict = Leads.objects.filter(type_1=lead_type,lead_owner_email=lead_owner,
-                        lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'],
-                        appointment_date_in_ist=current_lead.appointment_date_in_ist)
+                            lead_status__in=['Attempting Contact','In Queue','ON CALL','In Progress'],
+                            appointment_date_in_ist=current_lead.appointment_date_in_ist)
                     assign = False if appointment_conflict else True
+                else:
+                    assign = True
         if assign:
             # Store this action as part of history
             lh = LeadHistory()
