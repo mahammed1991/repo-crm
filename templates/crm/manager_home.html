@@ -83,7 +83,7 @@ WFM Home
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
         </div>
-        <div style="float: right;">
+        <!--div style="float: right;">
             <label><b style="font-weight: bold;">Result Limit</b></label>
                 <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;    margin-bottom: 0px;">
                   <option>10</option>
@@ -91,7 +91,7 @@ WFM Home
                   <option>50</option>
                   <option>100</option>
                 </select>
-          </div>
+          </div-->
         </div>
         <div class="white-section">
           
@@ -101,15 +101,21 @@ WFM Home
               <div class="col-md-5">
                 <div class="arrow-box-blue" style="width:104%">
                   <div class="row">
-
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
+                        <label for="limit">Show Results</label>
+                            <select id="limit" name="limit" class="form-control bgicon">
+                              <option>10</option>
+                              <option>25</option>
+                              <option>50</option>
+                              <option>100</option>
+                            </select>
+                      </div>
+                    <div class="col-sm-4">
                       <label for="exampleInputEmail1">Region</label>
-                        <select id="region" name="region" class="form-control bgicon" >
-                          
-                        </select>
+                        <select id="region" name="region" class="form-control bgicon" ></select>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                       <label for="exampleInputEmail1">Process</label>
                         <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
@@ -185,7 +191,9 @@ WFM Home
         </div>
         <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
       </div>
-       <div style="margin-bottom: 10px;text-align: center;">
+      <div id="entries" style="margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;">
+      </div>
+       <div style="margin-bottom: 10px;text-align: center;display:inline;">
           <ul class="pagination" id="pagination">
             
           </ul>
@@ -198,6 +206,7 @@ WFM Home
     var clickedPage = 1;
     var pageStartNum = 1;
     var pageEndNum = 10;
+    var activePage = 1;
     var defaultStartNum = 1, defaultEndNum = 20, shaffelCount = 10;
     $(document).ready(function(){
         initial_load = true;
@@ -548,6 +557,11 @@ WFM Home
       ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
     else
       ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
+
+    var lmt = parseInt($("#limit").val());
+    var from = clickedPage * lmt - lmt+1;
+    var to = from + lmt-1;
+    $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
   }
 
   $("body").on('click', '.paged', function(e){
@@ -556,7 +570,7 @@ WFM Home
       clickedPage = $(this).text();
       var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
       var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
-      var activePage = parseInt($('#pagination li a.active' ).data('value' ));
+      activePage = parseInt($('#pagination li a.active' ).data('value' ));
       var reShuffelPagination = false;
       if(clickedPage === "«" && activePage > 0){
         if(firstPage == 1){
