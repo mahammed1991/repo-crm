@@ -1,0 +1,54 @@
+{% extends 'layouts/main.html' %}
+
+{% load rep_filters %}
+{% load staticfiles %}
+
+{% block title %}
+Manage Users
+{% endblock title %}
+
+{% block content %}
+<div id="content" class="clearfix">
+    <div class="main_content">
+        <fieldset style="border:1px solid #d9d9d9;">
+            <legend class="legend"><p style="font-family:Times New Roman;font-size:25px;font-weight:bold;text-align:center; color:#3c3c3c">Manage Users</p></legend>
+                <div style="float: right;margin-bottom: 5px;">
+                        <input type="button" value="Add User" class="logbtn" onclick="window.location.href='{% url 'representatives.views.add_edit_user' %}';">
+                </div>
+                <div style="clear:both;"></div>
+                <div style="padding-bottom:10px;">
+                    <form action='' method="post" >
+                        <table class="list" rules="all" border="1" align="center" style="background-color:White;border-color:#4C4C4C;border-width:1px;border-style:None;font-size:9pt;width:100%;border-collapse:collapse;">
+                            <tr style="color:#4C4C4C;background-color:#E6E6E6;font-weight:bold;height:40px;">
+                                <th width="40px" align="center">S.No.</th>
+                                <th width="150px;">Name</th>
+                                <th width="200px;">Username</th>
+                                <th width="150px;">Role</th>
+                                <th width="200px;">User manager</th>
+                                <th align="center">Action</th>
+                            </tr>
+                            {% for user_info in users %}
+                                <tr style="color:#4C4C4C;background-color:#FBFBFB;height:40px;">
+                                    <td align="center">{{ forloop.counter }}</td>
+                                    <td align="center">
+                                        <div id="a{{user_info.id}}"><a href="{% url 'representatives.views.add_edit_user' user_info.id %}" style="font-size: 14px;font-weight: bold;color: #3c3c3c;">{{user_info.get_full_name}}</a></div><div style="display:none" id="b{{user_info.id}}"><input type="text" name="name" value="{{user_info.get_full_name}}" style="width:140px;"></div>
+                                    </td>
+                                    <td align="center">
+                                        <div id="s{{user_info.id}}">{{user_info.email}}</div><div style="display:none" id="t{{user_info.id}}"><input type="text" name="username" value="{{user_info.email}}"></div>
+                                    </td>
+                                    <td align="center">
+                                        <div id="c{{user_info.id}}">{{roles|get_dict_val:user_info.profile.role}}</div><div style="display:none;" id="d{{user_info.id}}"><input type="text" name="order_by" value="0" style="width:120px;" ></div>
+                                    </td>
+                                    <td align="center">
+                                        <div id="e{{user_info.id}}">{{user_info.profile.user_manager_name}}</div><div style="display:none" id="f{{user_info.id}}"><input type="text" name="user_manager_name" value="{{user_info.profile.user_manager_name}}"></div>
+                                    </td>
+                                    <td align="center"><a href="javascript:'" style="font-size: 14px;font-weight: bold;color: #3c3c3c;">Delete</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </form>
+                </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock content %}
