@@ -9,12 +9,18 @@ var reloadPagination = function(){
   pageEndNum = defaultEndNum;
 }
 var formPagination = function(numOfPages){
-    
+
+  console.log("1111111111111111111111111111111111111");
+  var lmt = parseInt($("#limit").val());
+  var from = clickedPage * lmt - lmt + 1
+  var to = from + lmt-1;
+
+  $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
   var ulEle = $("#pagination");
   ulEle.html('');
   
   if(clickedPage < 2)
-    ulEle.append("<li><a class='paged disabled' href='#'>»</a></li>");
+    ulEle.append("<li><a class='paged' href='#'>»</a></li>");
   else
     ulEle.append("<li><a class='paged' href='#'>«</a></li>");
 
@@ -31,9 +37,10 @@ var formPagination = function(numOfPages){
     $('#pagination li a:lt('+defaultEndNum+')').show();
   }
   if(clickedPage == numOfPages)
-    ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
+    ulEle.append("<li><a class='paged' href='#'>«</a></li>");
   else
     ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
+
 }
 $("body").on('click', '.paged', function(e){
       e.preventDefault();
