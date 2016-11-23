@@ -202,12 +202,9 @@ WFM Home
     </section>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
     <script type="text/javascript">
-    var clickedPage = 1;
-    var pageStartNum = 1;
-    var pageEndNum = 10;
-    var activePage = 1;
-    var defaultStartNum = 1, defaultEndNum = 20, shaffelCount = 10;
+
     $(document).ready(function(){
         initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
@@ -442,16 +439,20 @@ WFM Home
         }*/
         if(makeCall){
           data['page'] = clickedPage;
+          recentRequest = Math.random();
+          data['recentRequest'] = recentRequest;
           $.ajax({
               url: "/crm/all-leads/",
               type: 'GET',
               data: data,
               dataType: "json",
               success: function(data) {
-                  $("#leads_table_body").html('')
-                  LeadsDataTable(data)
-                  initial_load = false;
-              },
+                  req = getParameterByName('recentRequest', this.url);
+                  if(req === ""+recentRequest){
+                    $("#leads_table_body").html('')
+                    LeadsDataTable(data)
+                    initial_load = false;
+                  }              },
               error: function(xhr){
                   alert('Request Status: ' + xhr.status);
               }
@@ -557,11 +558,6 @@ WFM Home
       ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
     else
       ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
-
-    var lmt = parseInt($("#limit").val());
-    var from = clickedPage * lmt - lmt+1;
-    var to = from + lmt-1;
-    $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
   }
 
   $("body").on('click', '.paged', function(e){
@@ -570,7 +566,7 @@ WFM Home
       clickedPage = $(this).text();
       var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
       var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
-      activePage = parseInt($('#pagination li a.active' ).data('value' ));
+      var activePage = parseInt($('#pagination li a.active' ).data('value' ));
       var reShuffelPagination = false;
       if(clickedPage === "«" && activePage > 0){
         if(firstPage == 1){
