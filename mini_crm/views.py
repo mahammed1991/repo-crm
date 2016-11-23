@@ -221,7 +221,7 @@ def crm_agent(request):
             lead_sub_status = ''
             lead_appointment = None
 
-            limit = 10
+            limit = int(request.GET.get('limit', 10))
             on_page = int(request.GET.get('page', 1))
             if on_page <= 1:
                 offset = 0
@@ -288,6 +288,9 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             week_end = week_start + timedelta(6)
             start_date_time = datetime.combine(week_start, datetime.min.time()).replace(hour=0,minute=0,second=0)
             end_date_time =  datetime.combine(week_end, datetime.min.time()).replace(hour=23,minute=59,second=59)
+        if lead_appointment == 'Without Appointment':
+            start_date_time = ''
+            end_date_time = ''
         if user_group[0].name == 'CRM-AGENT':
             if lead_appointment == 'Without Appointment':
                 exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
@@ -302,7 +305,6 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
                         lead_owner_email=current_user_email)
         else:
             #manager
-
             leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
 
             # leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
@@ -320,20 +322,30 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
 
             # leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
-    print leads.count()
     return leads
 
 
 def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
-
     if has_region:
-        if start_date_time != '' and end_date_time != '':
-            query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
+        if lead_appointment == 'Without Appointment':
+            query = {'country__in':loc_list, 'appointment_date__isnull':True}
+        elif lead_appointment != 'Select' or 'Without Appointment':
+            query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 
+                    'appointment_date_in_ist__lte':end_date_time,
+                    'rescheduled_appointment_in_ist__gte':start_date_time,
+                    'rescheduled_appointment_in_ist__lte':end_date_time
+                    }
         else:
             query = {'country__in':loc_list}
     else:
-        if start_date_time != '' and end_date_time != '':
-            query = {'appointment_date_in_ist__gte':start_date_time, 'appointment_date_in_ist__lte':end_date_time}
+        if lead_appointment == 'Without Appointment':
+            query = {'appointment_date__isnull':True}
+        elif lead_appointment != 'Select' or 'Without Appointment':
+            query = {'appointment_date_in_ist__gte':start_date_time,
+                    'appointment_date_in_ist__lte':end_date_time,
+                    'rescheduled_appointment_in_ist__gte':start_date_time,
+                    'rescheduled_appointment_in_ist__lte':end_date_time
+                    }
         else:
             query = {}
 
@@ -514,7 +526,6 @@ def lead_history(request):
                     leads = list()
                 else:
                     leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
-            print leads.count(),'c'
             res = HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
             return res
         return render(request,'crm/lead_and_history.html')
