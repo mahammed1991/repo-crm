@@ -74,7 +74,18 @@ WFM Home
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
         </div>
+        <div style="float: right;">
+            <label>Result Limit</label>
+                <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:68px;    margin-bottom: 0px;">
+                  <option>10</option>
+                  <option>25</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+          </div>
+        </div>
         <div class="white-section">
+          
           <div class="blue-bg">
           <div id="delete_lead_msg"></div>
             <div class="row">
@@ -163,7 +174,7 @@ WFM Home
           
         </div>
       </div>
-       <div style="margin-bottom: 10px;margin-right: 4%">
+       <div style="margin-bottom: 10px;text-align: center;">
           <ul class="pagination" id="pagination">
             
           </ul>
@@ -355,6 +366,11 @@ WFM Home
         LoadTheTableContent(true);
     });
 
+    $('#limit').on('change',function(){
+      reloadPagination();
+      LoadTheTableContent(false)
+    });
+
     var reloadPagination = function(){
       clickedPage = 1;
       pageStartNum = defaultStartNum;
@@ -363,6 +379,7 @@ WFM Home
 
 
     function LoadTheTableContent(freshAppointment){
+        var limit = $('#limit').val()
         var region = $('#region').val()
         var ptype = getParameterByName('ptype')
         var c_id = getParameterByName('customer_id')
@@ -380,17 +397,17 @@ WFM Home
         var makeCall = false;
         if(status != "Select"){
           if(sub_status != "Select")
-            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status};
+            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
           else
-            data = {'region':region,'process':process_name,'status':status};
+            data = {'region':region,'process':process_name,'status':status, 'limit':limit};
           makeCall = true;
         }else{
             if (appointment != "Select"){
               makeCall = true;
-              data = {'appointment': appointment, 'region':region, 'process':process_name};
+              data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
             }   
             if (sub_status == "Select" && appointment == "Select")  {
-              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status};
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
               makeCall = true;              
             }
         }
@@ -423,7 +440,7 @@ WFM Home
         $("#leads_table_body").html('')
         leads_count = data['leads_count']
         if (leads_count > 10){
-          numOfPages = Math.ceil(leads_count/10);
+          numOfPages = Math.ceil(leads_count/parseInt($('#limit').val()));
           formPagination(numOfPages);
           }
         else{
@@ -533,9 +550,18 @@ WFM Home
         if(activePage == numOfPages)
             reShuffelPagination = false;
         else{
-          pageStartNum += 1
-          pageEndNum += 1
-          clickedPage = activePage + 1;
+          if(numOfPages > defaultEndNum){
+             pageStartNum += 1
+             pageEndNum += 1
+             clickedPage = activePage + 1;
+          }
+          else{
+             pageStartNum = 1
+             pageEndNum = numOfPages
+             clickedPage = activePage + 1;
+
+          }
+         
         }
         reShuffelPagination = true;
         
