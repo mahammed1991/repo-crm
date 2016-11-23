@@ -70,7 +70,8 @@ WFM Home
     <section class="top-margin wfm">
 
       <div class="container-fluid" style="max-width:100%;">
-        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+        
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="clone-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
         </div>
@@ -360,6 +361,9 @@ WFM Home
     });
 
     $('#appointment').on('change',function(){
+      if (sub_status == null && $('#appointment').val() == "Select" && status == "Select"){
+        $('#process').trigger("change");
+      }
       reloadPagination();
       $('#status').val("Select");
       $('#sub_status').val("Select");
@@ -411,6 +415,7 @@ WFM Home
               data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
               makeCall = true;              
             }
+
         }
         
         /*if(status =="Select" && sub_status == "Select" && appointment == "Select"){
