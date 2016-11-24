@@ -538,7 +538,7 @@ def search_leads(request):
     search_query = request.GET.get('q')
     results = list()
     try:
-        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id', 'lead_owner_name', 'date_of_installation').filter(
             Q(customer_id= search_query) | Q(sf_lead_id= search_query))
         if normal_leads:
             for each in list(normal_leads):
@@ -552,7 +552,7 @@ def search_leads(request):
     except ObjectDoesNotExist:
         pass
     # try:
-    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id',  'lead_owner_name', 'date_of_installation').filter(
     #         Q(customer_id= search_query) | Q(sf_lead_id= search_query))
     #     if picasso_leads:
     #         for each in list(picasso_leads):
@@ -565,7 +565,7 @@ def search_leads(request):
     # except ObjectDoesNotExist:
     #     pass
     # try:
-    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
+    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id' , 'lead_owner_name', 'date_of_installation').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
     #     if wpp_leads:
     #         for each in list(wpp_leads):
     #             each['process_type'] = 'WPP'
