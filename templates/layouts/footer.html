@@ -1,0 +1,86 @@
+{% load static %}
+<a href="#" class="report-a-bug" title="Report a Bug" data-toggle="modal" data-target="#feedbackModalbug" onclick='hideOlark();' data-backdrop="static" data-keyboard="false"></a>
+<footer class="footer" style="margin-bottom: -50px;">
+    <div class="container-fluid">
+        <ul>
+            <li>© 2016 Regalix Inc.</li>
+            <!-- <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Privacy Policy</a></li> -->
+            <li><a href="#">All Rights Reserved.</a></li>
+        </ul>
+    </div>
+</footer>
+
+<!-- feedback modal -->
+        <div class="modal" id="feedbackModalbug" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog ping-snippet">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" id="closing"  class="close close-modal" data-dismiss="modal" aria-label="Close" onclick="showOlark()"><i aria-hidden="true" class="fa fa-times-circle"   ></i></button>
+                <h4 class="modal-title" id="myModalLabel">Report a Bug</h4>
+              </div>
+              <div class="modal-body" id="bug-feedback-body"> 
+                <form method='POST' enctype="multipart/form-data" id="portalFeedback">
+                    {% csrf_token %}
+                   <input type="text" class="form-control" style="padding: 0px 10px;" id="ldap" value='{{request.user.first_name}} {{request.user.last_name}}' disabled />
+                   <input type="hidden" id="bug_url" name="bug_url" value="">
+                     <select class="form-control bgicon" id="bugfeedbackType" name="type">
+                        <option value="Feedback Type">Bug Found</option>
+                        <option value="UI / Design Related"> UI / Design Related</option>
+                        <option value="Not Able to Submit Lead"> Not able to submit lead</option>
+                        <option value="UX / Experience Related">UX / Experience Related</option>
+                    </select>
+                   <div id="preloaderOverlay" class="footeroverlay" style='display:none;margin-left: -16px;'>
+                      <div class="preloader">
+                      <img src="{% static 'images/preloader.gif'%}" width="40" height="40" style="margin-left: 53px;">
+                      <span style="font-style: italic;font-size: 20px;margin-left: -71px;margin-top: 43px;">Please wait....</span>
+                      </div>
+                    </div>
+                    <textarea class="form-control" placeholder="Comments" id='bugcomments' name="comment"></textarea>
+                    
+                      <div style="width:100%;">  
+                      <input type="button" value="Choose file" id="fakeBrowse" onclick="HandleBrowseClick();" style="width:40%;"/> 
+                      <input type="file" id="attachmentfile" name="attachmentfile" style="display: none" onChange="Handlechange();" />
+                      <input type="text" id="filename" readonly="true" style="width:58%;" />
+                      </div>                     
+                                          
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+
+                  <div class="btn-group">
+                      <button class="btn std-btn" id='SubmitFeedbackbug' style="border-radius:2px;padding:10px;font-size:14px;min-width:100px;">Submit</button>
+                  </div>
+                </div>
+               </form>
+            </div>
+          </div>
+        </div>
+        <!-- feedback modal ends -->
+
+
+ <!-- model window for displaing the bug as been reported -->
+<div class="modal fade" id="bugreported" role="dialog">
+    <div class="modal-dialog " style="width:510px;">
+      <!-- Modal content-->
+      <div class="modal-content" style="width:510px;">
+        <div class="modal-header" style="background:#109d59 !important;">
+          <button type="button" id="bug-noti-close" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"> Notification</h4>
+        </div>
+        <div class="modal-body" style="height:100px !important;width:510px !important;">
+          <p>Bug has been reported thank you.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="bug-cls-btn" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+<!--End of model window for displaing the bug as been reported -->
+
+<script type="text/javascript">
+  document.getElementById("bug_url").value = location.href;
+</script>
+
