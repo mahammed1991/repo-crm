@@ -373,8 +373,7 @@
 
                                      </table>
                                  </div> -->
-
-                                 {% if lead.type_1 == 'Google Shopping Setup' %}
+                                 {% if  lead.type_1 == 'Google Shopping Setup' or lead.type_1 == 'Existing Datafeed Optimization' or lead.type_1 == 'Project Argos- Feed Performance Optimization' %}
                                  <div class="yellow-line"></div>
                                  <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Google Shopping Setup</a>
                                  <div class="table-responsive">
@@ -1526,7 +1525,7 @@ $('#edit-lead').on('click',function() {
     $('.cancel-save').show();
     /*$('#save-lead-comment').show();*/
 
-    autoCall();
+    bindAutoComplete();
     
 });
 
@@ -1803,6 +1802,7 @@ $('#edit-lead').on('click',function() {
       })
     }
     else{
+      alert('')
       $('#span-msg').text('Please select/fill the required fields on form.');
       $('#clone-info').removeClass('.alert-success');
       $('#clone-info').addClass('alert-warning');
@@ -2208,7 +2208,7 @@ function cloneLead(){
       valCompare(prev_val,pres_val,this);
     });
 
-function autoCall(){
+function bindAutoComplete(){
   $(".mail-id span input").autocomplete(
   {
       search: function () {},
@@ -2232,6 +2232,9 @@ function autoCall(){
   });
 }
 
+$('.close').click(function(){
+   $('.white-section').css('margin-top','35px');
+})
 
     </script>
     
