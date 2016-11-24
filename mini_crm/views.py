@@ -538,7 +538,7 @@ def search_leads(request):
     search_query = request.GET.get('q')
     results = list()
     try:
-        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id', 'lead_owner_name', 'date_of_installation').filter(
             Q(customer_id= search_query) | Q(sf_lead_id= search_query))
         if normal_leads:
             for each in list(normal_leads):
@@ -552,7 +552,7 @@ def search_leads(request):
     except ObjectDoesNotExist:
         pass
     # try:
-    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id',  'lead_owner_name', 'date_of_installation').filter(
     #         Q(customer_id= search_query) | Q(sf_lead_id= search_query))
     #     if picasso_leads:
     #         for each in list(picasso_leads):
@@ -565,7 +565,7 @@ def search_leads(request):
     # except ObjectDoesNotExist:
     #     pass
     # try:
-    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
+    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id' , 'lead_owner_name', 'date_of_installation').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
     #     if wpp_leads:
     #         for each in list(wpp_leads):
     #             each['process_type'] = 'WPP'
@@ -871,9 +871,9 @@ def save_image_file(request):
         file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
         try:
             save_file(img_file, file_path)
-            response = {'msg':'File uploaded successfully','success':True}
+            response = {'msg':'Image uploaded successfully','success':True}
         except:
-            response = {'msg':'Failed to upload file, please try after sometime.','success':False}
+            response = {'msg':'Failed to upload image, please try after sometime.','success':False}
         lh.original_image_name = img_file.name
         lh.image_guid = new_file_name
         lh.action_type = 'image'
@@ -883,7 +883,7 @@ def save_image_file(request):
     else:
         lh.image_link = request.POST.get('image_link')
         lh.action_type = 'image_link'
-        response = {'msg':'image link added successfully' ,'success':True}
+        response = {'msg':'Link added successfully' ,'success':True}
     lh.lead_id = request.POST['lead_id']
     lh.modified_by = request.user.first_name + ' ' +request.user.last_name
     lh.save()
@@ -896,7 +896,10 @@ def get_lead_history(request):
     lead_history_list = list()
     if lead_id:
         leads = LeadHistory.objects.filter(lead_id=lead_id).order_by('-modified_date')
+        local_tz = pytz.timezone('Asia/Calcutta')
         for lead in leads:
+            created_date = pytz.utc.localize(lead.created_date)
+            created_date = created_date.astimezone(local_tz)           
             lead_history_dict = {
                 'lead_id':lead.lead_id,
                 'modified_by':lead.modified_by,
@@ -909,7 +912,7 @@ def get_lead_history(request):
                 'current_owner':lead.current_owner,
                 'image_path':"/media/"+lead.image_guid if lead.image_guid else '',
                 'image_size':round(float(os.path.getsize(os.path.join(settings.MEDIA_ROOT,lead.image_guid))) /(1024*1024),2) if lead.image_guid else '',
-                'created_date':datetime.strftime(lead.created_date, "%d-%m-%Y %I:%M %P"),
+                'created_date':datetime.strftime(created_date, "%d-%m-%Y %I:%M %P"),
             }
             lead_history_list.append(lead_history_dict)
         return HttpResponse(json.dumps(lead_history_list),content_type='application/json')
