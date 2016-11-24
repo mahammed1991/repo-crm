@@ -1408,7 +1408,7 @@ $('#edit-lead').on('click',function() {
 
     getLeadSubStatus(curr_status,'{{ ctype }}');
 
-    if({{request.session.groups|safe}}.includes('CRM-AGENT')){
+    if({{request.session.groups|safe}}.indexOf('CRM-AGENT')  != -1){
       $('#qa-fields').addClass('disabledbutton');
     }
    
@@ -1449,7 +1449,7 @@ $('#edit-lead').on('click',function() {
       $('#sqo-sto-comments span textarea').removeClass('error');
     }
     
-    if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val())){
+    if(['Pending QC - WIN','Pending QC - In Active'].indexOf($('#status option:selected').val()) != -1){
       if($('#implemented-code span select').val() == 'None'){
         valid = false;
         $('#implemented-code span select').addClass('error');
@@ -1532,7 +1532,7 @@ $('#edit-lead').on('click',function() {
       $('#rlsa-tag-team-contacted span select').removeClass('error')
     }
 
-    if({{request.session.groups|safe}}.includes('CRM-AGENT')){
+    if({{request.session.groups|safe}}.indexOf('CRM-AGENT') != -1){
       if(['In Queue', 'Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Rework Required - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].includes(curr_ls)){
         if($('#status option:selected').val() == 'In Active' && curr_ls != 'In Active'){
           valid = false;
@@ -1592,7 +1592,7 @@ $('#edit-lead').on('click',function() {
 
     }
 
-    if({{request.session.groups|safe}}.includes('CRM-MANAGER') && curr_ls != $('#status option:selected').val()){
+    if({{request.session.groups|safe}}.indexOf('CRM-MANAGER') && curr_ls != $('#status option:selected').val() != -1){
       var comment = 'On Call : Next Course Of Action :';
       var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
       if(curr_comment == comment){ 
@@ -1605,7 +1605,7 @@ $('#edit-lead').on('click',function() {
         $('.edit-textarea-for-comment span textarea').removeClass('error')
         $('#save-lead-comment').trigger('click');
       }
-    }else if({{request.session.groups|safe}}.includes('CRM-AGENT') && curr_ls != $('#status option:selected').val() && ['Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].includes($('#status option:selected').val())){
+    }else if({{request.session.groups|safe}}.indexOf('CRM-AGENT') && curr_ls != $('#status option:selected').val() && ['Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].indexOf($('#status option:selected').val()) != -1){
       var comment = 'On Call : Next Course Of Action :';
       var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
       if(curr_comment == comment){ 
@@ -1620,7 +1620,7 @@ $('#edit-lead').on('click',function() {
       }
     }
 
-    if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val()) && $('#type').text() == 'Google Shopping Setup'){
+    if(['Pending QC - WIN','Pending QC - In Active'].indexOf($('#status option:selected').val() != -1) && $('#type').text() == 'Google Shopping Setup'){
       if($('#products-uploaded span input').val().replace(' ','') == ''){
         valid = false;
         $('#products-uploaded p').show();
