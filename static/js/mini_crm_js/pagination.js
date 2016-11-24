@@ -105,7 +105,23 @@ $("body").on('click', '.paged', function(e){
         }
         reShuffelPagination = true;
       }
-
-      paginateFn(reShuffelPagination);
+      
+      if(is_agent){
+        appointment = $('#appointment').val()
+        if(reShuffelPagination){
+          if (appointment != 'Select'){
+            call_crm_management(true);
+          }
+          else{
+            call_crm_management(false);
+          }
+        }
+      }
+      else{
+          if(reShuffelPagination){
+          LoadTheTableContent(false);
+        }
+      }
+      
       
   });
