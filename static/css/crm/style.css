@@ -41,7 +41,7 @@ ul.top-menu li a:hover{ color:#4d7dbe;-webkit-transition:  all 0.5s ease 0s;
 
 .top-margin{ margin-top:2%}
 .left-panel{position: fixed; top: 0; bottom: 0;overflow-y: auto; border-radius: 0; background:#fff; border-right:1px solid #cdcdcd;}
-.white-section{ padding:0px; background:#fff; border:1px solid #cdcdcd;  margin-top:20px; overflow:visible}
+.white-section{ padding:0px; background:#fff; border:1px solid #cdcdcd;  margin-top:35px; overflow:visible}
 .first-canvas-nav { width:310px ; padding:20px 15px 20px; color:#000 }
 
 .search{position:relative;width:100%;display: inline-block; margin-bottom:3px}
@@ -70,6 +70,10 @@ ul.side-menu li a.active{ background:#4d7dbe; color:#fff}
 .white-section .nav-tabs {
 	border-bottom: 1px solid #cdcdcd;
 	background: #f2f2f2;
+	position: fixed;
+	width: 97.05%;
+	border-top: 1px solid #cdcdcd;
+	z-index: 1;
 }
 .white-section  .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus {color: #333;cursor: default;background-color: #f2f2f2;border: 0px solid #ddd; border-right:1px solid #cdcdcd;border-bottom-color: transparent; border-top:3px solid #4d7dbe;}
 .white-section .nav-tabs>li>a { border-radius: 0px 0px 0 0;color:#333; border: 0px solid transparent; border-right: 1px solid #cdcdcd; font-weight:600; text-transform:uppercase; margin-right: 0px; font-size:14px}

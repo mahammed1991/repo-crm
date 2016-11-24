@@ -945,6 +945,21 @@ def update_lead(request):
             if data.get('feed_optimisation_status') == 'None':
                 lead.feed_optimisation_sub_status = None
 
+            lead.regalix_comment += data.get('reg_comment')
+
+            try:
+                if data.get('grep_email'):
+                    google_user = User.objects.get(email=data.get('grep_email'))
+                    lead.google_rep_name = google_user.first_name + ' ' + google_user.last_name
+                    lead.google_rep_email = google_user.email
+
+                if data.get('grep_manager_email'):
+                    google_user = User.objects.get(email=data.get('grep_manager_email'))
+                    lead.google_rep_manager_name = google_user.first_name + ' ' + google_user.last_name
+                    lead.google_rep_manager_email = google_user.email
+            except ObjectDoesNotExist:
+                print "no user with this mail ID"
+
             # mail function on lead status change
             if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
                 mail_subject = "Lead status has been changed ("+str(lead.customer_id)+")"
@@ -981,6 +996,16 @@ def update_lead(request):
                     temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')
                     edited_dict['last_contacted_date'] = [datetime.strftime(lead.last_contacted_on, '%d-%m-%Y %I:%M %p') if lead_detail.last_contacted_on else '',data['last_contacted_date'].replace('.','').replace('/','-')]
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
+
+                if data.get('call_win'):
+                    temp_call_win = data['call_win'].replace('.','').replace('-','/')
+                    edited_dict['call_win'] = [datetime.strftime(lead.on_call_win, '%d-%m-%Y %I:%M %p') if lead_detail.on_call_win else '',data['call_win'].replace('.','').replace('/','-')]
+                    lead_detail.on_call_win = datetime.strptime(str(temp_call_win), '%d/%m/%Y %I:%M %p')
+
+                if data.get('qc_exception_date'):
+                    temp_qc_exception = data['qc_exception_date'].replace('.','').replace('-','/')
+                    edited_dict['qc_exception_date'] = [datetime.strftime(lead.qc_exception, '%d-%m-%Y %I:%M %p') if lead_detail.qc_exception else '',data['qc_exception_date'].replace('.','').replace('/','-')]
+                    lead_detail.qc_exception = datetime.strptime(str(temp_qc_exception), '%d/%m/%Y %I:%M %p')
 
                 edited_list.append(edited_dict)
                 if edited_dict:
