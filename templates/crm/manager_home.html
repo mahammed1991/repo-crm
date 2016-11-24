@@ -1,0 +1,548 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+WFM Home
+{% endblock title %}
+
+
+  <head>
+{% block main_css %}
+  <style type="text/css"></style>
+    <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+    .alert {
+            padding: 19px 15px;
+            color: #fefefe;
+            position: relative;
+            font: 20px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+        }
+      .alert .msg { padding: 0 20px 0 40px;}
+      .info-box {   background: #4D7DBE  no-repeat 14px 14px;}
+      .pagination {
+          display: inline-block;
+          padding-left: 0;
+          margin: 20px 0;
+          border-radius: 4px;
+      }
+
+      .pagination>li {
+          display: inline;
+      }
+
+      .pagination>li:first-child>a, .pagination>li:first-child>span {
+          margin-left: 0;
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+      }
+
+      .pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+        z-index: 3;
+        color: #fff;
+        cursor: default;
+        background-color: #337ab7;
+        border-color: #337ab7;
+    }
+
+    .pagination>li>a, .pagination>li>span {
+        position: relative;
+        float: left;
+        padding: 6px 12px;
+        margin-left: -1px;
+        line-height: 1.42857143;
+        color: #337ab7;
+        text-decoration: none;
+        background-color: #fff;
+        border: 1px solid #ddd;
+    }
+
+    .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {
+        z-index: 2;
+        color: #23527c;
+        background-color: #eee;
+        border-color: #ddd;
+    }
+
+    .pagination>li:last-child>a, .pagination>li:last-child>span {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    </style>
+{% endblock main_css %}
+  </head>
+  {% block content %}
+  <body>
+    <section class="top-margin wfm">
+
+      <div class="container-fluid" style="max-width:100%;">
+        
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="clone-info">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
+        </div>
+        <!--div style="float: right;">
+            <label><b style="font-weight: bold;">Result Limit</b></label>
+                <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;    margin-bottom: 0px;">
+                  <option>10</option>
+                  <option>25</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+          </div-->
+        </div>
+        <div class="white-section">
+          
+          <div class="blue-bg">
+          <div id="delete_lead_msg"></div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="arrow-box-blue" style="width:104%">
+                  <div class="row">
+                    <div class="col-sm-3">
+                        <label for="limit">Show Results</label>
+                            <select id="limit" name="limit" class="form-control bgicon">
+                              <option>10</option>
+                              <option>25</option>
+                              <option>50</option>
+                              <option>100</option>
+                            </select>
+                      </div>
+                    <div class="col-sm-4">
+                      <label for="exampleInputEmail1">Region</label>
+                        <select id="region" name="region" class="form-control bgicon" ></select>
+                    </div>
+
+                    <div class="col-sm-5">
+                      <label for="exampleInputEmail1">Process</label>
+                        <script type="text/javascript"> regions = "{{regions}}" </script>
+                        <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
+                        <select id="process" name="process" onchange="GetStatus();" class="form-control bgicon">
+                          <!-- <option value="process_default">Process</option> -->
+                        </select>
+                    </div> 
+
+                  </div>
+                </div>
+                  </div>
+              <div class="col-md-7">
+                <div class="blue-padding-20">
+                  <div class="row">
+
+                    <div class="col-sm-3">
+                      <label for="exampleInputEmail1">Fresh Appointment</label>
+                        <select id="appointment" name="appointment" onchange="" class="form-control bgicon" >
+                          <option>Select</option>
+                          <option>Without Appointment</option>
+                          <option>30 minutes</option>
+                          <option>1 hour</option>
+                          <option>Today</option>
+                          <option>Tomorrow</option>
+                          <option>This week</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-1 ">
+                      <p>OR</p>
+                    </div>
+
+                    <div class="col-sm-4">
+                      <label for="exampleInputEmail1">Status</label>
+                        <select id="status" name="status" onchange="" class="form-control bgicon" >
+                          <option>Select</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                      <label for="exampleInputEmail1">Sub Status</label>
+                        <select id="sub_status" name="sub_status" onchange="" class="form-control bgicon" >
+                          <!-- <option value="sub_status_default">Sub Status</option> -->
+                        </select> 
+                    </div>
+
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div class="padding-20 wfm-body-table" style="height: 450px;">
+          <table class="table table-bordered"> 
+            <thead>
+              <tr>
+                <th>CID </th> 
+                <th>Company</th> 
+                <th>Customer Name</th> 
+                <th>Created Date</th>
+                <th>Appointment time</th> 
+                <th>Phone No</th> 
+                <th>Additional Ph No</th> 
+                <th>Web Master No.</th> 
+                <th>Location</th>
+                <th>Process Type</th>
+
+              </tr>
+            </thead> 
+            
+            <tbody id="leads_table_body">
+
+              <div id="preloaderOverlay" style='display:none;margin-left: -21px;'>
+                  <div class="preloader">
+                    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+                    <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+                  </div>
+              </div>
+
+            </tbody> 
+          </table>
+          
+        </div>
+        <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
+      </div>
+      <!-- <div id="entries" style="margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;">
+      </div> -->
+       <div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
+          <ul class="pagination" id="pagination">
+            
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/reports/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
+    <script type="text/javascript">
+    is_agent = false;
+    $(document).ready(function(){
+        initial_load = true;
+        objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
+        objdata_process = Object.keys(JSON.parse(status_mapping.replace(/&quot;/g,'"')))
+        objdata_region = JSON.parse(regions.replace(/&quot;/g,'"'))
+        $('#region').append('<option value="all">All</option>')
+        for(i=0; i< objdata_region.length; i += 1){
+
+            option_region = '<option value="'+ objdata_region[i]['name'] +'">'+ objdata_region[i]['name'] +'</option>'
+            
+            $("#region").append(option_region); 
+        }
+
+        for(i=0; i< objdata_process.length; i += 1){
+            if (objdata_process[i] == "TAG"){
+                option_process = '<option selected="selected" value="'+ objdata_process[i] +'">'+ objdata_process[i] +'</option>'
+
+            }
+            else{
+                option_process = '<option value="'+ objdata_process[i] +'">'+ objdata_process[i] +'</option>'
+            }
+            $("#process").append(option_process);
+            $("#process option[value='WPP']").remove();
+            $("#process option[value='Picasso Audits']").remove(); 
+        }
+
+        option_two_process = '<option value="tag_and_shopping">TAG AND Shopping</option>'
+        $("#process").append(option_two_process);
+
+        if ($("#process").val()){
+          GetStatus()
+          $("#status").val('In Queue')
+          populate_sub_status();
+          
+        }
+        var qp = window.location.href.split('?')
+        if(qp.length > 1){
+          var qp = window.location.href.split('=')[1].split("&")
+          if(qp.length > 1){
+            $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
+            $("#clone-info").show(); 
+          }
+      }
+    });
+
+    function GetStatus(){
+      reloadPagination();
+      get_process = $("#process").val()
+      if (get_process == "tag_and_shopping"){
+        var tag_status = Object.keys(objdata["TAG"])
+        var shopping_status = Object.keys(objdata["Shopping"])
+        get_status_old = tag_status.concat(shopping_status);
+        var status_all = get_status_old;
+        var status_sorted = status_all.slice().sort(); 
+
+        var a = []; 
+        for(var i = 0; i < status_sorted.length; i++) 
+        {
+          if (a.indexOf(status_sorted[i]) == -1) a.push(status_sorted[i]);
+        }
+
+        var get_status_duplicate = [];
+        for (var i = 0; i < status_sorted.length - 1; i++) {
+          
+            if (status_sorted[i + 1] == status_sorted[i]) {
+                get_status_duplicate.push(status_sorted[i]);
+            }
+        }
+        var array1 = a.slice().sort();
+        var array2 = get_status_duplicate.slice().sort()
+        var diff = $(array1).not(array2)
+        distinct_status = diff.toArray()
+        get_status = []
+        
+        for (var i = 0; i < get_status_duplicate.length; i++) {
+          if(JSON.stringify(objdata["Shopping"][get_status_duplicate[i]]) !== JSON.stringify(objdata["TAG"][get_status_duplicate[i]])){
+            get_status.push("TAG "+ get_status_duplicate[i]);
+            get_status.push("Shopping " + get_status_duplicate[i]);
+          }
+          else{
+            get_status.push(get_status_duplicate[i]);
+          }
+            
+        }
+        for (var i = 0; i < distinct_status.length; i++) {
+          get_status.push(distinct_status[i]);
+            
+        }
+        
+      }
+      else{
+        get_status = Object.keys(objdata[$("#process").val()])
+      }
+      //$("#status").html('')
+      
+      if (get_status.length){
+        $('#status').find('option').not(':first').remove();
+        for(i=0; i< get_status.length; i += 1){
+            
+              option_status = '<option value="'+ get_status[i] +'">'+ get_status[i] +'</option>'
+            
+             $("#status").append(option_status); 
+        }
+        if($('#process').val() == 'tag_and_shopping'){
+          $("#status").val('In Queue');
+          $("#sub_status").val('In Queue');
+        }
+          $("#status").val('In Queue');
+          $("#sub_status").val('In Queue'); 
+          $("#appointment").val('Select'); 
+
+      }
+      populate_sub_status()
+    }
+
+    function populate_sub_status(){
+      process_name = $('#process').val()
+      status = $('#status').val()
+      $('#sub_status').html('')
+      if (status.startsWith("TAG")){
+        var new_status = status.replace('TAG','').trim();
+        lead_sub_status = objdata["TAG"][new_status]
+      }
+      else if(status.startsWith("Shopping")){
+        var new_status = status.replace('Shopping','').trim();
+        lead_sub_status = objdata["Shopping"][new_status]
+      }
+      else{
+        if ($('#process').val() == "tag_and_shopping"){
+          lead_sub_status = objdata["TAG"][status]
+        }
+        else{
+          lead_sub_status = objdata[process_name][status]
+        }
+        
+      }
+      
+      if(lead_sub_status){
+
+        if (lead_sub_status.length){
+          for(var i=0;i<lead_sub_status.length;i++){
+            $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+          }
+        }
+      }
+      else{
+        $('#sub_status').append("<option>Select</option>")  
+      }
+      LoadTheTableContent(false);    
+    };
+
+    $('#region').on('change',function(){
+      reloadPagination();
+      LoadTheTableContent(false)
+    });
+
+    $('#status').on('change',function(){
+      reloadPagination();
+      $('#appointment').val("Select");
+      populate_sub_status();
+    });
+
+    $('#sub_status').on('change',function(){
+      reloadPagination();
+      $('#appointment').val("Select");
+      if($(this).val() != "Select"){
+        LoadTheTableContent(false);
+      }
+    });
+
+    $('#appointment').on('change',function(){
+      // if (sub_status == null && $('#appointment').val() == "Select" && status == "Select"){
+      //   $('#process').trigger("change");
+      // }
+      reloadPagination();
+      $('#status').val("Select");
+      $('#sub_status').val("Select");
+      if($(this).val() != 'Select')
+        LoadTheTableContent(true);
+      else
+        LoadTheTableContent(false);
+    });
+
+    $('#limit').on('change',function(){
+      reloadPagination();
+      LoadTheTableContent(false)
+    });
+
+    function LoadTheTableContent(freshAppointment){
+        var limit = $('#limit').val()
+        var region = $('#region').val()
+        var ptype = getParameterByName('ptype')
+        var c_id = getParameterByName('customer_id')
+        process_name = $('#process').val()
+        if(initial_load && ptype != null){
+          if(ptype === "ShoppingArgos");
+          if(ptype === "PicassoAudits") ptype  = "Picasso Audits";
+          $('#process').val(ptype)
+          process_name = ptype
+        }
+        status = $('#status').val()
+        sub_status = $('#sub_status').val()
+        appointment = $('#appointment').val()
+
+        var makeCall = false;
+        if(status != "Select"){
+          if(sub_status != "Select")
+            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+          else
+            data = {'region':region,'process':process_name,'status':status, 'limit':limit};
+          makeCall = true;
+        }else{
+            if (appointment != "Select"){
+              makeCall = true;
+              data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
+            }   
+            if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+              makeCall = true;              
+            }
+
+        }
+        
+        /*if(status =="Select" && sub_status == "Select" && appointment == "Select"){
+          data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status};
+          makeCall = true;
+        }*/
+        if(makeCall){
+          data['page'] = clickedPage;
+          recentRequest = Math.random();
+          data['recentRequest'] = recentRequest;
+          $('#preloaderOverlay').show();
+          $.ajax({
+              url: "/crm/all-leads/",
+              type: 'GET',
+              data: data,
+              dataType: "json",
+              success: function(data) {
+                  req = getParameterByName('recentRequest', this.url);
+                  if(req === ""+recentRequest){
+                    $("#leads_table_body").html('')
+                    LeadsDataTable(data)
+                    initial_load = false;
+                    $('#preloaderOverlay').hide();
+                  }              },
+              error: function(xhr){
+                  alert('Request Status: ' + xhr.status);
+              }
+          });
+      }
+    };
+
+    function LeadsDataTable(data){
+        process_col_data = $("#process").val()
+        $("#leads_table_body").html('')
+        leads_count = data['leads_count']
+        if (leads_count > 10){
+          numOfPages = Math.ceil(leads_count/parseInt($('#limit').val()));
+          formPagination(numOfPages);
+        }else{
+          $("#pagination").html('');
+          $("#entries").html('');
+        }
+        tabledata = data['leads_list']
+        if(tabledata.length != 0){
+            $('table').show();
+            $('#data').hide();
+            for(i=0; i< tabledata.length; i++){
+                if(tabledata[i]['appointment_time'] == null){
+                  tabledata[i]['appointment_time'] = "N/A"
+                }
+                row = '<tr><td><a onclick="addURL(this)" href="/crm/lead-details/' + tabledata[i]['id'] + '/'+ tabledata[i]['sf_lead_id'] + '" target="_blank">'+ tabledata[i]['c_id'] + '</a></td>' +
+                '<td>' + tabledata[i]['company'] + '</td>' +
+                '<td>' + tabledata[i]['customer_name'] +'</td>'+
+                '<td>' + tabledata[i]['created_date'] +'</td>'+
+                '<td>' + tabledata[i]['appointment_time'] + '</td>'+
+                '<td>' + tabledata[i]['phone_number'] + '</td>'+
+                '<td>' + tabledata[i]['additional_phone_number'] + '</td>'+
+                '<td>' + tabledata[i]['web_master_number'] + '</td>'+
+                '<td>' + tabledata[i]['location'] + '</td>'+
+                '<td id="ctype">' + tabledata[i]['type_1'] + '</td>'
+
+                $("#leads_table_body").append(row)
+            }
+        }
+        else{
+            $('#data').html('<div  id="no-leads-msg">'+
+                            '<div class="container-fluid" style="margin-top:15%;">'+
+                            '<div class="info-box alert"><div class="msg">'+
+                            '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
+                            'please contact your TL/WFM.</b></i></div></div></div></div>');
+            $('#data').show(); 
+            $('table').hide();
+          }
+    }
+
+    function addURL(element)
+    {
+
+      var type = $('#ctype').text().replace(/ |-/g,"");
+        $(element).attr('href', function() {
+          var url = this.href;
+          if(url.includes(type))
+          {
+            return this.href;
+          }
+          else{
+            return this.href + '/' + type;
+          }
+        });
+    }
+
+    function getParameterByName(name, url) {
+      if (!url) {
+        url = window.location.href;
+      }
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+    </script>
+    
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    
+  </body>
+  {% endblock content %}
