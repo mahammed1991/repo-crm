@@ -80,22 +80,22 @@
         
         <section class="top-margin wfm">
        		<div class="container-fluid" style="max-width:100%;">
-              <div style="float: right;">
-                <label><b style="font-weight: bold;">Result Limit</b></label>
-                    <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;margin-bottom: 0px;">
-                      <option>10</option>
-                      <option>25</option>
-                      <option>50</option>
-                      <option>100</option>
-                    </select>
-              </div>
             </div>
             	<div class="white-section">
                 	<div class="blue-bg">
                     <div class="col-sm-12">
                       <div class="blue-padding-20">
                         <div class="row">
-                            <div class="col-sm-4">
+                           <div class="col-sm-2">
+                            <label>Show Results</label>
+                            <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;margin-bottom: 0px;">
+                              <option>10</option>
+                              <option>25</option>
+                              <option>50</option>
+                              <option>100</option>
+                            </select>
+                           </div>
+                            <div class="col-sm-3">
                               <label for="status">Status</label>
                                <select class="form-control bgicon" id='status'>
                                <option>Select</option>
@@ -106,7 +106,7 @@
                                  {% endif %}
                                </select>
                              </div>
-                             <div class="col-sm-4">
+                             <div class="col-sm-3">
                                <label for="status">Sub Status</label>
                                <select class="form-control bgicon" id='sub_status'>
                                </select>
@@ -165,11 +165,8 @@
 {% block main_js %}
 <script src="{% static 'js/reports/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
 <script type="text/javascript">
-  var clickedPage = 1;
-  var pageStartNum = 1;
-  var pageEndNum = 10;
-  var defaultStartNum = 1, defaultEndNum = 20, shaffelCount = 10;
   function call_crm_management(freshAppointment){
       limit = $('#limit').val()
       status = $('#status').val()
@@ -177,7 +174,7 @@
       appointment = $('#appointment').val()
       data = {'status':status, 'sub_status':sub_status,'limit':limit}
       if(freshAppointment){
-        data = {'appointment': appointment}
+        data = {'appointment': appointment,'limit':limit}
         $('#status').val('Select')
         $('#sub_status').html('')
         lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[$('#status').val()]
@@ -294,108 +291,17 @@
     }
   });
 
-  var reloadPagination = function(){
-    clickedPage = 1;
-    pageStartNum = defaultStartNum;
-    pageEndNum = defaultEndNum;
-  }
-
-  var formPagination = function(numOfPages){
-    var ulEle = $("#pagination");
-    ulEle.html('');
-    
-    if(clickedPage < 2)
-      ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
-    else
-      ulEle.append("<li><a class='paged' href='#'>«</a></li>");
-
-    for(i=pageStartNum; i<= Math.min(pageEndNum, numOfPages); i++){
-      if(clickedPage == i)
-        ulEle.append("<li><a class='paged active' href='#' style='background-color: #4CAF50;' data-value=" +i+ ">"+i+"</a></li>");
-      else
-        ulEle.append("<li><a class='paged' href='#' data-value=" +i+ ">"+i+"</a></li>");
-    }
-    if($( '#pagination li a' ).data( 'value' ) )
-
-    if(numOfPages > defaultEndNum){
-      $('#pagination li a').hide();
-      $('#pagination li a:lt('+defaultEndNum+')').show();
-    }
-
-    if(clickedPage == numOfPages)
-      ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
-    else
-      ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
-  }
-
-  $("body").on('click', '.paged', function(e){
-      e.preventDefault();
-      clickedPage = $(this).text();
-      var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
-      var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
-      var activePage = parseInt($('#pagination li a.active' ).data('value' ));
-      var reShuffelPagination = false;
-      if(clickedPage === "«" && activePage > 0){
-        if(firstPage == 1){
-          pageStartNum = defaultStartNum
-          pageEndNum = defaultEndNum
-          if(activePage == 1)
-            clickedPage = activePage
-          else
-            clickedPage = activePage - 1
-        }else{
-          pageStartNum -= 1
-          pageEndNum -= 1
-          clickedPage = activePage - 1;
-        }
-        reShuffelPagination = true;
-      }else if(clickedPage === "»" && activePage < numOfPages){
-        if(activePage == numOfPages)
-            reShuffelPagination = false;
-        else{
-            if(numOfPages > defaultEndNum){
-               pageStartNum += 1
-               pageEndNum += 1
-               clickedPage = activePage + 1;
-            }
-            else{
-               pageStartNum = 1
-               pageEndNum = numOfPages
-               clickedPage = activePage + 1;
-
-            }
-        }
-        reShuffelPagination = true;
-        
-      }else if(parseInt(clickedPage)) {
-        clickedPage = parseInt(clickedPage);
-        if(clickedPage == lastPage){
-          pageStartNum += shaffelCount;
-          pageEndNum += shaffelCount;
-        }else if (clickedPage == firstPage){
-          if(activePage - shaffelCount > shaffelCount){
-            pageStartNum -= shaffelCount;
-            pageEndNum -= shaffelCount; 
-          }else{
-              pageStartNum = defaultStartNum
-              pageEndNum = defaultEndNum
-          }
-        }else{
-          clickedPage = clickedPage;
-        }
-        reShuffelPagination = true;
+  function paginateFn(reShuffelPagination){
+    appointment = $('#appointment').val()
+    if(reShuffelPagination){
+      if (appointment != 'Select'){
+        call_crm_management(true);
       }
-
-      appointment = $('#appointment').val()
-      if(reShuffelPagination){
-        if (appointment != 'Select'){
-          call_crm_management(true);
-        }
-        else{
-          call_crm_management(false);
-        }
+      else{
+        call_crm_management(false);
       }
-  });
+    }
+  }
 
 $(document).ready(function() {
   lead_data = '{{lead_status_sub_status_mapping}}'
