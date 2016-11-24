@@ -154,9 +154,9 @@ def crm_management(request):
             else:
                 user_group = request.user.groups.filter(name='CRM-MANAGER')
                 current_user_email = request.user.email
-                leads = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)
-                leads_count = leads.count()
-
+                leads = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)[0]
+                leads_count = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)[1]
+                print leads_count
             all_leads = get_leads(leads, leads_list)
 
             try:
@@ -305,8 +305,8 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
                         lead_owner_email=current_user_email)
         else:
             #manager
-            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
-
+            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)[0]
+            leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)[1]
             # leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
     else:
@@ -318,11 +318,11 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             leads = Leads.objects.filter(lead_status=lead_status,lead_owner_email=current_user_email,**query)
         else:
             #manager
-            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
-
+            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)[0]
+            leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)[1]
             # leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
-    return leads
+    return [leads, leads_count]
 
 
 def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
@@ -405,7 +405,7 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
             )[offset:limit]
         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
-    return leads
+    return [leads,leads_count]
 
 
 def get_json_leads(leads, process_type=None):

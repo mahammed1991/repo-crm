@@ -70,6 +70,7 @@ WFM Home
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
     }
+
     </style>
 {% endblock main_css %}
   </head>
@@ -185,15 +186,25 @@ WFM Home
 
               </tr>
             </thead> 
-            <tbody id="leads_table_body"></tbody> 
+            
+            <tbody id="leads_table_body">
+
+              <div id="preloaderOverlay" style='display:none;margin-left: -21px;'>
+                  <div class="preloader">
+                    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+                    <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+                  </div>
+              </div>
+
+            </tbody> 
           </table>
           
         </div>
         <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
       </div>
-      <div id="entries" style="margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;">
-      </div>
-       <div style="margin-bottom: 10px;text-align: center;display:inline;">
+      <!-- <div id="entries" style="margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;">
+      </div> -->
+       <div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
           <ul class="pagination" id="pagination">
             
           </ul>
@@ -391,13 +402,6 @@ WFM Home
       LoadTheTableContent(false)
     });
 
-    var reloadPagination = function(){
-      clickedPage = 1;
-      pageStartNum = defaultStartNum;
-      pageEndNum = defaultEndNum;
-    }
-
-
     function LoadTheTableContent(freshAppointment){
         var limit = $('#limit').val()
         var region = $('#region').val()
@@ -441,6 +445,7 @@ WFM Home
           data['page'] = clickedPage;
           recentRequest = Math.random();
           data['recentRequest'] = recentRequest;
+          $('#preloaderOverlay').show();
           $.ajax({
               url: "/crm/all-leads/",
               type: 'GET',
@@ -452,6 +457,7 @@ WFM Home
                     $("#leads_table_body").html('')
                     LeadsDataTable(data)
                     initial_load = false;
+                    $('#preloaderOverlay').hide();
                   }              },
               error: function(xhr){
                   alert('Request Status: ' + xhr.status);
@@ -467,9 +473,9 @@ WFM Home
         if (leads_count > 10){
           numOfPages = Math.ceil(leads_count/parseInt($('#limit').val()));
           formPagination(numOfPages);
-          }
-        else{
+        }else{
           $("#pagination").html('');
+          $("#entries").html('');
         }
         tabledata = data['leads_list']
         if(tabledata.length != 0){
@@ -531,11 +537,14 @@ WFM Home
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
+
+  function paginateFn(reShuffelPagination){
+    if(reShuffelPagination){
+        LoadTheTableContent(false);
+      }
+  }
     </script>
     
-
-    
-
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
   </body>
