@@ -215,7 +215,7 @@ WFM Home
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
     <script type="text/javascript">
-
+    is_agent = false;
     $(document).ready(function(){
         initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
@@ -540,11 +540,6 @@ WFM Home
       return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
-  function paginateFn(reShuffelPagination){
-    if(reShuffelPagination){
-        LoadTheTableContent(false);
-      }
-  }
     </script>
     
     <!-- Include all compiled plugins (below), or include individual files as needed -->
