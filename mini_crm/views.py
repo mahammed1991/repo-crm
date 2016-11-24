@@ -987,18 +987,21 @@ def update_lead(request):
 
             lead.regalix_comment += data.get('reg_comment')
 
-            try:
-                if data.get('grep_email'):
+            if data.get('grep_email'):
+                try:
                     google_user = User.objects.get(email=data.get('grep_email'))
                     lead.google_rep_name = google_user.first_name + ' ' + google_user.last_name
                     lead.google_rep_email = google_user.email
+                except ObjectDoesNotExist:
+                    print "no user with this mail ID"
 
-                if data.get('grep_manager_email'):
+            if data.get('grep_manager_email'):
+                try:
                     google_user = User.objects.get(email=data.get('grep_manager_email'))
                     lead.google_rep_manager_name = google_user.first_name + ' ' + google_user.last_name
                     lead.google_rep_manager_email = google_user.email
-            except ObjectDoesNotExist:
-                print "no user with this mail ID"
+                except ObjectDoesNotExist:
+                    print "no user with this mail ID"
 
             # mail function on lead status change
             if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
