@@ -40,7 +40,7 @@ from main.models import UserDetails, PicassoEligibilityMasterUpload
 from main.views import get_user_notifications
 from leads.models import (Leads, Location, Team, CodeType, ChatMessage, Language, ContactPerson, TreatmentType,
                           AgencyDetails, LeadFormAccessControl, RegalixTeams, Timezone, WPPLeads, PicassoLeads,
-                          BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID, ArgosProcessTimeTracker
+                          BlackListedCID, BuildsBoltEligibility, WhiteListedAuditCID, ArgosProcessTimeTracker, TagLeadDetail
                           )
 from reports.models import Region
 from representatives.models import (GoogeRepresentatives,RegalixRepresentatives)
@@ -65,6 +65,7 @@ def lead_form(request):
     """
     Lead Submission to Salesforce
     """
+
     if request.method == 'POST' and request.is_ajax():
         # Google form Posting Starts here
         post_lead_to_google_form(request.POST, 'normal')
@@ -116,6 +117,26 @@ def lead_form(request):
                     lead.comment_4 = data['comment4']
                 if data.get('comment5'):
                     lead.comment_5 = data['comment5']
+
+                lead.type_2 = data.get('ctype2', None)
+                lead.type_3 = data.get('ctype3', None)
+                lead.type_4 = data.get('ctype4', None)
+                lead.type_5 = data.get('ctype5', None)
+
+                lead.url_2 = data.get('url2', None)
+                lead.url_3 = data.get('url3', None)
+                lead.url_4 = data.get('url4', None)
+                lead.url_5 = data.get('url5', None)
+
+                lead.eto_ldap = data.get('eto_ldap', None)
+                lead.google_rep_location = data.get('rep_location', None)
+                lead.primary_contact_role = data.get('tag_primary_role', None)
+                lead.webmaster_name = data.get('webmaster_name', None)
+                lead.webmaster_email = data.get('web_master_email', None)
+                lead.webmaster_phone = data.get('popt', None)
+
+                lead.created_by = request.user.email
+
                 if 'tag_contact_person_name' in data:
                     full_name = request.POST.get('tag_contact_person_name')
                 else:
@@ -130,6 +151,12 @@ def lead_form(request):
                     lead.appointment_date = appointment_date
                     lead.appointment_date_in_ist, lead.appointment_date_in_pst = get_ist_pst_converted_timestamps(data['tzone'], appointment_date)
                 lead.save()
+
+                lead_detail = TagLeadDetail()
+                lead_detail.lead_id = lead
+                lead_detail.gcase_id = data.get('g_cases_id', None)
+                lead_detail.save()
+
                 mail_on_new_lead(request.POST, 'TAG', request.META['wsgi.url_scheme'], request.META['HTTP_HOST']) 
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -156,7 +183,14 @@ def lead_form(request):
                 lead.country = data['country']
                 lead.time_zone = data['tzone']
                 lead.sf_lead_id = get_unique_uuid('SHOPPING')
-                lead.company = data['company']               
+                lead.company = data['company']   
+
+                lead.webmaster_name = data.get('webmaster_name', None)
+                lead.webmaster_email = data.get('web_master_email', None)
+                lead.webmaster_phone = data.get('popt', None)
+                lead.created_by = request.user.email 
+                lead_detail = TagLeadDetail()
+
                 if data.get('setup_datepick'):
                     appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
                     lead.appointment_date = appointment_date
@@ -174,6 +208,9 @@ def lead_form(request):
                     lead.type_1 = 'Project Argos- Feed Performance Optimization'
                     lead.lead_status = 'Feed Audit'
                     lead.lead_sub_status = 'In Queue'
+
+                    lead_detail.mc_id = data.get('argos_mc_id', None)
+
                     # lead.feed_optimisation_status = data.get("Feed_Optimization_Status__c")
                     # lead.feed_optimisation_sub_status = data.get('Feed_Optimization_Sub_Status__c')
                     lead.number_of_products = data.get('products_count')
@@ -185,9 +222,21 @@ def lead_form(request):
                 else:
                     lead.type_1 = 'Google Shopping Setup'
                     lead.comment_1 = request.POST.get('description')
+
+                    lead_detail.mc_id = data.get('mc_id', None) 
+
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
                 lead.save()
+
+                lead_detail.lead_id = lead
+                lead_detail.recommended_bid = data.get('rbid', None)
+                lead_detail.recommended_mobile_bid_modifier = data.get('rbidmodifier', None)
+                lead_detail.recommended_budget = data.get('rbudget', None)
+                lead_detail.gcase_id = data.get('g_cases_id', None)
+                lead_detail.shopping_troubleshoot_issue_type = data.get('shopping_campaign_issues', None)
+                lead_detail.save()
+
                 mail_on_new_lead(request.POST, 'SHOPPING', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -227,7 +276,43 @@ def lead_form(request):
                 lead.last_name = last_name
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
+
+                lead.user_list_id_1 = data.get('user_list_id1', None)
+                lead.user_list_id_2 = data.get('user_list_id2', None)
+                lead.user_list_id_3 = data.get('user_list_id3', None)
+                lead.user_list_id_4 = data.get('user_list_id4', None)
+                lead.user_list_id_5 = data.get('user_list_id5', None)
+
+                lead.rlsa_bid_adjustment_1 = data.get('rsla_bid_adjustment1', None)
+                lead.rlsa_bid_adjustment_2 = data.get('rsla_bid_adjustment2', None)
+                lead.rlsa_bid_adjustment_3 = data.get('rsla_bid_adjustment3', None)
+                lead.rlsa_bid_adjustment_4 = data.get('rsla_bid_adjustment4', None)
+                lead.rlsa_bid_adjustment_5 = data.get('rsla_bid_adjustment5', None)
+
+                lead.campaign_id_1 = data.get('campaign_ids1', None)
+                lead.campaign_id_2 = data.get('campaign_ids2', None)
+                lead.campaign_id_3 = data.get('campaign_ids3', None)
+                lead.campaign_id_4 = data.get('campaign_ids4', None)
+                lead.campaign_id_5 = data.get('campaign_ids5', None)
+
+                lead.internale_cid_1 = data.get('internal_cid1', None)
+                lead.internale_cid_2 = data.get('internal_cid2', None)
+                lead.internale_cid_3 = data.get('internal_cid3', None)
+                lead.internale_cid_4 = data.get('internal_cid4', None)
+                lead.internale_cid_5 = data.get('internal_cid5', None)
+
+                lead.webmaster_name = data.get('webmaster_name', None)
+                lead.webmaster_email = data.get('web_master_email', None)
+                lead.webmaster_phone = data.get('popt', None)
+                lead.created_by = request.user.email 
+
                 lead.save()
+
+                lead_detail = TagLeadDetail()
+                lead_detail.lead_id = lead
+                lead_detail.gcase_id = data.get('g_cases_id', None)
+                lead_detail.save()
+
                 mail_on_new_lead(request.POST, 'RLSA', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -286,6 +371,25 @@ def lead_form(request):
                 if data.get('comment5'):
                     lead.comment_5 = data['comment5']
 
+                lead.type_2 = data.get('ctype2', None)
+                lead.type_3 = data.get('ctype3', None)
+                lead.type_4 = data.get('ctype4', None)
+                lead.type_5 = data.get('ctype5', None)
+
+                lead.url_2 = data.get('url2', None)
+                lead.url_3 = data.get('url3', None)
+                lead.url_4 = data.get('url4', None)
+                lead.url_5 = data.get('url5', None)
+
+                lead.eto_ldap = data.get('eto_ldap', None)
+                lead.google_rep_location = data.get('rep_location', None)
+                lead.primary_contact_role = data.get('tag_primary_role', None)
+                lead.webmaster_name = data.get('webmaster_name', None)
+                lead.webmaster_email = data.get('web_master_email', None)
+                lead.webmaster_phone = data.get('popt', None)
+
+                lead.created_by = request.user.email 
+
                 if 'tag_contact_person_name' in data:
                     full_name = request.POST.get('tag_contact_person_name')
                 else:
@@ -301,6 +405,12 @@ def lead_form(request):
                     lead.appointment_date_in_ist, lead.appointment_date_in_pst = get_ist_pst_converted_timestamps(
                         data['tzone'], appointment_date)
                 lead.save()
+
+                lead_detail = TagLeadDetail()
+                lead_detail.lead_id = lead
+                lead_detail.gcase_id = data.get('g_cases_id', None)
+                lead_detail.save()
+
                 mail_on_new_lead(request.POST, 'TAG', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -327,7 +437,15 @@ def lead_form(request):
                 lead.country = data['country']
                 lead.time_zone = data['tzone']
                 lead.sf_lead_id = get_unique_uuid('SHOPPING')
-                lead.company = data['company']               
+                lead.company = data['company']   
+
+                lead.webmaster_name = data.get('webmaster_name', None)
+                lead.webmaster_email = data.get('web_master_email', None)
+                lead.webmaster_phone = data.get('popt', None)
+
+                lead.created_by = request.user.email 
+                lead_detail = TagLeadDetail()
+                
                 if data.get('setup_datepick'):
                     appointment_date = datetime.strptime(str(data['setup_datepick']), '%m/%d/%Y %I:%M %p')
                     lead.appointment_date = appointment_date
@@ -345,6 +463,9 @@ def lead_form(request):
                     lead.type_1 = 'Project Argos- Feed Performance Optimization'
                     lead.lead_status = 'Feed Audit'
                     lead.lead_sub_status = 'In Queue'
+
+                    lead_detail.mc_id = data.get('argos_mc_id', None)
+
                     # lead.feed_optimisation_status = data.get("Feed_Optimization_Status__c")
                     # lead.feed_optimisation_sub_status = data.get('Feed_Optimization_Sub_Status__c')
                     lead.number_of_products = data.get('products_count')
@@ -356,9 +477,22 @@ def lead_form(request):
                 else:
                     lead.type_1 = 'Google Shopping Setup'
                     lead.comment_1 = request.POST.get('description')
+
+                    lead_detail.mc_id = data.get('mc_id', None) 
+
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
                 lead.save()
+
+                
+                lead_detail.lead_id = lead
+                lead_detail.recommended_bid = data.get('rbid', None)
+                lead_detail.recommended_mobile_bid_modifier = data.get('rbidmodifier', None)
+                lead_detail.recommended_budget = data.get('rbudget', None)
+                lead_detail.gcase_id = data.get('g_cases_id', None)
+                lead_detail.shopping_troubleshoot_issue_type = data.get('shopping_campaign_issues', None)
+                lead_detail.save()
+
                 mail_on_new_lead(request.POST, 'SHOPPING', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
@@ -398,7 +532,43 @@ def lead_form(request):
                 lead.last_name = last_name
                 lead.lead_status = 'In Queue'
                 lead.email_optional = data['aemail']
+
+                lead.user_list_id_1 = data.get('user_list_id1', None)
+                lead.user_list_id_2 = data.get('user_list_id2', None)
+                lead.user_list_id_3 = data.get('user_list_id3', None)
+                lead.user_list_id_4 = data.get('user_list_id4', None)
+                lead.user_list_id_5 = data.get('user_list_id5', None)
+
+                lead.rlsa_bid_adjustment_1 = data.get('rsla_bid_adjustment1', None)
+                lead.rlsa_bid_adjustment_2 = data.get('rsla_bid_adjustment2', None)
+                lead.rlsa_bid_adjustment_3 = data.get('rsla_bid_adjustment3', None)
+                lead.rlsa_bid_adjustment_4 = data.get('rsla_bid_adjustment4', None)
+                lead.rlsa_bid_adjustment_5 = data.get('rsla_bid_adjustment5', None)
+
+                lead.campaign_id_1 = data.get('campaign_ids1', None)
+                lead.campaign_id_2 = data.get('campaign_ids2', None)
+                lead.campaign_id_3 = data.get('campaign_ids3', None)
+                lead.campaign_id_4 = data.get('campaign_ids4', None)
+                lead.campaign_id_5 = data.get('campaign_ids5', None)
+
+                lead.internale_cid_1 = data.get('internal_cid1', None)
+                lead.internale_cid_2 = data.get('internal_cid2', None)
+                lead.internale_cid_3 = data.get('internal_cid3', None)
+                lead.internale_cid_4 = data.get('internal_cid4', None)
+                lead.internale_cid_5 = data.get('internal_cid5', None)
+
+                lead.webmaster_name = data.get('webmaster_name', None)
+                lead.webmaster_email = data.get('web_master_email', None)
+                lead.webmaster_phone = data.get('popt', None)
+                lead.created_by = request.user.email
+
                 lead.save()
+
+                lead_detail = TagLeadDetail()
+                lead_detail.lead_id = lead
+                lead_detail.gcase_id = data.get('g_cases_id', None)
+                lead_detail.save()
+                
                 mail_on_new_lead(request.POST, 'RLSA', request.META['wsgi.url_scheme'], request.META['HTTP_HOST'])
                 ret_url = basic_data['retURL'] + "&type="+ request.POST.get('ctype1').lower()
             except:
