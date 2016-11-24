@@ -96,27 +96,18 @@ def lead_form(request):
                 lead.time_zone = data['tzone']
                 lead.sf_lead_id = get_unique_uuid('TAG')
                 lead.company = data['company']
-                if data.get('code1'):
-                    lead.code_1 = data['code1']
-                if data.get('code2'):
-                    lead.code_2 = data['code2']
-                if data.get('code3'):
-                    lead.code_3 = data['code3']
-                if data.get('code4'):
-                    lead.code_4 = data['code4']
-                if data.get('code5'):
-                    lead.code_5 = data['code5']
+                
+                lead.code_1 = data.get('code1', None)
+                lead.code_2 = data.get('code2', None)
+                lead.code_3 = data.get('code3', None)
+                lead.code_4 = data.get('code4', None)
+                lead.code_5 = data.get('code5', None)
 
-                if data.get('comment1'):
-                    lead.comment_1 = data['comment1']
-                if data.get('comment2'):
-                    lead.comment_2 = data['comment2']
-                if data.get('comment3'):
-                    lead.comment_3 = data['comment3']
-                if data.get('comment4'):
-                    lead.comment_4 = data['comment4']
-                if data.get('comment5'):
-                    lead.comment_5 = data['comment5']
+                lead.comment_1 = data.get('comment1', None)
+                lead.comment_2 = data.get('comment2', None)
+                lead.comment_3 = data.get('comment3', None)
+                lead.comment_4 = data.get('comment4', None)
+                lead.comment_5 = data.get('comment5', None)
 
                 lead.type_2 = data.get('ctype2', None)
                 lead.type_3 = data.get('ctype3', None)
@@ -349,27 +340,18 @@ def lead_form(request):
                 lead.time_zone = data['tzone']
                 lead.sf_lead_id = get_unique_uuid('TAG')
                 lead.company = data['company']
-                if data.get('code1'):
-                    lead.code_1 = data['code1']
-                if data.get('code2'):
-                    lead.code_2 = data['code2']
-                if data.get('code3'):
-                    lead.code_3 = data['code3']
-                if data.get('code4'):
-                    lead.code_4 = data['code4']
-                if data.get('code5'):
-                    lead.code_5 = data['code5']
+                
+                lead.code_1 = data.get('code1', None)
+                lead.code_2 = data.get('code2', None)
+                lead.code_3 = data.get('code3', None)
+                lead.code_4 = data.get('code4', None)
+                lead.code_5 = data.get('code5', None)
 
-                if data.get('comment1'):
-                    lead.comment_1 = data['comment1']
-                if data.get('comment2'):
-                    lead.comment_2 = data['comment2']
-                if data.get('comment3'):
-                    lead.comment_3 = data['comment3']
-                if data.get('comment4'):
-                    lead.comment_4 = data['comment4']
-                if data.get('comment5'):
-                    lead.comment_5 = data['comment5']
+                lead.comment_1 = data.get('comment1', None)
+                lead.comment_2 = data.get('comment2', None)
+                lead.comment_3 = data.get('comment3', None)
+                lead.comment_4 = data.get('comment4', None)
+                lead.comment_5 = data.get('comment5', None)
 
                 lead.type_2 = data.get('ctype2', None)
                 lead.type_3 = data.get('ctype3', None)
