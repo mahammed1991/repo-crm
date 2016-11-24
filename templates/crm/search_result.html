@@ -76,6 +76,8 @@
                                         <th>CID </th> 
                                         <th>Code Type</th> 
                                         <th>URL</th> 
+                                        <th>Rep Name</th> 
+                                        <th>Date of Installation</th> 
                                         <th>Lead Status</th> 
                                   </tr> 
                               </thead> 
@@ -85,6 +87,8 @@
                                        <td><a href="../lead-details/{{data.id}}/{{data.sf_lead_id}}/{{data.process_type}}">{{data.customer_id}}   <i class="fa fa-external-link-square" aria-hidden="true"></i></a></td> 
                                        <td>{{data.type_1}}</td> 
                                        <td>{{data.url_1}}</td> 
+                                       <td>{{data.lead_owner_name}}</td> 
+                                       <td>{{data.date_of_installation|date}}</td> 
                                        <td>{{data.lead_status}}</td> 
 
                                     </tr>
