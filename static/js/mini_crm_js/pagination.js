@@ -10,15 +10,19 @@ var reloadPagination = function(){
 }
 var formPagination = function(numOfPages){
 
-  console.log("1111111111111111111111111111111111111");
   var lmt = parseInt($("#limit").val());
   var from = clickedPage * lmt - lmt + 1
   var to = from + lmt-1;
+ 
+  if($("#entries").length){
+    $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
+  }else{
+      $("#pagination-container").before("<div id='entries' style='margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;'></div>");
+      $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
+  }
 
-  $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
   var ulEle = $("#pagination");
   ulEle.html('');
-  
   if(clickedPage < 2)
     ulEle.append("<li><a class='paged' href='#'>»</a></li>");
   else
@@ -101,8 +105,23 @@ $("body").on('click', '.paged', function(e){
         }
         reShuffelPagination = true;
       }
-
-      if(reShuffelPagination){
-        LoadTheTableContent(false);
+      
+      if(is_agent){
+        appointment = $('#appointment').val()
+        if(reShuffelPagination){
+          if (appointment != 'Select'){
+            call_crm_management(true);
+          }
+          else{
+            call_crm_management(false);
+          }
+        }
       }
+      else{
+          if(reShuffelPagination){
+          LoadTheTableContent(false);
+        }
+      }
+      
+      
   });
