@@ -22,6 +22,9 @@
     }
     .alert .msg { padding: 0 20px 0 40px;}
     .info-box {		background: #4D7DBE  no-repeat 14px 14px;}
+    .input-group{
+      margin-bottom: -25px;
+    }
   </style>
 {% endblock main_css %}
   {% block content %}
@@ -999,7 +1002,7 @@
                         $('.side-menu').html('')
                         ajax_response = response
                         for(var i=0;i<response.length;i++){
-                          $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div> "+ response[i]['customer_id']) +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
+                          $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div>"+ response[i]['customer_id']) +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
                           $('.side-menu li:first a').addClass('active')
                           lead_id_selected = parseInt($('.side-menu li:first').attr('id'))
                           var result = ajax_response.filter(function( obj ) {

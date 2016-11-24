@@ -189,7 +189,7 @@
                                      </table>
                                  </div>
                                  <div class="yellow-line"></div>
-                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Lead Information</a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Google Rep Info</a>
                               <div class="table-responsive">
                                      <table class="table table-condensed info">
                                        <tr>
@@ -1130,6 +1130,7 @@
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui.js' %}"></script>
     <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
     <script type="text/javascript">
 
     $(document).ready(function(e) {
@@ -1517,7 +1518,8 @@ $('#edit-lead').on('click',function() {
    
     $(".editdateinput").datetimepicker({
       timepicker : true,
-      format: 'd/m/Y g:i A'
+      format: 'd/m/Y g:i A',
+      minDate:0
     });
     $('#edit-lead').hide();
     $('.save-lead').show();

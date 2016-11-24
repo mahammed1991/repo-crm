@@ -33,7 +33,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav main-nav">
           {% if "CRM-MANAGER" in  request.session.groups %}
-            <li style="margin-left: -15px;" class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">All Leads</a>
+            <li style="margin-left: -15px;"> <a href="{% url 'mini_crm.views.crm_management' %}" >All Leads</a></li>
           {% elif "CRM-AGENT" in  request.session.groups %}
             <li><a href="{% url 'mini_crm.views.crm_agent' %}">My Leads</a></li>
           {% else %}             
@@ -179,21 +179,21 @@
            {% if not "CRM-AGENT" in  request.session.groups %}
             {% if "wpp" in request.META.HTTP_HOST %}
              <!--  <button class="btn std-btn sm-btn" onclick='location.href=""'>Nominate Advertiser Website</button> -->
-              <button style="margin-left:0px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
+              <button style="margin-left: 24px !important;" class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.wpp_lead_form' %}"'>Submit Lead</button>
             {% else %}
               <button class="btn std-btn sm-btn" onclick='location.href="{% url 'leads.views.lead_form' %}"'>Submit Lead</button>
             {% endif %}
           {% endif %}
           </li>
           <li class="dropdown notification"> 
-          <a {% if "wpp" in request.META.HTTP_HOST %} style="margin-right: 28px;margin-left: -34px;" {% endif %}
+          <a {% if "wpp" in request.META.HTTP_HOST %} style="margin-right: 28px;" {% endif %}
            href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-bell"></i><span style="left:12px" id="notifications_count"></span></a>
-            <ul class="dropdown-menu" role="menu" id="notifications">
+            <ul class="dropdown-menu" role="menu" id="notifications" style="padding-top:0px;">
             </ul>
           </li>
           {% if user.is_authenticated %}
           <li class="dropdown user-area" {% if "CRM-AGENT" in  request.session.groups or "CRM-MANAGER" in  request.session.groups  %} style ="margin-left: 30px;"{% else %} style ="margin-left: 40px;"  {% endif %}> 
-            <a {% if "wpp" in request.META.HTTP_HOST %} style="margin-left: -31px;" {% endif %} 
+            <a style="text-decoration: none !important" {% if "wpp" in request.META.HTTP_HOST %} style="margin-left: -31px;" {% endif %} 
             href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
               {% if request.session.profile_image %}
                 <img src="{{request.session.profile_image}}?sz=32"/>
@@ -293,94 +293,5 @@ window.addEventListener("click", function(evt){
       $('#search-field').removeClass('error-box');
       }
 });
-
-
-//Chrome Appointment Notification start from here
-var tId = setInterval(function(){if(document.readyState == "complete") onComplete()},11);
-var appointmentData;
-function onComplete(){
-    clearInterval(tId);    
-    getUserAppointment();
-    setInterval(function() {
-      notify(appointmentData);
-    }, 900000 ); 
-};
-  
-
-Date.prototype.addMinutes= function(h){
-    this.setMinutes(this.getMinutes()+h);
-    return this;
-}
-
-function getUserAppointment(){
-        $.ajax({
-          dataType: 'JSON',
-          type: 'GET',
-          url: '/crm/user-appointments/',
-          success: function(res) {
-              appointmentData = res;
-              notify(appointmentData);
-          },
-          error: function(errorThrown) {
-          }
-      });
-    }
-
-function format_time(date_obj) {
-  // formats a javascript Date object into a 12h AM/PM time string
-  var hour = date_obj.getHours();
-  var minute = date_obj.getMinutes();
-  var med = (hour > 11) ? "PM" : "AM";
-  if(hour > 12) {
-    hour -= 12;
-  } else if(hour == 0) {
-    hour = "12";
-  }
-  if(minute < 10) {
-    minute = "0" + minute;
-  }
-  return hour + ":" + minute + " "+ med;
-}
-
-function notify(data){
-  if(data){
-    for(var i=0;i<data.length;i++){
-    if(data[i]['appointment_time'] != ""){
-      var at = new Date(Date.parse(data[i]['appointment_time'])); //Appointment Time
-      var ct = new Date(); // Current Time
-      if(at > ct && ct.addMinutes(15) > at)
-      {
-        row = "CID : "+data[i]['customer_id']+"\n"+"Appointment Time : "+ format_time(at);
-        notifyMe(row);
-      }
-    }
-  }
-  }
-}
-
-// request permission on page load
-document.addEventListener('DOMContentLoaded', function () {
-  if (Notification.permission !== "granted")
-    Notification.requestPermission();
-});
-
-function notifyMe(row) {
-  if (!Notification) {
-    alert('Desktop notifications not available in your browser. Please try Google Chrome.'); 
-    return;
-  }
-
-  if (Notification.permission !== "granted")
-    Notification.requestPermission();
-  else {
-    var notification = new Notification('Hey You have appointment in Next 15 Minutes', {
-      body: row,
-      icon: notifIcon,
-    });
-    
-  }
-
-}
-//Chrome Appointment Notification Ends
 
   </script>

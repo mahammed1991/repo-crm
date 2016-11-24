@@ -14,6 +14,14 @@ WFM Home
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <style>
+    .alert {
+            padding: 19px 15px;
+            color: #fefefe;
+            position: relative;
+            font: 20px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+        }
+      .alert .msg { padding: 0 20px 0 40px;}
+      .info-box {   background: #4D7DBE  no-repeat 14px 14px;}
       .pagination {
           display: inline-block;
           padding-left: 0;
@@ -62,6 +70,7 @@ WFM Home
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
     }
+
     </style>
 {% endblock main_css %}
   </head>
@@ -70,26 +79,44 @@ WFM Home
     <section class="top-margin wfm">
 
       <div class="container-fluid" style="max-width:100%;">
-        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+        
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="clone-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
         </div>
+        <!--div style="float: right;">
+            <label><b style="font-weight: bold;">Result Limit</b></label>
+                <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;    margin-bottom: 0px;">
+                  <option>10</option>
+                  <option>25</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+          </div-->
+        </div>
         <div class="white-section">
+          
           <div class="blue-bg">
           <div id="delete_lead_msg"></div>
             <div class="row">
               <div class="col-md-5">
                 <div class="arrow-box-blue" style="width:104%">
                   <div class="row">
-
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
+                        <label for="limit">Show Results</label>
+                            <select id="limit" name="limit" class="form-control bgicon">
+                              <option>10</option>
+                              <option>25</option>
+                              <option>50</option>
+                              <option>100</option>
+                            </select>
+                      </div>
+                    <div class="col-sm-4">
                       <label for="exampleInputEmail1">Region</label>
-                        <select id="region" name="region" class="form-control bgicon" >
-                          
-                        </select>
+                        <select id="region" name="region" class="form-control bgicon" ></select>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                       <label for="exampleInputEmail1">Process</label>
                         <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
@@ -109,6 +136,7 @@ WFM Home
                       <label for="exampleInputEmail1">Fresh Appointment</label>
                         <select id="appointment" name="appointment" onchange="" class="form-control bgicon" >
                           <option>Select</option>
+                          <option>Without Appointment</option>
                           <option>30 minutes</option>
                           <option>1 hour</option>
                           <option>Today</option>
@@ -158,12 +186,25 @@ WFM Home
 
               </tr>
             </thead> 
-            <tbody id="leads_table_body"></tbody> 
+            
+            <tbody id="leads_table_body">
+
+              <div id="preloaderOverlay" style='display:none;margin-left: -21px;'>
+                  <div class="preloader">
+                    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+                    <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Please wait....</span>
+                  </div>
+              </div>
+
+            </tbody> 
           </table>
           
         </div>
+        <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
       </div>
-       <div style="margin-bottom: 10px;">
+      <!-- <div id="entries" style="margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;">
+      </div> -->
+       <div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
           <ul class="pagination" id="pagination">
             
           </ul>
@@ -172,8 +213,9 @@ WFM Home
     </section>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/reports/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
     <script type="text/javascript">
-    var pageNum = 1;
+    is_agent = false;
     $(document).ready(function(){
         initial_load = true;
         objdata = JSON.parse(status_mapping.replace(/&quot;/g,'"'))
@@ -220,7 +262,7 @@ WFM Home
     });
 
     function GetStatus(){
-      pageNum = 1;
+      reloadPagination();
       get_process = $("#process").val()
       if (get_process == "tag_and_shopping"){
         var tag_status = Object.keys(objdata["TAG"])
@@ -326,18 +368,18 @@ WFM Home
     };
 
     $('#region').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       LoadTheTableContent(false)
     });
 
     $('#status').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       $('#appointment').val("Select");
       populate_sub_status();
     });
 
     $('#sub_status').on('change',function(){
-      pageNum = 1;
+      reloadPagination();
       $('#appointment').val("Select");
       if($(this).val() != "Select"){
         LoadTheTableContent(false);
@@ -345,15 +387,25 @@ WFM Home
     });
 
     $('#appointment').on('change',function(){
-      pageNum = 1;
+      // if (sub_status == null && $('#appointment').val() == "Select" && status == "Select"){
+      //   $('#process').trigger("change");
+      // }
+      reloadPagination();
       $('#status').val("Select");
       $('#sub_status').val("Select");
       if($(this).val() != 'Select')
         LoadTheTableContent(true);
+      else
+        LoadTheTableContent(false);
     });
 
+    $('#limit').on('change',function(){
+      reloadPagination();
+      LoadTheTableContent(false)
+    });
 
     function LoadTheTableContent(freshAppointment){
+        var limit = $('#limit').val()
         var region = $('#region').val()
         var ptype = getParameterByName('ptype')
         var c_id = getParameterByName('customer_id')
@@ -371,19 +423,20 @@ WFM Home
         var makeCall = false;
         if(status != "Select"){
           if(sub_status != "Select")
-            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status};
+            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
           else
-            data = {'region':region,'process':process_name,'status':status};
+            data = {'region':region,'process':process_name,'status':status, 'limit':limit};
           makeCall = true;
         }else{
             if (appointment != "Select"){
               makeCall = true;
-              data = {'appointment': appointment, 'region':region, 'process':process_name};
+              data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
             }   
-            if (sub_status == "Select" && appointment == "Select")  {
-              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status};
+            if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
               makeCall = true;              
             }
+
         }
         
         /*if(status =="Select" && sub_status == "Select" && appointment == "Select"){
@@ -391,17 +444,23 @@ WFM Home
           makeCall = true;
         }*/
         if(makeCall){
-          data['page'] = pageNum;
+          data['page'] = clickedPage;
+          recentRequest = Math.random();
+          data['recentRequest'] = recentRequest;
+          $('#preloaderOverlay').show();
           $.ajax({
               url: "/crm/all-leads/",
               type: 'GET',
               data: data,
               dataType: "json",
               success: function(data) {
-                  $("#leads_table_body").html('')
-                  LeadsDataTable(data)
-                  initial_load = false;
-              },
+                  req = getParameterByName('recentRequest', this.url);
+                  if(req === ""+recentRequest){
+                    $("#leads_table_body").html('')
+                    LeadsDataTable(data)
+                    initial_load = false;
+                    $('#preloaderOverlay').hide();
+                  }              },
               error: function(xhr){
                   alert('Request Status: ' + xhr.status);
               }
@@ -414,14 +473,16 @@ WFM Home
         $("#leads_table_body").html('')
         leads_count = data['leads_count']
         if (leads_count > 10){
-          numOfPages = Math.ceil(leads_count/10);
+          numOfPages = Math.ceil(leads_count/parseInt($('#limit').val()));
           formPagination(numOfPages);
-          }
-        else{
-          formPagination(1);
+        }else{
+          $("#pagination").html('');
+          $("#entries").html('');
         }
         tabledata = data['leads_list']
         if(tabledata.length != 0){
+            $('table').show();
+            $('#data').hide();
             for(i=0; i< tabledata.length; i++){
                 if(tabledata[i]['appointment_time'] == null){
                   tabledata[i]['appointment_time'] = "N/A"
@@ -440,6 +501,15 @@ WFM Home
                 $("#leads_table_body").append(row)
             }
         }
+        else{
+            $('#data').html('<div  id="no-leads-msg">'+
+                            '<div class="container-fluid" style="margin-top:15%;">'+
+                            '<div class="info-box alert"><div class="msg">'+
+                            '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
+                            'please contact your TL/WFM.</b></i></div></div></div></div>');
+            $('#data').show(); 
+            $('table').hide();
+          }
     }
 
     function addURL(element)
@@ -470,48 +540,8 @@ WFM Home
       return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
-  var formPagination = function(numOfPages){
-
-    var ulEle = $("#pagination");
-    ulEle.html('');
-    
-    if(pageNum < 2)
-      ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
-    else
-      ulEle.append("<li><a class='paged' href='#'>«</a></li>");
-
-    for(i=1; i<= numOfPages; i++){
-      if(pageNum == i)
-        ulEle.append("<li><a class='paged active'href='#' style='background-color: #4CAF50;'>"+i+"</a></li>");
-      else
-        ulEle.append("<li><a class='paged' href='#'>"+i+"</a></li>");
-    }
-
-    if(pageNum == numOfPages)
-      ulEle.append("<li><a class='paged disabled' href='#'>«</a></li>");
-    else
-      ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
-  }
-
-  $("body").on('click', '.paged', function(e){
-      e.preventDefault();
-      var page = $(this).text();
-      if(pageNum > 0 || parseInt(page)){
-        if(page === "«")
-          pageNum -= 1;
-        else if(page === "»")
-          pageNum += 1;
-        else
-          pageNum = page;
-        LoadTheTableContent(false);
-      }
-  });
-
     </script>
     
-
-    
-
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
   </body>
