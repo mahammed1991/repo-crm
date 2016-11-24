@@ -387,14 +387,16 @@ WFM Home
     });
 
     $('#appointment').on('change',function(){
-      if (sub_status == null && $('#appointment').val() == "Select" && status == "Select"){
-        $('#process').trigger("change");
-      }
+      // if (sub_status == null && $('#appointment').val() == "Select" && status == "Select"){
+      //   $('#process').trigger("change");
+      // }
       reloadPagination();
       $('#status').val("Select");
       $('#sub_status').val("Select");
       if($(this).val() != 'Select')
         LoadTheTableContent(true);
+      else
+        LoadTheTableContent(false);
     });
 
     $('#limit').on('change',function(){
@@ -430,7 +432,7 @@ WFM Home
               makeCall = true;
               data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
             }   
-            if (sub_status == "Select" && appointment == "Select")  {
+            if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
               data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
               makeCall = true;              
             }
