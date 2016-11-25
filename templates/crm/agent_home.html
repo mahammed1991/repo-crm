@@ -167,6 +167,7 @@
 <script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
 <script type="text/javascript">
+  is_agent = true;
   function call_crm_management(freshAppointment){
       limit = $('#limit').val()
       status = $('#status').val()
@@ -291,17 +292,6 @@
     }
   });
 
-  function paginateFn(reShuffelPagination){
-    appointment = $('#appointment').val()
-    if(reShuffelPagination){
-      if (appointment != 'Select'){
-        call_crm_management(true);
-      }
-      else{
-        call_crm_management(false);
-      }
-    }
-  }
 
 $(document).ready(function() {
   lead_data = '{{lead_status_sub_status_mapping}}'

@@ -154,9 +154,9 @@ def crm_management(request):
             else:
                 user_group = request.user.groups.filter(name='CRM-MANAGER')
                 current_user_email = request.user.email
-                leads = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)
-                leads_count = leads.count()
-
+                leads, leads_count = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)
+                
+                
             all_leads = get_leads(leads, leads_list)
 
             try:
@@ -305,8 +305,8 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
                         lead_owner_email=current_user_email)
         else:
             #manager
-            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
-
+            leads,leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
+            
             # leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
     else:
@@ -318,11 +318,11 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             leads = Leads.objects.filter(lead_status=lead_status,lead_owner_email=current_user_email,**query)
         else:
             #manager
-            leads = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
-
+            leads, leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
+           
             # leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
-    return leads
+    return leads, leads_count
 
 
 def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
@@ -405,7 +405,7 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
             )[offset:limit]
         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
-    return leads
+    return leads,leads_count
 
 
 def get_json_leads(leads, process_type=None):
@@ -538,7 +538,7 @@ def search_leads(request):
     search_query = request.GET.get('q')
     results = list()
     try:
-        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+        normal_leads = Leads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id', 'lead_owner_name', 'date_of_installation').filter(
             Q(customer_id= search_query) | Q(sf_lead_id= search_query))
         if normal_leads:
             for each in list(normal_leads):
@@ -552,7 +552,7 @@ def search_leads(request):
     except ObjectDoesNotExist:
         pass
     # try:
-    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(
+    #     picasso_leads = PicassoLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id',  'lead_owner_name', 'date_of_installation').filter(
     #         Q(customer_id= search_query) | Q(sf_lead_id= search_query))
     #     if picasso_leads:
     #         for each in list(picasso_leads):
@@ -565,7 +565,7 @@ def search_leads(request):
     # except ObjectDoesNotExist:
     #     pass
     # try:
-    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
+    #     wpp_leads = WPPLeads.objects.values('customer_id', 'type_1', 'url_1', 'lead_status', 'id', 'sf_lead_id' , 'lead_owner_name', 'date_of_installation').filter(Q(customer_id=search_query) | Q(sf_lead_id=search_query))
     #     if wpp_leads:
     #         for each in list(wpp_leads):
     #             each['process_type'] = 'WPP'
@@ -990,6 +990,24 @@ def update_lead(request):
             if data.get('feed_optimisation_status') == 'None':
                 lead.feed_optimisation_sub_status = None
 
+            lead.regalix_comment += data.get('reg_comment')
+
+            if data.get('grep_email'):
+                try:
+                    google_user = User.objects.get(email=data.get('grep_email'))
+                    lead.google_rep_name = google_user.first_name + ' ' + google_user.last_name
+                    lead.google_rep_email = google_user.email
+                except ObjectDoesNotExist:
+                    print "no user with this mail ID"
+
+            if data.get('grep_manager_email'):
+                try:
+                    google_user = User.objects.get(email=data.get('grep_manager_email'))
+                    lead.google_rep_manager_name = google_user.first_name + ' ' + google_user.last_name
+                    lead.google_rep_manager_email = google_user.email
+                except ObjectDoesNotExist:
+                    print "no user with this mail ID"
+
             # mail function on lead status change
             if str(data.get('lead_status')) in ["In Queue", "Attempting Contact", "In Progress", "In Active","Implemented", "ON CALL", "Pending QC - WIN", "Pending QC - In Active", "Rework Required - In Active", "Pending QC - Dead Lead", "Rework Fixed - Win", "Rework Fixed - In Active"]:
 
@@ -1034,6 +1052,16 @@ def update_lead(request):
                     temp_last_call_time = data['last_contacted_date'].replace('.','').replace('-','/')
                     edited_dict['last_contacted_date'] = [datetime.strftime(lead.last_contacted_on, '%d-%m-%Y %I:%M %p') if lead_detail.last_contacted_on else '',data['last_contacted_date'].replace('.','').replace('/','-')]
                     lead_detail.last_contacted_on = datetime.strptime(str(temp_last_call_time), '%d/%m/%Y %I:%M %p')
+
+                if data.get('call_win'):
+                    temp_call_win = data['call_win'].replace('.','').replace('-','/')
+                    edited_dict['call_win'] = [datetime.strftime(lead.on_call_win, '%d-%m-%Y %I:%M %p') if lead_detail.on_call_win else '',data['call_win'].replace('.','').replace('/','-')]
+                    lead_detail.on_call_win = datetime.strptime(str(temp_call_win), '%d/%m/%Y %I:%M %p')
+
+                if data.get('qc_exception_date'):
+                    temp_qc_exception = data['qc_exception_date'].replace('.','').replace('-','/')
+                    edited_dict['qc_exception_date'] = [datetime.strftime(lead.qc_exception, '%d-%m-%Y %I:%M %p') if lead_detail.qc_exception else '',data['qc_exception_date'].replace('.','').replace('/','-')]
+                    lead_detail.qc_exception = datetime.strptime(str(temp_qc_exception), '%d/%m/%Y %I:%M %p')
 
                 edited_list.append(edited_dict)
                 if edited_dict:
