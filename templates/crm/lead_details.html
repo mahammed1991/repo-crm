@@ -1,0 +1,2066 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  Lead Detail
+{% endblock title %}
+
+
+  <head>
+{% block main_css %}
+  <style type="text/css">
+    .table-left{
+      font-weight: bold;
+    }
+    .error{
+      border-color: red;
+    }
+
+    .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    .color-indicator {
+        float: left;
+        width: 10px;
+        height: 10px;
+        margin-top: 4px;
+        margin-right: 4px;
+      }
+
+      #orange {
+        background: rgb(223, 151, 13);
+      }
+
+      #red {
+        background: red;
+      }
+
+  </style>
+    <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/representative/jquery.datetimepicker.css' %}" type="text/css">
+{% endblock main_css %}
+  </head>
+  {% block content %}
+  <body>
+    <section class="top-margin wfm">
+    <div id="fakeTextarea" style="display: none;"></div>
+    {% if success %}
+      <div class=" container-fluid ">
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;" id="clone-info">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <span id ='span-msg' style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
+        </div>
+                    <div class="white-section">
+                        <!-- Nav tabs -->
+                      <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#lead" aria-controls="home" role="tab" data-toggle="tab">Lead</a></li>
+                        <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
+                        <div id="file_status"></div>
+                        
+                        <ul style="float:right;margin-top:6px;margin-right:20px;">
+                          <li><span class="color-indicator" id="orange"></span>Updated</li>
+                          <li><span class="color-indicator" id="red"></span>Error</li>
+                        </ul>
+
+                      </ul>
+
+                      <!-- Tab panes -->
+                      <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="lead">
+                          <div class="padding-20 lead-history">
+                              <div class="row">
+                                  <div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
+                                    <div class="col-md-6">
+                                      <ul class="lead-menu">
+                                            <li>
+                                              <a href="#" id="edit-lead">Edit </a>
+                                              <a href="#" class="cancel-save" onclick="window.location.reload()" style="display:none;">cancel </a>
+                                            </li>  
+                                            <li class="save-lead" style="display:none;"><a href="#" onclick="updateLead()">Save </a></li>
+                                            {% if manager %}           
+                                            <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
+                                            <!-- <li><a href="#">Clone</a></li> -->
+                                            <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="yellow-line"></div>
+                                <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
+                              <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Lead Owner</td>
+                                        <td class="table-right smile"><i class="fa fa-smile-o" aria-hidden="true"></i> <span id="lon">{{ lead.lead_owner_name }}</span> [<a href="#" id="assign-lead-popup">Change </a>] 
+                                        <div class="arrow-box" style="display:none;">
+                                          <div class="padding-20">
+                                              <h2 class="pull-left">Lead Owner</h2> 
+                                              <div>
+                                                <input class="form-control" type="email" id="exampleInputEmail1" autofocus>
+                                              </div>
+                                              <div>
+                                                <label>
+                                                  <input id="sendmail" type="checkbox" checked="checked"> Send Email Notification
+                                                </label>
+                                              </div>
+                                              <div id="over-ride" style="display:none">
+                                                <label>
+                                                  <input id="override" type="checkbox" > Override existing appointment
+                                                </label>
+                                              </div>
+                                              <input type="button" id="check-availability" class="btn btn-primary" value="Submit" style="margin-top:20px;float:right;background:#4385f5">
+                                              <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                        </td>
+                                        
+                                        <td class="table-left">Email</td>
+                                        <td class="table-right" id='mail'><span name="lead_owner_email">{{ lead.lead_owner_email }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Status  </td>
+                                        <td class="table-right" id="lead-status"><span name="lead_status">{{ lead.lead_status }}</span><p id="error-msg" style="display:none;color:red;">*You are not authorised to move leads to 'Rework Required' / 'In Queue'. Please contact your QA.</p></td>
+                                        <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="lead-sub-status"><span name="lead_sub_status">{{ lead.lead_sub_status }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Team</td>
+                                        <td class="table-right" id="team"><span name="team">{{ lead.team }}</span></td>
+                                        <td class="table-left">Not Interested Cases RCA</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Date of installation</td>
+                                        <td class="table-right edit-date" id="msg"><span name="installation_date" id="doi">{{ lead.date_of_installation|date:'d/m/Y g:i A' }}</span><p style="display:none;color:red;">*Please enter the value.</p></td>
+                                        <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="pls-sub-status"><span name="pla_sub_status">{{ lead_detail.pla_sub_status }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Type</td>
+                                        <td class="table-right edit" id="type">{{ lead.type_1 }}</td>
+                                        <td class="table-left">Regalix Webmaster</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Implemented Code is</td>
+                                        <td class="table-right" id="implemented-code"><span name="implemented_code_is">{{ lead_detail.implemented_code_is }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                        <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead.dead_lead_date|date:'d-m-Y g:i a' }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">LastCallTime</td>
+                                        <td class="table-right edit-date"><span name="last_contacted_date">{{ lead_detail.last_contacted_on|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-left">Dynamic Variable Set</td>
+                                        <td class="table-right" id="dynamic-variable-set"><span name="dynamic_variable_set">{{ lead_detail.dynamic_variable_set }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">No of Dials</td>
+                                        <td class="table-right edit"><span name="dials">{{ lead.dials }}</span></td>
+                                        <td class="table-left">Website Backup Taken?</td>
+                                        <td class="table-right">{{ lead_detail.is_backup_taken }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">On Call Win</td>
+                                        <td class="table-right edit-date"></td>
+                                        <td class="table-left">Dynamic Value</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left qstn"> 1st Contacted on <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-date" id="first-contacted"><span name="first_contacted">{{lead.first_contacted_on|date:'d-m-Y g:i a'}}</span><p style="display:none;color:red;">*You are not authorized to change this field</p></td>
+                                       </tr>
+
+                                       
+                                     </table>
+                                 </div>
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Google Rep Info</a>
+                              <div class="table-responsive">
+                                     <table class="table table-condensed info">
+                                       <tr>
+                                        <td class="table-left">Google Accounts Manager(D)</td>
+                                        <td class="table-right smile">{{ lead.google_rep_name }}</td>
+                                        <td class="table-left">Googler Location</td>
+                                        <td class="table-right edit"><span name="google_rep_location">{{ lead.google_rep_location }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Email </td>
+                                        <td class="table-right edit"><span name="google_rep_email">{{ lead.google_rep_email }}</span> [ <img src="{% static 'images/gmail.png' %}">   Gmail]</td>
+                                        <td class="table-left qstn">Number Of Codes</td>
+                                        <td class="table-right edit"><span name="number_of_products">{{ lead.number_of_products }}</span></td>
+                                       </tr>
+
+                                        <tr>
+                                        <td class="table-left">Google Manager(D)</td>
+                                        <td class="table-right">{{ lead.google_rep_manager_name }}</td>
+                                        <td class="table-left">Lead Bundle#</td>
+                                        <td class="table-right edit"><span></span></td>
+                                       </tr>
+                                       
+
+                                       <tr>
+                                        <td class="table-left">Google Manager Email</td>
+                                        <td class="table-right edit"><span name="google_rep_manager_email">{{ lead.google_rep_manager_email }}</span> [ <img src="{% static 'images/gmail.png' %}">   Gmail]</td>
+                                        <td class="table-left">Additional LDAP</td>
+                                        <td class="table-right edit"><span name="eto_ldap">{{ lead.eto_ldap }}</span></td>
+                                       </tr>
+                                       
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>ADVERTISER Contact Info</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Name</td>
+                                        <td class="table-right smile edit"><span name="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
+                                        <td class="table-left">Phone</td>
+                                        <td class="table-right edit"><span name="phone">{{ lead.phone }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Company</td>
+                                        <td class="table-right edit"><span name="company">{{ lead.company }}</span></td>
+                                        <td class="table-left qstn">Email (P)</td>
+                                        <td class="table-right edit"><span name="email_optional">{{ lead.email_optional }}</span> [ <img src="{% static 'images/gmail.png' %}">   Gmail]</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Advertiser Location</td>
+                                        <td class="table-right">{{ lead.county }}</td>
+                                        <td class="table-left">Language</td>
+                                        <td class="table-right" id="language">{{ lead.language }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Advertiser Full Name</td>
+                                        <td class="table-right edit"><span name="first_name">{{ lead.first_name }} {{ lead.last_name }}</span></td>
+                                        <td class="table-left qstn">Contact Primary</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Primary Contact Role</td>
+                                        <td class="table-right" id="primary-role">{{ lead.primary_contact_role }}</td>
+                                        <td class="table-left">Webmaster Phone</td>
+                                        <td class="table-right edit"><span name="webmaster_phone">{{ lead.webmaster_phone}}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Webmaster Name</td>
+                                        <td class="table-right edit"><span name="webmaster_name">{{ lead.webmaster_name}}</span></td>
+                                        <td class="table-left qstn">Webmaster E-mail</td>
+                                        <td class="table-right edit"><span name="webmaster_email">{{ lead.webmaster_email}}</span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Optional Fields</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">First Name - optional</td>
+                                        <td class="table-right edit"><span name="first_name_optional">{{ lead.first_name_optional }}</span></td>
+                                        <td class="table-left">Last Name - optional</td>
+                                        <td class="table-right edit"><span name="last_name_optional">{{ lead.last_name_optional }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Phone - optional</td>
+                                        <td class="table-right edit"><span name="phone_optional">{{ lead.phone_optional }}</span></td>
+                                        <td class="table-left">Email - optional</td>
+                                        <td class="table-right edit"><span name="email_optional">{{ lead.email_optional }}</span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Alternate Contact Role</td>
+                                        <td class="table-right primary-role"><span></span></td>
+                                        <td class="table-left">Contact Alternate</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Lead Processing Information</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Customer ID</td>
+                                        <td class="table-right" id="cid">{{ lead.customer_id }}</td>
+                                        <td class="table-left">Ecommerce</td>
+                                        <td class="table-right">{{ lead.ecommerce }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Time Zone</td>
+                                        <td class="table-right">{{ lead.time_zone }}</td>
+                                        <td class="table-left">Description</td>
+                                        <td class="table-right">{{ lead_detail.description }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Appointment Date</td>
+                                        <td class="table-right"><span name="appointment_date_on">{{ lead.appointment_date|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-left">Tag via GTM</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Appointment Time in IST</td>
+                                        <td class="table-right"><span name="appointment_date_ist_on">{{ lead.appointment_date_in_ist|date:'d/m/Y g:i A' }}</span></td>
+                                        <td class="table-left">Appointment Time in PST</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Rescheduled Appointments</td>
+                                        <td class="table-right edit-date" id="rescheduled-appointment"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d/m/Y g:i A' }}</span><p style="display:none;color:red;">*Please reschedule the appointment.</p></td>
+                                        <td class="table-left">Service Segment</td>
+                                        <td class="table-right">{{ lead_detail.service_segment }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Reschedule Time in IST</td>
+                                        <td class="table-right"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-left">RLSA Auth Approval</td>
+                                        <td class="table-right">{{ lead_detail.rlsa_auth_approval }}</td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Agency Lead Information</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Agency POC</td>
+                                        <td class="table-right edit"><span name="agency_poc">{{ lead_detail.agency_poc }}</span></td>
+                                        <td class="table-left">Agency Name</td>
+                                        <td class="table-right edit"><span name="agency_name">{{ lead_detail.agency_name }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Agency Phone</td>
+                                        <td class="table-right edit"><span name="agency_phone">{{ lead_detail.agency_phone }}</span></td>
+                                        <td class="table-left">Agency Email</td>
+                                        <td class="table-right edit"><span name="agency_email">{{ lead_detail.agency_email }}</span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Agency Bundle#</td>
+                                        <td class="table-right edit"><span name="agency_bundle_number">{{ lead_detail.agency_bundle_number }}</span></td>
+                                        <td class="table-left">Services Case ID</td>
+                                        <td class="table-right edit"><span name="agency_service_case_id">{{ lead_detail.agency_service_case_id }}</span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Google Shopping Setup</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">MC-ID</td>
+                                        <td class="table-right edit"><span name="mc_id">{{ lead_detail.mc_id }}</span></td>
+                                        <td class="table-left">Client's Web inventory</td>
+                                        <td class="table-right">{{ lead_detail.client_web_inventory }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit"><span name="opt_in_percent">{{ lead_detail.opt_in_percent }}</span></td>
+                                        <td class="table-left">SQO / STO Comments</td>
+                                        <td class="table-right edit-textarea" id="sqo-sto-comments"><span name="sqo_sto_comments">{{ lead_detail.sqo_sto_comments }}</span><p style="display:none;color:red;">*Field cannot be empty.</p></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Recommended Bid</td>
+                                        <td class="table-right edit"><span name="recommended_bid">{{ lead_detail.recommended_bid }}</span></td>
+                                        <td class="table-left">Secured Checkout</td>
+                                        <td class="table-right">{{ lead_detail.secured_checkout }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Recommended Budget</td>
+                                        <td class="table-right edit"><span name="recommended_budget">{{ lead_detail.recommended_budget }}</span></td>
+                                        <td class="table-left">Payment Gateway</td>
+                                        <td class="table-right">{{ lead_detail.payment_gateway }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Recommended Mobile Bid modifier</td>
+                                        <td class="table-right edit"><span name="recommended_mobile_bid_modifier">{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
+                                        <td class="table-left">Shopping Policies, verified?</td>
+                                        <td class="table-right">{{ lead_detail.shopping_polices_verified }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Type of Policy violation</td>
+                                        <td class="table-right" id="type-of-policy-violation"><span name="type_of_policy_violation">{{ lead_detail.type_of_policy_violation }}</span></td>
+                                        <td class="table-left">Shopping Troubleshoot Issue Type</td>
+                                        <td class="table-right edit"><span name="shopping_troubleshoot_issue_type">{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Please specify if others</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Number of Products uploaded</td>
+                                        <td class="table-right edit" id="products-uploaded"><span name="products_uploaded">{{ lead_detail.products_uploaded }}</span><p style="display:none;color:red;">*Please enter the value.</p></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Method used for feed upload</td>
+                                        <td class="table-right" id="feed-upload-method"><span name="feed_upload_method">{{ lead_detail.feed_upload_method }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                        <td class="table-left">Shopping Campaign ID</td>
+                                        <td class="table-right edit"><span name="campaign_id">{{ lead_detail.campaign_id }}</span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Project Argos- Feed Performance Optimization</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Feed Optimization Status</td>
+                                        <td class="table-right" id="feed-optimisation-status"><span name="feed_optimisation_status">{{ lead.feed_optimisation_status }}</span></td>
+                                        <td class="table-left">Business Type / Category:</td>
+                                        <td class="table-right edit"><span name="business_type">{{ lead.business_type }}</span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Additional support (Beyond the scope)<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-textarea"><span name="additional_support_beyond_case">{{ lead.additional_support_beyond_case }}</span></td>
+                                        <td class="table-left">Feed Optimization Sub Status</td>
+                                        <td class="table-right" id="feed-optimisation-sub-status"><span name="feed_optimisation_sub_status">{{ lead.feed_optimisation_sub_status }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Authorization Case ID for Optimization</td>
+                                        <td class="table-right edit"><span name="authcase_id">{{ lead.authcase_id }}</span></td>
+                                        <td class="table-left">Shopping Feed Link (G.Sheet)</td>
+                                        <td class="table-right edit-textarea"><span name="shopping_feed_link">{{ lead.shopping_feed_link }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left"># of Products on the feed</td>
+                                        <td class="table-right edit"><span name="number_of_products">{{ lead.number_of_products }}</span></td>
+                                        <td class="table-left">Area in need of most improvement:</td>
+                                        <td class="table-right edit-textarea"><span name="area_tobe_improved">{{ lead.area_tobe_improved }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Anything else we should know?</td>
+                                        <td class="table-right edit-textarea"></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                    
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Mandatory Fields</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Authorization Email Sent</td>
+                                        <td class="table-right">{{ lead_detail.auth_email_sent }}</td>
+                                        <td class="table-left qstn">Lead via Live Transfer<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="live-transfer"><span name="live_transfer">{{ lead_detail.live_transfer }}</span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Appointment Sub-Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="appointment-sub-status"><span name="appointment_sub_status">{{ lead_detail.appointment_sub_status }}</span></td>
+                                        <td class="table-left qstn">gCases ID<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit"><span name="gcase_id">{{ lead_detail.gcase_id }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left qstn">CMS/Platform<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="cms-platform"><span name="cms_platform">{{ lead_detail.cms_platform }}</span></td>
+                                        <td class="table-left qstn">GCSS Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="gcss-status"><span name="gcss_status">{{ lead_detail.gcss_status }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left qstn">Other CMS<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left qstn">GCSS Exception Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Screenshare Scheduled</td>
+                                        <td class="table-right" id="screenshare-scheduled"><span name="screenshare_scheduled">{{ lead_detail.screenshare_scheduled}}</span></td>
+                                        <td class="table-left">Mouse Control Taken</td>
+                                        <td class="table-right" id="mouse-control-taken"><span name="mouse_control_taken">{{ lead_detail.mouse_control_taken }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">List Type</td>
+                                        <td class="table-right" id="list-type"><span name="list_type">{{ lead_detail.list_type }}</span></td>
+                                        <td class="table-left qstn">Mouse Control Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="mouse-control-approved"><span name="mouse_control_approved_by">{{ lead_detail.mouse_control_approved_by }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Action Taken</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left">Lead Difficulty level</td>
+                                        <td class="table-right">{{ lead_detail.lead_difficulty_level }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left qstn">Regalix SME<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.regalix_sme }}</td>
+                                        <td class="table-left">RLSA - TagTeam Contacted Advertiser</td>
+                                        <td class="table-right" id="rlsa-tag-team-contacted"><span name="rlsa_tag_team_contacted">{{ lead_detail.rlsa_tag_team_contacted }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Campaigns already created by GSR</td>
+                                        <td class="table-right" id="campaign-created"><span name="campaign_created_by_gsr">{{ lead_detail.campaign_created_by_gsr}}</span></td>
+                                        <td class="table-left">Adwords CID Submitted</td>
+                                        <td class="table-right" id="adwords-cid-submitted"><span name="adwords_cid_submitted">{{ lead_detail.adwords_cid_submitted }}</span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+
+                                 <div class="yellow-line"></div>
+                                 <a class="button" href="#" id="save-lead-comment" style="display:none;float: right;color: #333;text-decoration:none;background: #4385f5;color: #fff; ">Save </a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Comments</a>
+                                  
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Tag Team Comments</td>
+                                        <td class="table-right" id="comment">
+                                        </td>
+                                        <td class="table-left">Google Comments</td>
+                                        <td class="table-right edit-textarea"><span name="google_comment">{{ lead.google_comment }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">New Comments Area</td>
+                                        <td class="table-right edit-textarea-for-comment"><span></span><p style="display:none;color:red;">*Please enter the value.</p></td>
+                                        <td class="table-left">Regalix Chat Comments</td>
+                                        <td class="table-right edit-textarea"><span name="regalix_comment"></span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Regalix Email Comments</td>
+                                        <td class="table-right edit-textarea"></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 1</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 1</td>
+                                        <td class="table-right edit-textarea"><span name="code_1">{{ lead.code_1 }}</span></td>
+                                        <td class="table-left">URL 1</td>
+                                        <td class="table-right edit"><span name="url_1">{{ lead.url_1 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_1 }}</td>
+                                        <td class="table-left">Comment 1</td>
+                                        <td class="table-right">{{ lead.comment_1 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 1 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 1</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 1</td>
+                                        <td class="table-right edit"><span name="user_list_id_1">{{ lead.user_list_id_1 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 1</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_1">{{ lead.rlsa_bid_adjustment_1 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 1</td>
+                                        <td class="table-right">{{ lead.internal_cid_1 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 1</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_1 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 1</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_1">{{ lead.campaign_id_1 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 2</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 2</td>
+                                        <td class="table-right edit-textarea"><span name="code_2">{{ lead.code_2 }}</span></td>
+                                        <td class="table-left">URL 2</td>
+                                        <td class="table-right edit"><span name="url_2">{{ lead.url_2 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_2 }}</td>
+                                        <td class="table-left">Comment 2</td>
+                                        <td class="table-right">{{ lead.comment_2 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 2 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 2</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 2</td>
+                                        <td class="table-right edit"><span name="user_list_id_2">{{ lead.user_list_id_2 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 2</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_2">{{ lead.rlsa_bid_adjustment_2 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 2</td>
+                                        <td class="table-right">{{ lead.internal_cid_2 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 2</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_2 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 2</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_2">{{ lead.campaign_id_2 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 3</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 3</td>
+                                        <td class="table-right edit-textarea"><span name="code_3">{{ lead.code_3 }}</span></td>
+                                        <td class="table-left">URL 3</td>
+                                        <td class="table-right edit"><span name="url_3">{{ lead.url_3 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_3 }}</td>
+                                        <td class="table-left">Comment 3</td>
+                                        <td class="table-right">{{ lead.comment_3 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 3 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 3</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 3</td>
+                                        <td class="table-right edit"><span name="user_list_id_3">{{ lead.user_list_id_3 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 3</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_3">{{ lead.rlsa_bid_adjustment_3 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 3</td>
+                                        <td class="table-right">{{ lead.internal_cid_3 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 3</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_3 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 3</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_3">{{ lead.campaign_id_3 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 4</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 4</td>
+                                        <td class="table-right edit-textarea"><span name="code_4">{{ lead.code_4 }}</span></td>
+                                        <td class="table-left">URL 4</td>
+                                        <td class="table-right edit"><span name="url_4">{{ lead.url_4 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_4 }}</td>
+                                        <td class="table-left">Comment 4</td>
+                                        <td class="table-right">{{ lead.comment_4 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 4 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 4</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 4</td>
+                                        <td class="table-right edit"><span name="user_list_id_4">{{ lead.user_list_id_4 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 4</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_4">{{ lead.rlsa_bid_adjustment_4 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 4</td>
+                                        <td class="table-right">{{ lead.internal_cid_4 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 4</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_4 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 4</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_4">{{ lead.campaign_id_4 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+
+                                <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 5</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 5</td>
+                                        <td class="table-right edit-textarea"><span name="code_5">{{ lead.code_5 }}</span></td>
+                                        <td class="table-left">URL 5</td>
+                                        <td class="table-right edit"><span name="url_5">{{ lead.url_5 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_5 }}</td>
+                                        <td class="table-left">Comment 5</td>
+                                        <td class="table-right">{{ lead.comment_5 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 5 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 5</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 5</td>
+                                        <td class="table-right edit"><span name="user_list_id_5">{{ lead.user_list_id_5 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 5</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_5">{{ lead.rlsa_bid_adjustment_5 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 5</td>
+                                        <td class="table-right">{{ lead.internal_cid_5 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 5</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_5 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 5</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_5">{{ lead.campaign_id_5 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>QUALITY ASSURANCE</a>
+                                 <div class="table-responsive" id="qa-fields">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Lead QC'ed on</td>
+                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-left qstn">Spend (Cost from creation<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="spend-cfc"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead QC'ed by</td>
+                                        <td class="table-right" id="qc-by"><span name="qc_by">{{ lead_detail.qc_by }}</span></td>
+                                        <td class="table-left">Reason For Conversion Not Reporting</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">QC Comments</td>
+                                        <td class="table-right edit-textarea"><span name="qc_comments">{{ lead_detail.qc_comments }}</span></td>
+                                        <td class="table-left">Unethical WIN</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Do Not QC Exception</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>System Information</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Created On</td>
+                                        <td class="table-right">{{ lead.created_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-left">Last Modified On</td>
+                                        <td class="table-right">{{ lead.updated_date|date:'d-m-Y g:i a' }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Created By</td>
+                                        <td class="table-right">{{ lead.created_date|date:'d/m/Y g:i A' }}</td>
+                                        <td class="table-left">Last Modified By</td>
+                                        <td class="table-right">{{ lead.updated_date|date:'d/m/Y g:i A' }}</td>
+                                       </tr>
+                                       <tr style="display:none;">
+                                        <td class="table-left"></td>
+                                        <td class="table-right" id="row-id">{{ lead.id }}</td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right" id="sf-id">{{ lead.sf_lead_id }}</td>
+                                       </tr>
+                                       
+                                     </table>
+                                 </div>                                 
+
+
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="history">
+                          <div class="padding-20 lead-history upld-lnk-section">
+                              <form action="" id="image_save" method="post" enctype="multipart/form-data">
+                              {% csrf_token %}
+                              
+                              <label class="input-group-btn upload-file">
+                              <span class="btn btn-primary load-file">
+                              <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
+                                  <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;" multiple>Upload File
+                                  <p class="file-name" style="color: black;"></p>
+                              </span>
+                              <div class="clearfix"></div>
+                              <p class="file-name"></p>
+                              </label>
+                                <div class="or-left">OR</div>
+                                <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
+                                <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Image link" value="" >
+                              </div>
+                              <input type="submit" name="submit" class="save-button" value="Save">
+                              </form>
+                                <div class="clearfix"></div>
+                              <div class="yellow-line"></div>
+                              <div class="row" id=lead_history_changed>
+                                  <!--<div class="col-lg-1 col-md-1 col-sm-1 ">
+                                      <img src="images/smile-pic.jpg" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                      <p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> changed Lead Status from Pending QC - WIN to Implemented and Lead QC'ed by from a blank value to Priyadarshani Rai.</p>
+                                        <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                      <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                      <img src="images/smile-pic.jpg" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                      <p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> Kanag Thara changed Lead Status from In Progress to Pending QC - WIN, Lead Sub-Status from IP - Code Sent to a blank value, and gCases ID from 0 to 3-2335000013751.</p>
+                                        <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                      <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>
+                                       <div class="col-lg-1 col-md-1 col-sm-1 ">
+                                      <img src="images/smile-pic.jpg" alt="">
+                                    </div> 
+                                    <div class="col-lg-10 col-md-10 col-sm-10 no-padding">
+                                      <p class="history-para"><a href="#" class="lead-blue-text">Tech Team</a> posted a file </p>
+                                        <div class="download-box">
+                                          <div class="media">
+                                              <div class="media-left">
+                                                <a href="#">
+                                                  <img class="media-object" src="images/print-screen.jpg" alt="">
+                                                </a>
+                                              </div>
+                                              <div class="media-body">
+                                                <h4 class="media-heading">Screenshot 2016-10-04 at 2.52.31 PM</h4>
+                                                <a href="#" class="screen-dwld"><i class="fa fa-download" aria-hidden="true"></i> Download png  <span>(208 KB)</span></a>
+                                              </div>
+                                            </div>
+                                        </div>
+                                         <span class="post-time">Yesterday at 9:36 AM  </span>
+                                    </div> 
+                                    <div class="col-lg-1 col-md-1 col-sm-1">
+                                      <a href="#" class="trash"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    </div> 
+                                    <div class="clearfix"></div>
+                                     <div class="margin-top-20"></div>-->
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div style="text-align:center;padding-top:10px;">
+                      <button class="cancel-save btn std-btn sm-btn grayed" onclick="window.location.reload()" style="display:none;">cancel</button>
+                      <button class="save-lead btn std-btn sm-btn" onclick="updateLead()" style="display:none;">Save</button>
+                    </div>
+                </div><!--container-fluid-->
+                {% else %}
+                <div class=" container " style="background:white"><div class="center-align" style="margin-top:20%;margin-bottom:20%;text-align:center;font-size:16px;">Lead does not exist.</div></div>
+                {% endif %}
+                <div style="margin-top:80px;"></div> 
+    </section>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    
+  </body>
+  <style type="text/css">
+    .button {
+      font: bold 11px Arial;
+      text-decoration: none;
+      background-color: #EEEEEE;
+      color: #333333;
+      padding: 2px 6px 2px 6px;
+      border-top: 1px solid #CCCCCC;
+      border-right: 1px solid #333333;
+      border-bottom: 1px solid #333333;
+      border-left: 1px solid #CCCCCC;
+    }
+    #save-lead-comment{
+
+    }
+    #modal {
+        display: none;
+        position: absolute;
+        top: 45%;
+        left: 45%;
+        width: 64px;
+        height: 64px;
+        padding:30px 15px 0px;
+        border: 3px solid #ababab;
+        box-shadow:1px 1px 10px #ababab;
+        border-radius:20px;
+        background-color: white;
+        z-index: 1002;
+        text-align:center;
+        overflow: auto;
+    }
+
+    #fade {
+        display: none;
+        position:absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: #ababab;
+        z-index: 1001;
+        -moz-opacity: 0.8;
+        opacity: .70;
+        filter: alpha(opacity=80);
+    }
+  </style>
+  {% endblock content %}
+
+  {% block main_js %}
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/reports/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function(e) {
+        var cmt_txt = "{{comment}}"
+        if(cmt_txt != "")
+        {
+          var cmt = cmt_txt.split("Dail");
+          var regComment = ""
+          for(var i = 1; i <= cmt.length - 1; i ++ )
+            regComment += "<p> Dail" + cmt[i] + "</p></br>";
+          regComment = replaceAll(regComment, "&lt;/br&gt;", "</br>");
+          $('#comment').html(regComment);
+      }
+    });
+
+
+    function replaceAll(str, find, replace) {
+      return str.replace(new RegExp(find, 'g'), replace);
+    }
+
+
+    $('#check-availability').click(function(){
+      var lead_owner = $("#exampleInputEmail1").val();
+      var lead_type = $('#type').text();
+      var lead_id = {{ lead.id }};
+      var send_mail ='False';
+      var override_appointment = 'False';
+
+      if($('#sendmail').is(':checked')){
+       send_mail = 'True';
+      }
+      if($('#override').is(':checked')){
+        override_appointment = 'True';
+      }
+
+      if(lead_owner != ''){
+       $('#exampleInputEmail1').css('border-color','#cccccc')
+       $.ajax({
+            url: "/crm/lead-owner-email/",
+            type: 'GET',
+            data: {'lead_owner_email':lead_owner,'id':lead_id,'type':lead_type,'override_appointment':override_appointment, 'send_mail':send_mail},
+            dataType: "json",
+            success: function(data) {
+              if(data['success']){
+                $("#over-ride").hide();
+                $("#override").removeAttr("style");
+                $('#lon').html(data['name']);
+                $('#mail').html(data['email']);
+                $('#exampleInputEmail1').val('');
+                $('#override').prop('checked',false);
+                $('.arrow-box').hide();
+                /*setTimeout(function(){// wait for 5 secs(2)
+                  location.reload(); // then reload the page.(3)
+                }, 2000); */
+              }
+              else{
+                $("#over-ride").show();
+                alert(data['name'] + ' is booked for an other appointment at the same time')
+              }
+            },
+            error: function(xhr){
+              if(xhr.status == '403'){
+                alert('You dont have permission to do this action.');
+              }
+            }
+        });
+     }
+     else{
+      $('#exampleInputEmail1').css('border-color','red');
+     }
+
+    });
+
+    $('#assign-lead-popup').click(function(){
+      $('.arrow-box').toggle();
+    });
+
+    $("#exampleInputEmail1").autocomplete(
+    {
+        search: function () {},
+        source: function (request, response)
+        {
+            $.ajax(
+            {
+                url: "/crm/crm-agents/emails/",
+                dataType: "json",
+                data:
+                {
+                    search_key: request.term,
+                },
+                success: function (data)
+                {
+                    response(data.data);
+                }
+            });
+        },
+        minLength: 1,
+    });
+
+
+var curr_ls = $('#lead-status span').html();
+var curr_fco = $('#first-contacted span').html();
+var rs_appointment = $('#rescheduled-appointment span').html();
+
+$('#edit-lead').on('click',function() {
+  var lead_status = {{ status|safe }};
+  var primary_role = {{ role|safe }};
+  var language = {{ language|safe }};
+  var team = {{ team|safe }};
+  
+    $('td.edit span').each(function(){
+
+        var html = $(this).html();
+        var input = $('<input type="text" style="width:200px;"/>');
+        input.val(html);
+        $(this).html(input);
+    });
+
+    $('td.edit-textarea span').each(function(){
+        var html = $(this).html();
+        var tarea = $('<textarea style="width:200px;">' + html + '</textarea>');
+        $(this).html(tarea);
+    });
+    
+    $('td.edit-textarea-for-comment span').html('<textarea style="width:200px;" id="add-comment"></textarea>');
+    $("#add-comment").html('On Call : \nNext Course Of Action :');
+    $("#add-comment").attr("data-dail", "{{dail_num}}");
+
+    $('td.edit-checkbox').each(function(){
+        var html = $(this).html();
+        var tarea = $('<input type="checkbox"/>');
+        $(this).html(tarea);
+    });
+
+    $('td.edit-date span').each(function(){
+
+        var html = $(this).html();
+        var input = $('<input type="text" class="editdateinput" style="width:200px;"/>');
+        input.val(html);
+        $(this).html(input);
+    });
+
+
+    var curr_status = $("#lead-status span").html();
+    $("#lead-status span").html("<select id='status' style='width:200px;'></select>");
+    assignDropDownValues(curr_status,lead_status,'#lead-status span')
+    
+
+    var curr_team = $("#team span").html();
+    $("#team span").html("<select id='team' style='width:200px;'></select>");
+    assignDropDownValues(curr_team,team,"#team span")
+
+
+    var curr_prole = $("#primary-role span").html();
+    $("#primary-role span").html("<select id='pRole' style='width:200px;'></select>");
+    assignDropDownValues(curr_prole,primary_role,"#primary-role span")
+
+
+    var curr_language = $("#language span").html();
+    $("#language span").html("<select id='lang' style='width:200px;'></select>");
+    assignDropDownValues(curr_language,language,'#language span')
+    
+
+    var qc_by_list = ["Vishal Kumar Jha","Anto Santosh","Raphael Martin","Joshua Ajay Stanislaus","Varun B","Lohith BP","Saurabh Agarwal"];
+    var curr_qc_by = $('#qc-by span').html();
+    $('#qc-by span').html('<select id="qcBy" style="width:200px;"></select>');
+    assignDropDownValues(curr_qc_by,qc_by_list,'#qc-by span')
+   
+
+    var spend_cfc_list = ["$0", "<= $2,000", "<=$5,000", "<=$10,000", "<=$20,000", ">$20,000"];
+    var curr_cfc = $('#spend-cfc span').html();
+    $('#spend-cfc span').html('<select id="spendCfc" style="width:200px;"></select>');
+    assignDropDownValues(curr_cfc,spend_cfc_list,'#spend-cfc span')       
+    
+
+    function assignDropDownValues(curr_val,val_list,doc_ele_id){
+      $(doc_ele_id + " select").append("<option value='None'>--None--</option>");
+      for(var i=0;i<val_list.length; i++){
+        if(curr_val == 'None'){
+          $(doc_ele_id +" select option[value='--None--']").prop('selected',true);
+        }
+        if(curr_val == val_list[i]){
+          $(doc_ele_id + " select").append("<option selected>"+ val_list[i] +"</option>");
+        }
+        else{
+          $(doc_ele_id + " select").append("<option>"+ val_list[i] +"</option>");
+        }
+      }
+    }
+
+    var pla_sub_status = {{ pla_sub_status|safe }};
+    var curr_pla_sub_status = $('#pls-sub-status span').html();
+    $('#pls-sub-status span').html('<select id="plaSubStatus" style="width:200px;"></select>');
+    assignDropDownValues(curr_pla_sub_status,pla_sub_status,'#pls-sub-status span')     
+
+
+    var dynamic_variable_set = ['Yes','No','Not Applicable'];
+    var curr_dynamic_variable_set = $('#dynamic-variable-set span').html();
+    $('#dynamic-variable-set span').html('<select id="dynamicariableSet" style="width:200px;"></select>');
+    assignDropDownValues(curr_dynamic_variable_set,dynamic_variable_set,'#dynamic-variable-set span')  
+    
+
+    var implemented_code_is = {{ implemented_code_list|safe }};
+    var curr_implemented_code = $('#implemented-code span').html();
+    $('#implemented-code span').html('<select id="implementedCode" style="width:200px;"></select>');
+    assignDropDownValues(curr_implemented_code,implemented_code_is,'#implemented-code span') 
+    
+
+    var campaign_created_list = ['Yes','No'];
+    var curr_campaign_created_state =  $('#campaign-created span').html();
+    $('#campaign-created span').html('<select id="campaignCreated" style="width:200px;"></select>');
+    assignDropDownValues(curr_campaign_created_state,campaign_created_list,'#campaign-created span');
+
+    var adwords_cid_submitted_list = ['Correct','Invalid',"Different from Advertiser's Adwords account"];
+    var curr_adwords_cid_submitted =  $('#adwords-cid-submitted span').html();
+    $('#adwords-cid-submitted span').html('<select id="adwordsCidSubmitted" style="width:200px;"></select>');
+    assignDropDownValues(curr_adwords_cid_submitted,adwords_cid_submitted_list,'#adwords-cid-submitted span');
+
+    var cms_platform_list = ["1&1 sitebuilder", "3D Cart", "Adobe Dreamweaver", "Aspdotnetstorefront", "Big Commerce", "Concrate 5", "Cs Cart", "Drupal", "EKM Powershop", "FTP/ Hosting account (customised website)", "Go Daddy", "Go Daddy Online store", "Go Daddy Site Builder", "JIMDO", "Joomla", "Magento", "MaxCart", "Netsuite", "Network Solution", "Open Cart", "OS Commerce", "Other CMS", "Prestashop", "Prostores", "Shopify", "Squarespace", "Vista print", "Volusion", "Webs.com site builder ", "Weebly", "Wix", "Wordpress", "X Cart", "Yahoo store", "Zen cart"];
+    var curr_cms = $('#cms-platform span').html();
+    $('#cms-platform span').html('<select id="cmsPlatform" style="width:200px;"></select>');
+    assignDropDownValues(curr_cms,cms_platform_list,'#cms-platform span')
+
+    var gcss_status_list = ["Advertiser Transferred to Phone GCSS", "Advertiser Not Interested for GCSS", "Advertiser Busy for GCSS", "Code Implemented via Email Instructions Sent - Email GCSS", "Call was not Via Calling Solution - Email GCSS", "TAG Rep has another Appointment", "TAG Rep busy for GCSS"];
+    var curr_gcss_status = $('#gcss-status span').html();
+    $('#gcss-status span').html('<select id="gcss-msg" style="width:200px;"></select>');
+    assignDropDownValues(curr_gcss_status,gcss_status_list,'#gcss-status span');
+
+    var appointment_sub_status_list = ["NA - NOT APPLICABLE", "Google - Incorrect Appointment / Past Appointment", "RX - Met Appointment, AD - Met Appointment", "RX - Met Appointment, AD - Missed Appointment", "RX - Met Appointment, AD - Rescheduled Appointment", "RX - Missed Appointment", "RX - Rescheduled Appointment", "ATC - Rescheduled Appointment", "RX - Met Appointment Adv-Met Appointment (After 10 Minutes)"]
+    var curr_appointment_sub_status = $('#appointment-sub-status span').html();
+    $('#appointment-sub-status span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_appointment_sub_status,appointment_sub_status_list,'#appointment-sub-status span');
+
+    var live_transfer_list = ['Yes','No']
+    var curr_live_transfer = $('#live-transfer span').html();
+    $('#live-transfer span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_live_transfer,live_transfer_list,'#live-transfer span');
+
+    var screenshare_scheduled_list = ["WebEx", "JoinMe", "TeamViewer", "GoogleHangout", "GoTo Meeting", "No Screenshare", "Gcases Screenshare", "Skype", "Appear.in"];
+    var curr_screenshare_scheduled = $('#screenshare-scheduled span').html();
+    $('#screenshare-scheduled span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_screenshare_scheduled,screenshare_scheduled_list,'#screenshare-scheduled span');
+
+    var mouse_control_taken_list = ['Yes','No'];
+    var curr_mouse_control_taken = $('#mouse-control-taken span').html();
+    $('#mouse-control-taken span').html('<select id="mc-taken" style="width:200px;"></select>');
+    assignDropDownValues(curr_mouse_control_taken,mouse_control_taken_list,'#mouse-control-taken span');
+
+    var mouse_control_approved_by_list = ["Haleema Shareef", "Konan Daniel", "Leon Dave", "Linda Joseph", "Rajesh Menon", "Sijo Varkey", "Syed Saifullah", "Vaibhav Gupta", "Vishal Kumar Jha"];
+    var curr_mouse_control_approved_by = $('#mouse-control-approved span').html();
+    $('#mouse-control-approved span').html('<select id="mc-approved" style="width:200px;"></select>');
+    assignDropDownValues(curr_mouse_control_approved_by,mouse_control_approved_by_list,'#mouse-control-approved span');
+
+    var rlsa_tag_team_contacted_list = ['By Phone','Via E-mail','No Contact'];
+    var curr_rlsa_tag_team_contacted = $('#rlsa-tag-team-contacted span').html();
+    $('#rlsa-tag-team-contacted span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_rlsa_tag_team_contacted,rlsa_tag_team_contacted_list,'#rlsa-tag-team-contacted span');
+
+    var list_type_list = ['Google Analytics Dynamic List','Google Adwords Dynamic List','No List'];
+    var curr_list_type = $('#list-type span').html();
+    $('#list-type span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_list_type,list_type_list,'#list-type span');
+
+
+    var feed_optimisation_status_list = {{ feed_optimisation_status|safe }};
+    var curr_feed_optimisation_status = $('#feed-optimisation-status span').html();
+    $('#feed-optimisation-status span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_feed_optimisation_status,feed_optimisation_status_list,'#feed-optimisation-status span');
+
+
+    var feed_upload_method_list = ["MaxCart", "GSS", "API", "Extensions", "XML", "Others(please specify in case logs)", "Not Applicable"];
+    var curr_feed_upload_method = $('#feed-upload-method span').html();
+    $('#feed-upload-method span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_feed_upload_method,feed_upload_method_list,'#feed-upload-method span');
+
+    var policy_violation_list_list = ["Not Applicable", "No Secured Payment method (SSL certificate missing)", "No Return and Refund policy page", "Payment not displayed on home page", "Contact information missing on home page", "No specific product landing page on the website", "Watermark on Images", "Services Related Website", "None", "Others"];
+    var curr_type_of_policy_violation = $('#type-of-policy-violation span').html();
+    $('#type-of-policy-violation span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_type_of_policy_violation,policy_violation_list_list,'#type-of-policy-violation span');
+
+    getFeedOptimisationSubStatus(curr_feed_optimisation_status);
+
+    getLeadSubStatus(curr_status,'{{ ctype }}');
+
+    if({{request.session.groups|safe}}.includes('CRM-AGENT')){
+      $('#qa-fields').addClass('disabledbutton');
+    }
+   
+    $(".editdateinput").datetimepicker({
+      timepicker : true,
+      format: 'd/m/Y g:i A',
+      minDate:0
+    });
+    $('#edit-lead').hide();
+    $('.save-lead').show();
+    $('.cancel-save').show();
+    $('#save-lead-comment').show();
+    
+});
+
+
+  var prev_lead_status = '';
+ 
+  function updateLead(){
+    var temp = {};
+    $('.edited').each(function(){
+      temp[$(this).attr('name')] = $(this).val();   
+    })
+    temp['sf_lead_id']= $('#sf-id').html();
+    if(prev_lead_status != ''){
+      temp['prev_lead_status'] = prev_lead_status;
+    }
+  
+    var valid = true;
+
+    if($('#plaSubStatus option:selected').val() == 'IP - Account Suspended' && $('#sqo-sto-comments span textarea').val().replace(' ','') == ''){
+      valid = false;
+      $('#sqo-sto-comments p').show();
+      $('#sqo-sto-comments span textarea').addClass('error');
+    }
+    else{
+      $('#sqo-sto-comments p').hide();
+      $('#sqo-sto-comments span textarea').removeClass('error');
+    }
+    
+    if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val())){
+      if($('#implemented-code span select').val() == 'None'){
+        valid = false;
+        $('#implemented-code span select').addClass('error');
+        $('#implemented-code p').show();
+      }
+      else{
+        $('#implemented-code span select').removeClass('error');
+        $('#implemented-code p').hide();
+      }
+    }
+
+    if($('#status option:selected').val() == 'Pending QC - WIN'){
+
+      valid = false;
+      $('#gcss-status p').show();
+      $('#gcss-msg').addClass('error');
+    }
+    else{
+      $('#gcss-status p').hide();
+      $('#gcss-msg').removeClass('error');
+    }
+
+    if($('#status option:selected').val() != 'None'){
+      if($('#sub-status option:selected').val() == 'None'){
+        valid = false;
+        $('#sub-status').addClass('error');
+      }
+      else{
+        $('#sub-status').removeClass('error');
+      }
+      if($('#plaSubStatus option:selected').val() == 'None'){
+        valid = false;
+        $('#pls-sub-status p').show();
+        $('#plaSubStatus').addClass('error');
+      }
+      else{
+        $('#pls-sub-status p').hide();
+        $('#plaSubStatus').removeClass('error');
+      }
+    }
+
+    if($('#screenshare-scheduled span select option:selected').val() != 'None'){
+      if($('#mouse-control-taken span select option:selected').val() == 'None'){
+        valid = false;
+        $('#mouse-control-taken p').show();
+        $('#mc-taken').addClass('error');
+      }
+      else{
+        $('#mouse-control-taken p').hide();
+        $('#mc-taken').removeClass('error');
+      }
+      if($('#mouse-control-approved span select option:selected').val() == 'None'){
+        valid = false;
+        $('#mouse-control-approved p').show();
+        $('#mc-approved').addClass('error');
+      }
+      else{
+        $('#mouse-control-approved p').hide();
+        $('#mc-approved').removeClass('error');
+      }
+    }
+
+    if($('#feed-optimisation-sub-status span select option:selected').val() == 'None'){
+      valid = false;
+      $('#feed-optimisation-sub-status p').show();
+      $('#feed-optimisation-sub-status span select').addClass('error');
+    }
+    else{
+      $('#feed-optimisation-sub-status p').hide();
+      $('#feed-optimisation-sub-status span select').removeClass('error');
+    }
+
+    if($('#type').text() == 'RLSA Bulk Implementation' && $('#rlsa-tag-team-contacted span select').val() == 'None'){
+      valid = false;
+      $('#rlsa-tag-team-contacted p').show();
+      $('#rlsa-tag-team-contacted span select').addClass('error');
+    }
+    else{
+      $('#rlsa-tag-team-contacted p').hide();
+      $('#rlsa-tag-team-contacted span select').removeClass('error')
+    }
+
+    if({{request.session.groups|safe}}.includes('CRM-AGENT')){
+      if(['In Queue', 'Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Rework Required - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].includes(curr_ls)){
+        if($('#status option:selected').val() == 'In Active' && curr_ls != 'In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*You are not authorised to move leads to "In Active". Please contact your QA.').show();
+        }
+        else if($('#status option:selected').val() == 'Implemented' && curr_ls != 'Implemented'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*You are not authorised to move leads to "Implemented". Please contact your QA.').show();
+        }
+        else if($('#status option:selected').val() == 'In Queue' && curr_ls != 'In Queue'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'In Queue'. Please contact your QA.").show();
+        }
+        else if($('#status option:selected').val() == 'Rework Required - In Active' && curr_ls != 'Rework Required - In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'Rework Required'. Please contact your QA.").show();
+        }
+        else{
+          $('#lead-status p#error-msg').hide();
+          $('#status').removeClass('error');
+        }
+      }
+      else if(['Implemented','In Active'].includes(curr_ls)){
+        if($('#status option:selected').val() != 'In Active' && curr_ls == 'In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*Leads declared as "In Active" should not be moved to any other status. Please contact your T.L for more information.').show();
+        }
+        else if($('#status option:selected').val() != 'Implemented' && curr_ls == 'Implemented'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text('*Leads declared as "Implemented" should not be moved to any other status. Please contact your T.L for more information.').show();
+        }
+        else{
+          $('#lead-status p#error-msg').hide();
+          $('#status').removeClass('error');
+        }
+      }
+
+      if($('#status option:selected').val() == 'Pending QC - WIN'){
+        $('#doi input').attr('disabled', 'disabled');
+      }
+
+      if(curr_fco != $('#first-contacted span input').val()){
+        valid = false;
+        $('#first-contacted span input').addClass('error');
+        $('#first-contacted p').show();
+      }
+      else{
+        $('#first-contacted span input').removeClass('error');
+        $('#first-contacted p').hide();
+      }
+
+    }
+
+    if({{request.session.groups|safe}}.includes('CRM-MANAGER') && curr_ls != $('#status option:selected').val()){
+      var comment = 'On Call : Next Course Of Action :';
+      var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
+      if(curr_comment == comment){ 
+        valid = false;
+        $('.edit-textarea-for-comment p').show();
+        $('.edit-textarea-for-comment span textarea').addClass('error')
+      }
+      else{
+        $('.edit-textarea-for-comment p').hide();
+        $('.edit-textarea-for-comment span textarea').removeClass('error')
+        $('#save-lead-comment').trigger('click');
+      }
+    }else if({{request.session.groups|safe}}.includes('CRM-AGENT') && curr_ls != $('#status option:selected').val() && ['Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].includes($('#status option:selected').val())){
+      var comment = 'On Call : Next Course Of Action :';
+      var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
+      if(curr_comment == comment){ 
+        valid = false;
+        $('.edit-textarea-for-comment p').show();
+        $('.edit-textarea-for-comment span textarea').addClass('error')
+      }
+      else{
+        $('.edit-textarea-for-comment p').hide();
+        $('.edit-textarea-for-comment span textarea').removeClass('error')
+        $('#save-lead-comment').trigger('click');
+      }
+    }
+
+    if(['Pending QC - WIN','Pending QC - In Active'].includes($('#status option:selected').val()) && $('#type').text() == 'Google Shopping Setup'){
+      if($('#products-uploaded span input').val().replace(' ','') == ''){
+        valid = false;
+        $('#products-uploaded p').show();
+        $('#products-uploaded span input').addClass('error');
+      }
+      else{
+        $('#products-uploaded p').hide();
+        $('#products-uploaded span input').removeClass('error');
+      }
+
+      if($('#feed-upload-method span select').val() == 'None'){
+        valid = false;
+        $('#feed-upload-method p').show();
+        $('#feed-upload-method span select').addClass('error');
+      }
+      else{
+        $('#feed-upload-method p').hide();
+        $('#feed-upload-method span select').removeClass('error');
+      }
+    }
+
+
+    if($('#status option:selected').val() == 'Attempting Contact'){
+      if(rs_appointment == $('#rescheduled-appointment span input').val()){
+        valid = false;
+        $('#rescheduled-appointment p').show();
+        $('#rescheduled-appointment span input').addClass('error');
+      }
+      else{
+        $('#rescheduled-appointment p').hide();
+        $('#rescheduled-appointment span input').removeClass('error');
+      }
+    }
+   
+
+    if(valid){
+      $('#clone-info').css('display','none');
+      $.ajax({
+        url: "/crm/update-lead/",
+        type: 'POST',
+        data: temp,
+        dataType: "json",
+        success:function(data){
+          if(data['success']){
+             location.reload(); //reload the page.
+          }
+        },
+        error:function(xhr){
+
+        }
+      })
+    }
+    else{
+      $('#span-msg').text('Please select/fill the required fields on form.');
+      $('#clone-info').removeClass('.alert-success');
+      $('#clone-info').addClass('alert-warning');
+      $('#clone-info').css('display','block');
+      $("body").scrollTop(0);
+   }
+  }
+
+    $('#save-lead-comment').click(function(e){
+      e.preventDefault();
+      var comment = $('#add-comment').val().replace("\n", "");
+      var date = new Date();
+      var date = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear()
+      commentDetail = "Dail: "+ $('#add-comment').attr("data-dail") +" </br>" + "Date: " + date +"</br>" + "Name: {{name}}</br>" + comment +"</br>"
+      data = {'id': $('#row-id').text(), 'regalix_comment':commentDetail}
+      $.ajax({
+        url: "/crm/add-lead-comment/",
+        type: 'POST',
+        data: data,
+        dataType: "json",
+        success:function(data){
+          if(data['success']){
+            $('#comment').html('');
+            var cmt = data["regalix_comment"].split('Dail')
+            for(var i = 1; i <= cmt.length - 1; i ++ )
+                $('#comment').append("<p> Dail" + cmt[i] + "</p></br>");
+
+              $("#add-comment").val('');
+              $("#add-comment").attr("data-dail", cmt.length -1);
+              $("#add-comment").val('On Call : \nNext Course Of Action :');
+            
+          }
+        },
+        error:function(xhr){
+
+        }
+    });
+  });
+
+  $("#delete-lead").click(function(e){
+    e.preventDefault();
+    if(confirm("Are you sure you want to delete this lead? This action cannot be undone."))
+      location.href = $(this).data("href");
+  });
+
+  
+
+function get_lead_history(){
+  $.ajax(
+  {
+      url: "/crm/get-lead-history/",
+      dataType: "json",
+      data:
+      {
+          lead_id: '{{lead.id}}',
+      },
+      success: function (data)
+      {
+        if (data.length) {
+          $('#lead_history_changed').html('')
+          for(var i=0;i<data.length;i++){
+            action_type = data[i]['action_type']
+            if (action_type == 'owner_change'){
+              changed = ' changed Lead Owner from ' + data[i]['previous_owner'] +  ' to ' + data[i]['current_owner'] + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
+            }
+            else if(action_type == 'edited'){
+              edited = JSON.parse(data[i]['modifications'])[0]
+              changed = ' changed '
+              edited_fields = Object.keys(edited)
+              if (edited){
+                chg_tbl = changed + '<table border="1" class="lead-history-tbl"><tr><th>Field</th><th>Previous Value</th><th>New Value</th></tr>'
+                for(var j=0;j<edited_fields.length;j++){
+                  field = edited_fields[j]
+                  fieldText = $("[name="+edited_fields[j]+"]").parent().prev().text();
+                  if(fieldText.length < 1){
+                    fieldText = field;
+                  }
+                  chg_tbl = chg_tbl + '<tr><td>' + fieldText +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
+                }
+                changed  = chg_tbl + "</table></p><span class='post-time'>"+ data[i]['created_date'] +'</span>' 
+              }
+            }
+            else if(action_type == 'image'){
+              changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
+            }
+            else if(action_type == 'clone'){
+              changed = "<p style='text-align left;color:red;'>"+data[i]['modifications']+"</p>"
+            }
+
+            else{
+              changed = " posted an image link <h4 class='media-heading'><a href="+ data[i]['image_link'] + " target='_blank'>"+data[i]['image_link']+"</a><span class='post-time'>"+ data[i]['created_date'] +"</span>"
+            }
+            $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='clearfix'></div><div class='margin-top-20'></div>")
+          }
+        }
+      }
+  });
+}
+
+    $("li a[href='#history']").click(function(){
+      get_lead_history();
+    })
+    
+
+/*lead cloinig functionality*/
+function cloneLead(){
+  if(confirm("Are you sure, want to clone this lead ?")){
+  var pathArray = window.location.pathname.split( '/' );
+  var lead_id = pathArray[3];
+  var sf_id = pathArray[4];
+  var process_type = pathArray[5];
+   $.ajax({
+            url: "/crm/clone-lead/",
+            type: 'POST',
+            data: {'lead_id':lead_id, 'process_type':process_type},
+            dataType: "json",
+            success: function(data) {
+
+            if(data.msg == 'Failed to clone'){
+            alert("Server error failed to clone");
+            }
+            else{
+            window.location.href='/crm/lead-details/'+data.id+'/'+data.sf_id+'/'+data.process_type+'?clone=true'
+            }
+                
+                
+            },
+            error: function(data){
+                alert("Something went wrong, please try after some time");
+            }
+        });
+  }
+}
+
+(function(){ 
+  if(window.location.href.split('=')[1] === 'true'){
+   $("#clone-info").show(); 
+  }
+})();
+
+  $('input[type=file]').on('change', prepareUpload);
+
+  function prepareUpload(event)
+  {
+    files = event.target.files;
+  }
+
+  var fileChange = function(){
+      $("#file_status").empty();
+      var files = $('input[name^="img_file"]')[0].files
+      var errState = document.getElementById("file_status");
+      if(files){
+        for (var i=0;i<files.length;i++){
+          console.log(files[i].name)
+          filename = files[i].name;
+          var allowedFiles = ["gif,jpg,jpeg,tiff,png,bmp"];
+          if (!(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename)) {
+            // inputted file path is not an image of one of the above types
+            $(".save-button").prop("disabled",true);
+
+            $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+            $('#span-msg').text('Please upload files only with extension ' + allowedFiles.join(', '))
+            $('#clone-info').show();
+            $('#image_save')[0].reset()
+            $('.file-name').html('');
+            return false;
+          }
+          $(".save-button").prop("disabled",false);
+          $('.file-name').html(filename);
+          return true;
+        }
+      }
+  }
+
+  $('#image_link').change(function(){
+    validateUrl();
+  })
+
+  var validateUrl= function(){
+      var image_link = $('#image_link').val()
+      var errState = document.getElementById("file_status");
+      if(image_link){
+        var regUrl = (/^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i);
+        if (regUrl.test(image_link) == false) {
+          $(".save-button").prop("disabled",true);
+
+          /*errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
+                           aria-label='close'>&times;</a> Please add a valid url</div>";*/
+          $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+          $('#span-msg').text('Please add a valid url')
+          $('#clone-info').show();
+          $('#image_save')[0].reset()
+          $('.file-name').html('');
+          return false;
+        }
+        $(".save-button").prop("disabled",false);
+        return true;
+      }
+  }
+
+  $("form#image_save").submit(function(e) {
+      e.preventDefault();
+      var $form = $('#image_save');
+
+      var formData = new FormData();
+      var files = $('input[name^="img_file"]')[0].files;
+
+      $.each(files, function(i, file) {
+          formData.append('file', file);
+      });
+
+      formData.append('image_link', $('#image_link').val());
+      formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
+      formData.append('lead_id', window.location.pathname.split( '/' )[3]);
+      var errState = document.getElementById("file_status");
+      if (files.length != 0 || $('#image_link').val() != ''){
+        $.ajax({
+            url: '/crm/save-image-file/',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+              if(data['success']){
+                $('#clone-info').removeClass('alert-warning').addClass('alert-success')
+              }
+              else{
+                $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+              }
+                $('#span-msg').text(data['msg'])
+                $('#clone-info').show();
+                get_lead_history();
+                $('#image_save')[0].reset()
+                $('.file-name').html('');
+            },
+            error: function(data){
+              alert("Something went wrong, please try after some time");
+            }
+        });
+      }
+
+      return false;
+  });
+  $(".tableDrop").click(function (e) {
+    e.preventDefault();
+
+    $tableDrop = $(this);
+    var drop = $(this);
+    //getting the next element
+    $linkIcon = $tableDrop.next();
+    //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+    $linkIcon.slideToggle(200, function () {
+        //execute this after slideToggle is done
+        //change arrow based on visibility of content div
+        drop.find('.fa.linkIcon').toggleClass('fa-caret-up fa-caret-right');
+    });
+
+  });
+
+  function getLeadSubStatus(lead_status,type){
+      $.ajax({
+        type: 'GET',
+        url: '/crm/get-lead-sub-status?lead_status=' + lead_status + '&ctype=' + type,
+        dataType: "json",
+        success: function(data) {
+                if(data['success'] && data['lead_sub_status']){
+                  var sub_status = $('#lead-sub-status span').text();
+                  $("#lead-sub-status span").html("<select id='sub-status' style='width:200px;'></select>");
+                  $("#lead-sub-status span select").append("<option value='None'>--None--</option>");
+                  for(var i=0;i< data['lead_sub_status'].length; i++){
+                    if(sub_status == 'None'){
+                      $("#lead-sub-status span select option[value='--None--']").prop('selected',true);
+                    }
+                    if(sub_status ==  data['lead_sub_status'][i]){
+                      $("#lead-sub-status span select").append("<option selected>"+ data['lead_sub_status'][i] +"</option>");
+                    }
+                    else{
+                      $("#lead-sub-status span select").append("<option>"+ data['lead_sub_status'][i] +"</option>");
+                    }
+                  }
+
+                }
+                else{
+                  $('#lead-sub-status span').html('');
+                }
+              },
+              error: function(data){
+                  alert("Something went wrong, please try after some time");
+              }
+      })
+    }
+
+
+    function getFeedOptimisationSubStatus(feed_optimisation_status){
+      $.ajax({
+        type: 'GET',
+        url: '/crm/get-feed-optimisation-sub-status?feed_optimisation_status=' + feed_optimisation_status,
+        dataType: "json",
+        success: function(data) {
+                if(data['success'] && data['feed_optimisation_sub_status']){
+                  var sub_status = $('#feed-optimisation-sub-status span').text();
+                  $("#feed-optimisation-sub-status span").html("<select style='width:200px;'></select>");
+                  $("#feed-optimisation-sub-status span select").append("<option value='None'>--None--</option>");
+                  for(var i=0;i< data['feed_optimisation_sub_status'].length; i++){
+                    if(sub_status == 'None'){
+                      $("#feed-optimisation-sub-status span select option[value='--None--']").prop('selected',true);
+                    }
+                    if(sub_status ==  data['feed_optimisation_sub_status'][i]){
+                      $("#feed-optimisation-sub-status span select").append("<option selected>"+ data['feed_optimisation_sub_status'][i] +"</option>");
+                    }
+                    else{
+                      $("#feed-optimisation-sub-status span select").append("<option>"+ data['feed_optimisation_sub_status'][i] +"</option>");
+                    }
+                  }
+
+                }
+                else{
+                  $('#feed-optimisation-sub-status span').html('');
+                }
+              },
+              error: function(data){
+                  alert("Something went wrong, please try after some time");
+              }
+      })
+    }
+
+
+
+
+    $(document).on('change','#lead-status span select',function(){
+      var curr_status = $(this).val();
+      var type = '{{ ctype }}';
+      getLeadSubStatus(curr_status,'{{ ctype }}');
+    })
+
+    $(document).on('change','#feed-optimisation-status span select',function(){
+      var curr_status = $(this).val();
+      getFeedOptimisationSubStatus(curr_status);
+    })
+
+    var prev_val = '';
+    var pres_val = '';
+
+    function valCompare(old_val,new_val,ele){
+      if(old_val != new_val){
+        $(ele).addClass('edited');
+        var val = $(ele).parent().attr('name');
+        $(ele).attr('name',val);
+        $(ele).css('background','#df970d');
+        if(val == 'lead_status'){
+          prev_lead_status = old_val;
+        }
+      }
+
+      prev_val = '';
+      pres_val = '';
+    }
+
+    $(document).on('focusin','input',function(){
+      prev_val = $(this).val();
+    });
+
+    $(document).on('focusout','input',function(){
+      pres_val = $(this).val();
+      valCompare(prev_val,pres_val,this);
+    });
+
+    $(document).on('focusin','textarea',function(){
+      prev_val = $(this).val();
+    });
+
+    $(document).on('focusout','textarea',function(){
+      pres_val = $(this).val();
+      valCompare(prev_val,pres_val,this);
+    });
+
+    $(document).on('focusin','select',function(){
+      prev_val = $(this).val();
+    });
+
+    $(document).on('focusout','select',function(){
+      pres_val = $(this).val();
+      valCompare(prev_val,pres_val,this);
+    });
+
+
+    </script>
+    
+  {% endblock main_js %}

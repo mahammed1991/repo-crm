@@ -1,0 +1,46 @@
+- hosts: google_portal
+  tasks:
+    - name: Install core system packages
+      apt: name={{ item }} update_cache=yes cache_valid_time=3600
+      with_items:
+        - gcc
+        - aptitude
+        - mysql-server
+        - libmysqlclient-dev
+        - python-dev
+        - python-setuptools
+        - libffi-dev
+        - libssl-dev
+      tags:
+        - core_sytem
+
+    - name: Install core python packages
+      easy_install: name={{ item }}
+      with_items:
+        - pip
+        - virtualenv
+        - mysql-python
+      tags:
+        - core_python
+
+    - name: Create directories
+      file: path=/opt/python/venv state=directory owner=vagrant group=vagrant
+      tags: create_directories
+
+    - name: Create mysql database
+      mysql_db: name=gtrack encoding=utf8 collation=utf8_general_ci
+      tags: mysql_create_database
+
+    - name: Install pip requirements
+      pip: requirements=/vagrant/requirements.txt virtualenv=/opt/python/venv/google-portal
+      sudo: no
+      tags: pip_requirements
+
+    - name: Sync Database
+      django_manage: >
+        command=syncdb
+        app_path=/vagrant
+        settings=google_portal.settings
+        virtualenv=/opt/python/venv/google-portal
+      sudo: no
+      tags: sync_db
