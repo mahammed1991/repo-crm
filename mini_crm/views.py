@@ -73,15 +73,15 @@ def crm_management(request):
 
                 if lead_status == lead_sub_status:
                     if has_region:
-                        query = {'lead_status': lead_status, 'country__in':loc_list}
+                        query = {'lead_status': lead_status, 'country__in':loc_list, 'is_delete':False}
                     else:
-                        query = {'lead_status': lead_status}
+                        query = {'lead_status': lead_status, 'is_delete':False}
                 else:
                     if has_region:
                         query = {'lead_status' : lead_status,'lead_sub_status' :lead_sub_status,
-                        'country__in':loc_list}
+                        'country__in':loc_list, 'is_delete':False}
                     else:
-                        query = {'lead_status' : lead_status,'lead_sub_status' :lead_sub_status}
+                        query = {'lead_status' : lead_status,'lead_sub_status' :lead_sub_status, 'is_delete':False}
 
                 if process_type == "WPP":
 
@@ -93,9 +93,9 @@ def crm_management(request):
                 elif process_type == "Picasso Audits":
 
                     if loc_list:
-                        query = {'lead_status': lead_status, 'country__in':loc_list}
+                        query = {'lead_status': lead_status, 'country__in':loc_list, 'is_delete':False}
                     else:
-                        query = {'lead_status': lead_status}
+                        query = {'lead_status': lead_status, 'is_delete':False}
 
                     leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country','type_1')[offset:limit]
@@ -328,23 +328,25 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
 def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
     if has_region:
         if lead_appointment == 'Without Appointment':
-            query = {'country__in':loc_list, 'appointment_date__isnull':True}
+            query = {'country__in':loc_list, 'appointment_date__isnull':True, 'is_delete':False}
         elif lead_appointment != 'Select' or 'Without Appointment':
             query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 
                     'appointment_date_in_ist__lte':end_date_time,
                     'rescheduled_appointment_in_ist__gte':start_date_time,
-                    'rescheduled_appointment_in_ist__lte':end_date_time
+                    'rescheduled_appointment_in_ist__lte':end_date_time, 
+                    'is_delete':False
                     }
         else:
-            query = {'country__in':loc_list}
+            query = {'country__in':loc_list, 'is_delete':False}
     else:
         if lead_appointment == 'Without Appointment':
-            query = {'appointment_date__isnull':True}
+            query = {'appointment_date__isnull':True, 'is_delete':False}
         elif lead_appointment != 'Select' or 'Without Appointment':
             query = {'appointment_date_in_ist__gte':start_date_time,
                     'appointment_date_in_ist__lte':end_date_time,
                     'rescheduled_appointment_in_ist__gte':start_date_time,
-                    'rescheduled_appointment_in_ist__lte':end_date_time
+                    'rescheduled_appointment_in_ist__lte':end_date_time, 
+                    'is_delete':False
                     }
         else:
             query = {}
@@ -360,7 +362,7 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
     elif process_type == "Picasso Audits":
 
         if loc_list:
-            query = {'country__in':loc_list}
+            query = {'country__in':loc_list, 'is_delete':False}
         else:
             query = {}
 
@@ -747,23 +749,33 @@ def get_crm_agents_emails(request):
 @login_required
 def delete_lead(request, lid, ctype):
     if request.user.groups.filter(name='CRM-MANAGER'):
+        
         if ctype == "WPP":
-            lead = WPPLeads.objects.get(id=lid)
-            lead_cid = lead.customer_id
-            lead.delete()
-        elif ctype == "PicassoAudits":
-            lead = PicassoLeads.objects.get(id=lid)
-            lead_cid = lead.customer_id
-            lead.delete()
-        elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
-            lead = TagLeadDetail.objects.filter(lead_id=lid)
-            if lead.count():
-                lead_cid = lead[0].lead_id.customer_id
-                lead.delete()
+            try:
+                lead = WPPLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
+                lead.is_delete = True
+                lead.save()
+            except ObjectDoesNotExist, e:
+                print "Cound not find lead object with the provided lead ID : ",lid, e
 
-            lead = Leads.objects.get(id=lid)
-            lead_cid = lead.customer_id
-            lead.delete()
+        elif ctype == "PicassoAudits":
+            try:
+                lead = PicassoLeads.objects.get(id=lid)
+                lead_cid = lead.customer_id
+                lead.is_delete = True
+                lead.save()
+            except ObjectDoesNotExist, e:
+                print "Cound not find lead object with the provided lead ID : ",lid, e
+
+        elif ctype == "RLSA" or "Shopping" or "ShoppingArgos" or "TAG":
+            try:
+                lead = Leads.objects.get(id=lid)
+                lead_cid = lead.customer_id
+                lead.is_delete = True
+                lead.save()
+            except ObjectDoesNotExist, e:
+                print "Cound not find lead object with the provided lead ID : ",lid, e
 
         return redirect(reverse("all-leads") + "?customer_id=" + lead_cid + "&ptype=" + ctype )
     else:

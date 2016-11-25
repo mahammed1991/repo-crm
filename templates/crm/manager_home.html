@@ -80,9 +80,9 @@ WFM Home
 
       <div class="container-fluid" style="max-width:100%;">
         
-        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="clone-info">
+        <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="delete-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-            <span id="msg-area" style="font-size: 22px;line-height: 0px;font-weight: 500;"></span>
+            <span id="msg-area" style="font-size: 22px;margin-left: 75px"></span>
         </div>
         <!--div style="float: right;">
             <label><b style="font-weight: bold;">Result Limit</b></label>
@@ -256,7 +256,7 @@ WFM Home
           var qp = window.location.href.split('=')[1].split("&")
           if(qp.length > 1){
             $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
-            $("#clone-info").show(); 
+            $("#delete-info").show(); 
           }
       }
     });
