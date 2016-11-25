@@ -860,33 +860,38 @@ def clone_lead(request):
 @login_required
 def save_image_file(request):
     lh = LeadHistory()
-    if request.FILES:
-        img_file = request.FILES['file']
-        original_file_name, file_extension = img_file.name.split(".")
-        new_file_name = str(uuid.uuid4()) + "." + file_extension
+    if request.FILES.getlist('file'):
+        img_files = request.FILES.getlist('file')
+        for img_file in img_files:
+            lh = LeadHistory()
+            original_file_name, file_extension = img_file.name.split(".")
+            new_file_name = str(uuid.uuid4()) + "." + file_extension
 
-        if not os.path.isdir(settings.MEDIA_ROOT):
-            os.makedirs(settings.MEDIA_ROOT)
+            if not os.path.isdir(settings.MEDIA_ROOT):
+                os.makedirs(settings.MEDIA_ROOT)
 
-        file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
-        try:
-            save_file(img_file, file_path)
-            response = {'msg':'Image uploaded successfully','success':True}
-        except:
-            response = {'msg':'Failed to upload image, please try after sometime.','success':False}
-        lh.original_image_name = img_file.name
-        lh.image_guid = new_file_name
-        lh.action_type = 'image'
-        '''
-            update file_path and file.name as Original File name in the DB
-        '''
+            file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
+            try:
+                save_file(img_file, file_path)
+                response = {'msg':'Image uploaded successfully','success':True}
+            except:
+                response = {'msg':'Failed to upload image, please try after sometime.','success':False}
+            lh.original_image_name = img_file.name
+            lh.image_guid = new_file_name
+            lh.action_type = 'image'
+            lh.lead_id = request.POST['lead_id']
+            lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+            '''
+                update file_path and file.name as Original File name in the DB
+            '''
+            lh.save()
     else:
         lh.image_link = request.POST.get('image_link')
         lh.action_type = 'image_link'
         response = {'msg':'Link added successfully' ,'success':True}
-    lh.lead_id = request.POST['lead_id']
-    lh.modified_by = request.user.first_name + ' ' +request.user.last_name
-    lh.save()
+        lh.lead_id = request.POST['lead_id']
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.save()
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 
