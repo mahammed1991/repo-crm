@@ -585,8 +585,7 @@ def lead_history(request):
                             'IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],
                             type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),
                             lead_owner_email=current_user_email,is_delete=False)
-            res = HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
-            return res
+            return HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
         return render(request,'crm/lead_and_history.html')
     else:
         raise Http404
