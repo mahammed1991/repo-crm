@@ -1376,10 +1376,10 @@ $('#edit-lead').on('click',function() {
     $('#rwm span').html('<select style="width:200px;" multiple></select>');
 
       for(var i=0;i<rwm_list.length; i++){
-        if(curr_rwm.includes('None')){
+        if(curr_rwm.indexOf('None') != -1){
           $("#rwm span select option[value='--None--']").prop('selected',true);
         }
-        if(curr_rwm.includes(rwm_list[i])){
+        if(curr_rwm.indexOf(rwm_list[i]) != -1){
           $("#rwm span select").append("<option selected>"+ rwm_list[i] +"</option>");
         }
         else{
@@ -1496,11 +1496,11 @@ $('#edit-lead').on('click',function() {
     $('#type-of-policy-violation span').html('<select style="width:200px;"></select>');
     assignDropDownValues(curr_type_of_policy_violation,policy_violation_list_list,'#type-of-policy-violation span');
 
-    if( ['Google Shopping Setup','Existing Datafeed Optimization'].includes($('#type').text()))
+    if( ['Google Shopping Setup','Existing Datafeed Optimization'].indexOf($('#type').text()) != -1)
       {
         var client_web_inventory_list = ["Under 100", "100 ~ 500", "500~ 2000", "2000 ~ 5000", "Above 5000"];
         var curr_client_web_inventory = $('#web-inventory span').html();
-        $('#web-inventory span').html('<select style="width:200px;"></select>');
+        $('#web-inventory span').html("<select style='width:200px;'></select>");
         assignDropDownValues(curr_client_web_inventory,client_web_inventory_list,'#web-inventory span');
       }
 
@@ -1536,7 +1536,8 @@ $('#edit-lead').on('click',function() {
     var temp = {};
     $('.edited').each(function(){
       temp[$(this).attr('name')] = $(this).val();   
-    })
+    });
+
     temp['sf_lead_id']= $('#sf-id').html();
     if(prev_lead_status != ''){
       temp['prev_lead_status'] = prev_lead_status;
@@ -1802,12 +1803,12 @@ $('#edit-lead').on('click',function() {
       })
     }
     else{
-      alert('')
       $('#span-msg').text('Please select/fill the required fields on form.');
       $('#clone-info').removeClass('.alert-success');
       $('#clone-info').addClass('alert-warning');
       $('#clone-info').css('display','block');
-      if($('#clone-info').css('display').toLowerCase() == 'block'){
+      var cloneInfo = $('#clone-info').css('display');
+      if(cloneInfo && cloneInfo.toLowerCase() === 'block'){
         $('.white-section').css('margin-top','105px')
       }
       else{
