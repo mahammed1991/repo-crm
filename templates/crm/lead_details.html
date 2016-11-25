@@ -1962,7 +1962,6 @@ function cloneLead(){
       var errState = document.getElementById("file_status");
       if(files){
         for (var i=0;i<files.length;i++){
-          console.log(files[i].name)
           filename = files[i].name;
           var allowedFiles = ["gif,jpg,jpeg,tiff,png,bmp"];
           if (!(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename)) {

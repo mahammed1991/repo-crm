@@ -919,13 +919,14 @@ def save_image_file(request):
     lh = LeadHistory()
     if request.FILES.getlist('file'):
         img_files = request.FILES.getlist('file')
+
+        if not os.path.isdir(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+
         for img_file in img_files:
             lh = LeadHistory()
             original_file_name, file_extension = img_file.name.split(".")
             new_file_name = str(uuid.uuid4()) + "." + file_extension
-
-            if not os.path.isdir(settings.MEDIA_ROOT):
-                os.makedirs(settings.MEDIA_ROOT)
 
             file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
             try:
