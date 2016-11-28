@@ -594,7 +594,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_1 }}</td>
+                                        <td class="table-right ctype"><span name="type_1">{{ lead.type_1 }}</span></td>
                                         <td class="table-left">Comment 1</td>
                                         <td class="table-right">{{ lead.comment_1 }}</td>
                                        </tr>
@@ -660,8 +660,8 @@
                                         <td class="table-right edit"><span name="url_2">{{ lead.url_2 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_2 }}</td>
+                                        <td class="table-left">Type 2</td>
+                                        <td class="table-right ctype"><span name="type_2">{{ lead.type_2 }}</span></td>
                                         <td class="table-left">Comment 2</td>
                                         <td class="table-right">{{ lead.comment_2 }}</td>
                                        </tr>
@@ -727,8 +727,8 @@
                                         <td class="table-right edit"><span name="url_3">{{ lead.url_3 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_3 }}</td>
+                                        <td class="table-left">Type 3</td>
+                                        <td class="table-right ctype"><span name="type_3">{{ lead.type_3 }}</span></td>
                                         <td class="table-left">Comment 3</td>
                                         <td class="table-right">{{ lead.comment_3 }}</td>
                                        </tr>
@@ -795,8 +795,8 @@
                                         <td class="table-right edit"><span name="url_4">{{ lead.url_4 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_4 }}</td>
+                                        <td class="table-left">Type 4</td>
+                                        <td class="table-right ctype"><span name="type_4">{{ lead.type_4 }}</span></td>
                                         <td class="table-left">Comment 4</td>
                                         <td class="table-right">{{ lead.comment_4 }}</td>
                                        </tr>
@@ -864,8 +864,8 @@
                                         <td class="table-right edit"><span name="url_5">{{ lead.url_5 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_5 }}</td>
+                                        <td class="table-left">Type 5</td>
+                                        <td class="table-right ctype"><span name="type_5">{{ lead.type_5 }}</span></td>
                                         <td class="table-left">Comment 5</td>
                                         <td class="table-right">{{ lead.comment_5 }}</td>
                                        </tr>
@@ -1143,6 +1143,14 @@
           regComment = replaceAll(regComment, "&lt;/br&gt;", "</br>");
           $('#comment').html(regComment);
       }
+
+      var cloneInfo = $('#clone-info').css('display');
+      if(cloneInfo && cloneInfo.toLowerCase() === 'block'){
+        $('.white-section').css('margin-top','105px')
+      }
+      else{
+        $('.white-section').css('margin-top','35px')
+      }
     });
 
 
@@ -1380,6 +1388,24 @@ $('#edit-lead').on('click',function() {
         }
         else{
           $(this).find("select").append("<option>"+ ebm_list[i] +"</option>");
+        }
+      }
+    })
+
+    $('.ctype span').each(function(){
+      var ctype_list = ["Adwords Conversion Code", "AdWords Event Tracking", "Adwords Remarketing", "Analytics", "Analytics Destination Tracking", "Analytics E-Commerce Tracking", "Analytics Enhanced E-Commerce Tracking", "Analytics Event Tracking", "Cross Domain Tracking", "Dynamic Remarketing - Extension (Non-Retail)", "Dynamic Remarketing - Retail", "Existing Datafeed Optimization", "Google Analytics Dynamic Remarketing (Non-Retail)", "Google Analytics Dynamic Remarketing (Retail)", "Google Analytics Remarketing", "Google Shopping Setup", "Google Tag Manager Installation", "Picasso", "RLSA Bulk Implementation", "SDK Conversion Tracking", "WCC", "Website Call Conversion", "Project Argos- Feed Performance Optimization"];
+      var curr_ctype = $(this).html();
+      $(this).html('<select style="width:200px;"></select>');
+      $(this).find('select').append("<option value='None'>--None--</option>");
+      for(var i=0;i<ctype_list.length; i++){
+        if(curr_ctype == 'None'){
+          $(this).find("select option[value='--None--']").prop('selected',true);
+        }
+        if(curr_ctype == ctype_list[i]){
+          $(this).find("select").append("<option selected>"+ ctype_list[i] +"</option>");
+        }
+        else{
+          $(this).find("select").append("<option>"+ ctype_list[i] +"</option>");
         }
       }
     })
