@@ -1144,13 +1144,28 @@
           $('#comment').html(regComment);
       }
 
-      var cloneInfo = $('#clone-info').css('display');
-      if(cloneInfo && cloneInfo.toLowerCase() === 'block'){
-        $('.white-section').css('margin-top','105px')
+    $('td.edit-checkbox span').each(function(){
+     if($(this).html() == 'False') {
+      var html = $(this).html();
+      var tarea = $('<input type="checkbox">');
+      $(this).html(tarea);
+     }
+     else{
+      var html = $(this).html();
+      var tarea = $('<input type="checkbox" checked>');
+      $(this).html(tarea);
+     }
+    });
+    $('td.edit-checkbox span input').prop('disabled',true);
+
+    $('td').each(function(){
+      if($(this).html() == 'None' || ['None','null'].indexOf($(this).find('span').html()) != -1){
+        $(this).html('');
+        $(this).find('span').html('');
       }
-      else{
-        $('.white-section').css('margin-top','35px')
-      }
+    })
+
+      alertMsgValidation();
     });
 
 
@@ -1254,6 +1269,8 @@ $('#edit-lead').on('click',function() {
   var language = {{ language|safe }};
   var team = {{ team|safe }};
   
+    $('td.edit-checkbox span input').prop('disabled',false);
+
     $('td.edit span').each(function(){
 
         var html = $(this).html();
@@ -1272,7 +1289,7 @@ $('#edit-lead').on('click',function() {
     $("#add-comment").html('On Call : \nNext Course Of Action :');
     $("#add-comment").attr("data-dail", "{{dail_num}}");
 
-    $('td.edit-checkbox span').each(function(){
+    /*$('td.edit-checkbox span').each(function(){
        if($(this).html() == 'False') {
         var html = $(this).html();
         var tarea = $('<input type="checkbox">');
@@ -1283,7 +1300,7 @@ $('#edit-lead').on('click',function() {
         var tarea = $('<input type="checkbox" checked>');
         $(this).html(tarea);
        }
-    });
+    });*/
 
     $('td.edit-date span').each(function(){
 
@@ -1373,7 +1390,7 @@ $('#edit-lead').on('click',function() {
       }
     })
 
-
+    //Overwrite existing bid modifiers
     $('.overwrite-ebm span').each(function(){
       var ebm_list = ["TRUE", "FALSE"];
       var curr_ebm = $(this).html();
@@ -1393,7 +1410,7 @@ $('#edit-lead').on('click',function() {
     })
 
     $('.ctype span').each(function(){
-      var ctype_list = ["Adwords Conversion Code", "AdWords Event Tracking", "Adwords Remarketing", "Analytics", "Analytics Destination Tracking", "Analytics E-Commerce Tracking", "Analytics Enhanced E-Commerce Tracking", "Analytics Event Tracking", "Cross Domain Tracking", "Dynamic Remarketing - Extension (Non-Retail)", "Dynamic Remarketing - Retail", "Existing Datafeed Optimization", "Google Analytics Dynamic Remarketing (Non-Retail)", "Google Analytics Dynamic Remarketing (Retail)", "Google Analytics Remarketing", "Google Shopping Setup", "Google Tag Manager Installation", "Picasso", "RLSA Bulk Implementation", "SDK Conversion Tracking", "WCC", "Website Call Conversion", "Project Argos- Feed Performance Optimization"];
+      var ctype_list = ["Adwords Conversion Code", "AdWords Event Tracking", "Adwords Remarketing", "Analytics", "Analytics Destination Tracking", "Analytics E-Commerce Tracking", "Analytics Enhanced E-Commerce Tracking", "Analytics Event Tracking", "Cross Domain Tracking", "Dynamic Remarketing - Extension (Non-Retail)", "Dynamic Remarketing - Retail", "Existing Datafeed Optimization", "Google Analytics Dynamic Remarketing (Non-Retail)", "Google Analytics Dynamic Remarketing (Retail)", "Google Analytics Remarketing", "Google Shopping Setup", "Google Tag Manager Installation", "RLSA Bulk Implementation", "SDK Conversion Tracking", "WCC", "Website Call Conversion", "Project Argos- Feed Performance Optimization"];
       var curr_ctype = $(this).html();
       $(this).html('<select style="width:200px;"></select>');
       $(this).find('select').append("<option value='None'>--None--</option>");
@@ -1417,8 +1434,10 @@ $('#edit-lead').on('click',function() {
 
 
     var rwm_list = ["Abraham", "Anirudh Pounzula Venkat", "Ankit Bhardwaj", "Dinesh", "Dotemin Clement Kone", "Ebuka", "Esse", "Isaac", "Karuppusamy", "Krishna Prasad", "Lead Owner (Self)", "Nagendrappa Patil", "Saurabh Santra", "Vishu Grover"]
-    var curr_rwm = $('#rwm span').html().split(',');
-    $('#rwm span').html('<select style="width:200px;" multiple></select>');
+    var curr_rwm = $('#rwm span').html();
+    if(curr_rwm){
+      curr_rwm = $('#rwm span').html().split(',')
+      $('#rwm span').html('<select style="width:200px;" multiple></select>');
 
       for(var i=0;i<rwm_list.length; i++){
         if(curr_rwm.indexOf('None') != -1){
@@ -1431,6 +1450,7 @@ $('#edit-lead').on('click',function() {
           $("#rwm span select").append("<option>"+ rwm_list[i] +"</option>");
         }
       }  
+    }
 
         /*  for(var j=0;j<curr_rwm.length;j++){
         if(curr_rwm[j] == 'None'){
@@ -1626,7 +1646,7 @@ $('#edit-lead').on('click',function() {
       }
     }
 
-    if($('#status option:selected').val() == 'Pending QC - WIN' && ['Existing Datafeed Optimization','Google Shopping Setup','Project Argos- Feed Performance Optimization','RLSA Bulk Implementation'].indexOf($('#type').text()) == -1){
+    if($('#status option:selected').val() == 'Pending QC - WIN' && ['Existing Datafeed Optimization','Google Shopping Setup','Project Argos- Feed Performance Optimization','RLSA Bulk Implementation'].indexOf($('#type').text()) != -1 && $('#gcss-status span select').val() == 'None'){
 
       valid = false;
       $('#gcss-status p').show();
@@ -1762,20 +1782,20 @@ $('#edit-lead').on('click',function() {
 
     }
 
-    if({{request.session.groups|safe}}.indexOf('CRM-MANAGER') && curr_ls != $('#status option:selected').val() != -1){
+    if({{request.session.groups|safe}}.indexOf('CRM-MANAGER') != -1 && curr_ls != $('#status option:selected').val()){
       var comment = 'On Call : Next Course Of Action :';
       var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
       if(curr_comment == comment){ 
         valid = false;
         $('.edit-textarea-for-comment p').show();
         $('.edit-textarea-for-comment span textarea').addClass('error')
-      }
-      else{
+      }else{
         $('.edit-textarea-for-comment p').hide();
         $('.edit-textarea-for-comment span textarea').removeClass('error')
         /*$('#save-lead-comment').trigger('click');*/
       }
-    }else if({{request.session.groups|safe}}.indexOf('CRM-AGENT') && curr_ls != $('#status option:selected').val() && ['Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].indexOf($('#status option:selected').val()) != -1){
+      
+    }else if({{request.session.groups|safe}}.indexOf('CRM-AGENT') != -1 && curr_ls != $('#status option:selected').val() && ['Attempting Contact', 'In Progress','ON CALL', 'Pending QC - WIN', 'Pending QC - In Active','Pending QC - Dead Lead','Rework Fixed - Win','Rework Fixed - In Active'].indexOf($('#status option:selected').val())){
       var comment = 'On Call : Next Course Of Action :';
       var curr_comment = $('.edit-textarea-for-comment span textarea').val().replace('\n','').trim();
       if(curr_comment == comment){ 
@@ -1853,12 +1873,7 @@ $('#edit-lead').on('click',function() {
       $('#clone-info').addClass('alert-warning');
       $('#clone-info').css('display','block');
       var cloneInfo = $('#clone-info').css('display');
-      if(cloneInfo && cloneInfo.toLowerCase() === 'block'){
-        $('.white-section').css('margin-top','105px')
-      }
-      else{
-        $('.white-section').css('margin-top','35px')
-      }
+      alertMsgValidation();
       $("body").scrollTop(0);
    }
   }
@@ -2017,6 +2032,7 @@ function cloneLead(){
             $('#clone-info').removeClass('alert-success').addClass('alert-warning')
             $('#span-msg').text('Please upload files only with extension ' + allowedFiles.join(', '))
             $('#clone-info').show();
+            alertMsgValidation();
             $('#image_save')[0].reset()
             $('.file-name').html('');
             return false;
@@ -2045,6 +2061,7 @@ function cloneLead(){
           $('#clone-info').removeClass('alert-success').addClass('alert-warning')
           $('#span-msg').text('Please add a valid url')
           $('#clone-info').show();
+          alertMsgValidation();
           $('#image_save')[0].reset()
           $('.file-name').html('');
           return false;
@@ -2086,6 +2103,7 @@ function cloneLead(){
               }
                 $('#span-msg').text(data['msg'])
                 $('#clone-info').show();
+                alertMsgValidation();
                 get_lead_history();
                 $('#image_save')[0].reset()
                 $('.file-name').html('');
@@ -2283,6 +2301,17 @@ $('.close').click(function(){
    $('.white-section').css('margin-top','35px');
    $('#clone-info').css('display','none');
 })
+
+function alertMsgValidation(){
+  var cloneInfo = $('#clone-info').css('display');
+  if(cloneInfo && cloneInfo.toLowerCase() === 'block'){
+    $('.white-section').css('margin-top','105px')
+  }
+  else{
+    $('.white-section').css('margin-top','35px')
+  }
+}
+
 
     </script>
     
