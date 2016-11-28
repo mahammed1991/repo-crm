@@ -238,9 +238,9 @@ def crm_agent(request):
                 lead_appointment = request.GET.get('appointment')
             user_group = request.user.groups.filter(name='CRM-AGENT')
             current_user_email = request.user.email
-            leads = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','')
+            leads, leads_count = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','')
             leads_data = get_json_leads(leads[offset:limit],'TAG')
-            response_json = {'leads_list': leads_data, 'leads_count':leads.count()}
+            response_json = {'leads_list': leads_data, 'leads_count':leads_count}
             res = HttpResponse(json.dumps(response_json), content_type="application/json") 
             return res
         context ={
@@ -295,14 +295,16 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             if lead_appointment == 'Without Appointment':
                 exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                 leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',
-                        lead_owner_email=current_user_email).exclude(type_1__in=exclude_types)
+                        lead_owner_email=current_user_email,
+                        is_delete=False).exclude(type_1__in=exclude_types)
             else:
                 leads = Leads.objects.filter(lead_status__in=['Attempting Contact','In Queue'], 
                         appointment_date_in_ist__gte=start_date_time,
                         appointment_date_in_ist__lte=end_date_time,
                         rescheduled_appointment_in_ist__gte=start_date_time,
                         rescheduled_appointment_in_ist__lte=end_date_time,
-                        lead_owner_email=current_user_email)
+                        lead_owner_email=current_user_email,is_delete=False)
+            leads_count = leads.count()
         else:
             #manager
             leads,leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
@@ -315,7 +317,9 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
                 query = {}
             else:
                 query = {'lead_sub_status': lead_sub_status}
-            leads = Leads.objects.filter(lead_status=lead_status,lead_owner_email=current_user_email,**query)
+            leads = Leads.objects.filter(lead_status=lead_status,
+                    lead_owner_email=current_user_email,is_delete=False,**query)
+            leads_count = leads.count()
         else:
             #manager
             leads, leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
@@ -489,47 +493,99 @@ def lead_history(request):
             exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
             if lead_status == 'In Queue':
                 if process_type == 'TAG':
-                    leads = Leads.objects.filter(lead_status=lead_status,lead_owner_email=current_user_email).exclude(type_1__in=exclude_types)
+                    leads = Leads.objects.filter(lead_status=lead_status,
+                            lead_owner_email=current_user_email,
+                            is_delete=False).exclude(type_1__in=exclude_types)
                 elif process_type == 'SHOPPING':
-                    leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(lead_status=lead_status,
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'RLSA':
-                    leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(lead_status=lead_status,
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'WPP':
-                    leads = WPPLeads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"),lead_owner_email=current_user_email)
+                    leads = WPPLeads.objects.filter(lead_status=lead_status,
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'Picasso Audits':
-                    leads = PicassoLeads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"),lead_owner_email=current_user_email)
+                    leads = PicassoLeads.objects.filter(lead_status=lead_status,
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 else:
-                    leads = Leads.objects.filter(lead_status=lead_status,type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(lead_status=lead_status,
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),
+                            lead_owner_email=current_user_email,is_delete=False)
             elif lead_status == 'Without Appointment':
                 if process_type == 'TAG':
-                    leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',lead_owner_email=current_user_email).exclude(type_1__in = exclude_types)
+                    leads = Leads.objects.filter(appointment_date__isnull=True,
+                            lead_status='In Queue',lead_owner_email=current_user_email,
+                            is_delete=False).exclude(type_1__in = exclude_types)
                 elif process_type == 'SHOPPING':
-                    leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(appointment_date__isnull=True,
+                            lead_status='In Queue',
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'RLSA':
-                    leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(appointment_date__isnull=True,
+                            lead_status='In Queue',
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'WPP':
-                    leads = WPPLeads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"),lead_owner_email=current_user_email)
+                    leads = WPPLeads.objects.filter(appointment_date__isnull=True,
+                            lead_status='In Queue',
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'Picasso Audits':
                     leads = list()
                 else:
-                    leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(appointment_date__isnull=True,
+                            lead_status='In Queue',
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),
+                            lead_owner_email=current_user_email,is_delete=False)
 
             else:
                 exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                 if process_type == 'TAG':
-                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],lead_owner_email=current_user_email).exclude(type_1__in = exclude_types)
+                    leads = Leads.objects.filter(appointment_date__isnull=False,
+                            rescheduled_appointment__isnull=False,lead_status='In Progress',
+                            lead_sub_status__in=['IP - CALL BACK',
+                            'IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],
+                            lead_owner_email=current_user_email,
+                            is_delete=False).exclude(type_1__in = exclude_types)
                 elif process_type == 'SHOPPING':
-                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(appointment_date__isnull=False,
+                            rescheduled_appointment__isnull=False,lead_status='In Progress',
+                            lead_sub_status__in=['IP - CALL BACK',
+                            'IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'RLSA':
-                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),lead_owner_email=current_user_email)
+                    leads = Leads.objects.filter(appointment_date__isnull=False,
+                            rescheduled_appointment__isnull=False,lead_status='In Progress',
+                            lead_sub_status__in=['IP - CALL BACK',
+                            'IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'WPP':
-                    leads = WPPLeads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"),lead_owner_email=current_user_email)
+                    leads = WPPLeads.objects.filter(appointment_date__isnull=False,
+                            rescheduled_appointment__isnull=False,
+                            lead_status='In Progress',
+                            lead_sub_status__in=['IP - CALL BACK',
+                            'IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"),
+                            lead_owner_email=current_user_email,is_delete=False)
                 elif process_type == 'Picasso Audits':
                     leads = list()
                 else:
-                    leads = Leads.objects.filter(appointment_date__isnull=False,rescheduled_appointment__isnull=False,lead_status='In Progress',lead_sub_status__in=['IP - CALL BACK','IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),lead_owner_email=current_user_email)
-            res = HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
-            return res
+                    leads = Leads.objects.filter(appointment_date__isnull=False,
+                            rescheduled_appointment__isnull=False,
+                            lead_status='In Progress',
+                            lead_sub_status__in=['IP - CALL BACK',
+                            'IP - Appointment Rescheduled - IS (GS)','IP - Code Sent'],
+                            type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),
+                            lead_owner_email=current_user_email,is_delete=False)
+            return HttpResponse(json.dumps(get_json_leads(leads,process_type)), content_type="application/json")
         return render(request,'crm/lead_and_history.html')
     else:
         raise Http404
@@ -872,33 +928,39 @@ def clone_lead(request):
 @login_required
 def save_image_file(request):
     lh = LeadHistory()
-    if request.FILES:
-        img_file = request.FILES['file']
-        original_file_name, file_extension = img_file.name.split(".")
-        new_file_name = str(uuid.uuid4()) + "." + file_extension
+    if request.FILES.getlist('file'):
+        img_files = request.FILES.getlist('file')
 
         if not os.path.isdir(settings.MEDIA_ROOT):
             os.makedirs(settings.MEDIA_ROOT)
 
-        file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
-        try:
-            save_file(img_file, file_path)
-            response = {'msg':'Image uploaded successfully','success':True}
-        except:
-            response = {'msg':'Failed to upload image, please try after sometime.','success':False}
-        lh.original_image_name = img_file.name
-        lh.image_guid = new_file_name
-        lh.action_type = 'image'
-        '''
-            update file_path and file.name as Original File name in the DB
-        '''
+        for img_file in img_files:
+            lh = LeadHistory()
+            original_file_name, file_extension = img_file.name.split(".")
+            new_file_name = str(uuid.uuid4()) + "." + file_extension
+
+            file_path = os.path.join(settings.MEDIA_ROOT,new_file_name)
+            try:
+                save_file(img_file, file_path)
+                response = {'msg':'Image uploaded successfully','success':True}
+            except:
+                response = {'msg':'Failed to upload image, please try after sometime.','success':False}
+            lh.original_image_name = img_file.name
+            lh.image_guid = new_file_name
+            lh.action_type = 'image'
+            lh.lead_id = request.POST['lead_id']
+            lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+            '''
+                update file_path and file.name as Original File name in the DB
+            '''
+            lh.save()
     else:
         lh.image_link = request.POST.get('image_link')
         lh.action_type = 'image_link'
         response = {'msg':'Link added successfully' ,'success':True}
-    lh.lead_id = request.POST['lead_id']
-    lh.modified_by = request.user.first_name + ' ' +request.user.last_name
-    lh.save()
+        lh.lead_id = request.POST['lead_id']
+        lh.modified_by = request.user.first_name + ' ' +request.user.last_name
+        lh.save()
     return HttpResponse(json.dumps(response),content_type="application/json")
 
 

@@ -49,7 +49,7 @@
   <body>
   <section style=" width: 100%;position:fixed;z-index:1;background:#e8e8e8">
         <div class="alert alert-success"  id="clone-info" style="display:none;width: 50%;margin-left: 25%;margin-top:15px;">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <a href="#" class="close" aria-label="close" title="close">×</a>
             <span id ='span-msg' style="font-size: 22px;line-height: 0px;font-weight: 500;">Lead Cloned Successfully - You are on the cloned lead now.</span>
         </div>
         </section>
@@ -594,7 +594,7 @@
                                        </tr>
                                        <tr>
                                         <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_1 }}</td>
+                                        <td class="table-right ctype"><span name="type_1">{{ lead.type_1 }}</span></td>
                                         <td class="table-left">Comment 1</td>
                                         <td class="table-right">{{ lead.comment_1 }}</td>
                                        </tr>
@@ -636,7 +636,7 @@
                                         <td class="table-left">Internal CID 1</td>
                                         <td class="table-right">{{ lead.internal_cid_1 }}</td>
                                         <td class="table-left">Overwrite existing bid modifiers 1</td>
-                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_1 }}</td>
+                                        <td class="table-right overwrite-ebm"><span name='override_existing_bid_modifiers_1'>{{ lead.override_existing_bid_modifiers_1 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -660,8 +660,8 @@
                                         <td class="table-right edit"><span name="url_2">{{ lead.url_2 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_2 }}</td>
+                                        <td class="table-left">Type 2</td>
+                                        <td class="table-right ctype"><span name="type_2">{{ lead.type_2 }}</span></td>
                                         <td class="table-left">Comment 2</td>
                                         <td class="table-right">{{ lead.comment_2 }}</td>
                                        </tr>
@@ -703,7 +703,7 @@
                                         <td class="table-left">Internal CID 2</td>
                                         <td class="table-right">{{ lead.internal_cid_2 }}</td>
                                         <td class="table-left">Overwrite existing bid modifiers 2</td>
-                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_2 }}</td>
+                                        <td class="table-right overwrite-ebm"><span name='override_existing_bid_modifiers_2'>{{ lead.override_existing_bid_modifiers_2 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -727,8 +727,8 @@
                                         <td class="table-right edit"><span name="url_3">{{ lead.url_3 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_3 }}</td>
+                                        <td class="table-left">Type 3</td>
+                                        <td class="table-right ctype"><span name="type_3">{{ lead.type_3 }}</span></td>
                                         <td class="table-left">Comment 3</td>
                                         <td class="table-right">{{ lead.comment_3 }}</td>
                                        </tr>
@@ -770,7 +770,7 @@
                                         <td class="table-left">Internal CID 3</td>
                                         <td class="table-right">{{ lead.internal_cid_3 }}</td>
                                         <td class="table-left">Overwrite existing bid modifiers 3</td>
-                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_3 }}</td>
+                                        <td class="table-right overwrite-ebm"><span name='override_existing_bid_modifiers_3'>{{ lead.override_existing_bid_modifiers_3 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -795,8 +795,8 @@
                                         <td class="table-right edit"><span name="url_4">{{ lead.url_4 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_4 }}</td>
+                                        <td class="table-left">Type 4</td>
+                                        <td class="table-right ctype"><span name="type_4">{{ lead.type_4 }}</span></td>
                                         <td class="table-left">Comment 4</td>
                                         <td class="table-right">{{ lead.comment_4 }}</td>
                                        </tr>
@@ -838,7 +838,7 @@
                                         <td class="table-left">Internal CID 4</td>
                                         <td class="table-right">{{ lead.internal_cid_4 }}</td>
                                         <td class="table-left">Overwrite existing bid modifiers 4</td>
-                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_4 }}</td>
+                                        <td class="table-right overwrite-ebm"><span name='override_existing_bid_modifiers_4'>{{ lead.override_existing_bid_modifiers_4 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -864,8 +864,8 @@
                                         <td class="table-right edit"><span name="url_5">{{ lead.url_5 }}</span></td>
                                        </tr>
                                        <tr>
-                                        <td class="table-left">Code Type</td>
-                                        <td class="table-right">{{ lead.type_5 }}</td>
+                                        <td class="table-left">Type 5</td>
+                                        <td class="table-right ctype"><span name="type_5">{{ lead.type_5 }}</span></td>
                                         <td class="table-left">Comment 5</td>
                                         <td class="table-right">{{ lead.comment_5 }}</td>
                                        </tr>
@@ -907,7 +907,7 @@
                                         <td class="table-left">Internal CID 5</td>
                                         <td class="table-right">{{ lead.internal_cid_5 }}</td>
                                         <td class="table-left">Overwrite existing bid modifiers 5</td>
-                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_5 }}</td>
+                                        <td class="table-right overwrite-ebm"><span name='override_existing_bid_modifiers_5'>{{ lead.override_existing_bid_modifiers_5 }}</span></td>
                                        </tr>
 
                                        <tr>
@@ -991,7 +991,7 @@
                               <label class="input-group-btn upload-file">
                               <span class="btn btn-primary load-file">
                               <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
-                                  <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;">Upload File
+                                  <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;" multiple>Upload File
                                   <p class="file-name" style="color: black;"></p>
                               </span>
                               <div class="clearfix"></div>
@@ -1142,6 +1142,14 @@
             regComment += "<p> Dail" + cmt[i] + "</p></br>";
           regComment = replaceAll(regComment, "&lt;/br&gt;", "</br>");
           $('#comment').html(regComment);
+      }
+
+      var cloneInfo = $('#clone-info').css('display');
+      if(cloneInfo && cloneInfo.toLowerCase() === 'block'){
+        $('.white-section').css('margin-top','105px')
+      }
+      else{
+        $('.white-section').css('margin-top','35px')
       }
     });
 
@@ -1361,6 +1369,43 @@ $('#edit-lead').on('click',function() {
         }
         else{
           $(this).find("select").append("<option>"+ rs_list[i] +"</option>");
+        }
+      }
+    })
+
+
+    $('.overwrite-ebm span').each(function(){
+      var ebm_list = ["TRUE", "FALSE"];
+      var curr_ebm = $(this).html();
+      $(this).html('<select style="width:200px;"></select>');
+      $(this).find('select').append("<option value='None'>--None--</option>");
+      for(var i=0;i<ebm_list.length; i++){
+        if(curr_ebm == 'None'){
+          $(this).find("select option[value='--None--']").prop('selected',true);
+        }
+        if(curr_ebm == ebm_list[i]){
+          $(this).find("select").append("<option selected>"+ ebm_list[i] +"</option>");
+        }
+        else{
+          $(this).find("select").append("<option>"+ ebm_list[i] +"</option>");
+        }
+      }
+    })
+
+    $('.ctype span').each(function(){
+      var ctype_list = ["Adwords Conversion Code", "AdWords Event Tracking", "Adwords Remarketing", "Analytics", "Analytics Destination Tracking", "Analytics E-Commerce Tracking", "Analytics Enhanced E-Commerce Tracking", "Analytics Event Tracking", "Cross Domain Tracking", "Dynamic Remarketing - Extension (Non-Retail)", "Dynamic Remarketing - Retail", "Existing Datafeed Optimization", "Google Analytics Dynamic Remarketing (Non-Retail)", "Google Analytics Dynamic Remarketing (Retail)", "Google Analytics Remarketing", "Google Shopping Setup", "Google Tag Manager Installation", "Picasso", "RLSA Bulk Implementation", "SDK Conversion Tracking", "WCC", "Website Call Conversion", "Project Argos- Feed Performance Optimization"];
+      var curr_ctype = $(this).html();
+      $(this).html('<select style="width:200px;"></select>');
+      $(this).find('select').append("<option value='None'>--None--</option>");
+      for(var i=0;i<ctype_list.length; i++){
+        if(curr_ctype == 'None'){
+          $(this).find("select option[value='--None--']").prop('selected',true);
+        }
+        if(curr_ctype == ctype_list[i]){
+          $(this).find("select").append("<option selected>"+ ctype_list[i] +"</option>");
+        }
+        else{
+          $(this).find("select").append("<option>"+ ctype_list[i] +"</option>");
         }
       }
     })
@@ -1900,7 +1945,7 @@ function get_lead_history(){
             }
 
             else{
-              changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
+              changed = " posted an image link <h4 class='media-heading'><a href="+ data[i]['image_link'] + " target='_blank'>"+data[i]['image_link']+"</a><span class='post-time'>"+ data[i]['created_date'] +"</span>"
             }
             $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='clearfix'></div><div class='margin-top-20'></div>")
           }
@@ -1959,28 +2004,27 @@ function cloneLead(){
 
   var fileChange = function(){
       $("#file_status").empty();
-      var file = $('input[name^="img_file"]')[0].files[0]
+      var files = $('input[name^="img_file"]')[0].files
       var errState = document.getElementById("file_status");
-      if(file){
-        filename = file.name;
-        var allowedFiles = ["gif,jpg,jpeg,tiff,png,bmp"];
-        if (!(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename)) {
-          // inputted file path is not an image of one of the above types
-          $(".save-button").prop("disabled",true);
+      if(files){
+        for (var i=0;i<files.length;i++){
+          filename = files[i].name;
+          var allowedFiles = ["gif,jpg,jpeg,tiff,png,bmp"];
+          if (!(/\.(gif|jpg|jpeg|tiff|png|bmp)$/i).test(filename)) {
+            // inputted file path is not an image of one of the above types
+            $(".save-button").prop("disabled",true);
 
-          /*errState.innerHTML = "<div class='alert alert-warning'><a id='errAlert'  href='#' class='close' data-dismiss='alert'\
-                           aria-label='close'>&times;</a> Please upload files only with extension<b> " + allowedFiles.join(', ') + "</b></div>";*/
-          $('#clone-info').removeClass('alert-success').addClass('alert-warning')
-          $('#clone-info').addClass('alert-warning')
-          $('#span-msg').text('Please upload files only with extension ' + allowedFiles.join(', '))
-          $('#clone-info').show();
-          $('#image_save')[0].reset()
-          $('.file-name').html('');
-          return false;
+            $('#clone-info').removeClass('alert-success').addClass('alert-warning')
+            $('#span-msg').text('Please upload files only with extension ' + allowedFiles.join(', '))
+            $('#clone-info').show();
+            $('#image_save')[0].reset()
+            $('.file-name').html('');
+            return false;
+          }
+          $(".save-button").prop("disabled",false);
+          $('.file-name').html(filename);
+          return true;
         }
-        $(".save-button").prop("disabled",false);
-        $('.file-name').html(filename);
-        return true;
       }
   }
 
@@ -2015,15 +2059,17 @@ function cloneLead(){
       var $form = $('#image_save');
 
       var formData = new FormData();
-      var file = $('input[name^="img_file"]')[0].files[0];
-      if (file) {
-          formData.append('file',  file);
-      }
+      var files = $('input[name^="img_file"]')[0].files;
+
+      $.each(files, function(i, file) {
+          formData.append('file', file);
+      });
+
       formData.append('image_link', $('#image_link').val());
       formData.append('csrfmiddlewaretoken', $("[name='csrfmiddlewaretoken']").val());
       formData.append('lead_id', window.location.pathname.split( '/' )[3]);
       var errState = document.getElementById("file_status");
-      if (file != undefined || $('#image_link').val() != ''){
+      if (files.length != 0 || $('#image_link').val() != ''){
         $.ajax({
             url: '/crm/save-image-file/',
             type: 'POST',
@@ -2235,6 +2281,7 @@ function bindAutoComplete(){
 
 $('.close').click(function(){
    $('.white-section').css('margin-top','35px');
+   $('#clone-info').css('display','none');
 })
 
     </script>
