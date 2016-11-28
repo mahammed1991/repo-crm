@@ -658,6 +658,8 @@ def lead_details(request, lid, sf_lead_id, ctype):
                 except ObjectDoesNotExist:
                     print "No teams with this filter parameters"
                 pla_sub_status = settings.PLA_SUB_STATUS
+                if lead.type_1 == 'Existing Datafeed Optimization':
+                    pla_sub_status.remove('Existing Datafeed Optimization')
                 implemented_code_list = ['Different / Alternate', 'Same as specified by the Google rep']
                 team_list = []
                 language_list = []
