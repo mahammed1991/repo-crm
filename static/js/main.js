@@ -78,7 +78,8 @@ $(document).ready(function() {
     }
 
 
-});/*
+});
+/*
 // Olark Hide For WPP Domain Starts Here
     var wpp_index = window.location.href.indexOf('wpp')
     if (wpp_index === -1) {
@@ -99,7 +100,8 @@ function showOlark(){
     }
 
 */
-  function HandleBrowseClick()
+
+function HandleBrowseClick()
 {
     var fileinput = document.getElementById("attachmentfile");
     fileinput.click();
@@ -111,7 +113,6 @@ function Handlechange()
     var textinput = document.getElementById("filename");
     textinput.value = fileinput.value;
 }
-
 
 $('#portalFeedback').submit(function(event){
   event.preventDefault();
