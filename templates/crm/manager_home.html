@@ -79,7 +79,7 @@ WFM Home
     <section class="top-margin wfm">
 
       <div class="container-fluid" style="max-width:100%;">
-        
+
         <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="delete-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;margin-left: 75px"></span>
@@ -456,12 +456,12 @@ WFM Home
               success: function(data) {
                   req = getParameterByName('recentRequest', this.url);
                   if(req === ""+recentRequest){
-                    $("#leads_table_body").html('')
-                    LeadsDataTable(data)
+                    $("#leads_table_body").html('');
+                    LeadsDataTable(data);
                     initial_load = false;
                     $('#preloaderOverlay').hide();
-                  }              },
-              error: function(xhr){
+                  }
+              },error: function(xhr){
                   alert('Request Status: ' + xhr.status);
               }
           });
