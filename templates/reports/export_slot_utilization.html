@@ -1,0 +1,363 @@
+{% extends 'layouts/main.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+Export-Slot-utilization
+{% endblock title %}
+{% block main_css %}
+  <style type="text/css">
+  </style>
+   <link rel="stylesheet" href="{% static 'css/representative/plan_schedule.css' %}">
+{% endblock main_css %}
+{% block content %}
+<section class="content-region inner-page">
+  
+  <div class="container">
+      <h1>EXPORT-SLOT-UTILIZATION</h1>
+     <!-- google rep info -->
+    <div class="row std-sub-top"></div>
+      <form method="POST" name="" onsubmit="return validatethis(this);">
+          {% csrf_token %}
+          
+          {% if error %}
+             <div class="row" id="" style="">
+              <div  class="col-md-12">
+                  <div class="">
+                    <div style="color:red"  class="picasso_workflow_text" id="not-eligible" style="" >
+                         <p> {{ error }} </p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="row" style="margin-left: 30px;">
+              <div class="col-md-1"></div>
+              <div class="col-md-3">
+                  <label style="float: left;margin-top: 2px;margin-left: 5px;">Start Date</label>
+                  <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date">
+              </div>
+              <div class="col-md-3">
+                  <label style="float: left;margin-left:23px;margin-top: 3px;">End Date</label>
+                  <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date">
+              </div>
+              <div class="col-md-3"> 
+                    <label style="margin-top: 3px;margin-left: 36px;">Choose Type</label><br>
+                    <select style="margin-left: 36px;" class="form-control bgicon" name="selection" id="download_type">
+                      <option value="choose">Choose</option>
+                      <option value="download_report">Download Report</option>
+                      <option value="download_summary">Download Summary</option>
+                       <option value="download_summary_day_time">Download Summary by Day/Time</option>
+                    </select>
+                    
+              </div>
+          </div>
+
+          <div class="row">
+          <div class="col-md-1"></div>
+            <div class="col-md-3 box2 processTeam" id="showProcess" style="display:none;margin-left:51px;"">
+            <!-- bellow row section is to dispaly process and team on selection download type day and time wise -->
+                <div id="processTypesDiv" class="btn-group drpDown" style="width: 85%;margin-top: 26px;margin-left:7px;">
+                        <button type="button" class="form-control bgicon" id="processTypeBtn" style="width: 100%;">Process Type</button>
+                        <ul class="dropdown-menu process-ul" style="margin-top: -21px;width: 100%;">
+                        {% for item in process_types %}
+                            <li id="{{item}}">
+                                <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{item}}</a>
+                            </li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+
+
+             <div class="col-md-3 box2 processTeam" id="showProcessTeam" style="display:none;margin-left:51px;">
+              <div id="teamsDiv" class="btn-group drpDown" style="width:86%;margin-top: 26px;">
+                <button type="button" class="form-control bgicon" id="teamTypeBtn" style="width: 98%;margin-left:-34px;">Teams</button>
+                <ul class="dropdown-menu teams-ul" style="overflow: scroll;height:auto;max-height:126px;margin-top: -21px;width: 104%;overflow-x: hidden;margin-left:-35px;">
+                        <li idValue='000' id='selectAll' class='selectAll hideItems'>
+                                <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;Select All</a>
+                        </li>
+                        {% for team in default_teams %}
+                            <li idValue='{{team.id}}' id='{{team.process_type}}_{{team.id}}' class='{{team.process_type}} hideItems'>
+                                <a href="#" class="small"><input type="checkbox" class="hiddenCheckbox" /><span class='glyphicon glyphicon-ok tickMark'></span>&nbsp;{{team}}</a>
+                            </li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+              
+            <div class="col-md-3">
+                  <label style="margin-top:3px;"></label>
+                  <input style="margin-top:26px;height:47px;margin-left:134%;width:94%" type="submit" value="Download" 
+                   class="btn std-btn" id="submitbutton" >
+            </div>
+
+          </div>
+
+            <div class="col-md-2 box2 bb hideItems">
+                <select id="selectedProcessType" name="selectedProcessType" multiple="multiple">                  
+                </select>
+                <select id="selectedTeams" name="selectedTeams" multiple="multiple">
+                </select>
+            </div>
+          </div>
+
+      </form>
+  </div>
+
+</section>
+
+{% endblock content %}
+
+{% block main_js %}
+
+
+
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+
+
+$("#download_type").change(function(){
+  if($("#download_type").val() == "download_summary_day_time"){
+     //$("#notify").css('display', '');
+     $("#showProcessTeam").css('display', '');
+     $("#showProcess").css('display', '');
+     $('#submitbutton').css('margin-left', '-18%');
+     $('#submitbutton').css('width', '94%');
+    }
+    else{
+      //$("#notify").css('display', 'none');
+      $("#showProcess").css('display', 'none');
+     $("#showProcessTeam").css('display', 'none');
+     $('#submitbutton').css('margin-left', '131%');
+     $('#submitbutton').css('width', '94%');
+    }
+});
+
+
+window.is_error = false;
+$(function() {
+    $("#datepickerFrom").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() + 1);
+            $("#datepickerTo").datepicker("option", "minDate", dt);
+        }
+    });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+
+
+  function validatethis(frm) {
+    
+    window.is_error = false;
+        if(frm.datepickerFrom.value == "0" || frm.datepickerFrom.value == "")
+          {
+              $(frm.datepickerFrom).addClass('error-box');
+              frm.datepickerFrom.focus();
+              window.is_error = true;
+          }
+        else{
+              $(frm.datepickerFrom).removeClass('error-box');
+            }
+        if(frm.datepickerTo.value == "0" || frm.datepickerTo.value == "")
+          {
+              $(frm.datepickerTo).addClass('error-box');
+              window.is_error = true;
+              frm.datepickerTo.focus();
+          }
+        else{
+              $(frm.datepickerTo).removeClass('error-box');
+            }
+        if($("#download_type").val() == "choose"){
+          $("#download_type").addClass('error-box');
+          window.is_error = true;
+          $("#download_type").focus();
+        }
+        else{
+          $("#download_type").removeClass('error-box');
+        }
+
+    // below code is to validate seletion of team and process type on day/time download reports
+
+    if($(".processTeam").is(":visible")){
+    
+      if(frm.selectedTeams.value == "0" || frm.selectedTeams.value == ""){
+            $(frm.teamTypeBtn).addClass('error-box');
+                window.is_error = true;
+                  }
+      else{
+            $(frm.teamTypeBtn).removeClass('error-box');
+                }
+        }
+
+    if($(".processTeam").is(":visible") ){
+        if(frm.selectedProcessType.value == "0" || frm.selectedProcessType.value == ""){
+            $(frm.processTypeBtn).addClass('error-box');
+              window.is_error = true;
+              }else{
+            $(frm.processTypeBtn).removeClass('error-box');
+              }
+       }
+               
+       if(window.is_error)
+             {
+          return false;
+              }
+          else{
+            var status = true; 
+            return status;
+          }
+    }
+
+
+    /* process and team selection  javascript code*/
+         $(document).click(function(evt){
+       if(evt.target.classList.contains('small') || evt.target.id == 'processTypeBtn'){
+            var visibility = $(".process-ul").is(":visible");
+            if(!visibility)
+            {
+                $('.process-ul').show();
+                $('.teams-ul').show();
+            }
+            else
+            {
+                if(evt.target.classList.contains('small'))
+                {
+                 $('.process-ul').show();
+                 $('.teams-ul').show();  
+                }
+                else
+                {
+                  $('.process-ul').hide(); 
+                  $('.teams-ul').hide(); 
+                }
+            }
+       }else{
+
+            $('.process-ul').hide();
+            $('.teams-ul').hide();
+       }
+    });
+    
+    // Call Process Select.
+    $('.process-ul').children().on('click', function(){
+        $('.teams-ul').show();
+        $('.process-ul').show();
+        selectProcessPopulateTeamData(this);
+    });
+
+    // Call Team Select.
+    $('.teams-ul').children().on('click', function(){
+        selectTeams(this.className, this);
+    });
+
+    // Select All Button. 
+    $('#selectAll').on('click', function(){
+
+        // UnSelect all.
+        if($(this).hasClass('all-selected')){
+            $(this).parent().children(':not(.hideItems)').children("a").children("span").removeClass('tickMarkShow');
+            $(this).parent().children(':not(.hideItems)').each(function(){
+                $('#selectedTeams').children("option[value='"+ $(this).attr('idValue')+"']").remove();
+            });
+            $(this).removeClass('all-selected');
+            return;
+        }
+
+        // Select all.
+        $(this).parent().children(':not(.hideItems)').children("a").children("span").addClass('tickMarkShow');
+        $(this).parent().children(':not(.hideItems)').each(function(){
+            var optionElement = "<option class ='"+$(this).attr('class')+"' value='"+ $(this).attr('idValue')+"' selected></option>";
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(this).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        });
+        $(this).addClass('all-selected');
+
+    });
+
+    function selectProcessPopulateTeamData(processElement){
+
+        var processOptionElement = "<option value='"+$(processElement).attr('id')+"' selected></option>";
+        var selectedProcessElement = $(processElement).children("a").children('span');
+
+        // UnSelect Process Items.
+        if(selectedProcessElement.hasClass('tickMarkShow')){
+            selectedProcessElement.removeClass('tickMarkShow');     // UnSelect the Process Element.
+            $('.'+$(processElement).attr('id')).children("a").children('span').removeClass('tickMarkShow'); // UnSelect the Process Element's teams.
+            $('#selectedTeams').children("option[class='"+$(processElement).attr('id')+"']").remove();
+            $('.'+$(processElement).attr('id')).addClass('hideItems');
+
+            $('#selectAll').children("a").children('span').removeClass('tickMarkShow');;
+            $('#selectedProcessType').children("option[value='"+$(processElement).attr('id')+"']").remove();
+
+            // If the selectedTeams list has only selectAll option element then remove 'all-selected' from it.
+            if($('#selectedTeams option[value="000"]:only-child').length){
+                $('#selectAll').removeClass('all-selected');
+            }
+
+            // If selectAll element has Not got the class 'all-selected', then hide it.
+            if(!$('#selectAll').hasClass('all-selected') && !$('#selectedProcessType').children().length){
+                $('#selectAll').addClass('hideItems');
+            }
+
+        }
+
+        // Select Process Items.
+        else{
+            $('.'+$(processElement).attr('id') + ', #selectAll').removeClass('hideItems');
+            selectedProcessElement.addClass('tickMarkShow');
+            $('#selectedProcessType').append(processOptionElement);
+
+            // Remove select all tick.
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
+        }
+
+    }
+
+    function selectTeams(parentElementId, selectedElement){
+        var selectedTeamsElement = $(selectedElement).children("a").children('span');
+        var optionElement = "<option class ='"+parentElementId+"' value='"+ $(selectedElement).attr('idValue')+"' selected></option>";
+        if(selectedTeamsElement.hasClass('tickMarkShow')){
+            selectedTeamsElement.removeClass('tickMarkShow');
+            $('#selectedTeams').children("option[value='"+ $(selectedElement).attr('idValue')+"']").remove();
+            $('#selectAll').children("a").children("span").removeClass('tickMarkShow');
+        }
+        else{
+            selectedTeamsElement.addClass('tickMarkShow');
+
+            // Append to list if Element is not present.
+            if(!$('#selectedTeams').has("option[value='"+$(selectedElement).attr('idValue')+"']").length){
+                $('#selectedTeams').append(optionElement);
+            }
+        }
+    }
+    /*end*/
+
+</script>
+
+{% endblock main_js %}
