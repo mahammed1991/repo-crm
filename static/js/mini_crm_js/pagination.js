@@ -1,7 +1,7 @@
 var clickedPage = 1;
 var pageStartNum = 1;
 var pageEndNum = 10;
-var defaultStartNum = 1, defaultEndNum = 20, shaffelCount = 10;
+var defaultStartNum = 1, defaultEndNum = 20, shuffleCount = 10;
 
 var reloadPagination = function(){
     clickedPage = 1;
@@ -48,7 +48,7 @@ $("body").on('click', '.paged', function(e){
     var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
     var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
     var activePage = parseInt($('#pagination li a.active' ).data('value' ));
-    var reShuffelPagination = false;
+    var reShufflePagination = false;
 
     if(clickedPage === "«" && activePage > 0){
         if(firstPage == 1){
@@ -61,9 +61,9 @@ $("body").on('click', '.paged', function(e){
             pageEndNum -= 1;
             clickedPage = activePage - 1;
         }
-        reShuffelPagination = true;
+        reShufflePagination = true;
     }else if(clickedPage === "»" && activePage < numOfPages){
-        if(activePage == numOfPages) reShuffelPagination = false;
+        if(activePage == numOfPages) reShufflePagination = false;
         else{
             if(numOfPages > defaultEndNum){
                 pageStartNum += 1
@@ -75,32 +75,32 @@ $("body").on('click', '.paged', function(e){
                 clickedPage = activePage + 1;
             }
         }
-        reShuffelPagination = true;
+        reShufflePagination = true;
     }else if(parseInt(clickedPage)){
         clickedPage = parseInt(clickedPage);
         if(clickedPage == lastPage){
-            pageStartNum += shaffelCount;
-            pageEndNum += shaffelCount;
+            pageStartNum += shuffleCount;
+            pageEndNum += shuffleCount;
         }else if (clickedPage == firstPage){
-            if(activePage - shaffelCount > shaffelCount){
-                pageStartNum -= shaffelCount;
-                pageEndNum -= shaffelCount;
+            if(activePage - shuffleCount > shuffleCount){
+                pageStartNum -= shuffleCount;
+                pageEndNum -= shuffleCount;
             }else{
                 pageStartNum = defaultStartNum
                 pageEndNum = defaultEndNum
             }
         }else clickedPage = clickedPage;
 
-        reShuffelPagination = true;
+        reShufflePagination = true;
     }
       
     if(is_agent){
         appointment = $('#appointment').val()
-        if(reShuffelPagination){
+        if(reShufflePagination){
           if (appointment != 'Select') call_crm_management(true);
           else call_crm_management(false);
         }
     }else{
-          if(reShuffelPagination) LoadTheTableContent(false);
+          if(reShufflePagination) LoadTheTableContent(false);
     }
 });
