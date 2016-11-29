@@ -447,14 +447,14 @@ WFM Home
         if(status != "Select"){
           if(sub_status != "Select")
 
-            if(start_date != "" || end_date != "")
+            if(start_date && end_date)
               data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit, 'start_date':start_date, 'end_date':end_date};
             else
               data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit}
             
           else
 
-            if(start_date != "" || end_date != "")
+            if(start_date && end_date)
               data = {'region':region,'process':process_name,'status':status, 'limit':limit, 'start_date':start_date, 'end_date':end_date};
             else
               data = {'region':region,'process':process_name,'status':status, 'limit':limit};
@@ -464,7 +464,7 @@ WFM Home
             if (appointment != "Select"){
               makeCall = true;
 
-              if(start_date != "" || end_date != "")
+              if(start_date && end_date)
                 data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit,'start_date':start_date, 'end_date':end_date};
               else
                 data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
@@ -472,7 +472,7 @@ WFM Home
             }   
             if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
 
-              if(start_date != "" || end_date != "")
+              if(start_date && end_date)
                 data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit,'start_date':start_date, 'end_date':end_date};
               else
                 data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
