@@ -1271,19 +1271,19 @@ def deleted_leads(request):
                                 'id','customer_id', 'company', 'sf_lead_id', 'first_name', 'last_name','url_1','appointment_date_in_ist','is_delete')
                     leads = list(all_leads[offset:limit])
                     leads_count =  all_leads.count()
-                    return HttpResponse(json.dumps({'leads_list': leads, 'leads_count':leads_count, 'success':True}), content_type="application/json")
+                    return HttpResponse(json.dumps({'leads_list': leads, 'leads_count':leads_count, 'success':True, 'process_type':'Shopping'}), content_type="application/json")
                 elif process_type ==  "RLSA":
                     all_leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"),is_delete=True).values(
                                 'id','customer_id', 'company', 'sf_lead_id', 'first_name', 'last_name','url_1','appointment_date_in_ist','is_delete')
                     leads = list(all_leads[offset:limit])
                     leads_count =  all_leads.count()
-                    return HttpResponse(json.dumps({'leads_list': leads, 'leads_count':leads_count, 'success':True}), content_type="application/json")
+                    return HttpResponse(json.dumps({'leads_list': leads, 'leads_count':leads_count, 'success':True, 'process_type':'RLSA'}), content_type="application/json")
                 elif  process_type ==  "ShoppingArgos":
                     all_leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"),is_delete=True).values(
                                 'id','customer_id', 'company', 'sf_lead_id', 'first_name', 'last_name','url_1','appointment_date_in_ist','is_delete')
                     leads = list(all_leads[offset:limit])
                     leads_count =  all_leads.count()
-                    return HttpResponse(json.dumps({'leads_list': leads, 'leads_count':leads_count, 'success':True}), content_type="application/json")
+                    return HttpResponse(json.dumps({'leads_list': leads, 'leads_count':leads_count, 'success':True, 'process_type':'ShoppingArgos'}), content_type="application/json")
                 else:
                     exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                     all_leads = Leads.objects.filter(is_delete=True).exclude(type_1__in = exclude_types).values('id','customer_id', 'company', 'first_name', 'sf_lead_id', 'last_name','url_1','appointment_date_in_ist','is_delete')
