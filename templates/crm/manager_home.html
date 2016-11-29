@@ -121,10 +121,8 @@ WFM Home
                         <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
                         <select id="process" name="process" onchange="GetStatus();" class="form-control bgicon">
-                          <!-- <option value="process_default">Process</option> -->
                         </select>
-                    </div> 
-
+                    </div>
                   </div>
                 </div>
                   </div>
@@ -505,8 +503,7 @@ WFM Home
             $('#data').html('<div  id="no-leads-msg">'+
                             '<div class="container-fluid" style="margin-top:15%;">'+
                             '<div class="info-box alert"><div class="msg">'+
-                            '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
-                            'please contact your TL/WFM.</b></i></div></div></div></div>');
+                            '<strong> Info : </strong> <i><b>There are no leads for the sort criteria.</b></i></div></div></div></div>');
             $('#data').show(); 
             $('table').hide();
           }
