@@ -20,4 +20,6 @@ urlpatterns = patterns(
     url(r'^get-lead-sub-status/$', views.get_lead_sub_status),
     url(r'^get-feed-optimisation-sub-status/$', views.get_feed_optimisation_sub_status),
     url(r'^user-appointments/$', views.user_appointmnets),
+    url(r'^deleted-leads/$', views.deleted_leads),
+    url(r'^restore-lead/$', views.restore_lead),
 )
