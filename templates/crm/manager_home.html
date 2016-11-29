@@ -439,23 +439,23 @@ WFM Home
         status = $('#status').val()
         sub_status = $('#sub_status').val()
         appointment = $('#appointment').val()
-        start_date =$('#datepickerFrom').val()
-        end_date =$('#datepickerTo').val()
+        startDate =$('#datepickerFrom').val()
+        endDate =$('#datepickerTo').val()
 
         var makeCall = false;
         
         if(status != "Select"){
           if(sub_status != "Select")
 
-            if(start_date && end_date)
-              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit, 'start_date':start_date, 'end_date':end_date};
+            if(startDate && endDate)
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit, 'start_date':startDate, 'end_date':endDate};
             else
               data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit}
             
           else
 
-            if(start_date && end_date)
-              data = {'region':region,'process':process_name,'status':status, 'limit':limit, 'start_date':start_date, 'end_date':end_date};
+            if(startDate && endDate)
+              data = {'region':region,'process':process_name,'status':status, 'limit':limit, 'start_date':startDate, 'end_date':endDate};
             else
               data = {'region':region,'process':process_name,'status':status, 'limit':limit};
               
@@ -464,16 +464,16 @@ WFM Home
             if (appointment != "Select"){
               makeCall = true;
 
-              if(start_date && end_date)
-                data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit,'start_date':start_date, 'end_date':end_date};
+              if(startDate && endDate)
+                data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit,'start_date':startDate, 'end_date':endDate};
               else
                 data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
 
             }   
             if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
 
-              if(start_date && end_date)
-                data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit,'start_date':start_date, 'end_date':end_date};
+              if(startDate && endDate)
+                data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit,'start_date':startDate, 'end_date':endDate};
               else
                 data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
                 
