@@ -1293,8 +1293,7 @@ def deleted_leads(request):
             except Object.DoesNotExist:
                 return HttpResponse(json.dumps({'msg':'Server error occurred. Please try again later.', 'success':False}), content_type="application/json")
                     
-        context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), }
-        return render(request, 'crm/deleted_leads.html', context)
+        return render(request, 'crm/deleted_leads.html', {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING) })
 
 
 @csrf_exempt
@@ -1312,11 +1311,9 @@ def restore_lead(request):
         lh.modifications = "This lead is Restored by " + request.user.first_name + ' ' +request.user.last_name
         lh.save()
 
-        response = {'msg':'Successfully Restored lead', 'success':True}
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return HttpResponse(json.dumps({'msg':'Successfully Restored lead', 'success':True}), content_type="application/json")
     except ObjectDoesNotExist:
-        response = {'msg':'Failed to Restore', 'success':False}
-        return HttpResponse(json.dumps(response),content_type='application/json')
+        return HttpResponse(json.dumps({'msg':'Failed to Restore', 'success':False}),content_type='application/json')
 
 
 
