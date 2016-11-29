@@ -58,6 +58,8 @@ def crm_management(request):
             lead_status = request.GET.get('status') if request.GET.get('status') else ''
             lead_sub_status = request.GET.get('sub_status') if request.GET.get('sub_status') else ''
             lead_appointment = request.GET.get('appointment') if request.GET.get('appointment') else None
+            start_date = datetime.strptime(str(request.GET.get('start_date')), "%m/%d/%Y") if request.GET.get('start_date') else None
+            end_date = datetime.strptime(str(request.GET.get('end_date')), "%m/%d/%Y") if request.GET.get('end_date') else None
 
             has_region = False
             loc_list = list()
@@ -73,15 +75,35 @@ def crm_management(request):
 
                 if lead_status == lead_sub_status:
                     if has_region:
+
                         query = {'lead_status': lead_status, 'country__in':loc_list, 'is_delete':False}
+
+                        if start_date and end_date:
+                            query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+                     
                     else:
+
                         query = {'lead_status': lead_status, 'is_delete':False}
+
+                        if start_date and end_date:
+                            query.update({'created_date__gte':start_date, 'created_date__gte':start_date, 'created_date__lt':end_date})
+                        
+                            
                 else:
                     if has_region:
+
                         query = {'lead_status' : lead_status,'lead_sub_status' :lead_sub_status,
                         'country__in':loc_list, 'is_delete':False}
+
+                        if start_date and end_date:
+                            query.update({'created_date__gte':start_date, 'created_date__gte':start_date, 'created_date__lt':end_date})
+
                     else:
+
                         query = {'lead_status' : lead_status,'lead_sub_status' :lead_sub_status, 'is_delete':False}
+
+                        if start_date and end_date:
+                            query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
 
                 if process_type == "WPP":
 
@@ -93,9 +115,16 @@ def crm_management(request):
                 elif process_type == "Picasso Audits":
 
                     if loc_list:
+
                         query = {'lead_status': lead_status, 'country__in':loc_list, 'is_delete':False}
+                        if start_date and end_date:
+                            query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+
                     else:
+                        
                         query = {'lead_status': lead_status, 'is_delete':False}
+                        if start_date and end_date:
+                            query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
 
                     leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country','type_1')[offset:limit]
@@ -154,7 +183,7 @@ def crm_management(request):
             else:
                 user_group = request.user.groups.filter(name='CRM-MANAGER')
                 current_user_email = request.user.email
-                leads, leads_count = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list)
+                leads, leads_count = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list, start_date, end_date)
                 
                 
             all_leads = get_leads(leads, leads_list)
@@ -252,7 +281,7 @@ def crm_agent(request):
         raise Http404
 
 
-def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list):
+def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list, start_date, end_date):
     if lead_appointment and lead_appointment != 'Select':
         #Our Local timezone, to which we want to convert the UTC time.
         local_tz = pytz.timezone('Asia/Calcutta')
@@ -307,7 +336,7 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             leads_count = leads.count()
         else:
             #manager
-            leads,leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
+            leads,leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time, start_date, end_date)
             
             # leads = Leads.objects.filter(lead_status="In Queue", appointment_date_in_ist__gte=start_date_time,appointment_date_in_ist__lte=end_date_time).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
@@ -322,36 +351,58 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
             leads_count = leads.count()
         else:
             #manager
-            leads, leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time)
+            leads, leads_count = get_leads_based_on_appointment_manager(process,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time, start_date, end_date)
            
             # leads = Leads.objects.filter(lead_status=lead_status,lead_sub_status=lead_sub_status).values(
             #     'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country')
     return leads, leads_count
 
 
-def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time):
+def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,offset,has_region,loc_list,start_date_time,end_date_time, start_date, end_date):
     if has_region:
         if lead_appointment == 'Without Appointment':
+
             query = {'country__in':loc_list, 'appointment_date__isnull':True, 'is_delete':False}
+
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+            
         elif lead_appointment != 'Select' or 'Without Appointment':
+
             query = {'country__in':loc_list, 'appointment_date_in_ist__gte':start_date_time, 
                     'appointment_date_in_ist__lte':end_date_time,
-                    'rescheduled_appointment_in_ist__gte':start_date_time,
-                    'rescheduled_appointment_in_ist__lte':end_date_time, 
+                    # 'rescheduled_appointment_in_ist__gte':start_date_time,
+                    # 'rescheduled_appointment_in_ist__lte':end_date_time, 
                     'is_delete':False
                     }
+
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+            
         else:
+
             query = {'country__in':loc_list, 'is_delete':False}
+
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+            
     else:
         if lead_appointment == 'Without Appointment':
+
             query = {'appointment_date__isnull':True, 'is_delete':False}
+
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+                
         elif lead_appointment != 'Select' or 'Without Appointment':
             query = {'appointment_date_in_ist__gte':start_date_time,
-                    'appointment_date_in_ist__lte':end_date_time,
-                    'rescheduled_appointment_in_ist__gte':start_date_time,
-                    'rescheduled_appointment_in_ist__lte':end_date_time, 
-                    'is_delete':False
-                    }
+                'appointment_date_in_ist__lte':end_date_time,
+                # 'rescheduled_appointment_in_ist__gte':start_date_time,
+                # 'rescheduled_appointment_in_ist__lte':end_date_time, 
+                'is_delete':False,
+            }
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
         else:
             query = {}
 
@@ -366,7 +417,11 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
     elif process_type == "Picasso Audits":
 
         if loc_list:
+
             query = {'country__in':loc_list, 'is_delete':False}
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
+
         else:
             query = {}
 

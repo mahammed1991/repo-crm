@@ -84,6 +84,22 @@ WFM Home
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;margin-left: 75px"></span>
         </div>
+
+        <div id="datediv" class="row">
+          <div class="col-md-3" style="width: 267px">
+              
+              <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date" style="height: 15px;">
+          </div>
+          <div class="col-md-3" style="width: 267px">
+              
+              <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date" style="margin-left: 0px;height: 15px;" >
+          </div>
+          <div class="col-md-3">
+
+              <input id="date-submit" type="submit" value="Submit" style="margin-top: 5px;">
+          </div>
+        </div>
+
         <!--div style="float: right;">
             <label><b style="font-weight: bold;">Result Limit</b></label>
                 <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;    margin-bottom: 0px;">
@@ -98,7 +114,7 @@ WFM Home
           
           <div class="blue-bg">
           <div id="delete_lead_msg"></div>
-            <div class="row">
+            <div class="row" style="margin-top: -40px;">
               <div class="col-md-5">
                 <div class="arrow-box-blue" style="width:104%">
                   <div class="row">
@@ -256,6 +272,7 @@ WFM Home
           var qp = window.location.href.split('=')[1].split("&")
           if(qp.length > 1){
             $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
+            $('#datediv').css('padding-top','58px');
             $("#delete-info").show(); 
           }
       }
@@ -404,6 +421,11 @@ WFM Home
       LoadTheTableContent(false)
     });
 
+    $( "#date-submit" ).click(function() {
+      reloadPagination();
+      LoadTheTableContent(false)
+    });
+
     function LoadTheTableContent(freshAppointment){
         var limit = $('#limit').val()
         var region = $('#region').val()
@@ -419,21 +441,44 @@ WFM Home
         status = $('#status').val()
         sub_status = $('#sub_status').val()
         appointment = $('#appointment').val()
+        start_date =$('#datepickerFrom').val()
+        end_date =$('#datepickerTo').val()
 
         var makeCall = false;
+        
         if(status != "Select"){
           if(sub_status != "Select")
-            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+
+            if(start_date != "" || end_date != "")
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit, 'start_date':start_date, 'end_date':end_date};
+            else
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit}
+            
           else
-            data = {'region':region,'process':process_name,'status':status, 'limit':limit};
+
+            if(start_date != "" || end_date != "")
+              data = {'region':region,'process':process_name,'status':status, 'limit':limit, 'start_date':start_date, 'end_date':end_date};
+            else
+              data = {'region':region,'process':process_name,'status':status, 'limit':limit};
+              
           makeCall = true;
         }else{
             if (appointment != "Select"){
               makeCall = true;
-              data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
+
+              if(start_date != "" || end_date != "")
+                data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit,'start_date':start_date, 'end_date':end_date};
+              else
+                data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
+
             }   
             if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
-              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+
+              if(start_date != "" || end_date != "")
+                data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit,'start_date':start_date, 'end_date':end_date};
+              else
+                data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+                
               makeCall = true;              
             }
 
@@ -546,3 +591,41 @@ WFM Home
     
   </body>
   {% endblock content %}
+
+  {% block main_js %}
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+
+    $(function() {
+      $("#datepickerFrom").datepicker({
+        defaultDate : "+1w",
+        changeMonth : true,
+        numberOfMonths : 1,
+        dateFormat: "mm/dd/yy",
+        onClose : function(selectedDate) {
+          $("#to").datepicker("option", "minDate", selectedDate);
+        },
+        onSelect: function (selected) {
+              var dt = new Date(selected);
+              dt.setDate(dt.getDate() + 1);
+              $("#datepickerTo").datepicker("option", "minDate", dt);
+          }
+      });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+
+</script>
+{% endblock main_js %}
