@@ -110,7 +110,7 @@ def crm_management(request):
 
                     leads = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country','type_1'
-                        )[offset:limit]
+                        )
                     leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
 
                 elif process_type == "Picasso Audits":
@@ -128,14 +128,14 @@ def crm_management(request):
                             query.update({'created_date__gte':start_date, 'created_date__lt':end_date})
 
                     leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
-                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country','type_1')[offset:limit]
+                        'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country','type_1')
                     leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
 
                 elif process_type == "RLSA":
 
                     leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-                        ).order_by('-created_date')[offset:limit]
+                        ).order_by('-created_date')
 
                     leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
 
@@ -143,13 +143,13 @@ def crm_management(request):
 
                     leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-                        )[offset:limit]
+                        )
                     leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
 
                 elif process_type == "ShoppingArgos":
                     leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-                        )[offset:limit]
+                        )
                     leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
                     
                 elif process_type == "tag_and_shopping":
@@ -158,27 +158,27 @@ def crm_management(request):
                         query['lead_status'] = query['lead_status'].replace("TAG",'').strip()
                         exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                         leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-                            )[offset:limit]
+                            )
                         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
                         
                     elif query['lead_status'].startswith('Shopping'):
                         query['lead_status'] = query['lead_status'].replace("Shopping",'').strip()
                         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
                         'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-                        )[offset:limit]
+                        )
                         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
                         
                     else:
                         query['lead_status'] = query['lead_status']
                         exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA")
                         leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country', 
-                            'type_1')[offset:limit]
+                            'type_1')
                         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
                         
                 else: # Tag
                     exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
                     leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-                        )[offset:limit]
+                        )
                     leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
             else:
@@ -187,9 +187,9 @@ def crm_management(request):
                 leads, leads_count = get_filtered_leads(user_group,process_type,lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,has_region,loc_list, start_date, end_date)
                 
                 
-            all_leads = get_leads(leads, leads_list)
-
+            all_leads = get_leads(leads[offset:limit], leads_list)
             if request.GET.get('download_csv'):
+                all_leads = get_leads(leads, [])
                 return export_filtered_leads(all_leads,False) 
             else:
                 try:
@@ -239,7 +239,6 @@ def get_leads(leads, leads_list):
                      'type_1': process_type}
         
         leads_list.append(lead_dict)
-
     return leads_list
 
 
@@ -253,7 +252,8 @@ def crm_agent(request):
             lead_status =  ''
             lead_sub_status = ''
             lead_appointment = None
-
+            start_date = datetime.strptime(str(request.GET.get('start_date')), "%m/%d/%Y").replace(hour=0,minute=0,second=0) if request.GET.get('start_date') else None
+            end_date = datetime.strptime(str(request.GET.get('end_date')), "%m/%d/%Y").replace(hour=23,minute=59,second=59) if request.GET.get('end_date') else None
             limit = int(request.GET.get('limit', 10))
             on_page = int(request.GET.get('page', 1))
             if on_page <= 1:
@@ -271,7 +271,7 @@ def crm_agent(request):
                 lead_appointment = request.GET.get('appointment')
             user_group = request.user.groups.filter(name='CRM-AGENT')
             current_user_email = request.user.email
-            leads, leads_count = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','','','')
+            leads, leads_count = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','',start_date, end_date)
             leads_data = get_json_leads(leads[offset:limit],'TAG')
             response_json = {'leads_list': leads_data, 'leads_count':leads_count}
             res = HttpResponse(json.dumps(response_json), content_type="application/json")
@@ -331,16 +331,22 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
         if user_group[0].name == 'CRM-AGENT':
             if lead_appointment == 'Without Appointment':
                 exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
-                leads = Leads.objects.filter(appointment_date__isnull=True,lead_status='In Queue',
-                        lead_owner_email=current_user_email,
-                        is_delete=False).exclude(type_1__in=exclude_types)
+                query = {'appointment_date__isnull':True,'lead_status':'In Queue',
+                        'lead_owner_email':current_user_email,
+                        'is_delete':False}
+                if start_date and end_date:
+                    query.update({'created_date__gte':start_date,'created_date__lte':end_date})
+                leads = Leads.objects.filter(**query).exclude(type_1__in=exclude_types)                    
             else:
-                leads = Leads.objects.filter(lead_status__in=['Attempting Contact','In Queue'], 
-                        appointment_date_in_ist__gte=start_date_time,
-                        appointment_date_in_ist__lte=end_date_time,
-                        rescheduled_appointment_in_ist__gte=start_date_time,
-                        rescheduled_appointment_in_ist__lte=end_date_time,
-                        lead_owner_email=current_user_email,is_delete=False)
+                query = {'lead_status__in':['Attempting Contact','In Queue'], 
+                        'appointment_date_in_ist__gte':start_date_time,
+                        'appointment_date_in_ist__lte':end_date_time,
+                        'rescheduled_appointment_in_ist__gte':start_date_time,
+                        'rescheduled_appointment_in_ist__lte':end_date_time,
+                        'lead_owner_email':current_user_email,'is_delete':False}
+                if start_date and end_date:
+                    query.update({'created_date__gte':start_date,'created_date__lte':end_date})
+                leads = Leads.objects.filter(**query)
             leads_count = leads.count()
         else:
             #manager
@@ -354,6 +360,9 @@ def get_filtered_leads(user_group,process,lead_status,lead_sub_status,lead_appoi
                 query = {}
             else:
                 query = {'lead_sub_status': lead_sub_status}
+
+            if start_date and end_date:
+                query.update({'created_date__gte':start_date,'created_date__lte':end_date})
             leads = Leads.objects.filter(lead_status=lead_status,
                     lead_owner_email=current_user_email,is_delete=False,**query)
             leads_count = leads.count()
@@ -415,13 +424,11 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
             query = {}
 
     if process_type == "WPP":
-
         leads = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).values(
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date','appointment_date', 'phone', 'phone_optional', 'country','type_1'
-            )[offset:limit]
+            )
         leads_count = WPPLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("WPP"), **query).count()
         
-
     elif process_type == "Picasso Audits":
 
         if loc_list:
@@ -434,36 +441,33 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
             query = {}
 
         leads = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).values(
-            'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country','type_1')[offset:limit]
+            'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'phone', 'country','type_1')
         leads_count = PicassoLeads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Picasso Audits"), **query).count()
 
     elif process_type == "RLSA":
 
         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).values(
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-            ).order_by('-created_date')[offset:limit]
+            ).order_by('-created_date')
 
         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("RLSA"), **query).count()
         
-
     elif process_type == "Shopping":
         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).values(
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-            )[offset:limit]
+            )
         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping"), **query).count()
         
-
     elif process_type == "ShoppingArgos":
         leads = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).values(
             'id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date', 'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-            )[offset:limit]
+            )
         leads_count = Leads.objects.filter(type_1__in = settings.PROCESS_TYPE_MAPPING.get("Shopping Argos"), **query).count()
         
-
     elif process_type == "tag_and_shopping":
         exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA")
         leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-            )[offset:limit]
+            )
         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
                     
     else: # Tag
@@ -471,7 +475,7 @@ def get_leads_based_on_appointment_manager(process_type,lead_appointment,limit,o
         exclude_types = settings.PROCESS_TYPE_MAPPING.get("RLSA") + settings.PROCESS_TYPE_MAPPING.get("Shopping Argos") + settings.PROCESS_TYPE_MAPPING.get("Shopping")
 
         leads = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).values('id', 'sf_lead_id','customer_id', 'company', 'first_name', 'created_date',  'appointment_date_in_ist', 'phone', 'phone_optional', 'country','type_1'
-            )[offset:limit]
+            )
         leads_count = Leads.objects.filter(**query).exclude(type_1__in = exclude_types).count()
 
     return leads,leads_count
@@ -530,7 +534,8 @@ def get_json_leads(leads, process_type=None):
         'team':lead.team,
         'date_of_installation':datetime.strftime(lead.date_of_installation, "%d/%m/%Y") if lead.date_of_installation else '',
         'first_contacted_on':datetime.strftime(lead.first_contacted_on, "%d/%m/%Y %I:%M %P") if hasattr(lead, 'first_contacted_on') and lead.first_contacted_on else '',
-        'dials':lead.dials if hasattr(lead, 'dials') and lead.dials else 0
+        'dials':lead.dials if hasattr(lead, 'dials') and lead.dials else 0,
+        'created_date':datetime.strftime(lead.created_date, "%d/%m/%Y %I:%M %P") if hasattr(lead, 'created_date') and lead.created_date else '',
         }
         if lead_dict.get('appointment_time'):
             local_tz = pytz.timezone('Asia/Calcutta')
@@ -1387,7 +1392,7 @@ def export_filtered_leads(leads,is_agent):
     response['Content-Disposition'] = 'attachment; filename="export_leads.csv"'
     writer = csv.writer(response)
     if is_agent:
-        header_fields = ['CID', 'Company', 'Customer Name', 'Appointment time', 'Phone No', 
+        header_fields = ['CID', 'Company', 'Customer Name', 'Created Date', 'Appointment time', 'Phone No', 
                         'Additional Ph No', 'Web Master No.', 'Location']
     else:
         header_fields = ['CID', 'Company', 'Customer Name', 'Created Date', 'Appointment time',
@@ -1399,6 +1404,7 @@ def export_filtered_leads(leads,is_agent):
             for lead in leads:
                 writer.writerow([lead['customer_id'].encode('utf-8'),lead['company'].encode('utf-8'),
                                 lead['customer_name'].encode('utf-8'),
+                                lead['created_date'].encode('utf-8'),
                                 lead['appointment_time'].encode('utf-8'),
                                 lead['phone'].encode('utf-8'),
                                 lead['phone_optional'].encode('utf-8'),
