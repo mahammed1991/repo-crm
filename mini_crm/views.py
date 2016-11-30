@@ -27,6 +27,7 @@ from lib.helpers import send_mail
 from django.forms.models import model_to_dict
 
 import ast
+import csv
 
 
 # Create your views here.
@@ -51,7 +52,7 @@ def crm_management(request):
                            'location':region.location_list()}
             regions_list.append(region_dict)
 
-        if request.is_ajax():
+        if request.GET:
  
             region = request.GET.get('region') if request.GET.get('region') else ''
             process_type = request.GET.get('process') if request.GET.get('process') else ''
@@ -159,10 +160,13 @@ def crm_management(request):
                 
             all_leads = get_leads(leads, leads_list)
 
-            try:
-                return HttpResponse(json.dumps({'leads_list': all_leads, 'leads_count':leads_count}), content_type="application/json")
-            except Exception as e:
-                print e
+            if request.GET.get('download_csv'):
+                return export_filtered_leads(all_leads,False) 
+            else:
+                try:
+                    return HttpResponse(json.dumps({'leads_list': all_leads, 'leads_count':leads_count}), content_type="application/json")
+                except Exception as e:
+                    print e
 
         context = {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING), 'regions':json.dumps(regions_list), 'manager':True}
         return render(request,'crm/manager_home.html',context)
@@ -215,7 +219,7 @@ def crm_agent(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
         return redirect('mini_crm.views.crm_management')
     elif request.user.groups.filter(name='CRM-AGENT'):
-        if request.is_ajax():
+        if request.GET:
             leads_data = list()
             lead_status =  ''
             lead_sub_status = ''
@@ -238,11 +242,15 @@ def crm_agent(request):
                 lead_appointment = request.GET.get('appointment')
             user_group = request.user.groups.filter(name='CRM-AGENT')
             current_user_email = request.user.email
-            leads, leads_count = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','')
+            leads, leads_count = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,'','','','','','')
             leads_data = get_json_leads(leads[offset:limit],'TAG')
             response_json = {'leads_list': leads_data, 'leads_count':leads_count}
-            res = HttpResponse(json.dumps(response_json), content_type="application/json") 
-            return res
+            res = HttpResponse(json.dumps(response_json), content_type="application/json")
+            if request.GET.get('download_csv'):
+                all_leads = get_json_leads(leads,'TAG')
+                return export_filtered_leads(all_leads,True) 
+            else:
+                return res
         context ={
             'lead_status':settings.LEAD_STATUS_SUB_STATUS_MAPPING['TAG'].keys(),
             'lead_status_sub_status_mapping':json.dumps({'lead_status_sub_status_mapping':settings.LEAD_STATUS_SUB_STATUS_MAPPING},encoding="utf-8")
@@ -1244,3 +1252,39 @@ def user_appointmnets(request):
         return HttpResponse(json.dumps(response), content_type='application/json')
     else:
         return HttpResponse(json.dumps([]), content_type='application/json')
+
+
+def export_filtered_leads(leads,is_agent):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="export_leads.csv"'
+    writer = csv.writer(response)
+    if is_agent:
+        header_fields = ['CID', 'Company', 'Customer Name', 'Appointment time', 'Phone No', 
+                        'Additional Ph No', 'Web Master No.', 'Location']
+    else:
+        header_fields = ['CID', 'Company', 'Customer Name', 'Created Date', 'Appointment time',
+                        'Phone No', 'Additional Ph No', 'Web Master No.', 'Location', 
+                        'Process Type']
+    writer.writerow(header_fields) 
+    if leads:
+        if is_agent:  
+            for lead in leads:
+                writer.writerow([lead['customer_id'].encode('utf-8'),lead['company'].encode('utf-8'),
+                                lead['customer_name'].encode('utf-8'),
+                                lead['appointment_time'].encode('utf-8'),
+                                lead['phone'].encode('utf-8'),
+                                lead['phone_optional'].encode('utf-8'),
+                                lead['web_master_no'].encode('utf-8'),
+                                lead['location'].encode('utf-8')])
+
+        else:
+            for lead in leads:
+                writer.writerow([lead['c_id'].encode('utf-8'), lead['company'].encode('utf-8'),
+                                lead['customer_name'].encode('utf-8'), 
+                                lead['created_date'].encode('utf-8'),
+                                lead['appointment_time'].encode('utf-8') if lead['appointment_time']  else lead['appointment_time'],
+                                lead['phone_number'].encode('utf-8'),
+                                lead['additional_phone_number'].encode('utf-8'),
+                                lead['web_master_number'].encode('utf-8'), 
+                                lead['location'].encode('utf-8'),lead['type_1'].encode('utf-8')])
+    return response   
