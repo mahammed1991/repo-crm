@@ -80,6 +80,7 @@
         
         <section class="top-margin wfm">
        		<div class="container-fluid" style="max-width:100%;">
+          <button style="float: right";><a id="export-btn" style="text-decoration: none">Export</a></button>
             </div>
             	<div class="white-section">
                 	<div class="blue-bg">
@@ -146,14 +147,20 @@
                              <tbody> 
                              </tbody> 
                      	</table>
-                    </div>
-                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
-                </div>
                <div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
                   <ul class="pagination" id="pagination">
                     
                   </ul>
                 </div>
+            </div>
+                    </div>
+                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
+                </div>
+               <!--<div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
+                  <ul class="pagination" id="pagination">
+                    
+                  </ul>
+                </div>-->
             </div>
         </section>
 
@@ -292,6 +299,17 @@
       call_crm_management(false);
     }
   });
+
+  $('#export-btn').on('click',function(){
+    data['download_csv'] = true;
+    data['is_agent'] = true
+    qs = ''
+    for (key in data){
+      qs += key + '=' + data[key] + '&'
+    }
+    $("#export-btn").attr('href','/crm/myleads/?'+qs)
+  });
+
 
 
 $(document).ready(function() {
