@@ -1,14 +1,17 @@
+// Set the initial clickedPage, pageStartNum, pageEndNum
 var clickedPage = 1;
 var pageStartNum = 1;
 var pageEndNum = 10;
 var defaultStartNum = 1, defaultEndNum = 20, shuffleCount = 10;
 
+//call reloadPagination on every on change event
 var reloadPagination = function(){
     clickedPage = 1;
     pageStartNum = defaultStartNum;
     pageEndNum = defaultEndNum;
 }
 
+// form pagination according to clickedPage,pageStartNum,pageEndNum and numOfPages
 var formPagination = function(numOfPages){
 
     var lmt = parseInt($("#limit").val());
@@ -30,7 +33,7 @@ var formPagination = function(numOfPages){
         if(clickedPage == i) ulEle.append("<li><a class='paged active'href='#' style='background-color: #4CAF50;' data-value=" +i+ ">"+i+"</a></li>");
         else ulEle.append("<li><a class='paged' href='#' data-value=" +i+ ">"+i+"</a></li>");
     }
-
+    // Take all page No. but show only default No. of pages
     if($('#pagination li a').data('value')){
         if(numOfPages > defaultEndNum){
             $('#pagination li a').hide();
@@ -42,6 +45,7 @@ var formPagination = function(numOfPages){
     else ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
 }
 
+// calling this on every page click
 $("body").on('click', '.paged', function(e){
     e.preventDefault();
     clickedPage = $(this).text();
@@ -51,6 +55,7 @@ $("body").on('click', '.paged', function(e){
     var reShufflePagination = false;
 
     if(clickedPage === "«" && activePage > 0){
+        // on click of forward arrow decrease the pageStartNum and PageEndNum by 1
         if(firstPage == 1){
             pageStartNum = defaultStartNum;
             pageEndNum = defaultEndNum;
@@ -65,6 +70,7 @@ $("body").on('click', '.paged', function(e){
     }else if(clickedPage === "»" && activePage < numOfPages){
         if(activePage == numOfPages) reShufflePagination = false;
         else{
+            // on click of forward arrow increase the pageStartNum and PageEndNum by 1 if numOfPages > defaultEndNum
             if(numOfPages > defaultEndNum){
                 pageStartNum += 1
                 pageEndNum += 1
@@ -78,10 +84,13 @@ $("body").on('click', '.paged', function(e){
         reShufflePagination = true;
     }else if(parseInt(clickedPage)){
         clickedPage = parseInt(clickedPage);
+        //if the click on lastPage then set pageStartNum to pageStartNum + shuffleCount
         if(clickedPage == lastPage){
             pageStartNum += shuffleCount;
             pageEndNum += shuffleCount;
-        }else if (clickedPage == firstPage){
+        }
+        //if the click on firstPage then set pageStartNum to pageStartNum-shuffleCount
+        else if (clickedPage == firstPage){
             if(activePage - shuffleCount > shuffleCount){
                 pageStartNum -= shuffleCount;
                 pageEndNum -= shuffleCount;
