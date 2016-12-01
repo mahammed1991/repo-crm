@@ -192,7 +192,6 @@ def crm_management(request):
                 
                 
             all_leads = get_leads(leads, leads_list)
-            print leads.count()
             if request.GET.get('download_csv'):
                 all_leads = get_leads(leads, [])
                 return export_filtered_leads(all_leads,False) 
@@ -279,7 +278,6 @@ def crm_agent(request):
             user_group = request.user.groups.filter(name='CRM-AGENT')
             current_user_email = request.user.email
             leads, leads_count = get_filtered_leads(user_group,'TAG',lead_status,lead_sub_status,lead_appointment,current_user_email,limit,offset,'','',start_date, end_date,download_csv)
-            print leads_count
             leads_data = get_json_leads(leads,'TAG')
             if request.GET.get('download_csv'):
                 return export_filtered_leads(leads_data,True) 
