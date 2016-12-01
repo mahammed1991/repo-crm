@@ -80,8 +80,23 @@
         
         <section class="top-margin wfm">
        		<div class="container-fluid" style="max-width:100%;">
+          <button style="float: right";><a id="export-btn" style="text-decoration: none">Export</a></button>
+          <div id="datediv" class="row">
+            <div class="col-md-3" style="width: 267px">
+                
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date" style="height: 15px;">
             </div>
-            	<div class="white-section">
+            <div class="col-md-3" style="width: 267px">
+                
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date" style="margin-left: 0px;height: 15px;" >
+            </div>
+            <div class="col-md-3">
+
+                <input id="date-submit" type="submit" value="Submit" style="margin-top: 5px;">
+            </div>
+          </div>
+            </div>
+            	<div class="white-section" style="margin-top: 0px;">
                 	<div class="blue-bg">
                     <div class="col-sm-12">
                       <div class="blue-padding-20">
@@ -135,7 +150,8 @@
                             	<tr> 
                                     <th>CID </th> 
                                     <th>Company</th> 
-                                    <th>Customer Name</th> 
+                                    <th>Customer Name</th>
+                                    <th>Created Date</th> 
                                     <th>Appointment time</th> 
                                     <th>Phone No</th> 
                                     <th>Additional Ph No</th> 
@@ -146,14 +162,20 @@
                              <tbody> 
                              </tbody> 
                      	</table>
-                    </div>
-                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
-                </div>
                <div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
                   <ul class="pagination" id="pagination">
                     
                   </ul>
                 </div>
+            </div>
+                    </div>
+                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
+                </div>
+               <!--<div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
+                  <ul class="pagination" id="pagination">
+                    
+                  </ul>
+                </div>-->
             </div>
         </section>
 
@@ -166,6 +188,7 @@
 <script src="{% static 'js/reports/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-ui.js' %}"></script>
 <script type="text/javascript">
   is_agent = true;
   function call_crm_management(freshAppointment){
@@ -173,6 +196,8 @@
       status = $('#status').val()
       sub_status = $('#sub_status').val()
       appointment = $('#appointment').val()
+      startDate = $('#datepickerFrom').val()
+      endDate = $('#datepickerTo').val()
       data = {'status':status, 'sub_status':sub_status,'limit':limit}
       if(freshAppointment){
         data = {'appointment': appointment,'limit':limit}
@@ -194,6 +219,10 @@
       }
 
       data['page'] = clickedPage;
+      if (startDate && endDate){
+        data['start_date'] = startDate
+        data['end_date'] = endDate
+      }
 
       $.ajax({
               type: "GET",
@@ -214,7 +243,7 @@
                         $('#data').hide(); 
                         $('tbody').html('')
                         for(var i=0;i<response['leads_list'].length;i++){
-                          $('tbody').append('<tr> <td><a onclick="addURL(this)" href="/crm/lead-details/' + response['leads_list'][i]['id'] + '/'+ response['leads_list'][i]['sf_lead_id'] + '" target="_blank">'+ response['leads_list'][i]['customer_id'] + '</a> </td>'+ "<td>"+response['leads_list'][i]['company'] + "</td> <td>"+response['leads_list'][i]['customer_name']+"</td> <td>"+response['leads_list'][i]['appointment_time']  + "</td> <td> " + response['leads_list'][i]['phone']  +"</td> <td> " + response['leads_list'][i]['phone_optional'] + "</td> <td> " + response['leads_list'][i]['web_master_no']  +"</td> <td>" + response['leads_list'][i]['location'] +"</td></tr>")                          
+                          $('tbody').append('<tr> <td><a onclick="addURL(this)" href="/crm/lead-details/' + response['leads_list'][i]['id'] + '/'+ response['leads_list'][i]['sf_lead_id'] + '" target="_blank">'+ response['leads_list'][i]['customer_id'] + '</a> </td>'+ "<td>"+response['leads_list'][i]['company'] + "</td> <td>"+response['leads_list'][i]['customer_name']+"</td> <td>"+response['leads_list'][i]['created_date']+ "</td> <td>"+response['leads_list'][i]['appointment_time']  + "</td> <td> " + response['leads_list'][i]['phone']  +"</td> <td> " + response['leads_list'][i]['phone_optional'] + "</td> <td> " + response['leads_list'][i]['web_master_no']  +"</td> <td>" + response['leads_list'][i]['location'] +"</td></tr>")                          
                         }
                       }
                       else{
@@ -293,12 +322,64 @@
     }
   });
 
+  $("#date-submit").click(function() {
+    reloadPagination();
+    if (appointment != 'Select'){
+      call_crm_management(true);
+    }
+    else{
+      call_crm_management(false);
+    }
+  });
+
+  $('#export-btn').on('click',function(){
+    data['download_csv'] = true;
+    data['is_agent'] = true
+    qs = ''
+    for (key in data){
+      qs += key + '=' + data[key] + '&'
+    }
+    $("#export-btn").attr('href','/crm/myleads/?'+qs)
+  });
+
+
 
 $(document).ready(function() {
   lead_data = '{{lead_status_sub_status_mapping}}'
   lead_data_status = JSON.parse(lead_data.replace(/&quot;/g,'"'));
   lead_status = $('#status').val('In Queue')
   populate_sub_status();
+
+
+  $("#datepickerFrom").datepicker({
+    defaultDate : "+1w",
+    changeMonth : true,
+    numberOfMonths : 1,
+    dateFormat: "mm/dd/yy",
+    onClose : function(selectedDate) {
+      $("#to").datepicker("option", "minDate", selectedDate);
+    },
+    onSelect: function (selected) {
+          var dt = new Date(selected);
+          dt.setDate(dt.getDate() + 1);
+          $("#datepickerTo").datepicker("option", "minDate", dt);
+      }
+  });
+  $("#datepickerTo").datepicker({
+    defaultDate : "+1w",
+    changeMonth : true,
+    numberOfMonths : 1,
+    dateFormat: "mm/dd/yy",
+    onClose : function(selectedDate) {
+      $("#from").datepicker("option", "maxDate", selectedDate);
+    },
+    onSelect: function (selected) {
+          var dt = new Date(selected);
+          dt.setDate(dt.getDate() - 1);
+          $("#datepickerFrom").datepicker("option", "maxDate", dt);
+      }
+  });
+
 });
 </script>
 {% endblock main_js %}
