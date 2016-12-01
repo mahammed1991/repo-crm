@@ -556,9 +556,9 @@ TAGLEAD_DETAILS_FIELDS = ['agency_name','agency_poc','agency_phone','agency_emai
                         'created_call_extension_3','created_call_extension_4','created_call_extension_5',
                         'analytics_code_is_setup_1','analytics_code_is_setup_2','analytics_code_is_setup_3',
                         'analytics_code_is_setup_4','analytics_code_is_setup_5','product_behaviour_1',
-                        'product_behaviour_2','product_behaviour_3','product_behaviour_4',
+                        'product_behaviour_2','product_behaviour_3','product_behaviour_4','not_interested_cases_rca',
                         'product_behaviour_5','transaction_behaviour_1','transaction_behaviour_2',
-                        'transaction_behaviour_3','transaction_behaviour_4','transaction_behaviour_5']
+                        'transaction_behaviour_3','transaction_behaviour_4','transaction_behaviour_5','gcss_exception_approved_by']
 
 PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back",\
                 "AC - Phone rings but No Answer", "DL - Account Suspended post Regalix Implementation",
