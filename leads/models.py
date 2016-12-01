@@ -180,7 +180,7 @@ class TagLeadDetail(models.Model):
     dynamic_variable_set = models.CharField(max_length=100, blank=True, null=True, default='')
     dead_lead_date = models.DateTimeField(blank=True, null=True)
     last_contacted_on = models.DateTimeField(blank=True, null=True)
-    is_backup_taken = models.NullBooleanField(blank=True, null=True)
+    is_backup_taken = models.CharField(max_length=100, blank=True, null=True, default='')
     tag_via_gtm = models.NullBooleanField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     service_segment = models.CharField(max_length=100, blank=True, null=True, default='')
