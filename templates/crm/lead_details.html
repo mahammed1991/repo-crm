@@ -138,7 +138,7 @@
                                         <td class="table-left">Team</td>
                                         <td class="table-right" id="team"><span name="team">{{ lead.team }}</span></td>
                                         <td class="table-left">Not Interested Cases RCA</td>
-                                        <td class="table-right"><span name="not_interested_cases_rca">{{lead_detail.not_interested_cases_rca}}</span></td>
+                                        <td class="table-right" id='nic-rca'><span name="not_interested_cases_rca">{{lead_detail.not_interested_cases_rca}}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
                                        <tr>
                                         <td class="table-left">Date of installation</td>
@@ -168,7 +168,7 @@
                                         <td class="table-left">No of Dials</td>
                                         <td class="table-right edit"><span name="dials">{{ lead.dials }}</span></td>
                                         <td class="table-left">Website Backup Taken?</td>
-                                        <td class="table-right" id='backup'><span name="is_backup_taken">{{ lead_detail.is_backup_taken }}</span></td>
+                                        <td class="table-right" id='backup'><span name="is_backup_taken">{{ lead_detail.is_backup_taken }}</span><p style="display:none;color:red;">*Please select a  value.</p></td>
                                        </tr>
 
                                        <tr>
@@ -382,7 +382,7 @@
                                         <td class="table-left">MC-ID</td>
                                         <td class="table-right edit"><span name="mc_id">{{ lead_detail.mc_id }}</span></td>
                                         <td class="table-left">Client's Web inventory</td>
-                                        <td class="table-right" id='web-inventory'><span name='client_web_inventory'>{{ lead_detail.client_web_inventory }}</span></td>
+                                        <td class="table-right" id='web-inventory'><span name='client_web_inventory'>{{ lead_detail.client_web_inventory }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
                                        
                                        <tr>
@@ -507,9 +507,9 @@
 
                                        <tr>
                                         <td class="table-left qstn">Other CMS<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right edit"><span name="other_cms">{{lead_detail.other_cms}}</span></td>
+                                        <td class="table-right edit" id='other-cms'><span name="other_cms">{{lead_detail.other_cms}}</span><p style="display:none;color:red;">*Please enter the value.</p></td>
                                         <td class="table-left qstn">GCSS Exception Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right"><span name="gcss_exception_approved_by">{{lead_detail.gcss_exception_approved_by}}</span></td>
+                                        <td class="table-right" id='gcss-exception'><span name="gcss_exception_approved_by">{{lead_detail.gcss_exception_approved_by}}</span></td>
                                        </tr>
 
                                        <tr>
@@ -530,12 +530,12 @@
                                         <td class="table-left">Action Taken</td>
                                         <td class="table-right"><span name="action_taken">{{lead_detail.action_taken}}</span></td>
                                         <td class="table-left">Lead Difficulty level</td>
-                                        <td class="table-right">{{ lead_detail.lead_difficulty_level }}</td>
+                                        <td class="table-right" id="difficulty-level"><span name='lead_difficulty_level'>{{ lead_detail.lead_difficulty_level }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left qstn">Regalix SME<i class="fa fa-question-circle" aria-hidden="true"></i></td>
-                                        <td class="table-right">{{ lead_detail.regalix_sme }}</td>
+                                        <td class="table-right" id="regalix-sme"><span name="regalix_sme">{{ lead_detail.regalix_sme }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                         <td class="table-left">RLSA - TagTeam Contacted Advertiser</td>
                                         <td class="table-right" id="rlsa-tag-team-contacted"><span name="rlsa_tag_team_contacted">{{ lead_detail.rlsa_tag_team_contacted }}</span><p style="display:none;color:red;">*Please select a value.</p></td>
                                        </tr>
@@ -1132,6 +1132,8 @@
     <script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
     <script type="text/javascript">
 
+    var regalix_sme = ["Abraham", "Aigbe Imuetinyan Noguese (Esse)", "Amaefula Chukwuebuka", "Ankit Bhardwaj", "Dinesh", "Haleema Sadia", "Issac Uloko", "Karuppusamy", "Konan Daniel", "Kone Clement", "Krishnaprasad", "Linda Joseph", "Nagendra Patil", "Sijo Varkey", "Sourav Santra", "Vishu Grover"];
+
     $(document).ready(function(e) {
         var cmt_txt = "{{comment}}"
         if(cmt_txt != "")
@@ -1159,8 +1161,7 @@
     $('td.edit-checkbox span input').prop('disabled',true);
 
     $('td').each(function(){
-      if($(this).html() == 'None' || ['None','null'].indexOf($(this).find('span').html()) != -1){
-        $(this).html('');
+      if(['None','null'].indexOf($(this).find('span').html()) != -1){
         $(this).find('span').html('');
       }
     })
@@ -1310,6 +1311,12 @@ $('#edit-lead').on('click',function() {
         $(this).html(input);
     });
 
+
+    var not_interested_cases_rca_list = ["Not Comfortable with installing codes on the site", "Pitch by the GSR was ineffective (Advertiser was not convinced for implementation)", "The webmasters takes more than 1 month to install codes", "Advertiser has set up alternate method to track conversions.", "The pitched task was not according to the advertisers requirement", "WCC- advertiser wanted to track multiple numbers", "General query/information , no implementation required"];
+    var curr_rca = $("#nic-rca span").html();
+    $("#nic-rca span").html("<select style='width:200px;'></select>");
+    assignDropDownValues(curr_rca,not_interested_cases_rca_list,"#nic-rca span")
+
     var reason_not_reporting_list = ["Campaigns Paused", "Campaigns Not Created", "Low Budget", "Inactive Account", "Code Active ,however No Conversions", "Code removed by advertiser after implementation"];
     var curr_not_reporting = $('#not-reporting span').html();
     $('#not-reporting span').html("<select style='width:200px;'></select>");
@@ -1435,35 +1442,35 @@ $('#edit-lead').on('click',function() {
 
     var rwm_list = ["Abraham", "Anirudh Pounzula Venkat", "Ankit Bhardwaj", "Dinesh", "Dotemin Clement Kone", "Ebuka", "Esse", "Isaac", "Karuppusamy", "Krishna Prasad", "Lead Owner (Self)", "Nagendrappa Patil", "Saurabh Santra", "Vishu Grover"]
     var curr_rwm = $('#rwm span').html();
-    if(curr_rwm){
-      curr_rwm = $('#rwm span').html().split(',')
-      $('#rwm span').html('<select style="width:200px;" multiple></select>');
 
-      for(var i=0;i<rwm_list.length; i++){
-        if(curr_rwm.indexOf('None') != -1){
-          $("#rwm span select option[value='--None--']").prop('selected',true);
-        }
-        if(curr_rwm.indexOf(rwm_list[i]) != -1){
-          $("#rwm span select").append("<option selected>"+ rwm_list[i] +"</option>");
-        }
-        else{
-          $("#rwm span select").append("<option>"+ rwm_list[i] +"</option>");
-        }
-      }  
+    curr_rwm = curr_rwm ? curr_rwm.split(',') : 'None';
+    $('#rwm span').html('<select style="width:200px;" multiple></select>');
+
+    for(var i=0;i<rwm_list.length; i++){
+      if(curr_rwm.indexOf('None') != -1){
+        $("#rwm span select option[value='--None--']").prop('selected',true);
+      }
+      if(curr_rwm.indexOf(rwm_list[i]) != -1){
+        $("#rwm span select").append("<option selected>"+ rwm_list[i] +"</option>");
+      }
+      else{
+        $("#rwm span select").append("<option>"+ rwm_list[i] +"</option>");
+      }
+    }  
+    
+
+    if(['Can be Implemented by the agent','Can NOT be Implemented by the agent'].indexOf($('#difficulty-level span').html()) != -1){
+      var curr_regalix_sme = $('#regalix-sme span').html();
+      $('#regalix-sme span').html('<select style="width:200px;"></select>');
+      assignDropDownValues(curr_regalix_sme,regalix_sme,'#regalix-sme span')
+
     }
-
-        /*  for(var j=0;j<curr_rwm.length;j++){
-        if(curr_rwm[j] == 'None'){
-          $("#rwm span select option[value='--None--']").prop('selected',true);
-        }
-        if(rwm_list.includes(curr_rwm[j])){
-          $("#rwm span select").append("<option selected>"+ curr_rwm[j] +"</option>");
-        }
-        else{
-          $("#rwm span select").append("<option>"+ curr_rwm[j] +"</option>");
-        }
-      }  */
-
+    else{
+      var regalix_sme_list = [];
+      var curr_regalix_sme = $('#regalix-sme span').html();
+      $('#regalix-sme span').html('<select style="width:200px;"></select>');
+      assignDropDownValues(curr_regalix_sme,regalix_sme_list,'#regalix-sme span');
+    }
 
     var dynamic_variable_set = ['Yes','No','Not Applicable'];
     var curr_dynamic_variable_set = $('#dynamic-variable-set span').html();
@@ -1504,10 +1511,18 @@ $('#edit-lead').on('click',function() {
     $('#cms-platform span').html('<select id="cmsPlatform" style="width:200px;"></select>');
     assignDropDownValues(curr_cms,cms_platform_list,'#cms-platform span')
 
+
     var gcss_status_list = ["Advertiser Transferred to Phone GCSS", "Advertiser Not Interested for GCSS", "Advertiser Busy for GCSS", "Code Implemented via Email Instructions Sent - Email GCSS", "Call was not Via Calling Solution - Email GCSS", "TAG Rep has another Appointment", "TAG Rep busy for GCSS"];
     var curr_gcss_status = $('#gcss-status span').html();
     $('#gcss-status span').html('<select id="gcss-msg" style="width:200px;"></select>');
     assignDropDownValues(curr_gcss_status,gcss_status_list,'#gcss-status span');
+
+
+    var gcss_exception_list = ["Haleema Sadia Shariff", "Konan Daniel", "Linda Joseph", "Rajesh Menon", "Sijo Varkey", "Syed Saifullah", "Vaibhav Gupta", "Vishal Jha"];
+    var curr_gcss_exception = $('#gcss-exception span').html();
+    $('#gcss-exception span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_gcss_exception,gcss_exception_list,'#gcss-exception span');
+
 
     var appointment_sub_status_list = ["NA - NOT APPLICABLE", "Google - Incorrect Appointment / Past Appointment", "RX - Met Appointment, AD - Met Appointment", "RX - Met Appointment, AD - Missed Appointment", "RX - Met Appointment, AD - Rescheduled Appointment", "RX - Missed Appointment", "RX - Rescheduled Appointment", "ATC - Rescheduled Appointment", "RX - Met Appointment Adv-Met Appointment (After 10 Minutes)"]
     var curr_appointment_sub_status = $('#appointment-sub-status span').html();
@@ -1539,10 +1554,11 @@ $('#edit-lead').on('click',function() {
     $('#rlsa-tag-team-contacted span').html('<select style="width:200px;"></select>');
     assignDropDownValues(curr_rlsa_tag_team_contacted,rlsa_tag_team_contacted_list,'#rlsa-tag-team-contacted span');
 
-    var list_type_list = ['Google Analytics Dynamic List','Google Adwords Dynamic List','No List'];
-    var curr_list_type = $('#list-type span').html();
-    $('#list-type span').html('<select style="width:200px;"></select>');
-    assignDropDownValues(curr_list_type,list_type_list,'#list-type span');
+    var difficulty_level_list = ["Implemented by the Agent (Default)", "Can be Implemented by the agent", "Can NOT be Implemented by the agent"];
+    var curr_difficulty_level = $('#difficulty-level span').html();
+    $('#difficulty-level span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_difficulty_level,difficulty_level_list,'#difficulty-level span');
+
 
 
     var feed_optimisation_status_list = {{ feed_optimisation_status|safe }};
@@ -1578,6 +1594,7 @@ $('#edit-lead').on('click',function() {
       $('#first-contacted').addClass('disabledbutton');
       $('#cid span input').addClass('disabledbutton');
       $('#aptmt-date span input').addClass('disabledbutton');
+      $('#gcss-exception').addClass('disabledbutton');
     }
    
     $(".editdateinput").datetimepicker({
@@ -1657,6 +1674,15 @@ $('#edit-lead').on('click',function() {
       $('#gcss-msg').removeClass('error');
     }
 
+
+    if(['RLSA Bulk Implementation'].indexOf($('#type').text()) == -1 && $('#sub-status').val() == 'IL - Not Interested' && $('#nic-rca span select').val() == 'None'){
+        $('#nic-rca span select').addClass('error');
+        $('#nic-rca p').show();
+      }else{
+        $('#nic-rca p').hide();
+        $('#nic-rca span select').removeClass('error');
+      }
+
     if($('#status option:selected').val() != 'None'){
       if($('#sub-status option:selected').val() == 'None'){
         valid = false;
@@ -1678,6 +1704,16 @@ $('#edit-lead').on('click',function() {
       else{
         $('#pls-sub-status p').hide();
         $('#plaSubStatus').removeClass('error');
+      }
+
+      if($('#web-inventory option:selected').val() == 'None'){
+        valid = false;
+        $('#web-inventory p').show();
+        $('#web-inventory').addClass('error');
+      }
+      else{
+        $('#web-inventory p').hide();
+        $('#web-inventory').removeClass('error');
       }
     }
 
@@ -1743,6 +1779,16 @@ $('#edit-lead').on('click',function() {
           valid = false;
           $('#status').addClass('error');
           $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'Rework Required'. Please contact your QA.").show();
+        }
+        else if($('#status option:selected').val() == 'Rework Fixed - Win' && curr_ls != 'Rework Fixed - Win'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'Rework Fixed - Win'. Please contact your QA.").show();
+        }
+        else if($('#status option:selected').val() == 'Rework Fixed - In Active' && curr_ls != 'Rework Fixed - In Active'){
+          valid = false;
+          $('#status').addClass('error');
+          $('#lead-status p#error-msg').text("*You are not authorised to move leads to 'Rework Fixed - In Active'. Please contact your QA.").show();
         }
         else{
           $('#lead-status p#error-msg').hide();
@@ -1830,6 +1876,22 @@ $('#edit-lead').on('click',function() {
         $('#feed-upload-method p').hide();
         $('#feed-upload-method span select').removeClass('error');
       }
+    }
+
+    if($('#status').val() == 'Pending QC - WIN' && $('#backup span select').val() == 'None'){
+      $('#backup p').show();
+      $('#backup span select').addClass('error');
+    }else{
+      $('#backup p').hide();
+      $('#backup span select').removeClass('error');
+    }
+
+    if($('#cms-platform span select').val() == 'Other CMS' && $('#other-cms span input').val() == ''){
+      $('#other-cms p').show();
+      $('#other-cms span input').addClass('error');
+    }else{
+      $('#other-cms p').hide();
+      $('#other-cms span input').removeClass('error');
     }
 
 
@@ -2312,6 +2374,20 @@ function alertMsgValidation(){
   }
 }
 
+
+$(document).on('change','#difficulty-level span select',function(){
+  if(['Can be Implemented by the agent','Can NOT be Implemented by the agent'].indexOf($(this).val()) != -1){
+
+    $('#regalix-sme span select').html('<option value="None">--None--</option>');
+    for(var i=0;i<regalix_sme.length;i++){
+      $('#regalix-sme span select').append('<option>'+ regalix_sme[i] +'</option>');
+    }
+
+  }
+  else{
+     $('#regalix-sme span select').html('<option value="None">--None--</option>');
+  }
+})
 
     </script>
     
