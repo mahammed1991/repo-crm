@@ -79,11 +79,27 @@ WFM Home
     <section class="top-margin wfm">
 
       <div class="container-fluid" style="max-width:100%;">
-        
+
         <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="delete-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;margin-left: 75px"></span>
         </div>
+
+        <div id="datediv" class="row">
+          <div class="col-md-3" style="width: 267px">
+              
+              <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date" style="height: 15px;">
+          </div>
+          <div class="col-md-3" style="width: 267px">
+              
+              <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date" style="margin-left: 0px;height: 15px;" >
+          </div>
+          <div class="col-md-3">
+
+              <input id="date-submit" type="submit" value="Submit" style="margin-top: 5px;">
+          </div>
+        </div>
+
         <!--div style="float: right;">
             <label><b style="font-weight: bold;">Result Limit</b></label>
                 <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;    margin-bottom: 0px;">
@@ -98,7 +114,7 @@ WFM Home
           
           <div class="blue-bg">
           <div id="delete_lead_msg"></div>
-            <div class="row">
+            <div class="row" style="margin-top: -40px;">
               <div class="col-md-5">
                 <div class="arrow-box-blue" style="width:104%">
                   <div class="row">
@@ -121,10 +137,8 @@ WFM Home
                         <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
                         <select id="process" name="process" onchange="GetStatus();" class="form-control bgicon">
-                          <!-- <option value="process_default">Process</option> -->
                         </select>
-                    </div> 
-
+                    </div>
                   </div>
                 </div>
                   </div>
@@ -256,6 +270,7 @@ WFM Home
           var qp = window.location.href.split('=')[1].split("&")
           if(qp.length > 1){
             $("#msg-area").text("Lead with CID " + qp[0] + " deleted sucessfully.");
+            $('#datediv').css('padding-top','58px');
             $("#delete-info").show(); 
           }
       }
@@ -404,6 +419,11 @@ WFM Home
       LoadTheTableContent(false)
     });
 
+    $( "#date-submit" ).click(function() {
+      reloadPagination();
+      LoadTheTableContent(false)
+    });
+
     function LoadTheTableContent(freshAppointment){
         var limit = $('#limit').val()
         var region = $('#region').val()
@@ -419,21 +439,44 @@ WFM Home
         status = $('#status').val()
         sub_status = $('#sub_status').val()
         appointment = $('#appointment').val()
+        startDate =$('#datepickerFrom').val()
+        endDate =$('#datepickerTo').val()
 
         var makeCall = false;
+        
         if(status != "Select"){
           if(sub_status != "Select")
-            data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+
+            if(startDate && endDate)
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit, 'start_date':startDate, 'end_date':endDate};
+            else
+              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit}
+            
           else
-            data = {'region':region,'process':process_name,'status':status, 'limit':limit};
+
+            if(startDate && endDate)
+              data = {'region':region,'process':process_name,'status':status, 'limit':limit, 'start_date':startDate, 'end_date':endDate};
+            else
+              data = {'region':region,'process':process_name,'status':status, 'limit':limit};
+              
           makeCall = true;
         }else{
             if (appointment != "Select"){
               makeCall = true;
-              data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
+
+              if(startDate && endDate)
+                data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit,'start_date':startDate, 'end_date':endDate};
+              else
+                data = {'appointment': appointment, 'region':region, 'process':process_name, 'limit':limit};
+
             }   
             if ((sub_status == "Select" || sub_status == null) && appointment == "Select")  {
-              data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+
+              if(startDate && endDate)
+                data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit,'start_date':startDate, 'end_date':endDate};
+              else
+                data = {'region':region,'process':process_name,'status':status, 'sub_status':sub_status, 'limit':limit};
+                
               makeCall = true;              
             }
 
@@ -456,12 +499,12 @@ WFM Home
               success: function(data) {
                   req = getParameterByName('recentRequest', this.url);
                   if(req === ""+recentRequest){
-                    $("#leads_table_body").html('')
-                    LeadsDataTable(data)
+                    $("#leads_table_body").html('');
+                    LeadsDataTable(data);
                     initial_load = false;
                     $('#preloaderOverlay').hide();
-                  }              },
-              error: function(xhr){
+                  }
+              },error: function(xhr){
                   alert('Request Status: ' + xhr.status);
               }
           });
@@ -505,8 +548,7 @@ WFM Home
             $('#data').html('<div  id="no-leads-msg">'+
                             '<div class="container-fluid" style="margin-top:15%;">'+
                             '<div class="info-box alert"><div class="msg">'+
-                            '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
-                            'please contact your TL/WFM.</b></i></div></div></div></div>');
+                            '<strong> Info : </strong> <i><b>There are no leads for the sort criteria.</b></i></div></div></div></div>');
             $('#data').show(); 
             $('table').hide();
           }
@@ -546,3 +588,41 @@ WFM Home
     
   </body>
   {% endblock content %}
+
+  {% block main_js %}
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+
+    $(function() {
+      $("#datepickerFrom").datepicker({
+        defaultDate : "+1w",
+        changeMonth : true,
+        numberOfMonths : 1,
+        dateFormat: "mm/dd/yy",
+        onClose : function(selectedDate) {
+          $("#to").datepicker("option", "minDate", selectedDate);
+        },
+        onSelect: function (selected) {
+              var dt = new Date(selected);
+              dt.setDate(dt.getDate() + 1);
+              $("#datepickerTo").datepicker("option", "minDate", dt);
+          }
+      });
+    $("#datepickerTo").datepicker({
+      defaultDate : "+1w",
+      changeMonth : true,
+      numberOfMonths : 1,
+      dateFormat: "mm/dd/yy",
+      onClose : function(selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+      },
+      onSelect: function (selected) {
+            var dt = new Date(selected);
+            dt.setDate(dt.getDate() - 1);
+            $("#datepickerFrom").datepicker("option", "maxDate", dt);
+        }
+    });
+  });
+
+</script>
+{% endblock main_js %}

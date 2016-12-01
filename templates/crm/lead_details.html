@@ -39,6 +39,34 @@
         background: red;
       }
 
+  .restoreButton {
+      -moz-box-shadow:inset 0px 39px 0px -24px #e67a73;
+      -webkit-box-shadow:inset 0px 39px 0px -24px #e67a73;
+      box-shadow:inset 0px 39px 0px -24px #e67a73;
+      background-color:#e4685d;
+      -moz-border-radius:14px;
+      -webkit-border-radius:14px;
+      border-radius:14px;
+      border:1px solid #ffffff;
+      display:inline-block;
+      cursor:pointer;
+      color:#ffffff;
+      font-family:Arial;
+      font-size:13px;
+      padding:6px 15px;
+      text-decoration:none;
+      text-shadow:0px 1px 0px #b23e35;
+      color: white !important;
+      font-weight: bold;
+    }
+    .restoreButton:hover {
+      background-color:#eb675e;
+    }
+    .restoreButton:active {
+      position:relative;
+      top:1px;
+    }
+
   </style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
@@ -77,6 +105,16 @@
                           <div class="padding-20 lead-history">
                               <div class="row">
                                   <div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
+                                    {% if  lead.is_delete == True %}
+                                    <div class="col-md-6">
+                                        <ul class="lead-menu">
+                                                <li>
+                                                  <a href="#" class="restoreButton" id="" onclick="restoreLead({{lead.id}})">Restore</a>
+                                                  
+                                                </li> 
+                                        </ul>
+                                     </div>
+                                     {% else %}
                                     <div class="col-md-6">
                                       <ul class="lead-menu">
                                             <li>
@@ -91,6 +129,8 @@
                                             {% endif %}
                                         </ul>
                                     </div>
+                                     {% endif %}
+
                                 </div>
                                 <div class="yellow-line"></div>
                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
@@ -2020,6 +2060,12 @@ function get_lead_history(){
             else if(action_type == 'clone'){
               changed = "<p style='text-align left;color:red;'>"+data[i]['modifications']+"</p>"
             }
+            else if(action_type == 'Restored'){
+              changed = "<p style='text-align left;'>"+data[i]['modifications']+"</p>"
+            }
+            else if(action_type == 'Deleted'){
+              changed = "<p style='text-align left;'>"+data[i]['modifications']+"</p>"
+            }
 
             else{
               changed = " posted an image link <h4 class='media-heading'><a href="+ data[i]['image_link'] + " target='_blank'>"+data[i]['image_link']+"</a><span class='post-time'>"+ data[i]['created_date'] +"</span>"
@@ -2375,6 +2421,34 @@ function alertMsgValidation(){
 }
 
 
+//Restoring  Deleted lead ajax function start from here
+ function restoreLead(unique_id){
+  if(confirm("Are you sure, want to Restore this lead ?")){
+   $.ajax({
+            url: "/crm/restore-lead/",
+            type: 'POST',
+            data: {'lead_id':unique_id},
+            dataType: "json",
+            success: function(data) {
+
+            if(data.msg == 'Failed to Restore'){
+            alert("Server error failed to Restore");
+            }
+            else{
+            location.reload();
+            }
+                
+                
+            },
+            error: function(data){
+              console.log(data)
+                alert("Something went wrong, please try after some time");
+            }
+        });
+  }
+}
+//Restoring  Deleted lead ajax function Ends
+
 $(document).on('change','#difficulty-level span select',function(){
   if(['Can be Implemented by the agent','Can NOT be Implemented by the agent'].indexOf($(this).val()) != -1){
 
@@ -2388,6 +2462,7 @@ $(document).on('change','#difficulty-level span select',function(){
      $('#regalix-sme span select').html('<option value="None">--None--</option>');
   }
 })
+
 
     </script>
     
