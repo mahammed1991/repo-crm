@@ -79,7 +79,7 @@ WFM Home
     <section class="top-margin wfm">
 
       <div class="container-fluid" style="max-width:100%;">
-
+          <button style="float: right";><a id="export-btn" style="text-decoration: none">Export</a></button>        
         <div class="alert alert-success" style="display:none;height: 50px; width: 50%;margin-left: 25%;    margin-bottom: -55px;" id="delete-info">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
             <span id="msg-area" style="font-size: 22px;margin-left: 75px;color: #3c763d;"></span>
@@ -137,6 +137,7 @@ WFM Home
                         <script type="text/javascript"> regions = "{{regions}}" </script>
                         <script type="text/javascript"> status_mapping = "{{crm_manager_text}}" </script>
                         <select id="process" name="process" onchange="GetStatus();" class="form-control bgicon">
+                          <!-- <option value="process_default">Process</option> -->
                         </select>
                     </div>
                   </div>
@@ -581,6 +582,16 @@ WFM Home
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
+
+  $('#export-btn').on('click',function(){
+    data['download_csv'] = true;
+    data['is_agent'] = false
+    qs = ''
+    for (key in data){
+      qs += key + '=' + data[key] + '&'
+    }
+    $("#export-btn").attr('href','/crm/all-leads/?'+qs)
+  });  
 
     </script>
     
