@@ -28,6 +28,8 @@ from django.forms.models import model_to_dict
 
 import ast
 
+from django.core import exceptions
+
 
 # Create your views here.
 @login_required
@@ -1294,6 +1296,8 @@ def deleted_leads(request):
                 return HttpResponse(json.dumps({'msg':'Server error occurred. Please try again later.', 'success':False}), content_type="application/json")
                     
         return render(request, 'crm/deleted_leads.html', {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING) })
+    else:
+        raise exceptions.PermissionDenied
 
 
 @csrf_exempt
