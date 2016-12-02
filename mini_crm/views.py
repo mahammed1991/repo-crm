@@ -1343,6 +1343,7 @@ def user_appointmnets(request):
         return HttpResponse(json.dumps([]), content_type='application/json')
 
 
+@login_required
 def deleted_leads(request):
     if request.user.groups.filter(name='CRM-MANAGER'):
         if request.is_ajax():
@@ -1387,6 +1388,7 @@ def deleted_leads(request):
         return render(request, 'crm/deleted_leads.html', {'crm_manager_text': json.dumps(settings.LEAD_STATUS_SUB_STATUS_MAPPING) })
 
 
+@login_required
 @csrf_exempt
 def restore_lead(request):
     lead_id = request.POST.get('lead_id')
