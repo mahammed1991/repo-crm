@@ -19,16 +19,18 @@ var formPagination = function(numOfPages){
     var to = from + lmt-1;
     var ulEle = $("#pagination");
     ulEle.html('');
- 
+    
+    // Text to show the total No of entries and current range
     if($("#entries").length) $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
     else{
       $("#pagination-container").before("<div id='entries' style='margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;'></div>");
       $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
     }
-
+    // if the click is on 1st page out of total numOfPages then replace backward arrow to forward arrow else keep the backward arrow as it is
     if(clickedPage < 2) ulEle.append("<li><a class='paged' href='#'>»</a></li>");
     else ulEle.append("<li><a class='paged' href='#'>«</a></li>");
 
+    //set the pagination numbers according to pageStartNum, pageEndNum, clickedPage and numOfPages
     for(i=pageStartNum; i<= Math.min(pageEndNum, numOfPages); i++){
         if(clickedPage == i) ulEle.append("<li><a class='paged active'href='#' style='background-color: #4CAF50;' data-value=" +i+ ">"+i+"</a></li>");
         else ulEle.append("<li><a class='paged' href='#' data-value=" +i+ ">"+i+"</a></li>");
@@ -41,6 +43,7 @@ var formPagination = function(numOfPages){
         }
     }
 
+    // if the click is on Last page out of total numOfPages then replace forward arrow to backward arrow else keep the forward arrow as it is
     if(clickedPage == numOfPages) ulEle.append("<li><a class='paged' href='#'>«</a></li>");
     else ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
 }
@@ -49,13 +52,14 @@ var formPagination = function(numOfPages){
 $("body").on('click', '.paged', function(e){
     e.preventDefault();
     clickedPage = $(this).text();
+    // get firstPage, lastPage and activePage from the pagination formed
     var firstPage = parseInt($('#pagination li a:eq(1)' ).data('value' ));
     var lastPage = parseInt($('#pagination li a:eq('+defaultEndNum+')' ).data('value' ));
     var activePage = parseInt($('#pagination li a.active' ).data('value' ));
     var reShufflePagination = false;
 
     if(clickedPage === "«" && activePage > 0){
-        // on click of forward arrow decrease the pageStartNum and PageEndNum by 1
+        // if the click is on forward arrow decrease the pageStartNum and PageEndNum by 1
         if(firstPage == 1){
             pageStartNum = defaultStartNum;
             pageEndNum = defaultEndNum;
@@ -70,7 +74,7 @@ $("body").on('click', '.paged', function(e){
     }else if(clickedPage === "»" && activePage < numOfPages){
         if(activePage == numOfPages) reShufflePagination = false;
         else{
-            // on click of forward arrow increase the pageStartNum and PageEndNum by 1 if numOfPages > defaultEndNum
+            // if click is on forward arrow increase the pageStartNum and PageEndNum by 1 if numOfPages > defaultEndNum
             if(numOfPages > defaultEndNum){
                 pageStartNum += 1
                 pageEndNum += 1
@@ -88,9 +92,8 @@ $("body").on('click', '.paged', function(e){
         if(clickedPage == lastPage){
             pageStartNum += shuffleCount;
             pageEndNum += shuffleCount;
-        }
-        //if the click on firstPage then set pageStartNum to pageStartNum-shuffleCount
-        else if (clickedPage == firstPage){
+        }else if (clickedPage == firstPage){
+            //if the click on firstPage then set pageStartNum to pageStartNum-shuffleCount
             if(activePage - shuffleCount > shuffleCount){
                 pageStartNum -= shuffleCount;
                 pageEndNum -= shuffleCount;
