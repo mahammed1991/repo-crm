@@ -67,6 +67,24 @@
       top:1px;
     }
 
+
+.scroll-top {
+    position:fixed;
+    bottom:20px;
+    right:15px;
+    color:#fff;
+    background-color:rgba(0, 0, 0, 0.29);
+    padding:5px 10px 5px 10px;
+    font-size:20px;
+    z-index: 1000;
+    display: none;
+}
+
+.scroll-top a, .scroll-top a:hover {
+        color:#fff;
+        text-decoration:none;
+}
+
   </style>
     <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
@@ -1112,6 +1130,14 @@
                 <div class=" container " style="background:white"><div class="center-align" style="margin-top:20%;margin-bottom:20%;text-align:center;font-size:16px;">Lead does not exist.</div></div>
                 {% endif %}
                 <div style="margin-top:80px;"></div> 
+
+
+                 <div class="scroll-top">
+                    <a href="#" id="home-section">
+                        <i class="fa fa-arrow-up "></i>
+                    </a>
+
+                </div>
     </section>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
@@ -2482,6 +2508,21 @@ $(document).on('change','#difficulty-level span select',function(){
   }
 })
 
+
+// Page Scroll to home position function
+$(function() {
+  $(window).scroll(function() {
+    if($(this).scrollTop() > 50) {
+      $('.scroll-top').fadeIn(); 
+    } else {
+      $('.scroll-top').fadeOut();
+    }
+  });
+ 
+  $('#home-section').click(function() {
+    $('body,html').animate({scrollTop:0},800);
+  }); 
+});
 
     </script>
     
