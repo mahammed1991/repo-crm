@@ -1,0 +1,1191 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  Agent Home
+{% endblock title %}
+
+{% block main_css %}
+  <!-- Bootstrap -->
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+  <style>
+    .alert {
+        padding: 19px 15px;
+        color: #fefefe;
+        position: relative;
+        font: 20px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+    }
+    .alert .msg { padding: 0 20px 0 40px;}
+    .info-box {		background: #4D7DBE  no-repeat 14px 14px;}
+    .input-group{
+      margin-bottom: -25px;
+    }
+  </style>
+{% endblock main_css %}
+  {% block content %}
+  <body>
+        <section class="top-margin" >
+       		<div class="left-panel first-canvas-nav top-margin" style="margin-top: 8%;">
+                <select class="form-control bgicon" id='status'>
+                  <option>In Queue</option>
+                  <option>Rescheduled</option>
+                  <option>Without Appointment</option>
+                </select>
+
+                <ul class="side-menu">
+                </ul>
+                
+            </div><!--left-panel-->
+            <div  id="no-leads-msg" class="page-pull-left" style="display:none">
+                <div class="container-fluid" style="margin-top:25%;">
+                    <div class="info-box alert">
+                        <div class="msg"> <strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for sort criteria, please contact your TL/WFM.</b></i></div>
+                    </div>
+                </div>
+            </div>
+            <div id="leads-msg"class="page-pull-left">
+                <div class=" container-fluid ">
+                    <div class="white-section">
+                        <!-- Nav tabs -->
+                      <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#lead" aria-controls="home" role="tab" data-toggle="tab">Lead</a></li>
+                        <li role="presentation"><a href="#history" aria-controls="profile" role="tab" data-toggle="tab">History</a></li>
+                      </ul>
+                    
+                      <!-- Tab panes -->
+                      <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="lead">
+                          <div class="padding-20 lead-history">
+                              <div class="row">
+                                  <div class="col-md-6"><h2 class="lead-head">Lead Detail</h2></div>
+                                    <div class="col-md-6">
+                                      <ul class="lead-menu">
+                                              <li id='edit_lead'><a onclick="addURL(this)" href="#" target="_blank">Edit </a>
+                                            </li>  
+                                            {% if manager %}           
+                                            <li><a id="delete-lead" href="#" data-href="{% url 'mini_crm.views.delete_lead' lead.id  ctype %}">Delete</a></li>         
+                                            <!-- <li><a href="#">Clone</a></li> -->
+                                            <li id=''><a onclick="cloneLead()" href="#">Clone</a></li> 
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="yellow-line"></div>
+                                <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Regalix Lead Owner Info</a>
+                              <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Lead Owner</td>
+                                        <td class="table-right smile"><i class="fa fa-smile-o" aria-hidden="true"></i> <span id="lead_owner"></span> [<a href="#" id="assign-lead-popup">Change </a>] 
+                                        <div class="arrow-box" style="display:none;">
+                                          <div class="padding-20">
+                                              <h2 class="pull-left">Lead Owner</h2> 
+                                              <div>
+                                                <input class="form-control" type="email" id="exampleInputEmail1" autofocus>
+                                              </div>
+                                              <div>
+                                                <label>
+                                                  <input id="sendmail" type="checkbox" checked="checked"> Send Email Notification
+                                                </label>
+                                              </div>
+                                              <div>
+                                                <label>
+                                                  <input id="override" type="checkbox"> Override existing appointment
+                                                </label>
+                                              </div>
+                                              <input type="button" id="check-availability" class="btn btn-primary" value="Submit" style="margin-top:20px;float:right;background:#4385f5">
+                                              <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                        </td>
+                                        
+                                        <td class="table-left">Email</td>
+                                        <td class="table-right"><span name="lead_owner_email" id='mail'></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Status  </td>
+                                        <td class="table-right" id="lead_status"><span name="lead_status"></span></td>
+                                        <td class="table-left qstn">Lead Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"><span name="lead_sub_status" id="lead_sub_status"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Team</td>
+                                        <td class="table-right" id="team"></td>
+                                        <td class="table-left">Not Interested Cases RCA</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Date of installation</td>
+                                        <td class="table-right edit-date"><span name="installation_date" id="date_of_installation"></span></td>
+                                        <td class="table-left qstn"> PLA Sub-Status <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="pls-sub-status"><span name="pla_sub_status"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead Type</td>
+                                        <td class="table-right edit" id="type"></td>
+                                        <td class="table-left">Regalix Webmaster</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Implemented Code is</td>
+                                        <td class="table-right" id="implemented-code"><span name="implemented_code_is"></span></td>
+                                        <td class="table-left qstn"> Dead Lead (Date) <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="dead-lead-date"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">LastCallTime</td>
+                                        <td class="table-right edit-date"><span name="last_contacted_date"></span></td>
+                                        <td class="table-left">Dynamic Variable Set</td>
+                                        <td class="table-right" id="dynamic-variable-set"><span name="dynamic_variable_set"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">No of Dials</td>
+                                        <td class="table-right" id="dials"></td>
+                                        <td class="table-left">Website Backup Taken?</td>
+                                        <td class="table-right" id="backup-taken"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">On Call Win</td>
+                                        <td class="table-right edit-date"></td>
+                                        <td class="table-left">Dynamic Value</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left qstn"> 1st Contacted on <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="first_contacted_on"></td>
+                                       </tr>
+
+                                       
+                                     </table>
+                                 </div>
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Lead Information</a>
+                              <div class="table-responsive">
+                                     <table class="table table-condensed info">
+                                       <tr>
+                                        <td class="table-left">Google Accounts Manager(D)</td>
+                                        <td class="table-right smile"></td>
+                                        <td class="table-left">Googler Location</td>
+                                        <td class="table-right edit"><span name="google_rep_location"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Email </td>
+                                        <td class="table-right edit"><span name="google_rep_email"></span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-left qstn">Number Of Codes</td>
+                                        <td class="table-right edit"><span name="number_of_products"></span></td>
+                                       </tr>
+
+                                        <tr>
+                                        <td class="table-left">Google Manager(D)</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left">Lead Bundle#</td>
+                                        <td class="table-right edit"><span></span></td>
+                                       </tr>
+                                       
+
+                                       <tr>
+                                        <td class="table-left">Google Manager Email</td>
+                                        <td class="table-right edit"><span name="google_rep_manager_email"></span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                        <td class="table-left">Additional LDAP</td>
+                                        <td class="table-right edit"><span name="eto_ldap">{{ lead.eto_ldap }}</span></td>
+                                       </tr>
+                                       
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>ADVERTISER Contact Info</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Name</td>
+                                        <td class="table-right smile edit"><span name="first_name" id="adv-name"></span></td>
+                                        <td class="table-left">Phone</td>
+                                        <td class="table-right edit"><span name="phone" id="adv-phone"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Company</td>
+                                        <td class="table-right edit"><span name="company" id="adv-company"></span></td>
+                                        <td class="table-left qstn">Email (P)</td>
+                                        <td class="table-right edit"><span name="email_optional" id="adv-email"></span> [ <img src="images/gmail.png" alt="">   Gmail]</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Advertiser Location</td>
+                                        <td class="table-right" id="adv-loc"></td>
+                                        <td class="table-left">Language</td>
+                                        <td class="table-right" id="adv-lang"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Advertiser Full Name</td>
+                                        <td class="table-right edit"><span name="first_name" id="adv-full-name"></span></td>
+                                        <td class="table-left qstn">Contact Primary</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Primary Contact Role</td>
+                                        <td class="table-right" id="primary-role"></td>
+                                        <td class="table-left">Webmaster Phone</td>
+                                        <td class="table-right edit"><span name="webmaster_phone" id="webm-ph"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Webmaster Name</td>
+                                        <td class="table-right edit"><span name="webmaster_name" id="webm-name"></span></td>
+                                        <td class="table-left qstn">Webmaster E-mail</td>
+                                        <td class="table-right edit"><span name="webmaster_email" id="webm-email"></span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Optional Fields</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">First Name - optional</td>
+                                        <td class="table-right edit"><span name="first_name_optional"></span></td>
+                                        <td class="table-left">Last Name - optional</td>
+                                        <td class="table-right edit"><span name="last_name_optional"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Phone - optional</td>
+                                        <td class="table-right edit"><span name="phone_optional"></span></td>
+                                        <td class="table-left">Email - optional</td>
+                                        <td class="table-right edit"><span name="email_optional"></span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Alternate Contact Role</td>
+                                        <td class="table-right primary-role"><span></span></td>
+                                        <td class="table-left">Contact Alternate</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Lead Processing Information</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Customer ID</td>
+                                        <td class="table-right" id="cid"></td>
+                                        <td class="table-left">Ecommerce</td>
+                                        <td class="table-right" id="lead-ecom"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Time Zone</td>
+                                        <td class="table-right" id="lead-tz"></td>
+                                        <td class="table-left">Description</td>
+                                        <td class="table-right" id="lead-desc"></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Appointment Date</td>
+                                        <td class="table-right edit-date"><span name="appointment_date_on" id="lead-apt-date"></span></td>
+                                        <td class="table-left">Tag via GTM</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Appointment Time in IST</td>
+                                        <td class="table-right edit-date"><span name="appointment_date_ist_on" id="lead-apt-date-ist"></span></td>
+                                        <td class="table-left">Appointment Time in PST</td>
+                                        <td class="table-right" ></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Rescheduled Appointments</td>
+                                        <td class="table-right edit-date"><span name="rescheduled_date_on" id="lead-res-date"></td>
+                                        <td class="table-left">Service Segment</td>
+                                        <td class="table-right" id="serv-seg"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Reschedule Time in IST</td>
+                                        <td class="table-right edit-date"><span name="rescheduled_date_ist_on" id="res-date-ist"></span></td>
+                                        <td class="table-left">RLSA Auth Approval</td>
+                                        <td class="table-right" id="rlsa-auth"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Agency Lead Information</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Agency POC</td>
+                                        <td class="table-right edit"><span name="agency_poc"></span></td>
+                                        <td class="table-left">Agency Name</td>
+                                        <td class="table-right edit"><span name="agency_name"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Agency Phone</td>
+                                        <td class="table-right edit"><span name="agency_phone"></span></td>
+                                        <td class="table-left">Agency Email</td>
+                                        <td class="table-right edit"><span name="agency_email"></span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Agency Bundle#</td>
+                                        <td class="table-right edit"><span name="agency_bundle_number"></span></td>
+                                        <td class="table-left">Services Case ID</td>
+                                        <td class="table-right edit"><span name="agency_service_case_id"></span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Google Shopping Setup</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">MC-ID</td>
+                                        <td class="table-right edit"><span name="mc_id"></span></td>
+                                        <td class="table-left">Client's Web inventory</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Opt-in %<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit"><span name="opt_in_percent">></span></td>
+                                        <td class="table-left">SQO / STO Comments</td>
+                                        <td class="table-right edit-textarea"><span name="sqo_sto_comments"></span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Recommended Bid</td>
+                                        <td class="table-right edit"><span name="recommended_bid"></span></td>
+                                        <td class="table-left">Secured Checkout</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Recommended Budget</td>
+                                        <td class="table-right edit"><span name="recommended_budget"></span></td>
+                                        <td class="table-left">Payment Gateway</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Recommended Mobile Bid modifier</td>
+                                        <td class="table-right edit"><span name="recommended_mobile_bid_modifier">{{ lead_detail.recommended_mobile_bid_modifier }}</span></td>
+                                        <td class="table-left">Shopping Policies, verified?</td>
+                                        <td class="table-right">{{ lead_detail.shopping_polices_verified }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Type of Policy violation</td>
+                                        <td class="table-right">{{ lead_detail.type_of_policy_violation }}</td>
+                                        <td class="table-left">Shopping Troubleshoot Issue Type</td>
+                                        <td class="table-right edit"><span name="shopping_troubleshoot_issue_type">{{ lead_detail.shopping_troubleshoot_issue_type }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Please specify if others</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Number of Products uploaded</td>
+                                        <td class="table-right edit"><span name="products_uploaded">{{ lead_detail.products_uploaded }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Method used for feed upload</td>
+                                        <td class="table-right">{{ lead_detail.feed_upload_method }}</td>
+                                        <td class="table-left">Shopping Campaign ID</td>
+                                        <td class="table-right edit"><span name="campaign_id">{{ lead_detail.campaign_id }}</span></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Project Argos- Feed Performance Optimization</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Feed Optimization Status</td>
+                                        <td class="table-right">{{ lead.feed_optimisation_status }}</td>
+                                        <td class="table-left">Business Type / Category:</td>
+                                        <td class="table-right edit"><span name="business_type">{{ lead.business_type }}</span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Additional support (Beyond the scope)<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-textarea"><span name="additional_support_beyond_case">{{ lead.additional_support_beyond_case }}</span></td>
+                                        <td class="table-left">Feed Optimization Sub Status</td>
+                                        <td class="table-right">{{ lead.feed_optimisation_sub_status }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Authorization Case ID for Optimization</td>
+                                        <td class="table-right edit"><span name="authcase_id">{{ lead.authcase_id }}</span></td>
+                                        <td class="table-left">Shopping Feed Link (G.Sheet)</td>
+                                        <td class="table-right edit-textarea"><span name="shopping_feed_link">{{ lead.shopping_feed_link }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left"># of Products on the feed</td>
+                                        <td class="table-right edit"><span name="number_of_products">{{ lead.number_of_products }}</span></td>
+                                        <td class="table-left">Area in need of most improvement:</td>
+                                        <td class="table-right edit-textarea"><span name="area_tobe_improved">{{ lead.area_tobe_improved }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Anything else we should know?</td>
+                                        <td class="table-right edit-textarea"></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                    
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Mandatory Fields</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Authorization Email Sent</td>
+                                        <td class="table-right">{{ lead_detail.auth_email_sent }}</td>
+                                        <td class="table-left qstn">Lead via Live Transfer<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.live_transfer }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Appointment Sub-Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.appointment_sub_status }}</td>
+                                        <td class="table-left qstn">gCases ID<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit"><span name="gcase_id">{{ lead_detail.gcase_id }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left qstn">CMS/Platform<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.cms_platform }}</td>
+                                        <td class="table-left qstn">GCSS Status<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.gcss_status }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left qstn">Other CMS<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left qstn">GCSS Exception Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Screenshare Scheduled</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left">Mouse Control Taken</td>
+                                        <td class="table-right">{{ lead_detail.mouse_control_taken }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">List Type</td>
+                                        <td class="table-right">{{ lead_detail.list_type }}</td>
+                                        <td class="table-left qstn">Mouse Control Approved by<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.mouse_control_approved_by }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Action Taken</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left">Lead Difficulty level</td>
+                                        <td class="table-right">{{ lead_detail.lead_difficulty_level }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left qstn">Regalix SME<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right">{{ lead_detail.regalix_sme }}</td>
+                                        <td class="table-left">RLSA - TagTeam Contacted Advertiser</td>
+                                        <td class="table-right">{{ lead_detail.rlsa_tag_team_contacted }}</td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Campaigns already created by GSR</td>
+                                        <td class="table-right">{{ lead_detail.campaign_created_by_gsr }}</td>
+                                        <td class="table-left">Adwords CID Submitted</td>
+                                        <td class="table-right">{{ lead_detail.adwords_cid_submitted }}</td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+
+                                 <div class="yellow-line"></div>
+                                 <a class="button" href="#" id="save-lead-comment" style="display:none;float: right;color: #333;text-decoration:none; ">Save </a>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Comments</a>
+                                  
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Tag Team Comments</td>
+                                        <td class="table-right" id="comment">
+                                        </td>
+                                        <td class="table-left">Google Comments</td>
+                                        <td class="table-right edit-textarea"><span name="google_comment">{{ lead.google_comment }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">New Comments Area</td>
+                                        <td class="table-right edit-textarea-for-comment"></td>
+                                        <td class="table-left">Regalix Chat Comments</td>
+                                        <td class="table-right edit-textarea"><span name="regalix_comment">{{ lead.regalix_comment }}</span></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">Regalix Email Comments</td>
+                                        <td class="table-right edit-textarea"></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 1</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 1</td>
+                                        <td class="table-right edit-textarea"><span name="code_1">{{ lead.code_1 }}</span></td>
+                                        <td class="table-left">URL 1</td>
+                                        <td class="table-right edit"><span name="url_1">{{ lead.url_1 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_1 }}</td>
+                                        <td class="table-left">Comment 1</td>
+                                        <td class="table-right">{{ lead.comment_1 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 1 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 1</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 1</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 1</td>
+                                        <td class="table-right edit"><span name="user_list_id_1">{{ lead.user_list_id_1 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 1</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_1">{{ lead.rlsa_bid_adjustment_1 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 1</td>
+                                        <td class="table-right">{{ lead.internal_cid_1 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 1</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_1 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 1</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_1">{{ lead.campaign_id_1 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 2</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 2</td>
+                                        <td class="table-right edit-textarea"><span name="code_2">{{ lead.code_2 }}</span></td>
+                                        <td class="table-left">URL 2</td>
+                                        <td class="table-right edit"><span name="url_2">{{ lead.url_2 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_2 }}</td>
+                                        <td class="table-left">Comment 2</td>
+                                        <td class="table-right">{{ lead.comment_2 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 2 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 2</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 2</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 2</td>
+                                        <td class="table-right edit"><span name="user_list_id_2">{{ lead.user_list_id_2 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 2</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_2">{{ lead.rlsa_bid_adjustment_2 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 2</td>
+                                        <td class="table-right">{{ lead.internal_cid_2 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 2</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_2 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 2</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_2">{{ lead.campaign_id_2 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 3</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 3</td>
+                                        <td class="table-right edit-textarea"><span name="code_3">{{ lead.code_3 }}</span></td>
+                                        <td class="table-left">URL 3</td>
+                                        <td class="table-right edit"><span name="url_3">{{ lead.url_3 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_3 }}</td>
+                                        <td class="table-left">Comment 3</td>
+                                        <td class="table-right">{{ lead.comment_3 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 3 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 3</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 3</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 3</td>
+                                        <td class="table-right edit"><span name="user_list_id_3">{{ lead.user_list_id_3 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 3</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_3">{{ lead.rlsa_bid_adjustment_3 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 3</td>
+                                        <td class="table-right">{{ lead.internal_cid_3 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 3</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_3 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 3</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_3">{{ lead.campaign_id_3 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 4</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 4</td>
+                                        <td class="table-right edit-textarea"><span name="code_4">{{ lead.code_4 }}</span></td>
+                                        <td class="table-left">URL 4</td>
+                                        <td class="table-right edit"><span name="url_4">{{ lead.url_4 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_4 }}</td>
+                                        <td class="table-left">Comment 4</td>
+                                        <td class="table-right">{{ lead.comment_4 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 4 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 4</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 4</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 4</td>
+                                        <td class="table-right edit"><span name="user_list_id_4">{{ lead.user_list_id_4 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 4</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_4">{{ lead.rlsa_bid_adjustment_4 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 4</td>
+                                        <td class="table-right">{{ lead.internal_cid_4 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 4</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_4 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 4</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_4">{{ lead.campaign_id_4 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+
+                                <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>Code 5</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Code 5</td>
+                                        <td class="table-right edit-textarea"><span name="code_5">{{ lead.code_5 }}</span></td>
+                                        <td class="table-left">URL 5</td>
+                                        <td class="table-right edit"><span name="url_5">{{ lead.url_5 }}</span></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Code Type</td>
+                                        <td class="table-right">{{ lead.type_5 }}</td>
+                                        <td class="table-left">Comment 5</td>
+                                        <td class="table-right">{{ lead.comment_5 }}</td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left qstn">Analytics Code is Setup 5 <i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Reporting Status</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Analytics account ID 5</td>
+                                        <td class="table-right edit"><span></span></td>
+                                        <td class="table-left">Created Call Extension 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Product Behaviour 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Cart Page Behaviour 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Check Out Process 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                        <td class="table-left">Transaction Behaviour 5</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">User List ID 5</td>
+                                        <td class="table-right edit"><span name="user_list_id_5">{{ lead.user_list_id_5 }}</span></td>
+                                        <td class="table-left">RLSA Bid Adjustment 5</td>
+                                        <td class="table-right edit"><span name="rlsa_bid_adjustment_5">{{ lead.rlsa_bid_adjustment_5 }}</span></td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Internal CID 5</td>
+                                        <td class="table-right">{{ lead.internal_cid_5 }}</td>
+                                        <td class="table-left">Overwrite existing bid modifiers 5</td>
+                                        <td class="table-right">{{ lead.override_existing_bid_modifiers_5 }}</td>
+                                       </tr>
+
+                                       <tr>
+                                        <td class="table-left">Campaign ID 5</td>
+                                        <td class="table-right edit-textarea"><span name="campaign_id_5">{{ lead.campaign_id_5 }}</span></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>QUALITY ASSURANCE</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Lead QC'ed on</td>
+                                        <td class="table-right edit-date"><span name="qc_on_date">{{ lead_detail.qc_on|date:'d-m-Y g:i a' }}</span></td>
+                                        <td class="table-left qstn">Spend (Cost from creation<i class="fa fa-question-circle" aria-hidden="true"></i></td>
+                                        <td class="table-right" id="spend-cfc"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Lead QC'ed by</td>
+                                        <td class="table-right" id="qc-by"><span name="qc_by">{{ lead_detail.qc_by }}</span></td>
+                                        <td class="table-left">Reason For Conversion Not Reporting</td>
+                                        <td class="table-right"></td>
+                                       </tr>
+                                       
+                                       <tr>
+                                        <td class="table-left">QC Comments</td>
+                                        <td class="table-right edit-textarea"><span name="qc_comments">{{ lead_detail.qc_comments }}</span></td>
+                                        <td class="table-left">Unethical WIN</td>
+                                        <td class="table-right edit-checkbox"></td>
+                                       </tr>
+                                       <tr>
+                                        <td class="table-left">Do Not QC Exception</td>
+                                        <td class="table-right"></td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right"></td>
+                                       </tr>
+
+                                     </table>
+                                 </div>
+
+
+                                 <div class="yellow-line"></div>
+                                 <a href="#" class="accordion-head tableDrop"><span><i class="fa fa-caret-down linkIcon" aria-hidden="true"></i></span>System Information</a>
+                                 <div class="table-responsive">
+                                     <table class="table table-condensed">
+                                       <tr>
+                                        <td class="table-left">Created By</td>
+                                        <td class="table-right">{{ lead.created_date|date:'d-m-Y g:i a' }}</td>
+                                        <td class="table-left">Last Modified By</td>
+                                        <td class="table-right">{{ lead.updated_date|date:'d-m-Y g:i a' }}</td>
+                                       </tr>
+                                       <tr style="display:none;">
+                                        <td class="table-left"></td>
+                                        <td class="table-right" id="row-id">{{ lead.id }}</td>
+                                        <td class="table-left"></td>
+                                        <td class="table-right" id="sf-id">{{ lead.sf_lead_id }}</td
+                                       </tr>
+                                       
+                                     </table>
+                                 </div>                                 
+
+
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="history">
+                          <div class="padding-20 lead-history upld-lnk-section">
+                              <!--<form action="" id="image_save" >
+                              <label class="input-group-btn upload-file">
+                              <span class="btn btn-primary load-file">
+                              <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
+                                  <input type="file" name="img_file" id="img_f" onChange="fileChange();" style="display: none;">Upload File
+                              </span>
+                              </label>
+                                <div class="or-left">OR</div>
+                                <div class="form-group col-xs-12 no-padding"> <span class="from-input-ic"><i class="fa fa-link" aria-hidden="true"></i></span>
+                                <input type="text" class="form-control" name="image_link" id="image_link" placeholder="Image link" value="" >
+                              </div>
+                              <input type="submit" name="submit" class="save-button" value="Save">
+                              </form>-->
+                                <div class="clearfix"></div>
+                              <div class="yellow-line"></div>
+                              <div class="row" id=lead_history_changed>           
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                </div><!--container-fluid-->   
+         	</div><!--page-pull-left-->
+        </section>
+  </body>
+{% endblock content %}
+
+
+{% block main_js %}
+<script type="text/javascript">
+  var ajax_response = ''
+  function call_lead_history(){
+      status = $('#status').val()
+      data = {'status':status}
+      $.ajax({
+              type: "GET",
+              url: '/crm/lead-history/',
+              data: data,
+              success: function(response) {
+                      if (response.length) {
+                        $('#no-leads-msg').hide();
+                        $('#leads-msg').show();
+                        $('.side-menu').html('')
+                        ajax_response = response
+                        for(var i=0;i<response.length;i++){
+                          $('.side-menu').append("<li id=" + response[i]['lead_id']+ "> <a href='#'' class=''>" + (response[i]['rescheduled'] == true ? "<span class='reschedule'><i class='fa fa-history' aria-hidden='true'></i> Rescheduled </span>":"<div class='menu-arrow'></div>"+ response[i]['customer_id']) +"<div class='side-menu-status clearfix'><span><i class='fa fa-signal' aria-hidden='true'></i> " + response[i]['lead_status'] + "</span>" + (response[i]['appointment_time'] != '' ? "<span ><i class='fa fa-calendar-minus-o' aria-hidden='true'></i> " + response[i]['apmnt_date'] + "</span><span><i class='fa fa-clock-o' aria-hidden='true'></i> " + response[i]['apmnt_time'] + "</span>": '<span class="w-a"><i class="fa fa-calendar-times-o" aria-hidden="true"></i> Without Appointment</span>') + "</div></a></li>")
+                          $('.side-menu li:first a').addClass('active')
+                          lead_id_selected = parseInt($('.side-menu li:first').attr('id'))
+                          var result = ajax_response.filter(function( obj ) {
+                            return obj.lead_id == lead_id_selected;
+                          });   
+
+                          if (result){
+                            lead_data = result[0]
+                            update_lead_data(lead_data);
+                          }                        
+                        }
+                      }
+                      else{
+                        $('.side-menu').html('No leads found')
+                        $('#no-leads-msg').show();
+                        $('#leads-msg').hide();
+                        /*$('.side-menu').html('')
+                        $('#lead_owner').text('')
+                        $('#lead_status').text('')
+                        $('#lead_sub_status').text('')
+                        $('#team').text('')
+                        $('#date_of_installation').text('')
+                        $('#dials').text('')
+                        $('#first_contacted_on').text('')*/
+                      }
+              },
+      });    
+  }
+
+  function addURL(element)
+  {
+    //var type = $('#process option:selected').text().replace(" ","");
+    process_type = 'TAG'
+    $(element).attr('href', function() {
+          var url = this.href;
+          if(url.includes(process_type))
+          {
+            return this.href;
+          }
+          else{
+            return this.href + '/' + process_type;
+          }
+    });
+  }
+  $('#status').on('change',function(){
+    call_lead_history()
+  })
+
+  function update_lead_data(lead_data){
+    //Regalix Lead Owner Info
+    $('#lead_owner').text(lead_data['lead_owner'])
+    $('#mail').text(lead_data['lead_owner_email'])
+    $('#lead_status').text(lead_data['lead_status'])
+    $('#lead_sub_status').text(lead_data['lead_sub_status'])
+    $('#team').text(lead_data['team'])
+    $('#date_of_installation').text(lead_data['date_of_installation'])
+    $('#pla-sub-status').text(lead_data['pla_sub_status'])
+    $('#implemented-code').text(lead_data['implemented_code_is'])
+    $('#type').text(lead_data['type_1'])
+    $('#dead-lead-date').text(lead_data['dead_lead_date'])
+    $('#dials').text(lead_data['dials'])
+    $('#backup-taken').text(lead_data['is_backup_taken'])
+    $('#first_contacted_on').text(lead_data['first_contacted_on'])
+    $('#edit_lead a').attr('href','/crm/lead-details/' + lead_data['lead_id'] + '/'+ lead_data['sf_lead_id'])
+
+    //ADVERTISER Contact Info
+    $('#adv-name').text(lead_data['first_name'] + ' '+ lead_data['last_name'])
+    $('#adv-phone').text(lead_data['phone'])
+    $('#adv-company').text(lead_data['company'])
+    $('#adv-email').text(lead_data['email_optional'])
+    $('#adv-loc').text(lead_data['country'])
+    $('#adv-lang').text(lead_data['language'])
+    $('#adv-full-name').text(lead_data['first_name'] + ' ' + lead_data['last_name'])
+    $('#primary-role').text(lead_data['primary_contact_role'])
+    $('#webm-ph').text(lead_data['webmaster_phone'])
+    $('#webm-email').text(lead_data['webmaster_name'])
+
+    //Lead Processing Information
+    $('#cid').text(lead_data['customer_id'])
+    $('#lead-ecom').text(lead_data['ecommerce'])
+    $('#lead-tz').text(lead_data['timezone'])
+    $('#lead-desc').text(lead_data['description'])
+    $('#lead-apt-date').text(lead_data['appointment_date'])
+    $('#lead-apt-date-ist').text(lead_data['appointment_date_in_ist'])
+    $('#lead-res-date').text(lead_data['rescheduled_appointment'])
+    $('#serv-seg').text(lead_data['service_segment'])
+    $('#res-date-ist').text(lead_data['rescheduled_appointment_in_ist'])
+    $('#rlsa-auth').text(lead_data['rlsa_auth_approval'])
+  } 
+
+  $(".side-menu").on('click','li a', function(){
+    $('.side-menu li a.active').removeClass('active')
+    $(this).addClass('active')
+    get_lead_history();
+    lead_id_selected = parseInt($(this).parent().attr('id'))
+    var result = ajax_response.filter(function( obj ) {
+      return obj.lead_id == lead_id_selected;
+    });   
+
+    if (result){
+      lead_data = result[0]
+      update_lead_data(lead_data);
+    }
+  })
+
+  $(".tableDrop").click(function (e) {
+    e.preventDefault();
+
+    $tableDrop = $(this);
+    var drop = $(this);
+    //getting the next element
+    $linkIcon = $tableDrop.next();
+    //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+    $linkIcon.slideToggle(200, function () {
+        //execute this after slideToggle is done
+        //change arrow based on visibility of content div
+        drop.find('.fa.linkIcon').toggleClass('fa-caret-up fa-caret-right');
+    });
+
+  });
+
+  function get_lead_history(){
+    var leadId = $('.side-menu a.active').parent().attr('id');
+    if(leadId){
+        $.ajax(
+        {
+            url: "/crm/get-lead-history/",
+            dataType: "json",
+            data:
+            {
+                lead_id:leadId,
+            },
+            success: function (data)
+            {
+              if (data.length) {
+                $('#lead_history_changed').html('')
+                for(var i=0;i<data.length;i++){
+                  action_type = data[i]['action_type']
+                  if (action_type == 'owner_change'){
+                    changed = ' changed Lead Owner from ' + data[i]['previous_owner'] +  ' to ' + data[i]['current_owner'] + "</p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
+                  }
+                  else if(action_type == 'edited'){
+                    edited = JSON.parse(data[i]['modifications'])[0]
+                    changed = ' changed '
+                    edited_fields = Object.keys(edited)
+                    if (edited){
+                      chg_tbl = changed + '<table border="1" class="lead-history-tbl"><tr><th>Field</th><th>Previous Value</th><th>New Value</th></tr>'
+                      for(var j=0;j<edited_fields.length;j++){
+                        field = edited_fields[j]
+                        fieldText = $("[name="+edited_fields[j]+"]").parent().prev().text();
+                        if(fieldText.length < 1){
+                          fieldText = field;
+                        }
+                        chg_tbl = chg_tbl + '<tr><td>' + fieldText +'</td><td>'+ edited[field][0] + '</td><td>' + edited[field][1] + '</td></tr>'
+                      }
+                      changed  = chg_tbl + "</table></p><span class='post-time'>"+ data[i]['created_date'] +'</span>'
+                    }
+                  }
+                  else if(action_type == 'image'){
+                    changed = " posted a file </p><div class='download-box'><div class='media'><div class='media-left'><a href='#''><img class='media-object' src="+ data[i]['image_path'] + " alt='' height='150' width='150'></a></div><div class='media-body'><h4 class='media-heading'>" + data[i]['original_image_name'] +"</h4><a href='/crm/download-image-file/?image_guid=" + data[i]['image_guid'] +  "'class='screen-dwld'><i class='fa fa-download' aria-hidden='true'></i> Download  <span>("+ data[i]['image_size'] +  " MB)</span></a></div></div></div><span class='post-time'>"+ data[i]['created_date'] +"</span>"
+                  }
+                  else{
+                    changed = " posted an image link <h4 class='media-heading'>"+ data[i]['image_link'] + "<span class='post-time'>"+ data[i]['created_date'] +"</span>"
+                  }
+                  $('#lead_history_changed').append("<div class='col-lg-1 col-md-1 col-sm-1 '><img src='/static/images/smile-pic.jpg' alt=''></div> <div class='col-lg-10 col-md-10 col-sm-10 no-padding'><p class='history-para'><a href='#' class='lead-blue-text'>" + data[i]['modified_by'] + "</a>" + changed + "</div> <div class='clearfix'></div><div class='margin-top-20'></div>")
+                }
+              }
+              else{
+                $('#lead_history_changed').html('');
+            }
+          }
+        });
+    }
+  }
+
+  $("li a[href='#history']").click(function(){
+    get_lead_history();
+  })
+
+$(document).ready(function() {
+  status = $('#status').val('In Queue');
+  call_lead_history()
+});
+</script>
+{% endblock main_js %}
+</html>
