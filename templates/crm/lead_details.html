@@ -330,7 +330,7 @@
                                         <td class="table-left">Alternate Contact Role</td>
                                         <td class="table-right" id="alternate-role"><span name="alternate_contact_role">{{lead_detail.alternate_contact_role}}</span></td>
                                         <td class="table-left">Contact Alternate</td>
-                                        <td class="table-right"><span name='contact_alternate'>{{lead_detail.contact_alternate}}</span></td>
+                                        <td class="table-right edit-checkbox"><span name='contact_alternate'>{{lead_detail.contact_alternate}}</span></td>
                                        </tr>
 
                                      </table>
@@ -351,35 +351,35 @@
                                         <td class="table-left">Time Zone</td>
                                         <td class="table-right">{{ lead.time_zone }}</td>
                                         <td class="table-left">Description</td>
-                                        <td class="table-right">{{ lead_detail.description }}</td>
+                                        <td class="table-right edit-textarea"><span name="description">{{ lead_detail.description }}</span></td>
                                        </tr>
                                        
                                        <tr>
                                         <td class="table-left">Appointment Date</td>
                                         <td class="table-right edit-date" id="aptmt-date"><span name="appointment_date_on">{{ lead.appointment_date|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">Tag via GTM</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-checkbox"><span name="tag_via_gtm">{{ lead_detail.tag_via_gtm }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Appointment Time in IST</td>
                                         <td class="table-right"><span name="appointment_date_ist_on">{{ lead.appointment_date_in_ist|date:'d/m/Y g:i A' }}</span></td>
                                         <td class="table-left">Appointment Time in PST</td>
-                                        <td class="table-right"></td>
+                                        <td class="table-right edit-date"><span name="appointment_date_pst_on">{{ lead.appointment_date_in_pst|date:'d/m/Y g:i A' }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Rescheduled Appointments</td>
                                         <td class="table-right edit-date" id="rescheduled-appointment"><span name="rescheduled_date_on">{{ lead.rescheduled_appointment|date:'d/m/Y g:i A' }}</span><p style="display:none;color:red;">*Please reschedule the appointment.</p></td>
                                         <td class="table-left">Service Segment</td>
-                                        <td class="table-right">{{ lead_detail.service_segment }}</td>
+                                        <td class="table-right" id="service-segment"><span name="service_segment">{{ lead_detail.service_segment }}</span></td>
                                        </tr>
 
                                        <tr>
                                         <td class="table-left">Reschedule Time in IST</td>
                                         <td class="table-right"><span name="rescheduled_date_ist_on">{{ lead.rescheduled_appointment_in_ist|date:'d-m-Y g:i a' }}</span></td>
                                         <td class="table-left">RLSA Auth Approval</td>
-                                        <td class="table-right">{{ lead_detail.rlsa_auth_approval }}</td>
+                                        <td class="table-right" id='rlsa-auth'><span name='rlsa_auth_approval'>{{ lead_detail.rlsa_auth_approval }}</span></td>
                                        </tr>
 
                                      </table>
@@ -568,7 +568,7 @@
 
                                        <tr>
                                         <td class="table-left">Action Taken</td>
-                                        <td class="table-right"><span name="action_taken">{{lead_detail.action_taken}}</span></td>
+                                        <td class="table-right" id="action-taken"><span name="action_taken">{{lead_detail.action_taken}}</span></td>
                                         <td class="table-left">Lead Difficulty level</td>
                                         <td class="table-right" id="difficulty-level"><span name='lead_difficulty_level'>{{ lead_detail.lead_difficulty_level }}</span></td>
                                        </tr>
@@ -1367,6 +1367,12 @@ $('#edit-lead').on('click',function() {
     assignDropDownValues(curr_status,lead_status,'#lead-status span')
     
 
+    var service_segment_list = ['SBA','HPA','HPA+']
+    var curr_service_segment = $("#service-segment span").html();
+    $("#service-segment span").html("<select style='width:200px;'></select>");
+    assignDropDownValues(curr_service_segment,service_segment_list,"#service-segment span")
+
+
     var curr_team = $("#team span").html();
     $("#team span").html("<select id='team' style='width:200px;'></select>");
     assignDropDownValues(curr_team,team,"#team span")
@@ -1574,6 +1580,16 @@ $('#edit-lead').on('click',function() {
     $('#live-transfer span').html('<select style="width:200px;"></select>');
     assignDropDownValues(curr_live_transfer,live_transfer_list,'#live-transfer span');
 
+     var rlsa_auth_list = ['Awaiting Approvals - DO NOT Proceed with RLSA','Approvals Received - Proceed with RLSA']
+    var curr_rlsa_auth = $('#rlsa-auth span').html();
+    $('#rlsa-auth span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_rlsa_auth,rlsa_auth_list,'#rlsa-auth span');
+
+     var action_taken_list = ['Informed Google Rep','Assisted Customer with Creating Dynamic List']
+    var curr_action_taken = $('#action-taken span').html();
+    $('#action-taken span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_action_taken,action_taken_list,'#action-taken span');
+
     var screenshare_scheduled_list = ["WebEx", "JoinMe", "TeamViewer", "GoogleHangout", "GoTo Meeting", "No Screenshare", "Gcases Screenshare", "Skype", "Appear.in"];
     var curr_screenshare_scheduled = $('#screenshare-scheduled span').html();
     $('#screenshare-scheduled span').html('<select style="width:200px;"></select>');
@@ -1599,7 +1615,10 @@ $('#edit-lead').on('click',function() {
     $('#difficulty-level span').html('<select style="width:200px;"></select>');
     assignDropDownValues(curr_difficulty_level,difficulty_level_list,'#difficulty-level span');
 
-
+    var list_type = ['Google Analytics Dynamic List','Google Adwords Dynamic List','No List'];
+    var curr_list_type = $('#list-type span').html();
+    $('#list-type span').html('<select style="width:200px;"></select>');
+    assignDropDownValues(curr_list_type,list_type,'#list-type span');
 
     var feed_optimisation_status_list = {{ feed_optimisation_status|safe }};
     var curr_feed_optimisation_status = $('#feed-optimisation-status span').html();
