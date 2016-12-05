@@ -539,7 +539,7 @@ TAGLEAD_DETAILS_FIELDS = ['agency_name','agency_poc','agency_phone','agency_emai
                         'gcase_id','gcss_status','gcss_status_approved_by','mouse_control_taken',
                         'mouse_control_approved_by','list_type','regalix_sme','lead_difficulty_level',
                         'rlsa_tag_team_contacted','campaign_created_by_gsr','adwords_cid_submitted',
-                        'implemented_code_is','number_of_dails','pla_sub_status',
+                        'implemented_code_is','number_of_dails','pla_sub_status','action_taken',
                         'dynamic_variable_set','dead_lead_date','last_contacted_on','is_backup_taken',
                         'tag_via_gtm','description','service_segment','rlsa_auth_approval',
                         'mc_id','opt_in_percent','client_web_inventory','recommended_bid','recommended_budget',
@@ -558,7 +558,8 @@ TAGLEAD_DETAILS_FIELDS = ['agency_name','agency_poc','agency_phone','agency_emai
                         'analytics_code_is_setup_4','analytics_code_is_setup_5','product_behaviour_1',
                         'product_behaviour_2','product_behaviour_3','product_behaviour_4','not_interested_cases_rca',
                         'product_behaviour_5','transaction_behaviour_1','transaction_behaviour_2',
-                        'transaction_behaviour_3','transaction_behaviour_4','transaction_behaviour_5','gcss_exception_approved_by']
+                        'transaction_behaviour_3','transaction_behaviour_4','transaction_behaviour_5',
+                        'gcss_exception_approved_by','contact_alternate','alternate_contact_role','lead_bundle']
 
 PLA_SUB_STATUS = ["AC - Gate Keeper", "AC - Invalid Number", "AC - Left VM - Call Back",\
                 "AC - Phone rings but No Answer", "DL - Account Suspended post Regalix Implementation",
