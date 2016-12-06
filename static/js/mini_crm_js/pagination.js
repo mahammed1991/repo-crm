@@ -1,17 +1,17 @@
-// Set the initial clickedPage, pageStartNum, pageEndNum
+// Set the default values to clickedPage, pageStartNum, pageEndNum
 var clickedPage = 1;
 var pageStartNum = 1;
 var pageEndNum = 10;
 var defaultStartNum = 1, defaultEndNum = 20, shuffleCount = 10;
 
-//call reloadPagination on every on change event
+// Call reloadPagination on every on event change like Process, result count, status, appointment, selecting page num
 var reloadPagination = function(){
     clickedPage = 1;
     pageStartNum = defaultStartNum;
     pageEndNum = defaultEndNum;
 }
 
-// form pagination according to clickedPage,pageStartNum,pageEndNum and numOfPages
+// Form pagination according to above event changes
 var formPagination = function(numOfPages){
 
     var lmt = parseInt($("#limit").val());
@@ -20,13 +20,14 @@ var formPagination = function(numOfPages){
     var ulEle = $("#pagination");
     ulEle.html('');
     
-    // Text to show the total No of entries and current range
+    // Set Text to show the total No of entries and current range
     if($("#entries").length) $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
     else{
       $("#pagination-container").before("<div id='entries' style='margin-left: 2%;margin-right: 2%;margin-bottom: 10px;float: left;display: inline;margin-top: 2%;'></div>");
       $("#entries").html("Showing "+ from +" to "+ to +" of "+ leads_count +" entries");
     }
-    // if the click is on 1st page out of total numOfPages then replace backward arrow to forward arrow else keep the backward arrow as it is
+    /* if the click is on 1st page out of total numOfPages then replace backward arrow to forward 
+    arrow else keep the backward arrow as it is */
     if(clickedPage < 2) ulEle.append("<li><a class='paged' href='#'>»</a></li>");
     else ulEle.append("<li><a class='paged' href='#'>«</a></li>");
 
@@ -43,7 +44,8 @@ var formPagination = function(numOfPages){
         }
     }
 
-    // if the click is on Last page out of total numOfPages then replace forward arrow to backward arrow else keep the forward arrow as it is
+    // if the click is on Last page out of total numOfPages then replace forward arrow to backward arrow 
+    // else keep the forward arrow as it is
     if(clickedPage == numOfPages) ulEle.append("<li><a class='paged' href='#'>«</a></li>");
     else ulEle.append("<li><a class='paged ' href='#'>»</a></li>");
 }
