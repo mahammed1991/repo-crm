@@ -1045,7 +1045,12 @@
                           <div class="padding-20 lead-history upld-lnk-section">
                               <form action="" id="image_save" method="post" enctype="multipart/form-data">
                               {% csrf_token %}
-                              
+                              <div id="preloaderOverlay" style='display:none;margin-left: -21px;'>
+                                  <div class="preloader">
+                                    <img src="{% static 'images/preloader.gif'%}" width="40" height="40" >
+                                    <span style="font-style: italic;font-size: 20px;margin-left: -70px;margin-top: 43px;">Uploading Please wait....</span>
+                                  </div>
+                              </div>
                               <label class="input-group-btn upload-file">
                               <span class="btn btn-primary load-file">
                               <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;
@@ -2191,7 +2196,10 @@ function cloneLead(){
             return false;
           }
           $(".save-button").prop("disabled",false);
-          $('.file-name').html(filename);
+          if(files.length > 1)
+            $('.file-name').html(files.length + " Files selected");
+          else
+            $('.file-name').html(filename)
           return true;
         }
       }
@@ -2240,6 +2248,7 @@ function cloneLead(){
       formData.append('lead_id', window.location.pathname.split( '/' )[3]);
       var errState = document.getElementById("file_status");
       if (files.length != 0 || $('#image_link').val() != ''){
+        $('#preloaderOverlay').show();
         $.ajax({
             url: '/crm/save-image-file/',
             type: 'POST',
@@ -2260,6 +2269,7 @@ function cloneLead(){
                 get_lead_history();
                 $('#image_save')[0].reset()
                 $('.file-name').html('');
+                $('#preloaderOverlay').hide();
             },
             error: function(data){
               alert("Something went wrong, please try after some time");
